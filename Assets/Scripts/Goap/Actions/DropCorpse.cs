@@ -14,14 +14,14 @@ public class DropCorpse : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Haul_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         logTags = new[] {LOG_TAG.Work};
     }
 
     
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Carry Corpse", false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Carry Corpse", false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
     }
     public override void Perform(ActualGoapNode actionNode) {
         base.Perform(actionNode);

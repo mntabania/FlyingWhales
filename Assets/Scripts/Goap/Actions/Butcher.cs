@@ -10,7 +10,7 @@ public class Butcher : GoapAction {
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
         actionIconString = GoapActionStateDB.Butcher_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Needs};
     }
@@ -20,7 +20,7 @@ public class Butcher : GoapAction {
         return true;
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetDead);
+        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetDead);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.PRODUCE_FOOD, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -94,7 +94,8 @@ public class Butcher : GoapAction {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
                                 cost += currCost;
                                 costLog += $" +{currCost}(Cannibal, Malnourished, Friend/Close)";
-                            } else if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
+                            }
+                            if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
                                 cost += 300;
                                 costLog += " +300(Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
                             }
@@ -102,7 +103,8 @@ public class Butcher : GoapAction {
                             if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
                                 cost += 2000;
                                 costLog += " +2000(Cannibal, Friend/Close)";
-                            } else if ((targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) && !actor.needsComponent.isStarving) {
+                            }
+                            if ((targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) && !actor.needsComponent.isStarving) {
                                 cost += 400;
                                 costLog += " +2000(Cannibal, Human/Elf/Sapient Ratman, not Starving)";
                             }
@@ -114,23 +116,28 @@ public class Butcher : GoapAction {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
                                 cost += currCost;
                                 costLog += $" +{currCost}(not Cannibal, Malnourished, Friend/Close)";
-                            } else if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
+                            }
+                            if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
                                 cost += 500;
                                 costLog += " +500(not Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
                             }
                         } else {
-                            if (actor.needsComponent.isStarving) {
-                                if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                                    int currCost = 300;
-                                    cost += currCost;
-                                    costLog += $" +300(not Cannibal, not Malnourished but starving, Friend/Close)";
-                                }
-                            } else {
-                                if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
-                                    cost += 2000;
-                                    costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf/Sapient Ratman)";
-                                }    
+                            if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
+                                cost += 2000;
+                                costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf/Sapient Ratman)";
                             }
+                            //if (actor.needsComponent.isStarving) {
+                            //    if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                            //        int currCost = 300;
+                            //        cost += currCost;
+                            //        costLog += $" +300(not Cannibal, not Malnourished but starving, Friend/Close)";
+                            //    }
+                            //} else {
+                            //    if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
+                            //        cost += 2000;
+                            //        costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf/Sapient Ratman)";
+                            //    }    
+                            //}
                         }
                     }
                 }
@@ -158,42 +165,51 @@ public class Butcher : GoapAction {
                 cost += currCost;
                 costLog += $" +{currCost}(Demon)";
             }
+
+            //Not everyone loves eating Rat/Ratman
+            //Humans are into butchering rat/ratman but Elves are not
+            if(actor.race == RACE.ELVES) {
+                if(targetCharacter.race == RACE.RATMAN || targetCharacter.race == RACE.RAT) {
+                    cost += 150;
+                    costLog += $" +150(Actor is Elf, Target is Rat/Ratman)";
+                }
+            }
+
             if (!targetCharacter.isDead) {
                 cost *= 2;
                 costLog += $" {cost}(Still Alive)";
             }
-        }
-        if (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER) {
-            if(!actor.characterClass.IsCombatant() && !targetCharacter.isDead && (targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER)) {
-                cost += 2000;
-                costLog += $" +{cost}(Non-combatant actor, Alive Wolf/Spider target)";
-            }
-            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing);
-            int currCost = 0;
-            if(severity == CRIME_SEVERITY.Infraction) {
-                currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
-                costLog += $" +{currCost}(Animal/Infraction)";
-            } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Serious || severity == CRIME_SEVERITY.Heinous) {
-                if (actor.traitContainer.HasTrait("Malnourished")) {
-                    if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                        currCost = 200;
-                        costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished/Friend/Close Friend)";
-                    } else {
-                        currCost = UtilityScripts.Utilities.Rng.Next(100, 111);
+            if (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER) {
+                if (!actor.characterClass.IsCombatant() && !targetCharacter.isDead && (targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER)) {
+                    cost += 2000;
+                    costLog += $" +{cost}(Non-combatant actor, Alive Wolf/Spider target)";
+                }
+                CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing);
+                int currCost = 0;
+                if (severity == CRIME_SEVERITY.Infraction) {
+                    currCost += UtilityScripts.Utilities.Rng.Next(80, 91);
+                    costLog += $" +{currCost}(Animal/Infraction)";
+                } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Serious || severity == CRIME_SEVERITY.Heinous) {
+                    if (actor.traitContainer.HasTrait("Malnourished")) {
+                        if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                            currCost += 200;
+                            costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished/Friend/Close Friend)";
+                        }
+                        currCost += UtilityScripts.Utilities.Rng.Next(100, 111);
                         costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished)";
+                    } else {
+                        currCost += 2000;
+                        costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/not Malnourished)";
                     }
                 } else {
-                    currCost = 2000;
-                    costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/not Malnourished)";
+                    currCost += UtilityScripts.Utilities.Rng.Next(40, 51);
+                    costLog += $" +{currCost}(Animal/No Severity)";
                 }
-            } else {
-                currCost = UtilityScripts.Utilities.Rng.Next(40, 51);
-                costLog += $" +{currCost}(Animal/No Severity)";
-            }
-            cost += currCost;
-            if (!targetCharacter.isDead) {
-                cost *= 2;
-                costLog += $" {cost}(Still Alive)";
+                cost += currCost;
+                if (!targetCharacter.isDead) {
+                    cost *= 2;
+                    costLog += $" {cost}(Still Alive)";
+                }
             }
         }
         actor.logComponent.AppendCostLog(costLog);
@@ -271,6 +287,20 @@ public class Butcher : GoapAction {
                 }
             }
         }
+    }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string reaction = base.ReactionToActor(actor, target, witness, node, status);
+        Character targetCharacter = GetDeadCharacter(target); 
+        if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null) {
+            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
+                string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
+                if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                    witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
+                }    
+            }
+        }
+        return reaction;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is Character character) {
@@ -385,7 +415,7 @@ public class Butcher : GoapAction {
             }
         }
         if (foodPile != null) {
-            goapNode.descriptionLog.AddInvolvedObjectManual(foodPile.persistentID);    
+            goapNode.descriptionLog.AddInvolvedObjectManual(foodPile.persistentID);
             //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
             if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) 
                && !goapNode.actor.traitContainer.HasTrait("Cannibal") && goapNode.actor.isNormalCharacter && poiTarget is Character targetCharacter) {

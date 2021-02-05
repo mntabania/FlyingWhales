@@ -12,13 +12,13 @@ public class BurnAtStake : GoapAction {
     public BurnAtStake() : base(INTERACTION_TYPE.BURN_AT_STAKE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Burn_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), CanDoBurnAtStake);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), CanDoBurnAtStake);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

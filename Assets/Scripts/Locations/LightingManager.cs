@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.Profiling;
 
 public class LightingManager : BaseMonoBehaviour {
     public static LightingManager Instance;
@@ -60,7 +61,9 @@ public class LightingManager : BaseMonoBehaviour {
     }
    
     private void OnTickEnded() {
+        Profiler.BeginSample($"Lighting On Tick Ended");
         UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
+        Profiler.EndSample();
     }
     private void ComputeLightingValues() {
         int darkToLightDifferenceInHours = Mathf.Abs(_darkPeriodRange.lowerBound - _brightPeriodRange.lowerBound);

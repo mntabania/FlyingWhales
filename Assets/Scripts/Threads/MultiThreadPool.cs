@@ -5,7 +5,7 @@ using UnityEngine;
 public class MultiThreadPool : BaseMonoBehaviour {
     public static MultiThreadPool Instance;
 
-    private static readonly object THREAD_LOCKER = new object();
+    public static readonly object THREAD_LOCKER = new object();
 
     private Queue<Multithread> functionsToBeRunInThread;
     private Queue<Multithread> functionsToBeResolved;
@@ -48,17 +48,17 @@ public class MultiThreadPool : BaseMonoBehaviour {
 
     private void RunThread() {
         while (isRunning) { // && !exitHandle.Wait(20)
-            if (this.functionsToBeRunInThread.Count > 0) {
-                //Thread.Sleep(20);
-                Multithread newFunction = this.functionsToBeRunInThread.Dequeue();
-                if (newFunction != null) {
-                    timer = new System.Threading.Timer(TimerCallback, newFunction, 1000, 1000);
-                    lock (THREAD_LOCKER) {
+            lock (THREAD_LOCKER) {
+                if (this.functionsToBeRunInThread != null && this.functionsToBeRunInThread.Count > 0) {
+                    //Thread.Sleep(20);
+                    Multithread newFunction = this.functionsToBeRunInThread.Dequeue();
+                    if (newFunction != null) {
+                        timer = new System.Threading.Timer(TimerCallback, newFunction, 1000, 1000);
                         newFunction.DoMultithread();
+                        elapsedTime = 0;
+                        timer.Dispose();
+                        this.functionsToBeResolved.Enqueue(newFunction);
                     }
-                    elapsedTime = 0;
-                    timer.Dispose();
-                    this.functionsToBeResolved.Enqueue(newFunction);
                 }
             }
         }

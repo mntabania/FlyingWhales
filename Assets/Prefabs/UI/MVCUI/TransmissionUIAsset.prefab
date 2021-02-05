@@ -263,6 +263,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &8957612347037387686
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -631,6 +632,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &6077830110971154792
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1574,6 +1576,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &929564805747896321
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3111,6 +3114,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &2365438855388205407
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3292,6 +3296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 496378098593690185}
   - component: {fileID: 4562080725786977436}
+  - component: {fileID: 2997810219076107549}
   m_Layer: 5
   m_Name: Tooltip Position
   m_TagString: Untagged
@@ -3332,6 +3337,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pivot: {x: 0, y: 1}
   anchor: 0
+--- !u!223 &2997810219076107549
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8961720625697529588}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 7
+  m_TargetDisplay: 0
 --- !u!1 &8963620586598517570
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ using Interrupts;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
 using Locations.Settlements;
+using Locations;
 
 public class ObjectPoolManager : BaseMonoBehaviour {
 
@@ -30,6 +31,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
+    private List<List<TileObject>> _tileObjectListPool;
     private List<List<HexTile>> _hexTileListPool;
     private List<List<LocationStructure>> _structureListPool;
     private List<List<LocationGridTile>> _tileListPool;
@@ -40,6 +42,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<ConversationData> _conversationDataPool;
     private List<List<ConversationData>> _conversationDataListPool;
     private List<List<EMOTION>> _emotionListPool;
+    private List<List<ILocation>> _ilocationListPool;
 
     private void Awake() {
         Instance = this;
@@ -72,6 +75,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructExpectedEffectsListPool();
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
+        ConstructTileObjectListPool();
         ConstructHexTileListPool();
         ConstructStructureListPool();
         ConstructGridTileListPool();
@@ -80,6 +84,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructJobPool();
         ConstructConversationPool();
         ConstructEmotionListPool();
+        ConstructILocationListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -125,11 +130,18 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].BeforeDestroyActions();
         }
-        pooledObject.SendObjectBackToPool();
+        //pooledObject.SendObjectBackToPool();
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].Reset();
         }
-        pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
+        pooledObject.SendObjectBackToPool();
+        //pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
+    }
+    public void DestroyObjectWithoutCheckingChildren(PooledObject pooledObject) {
+        Messenger.Broadcast(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
+        pooledObject.BeforeDestroyActions();
+        pooledObject.Reset();
+        pooledObject.SendObjectBackToPool();
     }
     public void DestroyObject(GameObject gameObject) {
         PooledObject[] pooledObjects = gameObject.GetComponents<PooledObject>();
@@ -137,11 +149,12 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].BeforeDestroyActions();
         }
-        pooledObjects[0].SendObjectBackToPool();
+        //pooledObjects[0].SendObjectBackToPool();
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].Reset();
         }
-        pooledObjects[0].transform.SetParent(pooledObjects[0].ParentPool.transform);
+        pooledObjects[0].SendObjectBackToPool();
+        //pooledObjects[0].transform.SetParent(pooledObjects[0].ParentPool.transform);
     }
 
     public EZObjectPool CreateNewPool(GameObject template, string poolName, int size, bool autoResize, bool instantiateImmediate, bool shared) {
@@ -167,7 +180,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private void ConstructGoapNodes() {
         goapNodesPool = new List<GoapNode>();
     }
-    public GoapNode CreateNewGoapPlanJob(int cost, int level, GoapAction action, IPointOfInterest target) {
+    public GoapNode CreateNewGoapNode(int cost, int level, GoapAction action, IPointOfInterest target) {
         GoapNode node = GetGoapNodeFromPool();
         node.Initialize(cost, level, action, target);
         return node;
@@ -386,6 +399,24 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Tile Objects
+    private void ConstructTileObjectListPool() {
+        _tileObjectListPool = new List<List<TileObject>>();
+    }
+    public List<TileObject> CreateNewTileObjectList() {
+        if (_tileObjectListPool.Count > 0) {
+            List<TileObject> data = _tileObjectListPool[0];
+            _tileObjectListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<TileObject>();
+    }
+    public void ReturnTileObjectListToPool(List<TileObject> data) {
+        data.Clear();
+        _tileObjectListPool.Add(data);
+    }
+    #endregion
+
     #region HexTiles
     private void ConstructHexTileListPool() {
         _hexTileListPool = new List<List<HexTile>>();
@@ -563,6 +594,24 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Emotions
+    private void ConstructILocationListPool() {
+        _ilocationListPool = new List<List<ILocation>>();
+    }
+    public List<ILocation> CreateNewILocationList() {
+        if (_ilocationListPool.Count > 0) {
+            List<ILocation> data = _ilocationListPool[0];
+            _ilocationListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<ILocation>();
+    }
+    public void ReturnILocationListToPool(List<ILocation> data) {
+        data.Clear();
+        _ilocationListPool.Add(data);
+    }
+    #endregion
+
     protected override void OnDestroy() {
         if (allObjectPools != null) {
             foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -613,6 +662,10 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _conversationDataListPool = null;
         _emotionListPool?.Clear();
         _emotionListPool = null;
+        _ilocationListPool?.Clear();
+        _ilocationListPool = null;
+        _tileObjectListPool?.Clear();
+        _tileObjectListPool = null;
         base.OnDestroy();
         Instance = null;
     }

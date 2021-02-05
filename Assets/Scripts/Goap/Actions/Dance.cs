@@ -10,7 +10,7 @@ public class Dance : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Party_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -52,11 +52,11 @@ public class Dance : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -71,18 +71,21 @@ public class Dance : GoapAction {
         }
         return false;
     }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region Effects
     public void PreDanceSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(6.67f);
     }
-    public void AfterDanceSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public void AfterDanceSuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     #endregion
 }

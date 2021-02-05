@@ -13,7 +13,7 @@ public static class SaveUtilities {
 
 
     public static List<string> compatibleSaveFileVersions = new List<string>() {
-        "0.33.68", "0.33.69", "0.33.70", "0.34", "0.34.01"
+        "0.35", "0.35.01", "0.35.02"
     };
     
     #region Character States
@@ -47,8 +47,8 @@ public static class SaveUtilities {
     public static List<Character> ConvertIDListToCharacters(List<string> ids) {
         List<Character> objects = new List<Character>();
         for (int i = 0; i < ids.Count; i++) {
-            string id = ids[i];
-            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(id);
+            string pid = ids[i];
+            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(pid);
             if (character != null) {
                 objects.Add(character);    
             }
@@ -58,8 +58,8 @@ public static class SaveUtilities {
     public static List<TileObject> ConvertIDListToTileObjects(List<string> ids) {
         List<TileObject> objects = new List<TileObject>();
         for (int i = 0; i < ids.Count; i++) {
-            string id = ids[i];
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(id);
+            string pid = ids[i];
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(pid);
             objects.Add(tileObject);
         }
         return objects;
@@ -67,8 +67,8 @@ public static class SaveUtilities {
     public static List<LocationGridTile> ConvertIDListToLocationGridTiles(List<string> ids) {
         List<LocationGridTile> objects = new List<LocationGridTile>();
         for (int i = 0; i < ids.Count; i++) {
-            string id = ids[i];
-            LocationGridTile tileObject = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(id);
+            string pid = ids[i];
+            LocationGridTile tileObject = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(pid);
             objects.Add(tileObject);
         }
         return objects;
@@ -76,19 +76,24 @@ public static class SaveUtilities {
     public static List<LocationStructure> ConvertIDListToStructures(List<string> ids) {
         List<LocationStructure> objects = new List<LocationStructure>();
         for (int i = 0; i < ids.Count; i++) {
-            string id = ids[i];
-            LocationStructure tileObject = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(id);
+            string pid = ids[i];
+            LocationStructure tileObject = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(pid);
             objects.Add(tileObject);
+        }
+        return objects;
+    }
+    public static List<Faction> ConvertIDListToFactions(List<string> ids) {
+        List<Faction> objects = new List<Faction>();
+        for (int i = 0; i < ids.Count; i++) {
+            string pid = ids[i];
+            Faction faction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(pid);
+            objects.Add(faction);
         }
         return objects;
     }
 
     public static SaveDataJobNode createSaveDataJobNode(JobNode jobNode) {
-        if (jobNode is SingleJobNode) {
-            return new SaveDataSingleJobNode();
-        } else {
-            return new SaveDataMultiJobNode();
-        }
+        return new SaveDataSingleJobNode();
     }
 
     #region Tile Objects

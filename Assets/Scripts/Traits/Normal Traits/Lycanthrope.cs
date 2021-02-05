@@ -85,7 +85,7 @@ namespace Traits {
             }
         }
         public override bool PerTickWhileStationaryOrUnoccupied() {
-            if (owner.marker != null && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
+            if (owner.hasMarker && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
                 float roll = Random.Range(0f, 100f);
                 float chance = 0.85f;
                 if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
@@ -174,7 +174,7 @@ namespace Traits {
                     LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                     //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
                     //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                    character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new OtherData[] { new LocationStructureOtherData(wilderness),  });    
+                    character.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new OtherData[] { new LocationStructureOtherData(wilderness),  });    
                 } else {
                     return "fail_no_target";
                 }
@@ -191,7 +191,7 @@ namespace Traits {
                 LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
                 //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                owner.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, new OtherData[] { new LocationStructureOtherData(wilderness) });
+                owner.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, new OtherData[] { new LocationStructureOtherData(wilderness) });
             }
         }
         private bool IsAlone() {
@@ -398,7 +398,7 @@ namespace Traits {
             }
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, form as IPointOfInterest, "");
-            if (form.carryComponent.isBeingCarriedBy != null) {
+            if (!form.carryComponent.IsNotBeingCarried()) {
                 form.carryComponent.masterCharacter.UncarryPOI(form);
             }
             //ForceCancelAllJobsTargettingThisCharacter();

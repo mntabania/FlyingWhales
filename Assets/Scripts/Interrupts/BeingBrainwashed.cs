@@ -22,6 +22,7 @@ namespace Interrupts {
                 if (defilerRoom.WasBrainwashSuccessful(interruptHolder.actor)) {
                     //successfully converted
                     interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Cultist");
+                    interruptHolder.actor.ResetNeeds();
                     log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Brainwashed", "converted", null, LOG_TAG.Major);
                 } else {
                     interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Unconscious");

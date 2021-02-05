@@ -8,15 +8,15 @@ public class CreateHealingPotion : GoapAction {
     public CreateHealingPotion() : base(INTERACTION_TYPE.CREATE_HEALING_POTION) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Herb Plant", false, GOAP_EFFECT_TARGET.ACTOR), HasHerbPlant);
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Water Flask", false, GOAP_EFFECT_TARGET.ACTOR), HasWaterFlask);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Herb Plant", false, GOAP_EFFECT_TARGET.ACTOR), HasHerbPlant);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Water Flask", false, GOAP_EFFECT_TARGET.ACTOR), HasWaterFlask);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Healing Potion", false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {

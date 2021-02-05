@@ -57,11 +57,13 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Ideologies
-        public void AddIdeology(FACTION_IDEOLOGY ideology) {
+        public FactionIdeology AddIdeology(FACTION_IDEOLOGY ideology) {
             if (!HasIdeology(ideology)) {
                 FactionIdeology factionIdeology = FactionManager.Instance.CreateIdeology<FactionIdeology>(ideology);
                 AddIdeologyBase(factionIdeology);
+                return factionIdeology;
             }
+            return null;
         }
         public void AddIdeology(FactionIdeology ideology) {
             if (!HasIdeology(ideology.ideologyType)) {
@@ -98,6 +100,15 @@ namespace Factions.Faction_Types {
                 }
             }
             factionIdeology = null;
+            return false;
+        }
+        public bool HasPeaceTypeIdeology() {
+            for (int i = 0; i < ideologies.Count; i++) {
+                FactionIdeology ideal = ideologies[i];
+                if (ideal.ideologyType.IsPeaceType()) {
+                    return true;
+                }
+            }
             return false;
         }
         #endregion

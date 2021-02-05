@@ -115,29 +115,4 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
         base.OnLoadBehaviourToCharacter(character);
         character.behaviourComponent.OnBecomeDeMooder();
     }
-    private List<Character> GetTargetChoices(List<HexTile> tiles) {
-        List<Character> characters = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            List<Character> charactersAtHexTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.isNormalCharacter && c.isDead == false
-                        && c.traitContainer.HasTrait("Dolorous") == false);
-            if (charactersAtHexTile != null) {
-                if (characters == null) {
-                    characters = new List<Character>();
-                }
-                characters.AddRange(charactersAtHexTile);
-                //for (int j = 0; j < charactersAtHexTile.Count; j++) {
-                //    Character character = charactersAtHexTile[j];
-                //    if (character.isNormalCharacter && character.isDead == false 
-                //        && character.traitContainer.HasTrait("Dolorous") == false) {
-                //        if (characters == null) {
-                //            characters = new List<Character>();
-                //        }
-                //        characters.Add(character);
-                //    }
-                //}    
-            }
-        }
-        return characters;
-    }
 }

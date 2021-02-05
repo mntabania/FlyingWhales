@@ -58,7 +58,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         
         pickPortalMessage.DOAnchorPosY(-110f, 0.5f).SetEase(Ease.InBack);
 
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial || WorldSettings.Instance.worldSettingsData.playerSkillSettings.omnipotentMode == OMNIPOTENT_MODE.Enabled) {
             loadOutMenu.OnClickContinue();
         } else {
             configureLoadoutBtnGO.gameObject.SetActive(true);    
@@ -76,6 +76,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
     }
     private void ReGenerateWorld() {
         DOTween.Clear(true);
+        WorldSettings.Instance.worldGenOptionsUIController.ApplyBiomeSettings(); //this is  so that random biomes will be randomized again
         MainMenuManager.Instance.StartGame();
     }
     #endregion

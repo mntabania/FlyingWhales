@@ -12,7 +12,7 @@ public class Daydream : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, };
         actionIconString = GoapActionStateDB.Daydream_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -46,28 +46,28 @@ public class Daydream : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-        actor.needsComponent.AdjustDoNotGetDrained(-1);
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
     #endregion
 
     #region Effects
     public void PreDaydreamSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        goapNode.actor.needsComponent.AdjustDoNotGetDrained(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(1.94f);
         goapNode.actor.needsComponent.AdjustStamina(0.33f);
     }
-    public void AfterDaydreamSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        goapNode.actor.needsComponent.AdjustDoNotGetDrained(-1);
-    }
+    //public void AfterDaydreamSuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     #endregion
 
     #region Requirement

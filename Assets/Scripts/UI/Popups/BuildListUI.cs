@@ -72,10 +72,10 @@ public class BuildListUI : PopupMenuBase {
             buildItems[i] = spellItem;
         }
     }
-    private void OnHoverSpellItem(SpellData spellData) {
+    private void OnHoverSpellItem(SkillData spellData) {
         PlayerUI.Instance.OnHoverSpell(spellData, tooltipPosition);
     }
-    private void OnHoverExitSpellItem(SpellData spellData) {
+    private void OnHoverExitSpellItem(SkillData spellData) {
         PlayerUI.Instance.OnHoverOutSpell(spellData);
     }
     private void UpdateBuildList() {
@@ -89,7 +89,7 @@ public class BuildListUI : PopupMenuBase {
             // }
         }
     }
-    private bool CanChooseLandmark(SpellData p_spellData) {
+    private bool CanChooseLandmark(SkillData p_spellData) {
         bool canChooseLandmark = p_spellData.CanPerformAbility();
 
         if (canChooseLandmark) {

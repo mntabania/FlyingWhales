@@ -71,6 +71,36 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.7, y: 0.7}
   m_EdgeRadius: 0
+--- !u!1 &4711230516054889582
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4174343863535658918}
+  m_Layer: 22
+  m_Name: ParticleEffectParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4174343863535658918
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4711230516054889582}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8315260436823278507}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7243257800902369828
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,7 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 3315199741045588070}
-  mainCollider: {fileID: 4136697277373552778}
+  _mainCollider: {fileID: 4136697277373552778}
 --- !u!1 &8176240005241488141
 GameObject:
   m_ObjectHideFlags: 0
@@ -4948,6 +4978,7 @@ Transform:
   m_Children:
   - {fileID: 406379647007160283}
   - {fileID: 88585158435033034}
+  - {fileID: 4174343863535658918}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5057,5 +5088,6 @@ MonoBehaviour:
   hpBarGO: {fileID: 0}
   hpFill: {fileID: 0}
   aspeedFill: {fileID: 0}
+  particleEffectParent: {fileID: 4174343863535658918}
   statusIconsParent: {fileID: 0}
   _vaporEffect: {fileID: 594688162140365333}

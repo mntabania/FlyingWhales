@@ -164,13 +164,13 @@ public class ReactionComponent : CharacterComponent {
         if (!reactable.informationLog.hasValue) {
             throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
         }
-        if(reactable.target is TileObject item && reactable is ActualGoapNode node) {
-            if (node.action.goapType == INTERACTION_TYPE.STEAL) {
-                if (item.isBeingCarriedBy != null) {
-                    target = item.isBeingCarriedBy;
-                }
-            }
-        }
+        //if(reactable.target is TileObject item && reactable is ActualGoapNode node) {
+        //    if (node.action.goapType == INTERACTION_TYPE.STEAL) {
+        //        if (item.isBeingCarriedBy != null) {
+        //            target = item.isBeingCarriedBy;
+        //        }
+        //    }
+        //}
         if(actor != owner && target != owner) {
             string emotionsToActor = reactable.ReactionToActor(actor, target, owner, REACTION_STATUS.WITNESSED);
             if(emotionsToActor != string.Empty) {
@@ -433,18 +433,49 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
+
+        if (actor.race == RACE.RATMAN) {
+            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if (prisoner != null && targetCharacter.traitContainer.HasTrait("Restrained")) {
+                if (actor.faction == prisoner.prisonerOfFaction && !actor.IsAtHome()) {
+                    LocationStructure targetStructureToDrop = null;
+                    if (actor.homeStructure != null) {
+                        if (!(actor.homeStructure is ThePortal)) {
+                            targetStructureToDrop = actor.homeStructure;
+                        }
+                    } else if (actor.homeSettlement != null && actor.homeSettlement.mainStorage != null) {
+                        targetStructureToDrop = actor.homeSettlement.mainStorage;
+                    }
+                    if (targetStructureToDrop != null) {
+                        actor.jobComponent.CreateAbductJob(targetCharacter, targetStructureToDrop);
+                    }
+                    return;
+                }
+            }
+        }
         
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
             if(actor.currentJob != null && actor.currentActionNode != null && actor.currentActionNode.avoidCombat && actor.currentActionNode.actionStatus == ACTION_STATUS.STARTED
                 && !targetCharacter.isDead && targetCharacter.limiterComponent.canPerform && targetCharacter.combatComponent.combatMode != COMBAT_MODE.Passive) {
+                debugLog = $"{debugLog}\n-Actor encountered a hostile";
                 actor.currentJob.CancelJob(false);
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
+                return;
             }
             bool shouldRelease = disguisedActor.isNormalCharacter && !disguisedActor.traitContainer.HasTrait("Enslaved") && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
                 && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor) && disguisedActor.faction != targetCharacter.faction;
             bool isPartOfRescueJob = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueQuest && rescueQuest.targetCharacter == targetCharacter;
-            if (shouldRelease || isPartOfRescueJob) {
+
+            bool shouldNotAttackSkeletons = disguisedActor.traitContainer.HasTrait("Necromancer") && targetCharacter.race == RACE.SKELETON && targetCharacter.faction == disguisedActor.prevFaction && disguisedActor.prevFaction != null;
+            bool shouldSwitchFaction = actor.race == RACE.SKELETON && disguisedTarget.traitContainer.HasTrait("Necromancer") && actor.faction == disguisedTarget.prevFaction && disguisedTarget.prevFaction != null;
+
+            if (shouldNotAttackSkeletons) {
+                debugLog = $"{debugLog}\n-Actor is a necromancer and target is a skeleton from the previous faction, will not attack even if hostile";
+            } else if (shouldSwitchFaction) {
+                debugLog = $"{debugLog}\n-Actor is a skeleton and target is a necromancer and actor is from the necromancer's previous faction, actor should switch to the faction of target";
+                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, disguisedTarget, identifier: "join_faction_necro");
+            } else if (shouldRelease || isPartOfRescueJob) {
                 actor.jobComponent.TriggerReleaseJob(targetCharacter);
             } else if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
                 debugLog = $"{debugLog}\n-Actor is a Troll and target is a Villager and actor has a home structure";
@@ -500,7 +531,9 @@ public class ReactionComponent : CharacterComponent {
                     debugLog = $"{debugLog}\n-{actor.name} triggered pray.";
                     actor.jobComponent.TriggerPray();
                 }
-            } else if (!targetCharacter.isDead && disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
+            } else if (!targetCharacter.isDead && (disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive || targetCharacter.race == RACE.HARPY) && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
+                //NOTE: Special case for Harpies: Even if harpies are passive, they should still be attacked. Reason: When a harpy tries to abduct a character in a village, all other villagers just ignores it
+                //https://trello.com/c/nOPHWxxk/3518-unity-034080127-harpy-not-being-attacked-while-doing-abduct
                 debugLog = $"{debugLog}\n-If Target is alive and not in Passive State and not Hibernating:";
                 debugLog = $"{debugLog}\n-Fight or Flight response";
                 //Fight or Flight
@@ -620,13 +653,14 @@ public class ReactionComponent : CharacterComponent {
                                     || disguisedActor.traitContainer.HasTrait("Unfaithful")) {
                                     debugLog = $"{debugLog}\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
                                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(disguisedActor, disguisedTarget);
+                                    
                                     int baseChance = 1;
                                     if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
                                         debugLog = $"{debugLog}\n-Flirt has +2% chance to trigger because character is in a normal mood";
                                         baseChance += 2;
                                     }
 
-                                    int flirtChance;
+                                    float flirtChance;
                                     if (compatibility != -1) {
                                         flirtChance = baseChance * compatibility;
                                         debugLog = $"{debugLog}\n-Chance: {flirtChance.ToString()}";
@@ -634,9 +668,13 @@ public class ReactionComponent : CharacterComponent {
                                         flirtChance = baseChance * 2;
                                         debugLog = $"{debugLog}\n-Chance: {flirtChance.ToString()} (No Compatibility)";
                                     }
-                                    int flirtRoll = UnityEngine.Random.Range(0, 100);
-                                    debugLog = $"{debugLog}\n-Roll: {flirtRoll.ToString()}";
-                                    if (flirtRoll < flirtChance) {
+                                    if (actor.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER) == targetCharacter) {
+                                        flirtChance = 0.2f;
+                                    }
+                                    bool succeed = GameUtilities.RollChance(flirtChance);
+                                    
+                                    debugLog = $"{debugLog}\n-Chance: {flirtChance.ToString()}";
+                                    if (succeed) {
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
                                     } else {
                                         debugLog = $"{debugLog}\n-Flirt did not trigger";
@@ -1230,6 +1268,28 @@ public class ReactionComponent : CharacterComponent {
                     }
                 }
             }
+            if (actor.race.IsSapient() && (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && resourcePile is FoodPile foodPile && 
+                !actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Malnourished")) {
+                if (!actor.defaultCharacterTrait.HasAlreadyReactedToFoodPile(foodPile)) {
+                    actor.defaultCharacterTrait.AddFoodPileAsReactedTo(foodPile);
+                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, foodPile, $"saw {foodPile.name}");    
+                }
+                actor.jobComponent.TryCreateDisposeFoodPileJob(foodPile);
+            }
+        }
+        if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
+            if(actor.race != RACE.TRITON) {
+                if (GameUtilities.RollChance(0.5f)) {
+                    if (actor.canBeTargetedByLandActions) {
+                        if (!actor.traitContainer.HasTrait("Sturdy", "Hibernating") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
+                            Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: targetTileObject.currentRegion, bypassIdeologyChecking: true);
+                            summon.SetIsVolatile(true);
+                            CharacterManager.Instance.PlaceSummonInitially(summon, targetTileObject.gridTileLocation);
+                            (summon as Triton).TriggerTritonKidnap(actor);
+                        }
+                    }
+                }
+            }
         }
 
         if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
@@ -1500,6 +1560,7 @@ public class ReactionComponent : CharacterComponent {
                         Character chosenSuspect = _assumptionSuspects[UnityEngine.Random.Range(0, _assumptionSuspects.Count)];
                         debugLog = debugLog + ("\n-Will create Steal assumption on " + chosenSuspect.name);
                         actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+                        actor.jobComponent.CreateDropItemJob(JOB_TYPE.RETURN_STOLEN_THING, targetTileObject, actor.homeStructure);
                     }
                 } else {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_steal_assumption", providedTags: LOG_TAG.Crimes);
@@ -1515,7 +1576,7 @@ public class ReactionComponent : CharacterComponent {
             }
         }
 
-        if (targetTileObject is CultistKit && targetTileObject.IsOwnedBy(actor) == false) {
+        if (targetTileObject is CultistKit && !targetTileObject.IsOwnedBy(actor)) {
             debugLog = $"{debugLog}\n-Object is a cultist kit";
             if (targetTileObject.gridTileLocation != null) {
                 if (targetTileObject.structureLocation is ManMadeStructure && 
@@ -1546,7 +1607,7 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
                         Character chosenTarget = CollectionUtilities.GetRandomElement(_assumptionSuspects);
-                        if(chosenTarget != null) {
+                        if(chosenTarget != null && CrimeManager.Instance.IsConsideredACrimeByCharacter(actor, chosenTarget, targetTileObject, CRIME_TYPE.Demon_Worship)) {
                             actor.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
                         }
                     }
@@ -1583,7 +1644,7 @@ public class ReactionComponent : CharacterComponent {
             if (carrier.reactionComponent.disguisedCharacter != null) {
                 disguisedTarget = carrier.reactionComponent.disguisedCharacter;
             }
-            if (!disguisedTarget.isDead) {
+            if (!disguisedTarget.isDead && CrimeManager.Instance.IsConsideredACrimeByCharacter(actor, disguisedTarget, targetTileObject, CRIME_TYPE.Demon_Worship)) {
                 actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
             }
         }

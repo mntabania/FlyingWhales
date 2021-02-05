@@ -2,11 +2,17 @@
 using Inner_Maps;
 
 public class CreateCultistKit : GoapAction {
+    private Precondition _stonePrecondition;
+    private Precondition _woodPrecondition;
+
     public CreateCultistKit() : base(INTERACTION_TYPE.CREATE_CULTIST_KIT) {
         actionIconString = GoapActionStateDB.Build_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Crimes};
+
+        _stonePrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
+        _woodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood);
     }
     
     #region Overrides
@@ -15,14 +21,15 @@ public class CreateCultistKit : GoapAction {
         // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR));
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
-        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
-        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-        p.AddRange(baseP);
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
+        //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        Precondition p = null;
+        //p.AddRange(baseP);
         if (actor.race == RACE.HUMANS) {
-            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone));
+            p = _stonePrecondition;
         } else {
-            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood));
+            p = _woodPrecondition;
         }
         isOverridden = true;
         return p;
@@ -70,7 +77,6 @@ public class CreateCultistKit : GoapAction {
                 actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Cultist Kit but lacks requirements");
             }
         }
-        
     }
     #endregion
 }

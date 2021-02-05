@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using Traits;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class NPCSettlement : BaseSettlement, IJobOwner {
@@ -27,6 +28,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool isPlagued { get; private set; }
     public bool hasTriedToStealCorpse { get; private set; }
     public LocationStructure exterminateTargetStructure { get; private set; }
+
+    private SettlementResources m_settlementResources;
+    public override SettlementResources SettlementResources {
+        get {
+            if (m_settlementResources == null) {
+                m_settlementResources = new SettlementResources();
+            }
+            return m_settlementResources;
+        }
+    }
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
@@ -282,6 +293,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Utilities
     public void Initialize() {
         SubscribeToSignals();
+        onSettlementBuilt?.Invoke();
     }
     protected override void SettlementWipedOut() {
         base.SettlementWipedOut();
@@ -323,13 +335,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         
     }
     private void OnTickEnded() {
+        Profiler.BeginSample($"Settlement On Tick Ended");
         ProcessForcedCancelJobsOnTickEnded();
+        Profiler.EndSample();
     }
     private void OnDayStarted() {
         hasTriedToStealCorpse = false;
         ClearAllBlacklistToAllExistingJobs();
     }
     private void OnHourStarted() {
+        Profiler.BeginSample($"{name} settlement OnHourStarted");
         CheckSlaveResidents();
         CheckForJudgePrisoners();
         if(locationType == LOCATION_TYPE.VILLAGE) {
@@ -365,7 +380,18 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
-        migrationComponent.OnHourStarted();
+        migrationComponent.OnHourStarted();    
+        Profiler.EndSample();
+    }
+    #endregion
+
+    #region Tiles
+    public override bool RemoveTileFromSettlement(HexTile tile) {
+        if (base.RemoveTileFromSettlement(tile)) {
+            npcSettlementEventDispatcher.ExecuteTileRemovedEvent(tile, this);
+            return true;
+        }
+        return false;
     }
     #endregion
 
@@ -439,11 +465,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             previousRuler.behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
             if (!previousRuler.isFactionLeader) {
                 previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
             }
         }
         if(ruler != null) {
             ruler.behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
             ruler.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+            ruler.jobComponent.AddPriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
             //ResetNewRulerDesignationChance();
             Messenger.Broadcast(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {
@@ -728,7 +756,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void OnAddResident(Character character) {
         eventManager.OnResidentAdded(character);
         settlementClassTracker.OnResidentAdded(character);
-        if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE) {
+        if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE && GameManager.Instance.gameHasStarted) {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
         }
@@ -790,7 +818,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void CheckIfInventoryJobsAreStillValid(TileObject item, LocationStructure structure) {
         if (structure == mainStorage && neededObjects.Contains(item.tileObjectType)) {
-            if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(item.tileObjectType).Count >= 2) {
+            if (mainStorage.GetNumberOfTileObjectsThatMeetCriteria(item.tileObjectType, t => t.mapObjectState == MAP_OBJECT_STATE.BUILT) >= 2) {
                 List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
                 for (int i = 0; i < jobs.Count; i++) {
                     JobQueueItem jqi = jobs[i];
@@ -898,7 +926,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         foreach (var kvp in settlementType.facilityWeights.dictionary) {
             int cap = settlementType.GetFacilityCap(kvp.Key);
             int currentAmount = GetStructureCount(kvp.Key.structureType);
-            if (currentAmount >= cap) {
+            SettlementResources.StructureRequirement required = kvp.Key.structureType.GetRequiredObjectForBuilding();
+            if (currentAmount >= cap || !m_settlementResources.IsRequirementAvailable(required)) {
                 facilityWeights.SetElementWeight(kvp.Key, 0); //remove weight of object since it is already at max.
             }
         }
@@ -920,6 +949,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return count;
     }
+    public bool HasFoodProducingStructure() {
+        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHING_SHACK);
+    }
+    public StructureSetting GetValidFoodProducingStructure() {
+        Assert.IsNotNull(owner);
+        List<HexTile> surroundingAreas = GetSurroundingAreas();
+        WeightedDictionary<StructureSetting> choices = new WeightedDictionary<StructureSetting>();
+        if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, owner.factionType.mainResource), 100);
+        }
+        if (HasAvailableStructureConnectorsBasedOnGameFeature()) {
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, owner.factionType.mainResource), 20);    
+        }
+        choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, owner.factionType.mainResource), 20);
+
+        return choices.PickRandomElementGivenWeights();
+    }
     #endregion
 
     #region Inner Map
@@ -933,12 +979,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void PlaceResourcePiles() {
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         mainStorage.AddPOI(woodPile);
+        woodPile.SetResourceInPile(500);
 
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         mainStorage.AddPOI(stonePile);
+        stonePile.SetResourceInPile(500);
 
         MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
         mainStorage.AddPOI(metalPile);
+        metalPile.SetResourceInPile(500);
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
         mainStorage.AddPOI(foodPile);
@@ -1009,16 +1058,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return pois;
     }
-    public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
-        List<TileObject> objs = new List<TileObject>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                objs.AddRange(keyValuePair.Value[i].GetTileObjectsThatAdvertise(types));
-            }
+    public void GetTileObjectsThatAdvertise(List<TileObject> p_objectList, params INTERACTION_TYPE[] types) {
+        for (int i = 0; i < allStructures.Count; i++) {
+            allStructures[i].PopulateTileObjectsThatAdvertise(p_objectList, types);
         }
-        return objs;
     }
-    public List<T> GetTileObjectsFromStructures<T>(STRUCTURE_TYPE structureType, Func<T, bool> validityChecker = null) where T : TileObject {
+    public List<T> PopulateTileObjectsFromStructures<T>(STRUCTURE_TYPE structureType, Func<T, bool> validityChecker = null) where T : TileObject {
         List<T> objs = new List<T>();
         if (HasStructure(structureType)) {
             List<LocationStructure> structureList = structures[structureType];
@@ -1060,6 +1105,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         int count = 0;
         for (int i = 0; i < availableJobs.Count; i++) {
             if (availableJobs[i].jobType == type) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public int GetNumberOfJobsThatMeetCriteria(Func<GoapPlanJob, bool> criteria) {
+        int count = 0;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job is GoapPlanJob goapJob && (criteria == null || criteria.Invoke(goapJob))) {
                 count++;
             }
         }
@@ -1223,7 +1278,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (affectedStructure == mainStorage && (objectThatTriggeredChange == null || neededObjects.Contains(objectThatTriggeredChange.tileObjectType))) {
             for (int i = 0; i < neededObjects.Count; i++) {
                 TILE_OBJECT_TYPE neededObject = neededObjects[i];
-                int objectsCount = affectedStructure.GetTileObjectsOfTypeCount(neededObject); //This includes unbuilt objects 
+                int objectsCount = affectedStructure.GetNumberOfTileObjectsThatMeetCriteria(neededObject, null); //This includes unbuilt objects 
                 int neededCount = 2;
                 if (objectsCount < neededCount) {
                     int missing = neededCount - objectsCount;
@@ -1233,6 +1288,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                         affectedStructure.AddPOI(item);
                         item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+                        JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(this, job, INTERACTION_TYPE.TAKE_RESOURCE);
                         switch (neededObject) {
                             case TILE_OBJECT_TYPE.HEALING_POTION:
                                 job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Potion);

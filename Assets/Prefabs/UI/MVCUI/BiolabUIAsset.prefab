@@ -1776,6 +1776,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1797435535485532865
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3296,6 +3297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7554806766464754026}
   - component: {fileID: 2469528104135216387}
+  - component: {fileID: 2699753760382569598}
   m_Layer: 5
   m_Name: Plagued Rats Tooltip Position
   m_TagString: Untagged
@@ -3336,6 +3338,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pivot: {x: 0, y: 1}
   anchor: 0
+--- !u!223 &2699753760382569598
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7969725561707473674}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 7
+  m_TargetDisplay: 0
 --- !u!1 &8123355696366161902
 GameObject:
   m_ObjectHideFlags: 0

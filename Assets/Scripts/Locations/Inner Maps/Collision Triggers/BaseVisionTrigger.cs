@@ -50,6 +50,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
         if (_mainCollider != null) {
             _mainCollider.enabled = true;    
         }
+        TransferToNonFilteredLayer();
     }
 
     #region Layers

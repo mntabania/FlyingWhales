@@ -8,9 +8,13 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 using Logs;
+using Locations.Tile_Features;
 
 namespace Locations.Settlements {
-    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, IPlayerActionTarget {
+    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, IPlayerActionTarget, ILocation {
+
+        public static Action onSettlementBuilt;
+        
         public string persistentID { get; private set; }
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
@@ -24,10 +28,13 @@ namespace Locations.Settlements {
         public List<Party> parties { get; protected set; }
         public List<PLAYER_SKILL_TYPE> actions { get; private set; }
 
+        public virtual SettlementResources SettlementResources { get; protected set; }
+
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
         public virtual Type serializedData => typeof(SaveDataBaseSettlement);
         public virtual Region region => null;
+        public string locationName => name;
         public LocationStructure currentStructure => null;
         public BaseSettlement currentSettlement => this;
         public bool hasBeenDestroyed => false;
@@ -37,7 +44,7 @@ namespace Locations.Settlements {
         protected BaseSettlement(LOCATION_TYPE locationType) {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             id = UtilityScripts.Utilities.SetID(this);
-            SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
+            SetName(RandomNameGenerator.GenerateSettlementName(RACE.HUMANS));
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
@@ -361,8 +368,30 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public bool HasStructure(params STRUCTURE_TYPE[] type) {
+            for (int i = 0; i < type.Length; i++) {
+                if (HasStructure(type[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
+        }
+        public bool HasStructureForProducingResource(RESOURCE resourceType) {
+            switch (resourceType) {
+                case RESOURCE.FOOD:
+                    return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHING_SHACK);
+                case RESOURCE.WOOD:
+                    return HasStructure(STRUCTURE_TYPE.LUMBERYARD);
+                case RESOURCE.STONE:
+                    return HasStructure(STRUCTURE_TYPE.QUARRY);
+                case RESOURCE.METAL:
+                    return HasStructure(STRUCTURE_TYPE.MINE_SHACK);
+                default:
+                    return false;
+            }
         }
         public LocationStructure GetRandomStructureThatMeetCriteria(System.Func<LocationStructure, bool> criteria) {
             List<LocationStructure> choices = ObjectPoolManager.Instance.CreateNewStructuresList();
@@ -379,7 +408,23 @@ namespace Locations.Settlements {
             ObjectPoolManager.Instance.ReturnStructuresListToPool(choices);
             return chosenStructure;
         }
-        public List<StructureConnector> GetAvailableStructureConnectors() {
+        public List<StructureConnector> GetStructureConnectorsForStructureType(STRUCTURE_TYPE p_structureType) {
+            switch (p_structureType) {
+                case STRUCTURE_TYPE.FISHING_SHACK:
+                    return GetAvailableFishingSpotConnectors();
+                case STRUCTURE_TYPE.QUARRY:
+                    return GetAvailableRockConnectors();
+                case STRUCTURE_TYPE.LUMBERYARD:
+                    return GetAvailableTreeConnectors();
+                case STRUCTURE_TYPE.HUNTER_LODGE:
+                    return GetAvailableStructureConnectorsBasedOnGameFeature();
+                case STRUCTURE_TYPE.MINE_SHACK:
+                    return GetAvailableOreVeinConnectors();
+                default:
+                    return GetAvailableStructureConnectors();
+            }
+        }
+        private List<StructureConnector> GetAvailableStructureConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
@@ -394,6 +439,84 @@ namespace Locations.Settlements {
             }
             return connectors;
         }
+        private List<StructureConnector> GetAvailableStructureConnectorsBasedOnGameFeature() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                        if (connector.isOpen) {
+                            if (connector.tileLocation != null && connector.tileLocation.collectionOwner.isPartOfParentRegionMap &&
+                                (connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                connectors.Add(connector);    
+                            }
+                        }
+                    }
+                }
+            }
+            return connectors;
+        }
+        public bool HasAvailableStructureConnectorsBasedOnGameFeature() {
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                        if (connector.isOpen) {
+                            if (connector.tileLocation != null && connector.tileLocation.collectionOwner.isPartOfParentRegionMap &&
+                                (connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        private List<StructureConnector> GetAvailableRockConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.rocks.Count; i++) {
+                Rock rock = SettlementResources.rocks[i];
+                if (rock.structureConnector != null && rock.structureConnector.isOpen && rock.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(rock.structureConnector);
+                }
+            }
+            return connectors;
+        }
+        private List<StructureConnector> GetAvailableTreeConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.trees.Count; i++) {
+                TreeObject treeObject = SettlementResources.trees[i];
+                if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen && treeObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(treeObject.structureConnector);
+                }
+            }
+            return connectors;
+        }
+        private List<StructureConnector> GetAvailableFishingSpotConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
+                FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
+                if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen && fishingSpot.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(fishingSpot.structureConnector);
+                }
+            }
+            return connectors;
+        }
+        private List<StructureConnector> GetAvailableOreVeinConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
+                OreVein oreVein = SettlementResources.oreVeins[i];
+                if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen && oreVein.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(oreVein.structureConnector);
+                }
+            }
+            return connectors;
+        }
+
         public int GetStructureCount(STRUCTURE_TYPE structureType) {
             if (HasStructure(structureType)) {
                 return structures[structureType].Count;
@@ -418,6 +541,7 @@ namespace Locations.Settlements {
             }
             if (tiles.Contains(tile) == false) {
                 tiles.Add(tile);
+                Debug.Log($"Added tile {tile.ToString()} to settlement {name}");
                 tile.SetSettlementOnTile(this);
                 if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                     tile.SetCorruption(true);
@@ -433,8 +557,9 @@ namespace Locations.Settlements {
                 AddTileToSettlement(tile);
             }
         }
-        public void RemoveTileFromSettlement(HexTile tile) {
+        public virtual bool RemoveTileFromSettlement(HexTile tile) {
             if (tiles.Remove(tile)) {
+                Debug.Log($"Removed tile {tile.ToString()} from settlement {name}");
                 tile.SetSettlementOnTile(null);
                 if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                     tile.SetCorruption(false);
@@ -443,7 +568,9 @@ namespace Locations.Settlements {
                     //when a settlement loses all its tiles consider it as wiped out
                     SettlementWipedOut();
                 }
+                return true;
             }
+            return false;
         }
         public bool HasTileInRegion(Region region) {
             for (int i = 0; i < tiles.Count; i++) {
@@ -505,6 +632,12 @@ namespace Locations.Settlements {
                 return locationGridTiles[UnityEngine.Random.Range(0, locationGridTiles.Count)];
             }
             return null;
+        }
+        public void PopulatePassableTilesList(List<LocationGridTile> p_tiles) {
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                p_tiles.AddRange(structure.passableTiles);
+            }
         }
         private List<LocationGridTile> GetLocationGridTilesInSettlement(System.Func<LocationGridTile, bool> validityChecker) {
             List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
@@ -644,9 +777,9 @@ namespace Locations.Settlements {
             }
             return false;
         }
-        public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+        public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] type) where T : TileObject {
             for (int i = 0; i < allStructures.Count; i++) {
-                T obj = allStructures[i].GetTileObjectOfType<T>(type);
+                T obj = allStructures[i].GetFirstTileObjectOfType<T>(type);
                 if(obj != null) {
                     return obj as T;
                 }
@@ -691,6 +824,13 @@ namespace Locations.Settlements {
             }
             return objs;
         }
+        public int GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE tileObjectType, System.Func<TileObject, bool> validityChecker) {
+            int count = 0;
+            for (int i = 0; i < allStructures.Count; i++) {
+                count += allStructures[i].GetNumberOfTileObjectsThatMeetCriteria(tileObjectType, validityChecker);
+            }
+            return count;
+        }
         #endregion
 
         #region Party
@@ -718,6 +858,9 @@ namespace Locations.Settlements {
             LocationStructure structure = GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             if(structure == null) {
                 structure = GetRandomStructure();
+            }
+            if(structure == null) {
+                return null;
             }
             return structure.GetRandomPassableTile();
         }

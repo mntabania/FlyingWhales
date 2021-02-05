@@ -17,11 +17,16 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (characterThatWillDoJob.limiterComponent.canPerform && characterThatWillDoJob.limiterComponent.canMove && !characterThatWillDoJob.isDead && !characterThatWillDoJob.isAlliedWithPlayer && targetPOI is TileObject objectToBeInspected) {
+            if (characterThatWillDoJob.limiterComponent.canPerform && characterThatWillDoJob.limiterComponent.canMove && !characterThatWillDoJob.isDead && !characterThatWillDoJob.isAlliedWithPlayer && targetPOI is TileObject objectToBeInspected
+                && objectToBeInspected.tileObjectType != TILE_OBJECT_TYPE.STRUCTURE_TILE_OBJECT && objectToBeInspected.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                 if (objectToBeInspected.lastManipulatedBy is Player) {
                     //Must not destroy even if suspicious if the tile object is edible and character is starving
                     if ((!objectToBeInspected.traitContainer.HasTrait("Edible") || !characterThatWillDoJob.needsComponent.isStarving) && !(objectToBeInspected is Heirloom)) {
-                        characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
+                        if (targetPOI.IsOwnedBy(characterThatWillDoJob)) {
+                            characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.RETURN_STOLEN_THING, targetPOI as TileObject, characterThatWillDoJob.homeStructure);
+                        } else {
+                            characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
+                        }
                     }
                 }
             }

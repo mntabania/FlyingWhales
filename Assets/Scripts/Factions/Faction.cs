@@ -10,6 +10,7 @@ using Traits;
 using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class Faction : IJobOwner, ISavable, ILogFiller {
@@ -44,10 +45,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public FactionSuccessionComponent successionComponent { get; private set; }
 
     //private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
-    
+
 
     #region getters/setters
-    public bool isDestroyed => characters.Count <= 0;
+    public bool isDisbanded => characters.Count <= 0;
     public bool isMajorOrVagrant => isMajorFaction || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
@@ -58,34 +59,17 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public JOB_OWNER ownerType => JOB_OWNER.FACTION;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     public System.Type serializedData => typeof(SaveDataFaction);
-    public RACE race {
-        get {
-            switch (factionType.type) {
-                case FACTION_TYPE.Elven_Kingdom:
-                    return RACE.ELVES;
-                case FACTION_TYPE.Human_Empire:
-                    return RACE.HUMANS;
-                case FACTION_TYPE.Demons:
-                    return RACE.DEMON;
-                case FACTION_TYPE.Ratmen:
-                    return RACE.RATMAN;
-                default:
-                    if (leader is Character character) {
-                        return character.race;
-                    }
-                    return RACE.HUMANS;
-            }
-        }
-    }
+    public RACE race { get; private set; }
     #endregion
 
-    public Faction(FACTION_TYPE _factionType) {
+    public Faction(FACTION_TYPE p_factionType, RACE p_race = RACE.NONE) {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
-        SetName(RandomNameGenerator.GenerateKingdomName());
+        SetName(RandomNameGenerator.GenerateFactionName());
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
-        SetFactionType(_factionType);
+        SetFactionType(p_factionType);
+        race = p_race == RACE.NONE ? p_factionType.GetRaceForFactionType() : p_race;
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
@@ -120,6 +104,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         emblem = FactionManager.Instance.GetFactionEmblem(data);
         FactionManager.Instance.SetEmblemAsUsed(emblem);
         factionColor = data.factionColor;
+        race = data.race;
         isActive = data.isActive;
         isMajorFaction = data.isMajorFaction;
         newLeaderDesignationChance = data.newLeaderDesignationChance;
@@ -150,13 +135,16 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
                 if (!isInitial) {
                     //Whenever a character joins a new faction, add Transitioning status, so that if his new faction is hostile with his previous faction he will not be attacked immediately by the people of his previous faction
+                    //Also, cancel all needs recovery job because it might not be applicable upon changing factions, example: if a character has founded a village, it should no longer it in the previous home village
                     character.traitContainer.AddTrait(character, "Transitioning");
+                    character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT,
+                        JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT, JOB_TYPE.HAPPINESS_RECOVERY);
                 }
 
                 //Every time ratman changes faction, behaviour set should update to know if he will use the resident behaviour or the ratmana behaviour
                 //Every time a minion changes faction, behaviour set should update to know if he will use the resident behaviour or the minion behaviour
                 //Reference: https://trello.com/c/8LQpoNGp/3036-when-a-demon-is-recruited-by-a-major-faction-its-behavior-will-be-replaced-by-the-villager-set
-                if(character.race == RACE.RATMAN || character.minion != null) {
+                if (character.race == RACE.RATMAN || character.minion != null) {
                     character.behaviourComponent.UpdateDefaultBehaviourSet();
                 }
 
@@ -175,6 +163,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             character.SetFaction(null);
             Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
+            if (isDisbanded && factionType.type != FACTION_TYPE.Undead && factionType.type != FACTION_TYPE.Vagrants && factionType.type != FACTION_TYPE.Demons) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "disband", providedTags: LOG_TAG.Major);
+                log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+            }
             return true;
         }
         return false;
@@ -192,23 +187,25 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return false;
     }
     public void OnlySetLeader(ILeader newLeader) {
-        if(leader != newLeader) {
+        if (leader != newLeader) {
             ILeader prevLeader = leader;
             leader = newLeader;
-            if(prevLeader != null && prevLeader is Character prevCharacterLeader) {
-                if(isMajorNonPlayer) {
+            if (prevLeader != null && prevLeader is Character prevCharacterLeader) {
+                if (isMajorNonPlayer) {
                     prevCharacterLeader.behaviourComponent.RemoveBehaviourComponent(typeof(FactionLeaderBehaviour));
                     if (!prevCharacterLeader.isSettlementRuler) {
                         prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                        prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
                     }
                 }
             }
             Character newCharacterLeader = leader as Character;
-            if(leader != null) {
-                if(newCharacterLeader != null) {
+            if (leader != null) {
+                if (newCharacterLeader != null) {
                     if (isMajorNonPlayer) {
                         newCharacterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
                         newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                        newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
                     }
                 }
             }
@@ -219,29 +216,33 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             factionEventDispatcher.ExecuteFactionLeaderChangedEvent(newLeader);
 
-            //https://trello.com/c/KDgydAWd/3005-faction-leader-also-doubles-as-the-settlement-ruler-of-its-current-settlement
-            if (newCharacterLeader != null) {
-                NPCSettlement homeSettlement = newCharacterLeader.homeSettlement as NPCSettlement;
-                if (homeSettlement != null) {
-                    Character previousRuler = homeSettlement.ruler;
-                    if(previousRuler != newCharacterLeader) {
-                        if (GameManager.Instance.gameHasStarted) {
-                            if (previousRuler == null) {
-                                newCharacterLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, newCharacterLeader);
-                            } else {
-                                //Do not trigger Become_Settlement_Ruler because we have a special log for this
-                                homeSettlement.SetRuler(newCharacterLeader);
-
-                                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "replace_ruler", null, LOG_TAG.Life_Changes);
-                                log.AddToFillers(newCharacterLeader, newCharacterLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                log.AddToFillers(previousRuler, previousRuler.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
-                                log.AddLogToDatabase();
-                            }
+            ProcessFactionLeaderAsSettlementRuler();
+        }
+    }
+    public void ProcessFactionLeaderAsSettlementRuler() {
+        //https://trello.com/c/KDgydAWd/3005-faction-leader-also-doubles-as-the-settlement-ruler-of-its-current-settlement
+        if (leader != null && leader is Character newCharacterLeader) {
+            NPCSettlement homeSettlement = newCharacterLeader.homeSettlement;
+            if (homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.VILLAGE && homeSettlement.owner == this) {
+                //Only do this for villages since special structures does not have settlement rulers
+                Character previousRuler = homeSettlement.ruler;
+                if (previousRuler != newCharacterLeader) {
+                    if (GameManager.Instance.gameHasStarted) {
+                        if (previousRuler == null) {
+                            newCharacterLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, newCharacterLeader);
                         } else {
-                            //If the game has not yet started yet, just set the ruler and do not log it because this is the first state of the world/game
+                            //Do not trigger Become_Settlement_Ruler because we have a special log for this
                             homeSettlement.SetRuler(newCharacterLeader);
+
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "replace_ruler", null, LOG_TAG.Life_Changes);
+                            log.AddToFillers(newCharacterLeader, newCharacterLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddToFillers(previousRuler, previousRuler.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+                            log.AddLogToDatabase();
                         }
+                    } else {
+                        //If the game has not yet started yet, just set the ruler and do not log it because this is the first state of the world/game
+                        homeSettlement.SetRuler(newCharacterLeader);
                     }
                 }
             }
@@ -301,7 +302,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return bannedCharacters.Remove(character);
     }
     public void KickOutCharacter(Character character) {
-        if(character.faction == this) {
+        if (character.faction == this) {
             AddBannedCharacter(character);
 
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "kick_out_faction_character");
@@ -322,9 +323,26 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             SetLeader(null);
         }
         successionComponent.OnCharacterDied(deadCharacter);
+        UpdateFactionCount();
+    }
+
+    private void OnCharacterReturnToLife(Character deadCharacter) {
+        UpdateFactionCount();
+    }
+
+    private void OnFactionmemberChanges(Character newMember, Faction faction) {
+        UpdateFactionCount();
+    }
+
+    private void OnNewVillagerMigrated(Character character) {
+        UpdateFactionCount();
+    }
+
+    private void UpdateFactionCount() {
+        FactionInfoHubUI.Instance.UpdateFactionItem(this);
     }
     public void SetLeader(ILeader newLeader) {
-        if(!isMajorFaction && !isPlayerFaction) {
+        if (!isMajorFaction && !isPlayerFaction) {
             //Neutral, Friendly Neutral, Disguised Factions cannot have a leader
             return;
         }
@@ -358,7 +376,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         string log = $"Designating a new npcSettlement faction leader for: {name}(chance it triggered: {newLeaderDesignationChance.ToString()})";
 
         Character chosenLeader = successionComponent.PickSuccessor();
-        if(chosenLeader != null) {
+        if (chosenLeader != null) {
             log += $"\nCHOSEN LEADER: {chosenLeader.name}";
             if (willLog) {
                 chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
@@ -514,7 +532,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             Character character1 = characters[i];
             for (int j = 0; j < characters.Count; j++) {
                 Character character2 = characters[j];
-                if(character1 != character2) {
+                if (character1 != character2) {
                     character1.relationshipContainer.AdjustOpinion(character1, character2, "Base", 0);
                 }
             }
@@ -537,6 +555,26 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return count;
     }
+
+    public int GetAliveMembersCount() {
+        int count = 0;
+        characters.ForEach((eachCharacter) => {
+            if (!eachCharacter.isDead) {
+                count++;
+            }
+        });
+        return count;
+    }
+
+    public bool HasAliveMember() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character character = characters[i];
+            if (!character.isDead) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Utilities
@@ -545,6 +583,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnToLife);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnFactionmemberChanges);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnFactionmemberChanges);
+        Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerMigrated);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
@@ -556,6 +598,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnToLife);
+        Messenger.RemoveListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnFactionmemberChanges);
+        Messenger.RemoveListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnFactionmemberChanges);
+        Messenger.RemoveListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerMigrated);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
@@ -602,7 +648,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} Faction";
     }
     private void OnTickEnded() {
+        Profiler.BeginSample($"Faction On Tick Ended");
         ProcessForcedCancelJobsOnTickEnded();
+        Profiler.EndSample();
     }
     private void OnDayStarted() {
         ClearAllBlacklistToAllExistingJobs();
@@ -945,7 +993,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             Character factionMember = characters[i];
             JobQueueItem job = factionMember.jobQueue.GetJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE);
             if(job != null && job is GoapPlanJob goapJob) {
-                OtherData[] otherData = goapJob.GetOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
+                OtherData[] otherData = goapJob.GetOtherDataSpecific(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
                 if(otherData != null && otherData.Length == 1 && otherData[0].obj == demonicStructure) {
                     return true;
                 }
@@ -1185,4 +1233,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     }
     #endregion
+
+    
 }

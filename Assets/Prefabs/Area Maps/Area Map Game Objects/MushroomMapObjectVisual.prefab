@@ -19,6 +19,7 @@ MonoBehaviour:
   hpBarGO: {fileID: 0}
   hpFill: {fileID: 0}
   aspeedFill: {fileID: 0}
+  particleEffectParent: {fileID: 5491723236643652598}
   statusIconsParent: {fileID: 7956641783735713556}
   growingSprite: {fileID: 0}
   ripeSprite: {fileID: 21300000, guid: 0e87581d39ea6634c8921d7dc6914539, type: 3}
@@ -101,6 +102,12 @@ Transform:
 --- !u!212 &3322241980719553946 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 212489938902139980, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 3235857238022592982}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5491723236643652598 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6980181590153484832, guid: d9d549510a4f590468f27e4140b34e5e,
     type: 3}
   m_PrefabInstance: {fileID: 3235857238022592982}
   m_PrefabAsset: {fileID: 0}

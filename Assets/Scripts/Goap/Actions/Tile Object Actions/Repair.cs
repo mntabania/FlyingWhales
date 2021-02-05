@@ -9,14 +9,14 @@ public class Repair : GoapAction {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Repair_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET));
     }
     //public override List<Precondition> GetPreconditions(IPointOfInterest poiTarget, object[] otherData) {
@@ -107,8 +107,8 @@ public class Repair : GoapAction {
         TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
         if (data != null && data.craftRecipes != null) {
             TileObjectRecipe recipe = data.mainRecipe;
-            for (int i = 0; i < recipe.ingredients.Length; i++) {
-                TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
+            if (!string.IsNullOrEmpty(recipe.ingredient.ingredientName)) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredient;
                 string neededItem = ingredient.ingredientName;
                 if (neededItem == "Wood Pile") {
                     ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) as ResourcePile;
@@ -143,8 +143,8 @@ public class Repair : GoapAction {
         TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
         if (data != null && data.craftRecipes != null) {
             TileObjectRecipe recipe = data.mainRecipe;
-            for (int i = 0; i < recipe.ingredients.Length; i++) {
-                TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
+            if(!string.IsNullOrEmpty(recipe.ingredient.ingredientName)) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredient;
                 string neededItem = ingredient.ingredientName;
                 if (neededItem == "Wood Pile") {
                     obj.AdjustResource(RESOURCE.WOOD, -ingredient.amount);

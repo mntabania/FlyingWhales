@@ -23,8 +23,9 @@ namespace Interrupts {
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break", null, logTags);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, "Loss of Control", LOG_IDENTIFIER.STRING_1);
-            interruptHolder.actor.logComponent.RegisterLog(overrideEffectLog, onlyClickedCharacter: false);
-            
+            //Removed this because overridden logs are already added after in AddEffectLog
+            //interruptHolder.actor.logComponent.RegisterLog(overrideEffectLog, onlyClickedCharacter: false);
+
             if (interruptHolder.actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 HexTile hexTile = interruptHolder.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                 if (interruptHolder.actor.characterClass.className.Equals("Druid")) {

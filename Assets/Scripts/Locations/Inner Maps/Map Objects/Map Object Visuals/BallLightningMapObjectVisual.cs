@@ -4,6 +4,7 @@ using DG.Tweening;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -108,9 +109,11 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+        Profiler.BeginSample($"Ball Lightning Per Tick");
         for (int i = 0; i < _objsInRange.Count; i++) {
             _objsInRange[i].AdjustHP(-60, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
         }
+        Profiler.EndSample();
     }
     #endregion
     

@@ -17,7 +17,7 @@ public class RitualKilling : GoapAction {
     
     public RitualKilling() : base(INTERACTION_TYPE.RITUAL_KILLING) {
         actionIconString = GoapActionStateDB.Death_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         atHomePrecondition = new Precondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET }, HasRestrained);
         notAtHomePrecondition = new Precondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInWildernessOrHome);
@@ -40,22 +40,24 @@ public class RitualKilling : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         if (target is Character) {
-            List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
-            List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-            p.AddRange(baseP);
+            //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
+            //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+            //p.AddRange(baseP);
+
+            Precondition p = null;
 
             Character targetCharacter = target as Character;
             if (actor.homeStructure == targetCharacter.currentStructure) {
-                p.Add(atHomePrecondition);
+                p = atHomePrecondition;
             } else {
-                p.Add(notAtHomePrecondition);
+                p = notAtHomePrecondition;
             }
             isOverridden = true;
             return p;
         }
-        return base.GetPreconditions(actor, target, otherData, out isOverridden);
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     //public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
     //    GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -163,6 +165,7 @@ public class RitualKilling : GoapAction {
     public void AfterKillingSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustHappiness(10000);
         if (goapNode.poiTarget is Character targetCharacter) {
+            targetCharacter.causeOfDeath = INTERACTION_TYPE.RITUAL_KILLING;
             NPCSettlement settlementOfTarget = targetCharacter.homeSettlement;
             targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
             goapNode.actor.jobComponent.TriggerBuryPsychopathVictim(targetCharacter, settlementOfTarget);

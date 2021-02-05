@@ -17,7 +17,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
 
             FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForCharacter(interruptHolder.actor);
-            Faction faction = FactionManager.Instance.CreateNewFaction(factionType);
+            Faction faction = FactionManager.Instance.CreateNewFaction(factionType, race: interruptHolder.actor.race);
 
             //Sets the default data of faction type
             faction.factionType.SetAsDefault();

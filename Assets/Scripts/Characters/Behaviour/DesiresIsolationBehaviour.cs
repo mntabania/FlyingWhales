@@ -21,7 +21,7 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
                 log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
                 if (deskOrTable != null) {
                     log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                    character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
+                    character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                     return true;
                 }
                 log += "\n-No available desk or table at location.";

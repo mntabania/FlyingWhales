@@ -5,6 +5,7 @@ using UnityEngine;
 using Pathfinding;
 using System.Linq;
 using Inner_Maps;
+using UnityEngine.Profiling;
 
 public class CharacterAIPath : AILerp {
     public CharacterMarker marker;
@@ -45,6 +46,7 @@ public class CharacterAIPath : AILerp {
     #region Overrides
     public override void OnTargetReached() {
         base.OnTargetReached();
+        Profiler.BeginSample($"{marker.character.name} Target Reached");
         if (!_hasReachedTarget && reachedEndOfPath && //&& !pathPending
             //only execute target reach if the agent has a destination transform, vector or has a flee path
             (marker.destinationSetter.target != null || !float.IsPositiveInfinity(destination.x) || marker.hasFleePath)) {
@@ -61,6 +63,7 @@ public class CharacterAIPath : AILerp {
                 marker.StartMovement();    
             }
         }
+        Profiler.EndSample();
     }
     protected override void OnPathComplete(Path newPath) {
         if (marker.character.isDead) {
@@ -75,7 +78,7 @@ public class CharacterAIPath : AILerp {
             marker.OnFleePathComputed(newPath);
             base.OnPathComplete(newPath);
         } else if (newPath is ConstantPath constantPath) {
-            marker.OnConstantPathComputed(constantPath);
+            marker.OnStrollPathComputed(constantPath);
         } else {
             // currentPath = newPath as CustomABPath;
             //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
@@ -136,12 +139,16 @@ public class CharacterAIPath : AILerp {
         // }
 
         // Alternative way of requesting the path
-        CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);
-        p.traversalProvider = blockerTraversalProvider;
-        p.SetRegion(marker.character.currentRegion);
-        p.SetNotAllowedStructures(notAllowedStructures);
-        p.SetOnlyAllowedStructures(onlyAllowedStructures);
-        p.SetAvoidSettlements(marker.character.movementComponent.avoidSettlements);
+        // CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);
+        // p.traversalProvider = blockerTraversalProvider;
+        // p.SetRegion(marker.character.currentRegion);
+        // p.SetNotAllowedStructures(notAllowedStructures);
+        // p.SetOnlyAllowedStructures(onlyAllowedStructures);
+        // p.SetAvoidSettlements(marker.character.movementComponent.avoidSettlements);
+        // p.calculatePartial = true;
+        // seeker.StartPath(p);
+        
+        ABPath p = ABPath.Construct(currentPosition, destination, null);
         p.calculatePartial = true;
         seeker.StartPath(p);
 
@@ -153,12 +160,19 @@ public class CharacterAIPath : AILerp {
         if (!marker.gameObject.activeSelf || marker.character == null) {
             return;
         }
+        Profiler.BeginSample($"{marker.character.name} - Update Position");
         marker.UpdatePosition();
+        Profiler.EndSample();
         //added checking for marker.character again because the call to UpdatePosition can cause the character to die or possibly turn to a food pile,
         //resulting in his marker being reset, before this function is finished 
         if (marker.character == null || marker.character.limiterComponent.canMove == false || isStopMovement || GameManager.Instance.isPaused) { return; }
+        Profiler.BeginSample($"{marker.character.name} - Update Rotation");
         UpdateRotation();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{marker.character.name} - Base Update Me Call");
         base.UpdateMe();
+        Profiler.EndSample();
         //Vector3 markerPos = marker.transform.position; 
         //marker.transform.position = new Vector3(markerPos.x, markerPos.y, 0f);
     }
@@ -170,7 +184,13 @@ public class CharacterAIPath : AILerp {
             } else {
                 direction = interpolator.tangent;
             }
-            marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, direction);
+            Profiler.BeginSample("Quaternion.LookRotation");
+            Quaternion lookRotation = Quaternion.LookRotation(Vector3.forward, direction);
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Set look rotation");
+            marker.visualsParent.localRotation = lookRotation;
+            Profiler.EndSample();
             //if(marker.character.currentParty.icon.travelLine == null) {
             //    if (!IsNodeWalkable(destination)) {
             //        //if(marker.character.currentAction)
@@ -178,7 +198,9 @@ public class CharacterAIPath : AILerp {
             //}
         } else if (marker.character.currentActionNode != null && marker.character.currentActionNode.poiTarget != marker.character) {
             if (marker.character.currentActionNode.poiTarget.gridTileLocation != null) {
+                Profiler.BeginSample("LookAt");
                 marker.LookAt(marker.character.currentActionNode.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
+                Profiler.EndSample();
             }
         }
     }

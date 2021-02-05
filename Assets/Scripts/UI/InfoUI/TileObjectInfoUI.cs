@@ -131,7 +131,7 @@ public class TileObjectInfoUI : InfoUIBase {
         }
     }
     private void UpdateBasicInfo() {
-        nameLbl.text = activeTileObject.name;
+        nameLbl.text = activeTileObject.nameplateName;
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeTileObject.currentHP}/{activeTileObject.maxHP}";
@@ -287,6 +287,22 @@ public class TileObjectInfoUI : InfoUIBase {
             UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
+
+    public void OnClickItem() {
+        if(activeTileObject == null) {
+            return;
+		}
+        if (activeTileObject.worldObject == null && activeTileObject.isBeingCarriedBy != null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.isBeingCarriedBy.worldObject.gameObject);
+        } else if (activeTileObject.worldObject != null && activeTileObject.isBeingCarriedBy == null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.worldObject.gameObject);
+        } else if (activeTileObject.worldObject != null && activeTileObject.isBeingCarriedBy != null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.worldObject.gameObject); 
+        } else {
+            return;
+        }
+    }
+
     public void OnHoverTrait(object obj) {
         if (obj is string) {
             string text = (string) obj;

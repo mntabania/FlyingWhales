@@ -15,6 +15,11 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 3240066269998398212}
   hoverObject: {fileID: 3240064117816445386}
+  clickCollider: {fileID: 0}
+  hpBarGO: {fileID: 0}
+  hpFill: {fileID: 0}
+  aspeedFill: {fileID: 0}
+  particleEffectParent: {fileID: 5682268890990303142}
   statusIconsParent: {fileID: 7820034385746684740}
   growingSprite: {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380, type: 3}
   ripeSprite: {fileID: 21300000, guid: 6b0d9acc33c3f924faa7c6840e010066, type: 3}
@@ -72,7 +77,7 @@ PrefabInstance:
     - target: {fileID: 2837276875990876525, guid: a16648d7c326a6448b2d114c6361e74d,
         type: 3}
       propertyPath: m_Name
-      value: BerryShrubGameObject
+      value: BerryShrubMapObjectVisual
       objectReference: {fileID: 0}
     - target: {fileID: 2843265405864430887, guid: a16648d7c326a6448b2d114c6361e74d,
         type: 3}
@@ -153,6 +158,12 @@ Transform:
 --- !u!212 &3240064117816445386 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 2708388828886894357, guid: a16648d7c326a6448b2d114c6361e74d,
+    type: 3}
+  m_PrefabInstance: {fileID: 675861466640862943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5682268890990303142 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5168545910107019641, guid: a16648d7c326a6448b2d114c6361e74d,
     type: 3}
   m_PrefabInstance: {fileID: 675861466640862943}
   m_PrefabAsset: {fileID: 0}

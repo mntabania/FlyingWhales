@@ -112,7 +112,7 @@ namespace Inner_Maps {
         private void OnRightClick() {
             if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
-                if (TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                     IPointOfInterest currentlySelectedPOI = UIManager.Instance.GetCurrentlySelectedPOI();
                     if (currentlySelectedPOI != null && selectables.Contains(currentlySelectedPOI)) {
                         currentlySelectedPOI.RightSelectAction();
@@ -382,17 +382,14 @@ namespace Inner_Maps {
                 return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
 
-            Profiler.BeginSample("Show Tile Data Sample");
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            //|| DEVELOPMENT_BUILD
+#if UNITY_EDITOR
             Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
-            bool isPathPossible = false;
-            if (showingCharacter?.gridTileLocation != null) {
-                isPathPossible = PathUtilities.IsPathPossible(showingCharacter.gridTileLocation.graphNode, tile.graphNode);
-            }
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
             // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             // summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
+            // summary = $"{summary}\n<b>Initial Ground Type:</b>{tile.initialGroundType.ToString()}";
             // summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
             // summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
@@ -445,10 +442,10 @@ namespace Inner_Maps {
                 summary = $"{summary}\n\tJobs Targeting this: ";
                 summary = poi.allJobsTargetingThis.Count > 0 ? poi.allJobsTargetingThis.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t}") : $"{summary}None";
             }
+            summary = tile.IsPartOfSettlement(out var settlement) ? $"{summary}\nSettlement: {settlement.name}" : $"{summary}\nSettlement: None";
             if (tile.structure != null) {
                 summary = $"{summary}\nStructure: {tile.structure},Is Interior: {tile.structure.isInterior.ToString()}";
                 // summary = $"{summary}\nOccupied Hex Tiles: {tile.structure.occupiedHexTiles.Count.ToString()}";
-                summary = $"{summary}\nSettlement: {tile.structure.settlementLocation?.name}";
                 summary = $"{summary}\nCharacters at {tile.structure}: ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
@@ -465,7 +462,6 @@ namespace Inner_Maps {
             } else {
                 summary = $"{summary}\nStructure: None";
             }
-            Profiler.EndSample();
             UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);
 #else
          //For build only
@@ -652,10 +648,15 @@ namespace Inner_Maps {
         }
         public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
             if (structureSetting.isCorrupted) {
-                return corruptedStructurePrefabs[structureSetting];
+                if (corruptedStructurePrefabs.ContainsKey(structureSetting)) {
+                    return corruptedStructurePrefabs[structureSetting];    
+                }
             } else {
-                return individualStructurePrefabs[structureSetting];    
+                if (individualStructurePrefabs.ContainsKey(structureSetting)) {
+                    return individualStructurePrefabs[structureSetting];    
+                }
             }
+            throw new Exception($"No structure prefabs for {structureSetting.ToString()}");
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);

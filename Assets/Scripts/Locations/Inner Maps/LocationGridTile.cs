@@ -12,6 +12,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using UnityEngine.Profiling;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -24,6 +25,8 @@ namespace Inner_Maps {
             Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone, Flesh, Structure_Stone,
             Ruined_Stone
         }
+
+        private static readonly GridNeighbourDirection[] gridNeighbourDirections = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
         
         public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
@@ -85,6 +88,7 @@ namespace Inner_Maps {
         public List<Trait> traits => genericTileObject.traitContainer.traits;
         public List<Status> statuses => genericTileObject.traitContainer.statuses;
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
+        public BIOMES biomeType => collectionOwner.GetConnectedHextileOrNearestHextile().biomeType;
         #endregion
         
         #region Pathfinding
@@ -293,10 +297,6 @@ namespace Inner_Maps {
                 } else if (assetName.Contains("water") || assetName.Contains("pond")) {
                     return Ground_Type.Water;
                 } else if (assetName.Contains("dirt") || assetName.Contains("soil") || assetName.Contains("outside") || assetName.Contains("snow")) {
-                    BIOMES biomeType = parentMap.region.coreTile.biomeType;
-                    if (collectionOwner.isPartOfParentRegionMap) {
-                        biomeType = collectionOwner.partOfHextile.hexTileOwner.biomeType;
-                    }
                     if (biomeType == BIOMES.SNOW || biomeType == BIOMES.TUNDRA) {
                         if (assetName.Contains("dirtsnow")) {
                             return Ground_Type.Snow_Dirt;
@@ -364,7 +364,6 @@ namespace Inner_Maps {
                 //if this tile's map object is shown and is showing a visual, update it's sprite to use the updated sprite.
                 genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
             }
-
             UpdateGroundTypeBasedOnAsset();
             if (updateEdges) {
                 CreateSeamlessEdgesForSelfAndNeighbours();
@@ -493,7 +492,7 @@ namespace Inner_Maps {
         /// Set this tile to the ground that it originally was, aka before anything was put on it.
         /// </summary>
         public void RevertTileToOriginalPerlin() {
-             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
+             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);
              SetGroundTilemapVisual(groundTile);
         }
         public void DetermineNextGroundTypeAfterDestruction() {
@@ -520,7 +519,7 @@ namespace Inner_Maps {
                 case Ground_Type.Corrupted:
                 case Ground_Type.Bone:
                     //if from structure, revert to original ground asset
-                    nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
+                    nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);
                     break;
                 case Ground_Type.Desert_Grass:
                 case Ground_Type.Sand:
@@ -540,10 +539,27 @@ namespace Inner_Maps {
 
         #region Structures
         public void SetStructure(LocationStructure structure) {
+            Profiler.BeginSample("Remove Tile");
             this.structure?.RemoveTile(this);
+            Profiler.EndSample();
+            
             this.structure = structure;
+            
+            Profiler.BeginSample("Add Tile");
             this.structure.AddTile(this);
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Generic Tile Object Initialize");
             genericTileObject.ManualInitialize(this);
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Update Awareness");
+            if(objHere != null) {
+                //Whenever a grid tile changes its structure (might be because a new structure is built on top of it), the object inside must update its awareness to that new structure
+                LocationAwarenessUtility.RemoveFromAwarenessList(objHere);
+                LocationAwarenessUtility.AddToAwarenessList(objHere, this);
+            }
+            Profiler.EndSample();
         }
         public void SetTileState(Tile_State state) {
             if (structure != null) {
@@ -559,10 +575,18 @@ namespace Inner_Maps {
 
         #region Characters
         public void AddCharacterHere(Character character) {
+            Profiler.BeginSample($"{character.name} Add Character To Tile");
             // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
+            if (character.race.IsSapient()) {
+                if (character.currentSettlement != null) {
+                    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
+                    collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddCharacterToSettlement(character);
+                }
+            }
+                
             // }
-            if(genericTileObject != null) {
+            if (genericTileObject != null) {
                 List<Trait> traitOverrideFunctions = genericTileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Enter_Grid_Tile_Trait);
                 if (traitOverrideFunctions != null) {
                     for (int i = 0; i < traitOverrideFunctions.Count; i++) {
@@ -604,6 +628,19 @@ namespace Inner_Maps {
             if (hasSnareTrap) {
                 TriggerSnareTrap(character);
             }
+
+            Character scorpionCharacter = HasRaceHere(RACE.SCORPION);
+            Scorpion scorpion = scorpionCharacter as Scorpion;
+            if (scorpion != null && !scorpion.isDead && scorpion.limiterComponent.canPerform && scorpion.limiterComponent.canMove && scorpion != character && scorpion.heldCharacter == null) {
+                if (character.canBeTargetedByLandActions) {
+                    if (!scorpion.hasPulledForTheDay) {
+                        scorpion.SetHasPulledForTheDay(true);
+                        scorpion.SetHeldCharacter(character);
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Pulled_Down, scorpion);
+                    }
+                }
+            }
+
             if (isCorrupted) {
                 if(!character.isDead && character.limiterComponent.canMove && character.limiterComponent.canPerform) {
                     if (!character.movementComponent.hasMovedOnCorruption) {
@@ -634,7 +671,7 @@ namespace Inner_Maps {
                     if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
                         if (!character.behaviourComponent.isAttackingDemonicStructure 
                             && character.homeSettlement != null && character.necromancerTrait == null && character.race.IsSapient()
-                            && character.marker != null && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
+                            && character.hasMarker && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
                             && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) 
                             //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
                             && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
@@ -673,6 +710,17 @@ namespace Inner_Maps {
             } else {
                 character.movementComponent.SetHasMovedOnCorruption(false);
             }
+            Profiler.EndSample();
+        }
+
+        public Character HasRaceHere(RACE p_lookUprace) {
+            Character found = null;
+            charactersHere.ForEach((eachCharacter) => {
+                if (eachCharacter.race == p_lookUprace) {
+                    found = eachCharacter;
+                }
+            });
+            return found;
         }
         public void RemoveCharacterHere(Character character) {
             charactersHere.Remove(character);
@@ -821,9 +869,8 @@ namespace Inner_Maps {
             return false;
         }
         public bool IsAtEdgeOfMap() {
-            GridNeighbourDirection[] dirs = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
-            for (int i = 0; i < dirs.Length; i++) {
-                if (!_neighbours.ContainsKey(dirs[i])) {
+            for (int i = 0; i < gridNeighbourDirections.Length; i++) {
+                if (!_neighbours.ContainsKey(gridNeighbourDirections[i])) {
                     return true;
                 }
             }
@@ -1005,27 +1052,58 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public LocationGridTile GetNearestUnoccupiedTileFromThis() {
-            List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
-            if (unoccupiedNeighbours.Count == 0) {
-                if (structure != null) {
-                    LocationGridTile nearestTile = null;
-                    float nearestDist = 99999f;
-                    for (int i = 0; i < structure.unoccupiedTiles.Count; i++) {
-                        LocationGridTile currTile = structure.unoccupiedTiles.ElementAt(i);
-                        if (currTile != this && currTile.groundType != Ground_Type.Water) {
-                            float dist = Vector2.Distance(currTile.localLocation, localLocation);
-                            if (dist < nearestDist) {
-                                nearestTile = currTile;
-                                nearestDist = dist;
-                            }
-                        }
-                    }
-                    return nearestTile;
-                }
-            } else {
-                return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+        //public LocationGridTile GetNearestUnoccupiedTileFromThis() {
+        //    List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
+        //    if (unoccupiedNeighbours.Count == 0) {
+        //        if (structure != null) {
+        //            LocationGridTile nearestTile = null;
+        //            float nearestDist = 99999f;
+        //            for (int i = 0; i < structure.unoccupiedTiles.Count; i++) {
+        //                LocationGridTile currTile = structure.unoccupiedTiles.ElementAt(i);
+        //                if (currTile != this && currTile.groundType != Ground_Type.Water) {
+        //                    float dist = Vector2.Distance(currTile.localLocation, localLocation);
+        //                    if (dist < nearestDist) {
+        //                        nearestTile = currTile;
+        //                        nearestDist = dist;
+        //                    }
+        //                }
+        //            }
+        //            return nearestTile;
+        //        }
+        //    } else {
+        //        return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+        //    }
+        //    return null;
+        //}
+        public LocationGridTile GetNeareastTileFromThisThatMeetCriteria(Func<LocationGridTile, bool> criteria, List<LocationGridTile> checkedTiles) {
+            if(checkedTiles == null) {
+                checkedTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
             }
+            if (!checkedTiles.Contains(this)) {
+                checkedTiles.Add(this);
+                if (criteria.Invoke(this)) {
+                    ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
+                    return this;
+                }
+            }
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                if (!checkedTiles.Contains(tile)) {
+                    checkedTiles.Add(tile);
+                    if (criteria.Invoke(tile)) {
+                        ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
+                        return tile;
+                    }
+                }
+            }
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                LocationGridTile chosenTile = tile.GetNeareastTileFromThisThatMeetCriteria(criteria, checkedTiles);
+                if (chosenTile != null) {
+                    return chosenTile;
+                }
+            }
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
             return null;
         }
         public LocationStructure GetNearestInteriorStructureFromThis() {
@@ -1511,7 +1589,7 @@ namespace Inner_Maps {
             return tiles;
         }
         public bool IsPassable() {
-            return (objHere == null || !(objHere is BlockWall)) && groundType != Ground_Type.Water;
+            return (objHere == null || !objHere.IsUnpassable()) && groundType != Ground_Type.Water;
         }
         private LocationGridTile GetTargetTileToGoToRegion(Region region) {
             //if (currentRegion != null) {
@@ -1622,18 +1700,14 @@ namespace Inner_Maps {
                     }
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true,
-                                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                            obj.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                         } else {
-                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj,
-                                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs));
+                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj);
                         }
                     } else if (poi is Character character) {
-                        character.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true,
-                            elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                        character.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     } else {
-                        poi.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true,
-                            elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                        poi.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     }
                 }
             }
@@ -1742,13 +1816,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Pathfinding
-        public GraphNode graphNode { get; private set; }
-        public void PredetermineGraphNode() {
-            graphNode = AstarPath.active.GetNearest(centeredWorldLocation).node;
-        }
-        #endregion
-
         #region Blueprints
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
@@ -1807,7 +1874,6 @@ namespace Inner_Maps {
             genericTileObject = null;
             walls?.Clear();
             walls = null;
-            graphNode = null;
         }
         #endregion
     }

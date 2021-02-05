@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UtilityScripts;
+using System.Linq;
 
 public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
     public sealed override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
@@ -111,8 +112,14 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
                             }
                         }
                         if (!hasAddedJob) {
-                            p_log += "\n-Stand";
-                            summon.jobComponent.TriggerStand(out p_producedJob);
+                            //Livestocks should not move around its hextile because it will be weird if they keep going outside its hextile even when there is a hunter lodge structure already built
+                            if(summon is Animal) {
+                                p_log += "\n-Roam around tile";
+                                summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
+                            } else {
+                                p_log += "\n-Stand";
+                                summon.jobComponent.TriggerStand(out p_producedJob);
+                            }
                         }
                         return true;
                     } else {
@@ -121,7 +128,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
                         if (summon.currentHP < fiftyPercentOfMaxHP) {
                             p_log += "\n-Less than 50% of Max HP, Return Territory or Home";
                             if (summon.homeStructure != null || summon.HasTerritory()) {
-                                return summon.jobComponent.PlanIdleReturnHome(out p_producedJob);
+                                return summon.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out p_producedJob);
                             } else {
                                 p_log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
                             }
@@ -135,7 +142,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
                             } else {
                                 p_log += "\n-Return Territory or Home";
                                 if (summon.homeStructure != null || summon.HasTerritory()) {
-                                    return summon.jobComponent.PlanIdleReturnHome(out p_producedJob);
+                                    return summon.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out p_producedJob);
                                 } else {
                                     p_log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
                                 }
@@ -146,6 +153,25 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
             }
 		}
 		return false;
+    }
+    protected bool TryTriggerLayEgg(Character character, int maxResidentCount, TILE_OBJECT_TYPE eggType, out JobQueueItem producedJob) {
+        int residentCount = 0;
+        int eggCount = 0;
+        if (character.homeSettlement != null) {
+            residentCount = character.homeSettlement.residents.Count(x => x.isDead == false && x.race == character.race); //&& (x is GiantSpider || x is SmallSpider))
+            eggCount = character.homeSettlement.GetNumberOfTileObjectsThatMeetCriteria(eggType, null);
+        } else if (character.homeStructure != null) {
+            residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
+            eggCount = character.homeStructure.GetNumberOfTileObjectsThatMeetCriteria(eggType, null);
+        } else if (character.HasTerritory()) {
+            residentCount = character.homeRegion.GetCountOfAliveCharacterWithSameTerritory(character);
+            eggCount = character.territory.GetNumberOfTileObjectsInHexTile(eggType);
+        }
+        if (residentCount < maxResidentCount && eggCount < 2) {
+            return character.jobComponent.TriggerLayEgg(out producedJob);
+        }
+        producedJob = null;
+        return false;
     }
     #endregion
 }

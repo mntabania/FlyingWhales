@@ -10,7 +10,7 @@ public class PickUp : GoapAction {
     public PickUp() : base(INTERACTION_TYPE.PICK_UP) {
         actionIconString = GoapActionStateDB.Haul_Icon;
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.TROLL, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -84,6 +84,9 @@ public class PickUp : GoapAction {
             if(targetTileObject is Heirloom && job != null && job.jobType == JOB_TYPE.DROP_ITEM_PARTY) { //|| job.jobType == JOB_TYPE.DROP_ITEM
                 cost += 10;
                 costLog = $"{costLog} +10(Heirloom)";
+            } else if(targetTileObject is FoodPile && job != null && job.jobType == JOB_TYPE.DISPOSE_FOOD_PILE) { //|| job.jobType == JOB_TYPE.DROP_ITEM
+                cost += 10;
+                costLog = $"{costLog} +10(Dispose Food Pile)";
             } else {
                 if (targetTileObject.characterOwner == null) {
                     if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL)) {

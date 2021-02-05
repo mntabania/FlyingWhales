@@ -204,7 +204,7 @@ namespace Traits {
             }
         }
         private void UpdateVisualsOnRemove(ITraitable removedFrom) {
-            if(_poisonedEffect != null) {
+            if(_poisonedEffect) {
                 ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
                 _poisonedEffect = null;
             }

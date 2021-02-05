@@ -11,13 +11,13 @@ public class GiantSpider : Summon {
     public override bool defaultDigMode => true;
 
     public GiantSpider() : base(SUMMON_TYPE.Giant_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public GiantSpider(string className) : base(SUMMON_TYPE.Giant_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public GiantSpider(SaveDataSummon data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
 
     #region Overrides
@@ -34,12 +34,18 @@ public class GiantSpider : Summon {
         movementComponent.SetAvoidSettlements(false);
     }
     public override void SubscribeToSignals() {
+        if (hasSubscribedToSignals) {
+            return;
+        }
         base.SubscribeToSignals();
         Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAddedJobToQueue);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnRemovedJobFromQueue);
     }
     public override void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
         base.UnsubscribeSignals();
         Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAddedJobToQueue);

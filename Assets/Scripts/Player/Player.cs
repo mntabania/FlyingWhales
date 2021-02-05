@@ -92,7 +92,6 @@ public class Player : ILeader, IObjectManipulator {
 
     #region Listeners
     private void AddListeners() {
-        AddWinListener();
         //goap
         // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
@@ -149,6 +148,11 @@ public class Player : ILeader, IObjectManipulator {
         Faction faction = FactionManager.Instance.CreateNewFaction(FACTION_TYPE.Demons, "Demons");
         faction.SetLeader(this);
         SetPlayerFaction(faction);
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+            //https://trello.com/c/hZOagpaZ/3537-pitto-tweaks-v2
+            FactionRelationship relationship = faction.GetRelationshipWith(FactionManager.Instance.neutralFaction);
+            relationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+        }
     }
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
@@ -235,26 +239,11 @@ public class Player : ILeader, IObjectManipulator {
     private void RejectMinion(object obj) { }
     #endregion
 
-    #region Win/Lose Conditions
-    private void AddWinListener() {
-        Messenger.AddListener<Faction>(FactionSignals.FACTION_LEADER_DIED, OnFactionLeaderDied);
-    }
-    private void OnFactionLeaderDied(Faction faction) {
-        List<Faction> allUndestroyedFactions = FactionManager.Instance.allFactions.Where(
-            x => x.factionType.type != FACTION_TYPE.Wild_Monsters
-            && !x.isPlayerFaction
-            && x.isActive && !x.isDestroyed).ToList();
-        if (allUndestroyedFactions.Count == 0) {
-            Debug.LogError("All factions are destroyed! Player won!");
-        }        
-    }
-    #endregion
-
     #region Role Actions
-    public SpellData currentActivePlayerSpell { get; private set; }
-    public void SetCurrentlyActivePlayerSpell(SpellData action) {
+    public SkillData currentActivePlayerSpell { get; private set; }
+    public void SetCurrentlyActivePlayerSpell(SkillData action) {
         if(currentActivePlayerSpell != action) {
-            SpellData previousActiveAction = currentActivePlayerSpell;
+            SkillData previousActiveAction = currentActivePlayerSpell;
             currentActivePlayerSpell = action;
             if (currentActivePlayerSpell == null) {
                 UIManager.Instance.SetTempDisableShowInfoUI(false); //allow UI clicks again after active spell has been set to null
@@ -551,7 +540,9 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
     public void ShowNotificationFromPlayer(Log log) {
-        log.AddLogToDatabase();
+        //Removed adding to database here because this function should only be for showing notification, if we want to add it to database, it should be called outside this function
+        //This is also redundant because all the outside calls of ShowNotificationFromPlayer already calls AddLogToDatabase
+        //log.AddLogToDatabase();
         ShowNotification(log);
     }
     

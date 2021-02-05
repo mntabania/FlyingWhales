@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Threading;
+using BayatGames.SaveGameFree;
 
 public class LocalizationManager : BaseMonoBehaviour {
 	public static LocalizationManager Instance;
@@ -26,6 +27,14 @@ public class LocalizationManager : BaseMonoBehaviour {
             Destroy(this.gameObject);
         }
     }
+	[ContextMenu("Save")]
+	public void SaveLocalizedTexts() {
+		Initialize();
+		foreach (var kvp in localizedText) {
+			SaveGame.Save($"{UtilityScripts.Utilities.dataPath}/{kvp.Key}.json", kvp.Value);	
+		}
+	}
+	
 	internal void Initialize(){
 		this.language = UtilityScripts.Utilities.defaultLanguage;
 		this.filePath = $"{Application.streamingAssetsPath}/{this.language}";
@@ -76,14 +85,11 @@ public class LocalizationManager : BaseMonoBehaviour {
 	public string GetLocalizedValue(string category, string file, string key){
 		string result = string.Empty;
         if (!this._localizedText.ContainsKey(category)) {
-            Debug.LogWarning($"Localization error! {category}/");
-            //throw new System.Exception("Localization error! " + category + "/");
+	        Debug.LogWarning($"Localization error! {category}/");
         } else if (!this._localizedText[category].ContainsKey(file)) {
             Debug.LogWarning($"Localization error! {category}/{file}/");
-            //throw new System.Exception("Localization error! " + category + "/" + file + "/");
         } else if (!this._localizedText[category][file].ContainsKey(key)) {
             Debug.LogWarning($"Localization error! {category}/{file}/{key}");
-            //throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
         } else {
             result = this._localizedText[category][file][key];
         }

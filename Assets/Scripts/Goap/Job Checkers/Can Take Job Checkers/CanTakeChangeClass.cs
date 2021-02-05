@@ -14,7 +14,7 @@
                     }
                 }
                 if (jobQueueItem is GoapPlanJob goapPlanJob) {
-                    OtherData[] otherData = goapPlanJob.GetOtherData(INTERACTION_TYPE.CHANGE_CLASS);
+                    OtherData[] otherData = goapPlanJob.GetOtherDataSpecific(INTERACTION_TYPE.CHANGE_CLASS);
                     string classToChangeTo = string.Empty;
                     for (int i = 0; i < otherData.Length; i++) {
                         OtherData data = otherData[i];

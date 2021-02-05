@@ -163,6 +163,11 @@ public class StructureInfoUI : InfoUIBase {
     }
     #endregion
 
+    #region Click
+    public void OnClickItem() {
+        activeStructure.CenterOnStructure();
+    }
+    #endregion
     #region Hover
     public void OnHoverEnterMigrationMeter() {
         if (activeStructure.settlementLocation != null && activeStructure.settlementLocation is NPCSettlement npcSettlement) {
@@ -180,13 +185,7 @@ public class StructureInfoUI : InfoUIBase {
     #region For Testing
     public void ShowStructureTestingInfo() {
 #if UNITY_EDITOR
-        string summary = $"{activeStructure.name} Info:";
-        summary += "\nDamage Contributing Objects:";
-        for (int i = 0; i < activeStructure.objectsThatContributeToDamage.Count; i++) {
-            IDamageable damageable = activeStructure.objectsThatContributeToDamage.ElementAt(i);
-            summary += $"\n\t- {damageable}";
-        }
-        UIManager.Instance.ShowSmallInfo(summary);
+        UIManager.Instance.ShowSmallInfo(activeStructure.GetTestingInfo());
 #endif
     }
     public void HideStructureTestingInfo() {

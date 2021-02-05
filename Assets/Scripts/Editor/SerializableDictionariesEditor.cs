@@ -81,6 +81,10 @@ public class LogTagSpriteDictionaryPropertyDrawer : SerializableDictionaryProper
 public class RaceSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(RaceDataDictionary))]
 public class RaceDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(MonsterMigrationBiomeDictionary))]
+public class MonsterMigrationBiomeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ScenarioSettingsDataDictionary))]
+public class ScenarioSettingsDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

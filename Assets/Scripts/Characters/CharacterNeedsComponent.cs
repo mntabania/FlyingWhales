@@ -5,6 +5,8 @@ using Interrupts;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
+using Inner_Maps.Location_Structures;
+using UnityEngine.Profiling;
 using Random = System.Random;
 
 public class CharacterNeedsComponent : CharacterComponent {
@@ -13,6 +15,10 @@ public class CharacterNeedsComponent : CharacterComponent {
     public int doNotGetBored{ get; private set; }
     public int doNotGetDrained { get; private set; }
     public int doNotGetDiscouraged { get; private set; }
+
+    public bool doesNotGetHungry => doNotGetHungry > 0 || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && owner.currentActionNode.action.IsFullnessRecoveryAction());
+    public bool doesNotGetTired => doNotGetTired > 0 || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && owner.currentActionNode.action.IsTirednessRecoveryAction());
+    public bool doesNotGetBored => doNotGetBored > 0 || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && owner.currentActionNode.action.IsHappinessRecoveryAction());
 
     public bool isStarving => fullness >= 0f && fullness <= STARVING_UPPER_LIMIT;
     public bool isExhausted => tiredness >= 0f && tiredness <= EXHAUSTED_UPPER_LIMIT;
@@ -151,12 +157,16 @@ public class CharacterNeedsComponent : CharacterComponent {
 
     #region Initialization
     public void SubscribeToSignals() {
-        Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds);
+        if(!(owner is Summon)) {
+            Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds); //do not make summons decrease needs
+        }
         Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
         Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void UnsubscribeToSignals() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
+        }
         Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
         Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
@@ -202,12 +212,14 @@ public class CharacterNeedsComponent : CharacterComponent {
     #endregion
 
     private void PerHour() {
+        Profiler.BeginSample($"{owner.name} Needs Component Hour Started");
         if (!_hasTriggeredThisHour) {
             _hasTriggeredThisHour = true;
             EveryOtherHour();
         } else {
             _hasTriggeredThisHour = false;
         }
+        Profiler.EndSample();
     }
     private void EveryOtherHour() {
         if (HasNeeds() == false) { return; }
@@ -260,6 +272,7 @@ public class CharacterNeedsComponent : CharacterComponent {
             /*&& _character.isAtHomeRegion && _character.homeNpcSettlement != null*/; //Characters living on a region without a npcSettlement must not decrease needs
     }
     public void DecreaseNeeds() {
+        Profiler.BeginSample($"{owner.name} Decrease Needs");
         //Stamina is not affected by HasNeeds checker, so anyone, even demons will decrease their stamina
         if (doNotGetDrained <= 0) {
             if (owner.marker && owner.marker.isMoving) {
@@ -276,15 +289,16 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (HasNeeds() == false) {
             return;
         }
-        if (doNotGetHungry <= 0) {
+        if (!doesNotGetHungry) {
             AdjustFullness(-(EditableValuesManager.Instance.baseFullnessDecreaseRate + fullnessDecreaseRate));
         }
-        if (doNotGetTired <= 0) {
+        if (!doesNotGetTired) {
             AdjustTiredness(-(EditableValuesManager.Instance.baseTirednessDecreaseRate + tirednessDecreaseRate));
         }
-        if (doNotGetBored <= 0) {
+        if (!doesNotGetBored) {
             AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
         }
+        Profiler.EndSample();
     }
     public string GetNeedsSummary() {
         string summary = $"Fullness: {fullness.ToString(CultureInfo.InvariantCulture)}/{FULLNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
@@ -491,7 +505,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetTired(int amount) {
         doNotGetTired += amount;
-        doNotGetTired = Math.Max(doNotGetTired, 0);
     }
     public bool PlanTirednessRecoveryActions() {
         if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
@@ -584,7 +597,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         return false;
     }
     public void PlanScheduledTirednessRecovery() {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.limiterComponent.canPerform && doNotGetTired <= 0) {
+        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.limiterComponent.canPerform && !doesNotGetTired) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
@@ -635,6 +648,17 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         if (!triggerSpooked) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            if (!owner.traitContainer.HasTrait("Travelling")) {
+                if(owner.homeStructure != null) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
+                }
+                //if (owner.homeSettlement != null) {
+                //    LocationStructure tavern = owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
+                //    if (tavern != null) {
+                //        job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, tavern);
+                //    }
+                //}
+            }
             owner.jobQueue.AddJobInQueue(job);
             if (shouldSetScheduleJobID) {
                 sleepScheduleJobID = job.persistentID;
@@ -784,7 +808,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetBored(int amount) {
         doNotGetBored += amount;
-        doNotGetBored = Math.Max(doNotGetBored, 0);
     }
     // public bool CanPlanScheduledHappinessRecovery() {
     //     if (!hasForcedHappiness && happinessForcedTick != 0 && GameManager.Instance.currentTick >= happinessForcedTick && owner.limiterComponent.canPerform && doNotGetBored <= 0) {
@@ -796,7 +819,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     //     return false;
     // }
     public void PlanScheduledSecondHappinessRecovery() {
-        if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.limiterComponent.canPerform && doNotGetBored <= 0) {
+        if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.limiterComponent.canPerform && !doesNotGetBored) {
             hasForcedSecondHappiness = true;
             if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 PlanHappinessRecoveryActions();
@@ -842,19 +865,20 @@ public class CharacterNeedsComponent : CharacterComponent {
                 //     value = 30;
                 // }
                 // if (chance < value || isSulking) {
-                    bool triggerBrokenhearted = false;
-                    Heartbroken heartbroken = owner.traitContainer.GetTraitOrStatus<Heartbroken>("Heartbroken");
-                    if (heartbroken != null) {
-                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[heartbroken.name]);
-                    }
-                    if (!triggerBrokenhearted) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), base.owner, base.owner);
-                        job.SetDoNotRecalculate(true);
-                        owner.jobQueue.AddJobInQueue(job);
-                    } else {
-                        heartbroken.TriggerBrokenhearted();
-                    }
-                    return true;
+            bool triggerBrokenhearted = false;
+            Heartbroken heartbroken = owner.traitContainer.GetTraitOrStatus<Heartbroken>("Heartbroken");
+            if (heartbroken != null) {
+                triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[heartbroken.name]);
+            }
+            if (!triggerBrokenhearted) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), base.owner, base.owner);
+                JobUtilities.PopulatePriorityLocationsForHappinessRecovery(owner, job);
+                job.SetDoNotRecalculate(true);
+                owner.jobQueue.AddJobInQueue(job);
+            } else {
+                heartbroken.TriggerBrokenhearted();
+            }
+            return true;
                 // }
             }
         // }
@@ -1060,7 +1084,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetHungry(int amount) {
         doNotGetHungry += amount;
-        doNotGetHungry = Math.Max(doNotGetHungry, 0);
     }
     public void PlanScheduledFullnessRecovery() {
         if (owner.traitContainer.HasTrait("Vampire")) {
@@ -1070,7 +1093,7 @@ public class CharacterNeedsComponent : CharacterComponent {
             //Now, when a character becomes Nocturnal, after becoming a Vampire, the schedule will be on Early Night, not After Midnight
             return;
         }
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.limiterComponent.canPerform && doNotGetHungry <= 0) {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.limiterComponent.canPerform && !doesNotGetHungry) {
             hasForcedFullness = true;
             //if (owner.traitContainer.HasTrait("Vampire")) {
             //    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
@@ -1264,6 +1287,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         if (!triggerGrieving) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            JobUtilities.PopulatePriorityLocationsForFullnessRecovery(owner, job);
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
             return job;
         } else {
@@ -1375,7 +1399,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetDrained(int amount) {
         doNotGetDrained += amount;
-        doNotGetDrained = Math.Max(doNotGetDrained, 0);
     }
     public void UpdateBaseStaminaDecreaseRate() {
         baseStaminaDecreaseRate = Mathf.RoundToInt(owner.characterClass.staminaReduction * (owner.raceSetting.staminaReductionMultiplier == 0f ? 1f : owner.raceSetting.staminaReductionMultiplier));
@@ -1474,7 +1497,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetDiscouraged(int amount) {
         doNotGetDiscouraged += amount;
-        doNotGetDiscouraged = Math.Max(doNotGetDiscouraged, 0);
     }
     #endregion
 

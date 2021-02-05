@@ -47,11 +47,10 @@ public class FactionInfoHubUI : MonoBehaviour {
         factionItems = new List<FactionItem>();
         //factionPaginationGOs = new List<GameObject>();
     }
-    void OnEnable() {
-        
-    }
-    void OnDisable() {
-        
+    private void InitializeUI() {
+        //Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
+        Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
     }
     public void InitializeAfterGameLoaded() {
         factionInfoUI.Initialize();
@@ -85,7 +84,7 @@ public class FactionInfoHubUI : MonoBehaviour {
         //yield return null;
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
-            if (faction.isMajorNonPlayer) {
+            if (faction.isMajorNonPlayer && !faction.isDisbanded) {
                 FactionItem item = AddFactionItem(faction);
                 SetFactionSelection(item, false);
             }
@@ -110,9 +109,6 @@ public class FactionInfoHubUI : MonoBehaviour {
             yield return null;
             factionScrollSnap.GoToScreen(0);
         }
-    }
-    private void InitializeUI() {
-        Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
     }
 
     public void Open() {
@@ -164,12 +160,19 @@ public class FactionInfoHubUI : MonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnFactionCreated(Faction faction) {
+    private void OnFactionCreated(Faction faction, Character creator) {
         if (GameManager.Instance.gameHasStarted) {
             if (faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Vagrants || faction.factionType.type == FACTION_TYPE.Undead || faction.factionType.type == FACTION_TYPE.Ratmen) {
                 //FactionItem item = AddFactionItem(faction);
                 //SetFactionSelection(item, false);
                 //RepopulateFactions();
+                StartCoroutine(RepopulateFactions());
+            }
+        }
+    }
+    private void OnFactionDisbanded(Faction faction) {
+        if (GameManager.Instance.gameHasStarted) {
+            if (faction.isMajorNonPlayer) {
                 StartCoroutine(RepopulateFactions());
             }
         }

@@ -112,7 +112,7 @@ public class CombatComponent : CharacterComponent {
                 //So this part is useless
                 //else {
                 //    log += "\n-Combat job not added";
-                //    if (owner.marker != null && owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
+                //    if (owner.hasMarker && owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
                 //        CombatState combatState = owner.stateComponent.currentState as CombatState;
                 //        combatState.CheckFlee(ref log);
                 //    }
@@ -552,19 +552,12 @@ public class CombatComponent : CharacterComponent {
     //}
     public bool RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
-            //if (poi is Character character) {
-            //    fightCombatData.Remove(character);
-            //} else 
             if (poi is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
             } else if (poi is Character targetCharacter) {
                 AddPOIToBannedFromHostile(targetCharacter);
-                //if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
-                //    AddPOIToBannedFromHostile(targetCharacter);
-                //}
             }
-            string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
-            owner.logComponent.PrintLogIfActive(removeHostileSummary);
+            owner.logComponent.PrintLogIfActive($"{poi.name} was removed from {owner.name}'s hostile range.");
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior) {
                 if (owner.combatComponent.isInCombat) {
@@ -917,11 +910,8 @@ public class CombatComponent : CharacterComponent {
                     }
                     break;
                 case JOB_TYPE.MONSTER_ABDUCT:
-                    return CombatManager.Abduct;
                 case JOB_TYPE.CAPTURE_CHARACTER:
-                    if (owner is Troll) {
-                        return CombatManager.Abduct;
-                    }
+                    return CombatManager.Abduct;
                     break;
                 case JOB_TYPE.KIDNAP_RAID:
                     return CombatManager.Raid;
@@ -974,7 +964,7 @@ public class CombatComponent : CharacterComponent {
         if (targetCharacter != null) {
             if(owner.IsInHomeSettlement()) {
                 if(targetCharacter.homeSettlement != owner.homeSettlement && targetCharacter.currentSettlement == owner.homeSettlement) {
-                    return CombatManager.Defending_Territory;
+                    return CombatManager.Defending_Home;
                 }
             } else if (owner.IsInTerritory()) {
                 if (!targetCharacter.IsTerritory(owner.hexTileLocation) && targetCharacter.IsInTerritoryOf(owner)) {

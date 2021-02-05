@@ -11,7 +11,7 @@ public class Sing : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Sing_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -52,11 +52,11 @@ public class Sing : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
@@ -86,20 +86,23 @@ public class Sing : GoapAction {
         }
         return REACTABLE_EFFECT.Neutral;
     }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region Effects
     public void PreSingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         //currentState.SetIntelReaction(SingSuccessIntelReaction);
     }
     public void PerTickSingSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(4.4f);
     }
-    public void AfterSingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public void AfterSingSuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     #endregion
 
     #region Requirement

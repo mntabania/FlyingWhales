@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using Inner_Maps;
+﻿using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Tilemaps;
 
 public class BlockWall : TileObject {
     
@@ -29,6 +27,18 @@ public class BlockWall : TileObject {
     }
 
     #region Overrides
+    public override bool IsUnpassable() {
+        return true;
+    }
+    public override bool IsValidCombatTargetFor(IPointOfInterest source) {
+        if (gridTileLocation == null) {
+            return false;
+        }
+        if (source.gridTileLocation == null) {
+            return false;
+        }
+        return true;
+    }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         return false;
     }
@@ -44,7 +54,7 @@ public class BlockWall : TileObject {
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-        Vector2 size = new Vector2(1.15f, 1.15f);
+        Vector2 size = new Vector2(1f, 1f);
         if (wallType == WALL_TYPE.Flesh) {
             size = new Vector2(0.5f, 0.5f);
         } else if (wallType == WALL_TYPE.Demon_Stone) {
@@ -53,9 +63,6 @@ public class BlockWall : TileObject {
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
 
         base.OnPlaceTileObjectAtTile(tile);
-    }
-    public override bool CollectsLogs() {
-        return false;
     }
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();

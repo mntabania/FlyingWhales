@@ -82,13 +82,13 @@ public class TransmissionUIController : MVCUIController, TransmissionUIView.ILis
 	private int GetTransmissionUpgradeCost(PLAGUE_TRANSMISSION p_transmissionType) {
 		switch (p_transmissionType) {
 			case PLAGUE_TRANSMISSION.Airborne:
-				return AirborneTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+				return AirborneTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
 			case PLAGUE_TRANSMISSION.Consumption:
-				return ConsumptionTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption));
+				return ConsumptionTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption));
 			case PLAGUE_TRANSMISSION.Physical_Contact:
-				return PhysicalContactTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact));
+				return PhysicalContactTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact));
 			case PLAGUE_TRANSMISSION.Combat:
-				return CombatRateTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat));
+				return CombatRateTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat));
 			default:
 				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
 		}
@@ -99,16 +99,16 @@ public class TransmissionUIController : MVCUIController, TransmissionUIView.ILis
 		int upgradeCost;
 		switch (p_transmissionType) {
 			case PLAGUE_TRANSMISSION.Airborne:
-				upgradeCost = AirborneTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
+				upgradeCost = AirborneTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
 				break;
 			case PLAGUE_TRANSMISSION.Consumption:
-				upgradeCost = ConsumptionTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
+				upgradeCost = ConsumptionTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
 				break;
 			case PLAGUE_TRANSMISSION.Physical_Contact:
-				upgradeCost = PhysicalContactTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
+				upgradeCost = PhysicalContactTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
 				break;
 			case PLAGUE_TRANSMISSION.Combat:
-				upgradeCost = CombatRateTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
+				upgradeCost = CombatRateTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
 				break;
 			default:
 				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
@@ -121,22 +121,22 @@ public class TransmissionUIController : MVCUIController, TransmissionUIView.ILis
 		int upgradeCost;
 		switch (p_transmissionType) {
 			case PLAGUE_TRANSMISSION.Airborne:
-				upgradeCost = AirborneTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
+				upgradeCost = AirborneTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
 				break;
 			case PLAGUE_TRANSMISSION.Consumption:
-				upgradeCost = ConsumptionTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
+				upgradeCost = ConsumptionTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
 				break;
 			case PLAGUE_TRANSMISSION.Physical_Contact:
-				upgradeCost = PhysicalContactTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
+				upgradeCost = PhysicalContactTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
 				break;
 			case PLAGUE_TRANSMISSION.Combat:
-				upgradeCost = CombatRateTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
+				upgradeCost = CombatRateTransmission.Instance.GetFinalTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType));
 				break;
 			default:
 				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
 		}
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= upgradeCost || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.omnipotentMode);
+			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= upgradeCost || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None);
 		} else {
 			return true;
 		}

@@ -10,7 +10,7 @@ public class ResolveCombat : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         //racesThatCanDoAction = new RACE[] {
         //    RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON,
         //    RACE.GOLEM, RACE.KOBOLD, RACE.LESSER_DEMON, RACE.MIMIC, RACE.PIG, RACE.SHEEP, RACE.ENT, RACE.WISP,
@@ -22,7 +22,7 @@ public class ResolveCombat : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.STARTS_COMBAT, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsCombatFinished);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.STARTS_COMBAT, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsCombatFinished);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, target = GOAP_EFFECT_TARGET.TARGET });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", target = GOAP_EFFECT_TARGET.TARGET });

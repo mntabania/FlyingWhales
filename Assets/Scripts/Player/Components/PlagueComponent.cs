@@ -18,7 +18,7 @@ public class PlagueComponent {
 
     #region Plague Points
     public void AdjustPlaguePoints(int amount) {
-        if(WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.omnipotentMode) {
+        if(WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {
             return;
         }
         _plaguePoints += amount;

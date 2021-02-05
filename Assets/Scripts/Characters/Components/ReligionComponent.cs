@@ -37,8 +37,11 @@
     #endregion
 
     #region Main
-    private void SetReligion(RELIGION religion) {
-        this.religion = religion;
+    public void ChangeReligion(RELIGION p_religion) {
+        SetReligion(p_religion);
+    }
+    private void SetReligion(RELIGION p_religion) {
+        religion = p_religion;
     }
     private void SetDefaultReligion() {
         switch (owner.race) {

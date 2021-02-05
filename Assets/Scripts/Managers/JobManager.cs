@@ -120,21 +120,11 @@ public class JobManager : BaseMonoBehaviour {
         job.Initialize(jobType, goal, targetPOI, owner);
         return job;
     }
-    //public GoapPlanJob CreateNewGoapPlanJob(JOB_TYPE jobType, GoapEffect goal, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, IJobOwner owner) {
-    //    GoapPlanJob job = new GoapPlanJob(jobType, goal, targetPOI, otherData, owner);
-    //    job.Initialize(jobType, goal, targetPOI, owner);
-    //    return job;
-    //}
     public GoapPlanJob CreateNewGoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, IJobOwner owner) {
         GoapPlanJob job = ObjectPoolManager.Instance.CreateNewGoapPlanJob();
         job.Initialize(jobType, targetInteractionType, targetPOI, owner);
         return job;
     }
-    //public GoapPlanJob CreateNewGoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, IJobOwner owner) {
-    //    GoapPlanJob job = new GoapPlanJob(jobType, targetInteractionType, targetPOI, otherData, owner);
-    //    job.Initialize(jobType, goal, targetPOI, owner);
-    //    return job;
-    //}
     public GoapPlanJob CreateNewGoapPlanJob(SaveDataGoapPlanJob data) {
         GoapPlanJob job = ObjectPoolManager.Instance.CreateNewGoapPlanJob();
         job.Initialize(data);

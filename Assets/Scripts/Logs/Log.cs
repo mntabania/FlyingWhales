@@ -2,6 +2,7 @@
 using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 [System.Serializable]
 public struct Log {
@@ -51,6 +52,22 @@ public struct Log {
             //always default log to misc if no tags were provided, this is to prevent logs from having no tags
             AddTag(LOG_TAG.Work);
         }
+    }
+    public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTag = LOG_TAG.Work) {
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+        this.category = category;
+        this.file = file;
+        this.key = key;
+        gameDate = date;
+        _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+        rawText = string.Empty;
+        actionID = node?.persistentID ?? string.Empty;
+        fillers = new List<LogFillerStruct>();
+        tags = new List<LOG_TAG>();
+        hasValue = true;
+        hasBeenFinalized = false;
+        allInvolvedObjectIDs = string.Empty;
+        AddTag(providedTag);
     }
     public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
         persistentID = id;
@@ -142,6 +159,9 @@ public struct Log {
          return false;
     }
     public bool IsInvolved(ILogFiller obj) {
+        if (obj == null) {
+            return false;
+        }
         return !string.IsNullOrEmpty(allInvolvedObjectIDs) && allInvolvedObjectIDs.Contains(obj.persistentID);
     }
     private void AddInvolvedObject(string persistentID) {
@@ -171,8 +191,13 @@ public struct Log {
         
     #region Addition
     public void AddLogToDatabase() {
+        Profiler.BeginSample("Add Log To Database");
         DatabaseManager.Instance.mainSQLDatabase.InsertLog(this);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Log Added Signal");
         Messenger.Broadcast(UISignals.LOG_ADDED, this);
+        Profiler.EndSample();
     }
     #endregion
 

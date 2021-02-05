@@ -16,6 +16,8 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	private System.Action<IContextMenuItem, UIHoverPosition> _onHoverOverAction;
 	private System.Action<IContextMenuItem> _onHoverOutAction;
 
+    public IContextMenuItem currentlyOpenedParentContextItem { get; private set; }
+
 	private void OnEnable() {
 		ContextMenuUIObject.onMenuPress += OnMenuClicked;
 		ContextMenuUIObject.onHoverOverItem += OnMenuHoveredOver;
@@ -66,9 +68,10 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	}
 	
 	private void OnMenuClicked(IContextMenuItem p_UIMenu, bool p_isAction, int p_currentColumn) {
-		if (!p_isAction) {
-			if (p_UIMenu.CanBePickedRegardlessOfCooldown()) {
-				m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
+        if (!p_isAction) {
+            if (p_UIMenu.CanBePickedRegardlessOfCooldown()) {
+                currentlyOpenedParentContextItem = p_UIMenu;
+                m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
 			}
 		} else {
 			p_UIMenu.OnPickAction();

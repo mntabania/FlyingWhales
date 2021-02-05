@@ -13,9 +13,9 @@ public class Necronomicon : Artifact {
     public Necronomicon(SaveDataArtifact data) : base(data) { }
 
     #region Overrides
-    public override void SetInventoryOwner(Character character) {
-        if(isBeingCarriedBy != character) {
-            base.SetInventoryOwner(character);
+    public override void SetInventoryOwner(Character p_newOwner) {
+        if(isBeingCarriedBy != p_newOwner) {
+            base.SetInventoryOwner(p_newOwner);
             if (isBeingCarriedBy != null) {
                 isBeingCarriedBy.interruptComponent.NecromanticTranform();
             }
@@ -46,15 +46,12 @@ public class Necronomicon : Artifact {
                 tile3 = tilesInRange[index3];
             }
 
-            Character skeleton1 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Marauder");
-            Character skeleton2 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Archer");
-            Character skeleton3 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Mage");
-            skeleton1.CreateMarker();
-            skeleton2.CreateMarker();
-            skeleton3.CreateMarker();
-            skeleton1.InitialCharacterPlacement(tile1);
-            skeleton2.InitialCharacterPlacement(tile2);
-            skeleton3.InitialCharacterPlacement(tile3);
+            Summon skeleton1 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Marauder");
+            Summon skeleton2 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Archer");
+            Summon skeleton3 = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTileLocation.parentMap.region, className: "Mage");
+            CharacterManager.Instance.PlaceSummonInitially(skeleton1, tile1);
+            CharacterManager.Instance.PlaceSummonInitially(skeleton2, tile2);
+            CharacterManager.Instance.PlaceSummonInitially(skeleton3, tile3);
 
             GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Necronomicon_Activate);
             //gridTileLocation.structure.RemovePOI(this);

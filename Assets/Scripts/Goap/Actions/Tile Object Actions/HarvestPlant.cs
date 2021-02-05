@@ -12,7 +12,7 @@ public class HarvestPlant : GoapAction {
     public HarvestPlant() : base(INTERACTION_TYPE.HARVEST_PLANT) {
         actionIconString = GoapActionStateDB.Harvest_Icon;
         
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -69,11 +69,14 @@ public class HarvestPlant : GoapAction {
         base.AddFillersToLog(ref log, node);
         log.AddToFillers(null, GetTargetString(node.poiTarget), LOG_IDENTIFIER.STRING_2);
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        if (node.actor.characterClass.IsCombatant()) {
-            node.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    if (node.actor.characterClass.IsCombatant()) {
+    //        node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //    }
+    //}
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
     #endregion
 
@@ -93,10 +96,10 @@ public class HarvestPlant : GoapAction {
 
     #region State Effects
     public void PreHarvestSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        }
+        goapNode.descriptionLog.AddToFillers(null, "30", LOG_IDENTIFIER.STRING_1);
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //}
     }
     public void PerTickHarvestSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
@@ -104,9 +107,9 @@ public class HarvestPlant : GoapAction {
         }
     }
     public void AfterHarvestSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //}
         IPointOfInterest poiTarget = goapNode.poiTarget;
         if (poiTarget is Crops crop) {
             crop.SetGrowthState(Crops.Growth_State.Growing);
@@ -131,7 +134,7 @@ public class HarvestPlant : GoapAction {
             tile.structure.RemovePOI(poiTarget);
             
             FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
-            foodPile.SetResourceInPile(50);
+            foodPile.SetResourceInPile(30);
             tile.structure.AddPOI(foodPile, tile);
             if (foodPile != null && goapNode.actor.homeSettlement != null) {
                 goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);

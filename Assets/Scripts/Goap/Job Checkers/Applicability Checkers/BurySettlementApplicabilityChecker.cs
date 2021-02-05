@@ -10,7 +10,7 @@ namespace Goap.Job_Checkers {
             NPCSettlement npcSettlement = job.originalOwner as NPCSettlement;
             Assert.IsNotNull(npcSettlement);
             
-            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement) && target.marker != null;
+            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement) && target.hasMarker;
         }
     }
 }

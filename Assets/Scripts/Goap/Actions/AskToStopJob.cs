@@ -10,7 +10,7 @@ public class AskToStopJob : GoapAction {
     public AskToStopJob() : base(INTERACTION_TYPE.ASK_TO_STOP_JOB) {
         actionIconString = GoapActionStateDB.Work_Icon;
         doesNotStopTargetCharacter = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Social};
     }

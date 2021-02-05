@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Characters.Components;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Locations.Settlements;
 using Traits;
@@ -19,6 +20,7 @@ namespace Traits {
         public List<TileObject> alreadyInspectedTileObjects { get; private set; }
         public List<Character> charactersAlreadySawForHope { get; private set; }
         public HashSet<Character> charactersThatHaveReactedToThis { get; private set; }
+        public List<TileObject> alreadyReactedToFoodPiles { get; private set; }
         private Dictionary<Character, List<string>> _traitsFromOtherCharacterThatThisIsAwareOf; 
         public Character owner { get; private set; }
         /// <summary>
@@ -52,6 +54,7 @@ namespace Traits {
             alreadyInspectedTileObjects = new List<TileObject>();
             charactersAlreadySawForHope = new List<Character>();
             charactersThatHaveReactedToThis = new HashSet<Character>();
+            alreadyReactedToFoodPiles = new List<TileObject>();
             _traitsFromOtherCharacterThatThisIsAwareOf = new Dictionary<Character, List<string>>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
@@ -65,6 +68,9 @@ namespace Traits {
             alreadyInspectedTileObjects = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyInspectedTileObjects);
             charactersAlreadySawForHope.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersAlreadySawForHope));
             charactersThatHaveReactedToThis = new HashSet<Character>(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersThatHaveReactedToThis));
+            if (saveDataCharacterTrait.alreadyReactedFoodPiles != null) {
+                alreadyReactedToFoodPiles = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyReactedFoodPiles);    
+            }
             hasBeenAbductedByPlayerMonster = saveDataCharacterTrait.hasBeenAbductedByPlayerMonster;
             hasBeenAbductedByWildMonster = saveDataCharacterTrait.hasBeenAbductedByWildMonster;
             if (saveDataCharacterTrait.traitsFromOtherCharacterThatThisIsAwareOf != null) {
@@ -115,7 +121,7 @@ namespace Traits {
                 //    Debug.Log("sdfsdf");
                 //}
                 if (item is TreasureChest) {
-                    if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.OPEN_CHEST, item) == false 
+                    if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.OPEN_CHEST, item) == false
                         && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
                         //if character is non suspicious, create an open chest job.
                         characterThatWillDoJob.jobComponent.CreateOpenChestJob(item);
@@ -128,39 +134,47 @@ namespace Traits {
                         if (characterThatWillDoJob.faction != null) {
                             severity = characterThatWillDoJob.faction.factionType.GetCrimeSeverity(CRIME_TYPE.Demon_Worship);
                         }
-                        if(severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                        if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                             characterThatWillDoJob.jobComponent.TriggerDestroy(item);
                         }
                     }
                 } else if (ShouldInspectItem(characterThatWillDoJob, item)) {
-                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, item) && 
+                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, item) &&
                         !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.INSPECT)) {
                         characterThatWillDoJob.jobComponent.TriggerInspect(item);
                     }
                 } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && characterThatWillDoJob.limiterComponent.canDoFullnessRecovery && !characterThatWillDoJob.traitContainer.HasTrait("Vampire") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
                     characterThatWillDoJob.jobComponent.CreateEatJob(item);
-                } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))) {
-                    if (!characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
-                        //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
-                        if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
-                            && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
-                            int chance = 100;
-                            if (characterThatWillDoJob.HasItem(item.name) || characterThatWillDoJob.HasOwnedItemInHomeStructure(item.name)) {
-                                chance = 10;
-                                int itemCount = characterThatWillDoJob.GetItemCount(item.name) + characterThatWillDoJob.GetNumOfOwnedItemsInHomeStructure(item.name);
-                                if (itemCount >= 2) {
-                                    chance = 0;
-                                }
-                            }
-                            if (UnityEngine.Random.Range(0, 100) < chance) {
-                                characterThatWillDoJob.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, item);
-                                return true;
+                } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))
+                    && !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
+                    //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
+                    if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
+                        && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
+                        int chance = 100;
+                        if (characterThatWillDoJob.HasItem(item.name) || characterThatWillDoJob.HasOwnedItemInHomeStructure(item.name)) {
+                            chance = 10;
+                            int itemCount = characterThatWillDoJob.GetItemCount(item.name) + characterThatWillDoJob.GetNumOfOwnedItemsInHomeStructure(item.name);
+                            if (itemCount >= 2) {
+                                chance = 0;
                             }
                         }
+                        if (UnityEngine.Random.Range(0, 100) < chance) {
+                            if (item.characterOwner != null &&  !item.IsOwnedBy(characterThatWillDoJob)) {
+                                characterThatWillDoJob.jobComponent.CreateStealItemJob(JOB_TYPE.TAKE_ITEM, item);
+                            } else {
+                                characterThatWillDoJob.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, item);    
+                            }
+                            return true;
+                        }
+                        if (item.tileObjectType == TILE_OBJECT_TYPE.HERB_PLANT) {
+                            HerbPlantProcessing(characterThatWillDoJob, item);
+                        }
                     }
+                } else if (item.tileObjectType == TILE_OBJECT_TYPE.HERB_PLANT) {
+                    HerbPlantProcessing(characterThatWillDoJob, item);
                 } else if (characterThatWillDoJob.partyComponent.hasParty) {
-                    if(characterThatWillDoJob.partyComponent.currentParty.isActive && characterThatWillDoJob.partyComponent.currentParty.currentQuest is HeirloomHuntPartyQuest quest) {
-                        if(quest.targetHeirloom == item) {
+                    if (characterThatWillDoJob.partyComponent.currentParty.isActive && characterThatWillDoJob.partyComponent.currentParty.currentQuest is HeirloomHuntPartyQuest quest) {
+                        if (quest.targetHeirloom == item) {
                             quest.SetFoundHeirloom(true);
                             characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM_PARTY, quest.targetHeirloom, quest.targetHeirloom.structureSpot, true);
                         }
@@ -321,6 +335,19 @@ namespace Traits {
             }
             return false;
         }
+        private void HerbPlantProcessing(Character actor, TileObject herbPlant) {
+            NPCSettlement homeSettlement = actor.homeSettlement;
+            if(homeSettlement != null) {
+                LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                if(cityCenter != null && herbPlant.gridTileLocation != null && herbPlant.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
+                    int numOfHerbPlantsInCityCenter = cityCenter.GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE.HERB_PLANT, null);
+                    int numberOfHaulJobs = homeSettlement.GetNumberOfJobsThatMeetCriteria(j => j.poiTarget != null && j.poiTarget is HerbPlant);
+                    if((numOfHerbPlantsInCityCenter + numberOfHaulJobs) < 4) {
+                        homeSettlement.settlementJobTriggerComponent.TryCreateHaulJobForItems(herbPlant, cityCenter);
+                    }
+                }
+            }
+        }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             //if(node.action.goapType == INTERACTION_TYPE.INVITE) {
             //    bool triggered = node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Invite_To_Make_Love, node.poiTarget);
@@ -378,6 +405,18 @@ namespace Traits {
             }
         }
         #endregion
+
+        #region Food Piles
+        public void AddFoodPileAsReactedTo(FoodPile p_foodPile) {
+            alreadyReactedToFoodPiles.Add(p_foodPile);
+        }
+        public void RemoveFoodPileAsReactedTo(FoodPile p_foodPile) {
+            alreadyReactedToFoodPiles.Remove(p_foodPile);
+        }
+        public bool HasAlreadyReactedToFoodPile(FoodPile p_foodPile) {
+            return alreadyReactedToFoodPiles.Contains(p_foodPile);
+        }
+        #endregion
     }
 }
 
@@ -387,6 +426,7 @@ public class SaveDataCharacterTrait : SaveDataTrait {
     public List<string> alreadyInspectedTileObjects;
     public List<string> charactersAlreadySawForHope;
     public List<string> charactersThatHaveReactedToThis;
+    public List<string> alreadyReactedFoodPiles;
     public bool hasBeenAbductedByPlayerMonster;
     public bool hasBeenAbductedByWildMonster;
     public Dictionary<string, List<string>> traitsFromOtherCharacterThatThisIsAwareOf;
@@ -398,6 +438,7 @@ public class SaveDataCharacterTrait : SaveDataTrait {
         alreadyInspectedTileObjects = SaveUtilities.ConvertSavableListToIDs(characterTrait.alreadyInspectedTileObjects);
         charactersAlreadySawForHope = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersAlreadySawForHope);
         charactersThatHaveReactedToThis = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersThatHaveReactedToThis.ToList());
+        alreadyReactedFoodPiles = SaveUtilities.ConvertSavableListToIDs(characterTrait.alreadyReactedToFoodPiles);
         hasBeenAbductedByPlayerMonster = characterTrait.hasBeenAbductedByPlayerMonster;
         hasBeenAbductedByWildMonster = characterTrait.hasBeenAbductedByWildMonster;
         traitsFromOtherCharacterThatThisIsAwareOf = new Dictionary<string, List<string>>();

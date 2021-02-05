@@ -1,11 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Inner_Maps;
+﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
-using UnityEngine;  
 using Traits;
-using UtilityScripts;
 
 public class Cook : GoapAction {
 
@@ -15,13 +10,13 @@ public class Cook : GoapAction {
         //actionLocationType = ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsCarried);
+        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsCarried);
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -37,6 +32,9 @@ public class Cook : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter, addToLocation: false);
+        if (targetCharacter != null && targetCharacter.hasMarker) {
+            targetCharacter.marker.SetActiveState(true);    
+        }
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -44,6 +42,10 @@ public class Cook : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter, addToLocation: false);
+        if (targetCharacter != null && targetCharacter.hasMarker) {
+            targetCharacter.marker.SetActiveState(true);    
+        }
+        
     }
     public override void OnInvalidAction(ActualGoapNode node) {
         base.OnInvalidAction(node);
@@ -75,10 +77,11 @@ public class Cook : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             if (poiTarget is Character targetCharacter) {
-                if (!targetCharacter.isDead) {
-                    goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.reason = "target_dead";
-                } else if (!node.actor.carryComponent.IsPOICarried(targetCharacter)) {
+                //if (!targetCharacter.isDead) {
+                //    goapActionInvalidity.isInvalid = true;
+                //    goapActionInvalidity.reason = "target_dead";
+                //} else 
+                if (!node.actor.carryComponent.IsPOICarried(targetCharacter)) {
                     goapActionInvalidity.isInvalid = true;
                     goapActionInvalidity.reason = "target_unavailable";
                 }
@@ -89,19 +92,65 @@ public class Cook : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string reaction = base.ReactionToActor(actor, target, witness, node, status);
+        if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null && target is Character targetCharacter) {
+            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
+                string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
+                if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                    witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
+                }    
+            }
+        }
+        return reaction;
+    }
+    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+        if (target is Character targetCharacter) {
+            if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    reactions.Add(EMOTION.Despair);
+                    reactions.Add(EMOTION.Sadness);    
+                }
+            } else if (witness.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(targetCharacter)) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    reactions.Add(EMOTION.Despair);
+                    reactions.Add(EMOTION.Sadness);    
+                }
+            }
+        }
+    }
     #endregion
 
     #region State Effects
     public void PreCookSuccess(ActualGoapNode goapNode) {
         if(goapNode.poiTarget is Character targetCharacter) {
             goapNode.actor.UncarryPOI(addToLocation: false);
-            if (targetCharacter.currentRegion != null) {
-                targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
-            }
-            targetCharacter.DestroyMarker();
+            // if (targetCharacter.currentRegion != null) {
+            //     targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
+            // }
+            targetCharacter.marker.SetActiveState(false);
         }
     }
     public void AfterCookSuccess(ActualGoapNode goapNode) {
+        if(goapNode.poiTarget is Character targetCharacter) {
+            goapNode.actor.UncarryPOI(addToLocation: false);
+            if (targetCharacter.isDead) {
+                if (targetCharacter.currentRegion != null) {
+                    targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
+                }
+                if (targetCharacter.hasMarker) {
+                    targetCharacter.DestroyMarker();
+                }
+            } else {
+                targetCharacter.SetDestroyMarkerOnDeath(true);
+                targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor, _deathLog: goapNode.descriptionLog);    
+            }
+        }
         CharacterManager.Instance.CreateFoodPileForPOI(goapNode.poiTarget, goapNode.actor.gridTileLocation);
     }
     #endregion
@@ -119,10 +168,6 @@ public class Cook : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             Character targetCharacter = poiTarget as Character;
-            //target character must be dead
-            if (!targetCharacter.isDead) {
-                return false;
-            }
             //if (targetCharacter.marker == null) {
             //    return false;
             //}

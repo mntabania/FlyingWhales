@@ -107,11 +107,28 @@ public class ConsoleBase : InfoUIBase {
         tglAlwaysSuccessScheme.onValueChanged.AddListener(OnToggleAlwaysSuccessScheme);
     }
     private void Update() {
+        if (!isShowing) {
+            return;
+        }
         fullDebugLbl.text = string.Empty;
         fullDebug2Lbl.text = string.Empty;
-        if (GameManager.Instance.showFullDebug) {
-            FullDebugInfo();
+        string worldSettingsText = $"World Settings:";
+        worldSettingsText = $"{worldSettingsText}\nMigration: {WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCooldown: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.cooldownSpeed.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCosts: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCharges: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.threatAmount.ToString()}";
+        
+        worldSettingsText = $"{worldSettingsText}\nPathfinding:";
+        if (AstarPath.active.graphs.Length > 0) {
+            worldSettingsText = $"{worldSettingsText}\nTotal Nodes: {AstarPath.active.graphs[0].CountNodes().ToString()}";    
         }
+        
+        
+        // if (GameManager.Instance.showFullDebug) {
+        //     FullDebugInfo();
+        // }
+        fullDebugLbl.text = worldSettingsText;
         fullDebugGO.SetActive(!string.IsNullOrEmpty(fullDebugLbl.text) || !string.IsNullOrEmpty(fullDebug2Lbl.text));
 
         if (isShowing && consoleInputField.text != "" && Input.GetKeyDown(KeyCode.Return)) {
@@ -186,18 +203,6 @@ public class ConsoleBase : InfoUIBase {
         //} else {
         //    text += "\nNone";
         //}
-
-        text += "\n<b>Action History:</b> ";
-        List<string> reverseHistory = new List<string>(character.actionHistory);
-        reverseHistory.Reverse();
-        if (reverseHistory.Count > 0) {
-            for (int i = 0; i < reverseHistory.Count; i++) {
-                text += $"\n\n{reverseHistory[i]}";
-            }
-        } else {
-            text += "\nNone";
-        }
-
         return text;
     }
     private string GetSecondaryCharacterInfo() {
@@ -210,9 +215,6 @@ public class ConsoleBase : InfoUIBase {
         //}
 
         string text = $"\n{character.name}'s Location History:";
-        for (int i = 0; i < character.locationHistory.Count; i++) {
-            text += $"\n\t{character.locationHistory[i]}";
-        }
         return text;
     }
     #endregion

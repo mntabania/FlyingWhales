@@ -15,22 +15,21 @@ public class SpiderEgg : MonsterEgg {
     protected override void Hatch() {
         int numOfSpiders = UnityEngine.Random.Range(2, 4);
         for (int i = 0; i < numOfSpiders; i++) {
-            Summon monster = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Small_Spider, characterThatLay.faction, homeRegion: gridTileLocation.parentMap.region, bypassIdeologyChecking: true);
+            Summon monster = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Small_Spider, faction: characterThatLay.faction, homeLocation: characterThatLay.homeSettlement, homeRegion: characterThatLay.homeRegion, homeStructure: characterThatLay.homeStructure, bypassIdeologyChecking: true);
             if (monster.faction.isPlayerFaction) {
                 monster.traitContainer.RemoveTrait(monster, monster.bredBehaviour);
                 monster.traitContainer.AddTrait(monster, "Baby Infestor");
             }
-            monster.CreateMarker();
-            monster.InitialCharacterPlacement(gridTileLocation);
-            monster.OnPlaceSummon(gridTileLocation);
+            CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
 
-            BaseSettlement settlement;
-            if (gridTileLocation.structure.structureType.IsSpecialStructure()) {
-                monster.ClearTerritoryAndMigrateHomeStructureTo(gridTileLocation.structure);
-            } else if (gridTileLocation.IsPartOfSettlement(out settlement)) {
-                monster.ClearTerritory();
-                monster.MigrateHomeTo(settlement);
-            } else if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            //BaseSettlement settlement;
+            //if (gridTileLocation.structure.structureType.IsSpecialStructure()) {
+            //    monster.ClearTerritoryAndMigrateHomeStructureTo(gridTileLocation.structure);
+            //} else if (gridTileLocation.IsPartOfSettlement(out settlement)) {
+            //    monster.ClearTerritory();
+            //    monster.MigrateHomeTo(settlement);
+            //} else 
+            if (!monster.HasHome() && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 monster.ClearTerritory();
                 monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
             }

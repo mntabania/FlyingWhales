@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Traits;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class MoodComponent : CharacterComponent {
@@ -231,16 +232,17 @@ public class MoodComponent : CharacterComponent {
 		}
 	}
 	private void CheckForMajorMentalBreak() {
+		Profiler.BeginSample($"{owner.name} Check For Major Mental Break");
 		IncreaseMajorMentalBreakChance();
 		if (owner.limiterComponent.canPerform && isInMinorMentalBreak == false && isInMajorMentalBreak == false) {
 			float roll = Random.Range(0f, 100f);
-			Debug.Log(
-				$"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MAJOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
+			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MAJOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
 			if (roll <= currentCriticalMoodEffectChance) {
 				//Trigger Major Mental Break.
 				TriggerMajorMentalBreak();
 			}	
 		}
+		Profiler.EndSample();
 	}
 	private void AdjustMajorMentalBreakChance(float amount) {
 		currentCriticalMoodEffectChance = currentCriticalMoodEffectChance + amount;
@@ -297,11 +299,13 @@ public class MoodComponent : CharacterComponent {
 				//catatonic
 				summary += "Chosen break is <b>catatonic</b>";
 				TriggerCatatonic();
+				mentalBreakName = "Catatonia";
 				owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
 			} else if (roll == 1) {
 				//suicidal
 				summary += "Chosen break is <b>suicidal</b>";
 				TriggerSuicidal();
+				mentalBreakName = "Suicidal";
 				owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
 			}
 		} else if (owner.characterClass.className.Equals("Druid") || owner.characterClass.className.Equals("Shaman") 
@@ -312,6 +316,7 @@ public class MoodComponent : CharacterComponent {
 		} else {
 			summary += "Chosen break is <b>Berserked</b>";
 			TriggerBerserk();
+			mentalBreakName = "Berserked";
 			owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
 		}
 		
@@ -320,7 +325,6 @@ public class MoodComponent : CharacterComponent {
 	}
 	private void TriggerBerserk() {
 		if (owner.traitContainer.AddTrait(owner, "Berserked")) {
-			mentalBreakName = "Berserked";
 			Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);	
 		} else {
 			Debug.LogWarning($"{owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
@@ -336,7 +340,6 @@ public class MoodComponent : CharacterComponent {
 	}
 	private void TriggerCatatonic() {
 		if (owner.traitContainer.AddTrait(owner, "Catatonic")) {
-			mentalBreakName = "Catatonia";
 			Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);
 		} else {
 			Debug.LogWarning($"{owner.name} triggered catatonic mental break but could not add catatonic trait to its traits!");
@@ -352,7 +355,6 @@ public class MoodComponent : CharacterComponent {
 	}
 	private void TriggerSuicidal() {
 		if (owner.traitContainer.AddTrait(owner, "Suicidal")) {
-			mentalBreakName = "Suicidal";
 			Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
 		} else {
 			Debug.LogWarning($"{owner.name} triggered suicidal mental break but could not add suicidal trait to its traits!");

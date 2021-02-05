@@ -28,7 +28,7 @@ public class Dragon : Summon {
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
         charactersThatAreWary = new List<Character>();
-        movementComponent.SetTagAsTraversable(InnerMapManager.Obstacle_Tag); //dragons can traverse the obstacles tag
+        //movementComponent.SetTagAsTraversable(InnerMapManager.Obstacle_Tag); //dragons can traverse the obstacles tag
         //set all penalties to 0, so that dragon can freely move around
         for (int i = InnerMapManager.Starting_Tag_Index; i < 32; i++) {
             movementComponent.SetPenaltyForTag(i, 0);
@@ -57,15 +57,21 @@ public class Dragon : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        movementComponent.SetEnableDigging(true);
+        movementComponent.SetIsFlying(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Dragon_Behaviour);
     }
     public override void SubscribeToSignals() {
+        if (hasSubscribedToSignals) {
+            return;
+        }
         base.SubscribeToSignals();
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener(Signals.TICK_STARTED, TryLeaveWorld);
     }
     public override void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
         base.UnsubscribeSignals();
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.RemoveListener(Signals.TICK_STARTED, TryLeaveWorld);

@@ -36,7 +36,7 @@ namespace Inner_Maps.Location_Structures {
                 Summon newSummon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementLocation, region, this);
                 List<LocationGridTile> tileChoices = structureRoom.tilesInRoom.Where(x => x.IsPassable()).ToList();
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
-                CharacterManager.Instance.PlaceSummon(newSummon, targetTile);
+                CharacterManager.Instance.PlaceSummonInitially(newSummon, targetTile);
                 newSummon.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                 newSummon.movementComponent.SetEnableDigging(false);
             }
@@ -68,11 +68,23 @@ namespace Inner_Maps.Location_Structures {
         //         
         //     }
         // }
+        protected override void DestroyStructure() {
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                if (character is Summon summon && summon.homeStructure == this) {
+                    RevertCombatModeAndDiggingToDefault(summon);
+                }
+            }
+            base.DestroyStructure();
+        }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
             if (structure == this && character is Summon summon) {
-                summon.combatComponent.SetCombatMode(summon.defaultCombatMode);
-                summon.movementComponent.SetEnableDigging(summon.defaultDigMode);
+                RevertCombatModeAndDiggingToDefault(summon);
             }
+        }
+        private void RevertCombatModeAndDiggingToDefault(Summon summon) {
+            summon.combatComponent.SetCombatMode(summon.defaultCombatMode);
+            summon.movementComponent.SetEnableDigging(summon.defaultDigMode);
         }
     }
 }

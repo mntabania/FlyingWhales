@@ -65,7 +65,7 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
             log += $"\n-Will return to territory if he has one";
             if (character.homeStructure != null || character.HasTerritory()) {
                 log += $"\n-Return to territory";
-                character.jobComponent.TriggerReturnTerritory(out producedJob);
+                character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                 return true;
             }
         }

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Heal
   m_EditorClassIdentifier: 
   skill: 92
-  manaCost: -1
+  manaCost: 10
   charges: 3
-  cooldown: 48
+  cooldown: 144
   threat: 0
   threatPerHour: 0
   expCost: 300

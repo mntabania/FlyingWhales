@@ -8,14 +8,14 @@ public class CreateAntidote : GoapAction {
     public CreateAntidote() : base(INTERACTION_TYPE.CREATE_ANTIDOTE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
         logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Poison Flask", false, GOAP_EFFECT_TARGET.ACTOR), HasPoisonFlask);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Poison Flask", false, GOAP_EFFECT_TARGET.ACTOR), HasPoisonFlask);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Antidote", false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {

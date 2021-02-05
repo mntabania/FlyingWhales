@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
@@ -6,7 +7,6 @@ public class GoapThread : Multithread {
     public Character actor { get; private set; }
     public GoapPlan createdPlan { get; private set; }
     public GoapEffect goalEffect { get; private set; }
-    public GoapAction goalAction { get; private set; }
     public INTERACTION_TYPE goalType { get; private set; }
     public IPointOfInterest target { get; private set; }
     public bool isPersonalPlan { get; private set; }
@@ -24,17 +24,6 @@ public class GoapThread : Multithread {
         this.actor = actor;
         this.target = target;
         this.goalEffect = goalEffect;
-        this.isPersonalPlan = isPersonalPlan;
-        this.job = job;
-        owner = actor;
-    }
-    public void Initialize(Character actor, IPointOfInterest target, GoapAction goalAction
-        , bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
-        this.createdPlan = null;
-        this.recalculationPlan = null;
-        this.actor = actor;
-        this.target = target;
-        this.goalAction = goalAction;
         this.isPersonalPlan = isPersonalPlan;
         this.job = job;
         owner = actor;
@@ -84,7 +73,8 @@ public class GoapThread : Multithread {
         } else {
             CreateNewPlan();
         }
-        GridMap.Instance.UpdateAwarenessInAllRegions();
+        //UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
+        //removed by aaron for awareness update GridMap.Instance.UpdateAwarenessInAllRegions();
     }
     private void CreateNewPlan() {
         log = $"-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF {actor.name} WITH TARGET {target?.name}" ??
@@ -94,24 +84,29 @@ public class GoapThread : Multithread {
         } else {
             log += $"\nGOAL: {goalEffect}";
         }
+        if(job.priorityLocations != null) {
+            log += $"\nPRIORITY LOCATIONS:";
+            foreach (KeyValuePair<INTERACTION_TYPE, List<ILocation>> kvp in job.priorityLocations) {
+                log += $"\n{kvp.Key}: ";
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    if (i > 0) {
+                        log += ", ";
+                    }
+                    log += kvp.Value[i].locationName;
+                }
+            }
+        }
 
         string planLog = string.Empty;
         GoapPlan plan = null;
         if (goalType != INTERACTION_TYPE.NONE) {
             //provided goal type
             GoapAction action = InteractionManager.Instance.goapActionData[goalType];
-            int cost = 0;
-            if (target.CanAdvertiseActionToActor(actor, action, job, job.otherData, ref cost)) {
+            if (target.CanAdvertiseActionToActor(actor, action, job)) {
                 log += $"\n{target.name} Can advertise actions to {actor.name}";
                 plan = actor.planner.PlanActions(target, action, isPersonalPlan, ref planLog, job);
             } else {
                 log += $"\n{target.name} Cannot advertise actions to {actor.name}";
-            }
-        } else if (goalAction != null) {
-            //provided goal action
-            int cost = 0;
-            if (target.CanAdvertiseActionToActor(actor, goalAction, job, job.otherData, ref cost)) {
-                plan = actor.planner.PlanActions(target, goalAction, isPersonalPlan, ref planLog, job);
             }
         } else {
             //default
@@ -156,7 +151,6 @@ public class GoapThread : Multithread {
         actor = null;
         createdPlan = null;
         goalEffect = default;
-        goalAction = null;
         goalType = INTERACTION_TYPE.NONE;
         target = null;
         isPersonalPlan = false;

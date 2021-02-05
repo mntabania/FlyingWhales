@@ -98,7 +98,7 @@ public class MinionListUI : PopupMenuBase {
     private void OnLostMinion(Minion minion) {
         DeleteMinionItem(minion);
     }
-    private void OnHoverEnterReserveMinion(SpellData spellData) {
+    private void OnHoverEnterReserveMinion(SkillData spellData) {
         if (spellData is MinionPlayerSkill minionPlayerSkill) {
             CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(minionPlayerSkill.className);
             if (TraitManager.Instance.allTraits.ContainsKey(characterClass.traitNameOnTamedByPlayer)) {
@@ -108,7 +108,7 @@ public class MinionListUI : PopupMenuBase {
         }
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData, PlayerUI.Instance.minionListHoverPosition);
     }
-    private void OnHoverExitReserveMinion(SpellData spellData) {
+    private void OnHoverExitReserveMinion(SkillData spellData) {
         UIManager.Instance.HideSmallInfo();
         PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }

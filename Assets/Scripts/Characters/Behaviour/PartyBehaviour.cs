@@ -86,7 +86,9 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                 log += $"\n-Party is resting";
                                 if (party.targetRestingTavern != null && !party.targetRestingTavern.hasBeenDestroyed && party.targetRestingTavern.passableTiles.Count > 0) {
                                     if (character.currentStructure == party.targetRestingTavern) {
-                                        character.trapStructure.SetForcedStructure(party.targetRestingTavern);
+                                        //Removed this because this is the reason why the characters in party are not eating on adjacent hex tiles
+                                        //because they are forced to do actions inside the forced structure only
+                                        //character.trapStructure.SetForcedStructure(party.targetRestingTavern);
                                         character.needsComponent.CheckExtremeNeedsWhileInActiveParty();
 
                                         hasJob = TavernBehaviour(character, party, out producedJob);
@@ -99,7 +101,9 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                 } else if (party.targetCamp != null) {
                                     if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                                         && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == party.targetCamp) {
-                                        character.trapStructure.SetForcedHex(party.targetCamp);
+                                        //Removed this because this is the reason why the characters in party are not eating on adjacent hex tiles
+                                        //because they are forced to do actions inside the forced hex only
+                                        //character.trapStructure.SetForcedHex(party.targetCamp);
                                         character.needsComponent.CheckExtremeNeedsWhileInActiveParty();
 
                                         hasJob = CampBehaviour(character, party, out producedJob);

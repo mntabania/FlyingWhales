@@ -5,7 +5,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 
-public class SummonPlayerSkill : SpellData {
+public class SummonPlayerSkill : SkillData {
     public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.SUMMON; } }
     public RACE race { get; protected set; }
     public string className { get; protected set; }
@@ -20,11 +20,11 @@ public class SummonPlayerSkill : SpellData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
         summon.OnSummonAsPlayerMonster();
-        CharacterManager.Instance.PlaceSummon(summon, targetTile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, targetTile);
 
         BaseSettlement settlement = null;
-        if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
-            summon.MigrateHomeStructureTo(targetTile.structure);	
+        if (targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN && targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
+            summon.MigrateHomeStructureTo(targetTile.structure);
         } else {
             if (targetTile.collectionOwner.isPartOfParentRegionMap) {
                 summon.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
@@ -37,7 +37,7 @@ public class SummonPlayerSkill : SpellData {
     }
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
-        CharacterManager.Instance.PlaceSummon(summon, targetTile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, targetTile);
         //summon.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
         spawnedCharacter = summon;
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);

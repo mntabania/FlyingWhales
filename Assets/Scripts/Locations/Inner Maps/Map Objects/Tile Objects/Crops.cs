@@ -1,6 +1,7 @@
 ﻿using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Debug = System.Diagnostics.Debug;
 
 public abstract class Crops : TileObject {
@@ -15,6 +16,7 @@ public abstract class Crops : TileObject {
     public int remainingRipeningTicks => _remainingRipeningTicks;
     public override System.Type serializedData => typeof(SaveDataCrops);
     public int growthRate => _growthRate;
+    public virtual bool doesNotGrowPerTick => false;
     #endregion
     
     protected Crops() { }
@@ -31,11 +33,11 @@ public abstract class Crops : TileObject {
     #region Loading
     public override void LoadSecondWave(SaveDataTileObject data) {
         base.LoadSecondWave(data);
-        SaveDataCrops saveDataDrCrops = data as SaveDataCrops;
-        Debug.Assert(saveDataDrCrops != null, nameof(saveDataDrCrops) + " != null");
-        currentGrowthState = saveDataDrCrops.growthState;
-        SetRemainingRipeningTicks(saveDataDrCrops.remainingRipeningTicks);
-        SetGrowthRate(saveDataDrCrops.growthRate);
+        SaveDataCrops saveDataCrops = data as SaveDataCrops;
+        Debug.Assert(saveDataCrops != null, nameof(saveDataCrops) + " != null");
+        currentGrowthState = saveDataCrops.growthState;
+        SetRemainingRipeningTicks(saveDataCrops.remainingRipeningTicks);
+        SetGrowthRate(saveDataCrops.growthRate);
     }
     public override void LoadAdditionalInfo(SaveDataTileObject data) {
         base.LoadAdditionalInfo(data);
@@ -66,11 +68,13 @@ public abstract class Crops : TileObject {
         }
     }
     private void StartPerTickGrowth() {
+        if (doesNotGrowPerTick) { return; }
         if (hasStartedGrowth) { return; }
         hasStartedGrowth = true;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
     }
     private void StopPerTickGrowth() {
+        if (doesNotGrowPerTick) { return; }
         hasStartedGrowth = false;
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }
@@ -81,19 +85,27 @@ public abstract class Crops : TileObject {
     /// <returns></returns>
     public abstract int GetRipeningTicks();
     private void PerTickGrowth() {
+        Profiler.BeginSample($"{name} - Crop Per Tick Growth");
         if (_remainingRipeningTicks == -1) {
             //if value is set to -1 then it means that this crop has just started growing, set its remaining ripening ticks here
+            Profiler.BeginSample($"{name} - Crop Per Tick Growth - Get Ripening");
             _remainingRipeningTicks = GetRipeningTicks();
+            Profiler.EndSample();
         }
         if (_remainingRipeningTicks == 0) {
+            Profiler.BeginSample($"{name} - Set Growth State");
             SetGrowthState(Growth_State.Ripe);
+            Profiler.EndSample();
         }
         _remainingRipeningTicks = _remainingRipeningTicks - growthRate;
         //Make sure to set this to be at maximum 0, so as not to trigger the above -1 if statement, since that is meant to reset the per tick growth
         _remainingRipeningTicks = Mathf.Max(0, _remainingRipeningTicks);
         if (mapVisual != null) {
+            Profiler.BeginSample($"{name} - Update Visual");
             mapVisual.UpdateTileObjectVisual(this);    
+            Profiler.EndSample();
         }
+        Profiler.EndSample();
     }
     public void SetGrowthRate(int growthRate) {
         _growthRate = growthRate;
@@ -105,15 +117,18 @@ public abstract class Crops : TileObject {
     
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
+        //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
+        StopPerTickGrowth();
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
+        StartPerTickGrowth();
+        //Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
+        StopPerTickGrowth();
+        //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }
 
     #region Testing

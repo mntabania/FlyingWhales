@@ -78,6 +78,9 @@ public struct LogFillerStruct {
     public string GetSQLText() {
         //Need to replace single quotes in log message to two single quotes to prevent SQL command errors
         //Reference: https://stackoverflow.com/questions/603572/escape-single-quote-character-for-use-in-an-sqlite-query
+        if (string.IsNullOrEmpty(value)) {
+            return string.Empty;
+        }
         if (type == null) {
             return value.Replace("'", "''");
         } else {

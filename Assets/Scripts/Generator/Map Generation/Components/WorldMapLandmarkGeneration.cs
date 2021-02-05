@@ -44,7 +44,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				List<HexTile> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					if (i == 0) {
-						choices = new List<HexTile>() { GridMap.Instance.map[11, 3] };	
+						choices = new List<HexTile>() { GridMap.Instance.map[1, 4] };	
 					} else {
 						choices = new List<HexTile>() { GridMap.Instance.map[3, 7] };
 					}
@@ -52,7 +52,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && //a random flat tile
 						            x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && //with no Features yet
-						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x) //and not adjacent to player Portal, Settlement or other non-cave landmarks
+						            !IsAdjacentToPortal(x) && !IsInRangeOfSettlement(x, 3) && !IsAdjacentToSpecialStructure(x) //and not adjacent to player Portal, Settlement or other non-cave landmarks
 						)
 						.ToList();
 				}
@@ -114,7 +114,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-					choices = new List<HexTile>() { GridMap.Instance.map[7, 1] };	
+					choices = new List<HexTile>() { GridMap.Instance.map[6, 1] };	
 				} else {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && 
@@ -241,7 +241,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				List<HexTile> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 					choices = new List<HexTile>() {
-						GridMap.Instance.map[6, 2]
+						GridMap.Instance.map[3, 0]
 					};
 				} else {
 					choices = GridMap.Instance.normalHexTiles
@@ -475,6 +475,16 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
 			HexTile neighbour = tile.AllNeighbours[i];
 			if (neighbour.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private bool IsInRangeOfSettlement(HexTile tile, int range) {
+		List<HexTile> tilesInRange = tile.GetTilesInRange(range);
+		for (int i = 0; i < tilesInRange.Count; i++) {
+			HexTile tileInRange = tilesInRange[i];
+			if (tileInRange.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
 				return true;
 			}
 		}

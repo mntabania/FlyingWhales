@@ -83,19 +83,19 @@ namespace Traits {
 
         #region Visuals
         private void UpdateVisualsOnAdd(ITraitable addedTo) {
-            if (addedTo is Character character && _statusIcon == null && character.marker != null) {
+            if (addedTo is Character character && _statusIcon == null && character.hasMarker) {
                 _statusIcon = character.marker.AddStatusIcon(this.name);
             } else if (addedTo is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {
                     tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, InnerMapManager.Instance.assetManager.shoreTile, 0.5f);
-                } else if (tileObject.tileObjectType != TILE_OBJECT_TYPE.WATER_WELL && _statusIcon == null && addedTo.mapObjectVisual != null){
+                } else if (tileObject.tileObjectType != TILE_OBJECT_TYPE.WATER_WELL && tileObject.tileObjectType != TILE_OBJECT_TYPE.FISHING_SPOT && _statusIcon == null && addedTo.mapObjectVisual != null){
                     //add water icon above object
                     _statusIcon = addedTo.mapObjectVisual.AddStatusIcon(this.name);
                 }
             }
         }
         private void UpdateVisualsOnRemove(ITraitable removedFrom) {
-            if (removedFrom is Character character && character.marker != null) {
+            if (removedFrom is Character character && character.hasMarker) {
                 ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);
             } else if (removedFrom is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {

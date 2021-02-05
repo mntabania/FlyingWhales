@@ -108,7 +108,7 @@ public class MonsterInfoUI : InfoUIBase {
         Character previousMonster = _activeMonster;
         _activeMonster = _data as Character;
         base.OpenMenu();
-        if (previousMonster != null && previousMonster.marker != null) {
+        if (previousMonster != null && previousMonster.hasMarker) {
             previousMonster.marker.UpdateNameplateElementsState();
         }
         if (UIManager.Instance.IsConversationMenuOpen()) {
@@ -118,7 +118,13 @@ public class MonsterInfoUI : InfoUIBase {
             UIManager.Instance.HideObjectPicker();
         }
         if (_activeMonster.marker && _activeMonster.marker.transform != null) {
-            Selector.Instance.Select(_activeMonster, _activeMonster.marker.transform);
+            if (_activeMonster.tileObjectComponent.isUsingBed) {
+                if (_activeMonster.tileObjectComponent.bedBeingUsed.mapObjectVisual) {
+                    Selector.Instance.Select(_activeMonster.tileObjectComponent.bedBeingUsed, _activeMonster.tileObjectComponent.bedBeingUsed.mapObjectVisual.transform);
+                }
+            } else {
+                Selector.Instance.Select(_activeMonster, _activeMonster.marker.transform);
+            }
             _activeMonster.marker.UpdateNameplateElementsState();
         }
         UpdateMonsterInfo();

@@ -12,7 +12,7 @@ public class Spit : GoapAction {
 
     public Spit() : base(INTERACTION_TYPE.SPIT) {
         actionIconString = GoapActionStateDB.Anger_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
         logTags = new[] {LOG_TAG.Social};
@@ -29,10 +29,10 @@ public class Spit : GoapAction {
         base.Perform(goapNode);
         SetState("Spit Success", goapNode);
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        node.actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         if (actor.traitContainer.HasTrait("Enslaved")) {
@@ -122,6 +122,9 @@ public class Spit : GoapAction {
             log.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
     }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region Requirement
@@ -151,14 +154,14 @@ public class Spit : GoapAction {
     #region Effects
     public void PreSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
     }
     public void PerTickSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(18f);
     }
-    public void AfterSpitSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public void AfterSpitSuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     #endregion
 
     //#region Intel Reactions

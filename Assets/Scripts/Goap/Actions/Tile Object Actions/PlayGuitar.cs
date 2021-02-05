@@ -12,7 +12,7 @@ public class PlayGuitar : GoapAction {
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         // showNotification = false;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -92,7 +92,7 @@ public class PlayGuitar : GoapAction {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
+        //actor.needsComponent.AdjustDoNotGetBored(-1);
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -141,11 +141,14 @@ public class PlayGuitar : GoapAction {
         }
         return REACTABLE_EFFECT.Neutral;
     }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region State Effects
     public void PrePlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
     }
@@ -153,7 +156,7 @@ public class PlayGuitar : GoapAction {
         goapNode.actor.needsComponent.AdjustHappiness(3.34f);
     }
     public void AfterPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     //public void PreTargetMissing() {

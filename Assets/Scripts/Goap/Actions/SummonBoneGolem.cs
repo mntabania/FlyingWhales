@@ -9,7 +9,7 @@ public class SummonBoneGolem : GoapAction {
 
     public SummonBoneGolem() : base(INTERACTION_TYPE.SUMMON_BONE_GOLEM) {
         actionIconString = GoapActionStateDB.Magic_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         logTags = new[] {LOG_TAG.Major, LOG_TAG.Work};
         showNotification = true;
     }
@@ -118,9 +118,8 @@ public class SummonBoneGolem : GoapAction {
         if(gridTile == null) {
             gridTile = goapNode.actor.gridTileLocation;
         }
-        Character boneGolem = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Bone_Golem, goapNode.actor.faction, homeLocation: goapNode.actor.homeSettlement, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
-        boneGolem.CreateMarker();
-        boneGolem.InitialCharacterPlacement(gridTile);
+        Summon boneGolem = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Bone_Golem, goapNode.actor.faction, homeLocation: goapNode.actor.homeSettlement, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
+        CharacterManager.Instance.PlaceSummonInitially(boneGolem, gridTile);
     }
     #endregion
 

@@ -13,7 +13,7 @@ public class Play : GoapAction {
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Happy_Icon;
         
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, };
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -30,26 +30,26 @@ public class Play : GoapAction {
         //**Cost**: randomize between 6-15
         return UtilityScripts.Utilities.Rng.Next(6, 16);
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-        actor.needsComponent.AdjustDoNotGetTired(-1);
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     #endregion
 
     #region Effects
-    public void PrePlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
-    }
+    //public void PrePlaySuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+    //}
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(6f);
     }
-    public void AfterPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        goapNode.actor.needsComponent.AdjustDoNotGetTired(-1);
-    }
+    //public void AfterPlaySuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     #endregion
 
     #region Requirement

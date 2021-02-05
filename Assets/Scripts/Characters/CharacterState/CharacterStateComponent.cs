@@ -12,20 +12,16 @@ public class CharacterStateComponent : CharacterComponent {
     //public CharacterState previousMajorState { get; private set; }
     //This is the character's current state
     public CharacterState currentState { get; private set; }
-    
-
-    public void OnTickEnded() {
-        PerTickCurrentState();
-    }
-    public void SetCurrentState(CharacterState state) {
-        currentState = state;
-    }
+    private StrollOutsideState _strollOutsideState;
+    private CombatState _combatState;
 
     public CharacterStateComponent() {
-
+        _strollOutsideState = new StrollOutsideState(this);
+        _combatState = new CombatState(this);
     }
     public CharacterStateComponent(SaveDataCharacterStateComponent data) {
-
+        _strollOutsideState = new StrollOutsideState(this);
+        _combatState = new CombatState(this);
     }
    
     //This switches from one state to another
@@ -61,19 +57,17 @@ public class CharacterStateComponent : CharacterComponent {
         newState.EnterState();
         return newState;
     }
-    /// <summary>
-    /// Load a Character State given save data. 
-    /// NOTE: This will also make the character enter the loaded state.
-    /// </summary>
-    /// <param name="saveData">Save data to load.</param>
-    /// <returns>The state that was loaded.</returns>
-    public CharacterState LoadState(SaveDataCharacterState saveData) {
-        CharacterState loadedState = CreateNewState(saveData.characterState);
-        loadedState.Load(saveData);
-        loadedState.EnterState();
-        return loadedState;
+    public void OnTickEnded() {
+        PerTickCurrentState();
     }
-
+    public void SetCurrentState(CharacterState state) {
+        if(currentState != state) {
+            currentState = state;
+            if (owner.marker) {
+                owner.marker.UpdateActionIcon();
+            }
+        }
+    }
     /// <summary>
     /// This ends the current state.
     /// This is triggered when the timer is out, or the character simply wants to end its state and go back to normal state.
@@ -120,6 +114,7 @@ public class CharacterStateComponent : CharacterComponent {
                 }
             }
         }
+        currState.Reset();
     }
     private void PerTickCurrentState() {
         if(currentState != null && !currentState.isPaused && !currentState.isDone) {
@@ -151,13 +146,14 @@ public class CharacterStateComponent : CharacterComponent {
                 newState = new StrollState(this);
                 break;
             case CHARACTER_STATE.STROLL_OUTSIDE:
-                newState = new StrollOutsideState(this);
+                newState = _strollOutsideState; //new StrollOutsideState(this);
                 break;
             case CHARACTER_STATE.BERSERKED:
                 newState = new BerserkedState(this);
                 break;
             case CHARACTER_STATE.COMBAT:
-                newState = new CombatState(this);
+                // newState = new CombatState(this);
+                newState = _combatState;
                 break;
             case CHARACTER_STATE.DOUSE_FIRE:
                 newState = new DouseFireState(this);

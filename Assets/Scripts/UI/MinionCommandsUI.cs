@@ -88,9 +88,9 @@ public class MinionCommandsUI : MonoBehaviour {
         //else if (button.gameObject.name == "Learn Monster") {
         //    isInteractable = CanLearnMonster;
         //} 
-        else if (button.gameObject.name == "Take Artifact") {
-            isInteractable = CanTakeArtifact;
-        }
+        //else if (button.gameObject.name == "Take Artifact") {
+        //    isInteractable = CanTakeArtifact;
+        //}
         button.interactable = isInteractable == null || isInteractable();
     }
     private bool CanIssueCommand() {
@@ -167,20 +167,20 @@ public class MinionCommandsUI : MonoBehaviour {
     //}
     //#endregion
 
-    #region Artifacts
-    public void TakeArtifact() {
-        if (CanIssueCommand()) {
-            if (targetPOI is Artifact) {
-            Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-                actor.jobComponent.CreateTakeArtifactJob(targetPOI as Artifact, PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure);
-            } else {
-                Debug.LogError($"{targetPOI.name} is not an artifact!");
-            }
-        }
-        HideUI();
-    }
-    private bool CanTakeArtifact() {
-        return targetPOI.gridTileLocation != null;
-    }
-    #endregion
+    //#region Artifacts
+    //public void TakeArtifact() {
+    //    if (CanIssueCommand()) {
+    //        if (targetPOI is Artifact) {
+    //        Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
+    //            actor.jobComponent.CreateTakeArtifactJob(targetPOI as Artifact, PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure);
+    //        } else {
+    //            Debug.LogError($"{targetPOI.name} is not an artifact!");
+    //        }
+    //    }
+    //    HideUI();
+    //}
+    //private bool CanTakeArtifact() {
+    //    return targetPOI.gridTileLocation != null;
+    //}
+    //#endregion
 }

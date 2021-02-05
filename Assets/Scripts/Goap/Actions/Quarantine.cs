@@ -9,14 +9,14 @@ public class Quarantine : GoapAction {
     public Quarantine() : base(INTERACTION_TYPE.QUARANTINE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Cure_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.LESSER_DEMON };
         logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Social};
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.CARRIED_PATIENT, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsPatientCarried);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.CARRIED_PATIENT, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsPatientCarried);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

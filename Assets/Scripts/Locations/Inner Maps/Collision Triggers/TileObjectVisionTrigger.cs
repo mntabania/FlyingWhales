@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class TileObjectVisionTrigger : POIVisionTrigger {
 
@@ -10,13 +11,19 @@ public class TileObjectVisionTrigger : POIVisionTrigger {
             projectileReceiver.gameObject.SetActive(false);
         }
         TileObject tileObject = damageable as TileObject;
-        if (tileObject.tileObjectType.IsTileObjectVisibleByDefault()) {
-            VoteToMakeVisibleToCharacters();
-        } 
-        // else {
-        //     VoteToMakeInvisibleToCharacters();    
-        // }
         
+        //recompute filter votes upon initialization, this is to ensure the proper value.
+        int votes = 0;
+        if (tileObject.tileObjectType.IsTileObjectVisibleByDefault()) {
+            votes++;
+        }
+        if (tileObject.lastManipulatedBy is Player) {
+            votes++;
+        }
+        votes += tileObject.allJobsTargetingThis.Count;
+        votes += tileObject.traitContainer.statuses.Count(s => s.isTangible);
+        SetFilterVotes(votes);
+
     }
     public override bool IgnoresStructureDifference() {
         if (poi is MovingTileObject) {
@@ -24,5 +31,4 @@ public class TileObjectVisionTrigger : POIVisionTrigger {
         }
         return false;
     }
-    
 }

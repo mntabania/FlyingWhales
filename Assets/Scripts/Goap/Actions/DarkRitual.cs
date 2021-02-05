@@ -5,7 +5,7 @@ public class DarkRitual : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public DarkRitual() : base(INTERACTION_TYPE.DARK_RITUAL) {
         actionIconString = GoapActionStateDB.Cult_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Crimes};
     }
@@ -15,7 +15,7 @@ public class DarkRitual : GoapAction {
         return true;
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

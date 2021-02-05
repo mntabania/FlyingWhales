@@ -11,7 +11,7 @@ public class WarmUp : GoapAction {
 
     public WarmUp() : base(INTERACTION_TYPE.WARM_UP) {
         actionIconString = GoapActionStateDB.Happy_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         logTags = new[] {LOG_TAG.Needs};
     }
 

@@ -7,6 +7,11 @@ namespace UtilityScripts {
         
         public static void ShowLocationInfo(Region region) {
             string summary = $"{region.name} Info:";
+            summary += "\nDivisions:";
+            for (int i = 0; i < region.regionDivisionComponent.divisions.Count; i++) {
+                RegionDivision division = region.regionDivisionComponent.divisions[i];
+                summary += $"\n- {division.biome.ToString()} - {division.tiles.Count.ToString()}";
+            }
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
             summary += $"\n-----------------------------";
             summary += "\nLocations Info:";
@@ -18,8 +23,13 @@ namespace UtilityScripts {
                 }
                 if (!isRatmanFaction) {
                     summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
+                    summary += $"\nPoisoned Tiles: {npcSettlement.settlementJobTriggerComponent.poisonedTiles.Count.ToString()}";
                     summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
                     summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
+                    summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
+                    summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
+                    summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.fishingSpots.Count}";
+                    summary += $"\nCharacters inside: {npcSettlement.SettlementResources.characters.Count}";
                     summary += $"\nNeeded Items: ";
                     for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
                         summary += $"|{npcSettlement.neededObjects[j].ToString()}|";
@@ -101,6 +111,7 @@ namespace UtilityScripts {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}";
         summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
+        summary = $"{summary} Home Settlement: {activeCharacter.homeSettlement?.name ?? "None"}";
         summary = $"{summary} Current structure: {activeCharacter.currentStructure}";
         summary = $"{summary} Previous Home Structure: {activeCharacter.previousCharacterDataComponent.previousHomeStructure?.name}";
         summary = $"{summary} Previous Home Settlement: {activeCharacter.previousCharacterDataComponent.previousHomeSettlement?.name}";

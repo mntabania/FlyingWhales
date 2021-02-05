@@ -9,7 +9,7 @@ public class DouseFire : GoapAction {
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Douse_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.RATMAN };
         shouldAddLogs = false;
         logTags = new[] {LOG_TAG.Work};
@@ -17,7 +17,7 @@ public class DouseFire : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Water Flask", false, GOAP_EFFECT_TARGET.ACTOR), HasItemInInventory);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Water Flask", false, GOAP_EFFECT_TARGET.ACTOR), HasItemInInventory);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burning", false, GOAP_EFFECT_TARGET.TARGET));
     }
     public override void Perform(ActualGoapNode goapNode) {

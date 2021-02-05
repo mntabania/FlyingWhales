@@ -13,7 +13,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         yield return new WaitForSeconds(1.6f);
         OnIceteroidFell();
     }
-    protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
+    protected virtual void ParticleAfterEffect(ParticleSystem particleSystem) {
         ObjectPoolManager.Instance.DestroyObject(gameObject);
     }
     public void OnIceteroidFell() {

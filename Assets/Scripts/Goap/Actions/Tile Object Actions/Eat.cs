@@ -10,12 +10,16 @@ public class Eat : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
 
+    private Precondition _foodPrecondition;
+
     public Eat() : base(INTERACTION_TYPE.EAT) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.KOBOLD, RACE.RAT, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
+
+        _foodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood);
     }
 
     #region Overrides
@@ -37,16 +41,14 @@ public class Eat : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
-        if (target is Table && !(actor is Summon)) { // || target is FoodPile
-            List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
-            List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-            p.AddRange(baseP);
-            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood));
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        if (target is Table && !(actor is Summon) && jobType != JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+            //Only let the character deposit food to table if the job type is not recovery on sight because if it is, it means that is his fullness recovery is an urgent one, so only eat on those tables that already have enough food
+            Precondition p = _foodPrecondition;
             isOverridden = true;
             return p;
         }
-        return base.GetPreconditions(actor, target, otherData, out isOverridden);
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -61,24 +63,24 @@ public class Eat : GoapAction {
                 return 2000;
             }
         }
-        if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
-            if (actor.partyComponent.isActiveMember) {
-                if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                    int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+        //if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
+        //    if (actor.partyComponent.isActiveMember) {
+        //        if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
+        //        && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+        //            LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+        //            LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+        //            float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
+        //            int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
 
-                    if (distance > distanceToCheck) {
-                        //target is at structure that character is avoiding
-                        costLog += $" +2000(Active Party, Location of target too far from actor)";
-                        actor.logComponent.AppendCostLog(costLog);
-                        return 2000;
-                    }
-                }
-            }
-        }
+        //            if (distance > distanceToCheck) {
+        //                target is at structure that character is avoiding
+        //                costLog += $" +2000(Active Party, Location of target too far from actor)";
+        //                actor.logComponent.AppendCostLog(costLog);
+        //                return 2000;
+        //            }
+        //        }
+        //    }
+        //}
         int cost = 0;
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             if (!actor.partyComponent.hasParty) {
@@ -122,7 +124,8 @@ public class Eat : GoapAction {
             if (target is Table table) {
                 bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure)
                     || (table.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrapHex(table.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner));
-                if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(out var settlement) && actor.faction != null && settlement.owner != null && settlement.owner.IsHostileWith(actor.faction)) {
+                BaseSettlement settlementLocation = null;
+                if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(out settlementLocation) && actor.faction != null && settlementLocation.owner != null && settlementLocation.owner.IsHostileWith(actor.faction)) {
                     cost += 2000;
                     costLog += $" +{cost}(Table is inside settlement owned by hostile faction)";
                 } else if (isTrapped) {
@@ -153,39 +156,37 @@ public class Eat : GoapAction {
                         cost += 2000;
                         costLog += $" +{cost}(Travelling but not starving and target is table)";
                     }
-                } else if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
-                    if (table.structureLocation == actor.homeStructure) {
-                        cost = UtilityScripts.Utilities.Rng.Next(20, 36);
-                        costLog += $" +{cost}(Table is in actor's home)";
-                    } else {
-                        if (actor.needsComponent.isStarving) {
-                            Character tableOwner = table.characterOwner;
-                            if (tableOwner != null) {
-                                if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
-                                    cost = UtilityScripts.Utilities.Rng.Next(70, 81);
-                                    costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
-                                } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
-                                    cost = 300;
-                                    costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
-                                } else {
-                                    cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                                    costLog += $" +{cost}(Table owned by someone that is not friend or enemy and actor is starving)";
-                                }
+                } else if (table.structureLocation == actor.homeStructure) {
+                    cost = UtilityScripts.Utilities.Rng.Next(20, 36);
+                    costLog += $" +{cost}(Table is in actor's home)";
+                } else if (settlementLocation == actor.homeSettlement) {
+                    if (actor.needsComponent.isStarving) {
+                        Character tableOwner = table.characterOwner;
+                        if (tableOwner != null) {
+                            if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
+                                cost = UtilityScripts.Utilities.Rng.Next(70, 81);
+                                costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
+                            } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
+                                cost = 300;
+                                costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
                             } else {
                                 cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                                costLog += $" +{cost}(Table not owned)";
+                                costLog += $" +{cost}(Table owned by someone that is not friend or enemy and actor is starving)";
                             }
                         } else {
-                            //not starving
-                            if (table.characterOwner != null && !table.IsOwnedBy(actor)
-                                && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
-                                && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
-                                cost += 2000;
-                                costLog += $" +{cost}(Table personally owned by someone else who is not the Actor's Lover, Affair or Relative)";
-                            } else {
-                                cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                                costLog += $" +{cost}(Table not owned)";
-                            }
+                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                            costLog += $" +{cost}(Table not owned)";
+                        }
+                    } else {
+                        //not starving
+                        if (table.characterOwner != null && !table.IsOwnedBy(actor)
+                            && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
+                            && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
+                            cost += 2000;
+                            costLog += $" +{cost}(Table personally owned by someone else who is not the Actor's Lover, Affair or Relative)";
+                        } else {
+                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                            costLog += $" +{cost}(Table not owned)";
                         }
                     }
                 } else {
@@ -233,11 +234,11 @@ public class Eat : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetHungry(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetHungry(-1);
+    //}
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
         IPointOfInterest poiTarget = node.poiTarget;
@@ -304,20 +305,23 @@ public class Eat : GoapAction {
             }
         }
     }
+    public override bool IsFullnessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region Effects
-    public void PreEatSuccess(ActualGoapNode goapNode) {
-        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
-        //actor.traitContainer.AddTrait(actor,"Eating");
-    }
+    //public void PreEatSuccess(ActualGoapNode goapNode) {
+    //    //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //    //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
+    //    goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
+    //    //actor.traitContainer.AddTrait(actor,"Eating");
+    //}
     //public void PerTickEatSuccess(ActualGoapNode goapNode) {
     //    //goapNode.actor.AdjustFullness(520);
     //}
     public void AfterEatSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
         if (goapNode.actor.traitContainer.HasTrait("Cannibal") == false && 
             (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat) && goapNode.actor.isNotSummonAndDemon) {
@@ -326,6 +330,9 @@ public class Eat : GoapAction {
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
             log.AddLogToDatabase();
+        }
+        if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is RatMeat) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
         }
     }
     //public void PreEatFail(ActualGoapNode goapNode) {

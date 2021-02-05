@@ -24,6 +24,17 @@ public abstract class MonsterEgg : TileObject {
     public MonsterEgg(SaveDataMonsterEgg data) : base(data) {
         //SaveDataMonsterEgg saveDataMonsterEgg  = data as SaveDataMonsterEgg;
         Assert.IsNotNull(data);
+        summonType = data.summonType;
+
+        //Only a temp fix so that the old save data of players can still be used
+        //Remove this when we do not need this anym
+        if (summonType == SUMMON_TYPE.None) {
+            if (data is SaveDataSpiderEgg) {
+                summonType = SUMMON_TYPE.Giant_Spider;
+            } else if (data is SaveDataHarpyEgg) {
+                summonType = SUMMON_TYPE.Harpy;
+            }
+        }
         hatchDate = data.hatchDate;
         hasHatched = data.hasHatched;
         isSupposedToHatch = data.isSupposedToHatch;
@@ -71,13 +82,15 @@ public abstract class MonsterEgg : TileObject {
         }
     }
     protected virtual void Hatch() {
-        Character monster = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: gridTileLocation.parentMap.region);
-        monster.CreateMarker();
-        monster.InitialCharacterPlacement(gridTileLocation);
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            monster.ClearTerritory();
-            monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+        if(characterThatLay != null) {
+            Summon monster = CharacterManager.Instance.CreateNewSummon(summonType, faction: characterThatLay.faction, homeLocation: characterThatLay.homeSettlement, homeRegion: characterThatLay.homeRegion, homeStructure: characterThatLay.homeStructure, bypassIdeologyChecking: true);
+            CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
+            if (!monster.HasHome() && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                monster.ClearTerritory();
+                monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+            }
         }
+
     }
 
     #region Overrides
@@ -88,6 +101,7 @@ public abstract class MonsterEgg : TileObject {
 }
 
 public class SaveDataMonsterEgg : SaveDataTileObject {
+    public SUMMON_TYPE summonType;
     public string characterThatLayID;
     public GameDate hatchDate;
     public bool isSupposedToHatch;
@@ -97,6 +111,7 @@ public class SaveDataMonsterEgg : SaveDataTileObject {
         base.Save(tileObject);
         MonsterEgg monsterEgg = tileObject as MonsterEgg;
         Assert.IsNotNull(monsterEgg);
+        summonType = monsterEgg.summonType;
         characterThatLayID = monsterEgg.characterThatLay.persistentID;
         hatchDate = monsterEgg.hatchDate;
         isSupposedToHatch = monsterEgg.isSupposedToHatch;

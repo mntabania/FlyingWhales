@@ -1,5 +1,6 @@
 ﻿using Inner_Maps;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 namespace Locations.Tile_Features {
     public class PoisonBloomFeature : TileFeature {
 
@@ -36,10 +37,12 @@ namespace Locations.Tile_Features {
             expirationKey = SchedulingManager.Instance.AddEntry(expiryDate, () => owner.featureComponent.RemoveFeature(this, owner), this);
         }
         private void EmitPoisonCloudsPerTick() {
+            Profiler.BeginSample($"Emit Poison Cloud Per Tick");
             if (UnityEngine.Random.Range(0, 100) < 60 && owner != null) {
                 LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(owner.locationGridTiles);
                 InnerMapManager.Instance.SpawnPoisonCloud(chosenTile, 3);
             }
+            Profiler.EndSample();
         }
         
         #region Expiry

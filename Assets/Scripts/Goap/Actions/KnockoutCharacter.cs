@@ -11,7 +11,7 @@ public class KnockoutCharacter : GoapAction {
     public KnockoutCharacter() : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Stealth_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF,
             RACE.SPIDER, RACE.DRAGON, RACE.GOLEM, RACE.DEMON, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC, RACE.ABOMINATION,
             RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL, 
@@ -174,11 +174,14 @@ public class KnockoutCharacter : GoapAction {
             if (job != null && job.jobType == JOB_TYPE.SNATCH) { //&& actor.traitContainer.HasTrait("Cultist")
                 return true; //only allow cultists to use knock out if it is for snatching 
             }
+            if (actor.race == RACE.TRITON) {
+                return true;
+            }
             if (!actor.isNormalCharacter) {
                 //Monsters, minions and ratmen cannot do knockout character
                 return false;
             }
-            return actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampire");
+            return actor.traitContainer.HasTrait("Psychopath", "Vampire");
         }
         return false;
     }

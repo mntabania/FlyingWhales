@@ -9,6 +9,7 @@ using Logs;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class GoapNode {
@@ -36,6 +37,9 @@ public class GoapNode {
 
 //actual nodes located in a finished plan that is going to be executed by a character
 public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
+
+    private static string[] vigilantCancellingTraits = new[] { "Resting", "Unconscious", "Restrained" };
+    
     public string persistentID { get; private set; }
     public Character actor { get; private set; }
     public IPointOfInterest poiTarget { get; private set; }
@@ -140,22 +144,41 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         SetJob(job);
         isStealth = IsActionStealth(job);
         avoidCombat = IsActionAvoidCombat(job);
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set Current Action Node");
         actor.SetCurrentActionNode(this, job, plan);
+        Profiler.EndSample();
         // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Doing Action Signal");
         Messenger.Broadcast(JobSignals.CHARACTER_DOING_ACTION, actor, this);
-        actor.marker.UpdateActionIcon();
+        Profiler.EndSample();
+        //actor.marker.UpdateActionIcon();
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - On Action Started");
         action.OnActionStarted(this);
+        Profiler.EndSample();
         //poiTarget.AddTargettedByAction(this);
 
         //Set Crime Type
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set Crime Type");
         SetCrimeType();
+        Profiler.EndSample();
 
         //Move To Do Action
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Reset End Reached");
         actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set target to go to");
         SetTargetToGoTo();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Create Thought Bubble Log");
         CreateThoughtBubbleLog();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Check and move to do action");
         CheckAndMoveToDoAction(job);
+        Profiler.EndSample();
     }
     private void SetTargetToGoTo() {
         if (targetStructure == null) {
@@ -320,7 +343,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     private bool MoveToDoAction(JobQueueItem job) {
         if (targetTile == null) {
             //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
-            Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
+            // Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
             job.CancelJob(false);
             return false;
         }
@@ -334,31 +357,38 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else {
             if (targetPOIToGoTo == null) {
                 if (targetTile == actor.gridTileLocation) {
+                    Profiler.BeginSample("Perform Goap Action 1");
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
+                    Profiler.EndSample();
                 } else {
-                    if ((action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetTile)) || !actor.limiterComponent.canMove) {
+                    if ((action.canBePerformedEvenIfPathImpossible == false && !actor.movementComponent.HasPathTo(targetTile)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
+                    Profiler.BeginSample("GoTo 1");
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+                    Profiler.EndSample();
                 }
             } else {
                 if(actor.gridTileLocation == targetPOIToGoTo.gridTileLocation) {
+                    Profiler.BeginSample("Perform Goap Action 2");
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
+                    Profiler.EndSample();
                 } else {
-                    if ((action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.limiterComponent.canMove) {
+                    if ((action.canBePerformedEvenIfPathImpossible == false && !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
+                    Profiler.BeginSample("Go To POI");
                     actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
+                    Profiler.EndSample();
                 }
             }
         }
         return true;
     }
     private void OnArriveAtTargetLocation() {
+        Profiler.BeginSample($"{actor.name} - {action.name} - OnArriveAtTargetLocation");
         if(action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
             if(actor.marker && actor.marker.IsPOIInVision(poiTarget)) {
                 //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
@@ -372,6 +402,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else {
             actor.PerformGoapAction();
         }
+        Profiler.EndSample();
     }
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(this);
@@ -578,7 +609,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (action.goapType == INTERACTION_TYPE.REMOVE_BUFF) {
             return true;
         }
-        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE) {
+        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE || action.goapType == INTERACTION_TYPE.PICKPOCKET) {
             return true;
         } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
             return true;
@@ -623,12 +654,12 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         GoapActionState currentState = action.states[currentStateName];
 
         IPointOfInterest target = poiTarget;
-        if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
-            TileObject item = poiTarget as TileObject;
-            if(item.isBeingCarriedBy != null) {
-                target = item.isBeingCarriedBy;
-            }
-        }
+        //if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+        //    TileObject item = poiTarget as TileObject;
+        //    if(item.isBeingCarriedBy != null) {
+        //        target = item.isBeingCarriedBy;
+        //    }
+        //}
 
         if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
             //trigger vigilant, only if character is NOT resting or unconscious
@@ -695,7 +726,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             return;
         }
         //Separate calls for end effect if target is vigilang and the action is stealth because there are things that will be called in normal effect that does not apply to vigilant
-        if(isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
+        if(isStealth && target.traitContainer.HasTrait("Vigilant") && !target.traitContainer.HasTrait(vigilantCancellingTraits) && !target.isDead) {
             EndEffectVigilant();
         } else {
             EndEffectNormal(shouldDoAfterEffect);
@@ -723,13 +754,13 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         GoapActionState currentState = action.states[currentStateName];
         ActionResult(currentState);
 
-        IPointOfInterest target = poiTarget;
-        if (poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
-            TileObject item = poiTarget as TileObject;
-            if (item.isBeingCarriedBy != null) {
-                target = item.isBeingCarriedBy;
-            }
-        }
+        //IPointOfInterest target = poiTarget;
+        //if (poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+        //    TileObject item = poiTarget as TileObject;
+        //    if (item.isBeingCarriedBy != null) {
+        //        target = item.isBeingCarriedBy;
+        //    }
+        //}
 
         //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
         if (shouldDoAfterEffect) { // && !(isStealth && target.traitContainer.HasTrait("Vigilant"))
@@ -783,16 +814,17 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
     }
     private void PerTickEffect() {
+        Profiler.BeginSample($"{actor.name} - {action.name} - Per Tick Effect");
         GoapActionState currentState = action.states[currentStateName];
         currentStateDuration++;
 
         IPointOfInterest target = poiTarget;
-        if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
-            TileObject item = poiTarget as TileObject;
-            if(item.isBeingCarriedBy != null) {
-                target = item.isBeingCarriedBy;
-            }
-        }
+        //if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+        //    TileObject item = poiTarget as TileObject;
+        //    if(item.isBeingCarriedBy != null) {
+        //        target = item.isBeingCarriedBy;
+        //    }
+        //}
 
         if (!actor.interruptComponent.hasTriggeredSimultaneousInterrupt) {
             InnerMapManager.Instance.FaceTarget(actor, target);
@@ -817,8 +849,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
         //}
         if (currentStateDuration >= currentState.duration) {
+            Profiler.BeginSample($"{actor.name} - {action.name} - End Per Tick Effect");
             EndPerTickEffect();
+            Profiler.EndSample();
         }
+        Profiler.EndSample();
     }
     private void OnPerformActualActionToTarget() {
         if (GoapActionStateDB.GetStateResult(action.goapType, currentStateName) != InteractionManager.Goap_State_Success) {
@@ -930,6 +965,12 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public override string ToString() {
         return $"Action: {action?.name ?? "Null"}. Actor: {actor.name} . Target: {poiTarget?.name ?? "Null"}";
     }
+    public bool IsReturnHome() {
+        return action.goapType == INTERACTION_TYPE.RETURN_HOME
+                || associatedJobType == JOB_TYPE.IDLE_RETURN_HOME
+                || associatedJobType == JOB_TYPE.RETURN_HOME_URGENT
+                || associatedJobType == JOB_TYPE.FLEE_TO_HOME;
+    }
     #endregion
 
     #region IRumorable
@@ -1034,11 +1075,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (poiTarget != actor && isStealth && actor.isNormalCharacter) {
             IPointOfInterest trueTarget = poiTarget;
             //If action is steal, we must check the carrier of the item (poiTarget) that is being stolen, instead of the item itself
-            if (action.goapType == INTERACTION_TYPE.STEAL) {
-                if (poiTarget.isBeingCarriedBy != null) {
-                    trueTarget = poiTarget.isBeingCarriedBy;
-                }
-            }
+            //if (action.goapType == INTERACTION_TYPE.STEAL) {
+            //    if (poiTarget.isBeingCarriedBy != null) {
+            //        trueTarget = poiTarget.isBeingCarriedBy;
+            //    }
+            //}
             if (actor.marker && actor.marker.IsPOIInVision(trueTarget) && !actor.marker.CanDoStealthCrimeToTarget(trueTarget, crimeType)) {
                 return true;
             }

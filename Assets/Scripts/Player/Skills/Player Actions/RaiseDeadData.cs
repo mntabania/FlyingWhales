@@ -44,6 +44,13 @@ public class RaiseDeadData : PlayerAction {
         }
         return reasons;
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(TileObject targetTileObject) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetTileObject);
+        if(targetTileObject is Tombstone tombstone && tombstone.character != null && tombstone.character.traitContainer.IsBlessed()) {
+            reasons += $"Cannot use Raise Dead on Blessed Villagers,";
+        }
+        return reasons;
+    }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if(tileObject is Tombstone tombstone) {
             return CanPerformAbilityTowards(tombstone.character);

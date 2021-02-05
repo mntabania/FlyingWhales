@@ -7,16 +7,16 @@ namespace Plague.Transmission {
                 case 0:
                     return 0;
                 case 1:
-                    return 35;
+                    return 30;
                 case 2:
-                    return 50;
+                    return 40;
                 case 3:
-                    return 75;
+                    return 50;
                 default:
                     return 0;
             }
         }
-        public override int GetTransmissionNextLevelCost(int p_currentLevel) {
+        protected override int GetTransmissionNextLevelCost(int p_currentLevel) {
             switch (p_currentLevel) {
                 case 0:
                     return 10;

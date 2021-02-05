@@ -30,16 +30,22 @@ public class Troll : Summon {
         movementComponent.SetAvoidSettlements(false);
     }
     public override void SubscribeToSignals() {
+        if (hasSubscribedToSignals) {
+            return;
+        }
         base.SubscribeToSignals();
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     public override void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
         base.UnsubscribeSignals();
         Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     #endregion
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        if (character != this && !structure.isInterior && currentStructure.isInterior) {
+        if (character != this && currentStructure != null && !structure.isInterior && currentStructure.isInterior) {
             TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick(null);
             if (timeInWords != TIME_IN_WORDS.EARLY_NIGHT && timeInWords != TIME_IN_WORDS.LATE_NIGHT && timeInWords != TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 combatComponent.RemoveHostileInRange(character);

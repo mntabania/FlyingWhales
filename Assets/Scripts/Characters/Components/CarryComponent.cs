@@ -144,7 +144,7 @@ public class CarryComponent : CharacterComponent {
         character.carryComponent.SetIsBeingCarriedBy(null);
         
         //TODO: Find out why characters marker can be null while it is being carried! (https://trello.com/c/ZKPLZXjx/2485-nullreference-removecharacter)
-        if (character.marker != null) {
+        if (character.hasMarker) {
             if (dropLocation == null) {
                 character.marker.PlaceMarkerAt(owner.gridTileLocation);
                 //if (owner.gridTileLocation.isOccupied) {

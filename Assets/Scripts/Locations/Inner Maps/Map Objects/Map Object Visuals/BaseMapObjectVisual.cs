@@ -22,6 +22,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public GameObject hpBarGO;
     public Image hpFill;
     public Image aspeedFill;
+    public Transform particleEffectParent;
 
     public Transform statusIconsParent;
 
@@ -71,7 +72,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         objectVisual.sprite = sprite;
         hoverObject.sprite = sprite;
     }
-    public void SetColor(Color color) {
+    private void SetColor(Color color) {
         objectVisual.color = color;
     }
     public void SetActiveState(bool state) {
@@ -82,7 +83,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         color.a = alpha;
         SetColor(color);
     }
-    public void SetHoverObjectState(bool state) {
+    protected void SetHoverObjectState(bool state) {
         if (isHoverObjectStateLocked) {
             return; //ignore change because hover state is locked
         }
@@ -94,10 +95,10 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         }
         hoverObject.gameObject.SetActive(state);
     }
-    public void LockHoverObject() {
+    protected void LockHoverObject() {
         isHoverObjectStateLocked = true;
     }
-    public void UnlockHoverObject() {
+    protected void UnlockHoverObject() {
         isHoverObjectStateLocked = false;
     }
     public StatusIcon AddStatusIcon(string statusName) {
@@ -165,6 +166,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #region Object Pool
     public override void Reset() {
         base.Reset();
+        isHoverObjectStateLocked = false;
         if (objectVisual != null ) {
             SetVisualAlpha(1f);    
         }
@@ -174,6 +176,17 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (visionTrigger) {
             visionTrigger.Reset();    
         }
+
+        if (particleEffectParent != null) {
+            //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
+            Transform[] particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParent.gameObject);
+            if(particleGOs != null) {
+                for (int i = 0; i < particleGOs.Length; i++) {
+                    ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
+                }
+            }    
+        }
+        SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
     }
     void OnEnable() {
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);

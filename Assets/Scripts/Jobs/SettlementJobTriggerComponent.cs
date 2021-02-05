@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Goap.Job_Checkers;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-using Interrupts;
 using Jobs;
 using Locations;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Locations.Settlements;
-using UtilityScripts;
+using Locations.Settlements.Components;
+using UnityEngine.Profiling;
 
-public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener {
+public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener, NPCSettlementEventDispatcher.ITileListener {
 
 	private readonly NPCSettlement _owner;
 
@@ -77,6 +76,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		Messenger.AddListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.AddListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedVillage);
+		_owner.npcSettlementEventDispatcher.SubscribeToTileRemovedEvent(this);
 	}
 	public void UnsubscribeFromVillageListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -94,6 +94,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.RemoveListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
+        _owner.npcSettlementEventDispatcher.UnsubscribeToTileRemovedEvent(this);
     }
     public void SubscribeToDungeonListeners() {
         Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
@@ -111,7 +112,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     private void OnGameLoadedVillage() {
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 		if (SaveManager.Instance.useSaveData) {
-			LoadTendFarmCheck();
+			//LoadTendFarmCheck();
 			LoadCheckResource();
 		} else {
 			KickstartJobs();
@@ -126,14 +127,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
         }
     }
     public void KickstartJobs() {
-		CheckIfFarmShouldBeTended(true);
+		//CheckIfFarmShouldBeTended(true);
 		ScheduledCheckResource();
 		TryCreateMiningJob();
 	}
 	private void HourlyJobActions() {
+		Profiler.BeginSample($"{_owner.name} settlement Hourly Job Actions");
 		CreatePatrolJobs();
 		TryCreateMiningJob();
 		HourlyCheckForNeededCharacterClasses();
+		TryCreateMissingFoodProducingStructure();
+		Profiler.EndSample();
 	}
 	private void OnResourceInPileChangedVillage(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
@@ -198,7 +202,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			//	TryCreateApprehend(target);
 			//}
 		} else if (traitable is TileObject) {
-			if (traitable is GenericTileObject) {
+			if (traitable is GenericTileObject && traitable.gridTileLocation.IsPartOfSettlement(_owner)) {
 				if (trait is Wet) {
 					AddWetTile(traitable.gridTileLocation);
 				} else if (trait is Poisoned) {
@@ -209,7 +213,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	}
 	private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character character) {
 		if (traitable is TileObject) {
-			if (traitable is GenericTileObject) {
+			if (traitable is GenericTileObject && traitable.gridTileLocation.IsPartOfSettlement(_owner)) {
 				if (trait is Wet) {
 					RemoveWetTile(traitable.gridTileLocation);
 				} else if (trait is Poisoned) {
@@ -289,24 +293,40 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			CheckIfShouldStopWaterWellCheck();
 		}
 	}
-	#endregion
-
-	#region Utilities
-	private bool HasNearbyCave() {
-		List<HexTile> nearbyTiles = new List<HexTile>();
-		for (int i = 0; i < _owner.tiles.Count; i++) {
-			HexTile tile = _owner.tiles[i];
-			nearbyTiles.AddRange(tile.GetTilesInRange(2));
-		}
-		for (int j = 0; j < nearbyTiles.Count; j++) {
-			HexTile neighbour = nearbyTiles[j];
-			if (neighbour.elevationType == ELEVATION.MOUNTAIN) {
-				return true;
+	public void OnSettlementTileRemoved(HexTile p_hexTile, NPCSettlement p_settlement) {
+		for (int i = 0; i < poisonedTiles.Count; i++) {
+			LocationGridTile tile = poisonedTiles[i];
+			if (p_hexTile.locationGridTiles.Contains(tile)) {
+				RemovePoisonedTile(tile);
+				i--;
 			}
 		}
-		return false;
+		for (int i = 0; i < wetTiles.Count; i++) {
+			LocationGridTile tile = wetTiles[i];
+			if (p_hexTile.locationGridTiles.Contains(tile)) {
+				RemoveWetTile(tile);
+				i--;
+			}
+		}
 	}
 	#endregion
+
+	//#region Utilities
+	//private bool HasNearbyCave() {
+	//	List<HexTile> nearbyTiles = new List<HexTile>();
+	//	for (int i = 0; i < _owner.tiles.Count; i++) {
+	//		HexTile tile = _owner.tiles[i];
+	//		nearbyTiles.AddRange(tile.GetTilesInRange(2));
+	//	}
+	//	for (int j = 0; j < nearbyTiles.Count; j++) {
+	//		HexTile neighbour = nearbyTiles[j];
+	//		if (neighbour.elevationType == ELEVATION.MOUNTAIN) {
+	//			return true;
+	//		}
+	//	}
+	//	return false;
+	//}
+	//#endregion
 
 	#region Resources
 	public int GetTotalResource(RESOURCE resourceType) {
@@ -440,7 +460,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		}
 	}
 	private void TriggerProduceResource<T>(RESOURCE resourceType, JOB_TYPE jobType) where T : ResourcePile {
-		if (_owner.HasJob(jobType) == false) {
+		if (_owner.HasJob(jobType) == false && _owner.HasStructureForProducingResource(resourceType)) {
 			ResourcePile targetPile = _owner.mainStorage.GetTileObjectOfType<T>();
 			if (targetPile == null) {
 				TILE_OBJECT_TYPE tileObjectType;
@@ -465,15 +485,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 				targetPile = newPile;
 			}
-			if (_owner.HasJob(jobType) == false) {
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, 
-					new GoapEffect(GetProduceResourceGoapEffect(resourceType), string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), 
-					targetPile, _owner);
-				job.SetStillApplicableChecker(JobManager.Produce_Resource_Applicability);
-				_owner.AddToAvailableJobs(job);	
-			}
-				
-		}
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType,
+                new GoapEffect(GetProduceResourceGoapEffect(resourceType), string.Empty, false, GOAP_EFFECT_TARGET.ACTOR),
+                targetPile, _owner);
+            UtilityScripts.JobUtilities.PopulatePriorityLocationsForProduceResources(_owner, job, resourceType);
+            job.SetStillApplicableChecker(JobManager.Produce_Resource_Applicability);
+            _owner.AddToAvailableJobs(job);
+        }
 	}
 	#endregion
 
@@ -483,7 +501,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
 			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Repair);
 			job.SetStillApplicableChecker(JobManager.Repair_Applicability);
-			if (target is TileObject tileObject) {
+            UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(_owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
+            if (target is TileObject tileObject) {
 				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {TileObjectDB.GetTileObjectData(tileObject.tileObjectType).repairCost});	
 			}
 			_owner.AddToAvailableJobs(job);
@@ -512,6 +531,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			_owner.AddToAvailableJobs(job);
 		}
 	}
+    public void TryCreateHaulJobForItems(TileObject target, LocationStructure dropLocation) {
+        if (_owner.HasJob(JOB_TYPE.HAUL, target) == false) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+            job.SetStillApplicableChecker(JobManager.Haul_Applicability);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Haul);
+            _owner.AddToAvailableJobs(job);
+        }
+    }
     #endregion
 
     #region Judge Prisoner
@@ -574,7 +602,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Obtain_Personal_Food);
 			job.SetStillApplicableChecker(JobManager.Obtain_Personal_Food_Applicability);
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { neededFood });
-			_owner.AddToAvailableJobs(job);
+            UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingPersonalItem(_owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
+            _owner.AddToAvailableJobs(job);
 		}
 	}
 	private bool CanTakeObtainPersonalFoodJob(Character character, JobQueueItem job) {
@@ -609,16 +638,18 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		//get all resource piles inside the main storage, then check if iny of them are not at max capacity,
 		//if not at max capacity, check if the pile can handle the resources of the new pile,
 		//if it can, then create combine job
-		List<ResourcePile> resourcePiles = _owner.mainStorage.GetTileObjectsOfType<ResourcePile>(pile.tileObjectType);
+		List<TileObject> resourcePiles = _owner.mainStorage.GetTileObjectsOfType(pile.tileObjectType);
 		ResourcePile targetPile = null;
-		for (int i = 0; i < resourcePiles.Count; i++) {
-			ResourcePile currPile = resourcePiles[i];
-			if (currPile != pile && currPile.mapObjectState == MAP_OBJECT_STATE.BUILT && currPile.IsAtMaxResource(pile.providedResource) == false
-			    && currPile.HasEnoughSpaceFor(pile.providedResource, pile.resourceInPile)) {
-				targetPile = currPile;
-				break;
-			}
-		}
+        if(resourcePiles != null) {
+            for (int i = 0; i < resourcePiles.Count; i++) {
+                ResourcePile currPile = resourcePiles[i] as ResourcePile;
+                if (currPile != pile && currPile.mapObjectState == MAP_OBJECT_STATE.BUILT && currPile.IsAtMaxResource(pile.providedResource) == false
+                    && currPile.HasEnoughSpaceFor(pile.providedResource, pile.resourceInPile)) {
+                    targetPile = currPile;
+                    break;
+                }
+            }
+        }
 		if (targetPile != null && _owner.HasJob(JOB_TYPE.COMBINE_STOCKPILE, targetPile) == false) { //only create job if chosen target pile does not already have a job to combine it with another pile
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMBINE_STOCKPILE, 
 				INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, pile, _owner);
@@ -776,18 +807,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 
 	#region Dry Tiles
 	private void AddWetTile(LocationGridTile tile) {
-		if (tile.IsPartOfSettlement(_owner)) {
-			if (wetTiles.Contains(tile) == false) {
-				wetTiles.Add(tile);
-			}	
-		}
+		if (!wetTiles.Contains(tile)) {
+			wetTiles.Add(tile);
+		}	
 	}
 	private void RemoveWetTile(LocationGridTile tile) {
-		if (tile.IsPartOfSettlement(_owner)) {
-			if (wetTiles.Remove(tile)) {
-				CheckDryTilesValidity();
-			}	
-		}
+		if (wetTiles.Remove(tile)) {
+			CheckDryTilesValidity();
+		}	
 	}
 	public void TriggerDryTiles() {
 		if (wetTiles.Count > 0) {
@@ -827,18 +854,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	
 	#region Cleanse Tiles
 	private void AddPoisonedTile(LocationGridTile tile) {
-		if (tile.IsPartOfSettlement(_owner)) {
-			if (poisonedTiles.Contains(tile) == false) {
-				poisonedTiles.Add(tile);
-			}	
-		}
+		if (!poisonedTiles.Contains(tile)) {
+			poisonedTiles.Add(tile);
+		}	
 	}
 	private void RemovePoisonedTile(LocationGridTile tile) {
-		if (tile.IsPartOfSettlement(_owner)) {
-			if (poisonedTiles.Remove(tile)) {
-				CheckCleanseTilesValidity();
-			}	
-		}
+		if (poisonedTiles.Remove(tile)) {
+			CheckCleanseTilesValidity();
+		}	
 	}
 	public void TriggerCleanseTiles() {
 		if (poisonedTiles.Count > 0) {
@@ -878,55 +901,55 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 
 	#region Tend Farm
 	private void ScheduleTendFarmCheck() {
-		GameDate checkDate = GameManager.Instance.Today();
-		checkDate.AddDays(1);
-		checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
-		SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
+		//GameDate checkDate = GameManager.Instance.Today();
+		//checkDate.AddDays(1);
+		//checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+		//SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
 	}
 	private void LoadTendFarmCheck() {
-		if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(6)) {
-			//if current tick is before check time, then schedule check for today at the specified check time.
-			GameDate checkDate = GameManager.Instance.Today();
-			checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
-			SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
-		} else {
-			ScheduleTendFarmCheck();
-		}
+		//if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(6)) {
+		//	//if current tick is before check time, then schedule check for today at the specified check time.
+		//	GameDate checkDate = GameManager.Instance.Today();
+		//	checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+		//	SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
+		//} else {
+		//	ScheduleTendFarmCheck();
+		//}
 	}
 	public void CheckIfFarmShouldBeTended(bool reschedule) {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) > 16) {
-			return; //already 4pm do not create tend job
-		}
-		if (_owner.HasJob(JOB_TYPE.TEND_FARM)) {
-			return; //already has tend job
-		}
-		List<LocationStructure> farms = _owner.GetStructuresOfType(STRUCTURE_TYPE.FARM);
-		if (farms != null) {
-			int untendedCornCrops = 0;
-			for (int i = 0; i < farms.Count; i++) {
-				LocationStructure farm = farms[i];
-				List<CornCrop> cornCrops = farm.GetTileObjectsOfType<CornCrop>(TILE_OBJECT_TYPE.CORN_CROP);
-				for (int j = 0; j < cornCrops.Count; j++) {
-					CornCrop cornCrop = cornCrops[j];
-					if (cornCrop.traitContainer.HasTrait("Tended") == false) {
-						untendedCornCrops++;
-						if (untendedCornCrops >= 3) {
-							break;
-						}
-					}
-				}
-				if (untendedCornCrops >= 3) {
-					break;
-				}
-			}
-			if (untendedCornCrops >= 3) {
-				CreateTendFarmJob();
-			}	
-		}
-		if (reschedule) {
-			//reschedule check for next day
-			ScheduleTendFarmCheck();	
-		}
+		//if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) > 16) {
+		//	return; //already 4pm do not create tend job
+		//}
+		//if (_owner.HasJob(JOB_TYPE.TEND_FARM)) {
+		//	return; //already has tend job
+		//}
+		//List<LocationStructure> farms = _owner.GetStructuresOfType(STRUCTURE_TYPE.FARM);
+		//if (farms != null) {
+		//	int untendedCornCrops = 0;
+		//	for (int i = 0; i < farms.Count; i++) {
+		//		LocationStructure farm = farms[i];
+		//		List<CornCrop> cornCrops = farm.GetTileObjectsOfType<CornCrop>(TILE_OBJECT_TYPE.CORN_CROP);
+		//		for (int j = 0; j < cornCrops.Count; j++) {
+		//			CornCrop cornCrop = cornCrops[j];
+		//			if (cornCrop.traitContainer.HasTrait("Tended") == false) {
+		//				untendedCornCrops++;
+		//				if (untendedCornCrops >= 3) {
+		//					break;
+		//				}
+		//			}
+		//		}
+		//		if (untendedCornCrops >= 3) {
+		//			break;
+		//		}
+		//	}
+		//	if (untendedCornCrops >= 3) {
+		//		CreateTendFarmJob();
+		//	}	
+		//}
+		//if (reschedule) {
+		//	//reschedule check for next day
+		//	ScheduleTendFarmCheck();	
+		//}
 	}
 	private void CreateTendFarmJob() {
 		GameDate expiry = GameManager.Instance.Today();
@@ -948,7 +971,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 
 	#region Mining
 	private void TryCreateMiningJob() {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && HasNearbyCave()) { //6
+		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && _owner.HasStructure(STRUCTURE_TYPE.MINE_SHACK)) { //6
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
 			_owner.AddToAvailableJobs(job);
 		}
@@ -981,7 +1004,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     }
     private void CheckIfShouldStopWaterWellCheck() {
 	    LocationStructure cityCenter = _owner.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-	    TileObject waterWell = cityCenter.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+	    TileObject waterWell = cityCenter.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
 	    if (waterWell != null && waterWell.mapObjectState == MAP_OBJECT_STATE.BUILT) {
 		    //already has a built water well at city center, stop hourly check
 		    StopCraftWaterWellCheck();
@@ -992,8 +1015,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     }
     
     public void CheckIfShouldCraftWaterWell() {
+	    Profiler.BeginSample($"{_owner.name} settlementt Craft Water Well Check");
 	    LocationStructure cityCenter = _owner.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-	    TileObject waterWell = cityCenter.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+	    TileObject waterWell = cityCenter.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
 	    Assert.IsNotNull(waterWell);
 	    //there is water well present, check if water well is unbuilt
 	    if (waterWell.mapObjectState == MAP_OBJECT_STATE.BUILT) {
@@ -1002,10 +1026,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	    
 	    if (!_owner.HasJob(JOB_TYPE.CRAFT_OBJECT, waterWell)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, waterWell, _owner);
-		    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.WATER_WELL).mainRecipe });
+            UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(_owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
+            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.WATER_WELL).mainRecipe });
 		    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Well);
 		    _owner.AddToAvailableJobs(job); 
 	    }
+	    Profiler.EndSample();
     }
     #endregion
 
@@ -1093,6 +1119,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
             object[] corpses = Get3CorpsesToSummonBoneGolem(cultTemple);
             if (corpses != null) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SUMMON_BONE_GOLEM, new GoapEffect(GOAP_EFFECT_CONDITION.SUMMON, "Bone Golem", false, GOAP_EFFECT_TARGET.ACTOR), null, _owner);
+                job.AddPriorityLocation(INTERACTION_TYPE.SUMMON_BONE_GOLEM, cultTemple);
                 job.AddOtherData(INTERACTION_TYPE.SUMMON_BONE_GOLEM, corpses);
                 job.SetCanTakeThisJobChecker(JobManager.Can_Summon_Bone_Golem);
                 job.SetForceCancelOnInvalid(true);
@@ -1180,6 +1207,24 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		    job.SetCanTakeThisJobChecker(JobManager.Can_Take_Change_Class);
 		    job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
 		    _owner.AddToAvailableJobs(job);    
+	    }
+    }
+    #endregion
+
+    #region Food Producing Structure
+    private void TryCreateMissingFoodProducingStructure() {
+	    if (!_owner.HasFoodProducingStructure()) {
+		    TriggerBuildFoodProducingStructure();
+	    }
+    }
+    private void TriggerBuildFoodProducingStructure() {
+	    if (_owner.owner != null && !_owner.HasJob(JOB_TYPE.PLACE_BLUEPRINT) && !_owner.HasJob(JOB_TYPE.BUILD_BLUEPRINT)) {
+		    StructureSetting foodProducingStructure = _owner.GetValidFoodProducingStructure();
+		    if (LandmarkManager.Instance.CanPlaceStructureBlueprint(_owner, foodProducingStructure, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.PLACE_BLUEPRINT, targetTile.genericTileObject, _owner);
+			    job.AddOtherData(INTERACTION_TYPE.PLACE_BLUEPRINT, new object[] { structurePrefabName, connectorTile, foodProducingStructure });
+			    _owner.AddToAvailableJobs(job);
+		    }
 	    }
     }
     #endregion

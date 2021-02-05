@@ -11,9 +11,9 @@ public class DropItem : GoapAction {
     }
 
     public DropItem() : base(INTERACTION_TYPE.DROP_ITEM) {
-        actionIconString = GoapActionStateDB.No_Icon;
+        actionIconString = GoapActionStateDB.Haul_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.TROLL, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -22,11 +22,12 @@ public class DropItem : GoapAction {
     //protected override void ConstructBasePreconditionsAndEffects() {
     //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsItemInInventory);
     //}
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
-        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
-        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-        p.AddRange(baseP);
-        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsItemInInventory));
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
+        //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        //p.AddRange(baseP);
+        Precondition p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsItemInInventory);
+        isOverridden = true;
         return p;
     }
     public override void Perform(ActualGoapNode goapNode) {

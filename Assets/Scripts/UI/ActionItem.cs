@@ -5,6 +5,7 @@ using DG.Tweening;
 using EZObjectPools;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class ActionItem : PooledObject {
@@ -30,8 +31,8 @@ public class ActionItem : PooledObject {
         actionImg.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerAction.type).playerActionIcon;
         actionLbl.text = playerAction.GetLabelName(playerActionTarget);
         gameObject.SetActive(true);
-        Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
-        Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.AddListener<SkillData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+        Messenger.AddListener<SkillData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
     public void SetInteractable(bool state) {
@@ -74,7 +75,7 @@ public class ActionItem : PooledObject {
     }
 
     #region Listeners
-    private void OnSpellCooldownStarted(SpellData spellData) {
+    private void OnSpellCooldownStarted(SkillData spellData) {
 	    if (this.playerAction == spellData) {
 		    // if (spellData.hasCharges && spellData.charges <= 0) {
 			   //  //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown
@@ -86,7 +87,7 @@ public class ActionItem : PooledObject {
 		    // }
 	    }
     }
-    private void OnSpellCooldownFinished(SpellData spellData) {
+    private void OnSpellCooldownFinished(SkillData spellData) {
 	    if (playerAction == spellData) {
 		    // SetCooldownState(playerAction.isInCooldown);
 		    StopCooldownFill();
@@ -112,8 +113,10 @@ public class ActionItem : PooledObject {
 	    Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {
+	    Profiler.BeginSample($"Action Item Per Tick Cooldown");
 	    float fillAmount = ((float)playerAction.currentCooldownTick / playerAction.cooldown);
         cooldownCoverImg.DOFillAmount(fillAmount, 0.4f);
+        Profiler.EndSample();
     }
     private void StopCooldownFill() {
         SetCooldownState(false);
@@ -138,8 +141,8 @@ public class ActionItem : PooledObject {
 		SetCooldownState(false);
 		SetInteractable(true);
 		Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
-		Messenger.RemoveListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
-		Messenger.RemoveListener<SpellData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+		Messenger.RemoveListener<SkillData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+		Messenger.RemoveListener<SkillData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.RemoveListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
 }

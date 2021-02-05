@@ -43,17 +43,17 @@ namespace Traits {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
                     }
 
-                    List<TileObject> choices = new List<TileObject>();
-                    for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
-                        Character otherCharacter = character.currentRegion.charactersAtLocation[i];
-                        for (int j = 0; j < otherCharacter.items.Count; j++) {
-                            TileObject currItem = otherCharacter.items[j];
-                            if (CanBeStolen(currItem)) {
-                                choices.Add(currItem);    
-                            }
-                        }
-                    }
-                    
+                    //List<TileObject> choices = new List<TileObject>();
+                    //for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
+                    //    Character otherCharacter = character.currentRegion.charactersAtLocation[i];
+                    //    for (int j = 0; j < otherCharacter.items.Count; j++) {
+                    //        TileObject currItem = otherCharacter.items[j];
+                    //        if (CanBeStolen(currItem)) {
+                    //            choices.Add(currItem);
+                    //        }
+                    //    }
+                    //}
+
                     //NOTE: Might be heavy on performance, optimize this!
                     //foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in character.currentRegion.structures) {
                     //    for (int i = 0; i < pair.Value.Count; i++) {
@@ -69,21 +69,30 @@ namespace Traits {
                     //        }
                     //    }
                     //}
+                    List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
+                    for (int i = 0; i < character.currentSettlement.SettlementResources.characters.Count; i++) {
+                        Character otherCharacter = character.currentSettlement.SettlementResources.characters[i];
+                        if (otherCharacter.HasItem()) {
+                            choices.Add(otherCharacter);
+                        }
+                    }
                     if (choices.Count > 0) {
                         IPointOfInterest target = CollectionUtilities.GetRandomElement(choices);
                         LocationGridTile targetTile = target.gridTileLocation;
-                        if(target.isBeingCarriedBy != null) {
-                            targetTile = target.isBeingCarriedBy.gridTileLocation;
-                        }
+                        //if(target.isBeingCarriedBy != null) {
+                        //    targetTile = target.isBeingCarriedBy.gridTileLocation;
+                        //}
                         if (!character.movementComponent.HasPathToEvenIfDiffRegion(targetTile)) {
                             return "no_path_to_target";
                         } else {
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.PICKPOCKET, target, character);
+                            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
                             character.jobQueue.AddJobInQueue(job);
                         }
                     } else {
                         return "no_target";
                     }
+                    ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
                 } else {
                     heartbroken.TriggerBrokenhearted();
                 }
@@ -91,7 +100,7 @@ namespace Traits {
             return base.TriggerFlaw(character);
         }
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
-            if (action == INTERACTION_TYPE.STEAL) {
+            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.PICKPOCKET) {
                 cost = 0;//Utilities.rng.Next(5, 10);//5,46
             } else if (action == INTERACTION_TYPE.PICK_UP) {
                 cost = 10000;//Utilities.rng.Next(5, 10);//5,46

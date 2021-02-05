@@ -9,7 +9,7 @@ public class RaiseCorpse : GoapAction {
 
     public RaiseCorpse() : base(INTERACTION_TYPE.RAISE_CORPSE) {
         actionIconString = GoapActionStateDB.Magic_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.DEMON, RACE.RATMAN };
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes};
@@ -54,9 +54,9 @@ public class RaiseCorpse : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget is Character targetCharacter) {
-                return targetCharacter.isDead && !(targetCharacter is Summon) && !targetCharacter.hasBeenRaisedFromDead && targetCharacter.marker != null;
+                return targetCharacter.isDead && !(targetCharacter is Summon) && !targetCharacter.hasBeenRaisedFromDead && targetCharacter.hasMarker;
             } else if (poiTarget is Tombstone tombstone) {
-                return tombstone.gridTileLocation != null && tombstone.mapObjectVisual && !(tombstone.character is Summon) && !tombstone.character.hasBeenRaisedFromDead && tombstone.character.marker != null;
+                return tombstone.gridTileLocation != null && tombstone.mapObjectVisual && !(tombstone.character is Summon) && !tombstone.character.hasBeenRaisedFromDead && tombstone.character.hasMarker;
             }
         }
         return false;
@@ -72,7 +72,7 @@ public class RaiseCorpse : GoapAction {
         } else if (targetPOI is Tombstone) {
             target = (targetPOI as Tombstone).character;
         }
-        if (target != null && target.marker != null) {
+        if (target != null && target.hasMarker) {
             CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, goapNode.actor.faction, target.characterClass.className);    
         } else {
             Debug.LogWarning($"Could not raise {target?.name} because it's marker is null!");

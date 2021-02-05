@@ -352,7 +352,7 @@ public class PlayerUI : BaseMonoBehaviour {
             regionNameTopMenuText.text = location.name;
             regionNameTopMenuGO.SetActive(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
+            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
             regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
 #endif
         } else {
@@ -362,10 +362,12 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region Mana
     private void OnManaAdjusted(int adjustedAmount, int mana) {
-        UpdateMana();
-        ShowManaAdjustEffect(adjustedAmount);
-        DoManaPunchEffect();
-        AudioManager.Instance.PlayParticleMagnet();
+        if (adjustedAmount != 0) {
+            UpdateMana();
+            ShowManaAdjustEffect(adjustedAmount);
+            DoManaPunchEffect();
+            AudioManager.Instance.PlayParticleMagnet();    
+        }
     }
     private void UpdateMana() {
         manaLbl.text = PlayerManager.Instance.player.mana.ToString();
@@ -533,9 +535,9 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
 
     #region End Game Mechanics
-    public void WinGameOver() {
+    public void WinGameOver(string winMessage) {
         SaveManager.Instance.currentSaveDataPlayer.OnWorldCompleted(WorldSettings.Instance.worldSettingsData.worldType);
-        UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");
+        UIManager.Instance.ShowEndDemoScreen(winMessage);
         // if (WorldConfigManager.Instance.isTutorialWorld) {
         //     UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");
         // } else {
@@ -544,8 +546,8 @@ public class PlayerUI : BaseMonoBehaviour {
         // }
         
     }
-    public void LoseGameOver() {
-        UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
+    public void LoseGameOver(string p_gameOverMessage = "The Portal is in ruins! \nYour invasion has ended prematurely.") {
+        UIManager.Instance.ShowEndDemoScreen(p_gameOverMessage);
         // if (WorldConfigManager.Instance.isTutorialWorld) {
         //     UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
         // } else {
@@ -839,7 +841,7 @@ public class PlayerUI : BaseMonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
         SpellItem item = go.GetComponent<SpellItem>();
         go.SetActive(false);
-        SpellData spellData = PlayerSkillManager.Instance.GetSpellData(spell);
+        SkillData spellData = PlayerSkillManager.Instance.GetSpellData(spell);
         if (spellData != null) {
             item.SetObject(spellData);
         } else {
@@ -882,10 +884,10 @@ public class PlayerUI : BaseMonoBehaviour {
         }
         return null;
     }
-    public void OnHoverSpell(SpellData skillData, UIHoverPosition position = null) {
+    public void OnHoverSpell(SkillData skillData, UIHoverPosition position = null) {
         skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position);
     }
-    public void OnHoverOutSpell(SpellData skillData) {
+    public void OnHoverOutSpell(SkillData skillData) {
         skillDetailsTooltip.HidePlayerSkillDetails();
     }
     #endregion
@@ -958,7 +960,9 @@ public class PlayerUI : BaseMonoBehaviour {
             TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL,
             TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL, TILE_OBJECT_TYPE.SNOW_MOUND,
             TILE_OBJECT_TYPE.WINTER_ROSE, TILE_OBJECT_TYPE.DESERT_ROSE, TILE_OBJECT_TYPE.CULTIST_KIT,
-            TILE_OBJECT_TYPE.TREASURE_CHEST, TILE_OBJECT_TYPE.ICE, TILE_OBJECT_TYPE.HERB_PLANT, TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.PROFESSION_PEDESTAL
+            TILE_OBJECT_TYPE.TREASURE_CHEST, TILE_OBJECT_TYPE.ICE, TILE_OBJECT_TYPE.HERB_PLANT, 
+            TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.PROFESSION_PEDESTAL, TILE_OBJECT_TYPE.TOOL,
+            TILE_OBJECT_TYPE.EXCALIBUR, TILE_OBJECT_TYPE.PHYLACTERY
         };
         for (int i = 0; i < items.Length; i++) {
             CreateNewItemItem(items[i]);

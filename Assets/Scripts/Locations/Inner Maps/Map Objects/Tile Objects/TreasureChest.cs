@@ -45,7 +45,7 @@ public class TreasureChest : TileObject {
                 Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTreasureChest.objectInsideID);
                 if (character != null) {
                     SetObjectInside(character);
-                    if (character.marker != null) {
+                    if (character.hasMarker) {
                         character.marker.PlaceMarkerAt(gridTileLocation);
                         character.DisableMarker();
                     }    
@@ -114,7 +114,7 @@ public class TreasureChest : TileObject {
         }
     }
     public void SpawnInitialMimic(LocationGridTile tile, Summon summon) {
-        CharacterManager.Instance.PlaceSummon(summon, tile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, tile);
         summon.SetTerritory(tile.GetNearestHexTileWithinRegion());
         TraitManager.Instance.CopyStatuses(this, summon);
     }

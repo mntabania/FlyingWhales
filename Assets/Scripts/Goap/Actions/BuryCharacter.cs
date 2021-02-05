@@ -15,7 +15,7 @@ public class BuryCharacter : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Bury_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -53,13 +53,24 @@ public class BuryCharacter : GoapAction {
             LocationStructure targetStructure = GetTargetStructure(goapNode);
             if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                 if(goapNode.actor.homeSettlement != null) {
-                    List<LocationGridTile> validTiles = targetStructure.unoccupiedTiles.Where(tile => tile.IsNextToSettlement(goapNode.actor.homeSettlement)).ToList();
-                    // List<LocationGridTile> validTiles = new List<LocationGridTile>();
-                    // goapNode.actor.homeNpcSettlement.tiles.ForEach(t => 
-                    //     validTiles.AddRange(
-                    //         t.locationGridTiles.Where(x => targetStructure.unoccupiedTiles.Contains(x))
-                    //     )
-                    // );
+                    List<HexTile> surroundingAreas = goapNode.actor.homeSettlement.GetSurroundingAreas();
+                    surroundingAreas = CollectionUtilities.Shuffle(surroundingAreas);
+                    List<LocationGridTile> validTiles = null;
+                    for (int i = 0; i < surroundingAreas.Count; i++) {
+                        HexTile surroundingArea = surroundingAreas[i];
+                        for (int j = 0; j < surroundingArea.locationGridTiles.Count; j++) {
+                            LocationGridTile tileInSurroundingArea = surroundingArea.locationGridTiles[j];
+                            if (!tileInSurroundingArea.isOccupied && tileInSurroundingArea.IsNextToSettlement(goapNode.actor.homeSettlement) && tileInSurroundingArea.structure is Wilderness) {
+                                if (validTiles == null) { validTiles = new List<LocationGridTile>(); }
+                                validTiles.Add(tileInSurroundingArea);
+                            }
+                        }
+                        if (validTiles != null) { break; }
+                    }
+                    if (validTiles == null) {
+                        //fallback
+                        validTiles = targetStructure.unoccupiedTiles.Where(tile => tile.IsNextToSettlement(goapNode.actor.homeSettlement)).ToList(); 
+                    }
                     return CollectionUtilities.GetRandomElement(validTiles);
                 } else if (goapNode.poiTarget.gridTileLocation != null) {
                     return goapNode.poiTarget.gridTileLocation.GetNearestUnoccupiedTileFromThisWithStructure(targetStructure.structureType);
@@ -77,7 +88,7 @@ public class BuryCharacter : GoapAction {
         return null; //allow normal logic to pick target tile
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsCarried);
+        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsCarried);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {

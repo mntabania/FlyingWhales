@@ -14,14 +14,14 @@ public class DropRestrained : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Haul_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Work};
     }
 
     
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Carry Restrained", target = GOAP_EFFECT_TARGET.TARGET }, IsCarriedOrInInventory);
+        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Carry Restrained", target = GOAP_EFFECT_TARGET.TARGET }, IsCarriedOrInInventory);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode actionNode) {
@@ -135,10 +135,14 @@ public class DropRestrained : GoapAction {
     #endregion
 
     #region State Effects
-    //public void PreDropSuccess(ActualGoapNode goapNode) {
-    //    //GoapActionState currentState = this.states[goapNode.currentStateName];
-    //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
+    public void PreDropSuccess(ActualGoapNode goapNode) {
+        if (goapNode.associatedJobType == JOB_TYPE.TRITON_KIDNAP) {
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "triton_kidnap", goapNode, logTags);
+            log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            goapNode.OverrideDescriptionLog(log);
+        }
+    }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //Character target = goapNode.poiTarget as Character;
         OtherData[] otherData = goapNode.otherData;
@@ -151,7 +155,12 @@ public class DropRestrained : GoapAction {
         goapNode.actor.UncarryPOI(goapNode.poiTarget, dropLocation: tile);
         if(goapNode.poiTarget is Character targetCharacter) {
             BaseSettlement currentSettlement = goapNode.actor.currentSettlement;
-            if (goapNode.associatedJobType == JOB_TYPE.APPREHEND && currentSettlement != null && currentSettlement is NPCSettlement settlement && targetCharacter.currentStructure == settlement.prison) {
+            if(goapNode.associatedJobType == JOB_TYPE.TRITON_KIDNAP) {
+                if (!targetCharacter.isDead) {
+                    targetCharacter.SetDestroyMarkerOnDeath(true);
+                    targetCharacter.Death("drowned", responsibleCharacter: goapNode.actor);
+                }
+            } else if (goapNode.associatedJobType == JOB_TYPE.APPREHEND && currentSettlement != null && currentSettlement is NPCSettlement settlement && targetCharacter.currentStructure == settlement.prison) {
                 if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                     Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     criminalTrait.SetIsImprisoned(true);
@@ -163,7 +172,7 @@ public class DropRestrained : GoapAction {
                     LocationStructure structure = hexTileLocation.GetMostImportantStructureOnTile();
                     if (structure is DemonicStructure) {
                         if (structure is Kennel) {
-                            List<LocationGridTile> choices = structure.passableTiles.Where(t => (t.objHere == null || t.IsPassable()) && !(t.objHere is DoorTileObject)).ToList();
+                            List<LocationGridTile> choices = structure.passableTiles.Where(t => t.objHere == null || t.IsPassable()).ToList();
                             if (choices.Count > 0) {
                                 LocationGridTile randomTile = CollectionUtilities.GetRandomElement(choices);
                                 targetCharacter.marker.PlaceMarkerAt(randomTile);
@@ -175,7 +184,7 @@ public class DropRestrained : GoapAction {
                             List<StructureRoom> roomChoices = structure.rooms.Where(r => r.CanUnseizeCharacterInRoom(targetCharacter)).ToList();
                             if (roomChoices.Count > 0) {
                                 StructureRoom randomRoom = CollectionUtilities.GetRandomElement(roomChoices);
-                                List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => (t.objHere == null || t.IsPassable()) && !(t.objHere is DoorTileObject)).ToList();
+                                List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => t.objHere == null || t.IsPassable()).ToList();
                                 if (choices.Count > 0) {
                                     LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(choices);
                                     targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);

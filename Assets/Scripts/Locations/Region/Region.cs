@@ -28,14 +28,11 @@ public class Region : ISavable, ILogFiller {
     public List<Character> residents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
     public HexTile[,] hexTileMap { get; private set; }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
-    public List<IPointOfInterest> pendingAddAwareness { get; private set; }
-    public List<IPointOfInterest> pendingRemoveAwareness { get; private set; }
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
-    public RegionTemplate regionTemplate { get; }
+    public RegionDivisionComponent regionDivisionComponent { get; }
     /// <summary>
     /// Number of tile objects in this region categorized by type.
     /// NOTE: This isn't saved/loaded since this is updated every time a new tile object is placed.
@@ -62,30 +59,26 @@ public class Region : ISavable, ILogFiller {
         charactersAtLocation = new List<Character>();
         factionsHere = new List<Faction>();
         residents = new List<Character>();
-        awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
-        pendingAddAwareness = new List<IPointOfInterest>();
-        pendingRemoveAwareness = new List<IPointOfInterest>();
         regionFeatureComponent = new RegionFeatureComponent();
         settlementsInRegion = new List<BaseSettlement>();
         neighbours = new List<Region>();
         neighboursWithDirection = new Dictionary<GridNeighbourDirection, Region>();
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
     }
-    public Region(HexTile coreTile, RegionTemplate regionTemplate) : this() {
+    public Region(HexTile coreTile, string p_name = "") : this() {
         persistentID = System.Guid.NewGuid().ToString();
         id = UtilityScripts.Utilities.SetID(this);
-        name = RandomNameGenerator.GetRegionName();
+        name = string.IsNullOrEmpty(p_name) ? RandomNameGenerator.GetRegionName() : p_name;
         this.coreTile = coreTile;
-        this.regionTemplate = regionTemplate;
         tiles = new List<HexTile>();
         shuffledNonMountainWaterTiles = new List<HexTile>();
         AddTile(coreTile);
         regionColor = GenerateRandomRegionColor();
+        regionDivisionComponent = new RegionDivisionComponent();
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
     }
     public Region(SaveDataRegion data) : this() {
         persistentID = data.persistentID;
-        regionTemplate = data.regionTemplate;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         name = data.name;
         coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];
@@ -93,6 +86,9 @@ public class Region : ISavable, ILogFiller {
         shuffledNonMountainWaterTiles = new List<HexTile>();
         regionColor = data.regionColor;
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
+
+        //Components
+        regionDivisionComponent = data.regionDivisionComponent.Load();
     }
 
     #region Loading
@@ -199,30 +195,6 @@ public class Region : ISavable, ILogFiller {
     }
     public void GenerateOuterBorders() {
         _borders = GetOuterBorders();
-    }
-    public void RedetermineCore() {
-        int maxX = tiles.Max(t => t.data.xCoordinate);
-        int minX = tiles.Min(t => t.data.xCoordinate);
-        int maxY = tiles.Max(t => t.data.yCoordinate);
-        int minY = tiles.Min(t => t.data.yCoordinate);
-
-        int x = (minX + maxX) / 2;
-        int y = (minY + maxY) / 2;
-
-        HexTile newCoreTile = GridMap.Instance.map[x, y];
-        if (newCoreTile.IsAtEdgeOfMap() == false) {
-            coreTile = newCoreTile;
-        }
-        
-        //clear all tiles again after redetermining core
-        List<HexTile> allTiles = new List<HexTile>(tiles);
-        for (int i = 0; i < allTiles.Count; i++) {
-            HexTile currTile = allTiles[i];
-            if (currTile != coreTile) {
-                RemoveTile(currTile);
-            }
-        }
-        
     }
     private List<HexTile> GetOuterTiles() {
         List<HexTile> outerTiles = new List<HexTile>();
@@ -607,74 +579,6 @@ public class Region : ISavable, ILogFiller {
         return factionsHere.Contains(faction);
     }
     #endregion
-
-    #region Awareness
-    public void AddPendingAwareness(IPointOfInterest poi) {
-        pendingAddAwareness.Add(poi);
-    }
-    public void RemovePendingAwareness(IPointOfInterest poi) {
-        pendingRemoveAwareness.Add(poi);
-    }
-    public void UpdateAwareness() {
-        for (int i = 0; i < pendingAddAwareness.Count; i++) {
-            AddAwareness(pendingAddAwareness[i]);
-        }
-        for (int i = 0; i < pendingRemoveAwareness.Count; i++) {
-            RemoveAwareness(pendingRemoveAwareness[i]);
-        }
-        pendingAddAwareness.Clear();
-        pendingRemoveAwareness.Clear();
-    }
-    private bool AddAwareness(IPointOfInterest pointOfInterest) {
-        if(pointOfInterest == null) {
-            return false;
-        }
-        if (!HasAwareness(pointOfInterest)) {
-            if (!awareness.ContainsKey(pointOfInterest.poiType)) {
-                awareness.Add(pointOfInterest.poiType, new List<IPointOfInterest>());
-            }
-            awareness[pointOfInterest.poiType].Add(pointOfInterest);
-            //if (pointOfInterest is TreeObject) {
-            //    List<IPointOfInterest> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE_OBJECT);
-            //    if (treeAwareness.Count >= Character.TREE_AWARENESS_LIMIT) {
-            //        RemoveAwareness(treeAwareness[0]);
-            //    }
-            //}
-            return true;
-        }
-        return false;
-    }
-    public void RemoveAwareness(IPointOfInterest pointOfInterest) {
-        if (awareness.ContainsKey(pointOfInterest.poiType)) {
-            List<IPointOfInterest> awarenesses = awareness[pointOfInterest.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IPointOfInterest iawareness = awarenesses[i];
-                if (iawareness == pointOfInterest) {
-                    awarenesses.RemoveAt(i);
-                    break;
-                }
-            }
-        }
-    }
-    public void RemoveAwareness(POINT_OF_INTEREST_TYPE poiType) {
-        if (awareness.ContainsKey(poiType)) {
-            awareness.Remove(poiType);
-        }
-    }
-    public bool HasAwareness(IPointOfInterest poi) {
-        if (awareness.ContainsKey(poi.poiType)) {
-            List<IPointOfInterest> awarenesses = awareness[poi.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IPointOfInterest currPOI = awarenesses[i];
-                if (currPOI == poi) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    }
-    #endregion
     
     #region Structures
     public void CreateStructureList() {
@@ -904,7 +808,10 @@ public class Region : ISavable, ILogFiller {
         List<TileObject> objs = new List<TileObject>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType(type));
+                List<TileObject> tileObjects = keyValuePair.Value[i].GetTileObjectsOfType(type);
+                if(tileObjects != null) {
+                    objs.AddRange(tileObjects);
+                }
             }
         }
         return objs;
@@ -1199,8 +1106,6 @@ public class Region : ISavable, ILogFiller {
     #endregion
 
     public void CleanUp() {
-        awareness?.Clear();
-        awareness = null;
         tiles?.Clear();
         tiles = null;
         shuffledNonMountainWaterTiles?.Clear();
@@ -1213,10 +1118,6 @@ public class Region : ISavable, ILogFiller {
         charactersAtLocation?.Clear();
         charactersAtLocation = null;
         hexTileMap = null;
-        pendingAddAwareness?.Clear();
-        pendingAddAwareness = null;
-        pendingRemoveAwareness?.Clear();
-        pendingRemoveAwareness = null;
         structures?.Clear();
         structures = null;
         settlementsInRegion?.Clear();

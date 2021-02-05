@@ -130,7 +130,7 @@ namespace Inner_Maps.Location_Structures {
 
                 LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);
                 
-                CharacterManager.Instance.PlaceSummon(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
+                CharacterManager.Instance.PlaceSummonInitially(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, skeleton);
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
                     skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 

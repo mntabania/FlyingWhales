@@ -12,7 +12,7 @@ public class CultistBehaviour : CharacterBehaviourComponent {
     }
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.homeSettlement == null && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && 
+        if (character.homeSettlement == null && !WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && 
             character.faction.factionType.type == FACTION_TYPE.Demon_Cult && character.characterClass.className == "Cult Leader") {
             HexTile targetTile = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
             if (targetTile != null) {
@@ -56,7 +56,7 @@ public class CultistBehaviour : CharacterBehaviourComponent {
     }
     public bool TryCreateCultistJob(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false 
-            && character.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT) == null) {
+            && character.homeStructure?.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT) == null) {
             log += $"\n{character.name} has no cultist kit available. Will create obtain personal item job.";
             bool success = character.jobComponent.TryCreateObtainPersonalItemJob("Cultist Kit", out producedJob);
             if (success) {

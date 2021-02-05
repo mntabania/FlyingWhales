@@ -57,6 +57,11 @@ public class CharacterState {
         CreateThoughtBubbleLog();
         DoMovementBehavior();
         Messenger.Broadcast(CharacterSignals.CHARACTER_STARTED_STATE, stateComponent.owner, this);
+        if (characterState.IsCombatState()) {
+            if (stateComponent.owner.marker) {
+                stateComponent.owner.marker.visionCollider.TransferAllDifferentStructureCharacters();
+            }
+        }
         ProcessInVisionPOIsOnStartState();
         //if(startStateAction != null) {
         //    startStateAction();
@@ -121,9 +126,9 @@ public class CharacterState {
     //public virtual void SetOtherDataOnStartState(object otherData) { }
     //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
     public virtual void AfterExitingState() {
-        if (stateComponent.owner.marker) {
-            stateComponent.owner.marker.UpdateActionIcon();
-        }
+        //if (stateComponent.owner.marker) {
+        //    stateComponent.owner.marker.UpdateActionIcon();
+        //}
         Messenger.Broadcast(CharacterSignals.CHARACTER_ENDED_STATE, stateComponent.owner, this);
     }
     //public virtual bool CanResumeState() {
@@ -158,8 +163,7 @@ public class CharacterState {
         if (!isPaused) {
             return; //if this state is not paused then do not resume.
         }
-        stateComponent.owner.logComponent.PrintLogIfActive(
-            $"Resuming {stateName} for {stateComponent.owner.name}");
+        stateComponent.owner.logComponent.PrintLogIfActive($"Resuming {stateName} for {stateComponent.owner.name}");
         isPaused = false;
         if (stateComponent.currentState != this) {
             stateComponent.SetCurrentState(this);
@@ -180,6 +184,14 @@ public class CharacterState {
                 thoughtBubbleLog.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
         }
+    }
+    public virtual void Reset() {
+        currentDuration = 0;
+        isDone = false;
+        hasStarted = false;
+        isPaused = false;
+        job = null;
+        targetPOI = null;
     }
     #endregion
 
@@ -257,18 +269,17 @@ public class CharacterState {
     //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        stateComponent.owner.logComponent.PrintLogIfActive(
-            $"Exiting {stateName} for {stateComponent.owner.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
+        // stateComponent.owner.logComponent.PrintLogIfActive($"Exiting {stateName} for {stateComponent.owner.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
         EndState();
     }
     public void SetJob(CharacterStateJob job) {
         this.job = job;
-        if (job != null) {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to {job}!");
-            OnJobSet();
-        } else {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");
-        }
+        // if (job != null) {
+        //     Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to {job}!");
+        //     OnJobSet();
+        // } else {
+        //     Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");
+        // }
     }
     /// <summary>
     /// What should happen once the job of this state is set to anything other than null?

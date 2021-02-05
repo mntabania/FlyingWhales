@@ -150,13 +150,15 @@ public class ActionIntel : IIntel, IDisposable {
     public string GetIntelInfoBlackmailText() {
         string text = string.Empty;
         Character actor = this.actor;
-        if(node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset) {
-            CrimeType crime = CrimeManager.Instance.GetCrimeType(node.crimeType);
-            BLACKMAIL_TYPE blackmailType = GetBlackMailTypeConsideringTarget(actor);
-            if(blackmailType != BLACKMAIL_TYPE.None) {
-                //Only show evidence hover if the actor's faction considers this intel as a crime
-                //Reason: It is confusing when the intel is being hovered and it says that it is an evidence but when you try to use it in Meddler, it does not show up as one of the blackmail materials since the faction does not consider it a crime
-                text = $"Blackmail material: Evidence that {actor.visuals.GetCharacterNameWithIconAndColor()} committed <b>{crime.name}</b> crime.";
+        if (CanBeUsedToBlackmailCharacter(actor)) {
+            if (node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset) {
+                CrimeType crime = CrimeManager.Instance.GetCrimeType(node.crimeType);
+                BLACKMAIL_TYPE blackmailType = GetBlackMailTypeConsideringTarget(actor);
+                if (blackmailType != BLACKMAIL_TYPE.None) {
+                    //Only show evidence hover if the actor's faction considers this intel as a crime
+                    //Reason: It is confusing when the intel is being hovered and it says that it is an evidence but when you try to use it in Meddler, it does not show up as one of the blackmail materials since the faction does not consider it a crime
+                    text = $"Blackmail material: Evidence that {actor.visuals.GetCharacterNameWithIconAndColor()} committed <b>{crime.name}</b> crime.";
+                }
             }
         }
         return text;
@@ -184,6 +186,9 @@ public class ActionIntel : IIntel, IDisposable {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public bool CanBeUsedToBlackmailCharacter(Character p_target) {
+        if (node.isAssumption) {
+            return false;
+        }
         if (p_target == actor) {
             BLACKMAIL_TYPE blackmailType = GetBlackMailTypeConsideringTarget(p_target);
             return blackmailType != BLACKMAIL_TYPE.None;
@@ -398,9 +403,11 @@ public class InterruptIntel : IIntel, IDisposable {
     public string GetIntelInfoBlackmailText() {
         string text = string.Empty;
         Character actor = this.actor;
-        if (interruptHolder.crimeType != CRIME_TYPE.None && interruptHolder.crimeType != CRIME_TYPE.Unset) {
-            CrimeType crime = CrimeManager.Instance.GetCrimeType(interruptHolder.crimeType);
-            text = $"Blackmail material: Evidence that {actor.visuals.GetCharacterNameWithIconAndColor()} committed <b>{crime.name}</b> crime.";
+        if (CanBeUsedToBlackmailCharacter(actor)) {
+            if (interruptHolder.crimeType != CRIME_TYPE.None && interruptHolder.crimeType != CRIME_TYPE.Unset) {
+                CrimeType crime = CrimeManager.Instance.GetCrimeType(interruptHolder.crimeType);
+                text = $"Blackmail material: Evidence that {actor.visuals.GetCharacterNameWithIconAndColor()} committed <b>{crime.name}</b> crime.";
+            }
         }
         return text;
     }

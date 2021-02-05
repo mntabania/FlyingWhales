@@ -4,6 +4,7 @@ using Inner_Maps;
 using Logs;
 using UnityEngine;
 using Traits;
+using Locations;
 
 public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     string persistentID { get; }
@@ -15,7 +16,9 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     bool isDead { get; }
     bool isHidden { get; }
     bool isBeingSeized { get; }
+    //bool isInPendingAwarenessList { get; }
     int numOfActionsBeingPerformedOnThis { get; } //this is increased, when the action of another character stops this characters movement
+    ILocationAwareness currentLocationAwareness { get; }
     POINT_OF_INTEREST_TYPE poiType { get; }
     POI_STATE state { get; }
     Region currentRegion { get; }
@@ -37,8 +40,8 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void SetPOIState(POI_STATE state);
     bool IsAvailable();
     LocationGridTile GetNearestUnoccupiedTileFromThis();
-    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log);
-    bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost);
+    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log);
+    bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job);
     bool IsValidCombatTargetFor(IPointOfInterest source);
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
     bool IsOwnedBy(Character character);
@@ -55,11 +58,10 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void AdjustNumOfActionsBeingPerformedOnThis(int amount);
     bool IsPOICurrentlyTargetedByAPerformingAction();
     bool IsPOICurrentlyTargetedByAPerformingAction(params JOB_TYPE[] jobType);
-    /// <summary>
-    /// Does this POI collect Logs aka. History
-    /// </summary>
-    /// <returns>True or false</returns>
-    bool CollectsLogs();
+    bool Advertises(INTERACTION_TYPE type);
+    void SetCurrentLocationAwareness(ILocationAwareness locationAwareness);
+    //void SetIsInPendingAwarenessList(bool state);
+    bool IsUnpassable();
 }
 
 /// <summary>

@@ -2,69 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
+using Inner_Maps;
+using Locations;
+using Locations.Settlements;
 
 public class GoapPlanner {
     public Character owner { get; private set; }
     public GOAP_PLANNING_STATUS status { get; private set; }
+    private Precondition failedPrecondition { get; set; }
+    public INTERACTION_TYPE failedPreconditionActionType { get; private set; }
+    
+    private List<GoapNode> _rawPlan;
 
     public GoapPlanner(Character owner) {
         this.owner = owner;
+        _rawPlan = new List<GoapNode>();
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GoapPlanJob job, bool isPersonalPlan = true) {
         if (status == GOAP_PLANNING_STATUS.RUNNING) {
             //If already processing, do not throw another process to the multithread
             return;
         }
-        //List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
-        //if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //    actor.AddAwareness(target);
-        //    //characterTargetsAwareness.Add(target);
-        //}
-
-        //if (otherCharactePOIs != null) {
-        //    for (int i = 0; i < otherCharactePOIs.Count; i++) {
-        //        AddAwareness(otherCharactePOIs[i]);
-        //        characterTargetsAwareness.Add(otherCharactePOIs[i]);
-        //    }
-        //}
         if (job != null) {
             job.SetAssignedPlan(null);
         }
         status = GOAP_PLANNING_STATUS.RUNNING;
 
-        //_numOfWaitingForGoapThread++;
-        //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
         Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has started planning {job}");
         Character actor = owner;
         GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
         thread.Initialize(actor, target, goal, isPersonalPlan, job);
-        MultiThreadPool.Instance.AddToThreadPool(thread);
-        job.SetIsInMultithread(true);
-    }
-    public void StartGOAP(GoapAction goal, IPointOfInterest target, GoapPlanJob job, bool isPersonalPlan = true) {
-        if (status == GOAP_PLANNING_STATUS.RUNNING) {
-            //If already processing, do not throw another process to the multithread
-            return;
-        }
-        //List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
-        //if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //    actor.AddAwareness(target);
-        //    //characterTargetsAwareness.Add(target);
-        //}
-
-        //if (otherCharactePOIs != null) {
-        //    for (int i = 0; i < otherCharactePOIs.Count; i++) {
-        //        AddAwareness(otherCharactePOIs[i]);
-        //        characterTargetsAwareness.Add(otherCharactePOIs[i]);
-        //    }
-        //}
-        if (job != null) {
-            job.SetAssignedPlan(null);
-        }
-        //_numOfWaitingForGoapThread++;
-        status = GOAP_PLANNING_STATUS.RUNNING;
-        GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
-        thread.Initialize(owner, target, goal, isPersonalPlan, job);
         MultiThreadPool.Instance.AddToThreadPool(thread);
         job.SetIsInMultithread(true);
     }
@@ -73,15 +41,9 @@ public class GoapPlanner {
             //If already processing, do not throw another process to the multithread
             return;
         }
-        //List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
-        //if (target != null && target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //    actor.AddAwareness(target);
-        //    //characterTargetsAwareness.Add(target);
-        //}
         if (job != null) {
             job.SetAssignedPlan(null);
         }
-        //_numOfWaitingForGoapThread++;
         status = GOAP_PLANNING_STATUS.RUNNING;
         Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has started planning {job}");
         GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
@@ -123,9 +85,6 @@ public class GoapPlanner {
             ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
             return;
         }
-        //status = GOAP_PLANNING_STATUS.PROCESSING_RESULT;
-
-        //owner.ExecutePendingActionsAfterMultithread();
         string additionalLog = string.Empty;
         if (goapThread.job.originalOwner == null) {
             //This means that the job is already in the object pool, meaning that the received plan for the job is no longer applicable since the job is already deleted/cancelled
@@ -167,12 +126,7 @@ public class GoapPlanner {
             JOB_TYPE jobType = goapThread.job.jobType;
             if (jobType.IsNeedsTypeJob()) {
                 //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
-                if (owner.trapStructure.IsTrapped()) {
-                    owner.trapStructure.ResetAllTrapStructures();
-                }
-                if (owner.trapStructure.IsTrappedInHex()) {
-                    owner.trapStructure.ResetAllTrapHexes();
-                }
+                owner.trapStructure.ResetAllTrappedValues();
                 if (owner.partyComponent.isActiveMember) {
                     if (owner.partyComponent.currentParty.startedTrueRestingState) {
                         if (jobType.IsFullnessRecoveryTypeJob()) {
@@ -195,7 +149,7 @@ public class GoapPlanner {
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
                         owner.logComponent.RegisterLog(log);
-                    }    
+                    }
                 }
                 if (goapThread.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                     goapThread.job.AddBlacklistedCharacter(owner);
@@ -217,6 +171,10 @@ public class GoapPlanner {
                     owner.logComponent.PrintLogIfActive(log);
                 }
                 owner.UncarryPOI();
+            }
+            if (goapThread.job != null && goapThread.job.jobType.IsCultistJob()) {
+                string reason = owner.GetCultistUnableToDoJobReason(goapThread.job, failedPrecondition, failedPreconditionActionType);
+                owner.LogUnableToDoJob(reason);
             }
             goapThread.job.CancelJob(false);
 
@@ -275,11 +233,11 @@ public class GoapPlanner {
     //}
     public GoapPlan PlanActions(IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, ref string log, GoapPlanJob job) {
         //Cache all needed data
-        Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = owner.currentRegion.awareness;
-        //Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.gridTileLocation.parentMap.location.coreTile.region.awareness;
-        Dictionary<INTERACTION_TYPE, OtherData[]> otherData = job.otherData;
-        List<GoapNode> rawPlan = null; //The plan that will be created will be stored here
+        Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
+        _rawPlan.Clear();
+        failedPrecondition = null;
+        failedPreconditionActionType = INTERACTION_TYPE.NONE;
+
         owner.logComponent.ClearCostLog();
         owner.logComponent.AppendCostLog($"BASE COSTS OF {owner.name} ACTIONS ON {job.name} PLANNING");
         log = $"{log}\n--Searching plan for target: {target.name}";
@@ -288,12 +246,11 @@ public class GoapPlanner {
             int cost = 0;
             //Get action with the lowest cost that the actor can do that satisfies the goal effect
             if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
-                GoapAction currentAction = target.AdvertiseActionsToActor(owner, goalEffect, job, otherData, ref cost, ref log);
+                GoapAction currentAction = target.AdvertiseActionsToActor(owner, goalEffect, job, ref cost, ref log);
                 if (currentAction != null) {
                     //If an action is found, make it the goal node and start building the plan
-                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, 0, currentAction, target);
-                    rawPlan = new List<GoapNode>();
-                    BuildGoapTree(goalNode, owner, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
+                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, 0, currentAction, target);
+                    BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
                 }
             }
         } else if (goalEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
@@ -303,97 +260,23 @@ public class GoapPlanner {
             int lowestCost = 0;
             log = $"{log}\n--Choices for {goalEffect.ToString()}";
             log = $"{log}\n--";
-            foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<GoapAction>> kvp in allGoapActionAdvertisements) {
-                //First loop through all actions that can be advertised (it is grouped by the poi type that can advertise the actions)
-                if (awareness.ContainsKey(kvp.Key)) {
-                    List<GoapAction> actionList = kvp.Value;
-                    for (int j = 0; j < actionList.Count; j++) {
-                        GoapAction currentAction = actionList[j];
-                        if (currentAction.WillEffectsMatchPreconditionTypeAndTarget(goalEffect)) {
-                            //get other data for current action.
-                            OtherData[] otherActionData = null;
-                            if (job.otherData != null) {
-                                if (job.otherData.ContainsKey(currentAction.goapType)) {
-                                    otherActionData = job.otherData[currentAction.goapType];
-                                } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                                    otherActionData = job.otherData[INTERACTION_TYPE.NONE];
-                                }
-                            }
-                            //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
-                            bool isJobTargetEvaluated = false;
-                            List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[kvp.Key];
-                            for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {
-                                IPointOfInterest poiTarget = poisThatAdvertisesCurrentAction[k];
-                                if(poiTarget == target) { isJobTargetEvaluated = true; }
-                                bool partOfAwarenessByCharacter = poiTarget.IsStillConsideredPartOfAwarenessByCharacter(owner);
-                                if (poiTarget == job.targetPOI || partOfAwarenessByCharacter) { //POI must either be the job's target or the actor is still aware of it
-                                    int cost = 0;
-                                    bool canAdvertiseActionToActor = poiTarget.CanAdvertiseActionToActor(owner, currentAction, job, otherData, ref cost);
-                                    bool willEffectsSatisfyPrecondition = currentAction.WillEffectsSatisfyPrecondition(goalEffect, owner, poiTarget, otherActionData);
-                                    bool canDoAction = canAdvertiseActionToActor && willEffectsSatisfyPrecondition;
-                                    if (canDoAction) {
-                                        log = $"{log}({cost}){currentAction.goapName}-{poiTarget.nameWithID}, ";
-                                        if (lowestCostAction == null || cost < lowestCost) {
-                                            lowestCostAction = currentAction;
-                                            lowestCostTarget = poiTarget;
-                                            lowestCost = cost;
-                                        }
-                                    }
-                                    
-                                    // if (canAdvertiseActionToActor) {
-                                    //     log = $"{log}\n -{poiTarget.name} can advertise {currentAction.name}";
-                                    //     bool willEffectsSatisfyPrecondition = currentAction.WillEffectsSatisfyPrecondition(goalEffect, owner, poiTarget, otherActionData);
-                                    //     if (willEffectsSatisfyPrecondition) {
-                                    //         log = $"{log}({cost}){currentAction.goapName}-{poiTarget.nameWithID}, ";
-                                    //         if (lowestCostAction == null || cost < lowestCost) {
-                                    //             lowestCostAction = currentAction;
-                                    //             lowestCostTarget = poiTarget;
-                                    //             lowestCost = cost;
-                                    //         }
-                                    //     } else {
-                                    //         log = $"{log} but, {currentAction.name} cannot satisfy precondition {goalEffect.ToString()}";
-                                    //     }
-                                    //     
-                                    // }
-                                   
-                                }
-                            }
-                            if(!isJobTargetEvaluated && kvp.Key == target.poiType) {
-                                IPointOfInterest poiTarget = target;
-                                if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
-                                    int cost = 0;
-                                    bool canDoAction = poiTarget.CanAdvertiseActionToActor(owner, currentAction, job, otherData, ref cost)
-                                        && currentAction.WillEffectsSatisfyPrecondition(goalEffect, owner, poiTarget, otherActionData);
-                                    if (canDoAction) {
-                                        log = $"{log}({cost}){currentAction.goapName}-{poiTarget.nameWithID}, ";
-                                        if (lowestCostAction == null || cost < lowestCost) {
-                                            lowestCostAction = currentAction;
-                                            lowestCostTarget = poiTarget;
-                                            lowestCost = cost;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+
+            ProcessFindingLowestCostActionAndTarget(job, goalEffect, target, actionsCategorizedByEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
             if (lowestCostAction != null) {
-                GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(lowestCost, 0, lowestCostAction, lowestCostTarget);
-                rawPlan = new List<GoapNode>();
-                BuildGoapTree(leafNode, owner, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
+                GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(lowestCost, 0, lowestCostAction, lowestCostTarget);
+                BuildGoapTree(leafNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
             }
         }
-        if(rawPlan != null && rawPlan.Count > 0) {
+        if(_rawPlan.Count > 0) {
             //has a created plan
             string rawPlanSummary = $"Generated raw plan for job { job.name } { owner.name }";
-            for (int i = 0; i < rawPlan.Count; i++) {
-                GoapNode currNode = rawPlan[i];
+            for (int i = 0; i < _rawPlan.Count; i++) {
+                GoapNode currNode = _rawPlan[i];
                 rawPlanSummary = $"{rawPlanSummary}\n - {currNode.action.goapName}";
             }
             Debug.Log(rawPlanSummary);
             owner.logComponent.PrintCostLog();
-            List<JobNode> actualNodes = TransformRawPlanToActualNodes(rawPlan, otherData);
+            List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
             GoapPlan plan = new GoapPlan(actualNodes, target, isPersonalPlan);
             return plan;
         }
@@ -401,38 +284,31 @@ public class GoapPlanner {
         return null;
     }
     public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job) {
-        Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = owner.currentRegion.awareness;
-        Dictionary<INTERACTION_TYPE, OtherData[]> otherData = job.otherData;
-        List<GoapNode> rawPlan = new List<GoapNode>();
+        Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
+        _rawPlan.Clear();
+        failedPrecondition = null;
+        failedPreconditionActionType = INTERACTION_TYPE.NONE;
+        
         owner.logComponent.ClearCostLog();
         owner.logComponent.AppendCostLog($"BASE COSTS OF {owner.name} ACTIONS ON {job.name} PLANNING");
         if(target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
             //POI must either be the job's target or the actor is still aware of it
             return null;
         }
-        OtherData[] data = null;
-        if (otherData != null) {
-            if (otherData.ContainsKey(goalAction.goapType)) {
-                data = otherData[goalAction.goapType];
-            } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                data = otherData[INTERACTION_TYPE.NONE];
-            }
-        }
-        int cost = goalAction.GetCost(owner, target, job, data);
+        int cost = goalAction.GetCost(owner, target, job);
         log += $"\n--Searching plan for target: {target.name} with goal action ({cost}){goalAction.goapName}";
-        GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, 0, goalAction, target);
-        BuildGoapTree(goalNode, owner, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
-        if (rawPlan != null && rawPlan.Count > 0) {
+        GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, 0, goalAction, target);
+        BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
+        if (_rawPlan.Count > 0) {
             string rawPlanSummary = $"Generated raw plan for job { job.name } { owner.name }";
-            for (int i = 0; i < rawPlan.Count; i++) {
-                GoapNode currNode = rawPlan[i];
+            for (int i = 0; i < _rawPlan.Count; i++) {
+                GoapNode currNode = _rawPlan[i];
                 rawPlanSummary += $"\n - {currNode.action.goapName }";
             }
             Debug.Log(rawPlanSummary);
             owner.logComponent.PrintCostLog();
             //has a created plan
-            List<JobNode> actualNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData);
+            List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
             GoapPlan plan = new GoapPlan(actualNodes, target, isPersonalPlan);
             return plan;
         }
@@ -442,131 +318,40 @@ public class GoapPlanner {
     public bool RecalculatePathForPlan(GoapPlan currentPlan, GoapPlanJob job, ref string log) {
         //In plan recalculation, only recalculate nodes starting from the previous node, because this means that the current node does not satisfy all preconditions, which in turn, means that somewhere in the previous nodes, the character failed to do the action
         //That is why we recalculate from the previous node up to the starting node
-        Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = owner.currentRegion.awareness;
-        List<GoapNode> rawPlan = new List<GoapNode>();
+        Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
+        _rawPlan.Clear();
+        failedPrecondition = null;
+        failedPreconditionActionType = INTERACTION_TYPE.NONE;
 
         JobNode currentJobNode = currentPlan.currentNode;
-        if (currentJobNode.singleNode != null) {
-            //Recalculate for single node
-            ActualGoapNode actualNode = currentJobNode.singleNode;
-            GoapAction goalAction = actualNode.action;
-            IPointOfInterest target = actualNode.poiTarget;
-            OtherData[] otherData = actualNode.otherData;
-            if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
-                //POI must either be the job's target or the actor is still aware of it
-                int cost = 0;
-                if (target.CanAdvertiseActionToActor(owner, goalAction, job, job.otherData, ref cost)) {
-                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
-                    BuildGoapTree(goalNode, owner, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //
-                    if (rawPlan != null && rawPlan.Count > 0) {
-                        //has a created plan
-                        string rawPlanSummary = $"Recalculated raw plan for job { job.name } { owner.name }";
-                        for (int i = 0; i < rawPlan.Count; i++) {
-                            GoapNode currNode = rawPlan[i];
-                            rawPlanSummary += $"\n - {currNode.action.goapName }";
-                        }
-                        Debug.Log(rawPlanSummary);
-                        List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
-                        currentPlan.Reset(plannedNodes);
-                        return true;
+        ActualGoapNode actualNode = currentJobNode.singleNode;
+        GoapAction goalAction = actualNode.action;
+        IPointOfInterest target = actualNode.poiTarget;
+        OtherData[] otherData = actualNode.otherData;
+        if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
+            //POI must either be the job's target or the actor is still aware of it
+            if (target.CanAdvertiseActionToActor(owner, goalAction, job) && target.Advertises(goalAction.goapType)) {
+                int cost = goalAction.GetCost(owner, target, job);
+                GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
+                BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //
+                if (_rawPlan.Count > 0) {
+                    //has a created plan
+                    string rawPlanSummary = $"Recalculated raw plan for job { job.name } { owner.name }";
+                    for (int i = 0; i < _rawPlan.Count; i++) {
+                        GoapNode currNode = _rawPlan[i];
+                        rawPlanSummary += $"\n - {currNode.action.goapName }";
                     }
+                    Debug.Log(rawPlanSummary);
+                    List<JobNode> plannedNodes = TransformRawPlanToActualNodes(_rawPlan, job, currentPlan);
+                    currentPlan.Reset(plannedNodes);
+                    return true;
                 }
             }
-        } else {
-            //Recalculate for multi node
-            ActualGoapNode[] actualNodes = currentJobNode.multiNode;
-            for (int i = 0; i < actualNodes.Length; i++) {
-                ActualGoapNode actualNode = actualNodes[i];
-                GoapAction goalAction = actualNode.action;
-                IPointOfInterest target = actualNode.poiTarget;
-                OtherData[] otherData = actualNode.otherData;
-                if (target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
-                    rawPlan.Clear();
-                    break;
-                }
-                int cost = 0;
-                if (!target.CanAdvertiseActionToActor(owner, goalAction, job, job.otherData, ref cost)) {
-                    rawPlan.Clear();
-                    break;
-                } else {
-                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
-                    BuildGoapTree(goalNode, owner, job, rawPlan, allGoapActionAdvertisements, awareness, ref log);
-                }
-            }
-            if (rawPlan != null && rawPlan.Count > 0) {
-                //has a created plan
-                string rawPlanSummary = $"Recalculated raw plan for job { job.name } { owner.name }";
-                for (int i = 0; i < rawPlan.Count; i++) {
-                    GoapNode currNode = rawPlan[i];
-                    rawPlanSummary += $"\n - {currNode.action.goapName }";
-                }
-                owner.logComponent.PrintCostLog();
-                List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
-                currentPlan.Reset(plannedNodes);
-                return true;
-            }
-            owner.logComponent.PrintCostLog();
         }
         return false;
-        //List of all starting nodes that can do the goal
-        //List<GoapNode> startingNodes = new List<GoapNode>();
-        //bool success = false;
-        //if (currentPlan.isPersonalPlan) {
-        //    string log = string.Empty;
-        //    success = BuildGoapTree(currentPlan.endNode, startingNodes, usableActions, ref log, currentPlan.job);
-        //} else {
-        //    GoapNode currentLeafNode = null;
-        //    bool hasUsableAction = false;
-        //    success = true;
-        //    for (int i = currentPlan.endNode.index; i >= 0; i--) {
-        //        GoapNode failedNode = currentPlan.allNodes[i];
-        //        hasUsableAction = false;
-        //        for (int j = 0; j < usableActions.Count; j++) {
-        //            GoapAction currentUsableAction = usableActions[j];
-        //            if(failedNode.action.goapType == currentUsableAction.goapType && failedNode.action.poiTarget == currentUsableAction.poiTarget) {
-        //                hasUsableAction = true;
-        //                if(currentLeafNode == null) {
-        //                    currentLeafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(failedNode.parent, failedNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
-        //                } else {
-        //                    GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(currentLeafNode.parent, currentLeafNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
-        //                    currentLeafNode = leafNode;
-        //                }
-        //                break;
-        //            }
-        //        }
-        //        if (!hasUsableAction) {
-        //            //No usable action for the current failed node, fail recalculation
-        //            success = false;
-        //            break;
-        //        }
-        //    }
-        //    if(currentLeafNode != null) {
-        //        startingNodes.Add(currentLeafNode);
-        //    } else {
-        //        success = false;
-        //    }
-        //}
-        //if (!success) {
-        //    return false;
-        //}
-
-        //GoapNode cheapestStartingNode = null;
-        //for (int i = 0; i < startingNodes.Count; i++) {
-        //    if (cheapestStartingNode == null) {
-        //        cheapestStartingNode = startingNodes[i];
-        //    } else {
-        //        if (startingNodes[i].cost < cheapestStartingNode.cost) {
-        //            cheapestStartingNode = startingNodes[i];
-        //        }
-        //    }
-        //}
-        //currentPlan.Reset(cheapestStartingNode);
-        //return true;
     }
     //Note: The target specified here is the target for the precondition not the job itself
-    private void BuildGoapTree(GoapNode node, Character actor, GoapPlanJob job, List<GoapNode> rawPlan, Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements
-        , Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness, ref string log) { //
+    private void BuildGoapTree(GoapNode node, Character actor, GoapPlanJob job, List<GoapNode> rawPlan, Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect, ref string log) { //
         GoapAction action = node.action;
         IPointOfInterest target = node.target;
         log += $"\n--Adding node to raw plan: ({node.cost}){node.action.goapName}-{target.nameWithID}";
@@ -578,163 +363,199 @@ public class GoapPlanner {
             rawPlan.Clear();
             return;
         }
-        List<Precondition> preconditions = null;
-        OtherData[] otherData = null;
-        if (job.otherData != null) {
-            if (job.otherData.ContainsKey(action.goapType)) {
-                otherData = job.otherData[action.goapType];
-            } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                //None Interaction Type means that the other data is applied to all actions in plan
-                otherData = job.otherData[INTERACTION_TYPE.NONE];
-            }
-        }
+        Precondition precondition = null;
+        OtherData[] otherData = job.GetOtherDataFor(action.goapType);
         bool isOverriden = false;
-        preconditions = action.GetPreconditions(actor, target, otherData, out isOverriden);
-        if (preconditions.Count > 0) {
-            log += $"\n--Node {node.action.goapName} has preconditions: {preconditions.Count}";
-            //get other data for current action
-            OtherData[] preconditionActionData = null;
-            if (job.otherData != null) {
-                if (job.otherData.ContainsKey(action.goapType)) {
-                    preconditionActionData = job.otherData[action.goapType];
-                } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                    preconditionActionData = job.otherData[INTERACTION_TYPE.NONE];
-                }
-            }
-
-            for (int i = 0; i < preconditions.Count; i++) {
-                Precondition precondition = preconditions[i];
-                if (!precondition.CanSatisfyCondition(actor, target, preconditionActionData, job.jobType)) {
-                    GoapEffect preconditionEffect = precondition.goapEffect;
-                    log +=
-                        $"\n--Could not satisfy condition {preconditionEffect}, will look for action to satisfy it...";
-                    if (preconditionEffect.target == GOAP_EFFECT_TARGET.TARGET) {
-                        //if precondition's target is the target, then the one who will advertise must be the target only
-                        int cost = 0;
-                        GoapAction currentAction = null;
-                        if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
-                            currentAction = target.AdvertiseActionsToActor(actor, preconditionEffect, job, job.otherData, ref cost, ref log);
-                        } else {
-                            log += $"\n--{target.name} is not the job's target and the actor is not aware of it";
-                        }
-                        if (currentAction != null) {
-                            log += $"\n--Found action: {currentAction.goapName}, creating new node...";
-                            GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, node.level + 1, currentAction, target);
-                            BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //
-                        } else {
-                            //Fail - rawPlan must be set to null so the plan will fail
-                            rawPlan.Clear();
-                            //rawPlan = null;
-                            if (isOverriden) {
-                                ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
-                            }
-                            log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
-                            return;
-                        }
-                    } else if (preconditionEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
-                        GoapAction lowestCostAction = null;
-                        IPointOfInterest lowestCostTarget = null;
-                        int lowestCost = 0;
-                        log += $"\n--Choices for {preconditionEffect}";
-                        log += "\n--";
-                        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<GoapAction>> kvp in allGoapActionAdvertisements) {
-                            if (awareness.ContainsKey(kvp.Key)) {
-                                List<GoapAction> actionList = kvp.Value;
-                                for (int j = 0; j < actionList.Count; j++) {
-                                    GoapAction currentAction = actionList[j];
-
-                                    if (currentAction.WillEffectsMatchPreconditionTypeAndTarget(preconditionEffect)) {
-                                        //get other data for current action.
-                                        OtherData[] otherActionData = null;
-                                        if (job.otherData != null) {
-                                            if (job.otherData.ContainsKey(currentAction.goapType)) {
-                                                otherActionData = job.otherData[currentAction.goapType];
-                                            } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                                                otherActionData = job.otherData[INTERACTION_TYPE.NONE];
-                                            }
-                                        }
-
-                                        //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
-                                        bool isJobTargetEvaluated = false;
-                                        List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[kvp.Key];
-                                        for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {
-                                            IPointOfInterest poiTarget = poisThatAdvertisesCurrentAction[k];
-                                            if (poiTarget == target) { isJobTargetEvaluated = true; }
-                                            if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
-                                                int cost = 0;
-                                                bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job, job.otherData, ref cost)
-                                                    && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, actor, poiTarget, otherActionData);
-                                                if (canDoAction) {
-                                                    log += $"({cost}){currentAction.goapName}-{poiTarget.nameWithID}, ";
-                                                    if (lowestCostAction == null || cost < lowestCost) {
-                                                        lowestCostAction = currentAction;
-                                                        lowestCostTarget = poiTarget;
-                                                        lowestCost = cost;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if (!isJobTargetEvaluated && kvp.Key == target.poiType) {
-                                            IPointOfInterest poiTarget = target;
-                                            if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
-                                                int cost = 0;
-                                                bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job, job.otherData, ref cost)
-                                                    && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, actor, poiTarget, otherActionData);
-                                                if (canDoAction) {
-                                                    log += $"({cost}){currentAction.goapName}-{poiTarget.nameWithID}, ";
-                                                    if (lowestCostAction == null || cost < lowestCost) {
-                                                        lowestCostAction = currentAction;
-                                                        lowestCostTarget = poiTarget;
-                                                        lowestCost = cost;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if(lowestCostAction != null) {
-                            log += $"\n--Found action: {lowestCostAction.goapName}, creating new node...";
-                            GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
-                            BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
-                        } else {
-                            //Fail - rawPlan must be set to null so the plan will fail
-                            rawPlan.Clear();
-                            //rawPlan = null;
-                            if (isOverriden) {
-                                ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
-                            }
-                            log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
-                            return;
-                        }
-                        //foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness in actor.awareness) {
-                        //    List<IPointOfInterest> awarenessList = awareness.Value;
-                        //    for (int i = 0; i < awarenessList.Count; i++) {
-                        //        IPointOfInterest poiTarget = awarenessList[i];
-                        //        int cost = 0;
-                        //        INTERACTION_TYPE actionType = poiTarget.AdvertiseActionsToActor(actor, preconditionEffect, job.otherData, ref cost);
-                        //        if (actionType != INTERACTION_TYPE.NONE) {
-                        //            GoapAction leafAction = InteractionManager.Instance.goapActionData[actionType];
-                        //            GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, goalNode.level + 1, leafAction, poiTarget);
-                        //            BuildGoapTree(leafNode, rawPlan, usableActions, ref log, job);
-                        //        }
-                        //    }
-                        //}
+        precondition = action.GetPrecondition(actor, target, otherData, job.jobType, out isOverriden);
+        if (precondition != null) {
+            log += $"\n--Node {node.action.goapName} has precondition";
+            if (!precondition.CanSatisfyCondition(actor, target, otherData, job.jobType)) {
+                GoapEffect preconditionEffect = precondition.goapEffect;
+                log +=
+                    $"\n--Could not satisfy condition {preconditionEffect}, will look for action to satisfy it...";
+                if (preconditionEffect.target == GOAP_EFFECT_TARGET.TARGET) {
+                    //if precondition's target is the target, then the one who will advertise must be the target only
+                    int cost = 0;
+                    GoapAction currentAction = null;
+                    if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
+                        currentAction = target.AdvertiseActionsToActor(actor, preconditionEffect, job, ref cost, ref log);
+                    } else {
+                        log += $"\n--{target.name} is not the job's target and the actor is not aware of it";
                     }
-                } else {
-                    log += $"\n--Condition {i} satisfied, checking next precondition...";
+                    if (currentAction != null) {
+                        log += $"\n--Found action: {currentAction.goapName}, creating new node...";
+                        GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, node.level + 1, currentAction, target);
+                        BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, ref log); //
+                    } else {
+                        //Fail - rawPlan must be set to null so the plan will fail
+                        rawPlan.Clear();
+                        log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
+                        failedPrecondition = precondition;
+                        failedPreconditionActionType = action.goapType;
+                        return;
+                    }
+                } else if (preconditionEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
+                    GoapAction lowestCostAction = null;
+                    IPointOfInterest lowestCostTarget = null;
+                    int lowestCost = 0;
+                    log += $"\n--Choices for {preconditionEffect}";
+                    log += "\n--";
+                    ProcessFindingLowestCostActionAndTarget(job, preconditionEffect, target, actionsCategorizedByEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                    if (lowestCostAction != null) {
+                        log += $"\n--Found action: {lowestCostAction.goapName}, creating new node...";
+                        GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
+                        BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, ref log); //, ref log
+                    } else {
+                        //Fail - rawPlan must be set to null so the plan will fail
+                        rawPlan.Clear();
+                        log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
+                        failedPrecondition = precondition;
+                        failedPreconditionActionType = action.goapType;
+                        return;
+                    }
                 }
+            } else {
+                log += $"\n--Precondition satisfied, exit goap tree...";
             }
         } else {
             log += $"\n--Node {node.action.goapName} has no preconditions, exiting goap tree...";
         }
-        if (isOverriden) {
-            ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
+    }
+    private void ProcessFindingLowestCostActionAndTarget(GoapPlanJob job, GoapEffect goalEffect, IPointOfInterest target, Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+        if (!actionsCategorizedByEffect.ContainsKey(goalEffect.conditionType)) {
+            return;
+        }
+
+        List<GoapAction> actionsFilteredByEffect = actionsCategorizedByEffect[goalEffect.conditionType];
+        for (int i = 0; i < actionsFilteredByEffect.Count; i++) {
+            GoapAction currentAction = actionsFilteredByEffect[i];
+            IPointOfInterest poiTarget = target;
+            bool isJobTargetEvaluated = false;
+
+            SetLowestCostActionBasedOnLocationAwareness(job, currentAction, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+
+            if (!isJobTargetEvaluated) {
+                if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
+                    if (poiTarget.Advertises(currentAction.goapType)) {
+                        PopulateLowestCostAction(poiTarget, currentAction, job, goalEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                    }
+                }
+            }
         }
     }
+    private void SetLowestCostActionBasedOnLocationAwareness(GoapPlanJob job, GoapAction action, GoapEffect goalEffect, ref bool isJobTargetEvaluated, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+        //TODO: Job Location Parameter
+        List<ILocation> priorityLocations = job.GetPriorityLocationsFor(action.goapType);
+        if (priorityLocations != null) {
+            bool hasSet = false;
+            for (int i = 0; i < priorityLocations.Count; i++) {
+                ILocation location = priorityLocations[i];
+                if (location is BaseSettlement settlement) {
+                    for (int j = 0; j < settlement.allStructures.Count; j++) {
+                        LocationStructure structure = settlement.allStructures[j];
+                        if(SetLowestCostActionGivenLocationAwareness(structure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                            hasSet = true;
+                        }
+                    }
+                    for (int j = 0; j < settlement.tiles.Count; j++) {
+                        HexTile hex = settlement.tiles[j];
+                        if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                            hasSet = true;
+                        }
+                    }
+                } else if (location is LocationStructure structure) {
+                    if (SetLowestCostActionGivenLocationAwareness(structure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                        hasSet = true;
+                    }
+                } else if (location is HexTile hex) {
+                    if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                        hasSet = true;
+                    }
+                }
+            }
+            if (hasSet) {
+                return;
+            }
+        }
 
-    private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes
+        LocationGridTile currentGridTile = owner.gridTileLocation;
+        if(currentGridTile != null) {
+            LocationStructure currentStructure = currentGridTile.structure;
+            //BaseSettlement currentSettlement = null;
+            //currentGridTile.IsPartOfSettlement(out currentSettlement);
+
+            //if(currentSettlement != null && currentSettlement == owner.homeSettlement) {
+
+            //}
+
+            //First step: Process current structure, if there is an action, skip next processing
+            if (currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS && currentStructure.structureType != STRUCTURE_TYPE.OCEAN) {
+                bool hasSet = SetLowestCostActionGivenLocationAwareness(currentStructure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                if(hasSet) {
+                    return;
+                }
+            }
+
+            HexTile currentHex = null;
+            if (currentGridTile.collectionOwner.isPartOfParentRegionMap) {
+                currentHex = currentGridTile.collectionOwner.partOfHextile.hexTileOwner;
+            }
+
+            if (currentHex != null) {
+                //Second step: Process current hex, if there is an action, skip next processing
+                bool hasSet = SetLowestCostActionGivenLocationAwareness(currentHex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                if (hasSet) {
+                    return;
+                }
+
+                //Second step: Process adjacent hexes, if there is an action, skip next processing
+                List<HexTile> adjacentHexes = currentHex.AllNeighbours;
+                for (int i = 0; i < adjacentHexes.Count; i++) {
+                    HexTile hex = adjacentHexes[i];
+                    SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                }
+            }
+        }
+    }
+    private bool SetLowestCostActionGivenLocationAwareness(ILocationAwareness locationAwareness, GoapPlanJob job, GoapAction action, GoapEffect goalEffect, ref bool isJobTargetEvaluated, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+        bool hasSetAsLowest = false;
+        lock (MultiThreadPool.THREAD_LOCKER) {
+            List<IPointOfInterest> pois = locationAwareness.GetListOfPOIBasedOnActionType(action.goapType);
+            if (pois != null) {
+                for (int i = 0; i < pois.Count; i++) {
+                    IPointOfInterest poi = pois[i];
+                    if (poi == job.targetPOI) {
+                        isJobTargetEvaluated = true;
+                    }
+                    if (poi.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
+                        if (PopulateLowestCostAction(poi, action, job, goalEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                            hasSetAsLowest = true;
+                        }
+                    }
+                }
+            }
+        }
+        return hasSetAsLowest;
+    }
+    private bool PopulateLowestCostAction(IPointOfInterest poiTarget, GoapAction action, GoapPlanJob job, GoapEffect goalEffect, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+        bool canActionBeDone = CanActionBeDoneOn(poiTarget, action, job, goalEffect);
+        if (canActionBeDone) {
+            int cost = action.GetCost(owner, poiTarget, job);
+            log = $"{log}({cost}){action.goapName}-{poiTarget.nameWithID}, ";
+            if (lowestCostAction == null || cost < lowestCost) {
+                lowestCostAction = action;
+                lowestCostTarget = poiTarget;
+                lowestCost = cost;
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool CanActionBeDoneOn(IPointOfInterest poiTarget, GoapAction action, GoapPlanJob job, GoapEffect goalEffect) {
+        bool state = poiTarget.CanAdvertiseActionToActor(owner, action, job) && action.WillEffectsSatisfyPrecondition(goalEffect, owner, poiTarget, job);
+        return state;
+    }
+    private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, GoapPlanJob job, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes
         List<JobNode> actualPlan = null;
         int index = 0;
         if (currentPlan == null) {
@@ -755,50 +576,15 @@ public class GoapPlanner {
                 }
             }
             if(tempNodeIndexHolder.Count > 0) {
-                if(tempNodeIndexHolder.Count == 1) {
-                    //Single Job Node
-                    int nodeIndex = tempNodeIndexHolder[0];
-                    GoapNode rawNode = rawPlan[nodeIndex];
-                    OtherData[] data = null;
-                    if (otherData != null) {
-                        if (otherData.ContainsKey(rawNode.action.goapType)) {
-                            data = otherData[rawNode.action.goapType];
-                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                            data = otherData[INTERACTION_TYPE.NONE];
-                        }
-                    }
-                    ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
-                    SingleJobNode singleJobNode = new SingleJobNode(actualNode);
-                    actualPlan.Insert(0, singleJobNode);
-                    GoapNode node = rawPlan[nodeIndex];
-                    rawPlan.RemoveAt(nodeIndex);
-                    ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
-                } else {
-                    //Multi Job Node
-                    discardedNodes.Clear();
-                    ActualGoapNode[] actualNodes = new ActualGoapNode[tempNodeIndexHolder.Count];
-                    for (int i = 0; i < tempNodeIndexHolder.Count; i++) {
-                        int nodeIndex = tempNodeIndexHolder[i];
-                        GoapNode rawNode = rawPlan[nodeIndex];
-                        OtherData[] data = null;
-                        if (otherData != null) {
-                            if (otherData.ContainsKey(rawNode.action.goapType)) {
-                                data = otherData[rawNode.action.goapType];
-                            } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                                data = otherData[INTERACTION_TYPE.NONE];
-                            }
-                        }
-                        ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
-                        actualNodes[i] = actualNode;
-                        discardedNodes.Add(rawNode);
-                    }
-                    for (int i = 0; i < discardedNodes.Count; i++) {
-                        rawPlan.Remove(discardedNodes[i]);
-                        ObjectPoolManager.Instance.ReturnGoapNodeToPool(discardedNodes[i]);
-                    }
-                    MultiJobNode multiJobNode = new MultiJobNode(actualNodes);
-                    actualPlan.Insert(0, multiJobNode);
-                }
+                int nodeIndex = tempNodeIndexHolder[0];
+                GoapNode rawNode = rawPlan[nodeIndex];
+                OtherData[] data = job.GetOtherDataFor(rawNode.action.goapType);
+                ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
+                SingleJobNode singleJobNode = new SingleJobNode(actualNode);
+                actualPlan.Insert(0, singleJobNode);
+                GoapNode node = rawPlan[nodeIndex];
+                rawPlan.RemoveAt(nodeIndex);
+                ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
             }
             index++;
         }

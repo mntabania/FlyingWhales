@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
-using Logs;
-using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UtilityScripts;
 
 public class Evangelize : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public Evangelize() : base(INTERACTION_TYPE.EVANGELIZE) {
         actionIconString = GoapActionStateDB.Cult_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Player, LOG_TAG.Crimes};
     }
@@ -19,7 +16,7 @@ public class Evangelize : GoapAction {
         return true;
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -80,7 +77,7 @@ public class Evangelize : GoapAction {
     #endregion
     
     #region State Effects
-    public void PreEvangelizeSuccess(ActualGoapNode goapNode) {
+    public void AfterEvangelizeSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         Assert.IsNotNull(targetCharacter, $"Target of Evangelize is not a character! Actor: {goapNode.actor.name}. Target: {goapNode.poiTarget?.name ?? "Null"}");
         WeightedDictionary<bool> weights = new WeightedDictionary<bool>();
@@ -132,12 +129,21 @@ public class Evangelize : GoapAction {
         if (targetCharacter.isFactionLeader) {
             fail += 500;
         }
-        
+
         weights.AddElement(true, success);
         weights.AddElement(false, fail);
-        weights.LogDictionaryValues($"{goapNode.actor.name} evangelize of {targetCharacter.name} weights.");
-
-        if (!weights.PickRandomElementGivenWeights()) {
+        
+        bool result = weights.PickRandomElementGivenWeights();
+        
+        weights.LogDictionaryValues($"{goapNode.actor.name} evangelize of {targetCharacter.name} weights. Result: {result.ToString()}");
+        
+        if (result) {
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "success", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
+            log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            targetCharacter.traitContainer.AddTrait(targetCharacter, "Cultist");
+            log.AddLogToDatabase();
+        } else {
             if ((targetCharacter.relationshipContainer.IsFamilyMember(goapNode.actor) || 
                  targetCharacter.relationshipContainer.HasRelationshipWith(goapNode.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER) || 
                  targetCharacter.relationshipContainer.HasOpinionLabelWithCharacter(goapNode.actor, RelationshipManager.Close_Friend)) &&
@@ -145,26 +151,14 @@ public class Evangelize : GoapAction {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "nothing_happens", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                goapNode.OverrideDescriptionLog(log);
-            } else if (CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship) > CRIME_SEVERITY.Infraction) {
+                log.AddLogToDatabase();
+            } else {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "crime", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                goapNode.OverrideDescriptionLog(log);
+                targetCharacter.assumptionComponent.CreateAndReactToNewAssumption(goapNode.actor, goapNode.actor, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
+                log.AddLogToDatabase();
             }
-        }
-    }
-    public void AfterEvangelizeSuccess(ActualGoapNode goapNode) {
-        Character targetCharacter = goapNode.poiTarget as Character;
-        Assert.IsNotNull(targetCharacter, $"Target of Evangelize is not a character! Actor: {goapNode.actor.name}. Target: {goapNode.poiTarget?.name ?? "Null"}");
-        //TODO: Use something else rather than the description log of the action, because this can easily be forgotten in case the log of this action changes.
-        if (goapNode.descriptionLog.logText.Contains("effective")) {
-            targetCharacter.traitContainer.AddTrait(targetCharacter, "Cultist");
-        } else if (goapNode.descriptionLog.logText.Contains("accused")) {
-            // CrimeManager.Instance.MakeCharacterACriminal(CRIME_TYPE.Demon_Worship, 
-            //     CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship, goapNode), 
-            //     goapNode, targetCharacter, goapNode.actor, targetCharacter, targetCharacter.faction, REACTION_STATUS.WITNESSED, goapNode.actor.traitContainer.GetNormalTrait<Criminal>("Criminal"));
-            targetCharacter.assumptionComponent.CreateAndReactToNewAssumption(goapNode.actor, goapNode.actor, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
         }
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
     }

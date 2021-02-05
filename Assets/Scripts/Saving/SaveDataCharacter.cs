@@ -52,12 +52,14 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> interestedItemNames;
 
     public POI_STATE state;
+    public INTERACTION_TYPE causeOfDeath;
 
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
 
     //References
     public string grave;
+    public string connectedFoodPile;
     public Log deathLog;
     public string homeRegion;
     public string homeSettlement;
@@ -140,6 +142,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         hasBeenRaisedFromDead = data.hasBeenRaisedFromDead;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
+        causeOfDeath = data.causeOfDeath;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 
@@ -208,6 +211,9 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
         if(data.grave != null) {
             grave = data.grave.persistentID;
+        }
+        if (data.connectedFoodPile != null) {
+            connectedFoodPile = data.connectedFoodPile.persistentID;
         }
         if (data.deathLog.hasValue) {
             deathLog = data.deathLog;

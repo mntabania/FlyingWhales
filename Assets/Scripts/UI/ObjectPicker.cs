@@ -79,8 +79,8 @@ public class ObjectPicker : PopupMenuBase {
             ShowSummonItems(validItems.Cast<SummonSlot>().ToList(), invalidItems.Cast<SummonSlot>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
         } else if (type == typeof(Artifact)) {
             ShowArtifactItems(validItems.Cast<Artifact>().ToList(), invalidItems.Cast<Artifact>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
-        } else if (type == typeof(SpellData)) {
-            ShowSpellItems(validItems.Cast<SpellData>().ToList(), invalidItems.Cast<SpellData>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter, asButton);
+        } else if (type == typeof(SkillData)) {
+            ShowSpellItems(validItems.Cast<SkillData>().ToList(), invalidItems.Cast<SkillData>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter, asButton);
         } else if (type.IsEnum) {
             ShowEnumItems(validItems.Cast<Enum>().ToList(), invalidItems.Cast<Enum>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter, asButton);
         } else if (type == typeof(RaceClass)) {
@@ -640,18 +640,18 @@ public class ObjectPicker : PopupMenuBase {
             item.SetInteractableState(false);
         }
     }
-    private void ShowSpellItems<T>(List<SpellData> validItems, List<SpellData> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, Func<string, Sprite> portraitGetter, bool asButton) {
-        Action<SpellData> convertedHoverAction = null;
+    private void ShowSpellItems<T>(List<SkillData> validItems, List<SkillData> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, Func<string, Sprite> portraitGetter, bool asButton) {
+        Action<SkillData> convertedHoverAction = null;
         if (onHoverItemAction != null) {
             convertedHoverAction = ConvertToSpellData(onHoverItemAction);
         }
-        Action<SpellData> convertedHoverExitAction = null;
+        Action<SkillData> convertedHoverExitAction = null;
         if (onHoverExitItemAction != null) {
             convertedHoverExitAction = ConvertToSpellData(onHoverExitItemAction);
         }
         
         for (int i = 0; i < invalidItems.Count; i++) {
-            SpellData spellData = invalidItems[i];
+            SkillData spellData = invalidItems[i];
             GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerSpellItemPrefab.name, objectPickerScrollView.content);
             SpellItem item = itemGO.GetComponent<SpellItem>();
             item.SetObject(spellData);
@@ -677,7 +677,7 @@ public class ObjectPicker : PopupMenuBase {
         }
         
         for (int i = 0; i < validItems.Count; i++) {
-            SpellData spellData = validItems[i];
+            SkillData spellData = validItems[i];
             GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerSpellItemPrefab.name, objectPickerScrollView.content);
             SpellItem item = itemGO.GetComponent<SpellItem>();
             item.SetObject(spellData);
@@ -908,9 +908,9 @@ public class ObjectPicker : PopupMenuBase {
         if (myActionT == null) return null;
         else return new Action<RaceClass>(o => myActionT((T)(object)o));
     }
-    private Action<SpellData> ConvertToSpellData<T>(Action<T> myActionT) {
+    private Action<SkillData> ConvertToSpellData<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
-        else return new Action<SpellData>(o => myActionT((T)(object)o));
+        else return new Action<SkillData>(o => myActionT((T)(object)o));
     }
     private Action<LocationStructure> ConvertToStructure<T>(Action<T> myActionT) {
         if (myActionT == null) return null;

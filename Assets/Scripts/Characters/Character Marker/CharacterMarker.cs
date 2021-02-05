@@ -1,22 +1,15 @@
-﻿using EZObjectPools;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using System;
-using TMPro;
 using Pathfinding;
 using System.Linq;
 using Inner_Maps;
-using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
-using UnityEngine.Assertions;
 using Locations.Settlements;
-using Random = UnityEngine.Random;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -32,7 +25,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private ParticleSystem bloodSplatterEffect;
     [SerializeField] private ParticleSystemRenderer bloodSplatterEffectRenderer;
     [SerializeField] private SpriteRenderer additionalEffectsImg;
-    public Transform particleEffectParent;
     public Transform particleEffectParentAllowRotation;
 
     [Header("Animation")]
@@ -70,7 +62,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     //movement
     public IPointOfInterest targetPOI { get; private set; }
-    public Vector2 anchoredPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
     public float progressionSpeedMultiplier { get; private set; }
     public bool isMoving { get; private set; }
@@ -95,6 +86,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private GameDate _destroyDate;
     private List<HexTile> hexInWildernessForFlee;
     private List<Vector3> avoidThisPositions;
+    private int _currentColliderSize;
 
     #region Getters
     public GameDate destroyDate => _destroyDate;
@@ -181,11 +173,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ManualUpdate() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
             if (character.isBeingSeized) { return; }
+            Profiler.BeginSample($"{character.name} - Attack Speed Meter");
             if (attackSpeedMeter < character.combatComponent.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
                 UpdateAttackSpeedMeter();
             }
+            Profiler.EndSample();
+
+            Profiler.BeginSample($"{character.name} - Pathfinding Update Me Call");
             pathfindingAI.UpdateMe();
+            Profiler.EndSample();
         }
     }
     private void LateUpdate() {
@@ -232,7 +229,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visualsParent.transform.localRotation = data.rotation;
         UpdateActionIcon();
         UpdateAnimation();
-        region.AddPendingAwareness(character);
+        character.SetGridTilePosition(transform.localPosition);
+        if (character.gridTileLocation != null) {
+            LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);    
+        }
+        //removed by aaron for awareness update region.AddPendingAwareness(character);
         if (data.hasExpiry) {
             ScheduleExpiry(data.markerExpiryDate);
         }
@@ -272,7 +273,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //}
         UpdateActionIcon();
         SetCollidersState(true);
-        tile.structure.region.AddPendingAwareness(character);
+        LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+        //removed by aaron for awareness update tile.structure.region.AddPendingAwareness(character);
         character.reactionComponent.UpdateHiddenState();
     }
     #endregion
@@ -372,10 +374,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
-        Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+        Messenger.AddListener(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS, ProcessAllUnprocessedVisionPOIs);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.REPROCESS_POI, ReprocessPOI);
-        Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
+        Messenger.AddListener(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT, PerTickMovement);
         Messenger.AddListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.AddListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
@@ -385,10 +387,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
-        Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+        Messenger.RemoveListener(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS, ProcessAllUnprocessedVisionPOIs);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.REPROCESS_POI, ReprocessPOI);
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
+        Messenger.RemoveListener(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT, PerTickMovement);
         Messenger.RemoveListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.RemoveListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
@@ -531,7 +533,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Action Icon
     public void UpdateActionIcon() {
-        if (_nameplate) {
+        //Do not show action icon if character is invisible
+        if (_nameplate && isMainVisualActive) {
             _nameplate.UpdateActionIcon();    
         }
     }
@@ -555,11 +558,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemoveListeners();
         HideHPBar();
         HideAdditionalEffect();
-        PooledObject[] pooledObjects = GameUtilities.GetComponentsInDirectChildren<PooledObject>(particleEffectParent.gameObject);
-        for (int i = 0; i < pooledObjects.Length; i++) {
-            PooledObject pooledObject = pooledObjects[i];
-            ObjectPoolManager.Instance.DestroyObject(pooledObject);
-        }
+        //PooledObject[] pooledObjects = GameUtilities.GetComponentsInDirectChildren<PooledObject>(particleEffectParent.gameObject);
+        //for (int i = 0; i < pooledObjects.Length; i++) {
+        //    PooledObject pooledObject = pooledObjects[i];
+        //    ObjectPoolManager.Instance.DestroyObject(pooledObject);
+        //}
+
+        //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
+        DestroyAllParticles();
+
         Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
         visionCollider.Reset();
         GameObject.Destroy(visionTrigger.gameObject);
@@ -578,6 +585,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
         collider = null;
         character = null;
         base.OnDestroy();
+    }
+    private void DestroyAllParticles() {
+        Transform[] particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParent.gameObject);
+        if (particleGOs != null) {
+            for (int i = 0; i < particleGOs.Length; i++) {
+                ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
+            }
+        }
+        particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParentAllowRotation.gameObject);
+        if (particleGOs != null) {
+            for (int i = 0; i < particleGOs.Length; i++) {
+                ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
+            }
+        }
     }
     #endregion
 
@@ -728,7 +749,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Action action = arrivalAction;
         //set arrival action to null, because some arrival actions set it
         ClearArrivalAction();
+        Profiler.BeginSample($"{character.name} - Arrived At Target - Action Invoke");
         action?.Invoke();   
+        Profiler.EndSample();
         
         // if (actualDestinationTile == attainedDestinationTile || (attainedDestinationTile != null && actualDestinationTile != null && attainedDestinationTile.IsNeighbour(actualDestinationTile))) {
         //     Action action = arrivalAction;
@@ -779,21 +802,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
     public void StopMovement() {
-        //if (!isMoving) {
-        //    return;
-        //}
         isMoving = false;
-        string log = $"{character.name} StopMovement function is called!";
-        character.logComponent.PrintLogIfActive(log);
+        // string log = $"{character.name} StopMovement function is called!";
+        // character.logComponent.PrintLogIfActive(log);
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
-        // Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
     }
     private void PerTickMovement() {
-        // if (character == null) {
-        //     Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
-        //     return;
-        // }
         if (isMoving) {
             Profiler.BeginSample($"{character.name} PerTickMovement");
             character.PerTickDuringMovement();    
@@ -918,16 +933,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         animator.Play(animation, 0, 0.5f);
     }
     public void UpdateAnimation() {
-        //if (isInCombatTick) {
-        //    return;
-        //}
         if (gameObject.activeSelf == false) { return; }
         if (!character.carryComponent.IsNotBeingCarried()) {
             PlaySleepGround();
             ResetBlood();
-            //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-            //    PlaySleepGround();
-            //}
             return; //if not in own party do not update any other animations
         }
         if (character.isDead) {
@@ -946,7 +955,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else if ((character.limiterComponent.canMove == false || (!character.limiterComponent.canPerform && !character.limiterComponent.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
                 PlaySleepGround();
             } else if (isMoving) {
-                //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
                 PlayWalkingAnimation();
             } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 
                                                            && string.IsNullOrEmpty(character.currentActionNode.currentState.animationName) == false) {
@@ -980,7 +988,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         _pauseAnimationCounter--;
         UpdatePauseAnimationSpeed();
     }
-    private void UpdatePauseAnimationSpeed() {
+    public void UpdatePauseAnimationSpeed() {
         if(_pauseAnimationCounter > 0) {
             animator.speed = 0;
         } else {
@@ -1076,20 +1084,44 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
-        anchoredPos = transform.localPosition;
+        Profiler.BeginSample($"{character.name} Set Grid Tile Position");
+        character.SetGridTilePosition(transform.localPosition);
+        Profiler.EndSample();
 
         if (previousGridTile != character.gridTileLocation && character.gridTileLocation != null) {
+            Profiler.BeginSample($"{character.name} On Character Moved To");
             character.gridTileLocation.parentMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
+            Profiler.EndSample();
             if(character != null) {
                 previousGridTile = character.gridTileLocation;
                 if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
                     _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
                     if (_previousHexTileLocation != null) {
+                        _previousHexTileLocation.locationCharacterTracker.RemoveCharacterFromLocation(character);
+                        
+                        Profiler.BeginSample($"{character.name} Character Exited Hextile Broadcast");
                         Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+                        Profiler.EndSample();
+
+                        Profiler.BeginSample($"{character.name} Remove From Awareness List");
+                        if(character.currentLocationAwareness == _previousHexTileLocation.locationAwareness) {
+                            LocationAwarenessUtility.RemoveFromAwarenessList(character);
+                        }
+                        Profiler.EndSample();
                     }
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                        //When character enters new hex tile it becomes the previous hex tile altogether
                         _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        
+                        _previousHexTileLocation.locationCharacterTracker.AddCharacterAtLocation(character);
+                        
+                        Profiler.BeginSample($"{character.name} Character Entered Hextile Broadcast");
                         Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
+                        Profiler.EndSample();
+                        
+                        Profiler.BeginSample($"{character.name} Add To Awareness List");
+                        LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+                        Profiler.EndSample();
                     } else {
                         _previousHexTileLocation = null;
                     }
@@ -1178,7 +1210,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         mainImg.color = color;
     }
     private void UpdateHairState() {
-        //TODO: Find another way to unify this
         Character character = this.character;
         if(character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
@@ -1351,24 +1382,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void ProcessAllUnprocessedVisionPOIs() {
         if (character == null) { return; }
-        Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
-        string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
+        // string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
         if (unprocessedVisionPOIs.Count > 0) {
             if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.limiterComponent.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
+                Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs - Objects");
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {
-                        log += $"\n-{poi.nameWithID}'s map visual has been destroyed. Skipping...";
+                        // log = $"{log}\n-{poi.nameWithID}'s map visual has been destroyed. Skipping...";
                         continue;
                     }
                     if (poi.isHidden) {
-                        log += $"\n-{poi.nameWithID} is hidden. Skipping...";
+                        // log = $"{log}\n-{poi.nameWithID} is hidden. Skipping...";
                         continue;
                     }
                     if(poi is Character target) {
                         //After dropping a character, the carrier should not immediately react to the recently dropped character
                         if(target.carryComponent.justGotCarriedBy != null && target.carryComponent.justGotCarriedBy == character) {
-                            log += $"\n-{poi.nameWithID} is just got dropped. Skipping...";
+                            // log = $"{log}\n-{poi.nameWithID} is just got dropped. Skipping...";
                             target.carryComponent.SetJustGotCarriedBy(null);
                             continue;
                         }
@@ -1376,48 +1407,50 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if(!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(poi)) {
                         //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
                         if (!IsCharacterInLineOfSightWith(poi)) {
-                            log += $"\n-{poi.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
+                            // log = $"{log}\n-{poi.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
                             continue;
                         }
                     }
-                    log += $"\n-{poi.nameWithID}";
+                    // log = $"{log}\n-{poi.nameWithID}";
                     bool reactToActionOnly = false;
                     if (unprocessedVisionPOIInterruptsOnly.Count > 0) {
                         reactToActionOnly = unprocessedVisionPOIInterruptsOnly.Contains(poi);
                     }
                     character.ThisCharacterSaw(poi, reactToActionOnly);
                 }
+                Profiler.EndSample();
             } else {
-                log += "\n - Character is either dead, not processing...";
+                // log = $"{log}\n - Character is either dead, not processing...";
             }
             ClearUnprocessedPOI();
         }
         if (unprocessedActionsOnly.Count > 0) {
             if (!character.isDead) {
+                Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs - Actions");
                 for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
                     ActualGoapNode action = unprocessedActionsOnly[i];
                     Character actor = action.actor;
-                    log += $"\n-{action.goapName} of {actor.name} towards {action.poiTarget.name}";
+                    // log = $"{log}\n-{action.goapName} of {actor.name} towards {action.poiTarget.name}";
                     if (!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(actor)) {
                         //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
                         if (!IsCharacterInLineOfSightWith(actor)) {
-                            log += $"\n-{actor.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
+                            // log = $"{log}\n-{actor.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
                             continue;
                         }
                     }
                     character.ThisCharacterSawAction(action);
                 }
+                Profiler.EndSample();
             } else {
-                log += "\n - Character is either dead, not processing...";
+                // log = $"{log}\n - Character is either dead, not processing...";
             }
             ClearUnprocessedActions();
         }
-        character.logComponent.PrintLogIfActive(log);
+        // character.logComponent.PrintLogIfActive(log);
         character.SetHasSeenFire(false);
         character.SetHasSeenWet(false);
         character.SetHasSeenPoisoned(false);
         character.combatComponent.CheckCombatPerTickEnded();
-        Profiler.EndSample();
     }
     public bool IsPOIInVision(IPointOfInterest poi) {
         return (poi is Character character && inVisionCharacters.Contains(character)) || (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject));
@@ -1842,14 +1875,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //private readonly RaycastHit2D[] linOfSightHitObjects = new RaycastHit2D[5];
     private RaycastHit2D[] lineOfSightHitObjects;
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {
-        Profiler.BeginSample($"{character.name} IsCharacterInLineOfSightWith Pre Check");
-        //if (target is BlockWall == false) {
-        //    //only Check in vision list if target is NOT Block Wall. 
-        //    //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
-
-        //    //if (IsPOIInVision(target) == false) { return false; } 
-        //}
-
         //No longer checks if target is in vision, rather, it should check if target has a map visual object, if it does not, there will be no line of sight
         //Also, there is no line of sight if actor and target is in a different region
         if (target.mapObjectVisual == null) {
@@ -1858,41 +1883,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character == null || character.currentRegion == null || target.gridTileLocation == null || character.currentRegion != target.gridTileLocation.structure.region) {
             return false;
         }
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} start set");
         //precompute our ray settings
         Vector3 start = transform.position;
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} Vector3 subtraction");
         Vector3 direction = GameUtilities.VectorSubtraction(target.worldPosition, start).normalized;
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} Raycast");
         float distance = rayDistance;
-        if (target is BlockWall) {
+        if (target.IsUnpassable()) {
             distance += 1.5f;
         }
         //do the ray test
         //int size = Physics2D.RaycastNonAlloc(start, direction, linOfSightHitObjects, distance, 
         //    GameUtilities.Line_Of_Sight_Layer_Mask);
-        lineOfSightHitObjects = Physics2D.RaycastAll(start, direction, distance,
-                GameUtilities.Line_Of_Sight_Layer_Mask);
-        Profiler.EndSample();
+        lineOfSightHitObjects = Physics2D.RaycastAll(start, direction, distance, GameUtilities.Line_Of_Sight_Layer_Mask);
         
-        Profiler.BeginSample($"{character.name} Raycast result loop");
         if(lineOfSightHitObjects != null) {
             for (int i = 0; i < lineOfSightHitObjects.Length; i++) {
                 RaycastHit2D hit = lineOfSightHitObjects[i];
-                if ((target is BlockWall) == false && hit.collider.gameObject.layer == LayerMask.NameToLayer("Unpassable")) {
+                if (!target.IsUnpassable() && hit.collider.gameObject.layer == LayerMask.NameToLayer("Unpassable")) {
                     return false;
                 } else if (hit.transform.IsChildOf(target.mapObjectVisual.transform)) {
                     return true;
                 }
             }
         }
-        Profiler.EndSample();
         return false;
     }
     #endregion
@@ -1909,7 +1921,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visionTrigger.SetAllCollidersState(state);
     }
     public void SetVisionColliderSize(int size) {
-        collider.size = new Vector2(size, size);
+        if (_currentColliderSize != size) {
+            _currentColliderSize = size;
+            collider.size = new Vector2(size, size);    
+        }
     }
     #endregion
 
@@ -2016,24 +2031,42 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Stroll
-    public void DoStrollMovement(Action onReachPathAction, STRUCTURE_TYPE[] notAllowedStructures = null) {
+    public void DoStrollMovement() {
+        Profiler.BeginSample($"{character.name} - Do Stroll Movement");
+        StopMovement();
         pathfindingAI.ClearAllCurrentPathData();
-        arrivalAction = onReachPathAction;
-        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
-        ConstantPath constantPath = ConstantPath.Construct(transform.position, 10000, null);
+        ConstantPath constantPath = ConstantPath.Construct(transform.position, 10000, OnStrollPathComputed);
         AstarPath.StartPath(constantPath);
-        constantPath.BlockUntilCalculated();
-        if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
-            GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1).Last(), arrivalAction);    
-        } else {
-            if (character.stateComponent.currentState is StrollOutsideState) {
-                //could not find nodes to stroll to. Just exit stroll state.
-                character.stateComponent.ExitCurrentState();    
-            }
-        }
-        
+        // constantPath.BlockUntilCalculated();
+        // if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
+        //     GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1, 5).Last(), arrivalAction);    
+        // } else {
+        //     if (character.stateComponent.currentState is StrollOutsideState) {
+        //         //could not find nodes to stroll to. Just exit stroll state.
+        //         character.stateComponent.ExitCurrentState();    
+        //     }
+        // }
+        UpdateAnimation();
+        Profiler.EndSample();
     }
-    public void OnConstantPathComputed(ConstantPath constantPath) { }
+    public void OnStrollPathComputed(Path path) {
+        if (character == null) {
+            return;
+        }
+        if (path is ConstantPath constantPath && character.stateComponent.currentState is StrollOutsideState strollOutsideState) {
+            if (character.jobQueue.jobsInQueue.Count > 1 && character.jobQueue.jobsInQueue[0] != strollOutsideState.job) {
+                character.stateComponent.ExitCurrentState();
+            } else {
+                if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
+                    GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1, 5).Last(), strollOutsideState.StartStrollMovement);    
+                } else {
+                    //could not find nodes to stroll to. Just exit stroll state.
+                    character.stateComponent.ExitCurrentState();
+                }    
+            }
+                
+        }
+    }
     #endregion
 
     #region Tags

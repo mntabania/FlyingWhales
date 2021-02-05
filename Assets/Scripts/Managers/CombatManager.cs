@@ -6,6 +6,7 @@ using System;
 using Traits;
 using Inner_Maps;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class CombatManager : BaseMonoBehaviour {
@@ -26,7 +27,7 @@ public class CombatManager : BaseMonoBehaviour {
         Slaying_Monster = "Slaying_Monster", Slaying_Undead = "Slaying_Undead", Slaying_Demon = "Slaying_Demon", Slaying_Villager = "Slaying_Villager",
         Incapacitating_Monster = "Incapacitating_Monster", Incapacitating_Undead = "Incapacitating_Undead", Incapacitating_Demon = "Incapacitating_Demon", Incapacitating_Villager = "Incapacitating_Villager",
         Fighting_Vagrant = "Fighting_Vagrant", Feral_Monster = "Feral_Monster",
-        Hostile_Undead = "Hostile_Undead", Defending_Territory = "Defending_Territory";
+        Hostile_Undead = "Hostile_Undead", Defending_Territory = "Defending_Territory", Defending_Home = "Defending_Home";
 
     //Retaliation reasons
     public const string Resisting_Arrest = "Resisting_Arrest", Resisting_Abduction = "Resisting_Abduction", Defending_Self = "Defending_Self";
@@ -48,11 +49,18 @@ public class CombatManager : BaseMonoBehaviour {
         Instance = null;
     }
 
-    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null) {
+    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null, bool createHitEffect = true) {
+        Profiler.BeginSample("Apply Elemental Damage - Get Data");
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
-        if (target != null) {
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Apply Elemental Damage - Create Hit Effect");
+        if (target != null && createHitEffect) {
             CreateHitEffectAt(target, elementalType);
         }
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Apply Elemental Damage - Wake Sleeping");
         if (damage < 0) {
             //Damage should awaken sleeping characters
             if (target.traitContainer.HasTrait("Resting")) {
@@ -66,36 +74,72 @@ public class CombatManager : BaseMonoBehaviour {
                 targetCharacter.reactionComponent.SetDisguisedCharacter(null);
             }
         }
+        Profiler.EndSample();
+        
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
+            Profiler.BeginSample("Apply Elemental Damage - Add Elemental Trait");
             bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, 
                 out Trait trait, characterResponsible); //, out trait
+            Profiler.EndSample();
             if (hasSuccessfullyAdded) {
+                Profiler.BeginSample("Apply Elemental Damage - Chain Electric");
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
                     ChainElectricDamage(target, damage, characterResponsible, target);
                 }
-                elementalTraitProcessor?.Invoke(target, trait);
+                Profiler.EndSample();
+                
+                Profiler.BeginSample("Apply Elemental Damage - Elemental Trait Processor");
+                if (elementalTraitProcessor != null) {
+                    elementalTraitProcessor.Invoke(target, trait);    
+                } else {
+                    DefaultElementalTraitProcessor(target, trait);
+                }
+                Profiler.EndSample();
+                
             }
         }
+        Profiler.BeginSample("Apply Elemental Damage - General Element Process");
         GeneralElementProcess(target, characterResponsible);
+        Profiler.EndSample();
+        
         if(elementalType == ELEMENTAL_TYPE.Earth) {
+            Profiler.BeginSample("Apply Elemental Damage - Earth Process");
             EarthElementProcess(target);
+            Profiler.EndSample();
         } else if (elementalType == ELEMENTAL_TYPE.Wind) {
+            Profiler.BeginSample("Apply Elemental Damage - Wind Process");
             WindElementProcess(target, characterResponsible);
+            Profiler.EndSample();
         } else if (elementalType == ELEMENTAL_TYPE.Fire) {
+            Profiler.BeginSample("Apply Elemental Damage - Fire Process");
             FireElementProcess(target);
+            Profiler.EndSample();
         } else if (elementalType == ELEMENTAL_TYPE.Water) {
+            Profiler.BeginSample("Apply Elemental Damage - Water Process");
             WaterElementProcess(target);
+            Profiler.EndSample();
         } else if (elementalType == ELEMENTAL_TYPE.Electric) {
+            Profiler.BeginSample("Apply Elemental Damage - Electric Process");
             ElectricElementProcess(target);
+            Profiler.EndSample();
         } else if (elementalType == ELEMENTAL_TYPE.Normal) {
+            Profiler.BeginSample("Apply Elemental Damage - Normal Process");
             NormalElementProcess(target);
+            Profiler.EndSample();
         }
     }
-    public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
+    public void DamageModifierByElementsAndTraits(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
         if(damage < 0) {
             if (target.traitContainer.HasTrait("Immune")) {
                 damage = 0;
             } else {
+                if (target.traitContainer.HasTrait("Protection")) {
+                    //Protected - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.5f);
+                    if (damage >= 0) {
+                        damage = -1;
+                    }
+                }
                 if (IsImmuneToElement(target, elementalType)) {
                     if (target is Vapor) {
                         damage = 0;
@@ -153,7 +197,7 @@ public class CombatManager : BaseMonoBehaviour {
                 return true;
             }
         } else if (elementalType == ELEMENTAL_TYPE.Ice) {
-            if (target.traitContainer.HasTrait("Cold Blooded")) {
+            if (target.traitContainer.HasTrait("Cold Blooded", "Iceproof")) {
                 //Immunity - less 85% damage
                 return true;
             }

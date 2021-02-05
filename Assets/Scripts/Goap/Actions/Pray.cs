@@ -10,7 +10,7 @@ public class Pray : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT };
         actionIconString = GoapActionStateDB.Pray_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -50,11 +50,11 @@ public class Pray : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         if (actor.religionComponent.religion == RELIGION.Demon_Worship) {
             return CRIME_TYPE.Demon_Worship;
@@ -89,11 +89,14 @@ public class Pray : GoapAction {
             reactions.Add(EMOTION.Approval);
         }
     }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region State Effects
     public void PrePraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickPraySuccess(ActualGoapNode goapNode) {
@@ -101,7 +104,7 @@ public class Pray : GoapAction {
         //goapNode.actor.needsComponent.AdjustStamina(0.5f);
     }
     public void AfterPraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         if (goapNode.actor.religionComponent.religion == RELIGION.Demon_Worship) {
             //Demon Worshippers produce 1 Chaos Orb when they Pray
             //https://trello.com/c/qnZzSwcW/2590-demon-worshippers-produce-1-chaos-orb-when-they-pray

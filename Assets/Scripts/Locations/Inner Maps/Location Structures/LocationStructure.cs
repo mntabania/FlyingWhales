@@ -7,9 +7,11 @@ using Locations.Settlements;
 using UnityEngine.Assertions;
 using Logs;
 using UtilityScripts;
+using Locations;
 namespace Inner_Maps.Location_Structures {
+
     [System.Serializable]
-    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller {
+    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, ILocation {
         public string persistentID { get; }
         public int id { get; private set; }
         public string name { get; protected set; }
@@ -21,12 +23,12 @@ namespace Inner_Maps.Location_Structures {
         public Region region { get; private set; }
         public BaseSettlement settlementLocation { get; private set; }
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
-        public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
+        public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> groupedTileObjects { get; private set; }
         public virtual InnerMapHexTile occupiedHexTile { get; private set; }
         //Inner Map
         public HashSet<LocationGridTile> tiles { get; private set; }
         public List<LocationGridTile> passableTiles { get; private set; }
-        public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
+        public List<LocationGridTile> unoccupiedTiles { get; private set; }
         public bool isInterior { get; private set; }
         public bool hasBeenDestroyed { get; private set; }
         //HP
@@ -36,6 +38,8 @@ namespace Inner_Maps.Location_Structures {
         public List<Character> residents { get; protected set; }
         public StructureRoom[] rooms { get; protected set; }
         public bool hasActiveSocialGathering { get; protected set; }
+
+        public LocationAwareness locationAwareness { get; protected set; }
 
         //protected Faction _owner;
         
@@ -51,6 +55,7 @@ namespace Inner_Maps.Location_Structures {
         
         #region getters
         public virtual string nameplateName => name;
+        public string locationName => ToString();
         public virtual bool isDwelling => false;
         public virtual Vector3 worldPosition { get; protected set; }
         public virtual Vector2 selectableSize => Vector2.zero;
@@ -71,10 +76,10 @@ namespace Inner_Maps.Location_Structures {
             this.region = location;
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
-            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
+            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             tiles = new HashSet<LocationGridTile>();
             passableTiles = new List<LocationGridTile>();
-            unoccupiedTiles = new LinkedList<LocationGridTile>();
+            unoccupiedTiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
@@ -83,6 +88,8 @@ namespace Inner_Maps.Location_Structures {
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
             maxResidentCapacity = 5;
+
+            locationAwareness = new LocationAwareness();
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
             persistentID = data.persistentID;
@@ -93,11 +100,11 @@ namespace Inner_Maps.Location_Structures {
             nameWithoutID = data.nameWithoutID;
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
-            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
+            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             structureTags = new List<STRUCTURE_TAG>(data.structureTags);
             tiles = new HashSet<LocationGridTile>();
             passableTiles = new List<LocationGridTile>();
-            unoccupiedTiles = new LinkedList<LocationGridTile>();
+            unoccupiedTiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
             occupiedHexTiles = new List<HexTile>();
@@ -106,6 +113,8 @@ namespace Inner_Maps.Location_Structures {
             SetInteriorState(data.isInterior);
             maxResidentCapacity = 5;
             hasBeenDestroyed = data.hasBeenDestroyed;
+            
+            locationAwareness = new LocationAwareness();
         }
 
         #region Loading
@@ -290,30 +299,28 @@ namespace Inner_Maps.Location_Structures {
             }
             return count;
         }
-        public List<Character> GetCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
-            List<Character> characters = null;
+        public void PopulateCharacterListThatMeetCriteria(List<Character> characterList, System.Func<Character, bool> criteria) {
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
                 if (criteria.Invoke(character)) {
-                    if (characters == null) { characters = new List<Character>(); }
-                    characters.Add(character);
+                    characterList.Add(character);
                 }
             }
-            return characters;
         }
         public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> criteria) {
-            List<Character> characters = null;
+            List<Character> characters = ObjectPoolManager.Instance.CreateNewCharactersList();
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
                 if (criteria.Invoke(character)) {
-                    if(characters == null) { characters = new List<Character>(); }
                     characters.Add(character);
                 }
             }
+            Character chosen = null;
             if(characters != null && characters.Count > 0) {
-                return characters[UnityEngine.Random.Range(0, characters.Count)];
+                chosen = characters[UnityEngine.Random.Range(0, characters.Count)];
             }
-            return null;
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(characters);
+            return chosen;
         }
         public int GetNumOfCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
             int count = 0;
@@ -324,6 +331,324 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
             return count;
+        }
+        #endregion
+
+        #region Tile Objects
+        protected void ProcessAllTileObjects(Action<TileObject> action) {
+            //List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
+                if (currPOI is TileObject poi) {
+                    action.Invoke(poi);
+                    //objs.Add(poi);
+                }
+            }
+            //return objs;
+        }
+        public void PopulateTileObjectsThatAdvertise(List<TileObject> p_objectList, params INTERACTION_TYPE[] types) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
+                if (currPOI is TileObject obj) {
+                    if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
+                        p_objectList.Add(obj);
+                    }
+                }
+            }
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile currTile = tiles.ElementAt(i);
+                if (currTile.genericTileObject.IsAvailable() && currTile.genericTileObject.AdvertisesAll(types)) {
+                    p_objectList.Add(currTile.genericTileObject);
+                }
+            }
+        }
+        public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi.IsAvailable() && poi is TileObject tileObj) {
+                    if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                        return tileObj;
+                    }
+                }
+            }
+            return null;
+        }
+        public IDamageable GetNearestDamageableThatContributeToHP(LocationGridTile fromTile) {
+            IDamageable nearest = null;
+            float nearestDist = 9999f;
+            for (int i = 0; i < objectsThatContributeToDamage.Count; i++) {
+                IDamageable poi = objectsThatContributeToDamage.ElementAt(i);
+                if (poi.gridTileLocation != null) {
+                    float dist = fromTile.GetDistanceTo(poi.gridTileLocation);
+                    if (nearest == null || dist < nearestDist) {
+                        nearest = poi;
+                        nearestDist = dist;
+                    }
+                }
+            }
+            return nearest;
+        }
+        public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
+            if (groupedTileObjects.ContainsKey(type)) {
+                return groupedTileObjects[type];
+            }
+            return null;
+            //List<TileObject> objs = new List<TileObject>();
+            //for (int i = 0; i < pointsOfInterest.Count; i++) {
+            //    IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+            //    if (poi is TileObject obj) {
+            //        if (obj.tileObjectType == type) {
+            //            objs.Add(obj);
+            //        }
+            //    }
+            //}
+            //return objs;
+        }
+        public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
+            if (groupedTileObjects.ContainsKey(type)) {
+                return groupedTileObjects[type].Count > 0;
+            }
+            return false;
+            //for (int i = 0; i < pointsOfInterest.Count; i++) {
+            //    IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+            //    if (poi is TileObject obj) {
+            //        if (obj.tileObjectType == type) {
+            //            return true;
+            //        }
+            //    }
+            //}
+            //return false;
+        }
+        public bool HasTileObjectThatMeetCriteria(Func<TileObject, bool> criteria) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject obj) {
+                    if (criteria.Invoke(obj)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        //public List<T> GetTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+        //    List<T> objs = new List<T>();
+        //    for (int i = 0; i < pointsOfInterest.Count; i++) {
+        //        IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+        //        if (poi is TileObject) {
+        //            TileObject obj = poi as TileObject;
+        //            if (obj.tileObjectType == type) {
+        //                objs.Add(obj as T);
+        //            }
+        //        }
+        //    }
+        //    return objs;
+        //}
+        //public List<T> GetBuiltTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+        //    List<T> objs = new List<T>();
+        //    for (int i = 0; i < pointsOfInterest.Count; i++) {
+        //        IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+        //        if (poi is TileObject) {
+        //            TileObject obj = poi as TileObject;
+        //            if (obj.tileObjectType == type && obj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+        //                objs.Add(obj as T);
+        //            }
+        //        }
+        //    }
+        //    return objs;
+        //}
+        public void PopulateTileObjectsList(List<TileObject> tileObjects, TILE_OBJECT_TYPE type, System.Func<TileObject, bool> validityChecker) {
+            if (groupedTileObjects.ContainsKey(type)) {
+                List<TileObject> objs = groupedTileObjects[type];
+                if(objs != null) {
+                    for (int i = 0; i < objs.Count; i++) {
+                        TileObject t = objs[i];
+                        if (validityChecker == null || validityChecker.Invoke(t)) {
+                            tileObjects.Add(t);
+                        }
+                    }
+                }
+            }
+        }
+        public List<T> GetTileObjectsOfType<T>(System.Func<T, bool> validityChecker = null) where T : TileObject {
+            List<T> objs = new List<T>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T obj) {
+                    if (validityChecker != null) {
+                        if (validityChecker.Invoke(obj)) {
+                            objs.Add(obj);
+                        }
+                    } else {
+                        objs.Add(obj);
+                    }
+                }
+            }
+            return objs;
+        }
+        public T GetRandomTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+            List<T> objs = null;
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T obj) {
+                    if (validityChecker.Invoke(obj)) {
+                        if (objs == null) { objs = new List<T>(); }
+                        objs.Add(obj);
+                    }
+                }
+            }
+            if (objs != null && objs.Count > 0) {
+                return objs[UnityEngine.Random.Range(0, objs.Count)];
+            }
+            return null;
+        }
+        public T GetFirstTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T obj) {
+                    if (validityChecker.Invoke(obj)) {
+                        return obj;
+                    }
+                }
+            }
+            return null;
+        }
+        public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] types) where T : TileObject {
+            //List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < types.Length; i++) {
+                TILE_OBJECT_TYPE type = types[i];
+                if (groupedTileObjects.ContainsKey(type)) {
+                    List<TileObject> objs = groupedTileObjects[type];
+                    if (objs != null) {
+                        for (int j = 0; j < objs.Count; j++) {
+                            TileObject t = objs[j];
+                            if (t is T converted) {
+                                return converted;
+                            }
+                        }
+                    }
+                }
+            }
+            //for (int i = 0; i < pointsOfInterest.Count; i++) {
+            //    IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+            //    if (poi is TileObject) {
+            //        TileObject obj = poi as TileObject;
+            //        if (obj.tileObjectType == type) {
+            //            return obj as T;
+            //        }
+            //    }
+            //}
+            return null;
+        }
+        public T GetTileObjectOfType<T>() where T : TileObject {
+            //List<TileObject> objs = new List<TileObject>();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T obj) {
+                    return obj;
+                }
+            }
+            return null;
+        }
+        public bool AnyTileObjectsOfType<T>(TILE_OBJECT_TYPE tileObjectType, System.Func<T, bool> validityChecker = null) where T : TileObject {
+            if (groupedTileObjects.ContainsKey(tileObjectType)) {
+                List<TileObject> tileObjects = groupedTileObjects[tileObjectType];
+                if (validityChecker != null) {
+                    for (int i = 0; i < tileObjects.Count; i++) {
+                        TileObject tileObject = tileObjects[i];
+                        if (tileObject is T obj) {
+                            if (validityChecker.Invoke(obj)) {
+                                return true;
+                            }
+                        }
+
+                    }
+                } else {
+                    //if no validity checker was provided then check if count of tile objects is greater than 0.
+                    return tileObjects.Count > 0;
+                }
+
+            }
+            return false;
+        }
+        public bool AnyTileObjectsOfType<T>(TILE_OBJECT_TYPE tileObjectType, out string log, System.Func<T, bool> validityChecker = null) where T : TileObject {
+            log = $"Checking for tile objects of type {tileObjectType.ToString()} at {ToString()}";
+            if (groupedTileObjects.ContainsKey(tileObjectType)) {
+                List<TileObject> tileObjects = groupedTileObjects[tileObjectType];
+                if (validityChecker != null) {
+                    log += $"\nFound {tileObjects.Count.ToString()}, checking validity...";
+                    for (int i = 0; i < tileObjects.Count; i++) {
+                        TileObject tileObject = tileObjects[i];
+                        if (tileObject is T obj) {
+                            log += $"\nChecking validity of {obj.nameWithID}";
+                            if (validityChecker.Invoke(obj)) {
+                                log += $"\n{obj.nameWithID} is valid! Returning true!";
+                                return true;
+                            } else {
+                                log += $"\n{obj.nameWithID} is not valid! Map Object State {obj.mapObjectState.ToString()}. Character Owner {obj.characterOwner?.name}";
+                            }
+                        }
+
+                    }
+                } else {
+                    //if no validity checker was provided then check if count of tile objects is greater than 0.
+                    return tileObjects.Count > 0;
+                }
+            }
+            return false;
+        }
+        public int GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE type, Func<TileObject, bool> criteria) {
+            if (groupedTileObjects.ContainsKey(type)) {
+                List<TileObject> tileObjects = groupedTileObjects[type];
+                if (tileObjects != null) {
+                    if (criteria == null) {
+                        return tileObjects.Count;
+                    } else {
+                        int count = 0;
+                        for (int i = 0; i < tileObjects.Count; i++) {
+                            TileObject t = tileObjects[i];
+                            if (criteria.Invoke(t)) {
+                                count++;
+                            }
+                        }
+                        return count;
+                    }
+                } 
+            }
+            return 0;
+        }
+        public T GetResourcePileObjectWithLowestCount<T>(bool excludeMaximum = true) where T : ResourcePile {
+            T chosenPile = null;
+            int lowestCount = 0;
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T obj) {
+                    if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
+                        continue; //skip
+                    }
+                    if (chosenPile == null || obj.resourceInPile <= lowestCount) {
+                        chosenPile = obj;
+                        lowestCount = obj.resourceInPile;
+                    }
+                }
+            }
+            return chosenPile;
+        }
+        public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE tileObjectType, bool excludeMaximum = true) {
+            ResourcePile chosenPile = null;
+            int lowestCount = 0;
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is ResourcePile obj && obj.tileObjectType == tileObjectType) {
+                    if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
+                        continue; //skip
+                    }
+                    if (chosenPile == null || obj.resourceInPile <= lowestCount) {
+                        chosenPile = obj;
+                        lowestCount = obj.resourceInPile;
+                    }
+                }
+            }
+            return chosenPile;
         }
         #endregion
 
@@ -340,11 +665,9 @@ namespace Inner_Maps.Location_Structures {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
-                        groupedTileObjects[tileObject.tileObjectType].AddTileObject(tileObject);
+                        groupedTileObjects[tileObject.tileObjectType].Add(tileObject);
                     } else {
-                        TileObjectsAndCount toac = new TileObjectsAndCount();
-                        toac.AddTileObject(tileObject);
-                        groupedTileObjects.Add(tileObject.tileObjectType, toac);
+                        groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
                     }
                     if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                     && tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
@@ -364,11 +687,9 @@ namespace Inner_Maps.Location_Structures {
                 pointsOfInterest.Add(p_poi);
                 if (p_poi is TileObject tileObject) {
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
-                        groupedTileObjects[tileObject.tileObjectType].AddTileObject(tileObject);
+                        groupedTileObjects[tileObject.tileObjectType].Add(tileObject);
                     } else {
-                        TileObjectsAndCount toac = new TileObjectsAndCount();
-                        toac.AddTileObject(tileObject);
-                        groupedTileObjects.Add(tileObject.tileObjectType, toac);
+                        groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
                     }    
                 }
             }
@@ -378,7 +699,7 @@ namespace Inner_Maps.Location_Structures {
                 Debug.Log($"Removed {p_poi.name} from {name}");
                 if (p_poi is TileObject tileObject) {
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
-                        groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                        groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
                     }    
                 }
             }
@@ -391,11 +712,9 @@ namespace Inner_Maps.Location_Structures {
                 }
                 if (poi is TileObject tileObject) {
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
-                        groupedTileObjects[tileObject.tileObjectType].AddTileObject(tileObject);
+                        groupedTileObjects[tileObject.tileObjectType].Add(tileObject);
                     } else {
-                        TileObjectsAndCount toac = new TileObjectsAndCount();
-                        toac.AddTileObject(tileObject);
-                        groupedTileObjects.Add(tileObject.tileObjectType, toac);
+                        groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
                     }
                     // if (tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                     //     region.AddTileObjectInRegion(tileObject);    
@@ -408,7 +727,7 @@ namespace Inner_Maps.Location_Structures {
         public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
             if (pointsOfInterest.Remove(poi)) {
                 if (poi is TileObject obj) {
-                    groupedTileObjects[obj.tileObjectType].RemoveTileObject(obj);
+                    groupedTileObjects[obj.tileObjectType].Remove(obj);
                 }
                 LocationGridTile tileLocation = poi.gridTileLocation;
                 if (poi.gridTileLocation != null) {
@@ -434,7 +753,7 @@ namespace Inner_Maps.Location_Structures {
             if (pointsOfInterest.Remove(poi)) {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
-                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                    groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
                 }
                 if (poi.gridTileLocation != null) {
                     if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -449,7 +768,7 @@ namespace Inner_Maps.Location_Structures {
             if (pointsOfInterest.Remove(poi)) {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
-                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                    groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
                     if (poi.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                     && poi.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemRemovedFromLocation(tileObject, this, poi.gridTileLocation);    
@@ -473,220 +792,6 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
             return pois;
-        }
-        public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
-            List<TileObject> objs = new List<TileObject>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is TileObject obj) {
-                    if (obj.tileObjectType == type) {
-                        objs.Add(obj);
-                    }
-                }
-            }
-            return objs;
-        }
-        public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is TileObject obj) {
-                    if (obj.tileObjectType == type) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        public bool HasTileObjectThatMeetCriteria(Func<TileObject, bool> criteria) {
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is TileObject obj) {
-                    if (criteria.Invoke(obj)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        public List<T> GetTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
-            List<T> objs = new List<T>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is TileObject) {
-                    TileObject obj = poi as TileObject;
-                    if (obj.tileObjectType == type) {
-                        objs.Add(obj as T);
-                    }
-                }
-            }
-            return objs;
-        }
-        public List<T> GetBuiltTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
-            List<T> objs = new List<T>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is TileObject) {
-                    TileObject obj = poi as TileObject;
-                    if (obj.tileObjectType == type && obj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
-                        objs.Add(obj as T);
-                    }
-                }
-            }
-            return objs;
-        }
-        public List<T> GetTileObjectsOfType<T>(System.Func<T, bool> validityChecker = null) where T : TileObject {
-            List<T> objs = new List<T>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is T obj) {
-                    if (validityChecker != null) {
-                        if (validityChecker.Invoke(obj)) {
-                            objs.Add(obj);    
-                        }  
-                    } else {
-                        objs.Add(obj);    
-                    }
-                }
-            }
-            return objs;
-        }
-        public T GetRandomTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
-            List<T> objs = null;
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T obj) {
-                    if (validityChecker.Invoke(obj)) {
-                        if (objs == null) { objs = new List<T>(); }
-                        objs.Add(obj);
-                    }
-                }
-            }
-            if(objs != null && objs.Count > 0) {
-                return objs[UnityEngine.Random.Range(0, objs.Count)];
-            }
-            return null;
-        }
-        public T GetFirstTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T obj) {
-                    if (validityChecker.Invoke(obj)) {
-                        return obj;
-                    }
-                }
-            }
-            return null;
-        }
-        public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject{
-            //List<TileObject> objs = new List<TileObject>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is TileObject) {
-                    TileObject obj = poi as TileObject;
-                    if (obj.tileObjectType == type) {
-                        return obj as T;
-                    }
-                }
-            }
-            return null;
-        }
-        public T GetTileObjectOfType<T>() where T : TileObject{
-            //List<TileObject> objs = new List<TileObject>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is T obj) {
-                    return obj;
-                }
-            }
-            return null;
-        }
-        public bool AnyTileObjectsOfType<T>(TILE_OBJECT_TYPE tileObjectType, System.Func<T, bool> validityChecker = null) where T : TileObject {
-            if (groupedTileObjects.ContainsKey(tileObjectType)) {
-                TileObjectsAndCount tileObjectsAndCount = groupedTileObjects[tileObjectType];
-                if (validityChecker != null) {
-                    for (int i = 0; i < tileObjectsAndCount.tileObjects.Count; i++) {
-                        TileObject tileObject = tileObjectsAndCount.tileObjects[i];
-                        if (tileObject is T obj) {
-                            if (validityChecker.Invoke(obj)) {
-                                return true;
-                            }    
-                        }
-                        
-                    }
-                } else {
-                    //if no validity checker was provided then check if count of tile objects is greater than 0.
-                    return tileObjectsAndCount.count > 0;
-                }
-                
-            }
-            return false;
-        }
-        public bool AnyTileObjectsOfType<T>(TILE_OBJECT_TYPE tileObjectType, out string log, System.Func<T, bool> validityChecker = null) where T : TileObject {
-            log = $"Checking for tile objects of type {tileObjectType.ToString()} at {ToString()}";
-            if (groupedTileObjects.ContainsKey(tileObjectType)) {
-                TileObjectsAndCount tileObjectsAndCount = groupedTileObjects[tileObjectType];
-                if (validityChecker != null) {
-                    log += $"\nFound {tileObjectsAndCount.tileObjects.Count.ToString()}, checking validity...";
-                    for (int i = 0; i < tileObjectsAndCount.tileObjects.Count; i++) {
-                        TileObject tileObject = tileObjectsAndCount.tileObjects[i];
-                        if (tileObject is T obj) {
-                            log += $"\nChecking validity of {obj.nameWithID}";
-                            if (validityChecker.Invoke(obj)) {
-                                log += $"\n{obj.nameWithID} is valid! Returning true!";
-                                return true;
-                            } else {
-                                log += $"\n{obj.nameWithID} is not valid! Map Object State {obj.mapObjectState.ToString()}. Character Owner {obj.characterOwner?.name}";
-                            }
-                        }
-                        
-                    }
-                } else {
-                    //if no validity checker was provided then check if count of tile objects is greater than 0.
-                    return tileObjectsAndCount.count > 0;
-                }
-            }
-            return false;
-        }
-        public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
-            int count = 0;
-            if (groupedTileObjects.ContainsKey(type)) {
-                count = groupedTileObjects[type].count;
-            }
-            return count;
-        }
-        public T GetResourcePileObjectWithLowestCount<T>(bool excludeMaximum = true) where T : ResourcePile {
-            T chosenPile = null;
-            int lowestCount = 0;
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is T obj) {
-                    if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
-                        continue; //skip
-                    }
-                    if(chosenPile == null || obj.resourceInPile <= lowestCount) {
-                        chosenPile = obj;
-                        lowestCount = obj.resourceInPile;
-                    }
-                }
-            }
-            return chosenPile;
-        }
-        public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE tileObjectType, bool excludeMaximum = true){
-            ResourcePile chosenPile = null;
-            int lowestCount = 0;
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is ResourcePile obj && obj.tileObjectType == tileObjectType) {
-                    if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
-                        continue; //skip
-                    }
-                    if(chosenPile == null || obj.resourceInPile <= lowestCount) {
-                        chosenPile = obj;
-                        lowestCount = obj.resourceInPile;
-                    }
-                }
-            }
-            return chosenPile;
         }
         private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
             if (tile != null) {
@@ -790,7 +895,7 @@ namespace Inner_Maps.Location_Structures {
             //Debug.Log(name + " removed passable tile: " + tile.ToString());
         }
         public void AddUnoccupiedTile(LocationGridTile tile) {
-            unoccupiedTiles.AddLast(tile);
+            unoccupiedTiles.Add(tile);
         }
         public void RemoveUnoccupiedTile(LocationGridTile tile) {
             unoccupiedTiles.Remove(tile);
@@ -807,6 +912,22 @@ namespace Inner_Maps.Location_Structures {
             }
             return passableTiles[UtilityScripts.Utilities.Rng.Next(0, passableTiles.Count)];
         }
+        public LocationGridTile GetRandomPassableTileThatMeetCriteria(Func<LocationGridTile, bool> criteria) {
+            if (passableTiles.Count <= 0) {
+                return null;
+            }
+            List<LocationGridTile> filteredList = ObjectPoolManager.Instance.CreateNewGridTileList();
+            for (int i = 0; i < passableTiles.Count; i++) {
+                LocationGridTile tile = passableTiles[i];
+                if (criteria.Invoke(tile)) {
+                    filteredList.Add(tile);
+                }
+            }
+            if(filteredList.Count > 0) {
+                return filteredList[UtilityScripts.Utilities.Rng.Next(0, filteredList.Count)];
+            }
+            return null;
+        }
         public LocationGridTile GetRandomUnoccupiedTile() {
             if (unoccupiedTiles.Count <= 0) {
                 return null;
@@ -820,65 +941,6 @@ namespace Inner_Maps.Location_Structures {
         }
         private void RemoveOccupiedHexTile(HexTile hexTile) {
             occupiedHexTiles.Remove(hexTile);
-        }
-        #endregion
-
-        #region Tile Objects
-        protected List<TileObject> GetTileObjects() {
-            List<TileObject> objs = new List<TileObject>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
-                if (currPOI is TileObject poi) {
-                    objs.Add(poi);
-                }
-            }
-            return objs;
-        }
-        public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
-            List<TileObject> objs = new List<TileObject>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
-                if (currPOI is TileObject) {
-                    TileObject obj = currPOI as TileObject;
-                    if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
-                        objs.Add(obj);
-                    }
-                }
-            }
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile currTile = tiles.ElementAt(i);
-                if (currTile.genericTileObject.IsAvailable() && currTile.genericTileObject.AdvertisesAll(types)) {
-                    objs.Add(currTile.genericTileObject);
-                }
-            }
-            return objs;
-        }
-        public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi.IsAvailable() && poi is TileObject) {
-                    TileObject tileObj = poi as TileObject;
-                    if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
-                        return tileObj;
-                    }
-                }
-            }
-            return null;
-        }
-        public IDamageable GetNearestDamageableThatContributeToHP(LocationGridTile fromTile) {
-            IDamageable nearest = null;
-            float nearestDist = 9999f;
-            for (int i = 0; i < objectsThatContributeToDamage.Count; i++) {
-                IDamageable poi = objectsThatContributeToDamage.ElementAt(i);
-                if (poi.gridTileLocation != null) {
-                    float dist = fromTile.GetDistanceTo(poi.gridTileLocation);
-                    if (nearest == null || dist < nearestDist) {
-                        nearest = poi;
-                        nearestDist = dist;
-                    }
-                }
-            }
-            return nearest;
         }
         #endregion
 
@@ -1203,24 +1265,17 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         public virtual void OnCharacterUnSeizedHere(Character character) { }
-    }
-}
 
-public class TileObjectsAndCount {
-    public int count;
-    public List<TileObject> tileObjects;
-    
-    public TileObjectsAndCount() {
-        tileObjects = new List<TileObject>();
-    }
-
-    public void AddTileObject(TileObject tileObject) {
-        tileObjects.Add(tileObject);
-        count = tileObjects.Count;
-    }
-    public void RemoveTileObject(TileObject tileObject) {
-        if (tileObjects.Remove(tileObject)) {
-            count = tileObjects.Count;
+        #region Testing
+        public virtual string GetTestingInfo() {
+            string summary = $"{name} Info:";
+            summary += "\nDamage Contributing Objects:";
+            for (int i = 0; i < objectsThatContributeToDamage.Count; i++) {
+                IDamageable damageable = objectsThatContributeToDamage.ElementAt(i);
+                summary += $"\n\t- {damageable}";
+            }
+            return summary;
         }
+        #endregion
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System;
 using Inner_Maps;
+using Locations.Tile_Features;
 using Traits;
 using UnityEngine;
 
@@ -68,6 +69,11 @@ public static class Extensions {
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.TAVERN:
             case STRUCTURE_TYPE.CULT_TEMPLE:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
                 return true;
             default:
                 return false;
@@ -86,6 +92,12 @@ public static class Extensions {
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.CULT_TEMPLE:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
                 return true;
             default:
                 return false;
@@ -140,6 +152,14 @@ public static class Extensions {
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.RUINED_ZOO:
             case STRUCTURE_TYPE.BIOLAB:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.TEMPLE:
+            case STRUCTURE_TYPE.CULT_TEMPLE:
+            case STRUCTURE_TYPE.MONSTER_LAIR:
                 return true;
             default:
                 return false;
@@ -165,6 +185,37 @@ public static class Extensions {
             return parsed;
         } else {
             return LANDMARK_TYPE.HOUSES;
+        }
+    }
+
+    public static SettlementResources.StructureRequirement GetRequiredObjectForBuilding(this STRUCTURE_TYPE structureType) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.QUARRY:
+                return SettlementResources.StructureRequirement.ROCK;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return SettlementResources.StructureRequirement.FEATURE_GAME;
+            case STRUCTURE_TYPE.MINE_SHACK:
+                return SettlementResources.StructureRequirement.ORE_VEIN;
+            case STRUCTURE_TYPE.ABANDONED_MINE:
+            case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
+            case STRUCTURE_TYPE.ANCIENT_RUIN:
+            case STRUCTURE_TYPE.MONSTER_LAIR:
+            case STRUCTURE_TYPE.CAVE:
+            case STRUCTURE_TYPE.TEMPLE:
+            case STRUCTURE_TYPE.RUINED_ZOO:
+                return SettlementResources.StructureRequirement.NONE;
+            default:
+                return SettlementResources.StructureRequirement.NONE;
+        }
+    }
+    public static bool IsValidCenterTileForStructure(this STRUCTURE_TYPE structureType, LocationGridTile p_tile) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.LUMBERYARD:
+                return p_tile.collectionOwner.isPartOfParentRegionMap && p_tile.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature);
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return p_tile.collectionOwner.isPartOfParentRegionMap && p_tile.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature);
+            default:
+                return true;
         }
     }
     #endregion
@@ -205,6 +256,7 @@ public static class Extensions {
         switch (type) {
             case INTERACTION_TYPE.ASSAULT:
             case INTERACTION_TYPE.STEAL:
+            case INTERACTION_TYPE.PICKPOCKET:
             case INTERACTION_TYPE.RESTRAIN_CHARACTER:
                 return true;
             default:
@@ -302,12 +354,21 @@ public static class Extensions {
     #endregion
 
     #region Tile Objects
-    public static FURNITURE_TYPE ConvertTileObjectToFurniture(this TILE_OBJECT_TYPE type) {
-        FURNITURE_TYPE to;
-        if (System.Enum.TryParse<FURNITURE_TYPE>(type.ToString(), out to)) {
-            return to;
+    public static bool IsArtifact(this TILE_OBJECT_TYPE tileObjectType, out ARTIFACT_TYPE artifactType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.NECRONOMICON:
+                artifactType = ARTIFACT_TYPE.Necronomicon;
+                return true;
+            case TILE_OBJECT_TYPE.ANKH_OF_ANUBIS:
+                artifactType = ARTIFACT_TYPE.Ankh_Of_Anubis;
+                return true;
+            case TILE_OBJECT_TYPE.CHAOS_ORB:
+                artifactType = ARTIFACT_TYPE.Berserk_Orb;
+                return true;
+            default:
+                artifactType = ARTIFACT_TYPE.None;
+                return false;
         }
-        return FURNITURE_TYPE.NONE;
     }
     public static bool IsPreBuilt(this TILE_OBJECT_TYPE tileObjectType) {
         switch (tileObjectType) {
@@ -367,6 +428,12 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.STONE_PILE:
             case TILE_OBJECT_TYPE.WOOD_PILE:
             case TILE_OBJECT_TYPE.TABLE:
+            case TILE_OBJECT_TYPE.FISHING_SPOT:
+            case TILE_OBJECT_TYPE.FEEBLE_SPIRIT:
+            case TILE_OBJECT_TYPE.FORLORN_SPIRIT:
+            case TILE_OBJECT_TYPE.RAVENOUS_SPIRIT:
+            case TILE_OBJECT_TYPE.HUMAN_MEAT:
+            case TILE_OBJECT_TYPE.ELF_MEAT:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
@@ -482,14 +549,16 @@ public static class Extensions {
             case JOB_TYPE.MONSTER_EAT_CORPSE:
                 priority = 1087;
                 break;
+            case JOB_TYPE.DISPOSE_FOOD_PILE:
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
                 priority = 1086;
                 break;
             //case JOB_TYPE.FLEE_CRIME:
             //case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.DESTROY:
-                //case JOB_TYPE.BERSERK_STROLL:
-                ////case JOB_TYPE.GO_TO:
+            case JOB_TYPE.RETURN_STOLEN_THING:
+            //case JOB_TYPE.BERSERK_STROLL:
+            ////case JOB_TYPE.GO_TO:
                 priority = 1085;
                 break;
             case JOB_TYPE.REPORT_CORRUPTED_STRUCTURE:
@@ -501,6 +570,7 @@ public static class Extensions {
             case JOB_TYPE.STEAL_CORPSE:
             case JOB_TYPE.SUMMON_BONE_GOLEM:
             case JOB_TYPE.REPORT_CRIME:
+            case JOB_TYPE.PREACH:
                 priority = 1050;
                 break;
             case JOB_TYPE.RETURN_HOME_URGENT:
@@ -560,6 +630,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.MOVE_CHARACTER:
             case JOB_TYPE.CAPTURE_CHARACTER:
+            case JOB_TYPE.TRITON_KIDNAP:
                 priority = 926;
                 break;
             case JOB_TYPE.GO_TO:
@@ -603,7 +674,6 @@ public static class Extensions {
             case JOB_TYPE.CULTIST_TRANSFORM:
             case JOB_TYPE.CULTIST_POISON:
             case JOB_TYPE.CULTIST_BOOBY_TRAP:
-            case JOB_TYPE.EVANGELIZE:
             case JOB_TYPE.SNATCH:
             case JOB_TYPE.VAMPIRIC_EMBRACE:
             case JOB_TYPE.IMPRISON_BLOOD_SOURCE:
@@ -652,9 +722,9 @@ public static class Extensions {
             case JOB_TYPE.STEAL_RAID:
                 priority = 530;
                 break;
-            //case JOB_TYPE.MOVE_CHARACTER:
-            //    priority = 520;
-            //    break;
+            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
+                priority = 520;
+                break;
             case JOB_TYPE.TAKE_ITEM:
             case JOB_TYPE.INSPECT:
                 priority = 510;
@@ -697,9 +767,9 @@ public static class Extensions {
             case JOB_TYPE.CHECK_PARALYZED_FRIEND:
                 priority = 400;
                 break;
-            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
-                priority = 300;
-                break;
+            //case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
+            //    priority = 300;
+            //    break;
             case JOB_TYPE.VISIT_FRIEND:
             case JOB_TYPE.VISIT_DIFFERENT_REGION:
                 priority = 280;
@@ -880,6 +950,16 @@ public static class Extensions {
                 return true;
         }
     }
+    public static bool IsCultistJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.PREACH:
+            case JOB_TYPE.CULTIST_POISON:
+            case JOB_TYPE.CULTIST_BOOBY_TRAP:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Summons
@@ -1023,6 +1103,20 @@ public static class Extensions {
                 return "#F8E1A9";
         }
     }
+    public static RACE GetRaceForFactionType(this FACTION_TYPE p_factionType) {
+        switch (p_factionType) {
+            case FACTION_TYPE.Elven_Kingdom:
+                return RACE.ELVES;
+            case FACTION_TYPE.Human_Empire:
+                return RACE.HUMANS;
+            case FACTION_TYPE.Demons:
+                return RACE.DEMON;
+            case FACTION_TYPE.Ratmen:
+                return RACE.RATMAN;
+            default:
+                return RACE.HUMANS;
+        }
+    }
     #endregion
 
     #region Tiles
@@ -1128,6 +1222,50 @@ public static class Extensions {
                 return p_target.traitContainer.HasTraitOf(TRAIT_TYPE.FLAW);
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_temptation), p_temptation, null);
+        }
+    }
+    #endregion
+
+    #region Ideologies
+    public static bool IsReligionType(this FACTION_IDEOLOGY p_factionIdeology) {
+        switch (p_factionIdeology) {
+            case FACTION_IDEOLOGY.Nature_Worship:
+            case FACTION_IDEOLOGY.Demon_Worship:
+            case FACTION_IDEOLOGY.Divine_Worship:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsInclusivityType(this FACTION_IDEOLOGY p_factionIdeology) {
+        switch (p_factionIdeology) {
+            case FACTION_IDEOLOGY.Exclusive:
+            case FACTION_IDEOLOGY.Inclusive:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsPeaceType(this FACTION_IDEOLOGY p_factionIdeology) {
+        switch (p_factionIdeology) {
+            case FACTION_IDEOLOGY.Warmonger:
+            case FACTION_IDEOLOGY.Peaceful:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
+
+    #region Archetypes
+    public static bool IsMainArchetype(this PLAYER_ARCHETYPE p_archetype) {
+        switch (p_archetype) {
+            case PLAYER_ARCHETYPE.Ravager:
+            case PLAYER_ARCHETYPE.Lich:
+            case PLAYER_ARCHETYPE.Puppet_Master:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

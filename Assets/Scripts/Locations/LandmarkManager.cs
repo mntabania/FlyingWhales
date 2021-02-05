@@ -366,6 +366,21 @@ public partial class LandmarkManager : BaseMonoBehaviour {
                 return SETTLEMENT_TYPE.Human_Village;
         }
     }
+    public SETTLEMENT_TYPE GetSettlementTypeForFaction(Faction faction) {
+        switch (faction.factionType.type) {
+            case FACTION_TYPE.Elven_Kingdom:
+                return SETTLEMENT_TYPE.Elven_Hamlet;
+            case FACTION_TYPE.Human_Empire:
+                return SETTLEMENT_TYPE.Human_Village;
+            case FACTION_TYPE.Vampire_Clan:
+            case FACTION_TYPE.Lycan_Clan:
+                return GetSettlementTypeForRace(faction.race);
+            case FACTION_TYPE.Demon_Cult:
+                return SETTLEMENT_TYPE.Cult_Town;
+            default:
+                return GetSettlementTypeForRace(faction.race);
+        }
+    }
     
     #endregion
 
@@ -478,15 +493,16 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public LocationStructure PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, GameObject chosenPrefab, LocationGridTile centerTile) {
         return innerTileMap.PlaceBuiltStructureTemplateAt(chosenPrefab, centerTile, settlement);
     }
-    public bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse) {
-        List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
+    public bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, 
+        out int connectorToUse, out LocationGridTile connectorTile) {
+        List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureToPlace.structureType);
         availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
         List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureToPlace);
         prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
         for (int j = 0; j < prefabChoices.Count; j++) {
             GameObject prefabGO = prefabChoices[j];
             LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
+            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out connectorTile, structureToPlace);
             if (validConnector != null) {
                 targetTile = tileToPlaceStructure;
                 structurePrefabName = prefabGO.name;
@@ -497,6 +513,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         targetTile = null;
         structurePrefabName = string.Empty;
         connectorToUse = -1;
+        connectorTile = null;
         return false;
     }
     public bool HasEnoughSpaceForStructure(string structurePrefabName, LocationGridTile tileLocation) {

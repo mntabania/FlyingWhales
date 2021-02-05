@@ -186,57 +186,62 @@ public class CharacterMarkerNameplate : PooledObject {
             return;
         }
         if (character.isDead) {
-            actionIcon.gameObject.SetActive(false);
+            SetActionIconState(false);
             return;
         }
         if (character.isConversing && !character.combatComponent.isInCombat) {
             actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Social_Icon];
-            actionIcon.gameObject.SetActive(true);
+            SetActionIconState(true);
             return;
         }
         
         if (character.interruptComponent.isInterrupted) {
             if (character.interruptComponent.currentInterrupt.interrupt.interruptIconString != GoapActionStateDB.No_Icon) {
                 actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.currentInterrupt.interrupt.interruptIconString];
-                actionIcon.gameObject.SetActive(true);
+                SetActionIconState(true);
             } else {
-                actionIcon.gameObject.SetActive(false);
+                SetActionIconState(false);
             }
             return;
         } else if (character.interruptComponent.hasTriggeredSimultaneousInterrupt) {
             if (character.interruptComponent.triggeredSimultaneousInterrupt.interrupt.interruptIconString != GoapActionStateDB.No_Icon) {
                 actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.triggeredSimultaneousInterrupt.interrupt.interruptIconString];
-                actionIcon.gameObject.SetActive(true);
+                SetActionIconState(true);
             } else {
-                actionIcon.gameObject.SetActive(false);
+                SetActionIconState(false);
             }
             return;
         } else {
-            actionIcon.gameObject.SetActive(false);
+            SetActionIconState(false);
         }
         
         if (character.currentActionNode != null) {
             string actionIconString = character.currentActionNode.action.GetActionIconString(character.currentActionNode);
             if (actionIconString != GoapActionStateDB.No_Icon) {
                 actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];
-                actionIcon.gameObject.SetActive(true);
+                SetActionIconState(true);
             } else {
-                actionIcon.gameObject.SetActive(false);
+                SetActionIconState(false);
             }
         } else if (character.stateComponent.currentState != null) {
             string actionIconString = character.stateComponent.currentState.actionIconString;
             if (actionIconString != GoapActionStateDB.No_Icon) {
                 actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];
-                actionIcon.gameObject.SetActive(true);
+                SetActionIconState(true);
             } else {
-                actionIcon.gameObject.SetActive(false);
+                SetActionIconState(false);
             }
         } else if (_parentMarker.hasFleePath) {
             actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Flee_Icon];
-            actionIcon.gameObject.SetActive(true);
+            SetActionIconState(true);
         } else {
             //no action or state
-            actionIcon.gameObject.SetActive(false);
+            SetActionIconState(false);
+        }
+    }
+    private void SetActionIconState(bool state) {
+        if (actionIcon.gameObject.activeSelf != state) {
+            actionIcon.gameObject.SetActive(state);    
         }
     }
     #endregion

@@ -18,8 +18,9 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         //between 12am to 3am
         if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) >= 0 && 
             GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) <= 3) {
-            List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
-            if (webbedCharacters == null || webbedCharacters.Count <= 1) { //check if there are only 1 or less abducted "Food" at home structure
+            List<Character> webbedCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+            PopulateWebbedCharactersAtHome(webbedCharacters, character);
+            if (webbedCharacters.Count <= 1) { //check if there are only 1 or less abducted "Food" at home structure
                 if (character.behaviourComponent.currentAbductTarget != null 
                     && (character.behaviourComponent.currentAbductTarget.isDead 
                         || character.behaviourComponent.currentAbductTarget.traitContainer.HasTrait("Restrained"))) {
@@ -27,20 +28,28 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                 }
             
                 //set abduction target if none, and chance met
-                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(1)) {
-                    List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
-                    for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
-                        Character c = character.currentRegion.charactersAtLocation[i];
-                        if (c != character && !c.isDead && (c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))) && c.currentStructure is Kennel == false) {
-                            characterChoices.Add(c);
+                if (character.homeStructure != null) { 
+                    if (character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(1)) { //1
+                        List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
+                        for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
+                            Character c = character.currentRegion.charactersAtLocation[i];
+                            if (c != character && !c.isDead && (c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))) && c.currentStructure is Kennel == false) {
+                                characterChoices.Add(c);
+                            }
                         }
+                        if (characterChoices.Count > 0) {
+                            Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
+                            character.behaviourComponent.SetAbductionTarget(chosenCharacter);
+                        }
+                        ObjectPoolManager.Instance.ReturnCharactersListToPool(characterChoices);
                     }
-                    if (characterChoices.Count > 0) {
-                        Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
-                        character.behaviourComponent.SetAbductionTarget(chosenCharacter);
+                } else {
+                    if (character.behaviourComponent.currentAbductTarget != null) {
+                        character.behaviourComponent.SetAbductionTarget(null);    
                     }
-                    ObjectPoolManager.Instance.ReturnCharactersListToPool(characterChoices);
                 }
+
+                ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);
 
                 Character targetCharacter = character.behaviourComponent.currentAbductTarget;
                 if (targetCharacter != null) {
@@ -48,24 +57,28 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                     return character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob);
                 }
             }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);
         }
 
         //try to lay an egg
         if (GameUtilities.RollChance(1) && (character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory()) && !(character.currentStructure is RuinedZoo)) {
-            if (TryTriggerLayEgg(character, 4, out producedJob)) {
+            if (TryTriggerLayEgg(character, 4, TILE_OBJECT_TYPE.SPIDER_EGG, out producedJob)) {
                 return true;
             }
         }
 
         if (GameUtilities.RollChance(30)) {
             //Try and eat a webbed character at this spiders home cave
-            List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
-            if (webbedCharacters != null && webbedCharacters.Count > 0) {
+            List<Character> webbedCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+            PopulateWebbedCharactersAtHome(webbedCharacters, character);
+            if (webbedCharacters.Count > 0) {
                 Character webbedCharacter = CollectionUtilities.GetRandomElement(webbedCharacters);
+                ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);
                 return character.jobComponent.TriggerEatAlive(webbedCharacter, out producedJob);
-            }    
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);
         }
-        
+
         return character.jobComponent.TriggerRoamAroundTerritory(out producedJob, true);
     }
     protected override bool TamedBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
@@ -127,7 +140,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
 
             p_log = $"{p_log}\n-Will try to lay egg";
             if (GameUtilities.RollChance(3, ref p_log)) {
-                if (TryTriggerLayEgg(p_character, 5, out p_producedJob)) {
+                if (TryTriggerLayEgg(p_character, 5, TILE_OBJECT_TYPE.SPIDER_EGG, out p_producedJob)) {
                     p_log = $"{p_log}\n-Will lay an egg";
                     return true;
                 }
@@ -136,36 +149,11 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
             return TriggerRoamAroundTerritory(p_character, ref p_log, out p_producedJob);
         }
     }
-    
-    private bool TryTriggerLayEgg(Character character, int maxResidentCount, out JobQueueItem producedJob) {
-        int residentCount = 0;
-        int eggCount = 0;
-        if (character.homeSettlement != null) {
-            residentCount = character.homeSettlement.residents.Count(x => x.isDead == false && (x is GiantSpider || x is SmallSpider));
-            eggCount = character.homeSettlement.GetTileObjectsOfTypeThatMeetCriteria<SpiderEgg>()?.Count ?? 0;
-        }
-        else if (character.homeStructure != null) {
-            residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
-            eggCount = character.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
-        }
-        else if (character.HasTerritory()) {
-            residentCount = character.homeRegion.GetCountOfAliveCharacterWithSameTerritory(character);
-            eggCount += character.territory.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
-        }
-        if (residentCount < maxResidentCount && eggCount < 2) {
-            return character.jobComponent.TriggerLayEgg(out producedJob);
-        }
-        producedJob = null;
-        return false;
-    }
-    private List<Character> GetWebbedCharactersAtHome(Character character) {
+    private void PopulateWebbedCharactersAtHome(List<Character> p_characterList, Character character) {
         if (character.homeStructure != null) {
-            return character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
+            character.homeStructure.PopulateCharacterListThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
         } else if (character.HasTerritory()) {
-            List<Character> characters = character.territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Webbed"));
-            return characters;
+            character.territory.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
         }
-        return null;
     }
-   
 }

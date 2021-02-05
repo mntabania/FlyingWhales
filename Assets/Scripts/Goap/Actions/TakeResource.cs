@@ -10,7 +10,7 @@ using Locations.Settlements;
 public class TakeResource : GoapAction {
     public TakeResource() : base(INTERACTION_TYPE.TAKE_RESOURCE) {
         actionIconString = GoapActionStateDB.Haul_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -196,7 +196,8 @@ public class TakeResource : GoapAction {
             newPile.SetGridTileLocation(pile.gridTileLocation);
             newPile.InitializeMapObject(newPile);
             newPile.SetPOIState(POI_STATE.ACTIVE);
-            newPile.gridTileLocation.structure.region.AddPendingAwareness(newPile);
+            UtilityScripts.LocationAwarenessUtility.AddToAwarenessList(newPile, newPile.gridTileLocation);
+            //removed by aaron for awareness update newPile.gridTileLocation.structure.region.AddPendingAwareness(newPile);
             newPile.SetGridTileLocation(null);
 
             // carrier.ownParty.AddPOI(newPile);
@@ -224,7 +225,7 @@ public class TakeResource : GoapAction {
             }
         } else {
             if (jobQueueItem is GoapPlanJob job) {
-                if (job.jobType == JOB_TYPE.DARK_RITUAL || job.jobType == JOB_TYPE.EVANGELIZE) {
+                if (job.jobType == JOB_TYPE.DARK_RITUAL || job.jobType == JOB_TYPE.PREACH) {
                     //if job is dark ritual, assume that take resource is for a cultist kit, this isn't ideal, but cannot think of another solution at the moment.
                     TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT);
                     TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);

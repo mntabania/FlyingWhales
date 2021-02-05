@@ -13,7 +13,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
         priority = 10;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.isAtHomeStructure || character.IsInTerritory()) {
+        if (character.IsAtHome()) {
             //List<Character> choices = GetTargetChoices(character.territories, character);
             //if (choices != null) {
             //    Character chosenTarget = CollectionUtilities.GetRandomElement(choices);
@@ -32,7 +32,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
             }
         } else {
             //character is not at home, go back.
-            return character.jobComponent.TriggerReturnTerritory(out producedJob);
+            return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
         }
     }
     private Character GetFirstHostileIntruder(Character actor) {
@@ -56,28 +56,6 @@ public class DefendBehaviour : CharacterBehaviourComponent {
             }
         }
         return null;
-    }
-    private List<Character> GetTargetChoices(List<HexTile> tiles, Character defender) {
-        List<Character> characters = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            List<Character> charactersAtHexTile =
-                tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(
-                    c => defender.IsHostileWith(c) && 
-                         c.isDead == false && c.isAlliedWithPlayer == false && 
-                         c.marker.isMainVisualActive && 
-                         defender.movementComponent.HasPathTo(c.gridTileLocation) && 
-                         !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried() &&
-                         !c.traitContainer.HasTrait("Hibernating", "Indestructible")
-                );
-            if (charactersAtHexTile != null) {
-                if (characters == null) {
-                    characters = new List<Character>();
-                }
-                characters.AddRange(charactersAtHexTile);
-            }
-        }
-        return characters;
     }
     
     // public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {

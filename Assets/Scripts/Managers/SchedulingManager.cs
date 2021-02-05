@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 
 public class SchedulingManager : BaseMonoBehaviour {
 	public static SchedulingManager Instance;
@@ -26,7 +27,7 @@ public class SchedulingManager : BaseMonoBehaviour {
     }
     public void StartScheduleCalls() {
         checkGameDate = GameManager.Instance.Today();
-		Messenger.AddListener(Signals.TICK_ENDED, CheckSchedule);
+		Messenger.AddListener(Signals.CHECK_SCHEDULES, CheckSchedule);
     }
 	private void CheckSchedule(){
         checkGameDate = GameManager.Instance.Today();
@@ -43,8 +44,7 @@ public class SchedulingManager : BaseMonoBehaviour {
         }
         string newID = GenerateScheduleID();
         schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
-        Debug.Log(
-            $"{GameManager.Instance.TodayLogString()}Created new schedule on {gameDate.ConvertToContinuousDaysWithTime()}. Action is {act.Method.Name}, by {adder}");
+        // Debug.Log($"{GameManager.Instance.TodayLogString()}Created new schedule on {gameDate.ConvertToContinuousDaysWithTime()}. Action is {act.Method.Name}, by {adder}");
         return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){
@@ -102,9 +102,14 @@ public class SchedulingManager : BaseMonoBehaviour {
             ScheduledAction action = acts[i];
             if (schedules[checkGameDate].Contains(action)) {
                 //only perform scheduled action, if it still present in the original actions list.
-                if(action.IsScheduleStillValid() && action.action.Target != null){
-                    action.action ();
-                }    
+                Profiler.BeginSample($"Is Action Still Valid");
+                bool isScheduleStillValid = action.IsScheduleStillValid();
+                Profiler.EndSample();
+                if(isScheduleStillValid && action.action.Target != null){
+                    Profiler.BeginSample($"{action.ToString()} Invoke");
+                    action.action();
+                    Profiler.EndSample();
+                }
             }
 			
             actualIterations++;

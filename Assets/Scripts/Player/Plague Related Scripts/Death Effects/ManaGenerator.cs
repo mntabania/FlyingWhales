@@ -23,7 +23,7 @@ namespace Plague.Death_Effect {
             }
             Debug.Log("Activated Mana Generator Effect");
         }
-        public override int GetNextLevelUpgradeCost() {
+        protected override int GetNextLevelUpgradeCost() {
             switch (_level) {
                 case 1:
                     return 20;

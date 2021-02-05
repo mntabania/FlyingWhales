@@ -19,10 +19,12 @@ public class Excalibur : TileObject {
     /// </summary>
     private List<string> _traitsGainedByCurrentOwner;
     private HashSet<int> _finishedCharacters; //characters that have already inspected this.
+    private string _previousClassOfCurrentOwner;
 
     #region Getters
     public List<string> traitsGainedByCurrentOwner => _traitsGainedByCurrentOwner;
     public HashSet<int> finishedCharacters => _finishedCharacters;
+    public string previousClassOfCurrentOwner => _previousClassOfCurrentOwner;
     public override System.Type serializedData => typeof(SaveDataExcalibur);
     #endregion
     
@@ -37,6 +39,7 @@ public class Excalibur : TileObject {
         Assert.IsNotNull(data);
         _traitsGainedByCurrentOwner = data.traitsGainedByCurrentOwner; //new List<string>(data.traitsGainedByCurrentOwner);
         _finishedCharacters = new HashSet<int>(data.finishedCharacters);
+        _previousClassOfCurrentOwner = data.previousClass;
     }
 
     #region General
@@ -91,34 +94,62 @@ public class Excalibur : TileObject {
     private void UnlockSword(Character character) {
         LocationGridTile tile = gridTileLocation;
         SetLockedState(Locked_State.Unlocked);
-        character.AssignClass("Hero");
         character.PickUpItem(this, true);
         //replace sword with rock
         tile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ROCK), tile);
     }
-    public override void SetInventoryOwner(Character character) {
+    public override void SetInventoryOwner(Character p_newOwner) {
         Character previousOwner = isBeingCarriedBy; 
-        base.SetInventoryOwner(character);
-        if (previousOwner != character) {
-            //remove traits gained from previous owner
+        base.SetInventoryOwner(p_newOwner);
+        if (previousOwner != p_newOwner) {
             if (previousOwner != null) {
+                TryRevertClassOfOwner(previousOwner);
+                //remove traits gained from previous owner
                 for (int i = 0; i < _traitsGainedByCurrentOwner.Count; i++) {
                     string trait = _traitsGainedByCurrentOwner[i];
                     previousOwner.traitContainer.RemoveTrait(previousOwner, trait);
                 }
+                SetCharacterOwner(null);
             }
+            _previousClassOfCurrentOwner = string.Empty;
             _traitsGainedByCurrentOwner.Clear();
-            if (character != null) {
+            if (p_newOwner != null) {
+                SetCharacterOwner(p_newOwner);
+                if (CanBecomeHero(p_newOwner)) {
+                    _previousClassOfCurrentOwner = p_newOwner.characterClass.className;
+                    p_newOwner.AssignClass("Hero");    
+                }
                 //add traits to new carrier
                 for (int i = 0; i < traitsToBeGainedFromOwnership.Length; i++) {
                     string traitName = traitsToBeGainedFromOwnership[i];
-                    if (character.traitContainer.AddTrait(character, traitName)) {
+                    if (p_newOwner.traitContainer.AddTrait(p_newOwner, traitName)) {
                         _traitsGainedByCurrentOwner.Add(traitName);
                     }
                 }  
-                character.combatComponent.UpdateMaxHPAndReset();
+                p_newOwner.combatComponent.UpdateMaxHPAndReset();
             }
         }
+    }
+    private void TryRevertClassOfOwner(Character p_owner) {
+        if (p_owner.characterClass.className == "Hero") {
+            p_owner.AssignClass(previousClassOfCurrentOwner);
+        } else if (p_owner.characterClass.className == "Werewolf" && p_owner.previousClassName == "Hero") {
+            //if character is currently a werewolf, then set his/her previous class to _previousClassOfCurrentOwner
+            //so that when he/she reverts to normal, he/she will no longer be a Hero.
+            p_owner.OverridePreviousClassName(previousClassOfCurrentOwner); 
+        }
+    }
+    private bool CanBecomeHero(Character p_character) {
+        if (!p_character.traitContainer.IsBlessed()) {
+            return false;
+        }
+        if (p_character.traitContainer.HasTrait("Evil", "Treacherous", "Cultist")) {
+            return false;
+        }
+        if (p_character.characterClass.className == "Werewolf" || p_character.characterClass.className == "Necromancer" || p_character.characterClass.className == "Vampire Lord") {
+            return false;
+        }
+        return true;
     }
     #endregion
 }
@@ -128,6 +159,7 @@ public class SaveDataExcalibur : SaveDataTileObject {
     public Excalibur.Locked_State lockedState;
     public List<string> traitsGainedByCurrentOwner;
     public List<int> finishedCharacters;
+    public string previousClass;
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         Excalibur excalibur = tileObject as Excalibur;
@@ -135,6 +167,7 @@ public class SaveDataExcalibur : SaveDataTileObject {
         lockedState = excalibur.lockedState;
         traitsGainedByCurrentOwner = excalibur.traitsGainedByCurrentOwner;
         finishedCharacters = new List<int>(excalibur.finishedCharacters);
+        previousClass = excalibur.previousClassOfCurrentOwner;
     }
     public override TileObject Load() {
         TileObject tileObject = base.Load();

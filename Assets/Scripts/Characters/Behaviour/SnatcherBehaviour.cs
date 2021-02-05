@@ -23,7 +23,7 @@ namespace Characters.Behaviour {
                             LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
                             return character.jobComponent.CreateGoToJob(targetTile, out producedJob);    
                         } else {
-                            character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
+                            character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                             return true;
                         }
                     } else {
@@ -37,7 +37,7 @@ namespace Characters.Behaviour {
                         //character is already at demonic structure, just roam around there
                         return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_CORRUPTION, out producedJob, CollectionUtilities.GetRandomElement(choices));
                     } else {
-                        character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
+                        character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                         return true;
                     }
                     

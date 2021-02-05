@@ -155,11 +155,12 @@ public class CrimeManager : BaseMonoBehaviour {
         }
 
         if (key != string.Empty) {
-            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LOG_TAG.Life_Changes, LOG_TAG.Crimes, LOG_TAG.Major);
             addLog.AddToFillers(authority, authority.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
         }
         return key == "wanted";
     }
@@ -189,7 +190,8 @@ public class CrimeManager : BaseMonoBehaviour {
         } else if (consideredAction.associatedJobType == JOB_TYPE.SPREAD_RUMOR) {
             return CRIME_SEVERITY.Infraction;
         } else if (actionType == INTERACTION_TYPE.STEAL
-            || actionType == INTERACTION_TYPE.POISON) {
+            || actionType == INTERACTION_TYPE.POISON
+            || actionType == INTERACTION_TYPE.PICKPOCKET) {
             return CRIME_SEVERITY.Misdemeanor;
         } else if (actionType == INTERACTION_TYPE.PICK_UP) {
             if(consideredAction.poiTarget is TileObject targetTileObject) {
@@ -330,6 +332,10 @@ public class CrimeManager : BaseMonoBehaviour {
             finalCrimeSeverity = factionCrimeSeverity;
         }
         return finalCrimeSeverity;
+    }
+    public bool IsConsideredACrimeByCharacter(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
+        CRIME_SEVERITY crimeSeverity = GetCrimeSeverity(witness, actor, target, crimeType);
+        return crimeSeverity != CRIME_SEVERITY.None && crimeSeverity != CRIME_SEVERITY.Unapplicable;
     }
 
     //public void ReactToCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType, CRIME_SEVERITY crimeType) {

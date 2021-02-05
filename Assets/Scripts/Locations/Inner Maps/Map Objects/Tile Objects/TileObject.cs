@@ -9,7 +9,9 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 using UnityEngine.EventSystems;
 using Locations.Settlements;
+using Locations;
 using Logs;
+using Locations.Settlements;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -20,8 +22,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
-    public Region currentRegion => gridTileLocation.structure.region.coreTile.region;
+    public Region currentRegion => gridTileLocation.structure.region;
     public LocationStructure structureLocation => gridTileLocation?.structure;
+
+    public BaseSettlement parentSettlement; //NOTE: This is only used in Fishing Spot, Ore Vein, Rock and Tree Object //TODO: either use this in all TileObjects or refactor
     public bool isPreplaced { get; private set; }
     /// <summary>
     /// All currently in progress jobs targeting this.
@@ -51,12 +55,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public List<PLAYER_SKILL_TYPE> actions { get; protected set; }
     public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
-
+    public ILocationAwareness currentLocationAwareness { get; private set; }
+    //public bool isInPendingAwarenessList { get; private set; }
     private bool hasSubscribedToListeners;
-
     public LogComponent logComponent { get; protected set; }
-    
+    public virtual StructureConnector structureConnector { get; protected set; }
+
     #region getters
+    public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
     public virtual Type serializedData => typeof(SaveDataTileObject);
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
@@ -140,6 +146,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SubscribeListeners();
     }
 
+    public virtual void UpdateSettlementResourcesParent() { }
+    public virtual void RemoveFromSettlementResourcesParent() { }
+
     #region Loading
     /// <summary>
     /// Load data from second wave. NOTE: This is called after the tile object is placed.
@@ -199,6 +208,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     #region Virtuals
+    protected virtual string GetNameplateName() {
+        return name;
+    }
     /// <summary>
     /// Called when a character starts to do an action towards this object.
     /// </summary>
@@ -222,9 +234,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool OccupiesTile() { return true;}
     public virtual void OnDestroyPOI() {
         //DisableGameObject();
-        previousTile?.parentMap.region.RemovePendingAwareness(this);
+        LocationAwarenessUtility.RemoveFromAwarenessList(this);
+
+        //removed by aaron aranas awareness update previousTile?.parentMap.region.RemovePendingAwareness(this);
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
-        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "Target Destroyed");
         OnRemoveTileObject(null, previousTile);
         DestroyMapVisualGameObject();
         SetPOIState(POI_STATE.INACTIVE);
@@ -261,7 +275,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (mapVisual == null) {
             InitializeMapObject(this);
             OnMapObjectStateChanged(); //update visuals based on map object state
-            gridTileLocation.parentMap.region.AddPendingAwareness(this);
+            //removed by aaron for awareness update gridTileLocation.parentMap.region.AddPendingAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
         mapVisual.UpdateSortingOrders(this);
@@ -305,7 +319,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return null;
     }
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
@@ -326,35 +340,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     tileLocation = isBeingCarriedBy.gridTileLocation;
                 }
                 if ((action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    OtherData[] data = null;
-                    if (otherData != null) {
-                        if (otherData.ContainsKey(currType)) {
-                            data = otherData[currType];
-                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                            data = otherData[INTERACTION_TYPE.NONE];
-                        }
-                    }
-                    //object[] otherActionData = null;
-                    //if (otherData.ContainsKey(currType)) {
-                    //    otherActionData = otherData[currType];
-                    //}
+                    OtherData[] data = job.GetOtherDataFor(currType);
                     if (action.CanSatisfyRequirements(actor, this, data, job)
-                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
-                        int actionCost = action.GetCost(actor, this, job, data);
+                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, job)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                        int actionCost = action.GetCost(actor, this, job);
                         log += $"({actionCost}){action.goapName}-{nameWithID}, ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;
                         }
-                        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                        //if (goapAction != null) {
-                        //    if (data != null) {
-                        //        goapAction.InitializeOtherData(data);
-                        //    }
-                        //    usableActions.Add(goapAction);
-                        //} else {
-                        //    throw new System.Exception("Goap action " + currType.ToString() + " is null!");
-                        //}
                     }
                 }
             }
@@ -364,9 +358,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost) {
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job) {
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
-            && advertisedActions != null && advertisedActions.Contains(action.goapType)
+            //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && actor.trapStructure.SatisfiesForcedHex(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
@@ -374,17 +368,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (isBeingCarriedBy != null) {
                 tileLocation = isBeingCarriedBy.gridTileLocation;
             }
-            if(action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) {
-                OtherData[] data = null;
-                if (otherData != null) {
-                    if (otherData.ContainsKey(action.goapType)) {
-                        data = otherData[action.goapType];
-                    } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                        data = otherData[INTERACTION_TYPE.NONE];
-                    }
-                }
+            if (action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) {
+                OtherData[] data = job.GetOtherDataFor(action.goapType);
                 if (action.CanSatisfyRequirements(actor, this, data, job)) {
-                    cost = action.GetCost(actor, this, job, data);
                     return true;
                 }
             }
@@ -412,6 +398,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (removeTraits) {
             traitContainer.RemoveAllTraitsAndStatuses(this);
         }
+        RemoveFromSettlementResourcesParent();
     }
     public virtual void OnTileObjectGainedTrait(Trait trait) {
         if (trait is Status status && status.isTangible && mapObjectVisual != null) {
@@ -424,7 +411,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
-        return gridTileLocation != null && source.gridTileLocation != null && (this is BlockWall || (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)));
+        return gridTileLocation != null && source.gridTileLocation != null && source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation);
     }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
         if(mapVisual == null) {
@@ -470,10 +457,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         if (allowDuplicates || advertisedActions.Contains(type) == false) {
             advertisedActions.Add(type);
+            LocationAwarenessUtility.AddToAwarenessList(type, this);
         }
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
-        advertisedActions.Remove(type);
+        if (advertisedActions.Remove(type)) {
+            LocationAwarenessUtility.RemoveFromAwarenessList(type, this);
+        }
     }
     public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargetingThis.Add(job);
@@ -505,6 +495,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return false;
     }
+    public bool HasJobTargetingThis(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if (job.jobType == jobType) {
+                return true;
+            }
+        }
+        return false;
+    }
     public GoapPlanJob GetJobTargetingThisCharacter(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             if (allJobsTargetingThis[i] is GoapPlanJob) {
@@ -519,7 +518,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
-        CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
+        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
 
         if ((amount < 0  && CanBeDamaged()) || amount > 0) {
             //only added checking here because even if objects cannot be damaged,
@@ -549,8 +548,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? CombatManager.Instance.DefaultElementalTraitProcessor;
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, etp);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
             //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
         LocationGridTile tile = gridTileLocation;
@@ -604,6 +602,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void SetGridTileLocation(LocationGridTile tile) {
         previousTile = gridTileLocation;
         gridTileLocation = tile;
+        LocationAwarenessUtility.RemoveFromAwarenessList(this);
+        if (gridTileLocation != null) {
+            LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
+        }
     }
     public void OnSeizePOI() {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == this) {
@@ -636,9 +638,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             //    traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
             //}
         }
-    }
-    public virtual bool CollectsLogs() {
-        return true;
     }
     public void CancelRemoveStatusFeedAndRepairJobsTargetingThis() {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
@@ -678,6 +677,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 }
             }
         }
+        return false;
+    }
+    public void SetCurrentLocationAwareness(ILocationAwareness locationAwareness) {
+        currentLocationAwareness = locationAwareness;
+    }
+    //public void SetIsInPendingAwarenessList(bool state) {
+    //    isInPendingAwarenessList = state;
+    //}
+    public virtual bool IsUnpassable() {
         return false;
     }
     #endregion
@@ -965,9 +973,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// Set who currently has this item.
     /// This can be any character, and is not limited to just the owner of this object (i.e. if the object was stolen)
     /// </summary>
-    /// <param name="character"></param>
-    public virtual void SetInventoryOwner(Character character) {
-        this.isBeingCarriedBy = character;
+    /// <param name="p_newOwner"></param>
+    public virtual void SetInventoryOwner(Character p_newOwner) {
+        this.isBeingCarriedBy = p_newOwner;
         Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
@@ -1017,8 +1025,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return true;
         } else {
             //https://www.notion.so/ruinarch/c818a20f153d4b6ea49e823a04515394?v=5767c0da06f347549ce48dd37384af59&p=7e7a8a17d989411eaec3ebe4ba4b5460
-            //Can be picked up even if item has owner if character is Evil, Treacherous or Kleptomaniac
-            if(character.traitContainer.HasTrait("Evil", "Treacherous", "Kleptomaniac")) {
+            //Can be picked up even if item has owner if character is Kleptomaniac
+            if(character.traitContainer.HasTrait("Kleptomaniac")) {
                 return true;
             }
         }
@@ -1109,7 +1117,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SubscribeListeners();
         if (gridTileLocation != null) {
             //add tile object to region count. This will be called at DefaultProcessOnPlacePOI
-            gridTileLocation.parentMap.region.AddTileObjectInRegion(this);    
+            gridTileLocation.parentMap.region.AddTileObjectInRegion(this);
         }
     }
     private void CheckUnbuiltObjectValidity() {

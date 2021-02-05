@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Scenario_Maps;
 using Traits;
+using UnityEngine;
 using UtilityScripts;
 namespace Generator.Map_Generation.Components {
     public class CharacterFinalization : MapGenerationComponent {
@@ -15,16 +16,49 @@ namespace Generator.Map_Generation.Components {
                 //because of Ancient Graveyard.
                 if (character.isNormalCharacter && !character.isDead) {
                     character.CreateRandomInitialTraits();
+
+                }
+            }
+            
+            //apply faction related effects to each member
+            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                Faction faction = FactionManager.Instance.allFactions[i];
+                if (faction.isMajorNonPlayer) {
+                    if (faction.leader is Character factionLeader) {
+                        ApplyFactionTypeRelatedEffectToMember(faction, factionLeader);
+                    }
+                    List<Character> settlementRulers = faction.characters.Where(c => c.isSettlementRuler).ToList();
+                    for (int j = 0; j < settlementRulers.Count; j++) {
+                        Character settlementRuler = settlementRulers[j];
+                        ApplyFactionTypeRelatedEffectToMember(faction, settlementRuler);
+                    }
+                    
+                    List<Character> normalMembers = faction.characters.Where(c => !c.isFactionLeader && !c.isSettlementRuler).ToList();
+                    int halfMembers = Mathf.FloorToInt(normalMembers.Count() / 2f);
+                    for (int j = 0; j < normalMembers.Count; j++) {
+                        Character factionMember = normalMembers[j];
+                        if (j < halfMembers) {
+                            ApplyFactionTypeRelatedEffectToMember(faction, factionMember);
+                        }
+                    }
                 }
             }
             yield return null;
         }
-
-        #region Saved World
-        public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-            yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+        private void ApplyFactionTypeRelatedEffectToMember(Faction p_faction, Character p_member) {
+            switch (p_faction.factionType.type) {
+                case FACTION_TYPE.Demon_Cult:
+                    //No need to process demon cult members, since adding of cultist trait is handled by DemonCult.ProcessNewMember
+                    break;
+                case FACTION_TYPE.Vampire_Clan:
+                    p_member.traitContainer.AddTrait(p_member, "Vampire");
+                    break;
+                case FACTION_TYPE.Lycan_Clan:
+                    LycanthropeData lycanthropeData = new LycanthropeData(p_member);
+                    p_member.traitContainer.AddTrait(p_member, "Lycanthrope");
+                    break;
+            }
         }
-        #endregion
 
         #region Scenario Maps
         public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
@@ -58,17 +92,16 @@ namespace Generator.Map_Generation.Components {
             List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
             
             //Up to three traits
-            
-            if (character.homeRegion.coreTile.biomeType == BIOMES.SNOW) {
+            if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.SNOW) {
                 //Snow villagers starts with Cold Blooded
                 character.traitContainer.AddTrait(character, "Cold Blooded");
-            } else if (character.homeRegion.coreTile.biomeType == BIOMES.DESERT) {
+            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.DESERT) {
                 //Desert villagers starts with Fire Proof
                 character.traitContainer.AddTrait(character, "Fireproof");
-            } else if (character.homeRegion.coreTile.biomeType == BIOMES.GRASSLAND) {
+            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.GRASSLAND) {
                 //Grassland villagers starts with Electric
                 character.traitContainer.AddTrait(character, "Electric");
-            } else if (character.homeRegion.coreTile.biomeType == BIOMES.FOREST) {
+            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.FOREST) {
                 //Forest villagers starts with Venomous
                 character.traitContainer.AddTrait(character, "Venomous");
             }
@@ -118,16 +151,17 @@ namespace Generator.Map_Generation.Components {
 
         #region Icalawa
         private void IcalawaCharacterRandomInitialTraits(int index, Character character, int totalCharacters) {
-            if (index < totalCharacters/2) {
-                //half of villagers are robust
-                character.traitContainer.AddTrait(character, "Robust");
-            }
+            // if (index < totalCharacters/2) {
+            //     //half of villagers are robust
+            //     character.traitContainer.AddTrait(character, "Robust");
+            // }
             if (index + 1 == totalCharacters) {
                 //last villager is Evil.
                 character.traitContainer.AddTrait(character, "Evil");
             } else {
                 //all non evil characters are blessed
                 character.traitContainer.AddTrait(character, "Blessed");
+                character.traitContainer.AddTrait(character, "Robust");
             }
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
             buffTraits.Remove("Blessed");

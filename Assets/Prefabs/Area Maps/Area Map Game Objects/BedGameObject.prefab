@@ -19,12 +19,11 @@ MonoBehaviour:
   hpBarGO: {fileID: 3696244732525481535}
   hpFill: {fileID: 2438038570028579946}
   aspeedFill: {fileID: 9070921881876816135}
+  particleEffectParent: {fileID: 5753767231860112632}
   statusIconsParent: {fileID: 7891523105887240218}
   defaultBed: {fileID: 21300000, guid: 079ce5cc13bbd324fa99a5820bda0d54, type: 3}
   bed1Sleeping: {fileID: 21300000, guid: fd2146d69e98e394f8dc1ce405b2ab76, type: 3}
   bed2Sleeping: {fileID: 21300000, guid: c4fff26a111b1064ba5d9df5e610fd7a, type: 3}
-  actionIcon: {fileID: 0}
-  actionIconRect: {fileID: 0}
 --- !u!1001 &3388935614611859160
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -137,3 +136,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &5753767231860112632 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6980181590153484832, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 3388935614611859160}
+  m_PrefabAsset: {fileID: 0}

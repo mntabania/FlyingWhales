@@ -13,7 +13,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.currentStructure == character.homeStructure) {
-            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
+            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.IsReturnHome()) {
                 log += $"\n-{character.name} is in home structure and just returned home";
                 log += "\n-50% chance to Sit if there is still an unoccupied Table or Desk in the current location";
                 int chance = UnityEngine.Random.Range(0, 100);
@@ -22,7 +22,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                     TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                     if (deskOrTable != null) {
                         log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                        character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
+                        character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                         return true;
                     } else {
                         log += "\n  -No unoccupied table or desk";
@@ -30,7 +30,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                 }
                 log += "\n-Otherwise, stand idle";
                 log += $"\n  -{character.name} will do action Stand";
-                character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
+                character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                 return true;
             } else {
                 log += $"\n-{character.name} is in home structure and previous action is not returned home";
@@ -48,7 +48,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                                 log += "\n  -Character is vampiric, cannot do nap action";
                             } else {
                                 log += $"\n  -Afternoon: {character.name} will do action Nap on {bed}";
-                                character.PlanIdle(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed, out producedJob);
+                                character.PlanFixedJob(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed, out producedJob);
                                 return true;
                             }
                         } else {
@@ -84,7 +84,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                             LocationStructure targetStructure = targetCharacter.homeStructure;
                             Assert.IsNotNull(targetStructure, $"Home structure of visit target {targetCharacter.name} is null!");
                             log += $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
-                            character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, 
+                            character.PlanFixedJob(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, 
                                 new OtherData[] { new LocationStructureOtherData(targetStructure), new CharacterOtherData(targetCharacter), });
                         } else {
                             log += "\n  -No valid character to visit.";
@@ -100,7 +100,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                     TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                     if (deskOrTable != null) {
                         log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                        character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
+                        character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                         return true;
                     } else {
                         log += "\n  -No unoccupied Table or Desk";

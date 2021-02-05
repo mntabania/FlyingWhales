@@ -3,7 +3,7 @@
 public class CultistTransform : GoapAction {
     public CultistTransform() : base(INTERACTION_TYPE.CULTIST_TRANSFORM) {
         actionIconString = GoapActionStateDB.No_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Player};
     }
@@ -30,7 +30,7 @@ public class CultistTransform : GoapAction {
         summon.SetFirstAndLastName(character.firstName, character.surName);
         goapNode.descriptionLog.AddInvolvedObjectManual(summon.persistentID);
         
-        CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
+        CharacterManager.Instance.PlaceSummonInitially(summon, gridTileLocation);
         if (UIManager.Instance.characterInfoUI.isShowing && 
             UIManager.Instance.characterInfoUI.activeCharacter == character) {
             UIManager.Instance.characterInfoUI.CloseMenu();    

@@ -31,14 +31,19 @@ namespace Inner_Maps.Location_Structures {
             base.OnAddResident(newResident);
             if (GameManager.Instance.gameHasStarted) {
                 //only Update owners on add residency if resident is not from initial generation.
-                List<TileObject> objs = GetTileObjects();
-                for (int i = 0; i < objs.Count; i++) {
-                    TileObject obj = objs[i];
-                    if (obj.isPreplaced) {
-                        //only update owners of objects that were preplaced
-                        obj.UpdateOwners();    
+                ProcessAllTileObjects(t => {
+                    if (t.isPreplaced) {
+                        t.UpdateOwners();
                     }
-                }    
+                });
+                //List<TileObject> objs = ProcessAllTileObjects();
+                //for (int i = 0; i < objs.Count; i++) {
+                //    TileObject obj = objs[i];
+                //    if (obj.isPreplaced) {
+                //        //only update owners of objects that were preplaced
+                //        obj.UpdateOwners();    
+                //    }
+                //}    
             }
         }
 
@@ -74,18 +79,17 @@ namespace Inner_Maps.Location_Structures {
         public override string GetNameRelativeTo(Character character) {
             if (character.homeStructure == this) {
                 //- Dwelling where Actor Resides: "at [his/her] home"
-                return
-                    $"{UtilityScripts.Utilities.GetPronounString(character.gender, PRONOUN_TYPE.POSSESSIVE, false)} home";
+                return $"{UtilityScripts.Utilities.GetPronounString(character.gender, PRONOUN_TYPE.POSSESSIVE, false)} home";
             } else if (residents.Count > 0) {
                 //- Dwelling where Someone else Resides: "at [Resident Name]'s home"
                 string residentSummary = residents[0].name;
                 for (int i = 1; i < residents.Count; i++) {
                     if (i + 1 == residents.Count) {
-                        residentSummary += " and ";
+                        residentSummary = $"{residentSummary} and ";
                     } else {
-                        residentSummary += ", ";
+                        residentSummary = $"{residentSummary}, ";
                     }
-                    residentSummary += residents[i].name;
+                    residentSummary = $"{residentSummary}{residents[i].name}";
                 }
                 if (residentSummary.Last() == 's') {
                     return $"{residentSummary}' home";
@@ -95,9 +99,6 @@ namespace Inner_Maps.Location_Structures {
                 //- Dwelling where no one resides: "at an empty house"
                 return "an empty house";
             }
-        }
-        public LocationStructure GetLocationStructure() {
-            return this;
         }
         #endregion
     }

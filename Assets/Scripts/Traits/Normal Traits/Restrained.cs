@@ -90,6 +90,7 @@ namespace Traits {
                         if (!IsResponsibleForTrait(characterThatWillDoJob) && InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter)) {
                             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, targetCharacter, characterThatWillDoJob);
+                            UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(characterThatWillDoJob, job, INTERACTION_TYPE.NONE);
                             // job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.TOOL });
                             // job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.TOOL].craftCost });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);

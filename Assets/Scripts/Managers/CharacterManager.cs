@@ -61,7 +61,11 @@ public class CharacterManager : BaseMonoBehaviour {
         Ratman_Behaviour = "Ratman Behaviour",
         Slave_Behaviour = "Slave Behaviour",
         Fire_Elemental_Behaviour = "Fire Elemental Behaviour",
-        Sludge_Behaviour = "Sludge Behaviour";
+        Sludge_Behaviour = "Sludge Behaviour",
+        Scorpion_Behaviour = "Scorpion Behaviour",
+        Harpy_Behaviour = "Harpy Behaviour",
+        Triton_Behaviour = "Triton Behaviour";
+
     
     public const int VISION_RANGE = 8;
     public const int AVOID_COMBAT_VISION_RANGE = 12;
@@ -391,6 +395,27 @@ public class CharacterManager : BaseMonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
+        { Scorpion_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(ScorpionBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Harpy_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(HarpyBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Triton_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(TritonBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
     };
 
     #region getters/setters
@@ -517,10 +542,21 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return newCharacter;
     }
-    public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
+    /// <summary>
+    /// Create a new Character instance.
+    /// </summary>
+    /// <param name="data">Pre determined character data.</param>
+    /// <param name="className">Class that new character will be.</param>
+    /// <param name="faction">The faction this character will be part of. If null, will default to neutral.</param>
+    /// <param name="homeLocation">The Settlement that the new character lives in.</param>
+    /// <param name="homeStructure">The Structure that the new character lives in.</param>
+    /// <param name="afterInitializationAction">Other processes to be performed on new character before it is added to the provided faction.</param>
+    /// <returns></returns>
+    public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null, System.Action<Character> afterInitializationAction = null) {
         Character newCharacter = new Character(className, data.race, data.gender, data.sexuality, data.id);
         newCharacter.SetFirstAndLastName(data.firstName, data.surName);
         newCharacter.Initialize();
+        afterInitializationAction?.Invoke(newCharacter);
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter, isInitial: true)) {
                 FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter, isInitial: true);
@@ -635,20 +671,20 @@ public class CharacterManager : BaseMonoBehaviour {
             //determine tile object type based on what poi to convert to food pile.
             TILE_OBJECT_TYPE tileObjectType;
             if (deadCharacter != null) {
-                if (deadCharacter.isNormalCharacter) {
-                    switch (deadCharacter.race) {
-                        case RACE.HUMANS:
-                            tileObjectType = TILE_OBJECT_TYPE.HUMAN_MEAT;
-                            break;
-                        case RACE.ELVES:
-                            tileObjectType = TILE_OBJECT_TYPE.ELF_MEAT;
-                            break;
-                        default:
-                            tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
-                            break;
-                    }
-                } else {
-                    tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                switch (deadCharacter.race) {
+                    case RACE.HUMANS:
+                        tileObjectType = TILE_OBJECT_TYPE.HUMAN_MEAT;
+                        break;
+                    case RACE.ELVES:
+                        tileObjectType = TILE_OBJECT_TYPE.ELF_MEAT;
+                        break;
+                    case RACE.RAT:
+                    case RACE.RATMAN:
+                        tileObjectType = TILE_OBJECT_TYPE.RAT_MEAT;
+                        break;
+                    default:
+                        tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                        break;
                 }
             } else {
                 tileObjectType = poi is Crops ? TILE_OBJECT_TYPE.VEGETABLES : TILE_OBJECT_TYPE.ANIMAL_MEAT;
@@ -665,12 +701,15 @@ public class CharacterManager : BaseMonoBehaviour {
                     PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(foodPile);
                 }
 
-                if (deadCharacter != null && createLog) {
-                    //add log if food pile came from character
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
-                    log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                if (deadCharacter != null) {
+                    deadCharacter.SetConnectedFoodPile(foodPile);
+                    if (createLog) {
+                        //add log if food pile came from character
+                        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
+                        log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddLogToDatabase();
+                    }
                 }
 
                 foodPile.SetResourceInPile(food);
@@ -699,9 +738,9 @@ public class CharacterManager : BaseMonoBehaviour {
             Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className, bypassIdeologyChecking: true);
             summon.SetFirstAndLastName(target.firstName, target.surName);
             summon.SetHasBeenRaisedFromDead(true);
-            summon.CreateMarker();
-
-            summon.InitialCharacterPlacement(tile);
+            PlaceSummonInitially(summon, tile);
+            //summon.CreateMarker();
+            //summon.InitialCharacterPlacement(tile);
             if (target.currentRegion != null) {
                 target.currentRegion.RemoveCharacterFromLocation(target);
             }
@@ -939,10 +978,11 @@ public class CharacterManager : BaseMonoBehaviour {
     public ArtifactSettings GetArtifactSettings(ARTIFACT_TYPE type) {
         return artifactSettings[type];
     }
-    public void PlaceSummon(Summon summon, LocationGridTile locationTile) {
+    public void PlaceSummonInitially(Summon summon, LocationGridTile locationTile) {
         summon.currentRegion?.RemoveCharacterFromLocation(summon);
-        summon.CreateMarker();    
-        summon.marker.InitialPlaceMarkerAt(locationTile);
+        summon.CreateMarker();
+        //summon.marker.InitialPlaceMarkerAt(locationTile); //Replace with InitialCharacterPlacement
+        summon.InitialCharacterPlacement(locationTile);
         summon.OnPlaceSummon(locationTile);
     }
     public void Teleport(Character character, LocationGridTile tile) {
@@ -988,6 +1028,8 @@ public class CharacterManager : BaseMonoBehaviour {
         switch (summonType) {
             case SUMMON_TYPE.Giant_Spider:
                 return TILE_OBJECT_TYPE.SPIDER_EGG;
+            case SUMMON_TYPE.Harpy:
+                return TILE_OBJECT_TYPE.HARPY_EGG;
             default:
                 return TILE_OBJECT_TYPE.NONE;
         }
@@ -1313,7 +1355,7 @@ public class CharacterManager : BaseMonoBehaviour {
     #region Listeners
     private void OnCharacterFinishedAction(ActualGoapNode node) {
         if (node.actor.marker) {
-            node.actor.marker.UpdateActionIcon();
+            //node.actor.marker.UpdateActionIcon();
             node.actor.marker.UpdateAnimation();
         }
         //for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {

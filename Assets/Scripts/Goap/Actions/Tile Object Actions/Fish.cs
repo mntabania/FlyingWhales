@@ -8,7 +8,7 @@ public class Fish : GoapAction {
 
     public Fish() : base(INTERACTION_TYPE.FISH) {
         actionIconString = GoapActionStateDB.Fish_Icon;
-        advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         //racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         // validTimeOfDays = new[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON };
         logTags = new[] {LOG_TAG.Work};
@@ -45,11 +45,50 @@ public class Fish : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        if (node.actor.characterClass.IsCombatant()) {
-            node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    if (node.actor.characterClass.IsCombatant()) {
+    //        node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //    }
+    //}
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        string stateName = "Target Missing";
+        bool defaultTargetMissing = IsTargetMissingOverride(node);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
+        return goapActionInvalidity;
+    }
+    private bool IsTargetMissingOverride(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        //Action is invalid if the target is unavailable and the action cannot be advertised if target is unavailable
+        if ((poiTarget.IsAvailable() == false && !canBeAdvertisedEvenIfTargetIsUnavailable) || poiTarget.gridTileLocation == null) {
+            return true;
         }
+        if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.region) {
+            return true;
+        }
+        LocationGridTile targetTile = poiTarget.gridTileLocation;
+        if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
+            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) == false) {
+                return true;
+            }
+        } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
+            //if the action type is NEAR_OTHER_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
+                return true;
+            }
+        } else if (actionLocationType == ACTION_LOCATION_TYPE.NEARBY || actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION
+            || actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B || actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
+            //if the action type is NEARBY, RANDOM_LOCATION, RANDOM_LOCATION_B, OVERRIDE, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -57,6 +96,10 @@ public class Fish : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if(poiTarget is FishingSpot fishingSpot) {
+                return actor.homeSettlement != null && fishingSpot.connectedFishingShack != null && fishingSpot.connectedFishingShack.settlementLocation == actor.homeSettlement
+                    && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+            }
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
         }
         return false;
@@ -66,9 +109,9 @@ public class Fish : GoapAction {
     #region State Effects
     public void PreFishSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //}
     }
     public void PerTickFishSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
@@ -76,9 +119,9 @@ public class Fish : GoapAction {
         }
     }
     public void AfterFishSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //}
         LocationGridTile tile = goapNode.actor.gridTileLocation;
         if(tile != null && tile.objHere != null) {
             tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();

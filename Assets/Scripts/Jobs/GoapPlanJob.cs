@@ -7,6 +7,7 @@ using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 
 public class GoapPlanJob : JobQueueItem {
 
@@ -19,6 +20,7 @@ public class GoapPlanJob : JobQueueItem {
     //if INTERACTION_TYPE is NONE, it means that it is used by all
     public Dictionary<INTERACTION_TYPE, OtherData[]> otherData { get; protected set; } //TODO: Further optimize this by moving this dictionary to the actor itself
     public bool shouldBeCancelledOnDeath { get; private set; } //should this job be cancelled when the target dies?
+    public Dictionary<INTERACTION_TYPE, List<ILocation>> priorityLocations { get; private set; }
 
     #region getters
     public override IPointOfInterest poiTarget => targetPOI;
@@ -28,6 +30,7 @@ public class GoapPlanJob : JobQueueItem {
     
     public GoapPlanJob() : base() {
         otherData = new Dictionary<INTERACTION_TYPE, OtherData[]>();
+        priorityLocations = new Dictionary<INTERACTION_TYPE, List<ILocation>>();
     }
 
     public void Initialize(JOB_TYPE jobType, GoapEffect goal, IPointOfInterest targetPOI, IJobOwner owner) {
@@ -79,6 +82,32 @@ public class GoapPlanJob : JobQueueItem {
             }
             otherData.Add(saveDataOtherData.Key, loadedOtherData);
         }
+        if (data.priorityLocations != null) {
+            foreach (KeyValuePair<INTERACTION_TYPE, List<ILocationSaveData>> item in data.priorityLocations) {
+                if (item.Value != null) {
+                    priorityLocations.Add(item.Key, ObjectPoolManager.Instance.CreateNewILocationList());
+                    for (int i = 0; i < item.Value.Count; i++) {
+                        ILocationSaveData ilocationSaveData = item.Value[i];
+                        if(ilocationSaveData.objectType == OBJECT_TYPE.Settlement) {
+                            BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(ilocationSaveData.persistentID);
+                            if(settlement != null) {
+                                priorityLocations[item.Key].Add(settlement);
+                            }
+                        } else if (ilocationSaveData.objectType == OBJECT_TYPE.Structure) {
+                            LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(ilocationSaveData.persistentID);
+                            if (structure != null) {
+                                priorityLocations[item.Key].Add(structure);
+                            }
+                        } else if (ilocationSaveData.objectType == OBJECT_TYPE.Hextile) {
+                            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(ilocationSaveData.persistentID);
+                            if (hex != null) {
+                                priorityLocations[item.Key].Add(hex);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if (data.saveDataGoapPlan != null) {
             GoapPlan goapPlan = data.saveDataGoapPlan.Load();
             assignedPlan = goapPlan;
@@ -92,6 +121,7 @@ public class GoapPlanJob : JobQueueItem {
         if (hasBeenReset) { return false; }
         //Should goap plan in multithread if character is being carried or being seized
         if(assignedPlan == null && originalOwner != null && assignedCharacter != null && assignedCharacter.carryComponent.IsNotBeingCarried() && !assignedCharacter.isBeingSeized) {
+            Profiler.BeginSample($"Goap Plan Job Process Job");
             Character characterOwner = assignedCharacter;
             bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
             IPointOfInterest target = targetPOI ?? assignedCharacter; //if provided target is null, default to the assigned character.
@@ -106,6 +136,7 @@ public class GoapPlanJob : JobQueueItem {
                 //    }
                 //}
             }
+            Profiler.EndSample();
             return true;
         }
         return base.ProcessJob();
@@ -251,6 +282,8 @@ public class GoapPlanJob : JobQueueItem {
                 convertedData = new StringOtherData(str);
             } else if (obj is TileObjectRecipe recipe) {
                 convertedData = new TileObjectRecipeOtherData(recipe);
+            } else if (obj is StructureSetting structureSetting) {
+                convertedData = new StructureSettingOtherData(structureSetting);
             }
             if (convertedData != null) {
                 convertedDataArray[i] = convertedData;    
@@ -360,11 +393,37 @@ public class GoapPlanJob : JobQueueItem {
         }
         return false;
     }
-    public OtherData[] GetOtherData(INTERACTION_TYPE actionType) {
+    public OtherData[] GetOtherDataSpecific(INTERACTION_TYPE actionType) {
         if (HasOtherData(actionType)) {
             return otherData[actionType];
         }
         return null;
+    }
+    public OtherData[] GetOtherDataFor(INTERACTION_TYPE actionType) {
+        OtherData[] data = null;
+        if (otherData.ContainsKey(actionType)) {
+            data = otherData[actionType];
+        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+            //None Interaction Type means that the other data is applied to all actions in plan
+            data = otherData[INTERACTION_TYPE.NONE];
+        }
+        return data;
+    }
+    public void AddPriorityLocation(INTERACTION_TYPE actionType, ILocation location) {
+        if (!priorityLocations.ContainsKey(actionType)) {
+            priorityLocations.Add(actionType, ObjectPoolManager.Instance.CreateNewILocationList());
+        }
+        priorityLocations[actionType].Add(location);
+    }
+    public List<ILocation> GetPriorityLocationsFor(INTERACTION_TYPE actionType) {
+        List<ILocation> data = null;
+        if (priorityLocations.ContainsKey(actionType)) {
+            data = priorityLocations[actionType];
+        } else if (priorityLocations.ContainsKey(INTERACTION_TYPE.NONE)) {
+            //None Interaction Type means that the other data is applied to all actions in plan
+            data = priorityLocations[INTERACTION_TYPE.NONE];
+        }
+        return data;
     }
     #endregion
 
@@ -392,6 +451,11 @@ public class GoapPlanJob : JobQueueItem {
         otherData.Clear();
         SetAssignedPlan(null);
         shouldBeCancelledOnDeath = true;
+        foreach (List<ILocation> list in priorityLocations.Values) {
+            //Return ILocation list to pool
+            ObjectPoolManager.Instance.ReturnILocationListToPool(list);
+        }
+        priorityLocations.Clear();
     }
     #endregion
 }

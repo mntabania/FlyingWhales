@@ -51,7 +51,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
 
                 if (character.HasTerritory() && !character.IsInTerritory()) {
                     log += "\n-Return to territory";
-                    return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                    return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                 } else {
                     log += "\n-Already in territory, Roam";
                     return character.jobComponent.TriggerRoamAroundTile(out producedJob);
@@ -84,8 +84,9 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
             if (character.hexTileLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(character.hexTileLocation)) {
                 log += $"\n-Already at village target, will find character to attack";
                 //character is already at target village
-                List<Character> targets = GetTargetChoicesFor(character, character.behaviourComponent.invadeVillageTarget);
-                if (targets != null) {
+                List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
+                PopulateTargetChoicesFor(targets, character, character.behaviourComponent.invadeVillageTarget);
+                if (targets.Count > 0) {
                     //Fight a random target
                     Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
                     log += $"\n-Chosen target is {chosenTarget.name}";
@@ -95,6 +96,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
                     //No more valid targets exist, clearing village target. 
                     character.behaviourComponent.SetInvadeVillageTarget(null);
                 }
+                ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
                 producedJob = null;
                 return true;
             } else {
@@ -108,19 +110,11 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
         producedJob = null;
         return false;
     }
-    private List<Character> GetTargetChoicesFor(Character p_invader, List<HexTile> tiles) {
-        List<Character> characters = null;
+    private void PopulateTargetChoicesFor(List<Character> p_targetChoices, Character p_invader, List<HexTile> tiles) {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
-            List<Character> charactersAtHexTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c != p_invader && p_invader.IsHostileWith(c) && IsCharacterValidForInvade(c));
-            if (charactersAtHexTile != null) {
-                if(characters == null) {
-                    characters = new List<Character>();
-                }
-                characters.AddRange(charactersAtHexTile);
-            }
+            tile.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c => c != p_invader && p_invader.IsHostileWith(c) && IsCharacterValidForInvade(c));
         }
-        return characters;
     }
     private bool IsCharacterValidForInvade(Character character) {
         return !character.isDead && !character.traitContainer.HasTrait("Hibernating", "Indestructible") && !character.isInLimbo && !character.isBeingSeized && character.carryComponent.IsNotBeingCarried();

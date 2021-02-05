@@ -12,6 +12,7 @@ public class CombatState : CharacterState {
 
     private int _currentAttackTimer; //When this timer reaches max, remove currently hostile target from hostile list
     private bool _hasTimerStarted;
+    private const float Wall_Attack_Range_Tolerance = 0.4f;
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public IPointOfInterest currentClosestHostile { get; private set; }
@@ -153,6 +154,9 @@ public class CombatState : CharacterState {
     //}
     public override void AfterExitingState() {
         base.AfterExitingState();
+        if (stateComponent.owner.marker) {
+            stateComponent.owner.marker.visionCollider.ReCategorizeVision();
+        }
         if (!stateComponent.owner.isDead) {
             //TEMPORARILY REMOVED THIS UNTIL FURTHER NOTICE
             if (isBeingApprehended && stateComponent.owner.traitContainer.HasTrait("Criminal") && stateComponent.owner.limiterComponent.canPerform && stateComponent.owner.limiterComponent.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
@@ -728,6 +732,9 @@ public class CombatState : CharacterState {
                 // float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 // Profiler.EndSample();
                 float distance = Vector2.Distance(stateComponent.owner.marker.transform.position, currentClosestHostile.worldPosition);
+                if (stateComponent.owner.characterClass.rangeType == RANGE_TYPE.MELEE && currentClosestHostile.IsUnpassable()) {
+                    distance -= Wall_Attack_Range_Tolerance; //because sometimes melee characters cannot reach wall/door
+                }
                 if (stateComponent.owner.characterClass.attackRange >= distance) {
                     if (stateComponent.owner.movementComponent.isStationary) {
                         Attack();
@@ -778,8 +785,8 @@ public class CombatState : CharacterState {
         summary += "\nExecuting attack...";
         InnerMapManager.Instance.FaceTarget(stateComponent.owner, currentClosestHostile);
         if (isExecutingAttack == false) {
-            stateComponent.owner.marker.SetAnimationTrigger("Attack");
             isExecutingAttack = true;
+            stateComponent.owner.marker.SetAnimationTrigger("Attack");
         }
         //Reset Attack Speed
         stateComponent.owner.marker.ResetAttackSpeed();
@@ -839,7 +846,8 @@ public class CombatState : CharacterState {
                 }
             }
         }
-        
+
+        stateComponent.owner.logComponent.PrintLogIfActive(attackSummary);
         // if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
         //     attackSummary += $"\n{stateComponent.character.name}'s state is still this, running check coroutine.";
         //     stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
@@ -998,4 +1006,22 @@ public class CombatState : CharacterState {
     //    actionThatTriggeredThisState = action;
     //}
     #endregion
+
+    public override void Reset() {
+        base.Reset();
+        _currentAttackTimer = 0;
+        _hasTimerStarted = false;
+        isAttacking = false;
+        currentClosestHostile = null;
+        forcedTarget = null;
+        allCharactersThatDegradedRel.Clear();
+        allCharactersThatReactedToThisCombat.Clear();
+        endedInternally = false;
+        lastFledFrom = null;
+        lastFledFromStructure = null;
+        isBeingApprehended = false;
+        isFleeToHome = false;
+        _timesHitCurrentTarget = 0;
+        isExecutingAttack = false;
+    }
 }

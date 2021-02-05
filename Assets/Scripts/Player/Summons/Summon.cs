@@ -6,6 +6,7 @@ using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
 using Interrupts;
+using UnityEngine.Profiling;
 
 public class Summon : Character {
 
@@ -40,6 +41,7 @@ public class Summon : Character {
 
     #region Overrides
     public override void Initialize() {
+        combatComponent.SetCombatMode(defaultCombatMode);
         ConstructDefaultActions();
         OnUpdateRace();
         OnUpdateCharacterClass();
@@ -103,6 +105,12 @@ public class Summon : Character {
             Character carrier = isBeingCarriedBy;
             carrier?.UncarryPOI(this);
 
+            if (destroyMarkerOnDeath) {
+                //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
+                if (currentRegion != null) {
+                    currentRegion.RemoveCharacterFromLocation(this);
+                }
+            }
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
@@ -165,8 +173,10 @@ public class Summon : Character {
         }
     }
     protected override void OnTickStarted() {
+        Profiler.BeginSample($"{name} OnTickStarted");
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
+        Profiler.EndSample();
     }
     public override void OnUnseizePOI(LocationGridTile tileLocation) {
         base.OnUnseizePOI(tileLocation);
@@ -210,13 +220,19 @@ public class Summon : Character {
     /// <param name="tile">The tile the summon was placed on.</param>
     public virtual void OnPlaceSummon(LocationGridTile tile) {
         SubscribeToSignals();
-        Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
+        //Removed this Remove Listener, instead, do not add DecreaseNeeds to listener if character is a monster/summon
+        //Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
         movementComponent.UpdateSpeed();
         behaviourComponent.OnSummon(tile);
     }
     protected virtual void AfterDeath(LocationGridTile deathTileLocation) {
         if (marker == null && destroyMarkerOnDeath) {
-            GameManager.Instance.CreateParticleEffectAt(deathTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
+            if (race == RACE.TRITON) {
+                GameManager.Instance.CreateParticleEffectAt(deathTileLocation, PARTICLE_EFFECT.Water_Bomb);
+            } else {
+                GameManager.Instance.CreateParticleEffectAt(deathTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
+            }
+            
         }
         behaviourComponent.SetIsHarassing(false, null);
         behaviourComponent.SetIsInvading(false, null);
@@ -246,6 +262,9 @@ public class Summon : Character {
         AddPlayerAction(PLAYER_SKILL_TYPE.AGITATE);
         AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
         AddPlayerAction(PLAYER_SKILL_TYPE.SACRIFICE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
+        AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
     }
     #endregion
 

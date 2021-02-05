@@ -6,11 +6,15 @@ using Traits;
 
 public class DropResource : GoapAction {
 
+    private Precondition _foodPrecondition;
+
     public DropResource() : base(INTERACTION_TYPE.DROP_RESOURCE) {
         actionIconString = GoapActionStateDB.Haul_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
+
+        _foodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount);
     }
 
     #region Overrides
@@ -36,14 +40,15 @@ public class DropResource : GoapAction {
         isOverridden = true;
         return ee;
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
-        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
-        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-        p.AddRange(baseP);
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
+        //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        //p.AddRange(baseP);
+        Precondition p = null;
         if (target is Table) {
-            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+            p = _foodPrecondition;
         } else {
-            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, target.name /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+            p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, target.name /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount);
         }
         isOverridden = true;
         return p;

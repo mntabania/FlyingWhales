@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
+  m_Name: Icalawa
+  m_EditorClassIdentifier: 
+  scenarioSettings: {fileID: 4900000, guid: 5d1c1a6eea360fb45b5f85176d6c171d, type: 3}
+  faunaList:
+  - monsterType: 31
+    minRange: 3
+    maxRange: 5
+    weight: 100

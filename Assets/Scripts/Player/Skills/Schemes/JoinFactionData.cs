@@ -23,8 +23,8 @@ public class JoinFactionData : SchemeData {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if (faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Wild_Monsters
                     && faction.factionType.type != FACTION_TYPE.Undead
-                    && !faction.IsCharacterBannedFromJoining(sourceCharacter)
-                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)) {
+                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)
+                    && !faction.isDisbanded) {
                     choices.Add(faction);
                 }
             }
@@ -59,6 +59,9 @@ public class JoinFactionData : SchemeData {
         if (!target.ideologyComponent.DoesCharacterFitCurrentIdeologies(source)) {
             return false;
         }
+        if (target.IsCharacterBannedFromJoining(source)) {
+            return false;
+        }
         return true;
     }
     private void OnHoverEnter(Character source, Faction target) {
@@ -78,9 +81,8 @@ public class JoinFactionData : SchemeData {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnChooseFaction(object obj, Character source) {
+        UIManager.Instance.HideObjectPicker();
         if (obj is Faction targetFaction) {
-            UIManager.Instance.HideObjectPicker();
-
             //Show Scheme UI
             UIManager.Instance.ShowSchemeUI(source, targetFaction, this);
         }

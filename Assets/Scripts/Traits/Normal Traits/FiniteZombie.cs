@@ -37,9 +37,15 @@ namespace Traits {
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
-            if (!_hasTurnedAtLeastOnce) {
+            if (owner is Summon || owner.minion != null) {
                 owner.visuals.UsePreviousClassAsset(true);
                 owner.visuals.UpdateAllVisuals(owner);
+                owner.marker?.SetMarkerColor(Color.grey);
+            } else {
+                if (!_hasTurnedAtLeastOnce) {
+                    owner.visuals.UsePreviousClassAsset(true);
+                    owner.visuals.UpdateAllVisuals(owner);
+                }
             }
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
@@ -102,7 +108,13 @@ namespace Traits {
         }
         private void Reanimate() {
             _hasTurnedAtLeastOnce = true;
-            owner.visuals.UsePreviousClassAsset(false);
+            if (owner is Summon || owner.minion != null) {
+                //if character is not a villager, use previous class asset and change color to grey.
+                owner.visuals.UsePreviousClassAsset(true);
+                owner.marker?.SetMarkerColor(Color.grey);
+            } else {
+                owner.visuals.UsePreviousClassAsset(false);
+            }
             CharacterManager.Instance.RaiseFromDeadRetainCharacterInstance(owner, FactionManager.Instance.undeadFaction, owner.race, owner.characterClass.className);
             owner.visuals.UpdateAllVisuals(owner);    
         }

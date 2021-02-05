@@ -12,7 +12,6 @@ public class SaveDataRegion : SaveData<Region> {
     public string name;
     public int coreTileID;
     public ColorSave regionColor;
-    public RegionTemplate regionTemplate;
     public string[] residentIDs;
     public string[] charactersAtLocationIDs;
     public SaveDataInnerMap innerMapSave;
@@ -20,13 +19,15 @@ public class SaveDataRegion : SaveData<Region> {
     public List<string> neighbours;
     public string[] factionsHereIDs;
 
+    //Components
+    public SaveDataRegionDivisionComponent regionDivisionComponent;
+
     public override void Save(Region region) {
         persistentID = region.persistentID;
         id = region.id;
         name = region.name;
         coreTileID = region.coreTile.id;
         regionColor = region.regionColor;
-        regionTemplate = region.regionTemplate;
         
         //residents
         residentIDs = new string[region.residents.Count];
@@ -60,6 +61,8 @@ public class SaveDataRegion : SaveData<Region> {
             Faction factionHere = region.factionsHere[i];
             factionsHereIDs[i] = factionHere.persistentID;
         }
-        
+
+        //Components
+        regionDivisionComponent = new SaveDataRegionDivisionComponent(); regionDivisionComponent.Save(region.regionDivisionComponent);
     }
 }

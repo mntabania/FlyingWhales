@@ -10,7 +10,7 @@ public class SpawnSkeleton : GoapAction {
     public SpawnSkeleton() : base(INTERACTION_TYPE.SPAWN_SKELETON) {
         actionIconString = GoapActionStateDB.Magic_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.DEMON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -48,9 +48,8 @@ public class SpawnSkeleton : GoapAction {
         if(gridTile == null) {
             gridTile = goapNode.actor.gridTileLocation;
         }
-        Character skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, goapNode.actor.faction, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
-        skeleton.CreateMarker();
-        skeleton.InitialCharacterPlacement(gridTile);
+        Summon skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, goapNode.actor.faction, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
+        CharacterManager.Instance.PlaceSummonInitially(skeleton, gridTile);
     }
     #endregion
 

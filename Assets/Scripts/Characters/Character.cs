@@ -13,6 +13,8 @@ using UnityEngine.EventSystems;
 using UtilityScripts;
 using JetBrains.Annotations;
 using Plague.Transmission;
+using Locations;
+using UnityEngine.Profiling;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
     private int _id;
@@ -80,14 +82,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
     public POI_STATE state { get; private set; }
+    public ILocationAwareness currentLocationAwareness { get; private set; }
+    public Vector2Int gridTilePosition { get; private set; }
+    public bool hasMarker { get; private set; }
+    //public bool isInPendingAwarenessList { get; private set; }
 
     //misc
     public Tombstone grave { get; private set; }
-
-    //For Testing
-    public List<string> locationHistory { get; }
-    public List<string> actionHistory { get; }
-
+    public FoodPile connectedFoodPile { get; private set; }
+    
     //Components / Managers
     public TrapStructure trapStructure { get; private set; }
     public GoapPlanner planner { get; private set; }
@@ -101,7 +104,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterJobTriggerComponent jobComponent { get; private set; }
     public ReactionComponent reactionComponent { get; private set; }
     public LogComponent logComponent { get; private set; }
-    public CombatComponent combatComponent { get; private set; }
+    public CombatComponent combatComponent { get; protected set; }
     public RumorComponent rumorComponent { get; private set; }
     public AssumptionComponent assumptionComponent { get; private set; }
     public MovementComponent movementComponent { get; private set; }
@@ -115,6 +118,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LimiterComponent limiterComponent { get; private set; }
     public CharacterEventDispatcher eventDispatcher { get; }
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
+
+    public INTERACTION_TYPE causeOfDeath { set; get; }
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -152,13 +157,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;
     public bool isNotSummonAndDemonAndZombie => (this is Summon) == false && minion == null && characterClass.IsZombie();
     public bool isConsideredRatman => faction?.factionType.type == FACTION_TYPE.Ratmen && race == RACE.RATMAN;
+    public bool canBeTargetedByLandActions => !movementComponent.isFlying && !reactionComponent.isHidden && !traitContainer.HasTrait("Disabler", "DeMooder");
 
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => visuals.selectableSize;
     public Transform worldObject {
         get {
-            if (marker != null) {
+            if (hasMarker) {
                 return marker.transform;
             }
             return null;
@@ -175,7 +181,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BaseSettlement currentSettlement => gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
     public ProjectileReceiver projectileReceiver {
         get {
-            if (marker != null && marker.visionTrigger != null) {
+            if (hasMarker && marker.visionTrigger != null) {
                 return marker.visionTrigger.projectileReceiver;
             }
             return null;
@@ -191,6 +197,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// or openly (part of player faction).
     /// </summary>
     public bool isAlliedWithPlayer => IsAlliedWithPlayer();
+    public bool isNotHostileWithPlayer => IsNotHostileWithPlayer();
+
     public Region currentRegion {
         get {
             Character carrier = carryComponent.isBeingCarriedBy;
@@ -202,7 +210,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public LocationGridTile gridTileLocation {
         get {
-            if (ReferenceEquals(marker, null)) {
+            if (!hasMarker) {
                 return null;
             }
             Character carrier = carryComponent.isBeingCarriedBy;
@@ -218,14 +226,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 return gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
             }
             return null;
-        }
-    }
-    public Vector2Int gridTilePosition {
-        get {
-            if (!marker) {
-                throw new Exception($"{name} marker is null!");
-            }
-            return new Vector2Int(Mathf.FloorToInt(marker.anchoredPos.x), Mathf.FloorToInt(marker.anchoredPos.y));
         }
     }
     public LocationStructure currentStructure {
@@ -289,10 +289,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetPOIState(POI_STATE.ACTIVE);
         ConstructResources();
 
-        //for testing
-        locationHistory = new List<string>();
-        actionHistory = new List<string>();
-
         jobQueue = new JobQueue(this);
         trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
@@ -333,10 +329,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitsNeededToBeRemoved = new List<Trait>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         interestedItemNames = new List<string>();
-
-        locationHistory = new List<string>();
-        actionHistory = new List<string>();
-
+        
         jobQueue = new JobQueue(this);
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
@@ -371,6 +364,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         hasBeenRaisedFromDead = data.hasBeenRaisedFromDead;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
+        causeOfDeath = data.causeOfDeath;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 
@@ -456,7 +450,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         hasSubscribedToSignals = true; //This is done so there will be no duplication of listening to signals
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(CharacterSignals.CHARACTER_TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
@@ -465,8 +459,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
         Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, ForceCancelAllActionsTargetingPOI);
-        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+
+        //NOTE: To improve performance, since the calls here are just calls directly to the statecomponent owner, instead of all characters listening to the signal, i just directly call the statecomponent owner on the specific code
+        //Less signal subscription, less checking
+        //Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        //Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnActionPerformed);
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
@@ -495,7 +492,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         hasSubscribedToSignals = false; //This is done so there will be no duplication of listening to signals
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(CharacterSignals.CHARACTER_TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
@@ -504,8 +501,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, ForceCancelAllActionsTargetingPOI);
-        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        //Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        //Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnActionPerformed);
         Messenger.RemoveListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
@@ -546,11 +543,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (faction != null && faction.isMajorNonPlayerOrVagrant && marker) {
             if (poi is Character character) {
                 if (marker.IsPOIInVision(character)) {
-                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
+                    PlayerManager.Instance.player.threatComponent.AdjustThreatAndApplyModification(amount);
                 }
             } else if (poi is TileObject tileObject) {
                 if (marker.IsPOIInVision(tileObject)) {
-                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
+                    PlayerManager.Instance.player.threatComponent.AdjustThreatAndApplyModification(amount);
                 }
             }
         }
@@ -581,7 +578,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Revenant, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion);
-        CharacterManager.Instance.PlaceSummon(summon, deathTile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, deathTile);
         Revenant revenant = summon as Revenant;
         if (responsibleCharacter.partyComponent.hasParty) {
             for (int i = 0; i < responsibleCharacter.partyComponent.currentParty.members.Count; i++) {
@@ -597,7 +594,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Character betrayer = revenant.GetRandomBetrayer();
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
             (ghost as Ghost).SetBetrayedBy(betrayer);
-            CharacterManager.Instance.PlaceSummon(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
+            CharacterManager.Instance.PlaceSummonInitially(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
         }
 
 
@@ -670,6 +667,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Marker
+    public void SetGridTilePosition(Vector2 p_anchoredPos) {
+        Profiler.BeginSample($"{name} - SetGridTilePosition - Floor to Int");
+        int xFloorToInt = Mathf.FloorToInt(p_anchoredPos.x);
+        int yFloorToInt = Mathf.FloorToInt(p_anchoredPos.y);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} - SetGridTilePosition");
+        gridTilePosition = new Vector2Int(xFloorToInt, yFloorToInt);
+        Profiler.EndSample();
+    }
     public void CreateMarker() {
         GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);
         CharacterMarker _marker = portraitGO.GetComponent<CharacterMarker>();
@@ -715,7 +722,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
         if (marker == null) {
+            hasMarker = false;
             Messenger.Broadcast(CharacterSignals.CHARACTER_MARKER_DESTROYED, this);
+        } else {
+            hasMarker = true;
         }
     }
     public virtual void PerTickDuringMovement() {
@@ -812,6 +822,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         combatComponent.UpdateElementalType();
     }
+    public void OverridePreviousClassName(string p_className) {
+        previousClassName = p_className;
+    }
     #endregion
 
     #region Jobs
@@ -887,8 +900,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void ForceCancelAllActionsTargetingPOI(IPointOfInterest target, string reason) {
+    private void ForceCancelAllActionsTargetingPOI(IPointOfInterest target, string reason) {
         if(currentActionNode != null && currentActionNode.associatedJob != null && currentActionNode.poiTarget == target) {
+            //if target is main target of the job, stop the whole job
             currentActionNode.associatedJob.ForceCancelJob(false, reason);
         }
     }
@@ -1364,7 +1378,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             viableFactions.Clear();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.factionType.type == FACTION_TYPE.Demon_Cult && faction != prevFaction) {
+                if (faction.factionType.type == FACTION_TYPE.Demon_Cult 
+                    && faction != prevFaction
+                    && !faction.isDisbanded
+                    && !faction.IsCharacterBannedFromJoining(this)
+                    && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
                     bool hasCultLeader = faction.HasMemberThatMeetCriteria(m => !m.isDead && m.characterClass.className == "Cult Leader");
                     if (hasCultLeader) {
                         chosenFaction = faction;
@@ -1383,7 +1401,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (currentRegion != null) {
                 for (int i = 0; i < currentRegion.factionsHere.Count; i++) {
                     Faction potentialFaction = currentRegion.factionsHere[i];
-                    if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
+                    if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDisbanded
                         && !potentialFaction.IsCharacterBannedFromJoining(this)
                         && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)
                         && potentialFaction != prevFaction) {
@@ -1423,7 +1441,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
-        
+        ObjectPoolManager.Instance.ReturnFactionListToPool(viableFactions);
         if (chosenFaction != null) {
             interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.characters[0], "join_faction_normal");
             return chosenFaction;
@@ -1609,23 +1627,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         LocationStructure previousStructure = _currentStructure;
         _currentStructure = newStructure;
-        //if (marker && currentStructure != null) {
-        //    marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
-        //}
-        var summary = newStructure != null ? $"{GameManager.Instance.TodayLogString()}Arrived at <color=\"green\">{newStructure}</color>" 
-            : $"{GameManager.Instance.TodayLogString()}Left <color=\"red\">{previousStructure}</color>";
-        locationHistory.Add(summary);
-        if (locationHistory.Count > 80) {
-            locationHistory.RemoveAt(0);
-        }
-
         if (broadcast) {
             if (newStructure != null) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
+                LocationAwarenessUtility.RemoveFromAwarenessList(this);
+                LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
             }
             if (previousStructure != null) {
                 eventDispatcher.ExecuteCharacterLeftStructure(this, previousStructure);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LEFT_STRUCTURE, this, previousStructure);
+                if(newStructure == null && currentLocationAwareness == previousStructure.locationAwareness) {
+                    LocationAwarenessUtility.RemoveFromAwarenessList(this);
+                }
             }
         }
         // Debug.Log($"Set current structure location of {name} to {newStructure}");
@@ -1728,7 +1741,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     } 
     public bool HasHome() {
-        return homeSettlement != null || homeStructure != null || HasTerritory();
+        return homeSettlement != null || (homeStructure != null && !homeStructure.hasBeenDestroyed) || HasTerritory();
     }
     public bool IsAtHome() {
         if (homeSettlement != null) {
@@ -1754,7 +1767,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Utilities
-    public bool AssignRace(RACE race, bool isInitial = false) {
+    public bool IsUndead() {
+        if (characterClass.IsZombie() || (this is Summon summon && 
+            (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Skeleton || 
+             summon.summonType == SUMMON_TYPE.Vengeful_Ghost || summon.summonType == SUMMON_TYPE.Revenant))) {
+            return true;
+        }
+        return false;
+    }
+    private bool AssignRace(RACE race, bool isInitial = false) {
         if(_raceSetting == null || _raceSetting.race != race) {
             if (_raceSetting != null) {
                 if (_raceSetting.race == race) {
@@ -1796,9 +1817,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             RemoveAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
         }
-    }
-    public void ChangeGender(GENDER gender) {
-        _gender = gender;
     }
     public void SetRandomName() {
         string newName = RandomNameGenerator.GenerateRandomName(race, gender);
@@ -1848,15 +1866,39 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         WorldMapCameraMove.Instance.CenterCameraOn(carryComponent.masterCharacter.currentRegion.coreTile.gameObject);
                     }
                 } else if (carryComponent.masterCharacter.gridTileLocation != null) {
-                    // if (marker.gameObject.activeInHierarchy) {
-                        bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
-                        if (instantCenter) {
-                            InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);
-                        }
-                        InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
-                    // }
+                    bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
+                    if (instantCenter) {
+                        InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
-            } 
+            } else if (grave != null && grave.mapObjectVisual != null && (grave.gridTileLocation != null || grave.isBeingCarriedBy != null)) {
+                Region region = null;
+                if (grave.isBeingCarriedBy != null) {
+                    region = grave.isBeingCarriedBy.currentRegion;
+                } else if (grave.gridTileLocation != null){
+                    region = grave.gridTileLocation.parentMap.region;
+                }
+                if (region != null) {
+                    if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
+                        InnerMapManager.Instance.ShowInnerMap(region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(grave.mapObjectVisual.gameObject);    
+                }
+            } else if (connectedFoodPile != null && connectedFoodPile.mapObjectVisual != null && (connectedFoodPile.gridTileLocation != null || connectedFoodPile.isBeingCarriedBy != null)) {
+                Region region = null;
+                if (connectedFoodPile.isBeingCarriedBy != null) {
+                    region = connectedFoodPile.isBeingCarriedBy.currentRegion;
+                } else if (connectedFoodPile.gridTileLocation != null){
+                    region = connectedFoodPile.gridTileLocation.parentMap.region;
+                }
+                if (region != null) {
+                    if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
+                        InnerMapManager.Instance.ShowInnerMap(region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(connectedFoodPile.mapObjectVisual.gameObject);    
+                }
+            }
         }
         
         // else {
@@ -1929,6 +1971,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (character.id != id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnSeizeOtherCharacter(character);
+            currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
         }
     }
     private void OnBeforeSeizingTileObject(TileObject tileObject) {
@@ -2039,7 +2082,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
-        return isDead == false /*&& (limiterComponent.canPerform || canMove)*/ && marker != null 
+        return isDead == false /*&& (limiterComponent.canPerform || canMove)*/ && hasMarker 
                 && gridTileLocation != null && source.gridTileLocation != null && (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void SetHasUnresolvedCrime(bool state) {
@@ -2117,6 +2160,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool IsRatmanThatIsPartOfMajorFaction() {
         return race == RACE.RATMAN && faction != null && faction.isMajorNonPlayer;
+    }
+    public string GetCultistUnableToDoJobReason(GoapPlanJob job, Precondition failedPrecondition, INTERACTION_TYPE failedPreconditionActionType) {
+        string reason = job.GetJobDetailString();
+        if (failedPrecondition != null && failedPrecondition.goapEffect.conditionType == GOAP_EFFECT_CONDITION.TAKE_POI) {
+            reason = $"{reason}, could not find a {failedPrecondition.goapEffect.conditionKey} to do action {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(failedPreconditionActionType.ToString())}";
+        }
+        return reason;
+    }
+    public void LogUnableToDoJob(string reason) {
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan", providedTags: LOG_TAG.Work);
+        log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+        logComponent.RegisterLog(log);    
     }
     #endregion    
 
@@ -2476,10 +2532,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
         //Put this here so that we will have the chance to knockout before applying damage, since once the character receives damage they will automatically wake up from sleeping
         //So we need to check the knockout chance before applying damage
-        int chanceToKnockout = 15;
+        int chanceToKnockout = 0;
         if (!limiterComponent.canPerform || !limiterComponent.canMove) {
             //https://trello.com/c/QTYC0Rb4/3161-non-lethal-attack-of-sleeping-characters-should-only-have-50-instant-knockout-rate
             chanceToKnockout = 50;
+            attackSummary += $"\nTarget Cannot Perform/Move Knockout Chance: 50%";
+        } else {
+            chanceToKnockout = GetChanceToBeKnockedOutBy(characterThatAttacked, ref attackSummary);
         }
 
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
@@ -2523,6 +2582,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         Messenger.Broadcast(CharacterSignals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
+    private int GetChanceToBeKnockedOutBy(Character p_attacker, ref string p_attackSummary) {
+        int finalChance = 0;
+        float attackerPercentHP = (p_attacker.currentHP / (float) p_attacker.maxHP) * 100f;
+        float defenderPercentHP = (currentHP / (float) maxHP) * 100f;
+
+        p_attackSummary += $"\nAttacker Percent HP: {attackerPercentHP}%, Defender Percent HP: {defenderPercentHP}%";
+
+        float attackerHPRatio = (100 - attackerPercentHP) * 0.2f;
+        float defenderHPRatio = (100 - defenderPercentHP) * 0.25f;
+
+        float rawChance = (defenderHPRatio - attackerHPRatio) + 1f;
+        if (!characterClass.IsCombatant()) {
+            rawChance += 10f;
+        }
+
+        if(rawChance > 0f) {
+            finalChance = Mathf.RoundToInt(rawChance);
+        }
+        p_attackSummary += $"\nKnockout Chance: {finalChance}%";
+        return finalChance;
+    }
     private Character GetCharacterResponsibleForUnconsciousness(Character characterThatAttacked, CombatState combatStateOfAttacker) {
         Character responsibleCharacter = null;
         if (combatStateOfAttacker != null) {
@@ -2547,7 +2627,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         
-        CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
+        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
         
         if ((amount < 0 && CanBeDamaged()) || amount > 0) {
             //only added checking here because even if objects cannot be damaged,
@@ -2574,35 +2654,38 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ??
-                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
-                responsibleCharacter, etp);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
         } else {
             //hp was increased
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
-        if (triggerDeath && currentHP <= 0) {
-            if(source != null && source != this) {
-                if (source is Character character) {
-                    Death("attacked", responsibleCharacter: character);
+        if (currentHP <= 0) { //triggerDeath && 
+            if (triggerDeath) {
+                if (source != null && source != this) {
+                    if (source is Character character) {
+                        Death("attacked", responsibleCharacter: character);
+                    } else {
+                        string cause = "attacked";
+                        cause += $"_{source}";
+                        Death(cause);
+                    }
                 } else {
-                    string cause = "attacked";
-                    cause += $"_{source}";
-                    Death(cause);
+                    Death();
                 }
-            } else {
-                Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) { //do not make berserked characters trigger flight
-            bool willflight = true;
-            if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                willflight = false;
+        } else if (amount < 0) {
+            if (IsHealthCriticallyLow()) {
+                Messenger.Broadcast(CharacterSignals.HEALTH_CRITICALLY_LOW, this);
+                if(traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) {  //do not make berserked characters trigger flight
+                    bool willflight = true;
+                    if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                        willflight = false;
+                    }
+                    if (willflight) {
+                        combatComponent.FlightAll("critically low health");
+                    }
+                }
             }
-            if (willflight) {
-                combatComponent.FlightAll("critically low health");    
-            }
-            // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }
     public void HPRecovery(float maxHPPercentage) {
@@ -2767,7 +2850,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Added checking, because character can sometimes change home from dwelling to nothing.
         if(dwelling != null && dwelling.AddResident(this) && GameManager.Instance.gameHasStarted) {
             if (isNormalCharacter) {
-                jobComponent.PlanReturnHomeUrgent();
+                jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
             }
             return true;
         }
@@ -2798,12 +2881,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else if(homeSettlement != null && gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != homeSettlement){
                 stateAwarenessComponent.StartMissingTimer();
             }
+            if(faction != null) {
+                faction.ProcessFactionLeaderAsSettlementRuler();
+            }
         }
     }
     private void OnStructureDestroyed(LocationStructure structure) {
         //character's home was destroyed.
         if (structure == homeStructure) {
-            MigrateHomeStructureTo(null, affectSettlement: false);
+            //affect settlement if home settlement structures have been reduced to 0
+            bool affectSettlement = homeSettlement != null && homeSettlement.structures.Count == 0;
+            MigrateHomeStructureTo(null, affectSettlement: affectSettlement);
             interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             //MigrateHomeTo(null);
             //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
@@ -2988,47 +3076,82 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.DailyGoapProcesses();
     }
     public virtual void OnTickStartedWhileSeized() {
-         stateAwarenessComponent.PerTick();
+        Profiler.BeginSample($"{name} OnTickStartedWhileSeized");
+        stateAwarenessComponent.PerTick();
+        Profiler.EndSample();
     }
     protected virtual void OnTickStarted() {
+        Profiler.BeginSample($"{name} OnTickStarted");
         //What happens every start of tick
 
         //Check Trap Structure
+        Profiler.BeginSample($"{name} OnTickStarted - Increment Trap Structure");
         trapStructure.IncrementCurrentDuration(1);
+        Profiler.EndSample();
 
         //Out of combat hp recovery
         //if (!isDead && !isInCombat) {
         //    HPRecovery(0.0025f);
         //}
+        Profiler.BeginSample($"{name} OnTickStarted - State Component Awareness");
         stateAwarenessComponent.PerTick();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} OnTickStarted - Process Traits");
         ProcessTraitsOnTickStarted();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} OnTickStarted - GoapPlanGeneration");
         StartTickGoapPlanGeneration();
+        Profiler.EndSample();
+        
+        Profiler.EndSample();
     }
     protected virtual void OnTickEnded() {
+        Profiler.BeginSample($"{name} ProcessForcedCancelJobsOnTickEnded");
         ProcessForcedCancelJobsOnTickEnded();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} Mood Component - On Tick Ended");
         moodComponent.OnTickEnded();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} InterruptComponent - On Tick Ended");
         interruptComponent.OnTickEnded();
+        Profiler.EndSample();
         stateComponent.OnTickEnded();
+        Profiler.BeginSample($"{name} Process Traits On Tick Ended");
         ProcessTraitsOnTickEnded();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied");
         TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} EndTickPerformJobs");
         EndTickPerformJobs();
+        Profiler.EndSample();
     }
     protected virtual void OnHourStarted() {
+        Profiler.BeginSample($"{name} On Hour Started");
         ProcessTraitsOnHourStarted();
         if (needsComponent.HasNeeds()) {
+            needsComponent.PlanScheduledFullnessRecovery();
             needsComponent.PlanScheduledTirednessRecovery();
+            needsComponent.PlanScheduledSecondHappinessRecovery();
         }
+        Profiler.EndSample();
     }
     protected void StartTickGoapPlanGeneration() {
         //This is to ensure that this character will not be idle forever
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
-        if (needsComponent.HasNeeds()) {
-            needsComponent.PlanScheduledFullnessRecovery();
-            //needsComponent.PlanScheduledTirednessRecovery(this);
-            needsComponent.PlanScheduledSecondHappinessRecovery();
-        }
+        //if (needsComponent.HasNeeds()) {
+        //    needsComponent.PlanScheduledFullnessRecovery();
+        //    //needsComponent.PlanScheduledTirednessRecovery(this);
+        //    needsComponent.PlanScheduledSecondHappinessRecovery();
+        //}
         if (isNormalCharacter) {
             //try to take settlement job that this character can see the target of.
             if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
@@ -3059,7 +3182,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //characters that cannot witness, cannot plan actions.
         //minion == null &&
         return !isDead && numOfActionsBeingPerformedOnThis <= 0 && limiterComponent.canPerform
-            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
+            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
             && (carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false)
             && (marker && !marker.hasFleePath) && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted;
@@ -3124,15 +3247,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 currentActionNode.DoActionUponLoadingSavedGame();
             }
         } else {
+            Profiler.BeginSample($"{name} End Tick Perform Jobs");
             if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
                 JobQueueItem job = null;
                 if (jobQueue.jobsInQueue.Count > 0) {
                     job = jobQueue.jobsInQueue[0];
                 }
-                if (job != null && job.ProcessJob() == false) {
-                    PerformJob(job);
+                if (job != null) {
+                    Profiler.BeginSample($"{name} - Process Job");
+                    bool processJob = job.ProcessJob();
+                    Profiler.EndSample();
+                    if (!processJob) {
+                        Profiler.BeginSample($"{name} - Perform Job");
+                        PerformJob(job);
+                        Profiler.EndSample();
+                    }
                 }
+                
+                
             }
+            Profiler.EndSample();
         }
     }
     public bool CanPerformEndTickJobs() {
@@ -3277,7 +3411,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
-    public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, out JobQueueItem producedJob, OtherData[] otherData = null) {
+    public void PlanFixedJob(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, out JobQueueItem producedJob, OtherData[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
@@ -3286,26 +3420,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         job.SetAssignedPlan(goapPlan);
         producedJob = job;
     }
-    public void PlanIdle(JOB_TYPE jobType, GoapEffect effect, IPointOfInterest target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, effect, target, this);
-        jobQueue.AddJobInQueue(job);
-        //if (effect.targetPOI != null && effect.targetPOI != this) {
-        //    AddAwareness(effect.targetPOI);
-        //}
-        //StartGOAP(effect, effect.targetPOI, GOAP_CATEGORY.IDLE);
-
-        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, this, target);
-        //GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        //GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
-        //goapPlan.ConstructAllNodes();
-        //AddPlan(goapPlan);
-        //PlanGoapActions(goapAction);
-    }
-    public void PlanIdle(JOB_TYPE jobType, GoapEffect effect, IPointOfInterest target, out JobQueueItem producedJob) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, effect, target, this);
-        producedJob = job;
-    }
-    public void PlanAction(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, OtherData[] otherData = null) {
+    public void PlanFixedJob(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, OtherData[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
@@ -3370,11 +3485,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void AddAdvertisedAction(INTERACTION_TYPE type, bool allowDuplicates = false) {
         if (allowDuplicates || advertisedActions.Contains(type) == false) {
             advertisedActions.Add(type);
+            LocationAwarenessUtility.AddToAwarenessList(type, this);
         }
         //advertisedActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
-        advertisedActions.Remove(type);
+        if (advertisedActions.Remove(type)) {
+            LocationAwarenessUtility.RemoveFromAwarenessList(type, this);
+        }
     }
     #endregion
 
@@ -3716,27 +3834,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Awareness
     public void LogAwarenessList() {
-        string log = $"--------------AWARENESS LIST OF {name}-----------------";
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in currentRegion.awareness) {
-            log += $"\n{kvp.Key}: ";
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                if (i > 0) {
-                    log += ", ";
+        if (currentLocationAwareness != null) {
+            string log = $"--------------AWARENESS LIST OF {name}-----------------";
+            foreach (KeyValuePair<INTERACTION_TYPE, List<IPointOfInterest>> kvp in currentLocationAwareness.awareness) {
+                log += $"\n{kvp.Key}: ";
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    if (i > 0) {
+                        log += ", ";
+                    }
+                    log += kvp.Value[i].ToString();
                 }
-                log += kvp.Value[i].ToString();
             }
+            logComponent.PrintLogIfActive(log);
         }
-        logComponent.PrintLogIfActive(log);
     }
     #endregion
 
     #region Point Of Interest
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
-            //List<GoapAction> usableActions = new List<GoapAction>();
             GoapAction lowestCostAction = null;
             int currentLowestCost = 0;
             log += $"\n--Choices for {precondition}";
@@ -3749,35 +3868,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     continue; //skip
                 }
                 if ((action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    OtherData[] data = null;
-                    if (otherData != null) {
-                        if (otherData.ContainsKey(currType)) {
-                            data = otherData[currType];
-                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                            data = otherData[INTERACTION_TYPE.NONE];
-                        }
-                    }
-                    //object[] otherActionData = null;
-                    //if (otherData.ContainsKey(currType)) {
-                    //    otherActionData = otherData[currType];
-                    //}
+                    OtherData[] data = job.GetOtherDataFor(currType);
                     if (action.CanSatisfyRequirements(actor, this, data, job)
-                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
-                        int actionCost = action.GetCost(actor, this, job, data);
+                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, job)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                        int actionCost = action.GetCost(actor, this, job);
                         log += $"({actionCost}){action.goapName}-{nameWithID}, ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;
                         }
-                        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                        //if (goapAction != null) {
-                        //    if (data != null) {
-                        //        goapAction.InitializeOtherData(data);
-                        //    }
-                        //    usableActions.Add(goapAction);
-                        //} else {
-                        //    throw new System.Exception("Goap action " + currType.ToString() + " is null!");
-                        //}
                     }
                 }
             }
@@ -3787,23 +3886,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost) {
-        if((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable) 
-            && advertisedActions != null && advertisedActions.Contains(action.goapType)
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job) {
+        if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
+            //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && actor.trapStructure.SatisfiesForcedHex(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
             && (action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation))) {
-            OtherData[] data = null;
-            if (otherData != null) {
-                if (otherData.ContainsKey(action.goapType)) {
-                    data = otherData[action.goapType];
-                } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                    data = otherData[INTERACTION_TYPE.NONE];
-                }
-            }
+            OtherData[] data = job.GetOtherDataFor(action.goapType);
             if (action.CanSatisfyRequirements(actor, this, data, job)) {
-                cost = action.GetCost(actor, this, job, data);
                 return true;
             }
         }
@@ -3904,6 +3995,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.START_PLAGUE_CARE);
         AddAdvertisedAction(INTERACTION_TYPE.CARE);
         AddAdvertisedAction(INTERACTION_TYPE.LONG_STAND_STILL);
+        AddAdvertisedAction(INTERACTION_TYPE.COOK);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
@@ -3940,9 +4032,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.SCREAM_FOR_HELP);
             //AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
             AddAdvertisedAction(INTERACTION_TYPE.STUDY_MONSTER);
-            AddAdvertisedAction(INTERACTION_TYPE.CREATE_HEALING_POTION);
-            AddAdvertisedAction(INTERACTION_TYPE.CREATE_ANTIDOTE);
-            AddAdvertisedAction(INTERACTION_TYPE.CREATE_POISON_FLASK);
+            AddAdvertisedAction(INTERACTION_TYPE.PICKPOCKET);
+
+            //NOTE: Removed the creation of healing potion, etc. on the fly because it conflicts with the current crafting of objects
+            //It is confusing to have a crafting then another one the creates them in the inventory without any crafting
+            //Also, we already decided to not have a very deep branching of plans when goap planning
+            //Example: When a character wants to heal himself he needs healing potion, if he does not have one, he must get a healing potion, but if there is none, the plan should be discarded
+            //It should not continue further like getting ingredients to create a healing potion
+            //AddAdvertisedAction(INTERACTION_TYPE.CREATE_HEALING_POTION);
+            //AddAdvertisedAction(INTERACTION_TYPE.CREATE_ANTIDOTE);
+            //AddAdvertisedAction(INTERACTION_TYPE.CREATE_POISON_FLASK);
+
             //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
             //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_FREEZING);
             AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -3988,7 +4088,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //                        hasBeenInserted = true;
     //                        break;
     //                    }
-    //                }
+    //                }re
     //            }
     //            if (!hasBeenInserted) {
     //                allGoapPlans.Add(plan);
@@ -4038,8 +4138,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void PerformJob(JobQueueItem job) {
         string log = $"PERFORMING GOAP PLANS OF {name}";
         if (currentActionNode != null) {
-            log =
-                $"{log}\n{name} can't perform another action because he/she is currently performing {currentActionNode.action.goapName}";
+            log = $"{log}\n{name} can't perform another action because he/she is currently performing {currentActionNode.action.goapName}";
             logComponent.PrintLogIfActive(log);
             return;
         }
@@ -4048,24 +4147,39 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;
             ActualGoapNode currentNode = plan.currentActualNode;
-            if (RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType)
-                && InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob)) {
-                bool preconditionsSatisfied = currentNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType);
+            Profiler.BeginSample($"{name} - {currentNode.action.name} - Can Do Goap Action");
+            bool canCharacterDoGoapAction = RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType);
+            Profiler.EndSample();
+            
+            Profiler.BeginSample($"{name} - {currentNode.action.name} - Can Satisfy Goap Action Requirements");
+            bool canSatisfyGoapActionRequirements = InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob);
+            Profiler.EndSample();
+            
+            if (canCharacterDoGoapAction && canSatisfyGoapActionRequirements) {
+                Profiler.BeginSample($"{name} - {currentNode.action.name} - Can Satisfy All Preconditions");    
+                bool preconditionsSatisfied = currentNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType, out Precondition failedPrecondition);
+                Profiler.EndSample();
+                
                 if (!preconditionsSatisfied) {
-                    log =
-                        $"{log}\n - {currentNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
+                    Profiler.BeginSample($"{name} - {currentNode.action.name} - Preconditions not satisfied");
+                    log = $"{log}\n - {currentNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
                     if (plan.doNotRecalculate) {
-                        log =
-                            $"{log}\n - {currentNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
+                        log = $"{log}\n - {currentNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
                         logComponent.PrintLogIfActive(log);
+                        string reason = string.Empty;
+                        if (currentTopPrioJob.jobType.IsCultistJob()) {
+                            reason = GetCultistUnableToDoJobReason(currentTopPrioJob, failedPrecondition, currentNode.goapType);
+                        }
                         currentNode.action.OnStopWhileStarted(currentNode);
-                        currentTopPrioJob.CancelJob(false);
+                        currentTopPrioJob.CancelJob(false, reason);
                     } else {
                         logComponent.PrintLogIfActive(log);
                         planner.RecalculateJob(currentTopPrioJob);
                     }
+                    Profiler.EndSample();
                 } else {
                     //If character is Troll and job is Move Character, do not perform if target is not in vision, or target is outside and it is not Night time
+                    Profiler.BeginSample($"{name} Troll Checking");
                     if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.CAPTURE_CHARACTER) {
                         bool shouldCancelJob = false;
                         if(!marker || (!marker.IsPOIInVision(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
@@ -4089,7 +4203,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             return;
                         }
                     }
+                    Profiler.EndSample();
 
+                    Profiler.BeginSample($"{name} Carry check");
                     //Do not perform action if the target character is still in another character's party, this means that he/she is probably being abducted
                     //Wait for the character to be in its own party before doing the action
                     if (currentNode.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -4100,6 +4216,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             return;
                         }
                     }
+                    Profiler.EndSample();
                     //if (currentNode.poiTarget != this && currentNode.isStealth) {
                     //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
                     //    if (marker.IsPOIInVision(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
@@ -4108,6 +4225,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //        return;
                     //    }
                     //}
+                    Profiler.BeginSample($"{name} Lazy checking");
                     if(traitContainer.HasTrait("Lazy")) {
                         log = $"{log}\n - Character is lazy, has 30% chance to not perform job if it is a settlement job...";
                         //Note: Changed the checker from "Just settlement jobs" to "anything other than personal jobs", because non personal jobs are treated as work jobs
@@ -4130,132 +4248,41 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             log = $"{log}\n - Job is not a needs type job, continue to do job";
                         }
                     }
+                    Profiler.EndSample();
+                    
+                    
                     log = $"{log}\n - Action's preconditions are all satisfied, doing action...";
                     logComponent.PrintLogIfActive(log);
-                    Messenger.Broadcast(JobSignals.CHARACTER_WILL_DO_PLAN, this, plan);
+                    Profiler.BeginSample($"{name} - {currentNode.action.name} - Character Will Do Job Signal");
+                    Messenger.Broadcast(JobSignals.CHARACTER_WILL_DO_JOB, this, currentTopPrioJob);
+                    Profiler.EndSample();
+                    
+                    Profiler.BeginSample($"{name} - {currentNode.action.name} - Do Action Call");
                     currentNode.DoAction(currentTopPrioJob, plan);
+                    Profiler.EndSample();
                 }
             } else {
-                log =
-                    $"{log}\n - {plan.currentActualNode} Action did not meet current requirements and allowed actions, dropping plan...";
+                Profiler.BeginSample($"{name} - {currentNode.action.name} - Did not meet requirements");
+                log = $"{log}\n - {plan.currentActualNode} Action did not meet current requirements and allowed actions, dropping plan...";
                 logComponent.PrintLogIfActive(log);
+                string reason = string.Empty;
+                if (currentNode.associatedJob != null && currentNode.associatedJob.jobType.IsCultistJob()) {
+                    Precondition failedPrecondition = currentNode.action.GetPrecondition(this, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType, out bool isOverridden);
+                    if (failedPrecondition != null) {
+                        reason = GetCultistUnableToDoJobReason(currentTopPrioJob, failedPrecondition, currentNode.action.goapType);    
+                    }
+                }
                 currentNode.action.OnStopWhileStarted(currentNode);
-                currentTopPrioJob.CancelJob(false);
+                currentTopPrioJob.CancelJob(false, reason);
+                Profiler.EndSample();
             }
         }
-
-        //for (int i = 0; i < allGoapPlans.Count; i++) {
-        //    GoapPlan plan = allGoapPlans[i];
-        //    if (plan.currentNode == null) {
-        //        throw new Exception(this.name + "'s current node in plan is null! Plan is: " + plan.name + "\nCall stack: " + plan.setPlanStateCallStack + "\n");
-        //    }
-        //    log += "\n" + plan.currentNode.action.goapName;
-        //    if (plan.isBeingRecalculated) {
-        //        log += "\n - Plan is currently being recalculated, skipping...";
-        //        continue; //skip plan
-        //    }
-        //    if (RaceManager.Instance.CanCharacterDoGoapAction(this, plan.currentNode.action.goapType) 
-        //        && InteractionManager.Instance.CanSatisfyGoapActionRequirements(plan.currentNode.action.goapType, plan.currentNode.action.actor, plan.currentNode.action.poiTarget, plan.currentNode.action.otherData)) {
-        //        //if (plan.isBeingRecalculated) {
-        //        //    log += "\n - Plan is currently being recalculated, skipping...";
-        //        //    continue; //skip plan
-        //        //}
-        //        //if (IsPlanCancelledDueToInjury(plan.currentNode.action)) {
-        //        //    log += "\n - Action's plan is cancelled due to injury, dropping plan...";
-        //        //    PrintLogIfActive(log);
-        //        //    if (allGoapPlans.Count == 1) {
-        //        //        DropPlan(plan, true);
-        //        //        willGoIdleState = false;
-        //        //        break;
-        //        //    } else {
-        //        //        DropPlan(plan, true);
-        //        //        i--;
-        //        //        continue;
-        //        //    }
-        //        //}
-        //        if (plan.currentNode.action.IsHalted()) {
-        //            log += "\n - Action " + plan.currentNode.action.goapName + " is waiting, skipping...";
-        //            continue;
-        //        }
-        //        bool preconditionsSatisfied = plan.currentNode.action.CanSatisfyAllPreconditions();
-        //        if (!preconditionsSatisfied) {
-        //            log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
-        //            if (plan.doNotRecalculate) {
-        //                log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-        //                PrintLogIfActive(log);
-        //                if (allGoapPlans.Count == 1) {
-        //                    DropPlan(plan);
-        //                    willGoIdleState = false;
-        //                    break;
-        //                } else {
-        //                    DropPlan(plan);
-        //                    i--;
-        //                }
-        //            } else {
-        //                PrintLogIfActive(log);
-        //                planner.RecalculateJob(plan);
-        //                willGoIdleState = false;
-        //            }
-        //        } else {
-        //            //Do not perform action if the target character is still in another character's party, this means that he/she is probably being abducted
-        //            //Wait for the character to be in its own party before doing the action
-        //            if (plan.currentNode.action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //                Character targetCharacter = plan.currentNode.action.poiTarget as Character;
-        //                if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != _ownParty) {
-        //                    log += "\n - " + targetCharacter.name + " is not in its own party, waiting and skipping...";
-        //                    PrintLogIfActive(log);
-        //                    continue;
-        //                }
-        //            }
-        //            if(plan.currentNode.action.poiTarget != this && plan.currentNode.action.isStealth) {
-        //                //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-        //                if (marker.IsPOIInVision(plan.currentNode.action.poiTarget) && !marker.CanDoStealthActionToTarget(plan.currentNode.action.poiTarget)) {
-        //                    log += "\n - Action is stealth and character cannot do stealth action right now...";
-        //                    continue;
-        //                }
-        //            }
-        //            log += "\n - Action's preconditions are all satisfied, doing action...";
-        //            PrintLogIfActive(log);
-        //            Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);
-        //            //if (plan.currentNode.parent != null && plan.currentNode.parent.action.CanSatisfyAllPreconditions() && plan.currentNode.parent.action.CanSatisfyRequirements()) {
-        //            //    log += "\n - All Preconditions of next action in plan already met, skipping action: " + plan.currentNode.action.goapName;
-        //            //    //set next node to parent node instead
-        //            //    plan.SetNextNode();
-        //            //    log += "\n - Next action is: " + plan.currentNode.action.goapName;
-        //            //}
-        //            plan.currentNode.action.DoAction();
-        //            willGoIdleState = false;
-        //            break;
-        //        }
-        //    } else {
-        //        log += "\n - Action did not meet current requirements and allowed actions, dropping plan...";
-        //        PrintLogIfActive(log);
-        //        if (allGoapPlans.Count == 1) {
-        //            DropPlan(plan);
-        //            willGoIdleState = false;
-        //            break;
-        //        } else {
-        //            DropPlan(plan);
-        //            i--;
-        //        }
-        //    }
-        //}
-        //if (willGoIdleState) {
-        //    log += "\n - Character will go into idle state";
-        //    PrintLogIfActive(log);
-        //    PerStartTickActionPlanning();
-        //}
     }
     public void PerformGoapAction() {
         string log = string.Empty;
         if (currentActionNode == null) {
             log = $"{name} cannot PerformGoapAction because there is no current action!";
             logComponent.PrintLogIfActive(log);
-            //Debug.LogError(log);
-            //if (!DropPlan(plan)) {
-            //    //PlanGoapActions();
-            //}
-            //StartDailyGoapPlanGeneration();
             return;
         }
         log = $"{name} is performing goap action: {currentActionNode.action.goapName}";
@@ -4267,15 +4294,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJob)
             && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJobType)) {
-            log +=
-                $"\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}" ?? "No Tile Location";
+            log =  $"{log}\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}";
             logComponent.PrintLogIfActive(log);
             currentActionNode.PerformAction();
         } else {
-            log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
+            log = $"{log}\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
             GoapPlan plan = currentPlan;
             if (plan.doNotRecalculate) {
-                log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+                log = $"{log}\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
                 logComponent.PrintLogIfActive(log);
                 currentJob.CancelJob(false);
             } else {
@@ -4288,62 +4314,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 SetCurrentActionNode(null, null, null);
             }
         }
-        //if (currentActionNode.isStopped) {
-        //    log += "\n Action is stopped! Dropping plan...";
-        //    PrintLogIfActive(log);
-        //    SetCurrentActionNode(null);
-        //    if (!DropPlan(currentActionNode.parentPlan)) {
-        //        //PlanGoapActions();
-        //    }
-        //} else {
-        //    bool willStillContinueAction = true;
-        //    OnStartPerformGoapAction(currentActionNode, ref willStillContinueAction);
-        //    if (!willStillContinueAction) {
-        //        return;
-        //    }
-        //    if (currentActionNode.IsHalted()) {
-        //        log += "\n Action is waiting! Not doing action...";
-        //        //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //        //    Character targetCharacter = currentAction.poiTarget as Character;
-        //        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-        //        //}
-        //        SetCurrentActionNode(null);
-        //        return;
-        //    }
-        //    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData) 
-        //        && currentActionNode.CanSatisfyAllPreconditions()) {
-        //        //if (currentAction.poiTarget != this && currentAction.isStealth) {
-        //        //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-        //        //    if (marker.IsPOIInVision(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
-        //        //        log += "\n - Action is stealth and character cannot do stealth action right now...";
-        //        //        PrintLogIfActive(log);
-        //        //        return;
-        //        //    }
-        //        //}
-        //        log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentActionNode.goapName + " to " + currentActionNode.poiTarget.name + " at " + currentActionNode.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
-        //        PrintLogIfActive(log);
-        //        currentActionNode.Perform();
-        //    } else {
-        //        log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
-        //        //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //        //    Character targetCharacter = currentAction.poiTarget as Character;
-        //        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-        //        //}
-        //        GoapPlan plan = currentActionNode.parentPlan;
-        //        SetCurrentActionNode(null);
-        //        if (plan.doNotRecalculate) {
-        //            log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-        //            PrintLogIfActive(log);
-        //            if (!DropPlan(plan)) {
-        //                //PlanGoapActions();
-        //            }
-        //        } else {
-        //            PrintLogIfActive(log);
-        //            planner.RecalculateJob(plan);
-        //            //IdlePlans();
-        //        }
-        //    }
-        //}
     }
     public void GoapActionResult(string result, ActualGoapNode actionNode) {
         string log = $"{name} is done performing goap action: {actionNode.action.goapName}";
@@ -4357,18 +4327,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         if (isDead || !limiterComponent.canPerform) {
-            log += $"\n{name} is dead or cannot perform! Do not do GoapActionResult, automatically CancelJob";
+            log = $"{log}\n{name} is dead or cannot perform! Do not do GoapActionResult, automatically CancelJob";
             logComponent.PrintLogIfActive(log);
             job.CancelJob(false);
             return;
         }
 
         if(result == InteractionManager.Goap_State_Success) {
-            log += "\nPlan is setting next action to be done...";
+            log = log + "\nPlan is setting next action to be done...";
             Messenger.Broadcast(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, this, actionNode);
             plan.SetNextNode();
             if (plan.currentNode == null) {
-                log += "\nThis action is the end of plan.";
+                log = $"{log}\nThis action is the end of plan.";
                 //if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait<Trait>("Hardworking") != null) {
                 //    log += "\nFinished a npcSettlement job and character is hardworking, increase happiness by 3000...";
                 //    needsComponent.AdjustHappiness(3000);
@@ -4385,7 +4355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //this means that this is the end goal so end this plan now
                 job.ForceCancelJob(false);
             } else {
-                log += $"\nNext action for this plan: {plan.currentActualNode.goapName}";
+                log = $"{log}\nNext action for this plan: {plan.currentActualNode.goapName}";
                 //if (plan.job != null && plan.job.assignedCharacter != this) {
                 //    log += "\nPlan has a job: " + plan.job.name + ". Assigned character " + (plan.job.assignedCharacter != null ? plan.job.assignedCharacter.name : "None") + " does not match with " + name + ".";
                 //    log += "Drop plan because this character is no longer the one assigned";
@@ -4405,168 +4375,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    //public bool DropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
-    //    bool hasBeenRemoved = false;
-    //    if (allGoapPlans.Remove(plan)) {
-    //        Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
-    //        plan.EndPlan();
-    //        hasBeenRemoved = true;
-    //    }
-    //    if(hasBeenRemoved || forceProcessPlanJob) {
-    //        if (plan.job != null) {
-    //            if (plan.job.cancelJobOnFail || plan.job.cancelJobOnDropPlan || forceRemoveJob) {
-    //                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-    //            }
-    //            plan.job.SetAssignedCharacter(null);
-    //            plan.job.SetAssignedPlan(null);
-    //        }
-    //    }
-    //    return hasBeenRemoved;
-    //}
-    //public bool JustDropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
-    //    bool hasBeenRemoved = false;
-    //    if (allGoapPlans.Remove(plan)) {
-    //        Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
-    //        plan.EndPlan();
-    //        hasBeenRemoved = true;
-    //    }
-    //    if (hasBeenRemoved || forceProcessPlanJob) {
-    //        if (plan.job != null) {
-    //            if (plan.job.cancelJobOnDropPlan || forceRemoveJob) {
-    //                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-    //            }
-    //            plan.job.SetAssignedCharacter(null);
-    //            plan.job.SetAssignedPlan(null);
-    //        }
-    //    }
-    //    return hasBeenRemoved;
-    //}
-    //public void DropAllPlans(GoapPlan planException = null) {
-    //    if (planException == null) {
-    //        while (allGoapPlans.Count > 0) {
-    //            DropPlan(allGoapPlans[0]);
-    //        }
-    //    } else {
-    //        for (int i = 0; i < allGoapPlans.Count; i++) {
-    //            if (allGoapPlans[i] != planException) {
-    //                DropPlan(allGoapPlans[i]);
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
-    //public void JustDropAllPlansOfType(INTERACTION_TYPE type) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        GoapPlan currPlan = allGoapPlans[i];
-    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-    //            if (JustDropPlan(currPlan)) {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
-    //public void DropAllPlansOfType(INTERACTION_TYPE type) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        GoapPlan currPlan = allGoapPlans[i];
-    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-    //            if (DropPlan(currPlan)) {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
-    //public bool HasPlanWithType(INTERACTION_TYPE type) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        GoapPlan currPlan = allGoapPlans[i];
-    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        if (allGoapPlans[i].goalEffects.Contains(goalEffect)) {
-    //            return allGoapPlans[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public GoapPlan GetPlanByCategory(GOAP_CATEGORY category) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        if (allGoapPlans[i].category == category) {
-    //            return allGoapPlans[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-    //For testing: Drop Character
-    //public void DropACharacter() {
-    //    if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
-    //        List<IPointOfInterest> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
-    //        Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)] as Character;
-    //        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeRegion, targetPOI = randomTarget };
-    //        StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
-    //    }
-    //}
-    //public GoapPlan GetPlanWithAction(GoapAction action) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        for (int j = 0; j < allGoapPlans[i].allNodes.Count; j++) {
-    //            if (allGoapPlans[i].allNodes[j].actionType == action) {
-    //                return allGoapPlans[i];
-    //            }
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public void FaceTarget(IPointOfInterest target) {
-    //    if (this != target && !this.isDead && gridTileLocation != null) {
-    //        if (target is Character) {
-    //            Character targetCharacter = target as Character;
-    //            if (targetCharacter.isDead) {
-    //                return;
-    //            }
-    //            CharacterMarker lookAtMarker = targetCharacter.currentParty.owner.marker;
-    //            if (lookAtMarker.character != this) {
-    //                marker.LookAt(lookAtMarker.transform.position);
-    //            }
-    //        } else {
-    //            if (target.gridTileLocation == null) {
-    //                return;
-    //            }
-    //            marker.LookAt(target.gridTileLocation.centeredWorldLocation);
-    //        }
-    //    }
-    //}
     public void SetCurrentActionNode(ActualGoapNode actionNode, JobQueueItem job, GoapPlan plan) {
         if (currentActionNode != null) {
             previousCurrentActionNode = currentActionNode;
         }
         currentActionNode = actionNode;
         if (currentActionNode != null) {
-            logComponent.PrintLogIfActive(
-                $"{name} will do action {actionNode.action.goapType} to {actionNode.poiTarget}");
-            //stateComponent.SetStateToDo(null, stopMovement: false);
-
+            logComponent.PrintLogIfActive($"{name} will do action {actionNode.action.name} to {actionNode.poiTarget}");
             //Current Job must always be the job in the top prio, if there is inconsistency with the currentActionNode, then the problem lies on what you set as the currentActionNode
         }
         SetCurrentJob(job);
         SetCurrentPlan(plan);
-        
-        string summary = $"{GameManager.Instance.TodayLogString()}Set current action to ";
-        if (currentActionNode == null) {
-            summary += "null";
-        } else {
-            summary += $"{currentActionNode.action.goapName} targetting {currentActionNode.poiTarget.name}";
-        }
-        //summary += "\n StackTrace: " + StackTraceUtility.ExtractStackTrace();
 
-        actionHistory.Add(summary);
-        if (actionHistory.Count > 10) {
-            actionHistory.RemoveAt(0);
+        if (marker) {
+            marker.UpdateActionIcon();
         }
     }
-    public void SetCurrentPlan(GoapPlan plan) {
+    private void SetCurrentPlan(GoapPlan plan) {
         currentPlan = plan;
     }
     //Only stop an action node if it is the current action node
@@ -4589,7 +4414,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (shouldLogReason) {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason", providedTags: LOG_TAG.Social);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
+            string jobName = currentActionNode.action.goapName;
+            if (currentActionNode.associatedJobType.IsCultistJob()) {
+                jobName = $"{jobName} for {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentActionNode.associatedJobType.ToString())}";
+            }
+            log.AddToFillers(null, jobName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
             logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
@@ -4635,18 +4464,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Every time current node is stopped, drop carried poi
         if (carryComponent.IsNotBeingCarried()) {
             if (carryComponent.isCarryingAnyPOI) {
-                IPointOfInterest carriedPOI = carryComponent.carriedPOI;
-                string log = $"Dropping carried POI: {carriedPOI.name} because current action is stopped!";
-                log += "\nAdditional Info:";
-                if (carriedPOI is ResourcePile) {
-                    ResourcePile pile = carriedPOI as ResourcePile;
-                    log += $"\n-Stored resources on drop: {pile.resourceInPile} {pile.providedResource}";
-                } else if (carriedPOI is Table) {
-                    Table table = carriedPOI as Table;
-                    log += $"\n-Stored resources on drop: {table.food} Food.";
-                }
-
-                logComponent.PrintLogIfActive(log);
+                // IPointOfInterest carriedPOI = carryComponent.carriedPOI;
+                // string log = $"Dropping carried POI: {carriedPOI.name} because current action is stopped!";
+                // log += "\nAdditional Info:";
+                // if (carriedPOI is ResourcePile) {
+                //     ResourcePile pile = carriedPOI as ResourcePile;
+                //     log += $"\n-Stored resources on drop: {pile.resourceInPile} {pile.providedResource}";
+                // } else if (carriedPOI is Table) {
+                //     Table table = carriedPOI as Table;
+                //     log += $"\n-Stored resources on drop: {table.food} Food.";
+                // }
+                //
+                // logComponent.PrintLogIfActive(log);
                 UncarryPOI();
             }
         }
@@ -4660,8 +4489,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
         //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-        logComponent.PrintLogIfActive(
-            $"Stopped action of {name} which is {previousCurrentActionNode.action.goapName} targetting {previousCurrentActionNode.poiTarget.name}!");
+        logComponent.PrintLogIfActive($"Stopped action of {name} which is {previousCurrentActionNode.action.goapName} targetting {previousCurrentActionNode.poiTarget.name}!");
         return true;
     }
     //public void SetHasAlreadyAskedForPlan(bool state) {
@@ -4710,7 +4538,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //        }
     //    }
     //}
-    public void OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+    private void OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
         bool stillContinueCurrentAction = true;
 
         List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Start_Perform_Trait);
@@ -4860,6 +4688,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             marker.SetCharacter(this);
         }
+        //Note: This is added because, there is a bug wherein after unseizing the character, it does not animate anymore, the reason is that while character is being seized, the "UpdateAnimationSpeed" function is not called
+        //Refer to this: https://trello.com/c/oFbPZlmT/3521-character-not-animating-after-seizing
+        marker.UpdatePauseAnimationSpeed();
         //marker.SetAllColliderStates(true);
         EnableMarker();
         marker.OnUnseize();
@@ -4895,9 +4726,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
         //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
-    }
-    public bool CollectsLogs() {
-        return true;
     }
     #endregion
 
@@ -5066,54 +4894,54 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region States
-    private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
-        if (characterThatStartedState == this) {
-            marker.UpdateActionIcon();
-            if (state.characterState.IsCombatState()) {
-                marker.visionCollider.TransferAllDifferentStructureCharacters();
-            }
-        } else {
-            //if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
-            //    //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
-            //    CombatState combatState = state as CombatState;
-            //    float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
-            //    Character targetCharacter = null;
-            //    if (combatState.isAttacking && combatState.currentClosestHostile is Character) {
-            //        targetCharacter = combatState.currentClosestHostile as Character;
-            //    }
-            //    //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
-            //    if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
-            //        && this.IsHostileOutsider(targetCharacter) && (RelationshipManager.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
-            //        && distance <= Combat_Signalled_Distance) {
-            //        if (combatComponent.AddHostileInRange(targetCharacter, false)) {
-            //            if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
-            //                Log joinLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
-            //                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //                joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
-            //                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-            //            }
-            //            //combatComponent.ProcessCombatBehavior();
-            //            return; //do not do watch.
-            //        }
-            //    }
-            //    if (marker.IsPOIInVision(characterThatStartedState)) {
-            //        ThisCharacterWatchEvent(characterThatStartedState, null, null);
-            //    }
-            //}
-        }
-    }
-    private void OnCharacterEndedState(Character character, CharacterState state) {
-        if (character == this) {
-            if (state is CombatState && marker) {
-                //combatComponent.OnThisCharacterEndedCombatState();
-                marker.visionCollider.ReCategorizeVision();
-            }
-        }
-    }
-    #endregion
+    //#region States
+    //private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
+    //    if (characterThatStartedState == this) {
+    //        //marker.UpdateActionIcon();
+    //        if (state.characterState.IsCombatState()) {
+    //            marker.visionCollider.TransferAllDifferentStructureCharacters();
+    //        }
+    //    } else {
+    //        //if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
+    //        //    //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
+    //        //    CombatState combatState = state as CombatState;
+    //        //    float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
+    //        //    Character targetCharacter = null;
+    //        //    if (combatState.isAttacking && combatState.currentClosestHostile is Character) {
+    //        //        targetCharacter = combatState.currentClosestHostile as Character;
+    //        //    }
+    //        //    //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
+    //        //    if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
+    //        //        && this.IsHostileOutsider(targetCharacter) && (RelationshipManager.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
+    //        //        && distance <= Combat_Signalled_Distance) {
+    //        //        if (combatComponent.AddHostileInRange(targetCharacter, false)) {
+    //        //            if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
+    //        //                Log joinLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
+    //        //                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //        //                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //        //                joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
+    //        //                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //        //                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+    //        //            }
+    //        //            //combatComponent.ProcessCombatBehavior();
+    //        //            return; //do not do watch.
+    //        //        }
+    //        //    }
+    //        //    if (marker.IsPOIInVision(characterThatStartedState)) {
+    //        //        ThisCharacterWatchEvent(characterThatStartedState, null, null);
+    //        //    }
+    //        //}
+    //    }
+    //}
+    //private void OnCharacterEndedState(Character character, CharacterState state) {
+    //    if (character == this) {
+    //        if (state is CombatState && marker) {
+    //            //combatComponent.OnThisCharacterEndedCombatState();
+    //            marker.visionCollider.ReCategorizeVision();
+    //        }
+    //    }
+    //}
+    //#endregion
 
     #region Alter Egos
     //private void InitializeAlterEgos() {
@@ -5254,6 +5082,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    private bool IsNotHostileWithPlayer() {
+        if (traitContainer.HasTrait("Cultist")) {
+            return true;
+        }
+        if (faction != null) {
+            if (faction.isPlayerFaction) {
+                return true;
+            }
+            Faction playerFaction = null;
+            if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
+                playerFaction = PlayerManager.Instance.player.playerFaction;
+            }
+            if (playerFaction != null) {
+                if (faction == playerFaction || !faction.IsHostileWith(playerFaction)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region IJobOwner
@@ -5368,7 +5216,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
             AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
             AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
+
+            AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
         }
+        AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
+        AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_BUFF);
+        AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_FLAW);
+        AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_JOIN_FACTION);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
@@ -5415,7 +5270,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Middle);
     }
     public bool CanBeSelected() {
-        if (marker != null && marker.IsShowingVisuals() == false) {
+        if (hasMarker && marker.IsShowingVisuals() == false) {
             return false;
         }
         return true;
@@ -5436,7 +5291,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 MigrateHomeStructureTo(null, affectSettlement: false);
             }
             if (returnHome) {
-                jobComponent.PlanReturnHomeUrgent();    
+                jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);    
             }
         }
     }
@@ -5547,6 +5402,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+
+    public void ResetNeeds() {
+        needsComponent.ResetFullnessMeter();
+        needsComponent.ResetTirednessMeter();
+        needsComponent.ResetHappinessMeter();
+    }
+
     public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
@@ -5689,7 +5551,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             // if (_role != null) {
             //     _role.OnDeath(this);
             // }
-
+            if (destroyMarkerOnDeath) {
+                //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
+                if(currentRegion != null) {
+                    currentRegion.RemoveCharacterFromLocation(this);
+                }
+            }
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
@@ -5734,6 +5601,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
 
             SetHP(0);
+            currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
 
             marker?.OnDeath(deathTile);
 
@@ -5794,6 +5662,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
+    }
+    public void SetConnectedFoodPile(FoodPile p_foodPile) {
+        connectedFoodPile = p_foodPile;
     }
     #endregion
 
@@ -5865,7 +5736,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (vampireTrait != null && !vampireTrait.isInVampireBatForm) {
             vampireTrait.SetIsInVampireBatForm(true);
             movementComponent.AdjustSpeedModifier(0.20f);
-            movementComponent.SetTagAsTraversable(InnerMapManager.Obstacle_Tag);
+            movementComponent.SetIsFlying(true);
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5876,7 +5747,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (vampireTrait != null && vampireTrait.isInVampireBatForm) {
             vampireTrait.SetIsInVampireBatForm(false);
             movementComponent.AdjustSpeedModifier(-0.20f);
-            movementComponent.SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
+            movementComponent.SetIsFlying(false);
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5922,6 +5793,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    public void SetCurrentLocationAwareness(ILocationAwareness locationAwareness) {
+        currentLocationAwareness = locationAwareness;
+    }
+    //public void SetIsInPendingAwarenessList(bool state) {
+    //    isInPendingAwarenessList = state;
+    //}
+    public bool IsUnpassable() {
+        return false;
+    }
     #endregion
 
     #region Loading
@@ -5936,6 +5816,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
+        }
+        if (!string.IsNullOrEmpty(data.connectedFoodPile)) {
+            connectedFoodPile = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.connectedFoodPile) as FoodPile;
         }
         if (data.deathLog.hasValue) {
             deathLog = data.deathLog;

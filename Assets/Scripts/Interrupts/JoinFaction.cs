@@ -17,10 +17,15 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(interruptHolder.target is Character targetCharacter) {
                 Faction factionToJoinTo = targetCharacter.faction;
-                if (interruptHolder.actor.ChangeFactionTo(factionToJoinTo)) {
+                bool bypassIdeology = false;
+                if(interruptHolder.identifier == "join_faction_necro") {
+                    bypassIdeology = true;
+                }
+                if (interruptHolder.actor.ChangeFactionTo(factionToJoinTo, bypassIdeology)) {
                     overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Join Faction", interruptHolder.identifier, null, logTags);
                     overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     overrideEffectLog.AddToFillers(factionToJoinTo, factionToJoinTo.name, LOG_IDENTIFIER.FACTION_1);
+                    overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                     return true;
                 }

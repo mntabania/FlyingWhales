@@ -1,5 +1,6 @@
 ﻿using System;
 using Traits;
+using UtilityScripts;
 namespace Plague.Fatality {
     public abstract class Fatality : Plagued.IPlaguedListener {
 
@@ -9,6 +10,7 @@ namespace Plague.Fatality {
 
         protected void ActivateFatalityOn(Character p_character) {
             if (CanActivateFatalityOn(p_character)) {
+                p_character.causeOfDeath = INTERACTION_TYPE.PLAGUE_FATALITY;
                 ActivateFatality(p_character);
             }
         }
@@ -35,15 +37,15 @@ namespace Plague.Fatality {
         public static int GetFatalityCost(this PLAGUE_FATALITY fatality) {
             switch (fatality) {
                 case PLAGUE_FATALITY.Septic_Shock:
-                    return 30;
+                    return SpellUtilities.GetModifiedSpellCost(30, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_FATALITY.Heart_Attack:
-                    return 30;
+                    return SpellUtilities.GetModifiedSpellCost(30, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_FATALITY.Stroke:
-                    return 20;
+                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_FATALITY.Total_Organ_Failure:
-                    return 40;
+                    return SpellUtilities.GetModifiedSpellCost(40, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_FATALITY.Pneumonia:
-                    return 40;
+                    return SpellUtilities.GetModifiedSpellCost(40, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(fatality), fatality, null);
             }

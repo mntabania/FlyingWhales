@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Locations.Settlements;
 using Managers;
 using Quests;
 using Tutorial;
@@ -8,6 +9,7 @@ using UnityEngine;
 
 public class Initializer : MonoBehaviour {
     public IEnumerator InitializeDataBeforeWorldCreation() {
+        BaseSettlement.onSettlementBuilt = null; //TODO: Make this better
         LocalizationManager.Instance.Initialize();
         GameManager.Instance.Initialize();
         SaveManager.Instance.PrepareTempDirectory();
@@ -31,7 +33,6 @@ public class Initializer : MonoBehaviour {
         yield return null;
         JobManager.Instance.Initialize();
         PlayerUI.Instance.Initialize();
-        RandomNameGenerator.Initialize();
         WorldEventManager.Instance.Initialize();
         yield return null;
         PlayerSkillManager.Instance.ResetSpellsInUse();
@@ -57,8 +58,8 @@ public class Initializer : MonoBehaviour {
         }
         TutorialManager.Instance.Initialize();
         QuestManager.Instance.InitializeAfterLoadoutPicked();
-        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap() && !SaveManager.Instance.useSaveData) {
-            MapGenerationFinalization.ScenarioItemGenerationAfterPickingLoadout();    
+        if (!SaveManager.Instance.useSaveData) {
+            MapGenerationFinalization.ItemGenerationAfterPickingLoadout();    
         }
         AudioManager.Instance.OnLoadoutSelected();
     }

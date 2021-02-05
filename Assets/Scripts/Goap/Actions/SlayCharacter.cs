@@ -7,7 +7,7 @@ public class SlayCharacter : GoapAction {
     public SlayCharacter() : base(INTERACTION_TYPE.SLAY_CHARACTER) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Death_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Combat};
     }

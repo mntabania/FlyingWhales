@@ -232,6 +232,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4885969480045815750}
   - component: {fileID: 954381696249944637}
+  - component: {fileID: 8782460757608954605}
   m_Layer: 5
   m_Name: Tooltip Position
   m_TagString: Untagged
@@ -272,6 +273,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pivot: {x: 0, y: 1}
   anchor: 0
+--- !u!223 &8782460757608954605
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427327087144431842}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 1
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 7
+  m_TargetDisplay: 0
 --- !u!1 &2175716463087058899
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,6 +638,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &3740072940297338104
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1881,6 +1904,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &7170733580297808085
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2530,6 +2554,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &6442859296753002303
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2630,6 +2655,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1412445271980637826
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3413,6 +3439,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &6844963997752911116
 CanvasRenderer:
   m_ObjectHideFlags: 0

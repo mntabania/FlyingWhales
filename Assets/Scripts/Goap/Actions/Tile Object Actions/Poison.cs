@@ -12,7 +12,7 @@ public class Poison : GoapAction {
         actionIconString = GoapActionStateDB.Poison_Icon;
         //_isStealthAction = true;
         //SetIsStealth(true);
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Crimes};
     }

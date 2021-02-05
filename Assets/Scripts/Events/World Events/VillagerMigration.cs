@@ -68,7 +68,7 @@ namespace Events.World_Events {
                             newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
                             Debug.Log($"Spawned new villager {newCharacter.name} at {edgeTile}");
                             newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-                            newCharacter.jobComponent.PlanReturnHomeUrgent();
+                            newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
                             Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
 
                             debugLog = $"{debugLog}\nNew character {newCharacter.name} was spawned.";

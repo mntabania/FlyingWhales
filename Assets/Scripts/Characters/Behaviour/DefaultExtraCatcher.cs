@@ -19,7 +19,7 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
         //    }
         //}
         producedJob = null;
-        if (character.isNormalCharacter && character.marker != null && character.marker.inVisionCharacters.Count > 0 && HasCharacterNotConversedInMinutes(character, 10)) {
+        if (character.isNormalCharacter && character.hasMarker && character.marker.inVisionCharacters.Count > 0 && HasCharacterNotConversedInMinutes(character, 10)) {
             log += $"\n{character.name} has characters in vision and has not conversed in at least 10 minutes.";
             List<Character> validChoices =
                 character.marker.GetInVisionCharactersThatMeetCriteria((c) => HasCharacterNotConversedInMinutes(c, 10) && c.isNormalCharacter && !c.isDead);

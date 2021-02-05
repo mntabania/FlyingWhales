@@ -228,13 +228,15 @@ public class UIManager : BaseMonoBehaviour {
         showAllToggle.onValueChanged.AddListener(OnToggleAllFilters);
         UpdateSearchFieldsState();
         
-        _contextMenuUIController.SetOnHoverOverAction(OnHoverOverPlayerActionContextMenuItem);
-        _contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
+        contextMenuUIController.SetOnHoverOverAction(OnHoverOverPlayerActionContextMenuItem);
+        contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
         
         UpdateUI();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
-        if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
+        if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
+            || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW 
+            || p_playerAction.category == PLAYER_SKILL_CATEGORY.SCHEME) {
             HidePlayerActionContextMenu();    
         } else {
             if (IsContextMenuShowing()) {
@@ -306,13 +308,22 @@ public class UIManager : BaseMonoBehaviour {
         UpdateSpeedToggles(GameManager.Instance.isPaused);
     }
     public void SetProgressionSpeed1X() {
+        if (!GameManager.Instance.isPaused && GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+            PauseByPlayer();
+            return;
+        }
         if (!x1Btn.IsInteractable()) {
             return;
         }
         Unpause();
+        
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
     }
     public void SetProgressionSpeed2X() {
+        if (!GameManager.Instance.isPaused && GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+            PauseByPlayer();
+            return;
+        }
         if (!x2Btn.IsInteractable()) {
             return;
         }
@@ -320,6 +331,10 @@ public class UIManager : BaseMonoBehaviour {
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
     }
     public void SetProgressionSpeed4X() {
+        if (!GameManager.Instance.isPaused && GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+            PauseByPlayer();
+            return;
+        }
         if (!x4Btn.IsInteractable()) {
             return;
         }
@@ -330,6 +345,10 @@ public class UIManager : BaseMonoBehaviour {
     /// Helper function to call if the player is the one that paused the game.
     /// </summary>
     public void PauseByPlayer() {
+        if (GameManager.Instance.isPaused) {
+            Unpause();
+            return;
+        }
         Pause();
         // Debug.Log("Game was paused by player.");
         Messenger.Broadcast(UISignals.PAUSED_BY_PLAYER);
@@ -391,7 +410,6 @@ public class UIManager : BaseMonoBehaviour {
 
     #region Tooltips
     public void ShowSmallInfo(string info, string header = "", bool autoReplaceText = true) {
-        Profiler.BeginSample("Show Small Info Sample");
         smallInfoGO.transform.SetAsLastSibling();
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
@@ -415,7 +433,6 @@ public class UIManager : BaseMonoBehaviour {
             }
         }
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
-        Profiler.EndSample();
     }
     public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "", bool autoReplaceText = true, bool relayout = false) {
         smallInfoGO.transform.SetAsLastSibling();
@@ -1644,17 +1661,18 @@ public class UIManager : BaseMonoBehaviour {
     public GeneralConfirmationWithVisual generalConfirmationWithVisual;
     #endregion
 
-    #region Demo
-    [Header("Demo")]
-    [SerializeField] private DemoUI _demoUI;
-    public void ShowStartDemoScreen() {
-        _demoUI.ShowStartScreen();
+    #region Popup Screens
+    [FormerlySerializedAs("_demoUI")]
+    [Header("Popup Screens")]
+    [SerializeField] private PopUpScreensUI popUpScreensUI;
+    public void ShowStartScenario(string message) {
+        popUpScreensUI.ShowStartScreen(message);
     }
     public void ShowEndDemoScreen(string summary) {
-        _demoUI.ShowSummaryThenEndScreen(summary);
+        popUpScreensUI.ShowSummaryThenEndScreen(summary);
     }
     public bool IsShowingEndScreen() {
-        return _demoUI.IsShowingEndScreen();
+        return popUpScreensUI.IsShowingEndScreen();
     }
     #endregion
 
@@ -1804,7 +1822,7 @@ public class UIManager : BaseMonoBehaviour {
 
     #region Context Menu
     [Header("Context Menu")]
-    [SerializeField] private ContextMenuUIController _contextMenuUIController;
+    public ContextMenuUIController contextMenuUIController;
     [SerializeField] private UIHoverPosition _contextMenuTooltipHoverPosition;
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Transform p_followTarget) {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
@@ -1813,8 +1831,8 @@ public class UIManager : BaseMonoBehaviour {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
-        _contextMenuUIController.SetFollowPosition(p_followTarget);
-        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
+        contextMenuUIController.SetFollowPosition(p_followTarget);
+        contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
@@ -1824,8 +1842,8 @@ public class UIManager : BaseMonoBehaviour {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
-        _contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
-        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
+        contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
+        contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
     public void RefreshPlayerActionContextMenuWithNewTarget(IPlayerActionTarget p_target) {
@@ -1835,15 +1853,15 @@ public class UIManager : BaseMonoBehaviour {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
-        _contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
+        contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
     public void HidePlayerActionContextMenu() {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(null);
-        _contextMenuUIController.HideUI();
+        contextMenuUIController.HideUI();
     }
     public bool IsContextMenuShowing() {
-        return _contextMenuUIController.IsShowing();
+        return contextMenuUIController.IsShowing();
     }
     public bool IsContextMenuShowingForTarget(IPlayerActionTarget p_target) {
         return IsContextMenuShowing() && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target;
@@ -1851,7 +1869,7 @@ public class UIManager : BaseMonoBehaviour {
     private void OnHoverOverPlayerActionContextMenuItem(IContextMenuItem p_item, UIHoverPosition p_hoverPosition) {
         if (p_item is PlayerAction playerAction) {
             OnHoverPlayerAction(playerAction, p_hoverPosition, PlayerManager.Instance.player.currentlySelectedPlayerActionTarget);
-        } else if (p_item is Trait trait && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+        } else if (p_item is Trait trait && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter && contextMenuUIController.currentlyOpenedParentContextItem is TriggerFlawData) {
             OnHoverEnterFlaw(trait.name,  targetCharacter, p_hoverPosition);
         }
     }
@@ -1880,7 +1898,7 @@ public class UIManager : BaseMonoBehaviour {
         
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
-    private void OnHoverPlayerAction(SpellData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
+    private void OnHoverPlayerAction(SkillData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
         string title = $"{spellData.name}";
         string fullDescription = spellData.description;
         int charges = spellData.charges;
@@ -1920,6 +1938,9 @@ public class UIManager : BaseMonoBehaviour {
                     if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
                         additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
                     }
+                    string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeTileObject);
+                    wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                    additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                 } else if (activePOI is BaseSettlement activeSettlement) {
                     if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
                         string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
@@ -1952,7 +1973,7 @@ public class UIManager : BaseMonoBehaviour {
         fullDescription = $"{fullDescription}\n\n{additionalText}";
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
-    private bool HasEnoughMana(SpellData spellData) {
+    private bool HasEnoughMana(SkillData spellData) {
         if (spellData.hasManaCost) {
             if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
                 return true;
@@ -1962,7 +1983,7 @@ public class UIManager : BaseMonoBehaviour {
         //if skill has no mana cost then always has enough mana
         return true;
     }
-    private bool HasEnoughCharges(SpellData spellData) {
+    private bool HasEnoughCharges(SkillData spellData) {
         if (spellData.hasCharges) {
             if (spellData.charges > 0) {
                 return true;
@@ -2022,7 +2043,7 @@ public class UIManager : BaseMonoBehaviour {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
-        _contextMenuUIController.UpdateContextMenuItems(contextMenuItems);
+        contextMenuUIController.UpdateContextMenuItems(contextMenuItems);
     }
     private bool IsMouseOnContextMenu() {
         if (_pointer != null) {

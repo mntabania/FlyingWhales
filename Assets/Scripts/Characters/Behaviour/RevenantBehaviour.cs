@@ -25,7 +25,7 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
             }
             if (character.HasHome() && !character.IsAtHome()) {
                 log += "\n-Return to territory";
-                return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
             } else {
                 log += "\n-Already in territory or has no territory, Roam";
                 return character.jobComponent.TriggerRoamAroundTile(out producedJob);
@@ -56,7 +56,7 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
                 var targetFaction = p_character.faction ?? FactionManager.Instance.undeadFaction;
                 Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, targetFaction, homeLocation: revenant.homeSettlement, homeRegion: revenant.homeRegion, bypassIdeologyChecking: true);
                 (ghost as Ghost).SetBetrayedBy(betrayer);
-                CharacterManager.Instance.PlaceSummon(ghost, tile);
+                CharacterManager.Instance.PlaceSummonInitially(ghost, tile);
                 return true;
             } else {
                 p_log += $"\n-Already reached maximum number of spawned ghosts: 5";

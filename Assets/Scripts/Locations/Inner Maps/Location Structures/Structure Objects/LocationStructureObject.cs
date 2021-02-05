@@ -197,6 +197,7 @@ public class LocationStructureObject : PooledObject {
             if (!newTileObject.tileObjectType.IsPreBuilt()) { //non-prebuilt items should create a craft job targeting themselves
                 newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, npcSettlement);
+                UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(npcSettlement, job, INTERACTION_TYPE.TAKE_RESOURCE);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).mainRecipe });
                 npcSettlement.AddToAvailableJobs(job);    
             }
@@ -276,17 +277,17 @@ public class LocationStructureObject : PooledObject {
             List<LocationGridTile> differentStructureTiles = tile.neighbourList.Where(x => !tiles.Contains(x)).ToList();
             for (int j = 0; j < differentStructureTiles.Count; j++) {
                 LocationGridTile diffTile = differentStructureTiles[j];
-                if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
-                    if (diffTile.objHere.traitContainer.HasTrait("Indestructible")) {
-                        diffTile.structure.OnlyRemovePOIFromList(diffTile.objHere);
-                    } else {
-                        if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
-                            tombstone.SetRespawnCorpseOnDestroy(false);
-                        }
-                        diffTile.structure.RemovePOI(diffTile.objHere);    
-                    }
-                    
-                }
+                // if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                //     if (diffTile.objHere.traitContainer.HasTrait("Indestructible")) {
+                //         diffTile.structure.OnlyRemovePOIFromList(diffTile.objHere);
+                //     } else {
+                //         if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
+                //             tombstone.SetRespawnCorpseOnDestroy(false);
+                //         }
+                //         diffTile.structure.RemovePOI(diffTile.objHere);    
+                //     }
+                //     
+                // }
                 diffTile.parentMap.detailsTilemap.SetTile(diffTile.localPlace, null);
 
                 GridNeighbourDirection dir;
@@ -671,8 +672,11 @@ public class LocationStructureObject : PooledObject {
     /// <param name="connectionChoices">A list of all OPEN connector choices.</param>
     /// <param name="innerTileMap">The inner map that this structure will be placed on.</param>
     /// <param name="usedConnectorIndex">The index of the connector that was used by this structure object.</param>
+    /// <param name="tileToPlaceStructure">The LocationGridTile to place the structure at. This is the computed center of the structure.</param>
+    /// <param name="connectorTile">The LocationGridTile that the chosen connector is placed at.</param>
+    /// <param name="p_structureSetting">The structure setting to place.</param>
     /// <returns>The first valid connector from the list of choices.</returns>
-    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure) {
+    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting) {
         //loop through connection choices
         for (int i = 0; i < connectionChoices.Count; i++) {
             StructureConnector connectorA = connectionChoices[i];
@@ -692,15 +696,17 @@ public class LocationStructureObject : PooledObject {
                 Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
                 
                 LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
-                if (centerTile != null && HasEnoughSpaceIfPlacedOn(centerTile)) {
+                if (centerTile != null && p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile) && HasEnoughSpaceIfPlacedOn(centerTile)) {
                     tileToPlaceStructure = centerTile;
                     usedConnectorIndex = j;
+                    connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
                     return connectorA;
                 }
             }
         }
         tileToPlaceStructure = null;
         usedConnectorIndex = -1;
+        connectorTile = null;
         return null;
     }
     public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile) {
@@ -735,32 +741,53 @@ public class LocationStructureObject : PooledObject {
         if (tile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
             return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
         }
+
         if (tile.hasBlueprint) {
             return false; //This is to prevent overlapping blueprints. If any tile that will be occupied by this has a blueprint, then do not allow
         }
         if (tile.IsAtEdgeOfMap()) {
             return false;
         }
-        if (tile.collectionOwner.isPartOfParentRegionMap) {
-            HexTile hexTileOwner = tile.collectionOwner.partOfHextile.hexTileOwner;
-            if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
-                return false;
-            }
-            if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
-                return false;
-            }
+        if (GameManager.Instance.gameHasStarted) {
+            if (!tile.collectionOwner.isPartOfParentRegionMap) {
+                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement
+            }    
         } else {
-            return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement 
+            //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
+            //since we expect that they will be generated later
+            if (tile.collectionOwner.isPartOfParentRegionMap) {
+                HexTile hexTileOwner = tile.collectionOwner.partOfHextile.hexTileOwner;
+                if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
+                    return false;
+                }
+                if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
+                    return false;
+                }
+            } else {
+                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement 
+            }    
         }
+        
+        
         //limit so that structures will not be directly adjacent with each other
         for (int j = 0; j < tile.neighbourList.Count; j++) {
             LocationGridTile neighbour = tile.neighbourList[j];
             if (neighbour.hasBlueprint) {
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
-            //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
-            if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
-                return false;
+            if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
+                    return false;
+                }    
+            } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
+                    return false;
+                }
+            } else {
+                //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
+                    return false;
+                }    
             }
         }
         return true;
@@ -809,7 +836,6 @@ public class LocationStructureObject : PooledObject {
     private void ProcessConnectors(LocationStructure structure) {
         for (int i = 0; i < _connectors.Length; i++) {
             StructureConnector connector = _connectors[i];
-            connector.SetOwner(structure);
             connector.OnPlaceConnector(structure.region.innerMap);
         }
     }
@@ -889,6 +915,12 @@ public class LocationStructureObject : PooledObject {
             }
         }
     }
+
+    [ContextMenu("Set Pivot Point")]
+    public void SetPivotPoint() {
+        transform.Find("Content").transform.position = new Vector3((center.x + .5f) * -1f, (center.y + .5f) * -1f, 0f);
+    }
+    
     private WallVisual InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
         GameObject wallGO = Instantiate(wallPrefab, parent);
         wallGO.transform.position = centeredPos;
@@ -961,8 +993,20 @@ public class LocationStructureObject : PooledObject {
                     // _groundTileMap.SetColor(pos, Color.red);
                 }
             }
-        }    
-        
+        }
+    }
+    [ContextMenu("Log Ground Tile Map Assets")]
+    public void LogGroundTileMapAssets() {
+        BoundsInt bounds = _groundTileMap.cellBounds;
+        for (int x = bounds.xMin; x < bounds.xMax; x++) {
+            for (int y = bounds.yMin; y < bounds.yMax; y++) {
+                Vector3Int pos = new Vector3Int(x, y, 0);
+                TileBase tb = _groundTileMap.GetTile(pos);
+                if (tb != null) {
+                    Debug.Log($"{pos.ToString()} - {tb.name}");
+                }
+            }
+        }
     }
     #endregion
 

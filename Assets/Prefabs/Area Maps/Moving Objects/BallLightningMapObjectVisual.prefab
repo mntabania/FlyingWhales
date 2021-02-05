@@ -9453,7 +9453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 7939037006616712467}
-  mainCollider: {fileID: 1121445022089270363}
+  _mainCollider: {fileID: 1121445022089270363}
 --- !u!1 &5916995033446106202
 GameObject:
   m_ObjectHideFlags: 0
@@ -9559,6 +9559,7 @@ Transform:
   - {fileID: 4171962932510032294}
   - {fileID: 2112861478268394672}
   - {fileID: 9037759273486989034}
+  - {fileID: 1798706404406547157}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9668,5 +9669,36 @@ MonoBehaviour:
   hpBarGO: {fileID: 0}
   hpFill: {fileID: 0}
   aspeedFill: {fileID: 0}
+  particleEffectParent: {fileID: 1798706404406547157}
   statusIconsParent: {fileID: 0}
   _ballLightningEffect: {fileID: 160187851882942567}
+--- !u!1 &9197742639766648194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1798706404406547157}
+  m_Layer: 22
+  m_Name: ParticleEffectParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1798706404406547157
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9197742639766648194}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5919308932578943544}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

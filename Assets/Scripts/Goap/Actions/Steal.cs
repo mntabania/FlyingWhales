@@ -8,7 +8,7 @@ public class Steal : GoapAction {
 
     public Steal() : base(INTERACTION_TYPE.STEAL) {
         actionIconString = GoapActionStateDB.Steal_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Crimes};
     }
@@ -113,18 +113,18 @@ public class Steal : GoapAction {
             reactions.Add(EMOTION.Betrayal);
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
-        if (target is TileObject tileObject) {
-            Character targetCharacter = tileObject.isBeingCarriedBy;
-            if (targetCharacter != null) {
-                reactions.Add(EMOTION.Disappointment);
-                if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
-                    reactions.Add(EMOTION.Anger);
-                }
-            }
-        }
-    }
+    //public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+    //    base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    //    if (target is TileObject tileObject) {
+    //        Character targetCharacter = tileObject.isBeingCarriedBy;
+    //        if (targetCharacter != null) {
+    //            reactions.Add(EMOTION.Disappointment);
+    //            if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
+    //                reactions.Add(EMOTION.Anger);
+    //            }
+    //        }
+    //    }
+    //}
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
@@ -138,7 +138,7 @@ public class Steal : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             TileObject item = poiTarget as TileObject;
-            if (poiTarget.gridTileLocation != null) {
+            if (item.gridTileLocation != null) {
                 return item.characterOwner != null && !item.IsOwnedBy(actor);
             } else {
                 return item.isBeingCarriedBy != null && item.characterOwner != null && !item.IsOwnedBy(actor);
@@ -162,51 +162,4 @@ public class Steal : GoapAction {
         }
     }
     #endregion
-
-    //#region Intel Reactions
-    //private List<string> State1Reactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-    //    SpecialToken stolenItem = poiTarget as SpecialToken;
-    //    //Recipient is the owner of the item:
-    //    if (recipient == stolenItem.characterOwner) {
-    //        //- **Recipient Response Text**: "[Actor Name] stole from me? What a horrible person."
-    //        reactions.Add(string.Format("{0} stole from me? What a horrible person.", actor.name));
-    //        //- **Recipient Effect**: Remove Friend/Lover/Paramour relationship between Actor and Recipient.Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-    //        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //        List<RELATIONSHIP_TRAIT> traitsToRemove = recipient.relationshipContainer.GetRelationshipDataWith(actor).GetAllRelationshipOfEffect(RELATIONSHIP_EFFECT.POSITIVE);
-    //        for (int i = 0; i < traitsToRemove.Count; i++) {
-    //            RelationshipManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove[i]);
-    //        }
-    //    }
-
-    //    //Recipient and Actor is the same:
-    //    else if (recipient == actor) {
-    //        //- **Recipient Response Text**: "I know what I did."
-    //        reactions.Add("I know what I did.");
-    //        //-**Recipient Effect**: no effect
-    //    }
-
-    //    //Recipient and Actor have a positive relationship:
-    //    else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
-    //        //- **Recipient Response Text**: "[Actor Name] may have committed theft but I know that [he/she] is a good person."
-    //        reactions.Add(string.Format("{0} may have committed theft but I know that {1} is a good person.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-    //        //-**Recipient Effect**: no effect
-    //    }
-    //    //Recipient and Actor have a negative relationship:
-    //    else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //        //- **Recipient Response Text**: "[Actor Name] committed theft!? Why am I not surprised."
-    //        reactions.Add(string.Format("{0} committed theft!? Why am I not surprised.", actor.name));
-    //        //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-    //        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //    }
-    //    //Recipient and Actor have no relationship but are from the same faction:
-    //    else if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo) && recipient.faction == actor.faction) {
-    //        //- **Recipient Response Text**: "[Actor Name] committed theft!? That's illegal."
-    //        reactions.Add(string.Format("{0} committed theft!? That's illegal.", actor.name));
-    //        //- **Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-    //        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //    }
-    //    return reactions;
-    //}
-    //#endregion
 }

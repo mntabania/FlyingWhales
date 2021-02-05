@@ -37,11 +37,17 @@ public class Golem : Summon {
         traitContainer.RemoveTrait(this, "Hibernating");
     }
     public override void SubscribeToSignals() {
+        if (hasSubscribedToSignals) {
+            return;
+        }
         base.SubscribeToSignals();
         Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     public override void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
         base.UnsubscribeSignals();
         Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
@@ -83,7 +89,7 @@ public class Golem : Summon {
         if (character != this && combatComponent.isInCombat) {
             if (HasTerritory()) {
                 if (IsTerritory(tile)) {
-                    bool isCharacterInStillInTerritory = character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && IsTerritory(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+                    bool isCharacterInStillInTerritory = character.IsInTerritoryOf(this);
                     if (!isCharacterInStillInTerritory) {
                         combatComponent.RemoveHostileInRange(character);
                     }

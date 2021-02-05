@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Interrupts;
+using UnityEngine.Profiling;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
@@ -23,11 +24,17 @@ public class Ghost : Summon {
 
     #region Overrides
     public override void SubscribeToSignals() {
+        if (hasSubscribedToSignals) {
+            return;
+        }
         base.SubscribeToSignals();
         Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
     }
     public override void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
         base.UnsubscribeSignals();
         Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -58,6 +65,7 @@ public class Ghost : Summon {
     }
     
     private void FearCheck() {
+        Profiler.BeginSample($"Ghost Fear Check");
         if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().tick)) {
             if (UnityEngine.Random.Range(0, 100) < 15) {
                 //cast fear on random hostile
@@ -88,6 +96,7 @@ public class Ghost : Summon {
                 }
             }
         }
+        Profiler.EndSample();
     }
 }
 

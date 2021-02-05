@@ -16,6 +16,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
     public string leaderID;
     public bool isActive;
     public ColorSave factionColor;
+    public RACE race;
 
     public List<string> characterIDs;
     public List<string> bannedCharacterIDs;
@@ -50,6 +51,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         emblemName = data.emblem.name;
         factionColor = data.factionColor;
         isActive = data.isActive;
+        race = data.race;
 
         if (data.leader == null) {
             leaderID = string.Empty;

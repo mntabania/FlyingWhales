@@ -20,12 +20,12 @@ public class PlayerSkillDetails : MonoBehaviour {
     public Sprite notLearnedButtonSprite;
     public GameObject confirmationGO;
 
-    private SpellData spellData;
+    private SkillData spellData;
     private PlayerSkillData skillData;
     private PlayerSkillTreeNode skillTreeNode;
     //private bool _useSkillData;
 
-    public void ShowPlayerSkillDetails(SpellData spellData, PlayerSkillData skillData, PlayerSkillTreeNode skillTreeNode) {
+    public void ShowPlayerSkillDetails(SkillData spellData, PlayerSkillData skillData, PlayerSkillTreeNode skillTreeNode) {
         this.spellData = spellData;
         this.skillData = skillData;
         this.skillTreeNode = skillTreeNode;

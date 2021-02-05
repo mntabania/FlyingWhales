@@ -14,13 +14,13 @@ public class SmallSpider : Summon {
     public bool shouldGrowUpOnUnSeize { get; private set; }
 
     public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public SmallSpider(string className) : base(SUMMON_TYPE.Small_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public SmallSpider(SaveDataSmallSpider data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         growUpDate = data.growUpDate;
         shouldGrowUpOnUnSeize = data.shouldGrowUpOnUnSeize;
     }
@@ -108,7 +108,7 @@ public class SmallSpider : Summon {
         growUpLog.AddToFillers(summon, summon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         growUpLog.AddLogToDatabase();
         
-        CharacterManager.Instance.PlaceSummon(summon, tile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, tile);
         TraitManager.Instance.CopyStatuses(this, summon);
 
         Death("Transform Giant Spider");

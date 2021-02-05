@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Text;
 using System.Linq;
 using System.Reflection;
+using System.IO;
 using EZObjectPools;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -13,6 +14,7 @@ using Locations.Settlements;
 using Logs;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
+using FullSerializer;
 
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used.
@@ -1197,6 +1199,18 @@ namespace UtilityScripts {
             }
             return options;
         }
+        public static List<string> GetEnumChoices<T>(params T[] choices) {
+            List<string> options = new List<string>();
+            if (choices.Length == 0) {
+                choices = (T[]) Enum.GetValues(typeof(T));    
+            }
+            for (int i = 0; i < choices.Length; i++) {
+                T option = choices[i];
+                string normalizedStr = NormalizeStringUpperCaseFirstLetters(option.ToString());
+                options.Add(normalizedStr);
+            }
+            return options;
+        }
         public static string GetPossessivePronounForCharacter(Character character, bool capitalized = true) {
             if (character.gender == GENDER.MALE) {
                 if (capitalized) {
@@ -1386,6 +1400,35 @@ namespace UtilityScripts {
                 }
             }
             return string.Empty;
+        }
+        public static T Deserialize<T>(string text) {
+            Encoding encoding = Encoding.UTF8;
+            Stream stream = new MemoryStream(encoding.GetBytes(text));
+            T result = Deserialize<T>(stream, encoding);
+            stream.Dispose();
+            return result;
+        }
+        public static T Deserialize<T>(Stream stream, Encoding encoding) {
+            T result = default(T);
+#if !UNITY_WSA || !UNITY_WINRT
+            try {
+                StreamReader reader = new StreamReader(stream, encoding);
+                fsSerializer serializer = new fsSerializer();
+                fsData data = fsJsonParser.Parse(reader.ReadToEnd());
+                serializer.TryDeserialize(data, ref result);
+                if (result == null) {
+                    result = default(T);
+                }
+                reader.Dispose();
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+            }
+#else
+			StreamReader reader = new StreamReader ( stream, encoding );
+			result = JsonUtility.FromJson<T> ( reader.ReadToEnd () );
+			reader.Dispose ();
+#endif
+            return result;
         }
         #endregion
 

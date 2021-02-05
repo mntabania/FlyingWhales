@@ -1,6 +1,7 @@
 ﻿using Inner_Maps;
 using Interrupts;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public abstract class Nymph : Summon {
     
@@ -9,10 +10,10 @@ public abstract class Nymph : Summon {
     public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Defend;
     
     protected Nymph(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.NYMPH, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }
     protected Nymph(SaveDataSummon data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Defend);
         ScheduleAOEEffect(Random.Range(20, 40)); //Did not save _currentEffectSchedule, instead redo schedule upon loading because we cannot save schedules right now
     }
 
@@ -53,14 +54,21 @@ public abstract class Nymph : Summon {
     }
     private void ExecuteAOEEffect() {
         if (Random.Range(0, 100) < 25) {
+            Profiler.BeginSample($"Nymph - Adjust HP Current Tile");
             gridTileLocation.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
+            Profiler.EndSample();
+            
+            Profiler.BeginSample($"Nymph - Adjust HP Neighbours");
             for (int i = 0; i < gridTileLocation.neighbourList.Count; i++) {
                 LocationGridTile tile = gridTileLocation.neighbourList[i];
                 tile.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
             }
+            Profiler.EndSample();
         }
+        Profiler.BeginSample($"Nymph - Schedule AOE Effect");
         //reschedule after 20 minutes
         ScheduleAOEEffect();
+        Profiler.EndSample();
     }
     #endregion
 

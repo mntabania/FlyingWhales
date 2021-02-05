@@ -20,16 +20,16 @@ public class FactionManager : BaseMonoBehaviour {
     public Faction ratmenFaction { get; private set; }
     private Faction _undeadFaction;
 
-    [Space(10)]
-    [Header("Visuals")]
-    [SerializeField] private List<Sprite> _factionEmblems;
-    [SerializeField] private Sprite wildMonsterFactionEmblem;
-    [SerializeField] private Sprite vagrantFactionEmblem;
-    [SerializeField] private Sprite disguisedFactionEmblem;
-    [SerializeField] private Sprite undeadFactionEmblem;
-    [SerializeField] private Sprite playerFactionEmblem;
-    [SerializeField] private Sprite cultFactionEmblem;
-    [SerializeField] private Sprite ratmenFactionEmblem;
+    // [Space(10)]
+    // [Header("Visuals")]
+    // [SerializeField] private List<Sprite> _factionEmblems;
+    // [SerializeField] private Sprite wildMonsterFactionEmblem;
+    // [SerializeField] private Sprite vagrantFactionEmblem;
+    // [SerializeField] private Sprite disguisedFactionEmblem;
+    // [SerializeField] private Sprite undeadFactionEmblem;
+    // [SerializeField] private Sprite playerFactionEmblem;
+    // [SerializeField] private Sprite cultFactionEmblem;
+    // [SerializeField] private Sprite ratmenFactionEmblem;
 
     [Space(10)]
     [Header("Character Name Colors")]
@@ -82,7 +82,7 @@ public class FactionManager : BaseMonoBehaviour {
         Faction newFaction = new Faction(FACTION_TYPE.Wild_Monsters);
         newFaction.SetName("Wild Monsters");
         newFaction.SetFactionActiveState(false);
-        newFaction.SetEmblem(wildMonsterFactionEmblem);
+        newFaction.SetEmblem(FactionEmblemRandomizer.wildMonsterFactionEmblem);
         newFaction.factionType.SetAsDefault();
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetNeutralFaction(newFaction);
@@ -93,7 +93,7 @@ public class FactionManager : BaseMonoBehaviour {
         Faction newFaction = new Faction(FACTION_TYPE.Vagrants);
         newFaction.SetName("Vagrants");
         newFaction.SetFactionActiveState(false);
-        newFaction.SetEmblem(vagrantFactionEmblem);
+        newFaction.SetEmblem(FactionEmblemRandomizer.vagrantFactionEmblem);
         newFaction.factionType.SetAsDefault();
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetVagrantFaction(newFaction);
@@ -104,7 +104,7 @@ public class FactionManager : BaseMonoBehaviour {
         Faction newFaction = new Faction(FACTION_TYPE.Disguised);
         newFaction.SetName("Disguised");
         newFaction.SetFactionActiveState(false);
-        newFaction.SetEmblem(disguisedFactionEmblem);
+        newFaction.SetEmblem(FactionEmblemRandomizer.disguisedFactionEmblem);
         newFaction.factionType.SetAsDefault();
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetDisguisedFaction(newFaction);
@@ -115,7 +115,7 @@ public class FactionManager : BaseMonoBehaviour {
         Faction newFaction = new Faction(FACTION_TYPE.Ratmen);
         newFaction.SetName("Ratmen");
         newFaction.SetFactionActiveState(false);
-        newFaction.SetEmblem(ratmenFactionEmblem);
+        newFaction.SetEmblem(FactionEmblemRandomizer.ratmenFactionEmblem);
         newFaction.factionType.SetAsDefault();
         newFaction.SetPathfindingTag(InnerMapManager.Ratmen_Faction);
         newFaction.SetPathfindingDoorTag(InnerMapManager.Ratmen_Faction_Doors);
@@ -139,11 +139,15 @@ public class FactionManager : BaseMonoBehaviour {
     private void SetRatmenFaction(Faction faction) {
         ratmenFaction = faction;
     }
-    public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "") {
-        Faction newFaction = new Faction(factionType);
+    public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "", Sprite factionEmblem = null, RACE race = RACE.NONE) {
+        Faction newFaction = new Faction(factionType, race);
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         newFaction.SetIsMajorFaction(true);
-        DetermineFactionEmblem(newFaction);
+        if (factionEmblem == null) {
+            DetermineFactionEmblem(newFaction);    
+        } else {
+          newFaction.SetEmblem(factionEmblem);  
+        }
         DetermineFactionPathfindingTags(newFaction);
         CreateRelationshipsForFaction(newFaction);
         if (!string.IsNullOrEmpty(factionName)) {
@@ -157,17 +161,18 @@ public class FactionManager : BaseMonoBehaviour {
     private void DetermineFactionEmblem(Faction faction) {
         FACTION_TYPE factionType = faction.factionType.type;
         if (factionType == FACTION_TYPE.Demons) {
-            faction.SetEmblem(playerFactionEmblem);
+            faction.SetEmblem(FactionEmblemRandomizer.playerFactionEmblem);
         } else if (factionType == FACTION_TYPE.Undead) {
-            faction.SetEmblem(undeadFactionEmblem);
+            faction.SetEmblem(FactionEmblemRandomizer.undeadFactionEmblem);
         } else if (factionType == FACTION_TYPE.Ratmen) {
-            faction.SetEmblem(ratmenFactionEmblem);
-        } else if (factionType == FACTION_TYPE.Demon_Cult && 
-                   DatabaseManager.Instance.factionDatabase.allFactionsList.Count(f => f.factionType.type == FACTION_TYPE.Demon_Cult) == 1) {
+            faction.SetEmblem(FactionEmblemRandomizer.ratmenFactionEmblem);
+        } else if (factionType == FACTION_TYPE.Demon_Cult && DatabaseManager.Instance.factionDatabase.allFactionsList.Count(f => f.factionType.type == FACTION_TYPE.Demon_Cult) == 1) {
             //only set cult faction emblem on first cult faction.
-            faction.SetEmblem(cultFactionEmblem);
+            faction.SetEmblem(FactionEmblemRandomizer.cultFactionEmblem);
         } else {
-            faction.SetEmblem(GetRandomFactionEmblem(faction));
+            Sprite factionEmblem = FactionEmblemRandomizer.GetUnusedFactionEmblem();
+            faction.SetEmblem(factionEmblem);
+            FactionEmblemRandomizer.SetEmblemAsUsed(factionEmblem);
         }
     }
     private void DetermineFactionPathfindingTags(Faction faction) {
@@ -237,47 +242,45 @@ public class FactionManager : BaseMonoBehaviour {
     public Faction GetRandomMajorNonPlayerFaction() {
         return DatabaseManager.Instance.factionDatabase.GetRandomMajorNonPlayerFaction();
     }
+    public bool LeaveFaction(Character character) {
+        Faction targetFaction = null;
+        if(character.minion != null) {
+            targetFaction = PlayerManager.Instance.player.playerFaction;
+        } else if (character is Summon summon) {
+            targetFaction = summon.defaultFaction;
+        } else {
+            targetFaction = vagrantFaction;
+        }
+
+        return character.ChangeFactionTo(targetFaction);
+    }
     #endregion
 
     #region Emblem
-    private Sprite GetRandomFactionEmblem(Faction faction) {
-        if(_usedEmblems.Count >= _factionEmblems.Count) {
-            _usedEmblems.Clear();
-        }
-        for (int i = 0; i < _factionEmblems.Count; i++) {
-            Sprite currSprite = _factionEmblems[i];
-            if (_usedEmblems.Contains(currSprite)) {
-                continue;
-            }
-            SetEmblemAsUsed(currSprite);
-            return currSprite;
-        }
-        throw new System.Exception($"There are no more emblems for faction: {faction.name}");
-    }
     public Sprite GetFactionEmblem(SaveDataFaction p_data) {
         if (p_data.factionType.type == FACTION_TYPE.Wild_Monsters) {
-            return wildMonsterFactionEmblem;
+            return FactionEmblemRandomizer.wildMonsterFactionEmblem;
         }
         if (p_data.factionType.type == FACTION_TYPE.Vagrants) {
-            return vagrantFactionEmblem;
+            return FactionEmblemRandomizer.vagrantFactionEmblem;
         }
         if (p_data.factionType.type == FACTION_TYPE.Disguised) {
-            return disguisedFactionEmblem;
+            return FactionEmblemRandomizer.disguisedFactionEmblem;
         }
         if (p_data.factionType.type == FACTION_TYPE.Undead) {
-            return undeadFactionEmblem;
+            return FactionEmblemRandomizer.undeadFactionEmblem;
         }
         if (p_data.factionType.type == FACTION_TYPE.Demons) {
-            return playerFactionEmblem;
+            return FactionEmblemRandomizer.playerFactionEmblem;
         }
         if (p_data.factionType.type == FACTION_TYPE.Ratmen) {
-            return ratmenFactionEmblem;
+            return FactionEmblemRandomizer.ratmenFactionEmblem;
         }
-        if (p_data.emblemName == cultFactionEmblem.name) {
-            return cultFactionEmblem;
+        if (p_data.emblemName == FactionEmblemRandomizer.cultFactionEmblem.name) {
+            return FactionEmblemRandomizer.cultFactionEmblem;
         }
-        for (int i = 0; i < _factionEmblems.Count; i++) {
-            Sprite emblem = _factionEmblems[i];
+        for (int i = 0; i < FactionEmblemRandomizer.allEmblems.Count; i++) {
+            Sprite emblem = FactionEmblemRandomizer.allEmblems[i];
             if (emblem.name == p_data.emblemName) {
                 return emblem;
             }
@@ -306,6 +309,17 @@ public class FactionManager : BaseMonoBehaviour {
     }
     public string GetFactionNameColorHex() {
         return _factionNameColorHex;
+    }
+    public Faction GetDefaultFactionForMonster(SUMMON_TYPE summonType) {
+        switch (summonType) {
+            case SUMMON_TYPE.Ghost:
+            case SUMMON_TYPE.Skeleton:
+            case SUMMON_TYPE.Vengeful_Ghost:
+            case SUMMON_TYPE.Revenant:
+                return undeadFaction;
+            default:
+                return neutralFaction;
+        }
     }
     #endregion
 
@@ -631,10 +645,12 @@ public class FactionManager : BaseMonoBehaviour {
     }
     public void RevalidateFactionCrimes(Faction faction, Character leader) {
         //religion based crimes
-        if (leader.traitContainer.HasTrait("Cultist")) {
+        if (faction.factionType.type == FACTION_TYPE.Demon_Cult) {
             faction.factionType.RemoveCrime(CRIME_TYPE.Demon_Worship);
             faction.factionType.AddCrime(CRIME_TYPE.Divine_Worship, CRIME_SEVERITY.Serious);
             faction.factionType.AddCrime(CRIME_TYPE.Nature_Worship, CRIME_SEVERITY.Serious);
+            faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Divine_Worship);
+            faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Nature_Worship);
         } else if (leader.religionComponent.religion == RELIGION.Divine_Worship) {
             faction.factionType.RemoveCrime(CRIME_TYPE.Divine_Worship);
         } else if (leader.religionComponent.religion == RELIGION.Nature_Worship) {
@@ -759,7 +775,7 @@ public class FactionManager : BaseMonoBehaviour {
         int count = 0;
         for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
             Faction faction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
-            if (faction.isMajorNonPlayer && !faction.isDestroyed) {
+            if (faction.isMajorNonPlayer && !faction.isDisbanded) {
                 count++;
             }
         }

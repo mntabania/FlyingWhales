@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Events.World_Events;
 using Inner_Maps;
@@ -7,22 +9,58 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Locations.Tile_Features;
 using Managers;
+using Pathfinding;
 using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
+using Debug = UnityEngine.Debug;
 
 public class MapGenerationFinalization : MapGenerationComponent {
+
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
+		Stopwatch stopwatch = new Stopwatch();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
+		stopwatch.Stop();
+		AddLog($"FinalizeInnerMaps took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
+		stopwatch.Stop();
+		AddLog($"RegionalItemGeneration took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkItemGeneration());
+		stopwatch.Stop();
+		AddLog($"LandmarkItemGeneration took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
+		stopwatch.Stop();
+		AddLog($"CaveItemGeneration took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(LoadSettlementItems());
+		stopwatch.Stop();
+		AddLog($"LoadSettlementItems took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
-		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
+		stopwatch.Stop();
+		AddLog($"CharacterFinalization took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(CreateWorldEvents());
+		stopwatch.Stop();
+		AddLog($"CreateWorldEvents took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
@@ -34,6 +72,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	private IEnumerator CreateWorldEvents() {
 		//WorldEventManager.Instance.AddActiveEvent(new VillagerMigration());
 		WorldEventManager.Instance.AddActiveEvent(new CultLeaderEvent());
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			WorldEventManager.Instance.AddActiveEvent(new UndeadAttackEvent());
+		}
 		yield return null;
 	}
 	private IEnumerator LoadWorldEvents(SaveDataCurrentProgress saveData) {
@@ -50,21 +91,22 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
-	public static void ScenarioItemGenerationAfterPickingLoadout() {
-		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-			//spawn 1 desert rose
-			Region region = GridMap.Instance.allRegions[1];
-			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
-				t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
-				t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
-				!t.collectionOwner.partOfHextile.hexTileOwner.IsAtEdgeOfMap() &&
-				t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
-			LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
-			desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);
-			locationChoices.Remove(desertRoseLocation);
-			Debug.Log($"Placed desert rose at {desertRoseLocation.localPlace.ToString()}");	
-		}
+	public static void ItemGenerationAfterPickingLoadout() {
+		GenerateArtifacts();
+		// if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+		// 	//spawn 1 desert rose
+		// 	Region region = GridMap.Instance.allRegions[0];
+		// 	LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+		// 	List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
+		// 		t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
+		// 		t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
+		// 		!t.collectionOwner.partOfHextile.hexTileOwner.IsAtEdgeOfMap() &&
+		// 		t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
+		// 	LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
+		// 	desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);
+		// 	locationChoices.Remove(desertRoseLocation);
+		// 	Debug.Log($"Placed desert rose at {desertRoseLocation.localPlace.ToString()}");	
+		// }
 	}
 	#endregion
 	
@@ -97,20 +139,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		for (int i = 0; i < InnerMapManager.Instance.innerMaps.Count; i++) {
 			InnerTileMap map = InnerMapManager.Instance.innerMaps[i];
 			yield return MapGenerator.Instance.StartCoroutine(map.CreateSeamlessEdges());
-			PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
-			PathfindingManager.Instance.RescanGrid(map.unwalkableGraph);
-			yield return null;
-			map.PredetermineGraphNodes();
-		}
-	}
-
-	private IEnumerator ExecuteFeatureInitialActions() {
-		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
-			HexTile tile = GridMap.Instance.normalHexTiles[i];
-			for (int j = 0; j < tile.featureComponent.features.Count; j++) {
-				TileFeature feature = tile.featureComponent.features[j];
-				feature.GameStartActions(tile);
-			}
+			foreach (var progress in AstarPath.active.ScanAsync(new NavGraph[] {map.pathfindingGraph, map.unwalkableGraph})) ;
+				// PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
+			// PathfindingManager.Instance.RescanGrid(map.unwalkableGraph);
 			yield return null;
 		}
 	}
@@ -315,7 +346,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	#endregion
 
 	#region Artifacts
-	private IEnumerator LoadArtifacts() {
+	private static void GenerateArtifacts() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//if demo build, always spawn necronomicon at ancient ruins
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
@@ -336,7 +367,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			// Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			//always spawn Necronomicon
-			Region randomRegion = GridMap.Instance.allRegions[1];
+			Region randomRegion = GridMap.Instance.allRegions[0];
 			//tutorial should always have 2 ancient graveyards.
 			LocationStructure structure = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
@@ -366,9 +397,11 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			LocationStructure structure = landmarks[0].tileLocation.GetMostImportantStructureOnTile();
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
 			structure.AddPOI(artifact);
-		} else {
-			int artifactCount = GridMap.Instance.allRegions.Length <= 2 ? 1 : 2;
-			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			int artifactCount = 4;
+			List<ARTIFACT_TYPE> artifactChoices = new List<ARTIFACT_TYPE>() {
+				ARTIFACT_TYPE.Necronomicon, ARTIFACT_TYPE.Heart_Of_The_Wind, ARTIFACT_TYPE.Gorgon_Eye, ARTIFACT_TYPE.Berserk_Orb, ARTIFACT_TYPE.Ankh_Of_Anubis
+			};
 			//randomly generate Artifacts
 			for (int i = 0; i < artifactCount; i++) {
 				if (artifactChoices.Count == 0) { break; }
@@ -381,8 +414,34 @@ public class MapGenerationFinalization : MapGenerationComponent {
 					artifactChoices.Remove(randomArtifact);	
 				}
 			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+			List<BaseLandmark> landmarks = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MAGE_TOWER);
+			LocationStructure structure = landmarks[0].tileLocation.GetMostImportantStructureOnTile();
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
+			structure.AddPOI(artifact);
+		} else {
+			int artifactCount = GridMap.Instance.allRegions.Length <= 2 ? 1 : 2;
+			List<TILE_OBJECT_TYPE> artifactChoices = new List<TILE_OBJECT_TYPE>(WorldConfigManager.Instance.initialArtifactChoices);
+			//randomly generate Artifacts
+			for (int i = 0; i < artifactCount; i++) {
+				if (artifactChoices.Count == 0) { break; }
+				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+				LocationStructure specialStructure = randomRegion.GetRandomStructureThatMeetCriteria(currStructure => currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
+				if (specialStructure != null) {
+					TILE_OBJECT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
+					if (randomArtifact.IsArtifact(out ARTIFACT_TYPE artifactType)) {
+						Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(artifactType);
+						specialStructure.AddPOI(artifact);
+						artifactChoices.Remove(randomArtifact);	
+					} else {
+						TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(randomArtifact);
+						specialStructure.AddPOI(tileObject);
+						artifactChoices.Remove(randomArtifact);	
+					}
+					
+				}
+			}
 		}
-		yield return null;
 	}
 	#endregion
 }

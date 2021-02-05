@@ -11,9 +11,9 @@ public class ReportCrime : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public ReportCrime() : base(INTERACTION_TYPE.REPORT_CRIME) {
         actionIconString = GoapActionStateDB.Report_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
-        logTags = new[] {LOG_TAG.Crimes};
+        logTags = new[] {LOG_TAG.Crimes, LOG_TAG.Major};
     }
 
     #region Overrides
@@ -220,11 +220,12 @@ public class ReportCrime : GoapAction {
                 CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, crime as ActualGoapNode);
 
                 //Will only log on not believe because the log for believe report crime is already in the crime system
-                Log believeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, result, providedTags: LOG_TAG.Crimes);
+                Log believeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, result, shareActionItself, LOG_TAG.Crimes, LOG_TAG.Major);
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 believeLog.AddToFillers(null, "crime", LOG_IDENTIFIER.STRING_1);
                 believeLog.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFrom(actor, believeLog);
             }
         }
     }

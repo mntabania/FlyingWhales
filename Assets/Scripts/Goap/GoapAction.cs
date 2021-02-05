@@ -15,7 +15,7 @@ public class GoapAction {
     public INTERACTION_TYPE goapType { get; private set; }
     public virtual ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
     public string goapName { get; protected set; }
-    public List<Precondition> basePreconditions { get; private set; }
+    public Precondition basePrecondition { get; private set; }
     public List<GoapEffect> baseExpectedEffects { get; private set; }
     public List<GoapEffectConditionTypeAndTargetType> possibleExpectedEffectsTypeAndTargetMatching { get; private set; }
     public RACE[] racesThatCanDoAction { get; protected set; }
@@ -31,7 +31,7 @@ public class GoapAction {
     public bool canBeAdvertisedEvenIfTargetIsUnavailable { get; protected set; }
     public bool canBePerformedEvenIfPathImpossible { get; protected set; } //can this action still be advertised even if there is no path towards the target
     protected TIME_IN_WORDS[] validTimeOfDays;
-    public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
+    //public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
     public LOG_TAG[] logTags { get; protected set; }
 
     #region getters
@@ -44,7 +44,7 @@ public class GoapAction {
         this.goapName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
         showNotification = false;
         shouldAddLogs = true;
-        basePreconditions = new List<Precondition>();
+        basePrecondition = null;
         baseExpectedEffects = new List<GoapEffect>();
         possibleExpectedEffectsTypeAndTargetMatching = new List<GoapEffectConditionTypeAndTargetType>();
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -251,10 +251,14 @@ public class GoapAction {
     public virtual bool ShouldActionBeAnIntel(ActualGoapNode node) {
         return false;
     }
+    public virtual bool IsFullnessRecoveryAction() { return false; }
+    public virtual bool IsTirednessRecoveryAction() { return false; }
+    public virtual bool IsHappinessRecoveryAction() { return false; }
     #endregion
 
     #region Utilities
-    public int GetCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+    public int GetCost(Character actor, IPointOfInterest target, GoapPlanJob job) {
+        OtherData[] otherData = job.GetOtherDataFor(goapType);
         int baseCost = GetBaseCost(actor, target, job, otherData);
         //modify costs based on actor's and target's traits
         //for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
@@ -421,31 +425,32 @@ public class GoapAction {
     #endregion
 
     #region Preconditions
-    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, OtherData[], JOB_TYPE, bool> condition) {
-        basePreconditions.Add(new Precondition(effect, condition));
+    protected void SetPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, OtherData[], JOB_TYPE, bool> condition) {
+        basePrecondition = new Precondition(effect, condition);
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         bool isOverridden = false;
         bool canSatisfy = true;
-        List<Precondition> preconditions = GetPreconditions(actor, target, otherData, out isOverridden);
-        if(preconditions != null) {
-            for (int i = 0; i < preconditions.Count; i++) {
-                Precondition precondition = preconditions[i];
-                if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
-                    canSatisfy = false;
-                    break;
-                }
-            }
-        }
-
-        if (isOverridden) {
-            ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
+        Precondition precondition = GetPrecondition(actor, target, otherData, jobType, out isOverridden);
+        if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
+            canSatisfy = false;
         }
         return canSatisfy;
     }
-    public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out Precondition failedPrecondition) {
+        bool isOverridden = false;
+        bool canSatisfy = true;
+        failedPrecondition = null;
+        Precondition precondition = GetPrecondition(actor, target, otherData, jobType, out isOverridden);
+        if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
+            canSatisfy = false;
+            failedPrecondition = precondition;
+        }
+        return canSatisfy;
+    }
+    public virtual Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         isOverridden = false; 
-        return basePreconditions;
+        return basePrecondition;
     }
     #endregion
 
@@ -457,7 +462,8 @@ public class GoapAction {
     protected void AddPossibleExpectedEffectForTypeAndTargetMatching(GoapEffectConditionTypeAndTargetType effect) {
         possibleExpectedEffectsTypeAndTargetMatching.Add(effect);
     }
-    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, Character actor, IPointOfInterest target, OtherData[] otherData) {
+    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, Character actor, IPointOfInterest target, GoapPlanJob job) {
+        OtherData[] otherData = job.GetOtherDataFor(goapType);
         bool isOverridden = false;
         List<GoapEffect> effects = GetExpectedEffects(actor, target, otherData, out isOverridden);
         bool satisfied = false;

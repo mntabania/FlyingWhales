@@ -19,6 +19,7 @@ public class LoadPlayerQuests : MapGenerationComponent {
     #endregion
 
     private IEnumerator LoadReactionQuests(SaveDataCurrentProgress saveData) {
+        saveData.LoadWinConditionTracker();
         saveData.LoadReactionQuests();
         yield return null;
     }

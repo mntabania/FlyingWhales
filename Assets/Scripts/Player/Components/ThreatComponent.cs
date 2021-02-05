@@ -34,14 +34,15 @@ public class ThreatComponent {
     //     AdjustThreat(threatPerHour);
     // }
 
+    public void AdjustThreatAndApplyModification(int amount) {
+        amount = SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
+        AdjustThreat(amount);
+    }
     public void AdjustThreat(int amount) {
         if(!Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials && 
            WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             //Threat does not increase until Tutorial is over, and since the last tutorial is Invade a village, it should be the checker
             //https://trello.com/c/WOZJmvzQ/1238-threat-does-not-increase-until-tutorial-is-over
-            return;
-        }
-        if (WorldSettings.Instance.worldSettingsData.noThreatMode) {
             return;
         }
 
@@ -155,7 +156,7 @@ public class ThreatComponent {
             if (UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
             LocationGridTile spawnTile = spawnHex.GetRandomTile();
             Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
-            CharacterManager.Instance.PlaceSummon(angel, spawnTile);
+            CharacterManager.Instance.PlaceSummonInitially(angel, spawnTile);
             angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
             characters.Add(angel);
         }

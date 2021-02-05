@@ -1,4 +1,5 @@
 ﻿using Traits;
+using UtilityScripts;
 
 public class TrollBehaviour : BaseMonsterBehaviour {
 	public TrollBehaviour() {
@@ -7,7 +8,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
 	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a troll";
-        if (character.isAtHomeStructure || character.IsInHomeSettlement()) {
+        if (character.IsAtHome()) {
             log += $"\n-10% chance to create a cooking cauldron if it does not have one";
             int roll = UnityEngine.Random.Range(0, 100);
             log += $"\n-Roll: " + roll;
@@ -96,19 +97,35 @@ public class TrollBehaviour : BaseMonsterBehaviour {
                 }
             }
         }
-        if (character.isAtHomeStructure || character.IsInHomeSettlement()) {
-            log += $"\n-Already in home, 20% chance to cook a dead character if there is one";
+        if (character.IsAtHome()) {
+            log += $"\n-Already in home, 25% chance to eat a meat pile if there is one";
+            if (GameUtilities.RollChance(25)) {
+                FoodPile meat = null;
+                if (character.homeSettlement != null) {
+                    meat = character.homeSettlement.GetFirstTileObjectOfType<FoodPile>(TILE_OBJECT_TYPE.HUMAN_MEAT, TILE_OBJECT_TYPE.ELF_MEAT, TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.RAT_MEAT);
+                } else if (character.homeStructure != null) {
+                    meat = character.homeStructure.GetFirstTileObjectOfType<FoodPile>(TILE_OBJECT_TYPE.HUMAN_MEAT, TILE_OBJECT_TYPE.ELF_MEAT, TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.RAT_MEAT);
+                }
+                if (meat != null) {
+                    if (character.jobComponent.CreateEatJob(meat, false, out producedJob)) {
+                        return true;
+                    }
+                }
+            }
+
+
+            log += $"\n-Already in home, 35% chance to cook a character if there is one";
             int roll = UnityEngine.Random.Range(0, 100);
             log += $"\n-Roll: {roll}";
-            if (roll < 20) {
+            if (roll < 35) {
                 Character chosenCharacter = null;
                 TrollCauldron cauldron = null;
                 if (character.homeSettlement != null) {
-                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
-                    cauldron = character.homeStructure.GetTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
+                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => character != x && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                    cauldron = character.homeSettlement.GetFirstTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 } else if (character.homeStructure != null) {
-                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
-                    cauldron = character.homeStructure.GetTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
+                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => character != x && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                    cauldron = character.homeStructure.GetFirstTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 }
                 if (chosenCharacter != null && cauldron != null) {
                     log += $"\n-Chosen character: " + chosenCharacter.name;
@@ -120,12 +137,12 @@ public class TrollBehaviour : BaseMonsterBehaviour {
             log += $"\n-Already in home, 10% chance to butcher a character if there is one";
             roll = UnityEngine.Random.Range(0, 100);
             log += $"\n-Roll: {roll}";
-            if (roll < 50) {
+            if (roll < 10) {
                 Character chosenCharacter = null;
                 if (character.homeSettlement != null) {
-                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => character != chosenCharacter && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => character != x && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
                 } else if (character.homeStructure != null) {
-                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => character != chosenCharacter && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => character != x && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
                 }
                 if (chosenCharacter != null) {
                     log += $"\n-Chosen character: " + chosenCharacter.name;
@@ -137,7 +154,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
             return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         } else {
             log += $"\n-Not in home, go to home";
-            return character.jobComponent.PlanIdleReturnHome(out producedJob);
+            return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
         }
         //return true;
 	}

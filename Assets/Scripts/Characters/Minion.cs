@@ -5,6 +5,7 @@ using System;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
+using UnityEngine.Profiling;
 
 public class Minion {
     public const int MAX_INTERVENTION_ABILITY_SLOT = 5;
@@ -188,20 +189,24 @@ public class Minion {
 
     #region Invasion
     private void OnTickEnded() {
+        Profiler.BeginSample($"Minion On Tick Ended");
         if (character.isDead) { return; }
         character.interruptComponent.OnTickEnded();
         character.stateComponent.OnTickEnded();
         character.ProcessTraitsOnTickEnded();
         character.TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
         character.EndTickPerformJobs();
+        Profiler.EndSample();
     }
     private void OnTickStarted() {
+        Profiler.BeginSample($"Minion On Tick Started");
         if (character.isDead) { return; }
         character.ProcessTraitsOnTickStarted();
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }
         // character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true, source: character);
+        Profiler.EndSample();
     }
     #endregion
 
@@ -270,7 +275,7 @@ public class Minion {
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
         
-        SpellData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         
         int missingHealth = character.maxHP - character.currentHP;
         int cooldown = Mathf.CeilToInt((float)missingHealth / 7);
@@ -281,16 +286,18 @@ public class Minion {
         Messenger.Broadcast(SpellSignals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
+        Profiler.BeginSample($"Minion Unsummoned HP Recovery");
         this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
-        SpellData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         spellData.SetCurrentCooldownTick(spellData.currentCooldownTick + 1);
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again
             spellData.SetCooldown(-1);
-            spellData.SetCharges(1);
+            spellData.AdjustCharges(1);
             Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, spellData);
             Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
         }
+        Profiler.EndSample();
     }
     public void OnSeize() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
@@ -309,8 +316,10 @@ public class Minion {
     private void SubscribeListeners() {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+
+        //For explanation why this part is commented out, please see Character.cs SubscribeToSignals
+        //Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        //Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
         character.religionComponent.SubscribeListeners();
@@ -318,20 +327,20 @@ public class Minion {
     private void UnSubscribeListeners() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        //Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        //Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
         character.religionComponent.UnsubscribeListeners();
     }
-    private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
-        if (characterThatStartedState == character) {
-            character.marker.UpdateActionIcon();
-            if (state.characterState.IsCombatState()) {
-                character.marker.visionCollider.TransferAllDifferentStructureCharacters();
-            }
-        }
-    }
+    //private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
+    //    if (characterThatStartedState == character) {
+    //        //character.marker.UpdateActionIcon();
+    //        if (state.characterState.IsCombatState()) {
+    //            character.marker.visionCollider.TransferAllDifferentStructureCharacters();
+    //        }
+    //    }
+    //}
     private void OnCharacterCanPerformAgain(Character character) {
         if (character == this.character) {
             
@@ -342,13 +351,13 @@ public class Minion {
             }
         }
     }
-    private void OnCharacterEndedState(Character character, CharacterState state) {
-        if (character == this.character) {
-            if (state is CombatState && character.marker) {
-                character.marker.visionCollider.ReCategorizeVision();
-            }
-        }
-    }
+    //private void OnCharacterEndedState(Character character, CharacterState state) {
+    //    if (character == this.character) {
+    //        if (state is CombatState && character.marker) {
+    //            character.marker.visionCollider.ReCategorizeVision();
+    //        }
+    //    }
+    //}
     #endregion
 }
 

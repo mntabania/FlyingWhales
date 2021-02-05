@@ -150,4 +150,8 @@
     /// Parameters (Character, DemonicStructure)
     /// </summary>
     public static string CHARACTER_HIT_DEMONIC_STRUCTURE = "OnCharacterHitDemonicStructure";
+    public static string HEALTH_CRITICALLY_LOW = "OnHealthCriticallyLow";
+    public static string CHARACTER_TICK_ENDED_MOVEMENT = "OnTickEndedCharacterMovement";
+    public static string PROCESS_ALL_UNPOROCESSED_POIS = "ProcessAllUnprocessedPOIS";
+    public static string CHARACTER_TICK_ENDED = "OnCharacterTickEnded";
 }

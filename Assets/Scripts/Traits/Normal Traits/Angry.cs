@@ -166,10 +166,10 @@ namespace Traits {
 
         private void PerHourEffect() {
             if (owner.limiterComponent.canPerform && owner.limiterComponent.canMove && !owner.isDead && owner != null 
-                && owner.marker != null && owner.marker.inVisionTileObjects.Count > 0
+                && owner.hasMarker && owner.marker.inVisionTileObjects.Count > 0
                 && !owner.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.DESTROY) && Random.Range(0, 100) < 8) {
                 List<TileObject> choices = owner.marker.inVisionTileObjects
-                    .Where(x => x.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT).ToList();
+                    .Where(x => x.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && x.tileObjectType != TILE_OBJECT_TYPE.STRUCTURE_TILE_OBJECT).ToList();
                 if (choices.Count > 0 && owner.jobQueue.HasJob(JOB_TYPE.DESTROY) == false) {
                     TileObject tileObject = CollectionUtilities.GetRandomElement(choices);
                     owner.jobComponent.TriggerDestroy(tileObject);

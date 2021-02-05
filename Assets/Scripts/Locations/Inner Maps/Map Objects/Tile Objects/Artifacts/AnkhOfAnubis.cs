@@ -51,10 +51,10 @@ public class AnkhOfAnubis : Artifact {
 
     private void OnCharacterDeath(Character characterThatDied) {
         if (isActivated && gridTileLocation != null) {
-            if(characterThatDied.isNormalCharacter && currentRegion == characterThatDied.currentRegion && characterThatDied.marker != null && characterThatDied.visuals.HasBlood()) {
+            if(characterThatDied.isNormalCharacter && currentRegion == characterThatDied.currentRegion && characterThatDied.hasMarker && characterThatDied.visuals.HasBlood()) {
                 Summon vengefulGhost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Vengeful_Ghost, FactionManager.Instance.undeadFaction, null, currentRegion);
                 vengefulGhost.SetFirstAndLastName(characterThatDied.firstName, characterThatDied.surName);
-                CharacterManager.Instance.PlaceSummon(vengefulGhost, gridTileLocation); //characterThatDied.gridTileLocation
+                CharacterManager.Instance.PlaceSummonInitially(vengefulGhost, gridTileLocation); //characterThatDied.gridTileLocation
 
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Artifact", "Ankh Of Anubis", "spawn_vengeful_ghost", providedTags: LOG_TAG.Life_Changes);
                 log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

@@ -30,6 +30,7 @@ public class DoorTileObject : TileObject {
     }
     #endregion
 
+    #region Overrides
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _doorGameObject = mapVisual as DoorGameObject;
@@ -42,6 +43,19 @@ public class DoorTileObject : TileObject {
         base.OnPlaceTileObjectAtTile(tile);
         mapVisual.InitializeGUS(Vector2.zero, Vector2.one, tile);
     }
+    public override bool IsUnpassable() {
+        return !isOpen;
+    }
+    public override bool IsValidCombatTargetFor(IPointOfInterest source) {
+        if (gridTileLocation == null) {
+            return false;
+        }
+        if (source.gridTileLocation == null) {
+            return false;
+        }
+        return true;
+    }
+    #endregion
     
 
     public void Open() {

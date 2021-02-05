@@ -7,7 +7,7 @@ public class StudyMonster : GoapAction {
 
     public StudyMonster() : base(INTERACTION_TYPE.STUDY_MONSTER) {
         actionIconString = GoapActionStateDB.Inspect_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.DEMON };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -17,7 +17,7 @@ public class StudyMonster : GoapAction {
         return true;
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET }, HasUnconscious);
+        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET }, HasUnconscious);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

@@ -23,7 +23,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public VideoPlayer tooltipVideoPlayer;
     public RenderTexture tooltipVideoRenderTexture;
 
-    public void ShowPlayerSkillDetails(SpellData spellData, UIHoverPosition position = null) {
+    public void ShowPlayerSkillDetails(SkillData spellData, UIHoverPosition position = null) {
         UpdateData(spellData);
         UpdatePositionAndVideo(position, spellData.type);
     }
@@ -84,33 +84,34 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
     }
     private void UpdateData(PlayerSkillData skillData) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
+        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
         titleText.SetText(spellData.name);
         descriptionText.SetTextAndReplaceWithIcons(spellData.description);
-        int charges = skillData.charges;
-        int manaCost = skillData.manaCost;
-        int cooldown = skillData.cooldown;
+        int charges =  SpellUtilities.GetModifiedSpellCost(skillData.charges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+        int manaCost = SpellUtilities.GetModifiedSpellCost(skillData.manaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+        int cooldown = SpellUtilities.GetModifiedSpellCost(skillData.cooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
+        int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
 
         string currencyStr = string.Empty; 
         
-        if (manaCost != -1) {
+        if (manaCost > 0) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-        if (charges != -1) {
+        if (charges > 0) {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
             currencyStr += $"{charges.ToString()}/{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
-        if (cooldown != -1) {
+        if (cooldown > 0) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
-        if (skillData.threat > 0) {
-            currencyStr += $"{skillData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
+        if (threat > 0) {
+            currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
         }
         
         currenciesText.text = currencyStr;
         additionalText.text = string.Empty;
     }
-    private void UpdateData(SpellData spellData) {
+    private void UpdateData(SkillData spellData) {
         titleText.text = spellData.name;
         string fullDescription = spellData.description;
         int charges = spellData.charges;
@@ -119,13 +120,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         string currencyStr = string.Empty; 
         
-        if (manaCost != -1) {
+        if (manaCost > 0) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-        if (charges != -1) {
+        if (spellData.maxCharges > 0) {
             currencyStr += $"{charges.ToString()}/{spellData.maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
-        if (cooldown != -1) {
+        if (cooldown > 0) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
         if (spellData.threat > 0) {
@@ -192,13 +193,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         descriptionText.SetTextAndReplaceWithIcons(description);
         string currencyStr = string.Empty; 
         
-        if (manaCost != -1) {
+        if (manaCost > 0) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-        if (charges != -1) {
+        if (charges > 0) {
             currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
-        if (cooldown != -1) {
+        if (cooldown > 0) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
         if (threat > 0) {
@@ -207,7 +208,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
         additionalText.text = additionalTextStr;
 
-        if (manaCost != -1) {
+        if (manaCost > 0) {
             if(HasEnoughMana(manaCost) == false) {
                 additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
             }    
@@ -224,7 +225,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
     }
 
-    private bool HasEnoughMana(SpellData spellData) {
+    private bool HasEnoughMana(SkillData spellData) {
         if (spellData.hasManaCost) {
             if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
                 return true;
@@ -234,7 +235,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //if skill has no mana cost then always has enough mana
         return true;
     }
-    private bool HasEnoughCharges(SpellData spellData) {
+    private bool HasEnoughCharges(SkillData spellData) {
         if (spellData.hasCharges) {
             if (spellData.charges > 0) {
                 return true;

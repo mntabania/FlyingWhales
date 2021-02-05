@@ -8,7 +8,6 @@ public enum BIOMES{
     SNOW,
 	TUNDRA,
 	DESERT,
-	//WOODLAND,
 	FOREST,
 	BARE,
 	NONE,
@@ -64,6 +63,9 @@ public enum RACE{
     REVENANT = 34,
     RAT = 35,
     RATMAN = 36,
+    SCORPION = 37, 
+    HARPY = 38,
+    TRITON = 39,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -262,15 +264,7 @@ public enum ACTION_CATEGORY {
     CONSUME,
     VERBAL,
 }
-public enum ACTION_RESULT {
-    SUCCESS,
-    FAIL,
-}
-public enum BASE_AREA_TYPE {
-    SETTLEMENT,
-    DUNGEON,
-    PLAYER,
-}
+
 public enum LOCATION_TYPE {
     VILLAGE,
     DEMONIC_INTRUSION,
@@ -301,11 +295,7 @@ public enum TRAIT_REQUIREMENT {
     ONLY_DEMON,
     ROLE,
 }
-public enum MORALITY {
-    GOOD,
-    EVIL,
-    NEUTRAL,
-}
+
 public enum FACTION_TYPE {
     Elven_Kingdom,
     Human_Empire,
@@ -518,6 +508,9 @@ public enum INTERACTION_TYPE {
     GO_TO_SPECIFIC_TILE = 218,
     LONG_STAND_STILL = 219,
     BURROW = 220,
+    PLAGUE_FATALITY = 221,
+    PICKPOCKET = 222,
+    DISPOSE_FOOD
 }
 public enum INTERRUPT {
     None,
@@ -601,6 +594,7 @@ public enum INTERRUPT {
     Leave_Home,
     Leave_Village,
     Declare_War,
+    Pulled_Down,
 }
 
 public enum TRAIT_TYPE {
@@ -694,6 +688,11 @@ public enum STRUCTURE_TYPE {
     VAMPIRE_CASTLE = 45,
     CULT_TEMPLE = 46,
     BIOLAB = 47,
+    QUARRY = 48,
+    CRAFTING = 49,
+    TAILORING = 50,
+    TANNERY = 51,
+    FISHING_SHACK = 52,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -876,6 +875,10 @@ public enum TILE_OBJECT_TYPE {
     CULT_ALTAR = 161,
     CULT_CROSS = 162,
     PROFESSION_PEDESTAL = 163,
+    ORE_VEIN = 164,
+    FISHING_SPOT = 165,
+    HARPY_EGG = 166,
+    RAT_MEAT = 167,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -885,8 +888,6 @@ public enum POI_STATE {
 public enum TARGET_POI { ACTOR, TARGET, }
 public enum GridNeighbourDirection { North, South, West, East, North_West, North_East, South_West, South_East }
 public enum TIME_IN_WORDS { AFTER_MIDNIGHT, MORNING, AFTERNOON, EARLY_NIGHT, LATE_NIGHT, LUNCH_TIME, NONE }
-//public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
-public enum Food { BERRY, MUSHROOM, RABBIT, RAT }
 public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, STAMINA_RECOVERY, CANNOT_MOVE, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN
         , TARGET_REMOVE_RELATIONSHIP, TARGET_STOP_ACTION_AND_JOB, RESTRAIN_CARRY, REMOVE_FROM_PARTY_NO_CONSENT, IN_VISION, REDUCE_HP, INVITED, MAKE_NOISE, STARTS_COMBAT, CHANGE_CLASS
         , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION, FACTION_QUEST_DURATION_INCREASE
@@ -910,8 +911,9 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
         , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_GATHERING, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
         , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE, REPORT_CRIME
-        , EVANGELIZE, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY, GO_TO_WAITING, PRODUCE_FOOD_FOR_CAMP, KIDNAP_RAID, STEAL_RAID, BUILD_CAMP, CAPTURE_CHARACTER, BURY_IN_ACTIVE_PARTY, VAMPIRIC_EMBRACE, BUILD_VAMPIRE_CASTLE, FIND_NEW_VILLAGE
-        , IMPRISON_BLOOD_SOURCE, OFFER_BLOOD, CURE_MAGICAL_AFFLICTION, LYCAN_HUNT_PREY, STEAL_CORPSE, SUMMON_BONE_GOLEM, CHANGE_CLASS, QUARANTINE, PLAGUE_CARE, TORTURE, MONSTER_EAT_CORPSE,
+        , PREACH, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY, GO_TO_WAITING, PRODUCE_FOOD_FOR_CAMP, KIDNAP_RAID, STEAL_RAID, BUILD_CAMP, CAPTURE_CHARACTER, BURY_IN_ACTIVE_PARTY, VAMPIRIC_EMBRACE, BUILD_VAMPIRE_CASTLE, FIND_NEW_VILLAGE
+        , IMPRISON_BLOOD_SOURCE, OFFER_BLOOD, CURE_MAGICAL_AFFLICTION, LYCAN_HUNT_PREY, STEAL_CORPSE, SUMMON_BONE_GOLEM, CHANGE_CLASS, QUARANTINE, PLAGUE_CARE, TORTURE, MONSTER_EAT_CORPSE, TRITON_KIDNAP, RETURN_STOLEN_THING
+        , DISPOSE_FOOD_PILE
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, PARTY }
@@ -988,7 +990,9 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     SACRIFICE = 149, REPAIR = 150, EVANGELIZE = 151, SPREAD_RUMOR = 152,
     FOUND_CULT = 153, BONE_GOLEM = 154, BIOLAB = 155, PLAGUED_RAT = 156, UPGRADE = 157,
     SCHEME = 158, INSTIGATE_WAR = 159, RESIGN = 160, LEAVE_FACTION = 161, LEAVE_HOME = 162, LEAVE_VILLAGE = 163,
-    BREAK_UP = 164, JOIN_FACTION = 165, REBELLION = 166, OVERTHROW_LEADER = 167, INDUCE_MIGRATION = 168, STIFLE_MIGRATION = 169
+    BREAK_UP = 164, JOIN_FACTION = 165, REBELLION = 166, OVERTHROW_LEADER = 167, INDUCE_MIGRATION = 168, STIFLE_MIGRATION = 169,
+    RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
+    CULTIST_JOIN_FACTION = 179,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1045,17 +1049,15 @@ public enum SUMMON_TYPE {
     Troll,
     Bone_Golem,
     Rat,
+    Scorpion,
+    Harpy,
+    Triton,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { None, Gender, Race, Class, Trait }
-// public enum SPECIAL_OBJECT_TYPE { DEMON_STONE, SPELL_SCROLL, SKILL_SCROLL }
-public enum WORLD_EVENT { NONE, HARVEST, SLAY_MINION, MINE_SUPPLY, STUDY, PRAY_AT_TEMPLE, DESTROY_DEMONIC_LANDMARK, HOLY_INCANTATION, CORRUPT_CULTIST, DEMONIC_INCANTATION, SEARCHING, CLAIM_REGION, CLEANSE_REGION, INVADE_REGION, ATTACK_DEMONIC_REGION, ATTACK_NON_DEMONIC_REGION }
 public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INVADER, FIGHTER, RESEARCHER, }
-public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT, DESTROY_LANDMARK, DIVINE_INTERVENTION_SPEED_UP, CORRUPT_CHARACTER, DIVINE_INTERVENTION_SLOW_DOWN, SEARCHING, CONQUER_REGION, REMOVE_CORRUPTION, INVADE_REGION, ATTACK_DEMONIC_REGION, ATTACK_NON_DEMONIC_REGION }
-public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
-public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 public enum RESOURCE { FOOD, WOOD, STONE, METAL, NONE }
 public enum MAP_OBJECT_STATE { BUILT, UNBUILT, BUILDING }
 public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peaceful = 3, Divine_Worship = 4, Nature_Worship = 5, Demon_Worship = 6,
@@ -1066,7 +1068,7 @@ public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, RELIGION }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage, Plague_Hysteria, Distraught,
 }
-public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Second_World}
+public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Icalawa, Affatt }
 public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action
@@ -1083,7 +1085,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating, Transform_Revert, Teleport,
+    Disabler, Overheating, Transform_Revert, Teleport, Protection,
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
@@ -1100,7 +1102,7 @@ public enum CRIMABLE_TYPE { Action, Interrupt }
 public enum OBJECT_TYPE { 
     Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Hextile = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
     Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21, Party_Quest = 22, Gathering = 23,
-    Reaction_Quest = 24, Plague_Disease = 25,
+    Reaction_Quest = 24, Plague_Disease = 25
 }
 public enum PASSIVE_SKILL {
     Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
@@ -1148,4 +1150,33 @@ public enum BLACKMAIL_TYPE {
 }
 public enum FACTION_SUCCESSION_TYPE {
     None, Lineage, Popularity, Power
+}
+
+public enum MAP_SIZE {
+    Small, Medium, Large, Extra_Large
+}
+public enum VILLAGE_SIZE {
+    Small, Medium, Large
+}
+public enum MIGRATION_SPEED {
+    None, Slow, Normal 
+}
+public enum SKILL_COOLDOWN_SPEED {
+    None, Half, Normal, Double 
+}
+public enum SKILL_COST_AMOUNT {
+    None, Half, Normal, Double 
+}
+public enum SKILL_CHARGE_AMOUNT {
+    Unlimited, Half, Normal, Double 
+}
+public enum THREAT_AMOUNT {
+    None, Half, Normal 
+}
+public enum OMNIPOTENT_MODE {
+    Disabled, Enabled 
+}
+
+public enum VICTORY_CONDITION {
+    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Sandbox
 }

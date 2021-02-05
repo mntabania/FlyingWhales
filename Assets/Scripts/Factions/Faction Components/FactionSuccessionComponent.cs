@@ -92,6 +92,7 @@ public class FactionSuccessionComponent : FactionComponent {
             }
         }
         Messenger.Broadcast(FactionSignals.UPDATED_SUCCESSORS, owner);
+        ObjectPoolManager.Instance.ReturnCharactersListToPool(successorList);
     }
     private void ResetSuccessors() {
         for (int i = 0; i < successors.Length; i++) {

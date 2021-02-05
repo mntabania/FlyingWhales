@@ -10,14 +10,14 @@ public class HealSelf : GoapAction {
     public HealSelf() : base(INTERACTION_TYPE.HEAL_SELF) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Cure_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Healing Potion", false, GOAP_EFFECT_TARGET.ACTOR), HasItemInInventory);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Healing Potion", false, GOAP_EFFECT_TARGET.ACTOR), HasItemInInventory);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

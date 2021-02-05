@@ -82,41 +82,26 @@ public class GoapPlan {
         if (currentNode == null) {
             return;
         }
-        if(currentNode.singleNode != null || currentNode.currentNodeIndex >= (currentNode.multiNode.Length - 1)) {
-            previousNode = currentNode;
-            int nextNodeIndex = currentNodeIndex + 1;
-            if(nextNodeIndex < allNodes.Count) {
-                currentNode = allNodes[nextNodeIndex];
-                currentNodeIndex = nextNodeIndex;
-            } else {
-                Debug.Log($"{GameManager.Instance.TodayLogString()} current node of Plan was set to null {GetPlanSummary()}");
-                currentNode = null;
-            }
+        previousNode = currentNode;
+        int nextNodeIndex = currentNodeIndex + 1;
+        if (nextNodeIndex < allNodes.Count) {
+            currentNode = allNodes[nextNodeIndex];
+            currentNodeIndex = nextNodeIndex;
         } else {
-            currentNode.SetNextActualNode();
+            Debug.Log($"{GameManager.Instance.TodayLogString()} current node of Plan was set to null {GetPlanSummary()}");
+            currentNode = null;
         }
     }
     private ActualGoapNode GetCurrentActualNode() {
-        if(currentNode.singleNode != null) {
-            return currentNode.singleNode;
-        } else {
-            return currentNode.multiNode[currentNode.currentNodeIndex];
-        }
+        return currentNode.singleNode;
     }
     public bool HasNodeWithAction(INTERACTION_TYPE actionType) {
         if (allNodes != null) {
             for (int i = 0; i < allNodes.Count; i++) {
                 JobNode jobNode = allNodes[i];
-                if (jobNode.singleNode != null && jobNode.singleNode.goapType == actionType) {
+                if (jobNode.singleNode.goapType == actionType) {
                     return true;
-                } else if (jobNode.multiNode != null) {
-                    for (int j = 0; j < jobNode.multiNode.Length; j++) {
-                        ActualGoapNode currNode = jobNode.multiNode[i];
-                        if (currNode != null && currNode.goapType == actionType) {
-                            return true;
-                        }
-                    }
-                }
+                } 
             }    
         }
         return false;
@@ -206,18 +191,8 @@ public class GoapPlan {
                 log += "\n";
             }
             log += $"{(i + 1)}.";
-            if (jobNode.singleNode != null) {
-                ActualGoapNode node = jobNode.singleNode;
-                log += $" ({node.cost}) {node.action.goapName} - {node.poiTarget.name}";
-            } else {
-                for (int j = 0; j < jobNode.multiNode.Length; j++) {
-                    ActualGoapNode node = jobNode.multiNode[j];
-                    if (j > 0) {
-                        log += ",";
-                    }
-                    log += $" ({node.cost}) {node.action.goapName} - {node.poiTarget.name}";
-                }
-            }
+            ActualGoapNode node = jobNode.singleNode;
+            log += $" ({node.cost}) {node.action.goapName} - {node.poiTarget.name}";
         }
         return log;
     }

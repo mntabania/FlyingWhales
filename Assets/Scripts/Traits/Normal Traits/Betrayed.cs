@@ -31,7 +31,7 @@ namespace Traits {
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.neutralFaction, null, character.homeRegion);
             ghost.SetFirstAndLastName(character.firstName, character.surName);
             (ghost as Ghost).SetBetrayedBy(responsibleCharacter);
-            CharacterManager.Instance.PlaceSummon(ghost, character.gridTileLocation);
+            CharacterManager.Instance.PlaceSummonInitially(ghost, character.gridTileLocation);
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", this.name, "spawn_ghost", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
             log.AddToFillers(ghost, ghost.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -4626,6 +4626,7 @@ Transform:
   - {fileID: 1668552796237118105}
   - {fileID: 9187434493363385903}
   - {fileID: 3570920928036230070}
+  - {fileID: 3178224149124369574}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4735,6 +4736,7 @@ MonoBehaviour:
   hpBarGO: {fileID: 0}
   hpFill: {fileID: 0}
   aspeedFill: {fileID: 0}
+  particleEffectParent: {fileID: 3178224149124369574}
   statusIconsParent: {fileID: 0}
   _cloudEffect: {fileID: 8283122582522702008}
   _explosionEffect: {fileID: 201109846814245020}
@@ -9706,7 +9708,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 429179743822410361}
-  mainCollider: {fileID: 9212712127708879087}
+  _mainCollider: {fileID: 9212712127708879087}
+--- !u!1 &5844709398693819499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3178224149124369574}
+  m_Layer: 22
+  m_Name: ParticleEffectParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3178224149124369574
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5844709398693819499}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1668465503027918939}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5951456350570409433
 GameObject:
   m_ObjectHideFlags: 0

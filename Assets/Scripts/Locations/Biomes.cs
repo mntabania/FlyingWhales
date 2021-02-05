@@ -414,12 +414,11 @@ public class Biomes : MonoBehaviour {
         }
     }
     private ELEVATION GetElevationType(float elevationNoise){
-        //return ELEVATION.PLAIN;
         if (elevationNoise <= 0.20f) {
 			return ELEVATION.WATER;
 		} else if (elevationNoise > 0.20f && elevationNoise <= 0.39f) {
 			return ELEVATION.TREES;
-        } else if (elevationNoise > 0.39f && elevationNoise <= 0.6f) {
+        } else if (elevationNoise > 0.39f && elevationNoise <= 0.7f) {
             return ELEVATION.PLAIN;
         } else { 
             return ELEVATION.MOUNTAIN;
