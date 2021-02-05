@@ -54,11 +54,11 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         }
     }
     public void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
         if (currentHP <= 0 && amount < 0) {
             return; //ignore
         }
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         if (amount < 0 && Mathf.Abs(amount) > currentHP) {
             //if the damage amount is greater than this object's hp, set the damage to this object's
             //hp instead, this is so that if this object contributes to a structure's hp, it will not deal the excess damage

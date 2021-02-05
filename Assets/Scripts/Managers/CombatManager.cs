@@ -128,8 +128,12 @@ public class CombatManager : BaseMonoBehaviour {
             Profiler.EndSample();
         }
     }
-    public void DamageModifierByElementsAndTraits(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
+    public void ModifyDamage(ref int damage, ELEMENTAL_TYPE elementalType, float piercingPower, ITraitable target) {
         if(damage < 0) {
+            if(target is Character targetCharacter) {
+                //Piercing and Resistances
+                targetCharacter.piercingAndResistancesComponent.ModifyValueByResistance(ref damage, elementalType, piercingPower);
+            }
             if (target.traitContainer.HasTrait("Immune")) {
                 damage = 0;
             } else {

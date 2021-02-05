@@ -116,6 +116,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CrimeComponent crimeComponent { get; private set; }
     public ReligionComponent religionComponent { get; private set; }
     public LimiterComponent limiterComponent { get; private set; }
+    public PiercingAndResistancesComponent piercingAndResistancesComponent { get; private set; }
     public CharacterEventDispatcher eventDispatcher { get; }
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
 
@@ -315,6 +316,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
         religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
         limiterComponent = new LimiterComponent(); limiterComponent.SetOwner(this);
+        piercingAndResistancesComponent = new PiercingAndResistancesComponent(); piercingAndResistancesComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         previousCharacterDataComponent = new PreviousCharacterDataComponent(); previousCharacterDataComponent.SetOwner(this);
 
@@ -391,6 +393,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent = data.crimeComponent.Load(); crimeComponent.SetOwner(this);
         religionComponent = data.religionComponent.Load(); religionComponent.SetOwner(this);
         limiterComponent = data.limiterComponent.Load(); limiterComponent.SetOwner(this);
+        piercingAndResistancesComponent = data.piercingAndResistancesComponent.Load(); piercingAndResistancesComponent.SetOwner(this);
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
 
@@ -2542,7 +2545,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
-        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
+        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower);
         attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
 
         //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
@@ -2625,9 +2628,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     //Adjust current HP based on specified parameter, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
         
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         
         if ((amount < 0 && CanBeDamaged()) || amount > 0) {
             //only added checking here because even if objects cannot be damaged,
