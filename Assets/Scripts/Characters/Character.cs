@@ -5355,12 +5355,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ReturnToLife(Faction faction, RACE race, string className) {
         if (_isDead) {
             //SetRaisedFromDeadAsSkeleton(true);
-            ChangeFactionTo(faction);
             AssignRace(race);
             AssignClass(className);
 
             ReturnToLife();
 
+            //Change faction should be called last so that the character's nameplate in the Faction UI is updated when he transfers faction
+            ChangeFactionTo(faction);
         }
     }
     public bool ReturnToLife() {
@@ -5392,6 +5393,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.SetHappinessForcedTick();
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
+            visuals.UpdateAllVisuals(this);
             ConstructDefaultActions();
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
