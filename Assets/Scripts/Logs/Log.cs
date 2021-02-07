@@ -250,11 +250,7 @@ public class Log {
     #region Addition
     public void AddLogToDatabase(bool releaseLogAfter = false) {
         Profiler.BeginSample("Add Log To Database");
-        DatabaseManager.Instance.mainSQLDatabase.InsertLog(this);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample("Log Added Signal");
-        Messenger.Broadcast(UISignals.LOG_ADDED, this);
+        DatabaseManager.Instance.mainSQLDatabase.InsertLogUsingMultiThread(this);
         Profiler.EndSample();
 
         if (releaseLogAfter) {

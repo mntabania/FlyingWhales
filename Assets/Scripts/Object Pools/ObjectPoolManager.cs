@@ -9,6 +9,7 @@ using Inner_Maps.Location_Structures;
 using Inner_Maps;
 using Locations.Settlements;
 using Locations;
+using Threads;
 
 public class ObjectPoolManager : MonoBehaviour {
 
@@ -27,7 +28,8 @@ public class ObjectPoolManager : MonoBehaviour {
     public List<InterruptHolder> _interruptPool { get; private set; }
     public List<Party> _partyPool { get; private set; }
     public List<GoapThread> _goapThreadPool { get; private set; }
-    private List<LogDatabaseThread> _logDatabaseThreadPool;
+    private List<UpdateCharacterNameThread> _updateCharacterNameThreadPool;
+    private List<SQLLogInsertThread> _sqlInsertThreadPool;
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
@@ -85,6 +87,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructPartyPool();
         ConstructGoapThreadPool();
         ConstructLogDatabaseThreadPool();
+        ConstructSQLInsertThreadPool();
         ConstructExpectedEffectsListPool();
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
@@ -316,19 +319,34 @@ public class ObjectPoolManager : MonoBehaviour {
     
     #region Database Thread
     private void ConstructLogDatabaseThreadPool() {
-        _logDatabaseThreadPool = new List<LogDatabaseThread>();
+        _updateCharacterNameThreadPool = new List<UpdateCharacterNameThread>();
     }
-    public LogDatabaseThread CreateNewLogDatabaseThread() {
-        if (_logDatabaseThreadPool.Count > 0) {
-            LogDatabaseThread data = _logDatabaseThreadPool[0];
-            _logDatabaseThreadPool.RemoveAt(0);
+    public UpdateCharacterNameThread CreateNewLogDatabaseThread() {
+        if (_updateCharacterNameThreadPool.Count > 0) {
+            UpdateCharacterNameThread data = _updateCharacterNameThreadPool[0];
+            _updateCharacterNameThreadPool.RemoveAt(0);
             return data;
         }
-        return new LogDatabaseThread();
+        return new UpdateCharacterNameThread();
     }
-    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
+    public void ReturnLogDatabaseThreadToPool(SQLWorkerItem data) {
         data.Reset();
-        _logDatabaseThreadPool.Add(data);
+        if (data is UpdateCharacterNameThread characterNameThread) {
+            _updateCharacterNameThreadPool.Add(characterNameThread);    
+        } else if (data is SQLLogInsertThread sqlLogInsertThread) {
+           _sqlInsertThreadPool.Add(sqlLogInsertThread); 
+        }
+    }
+    private void ConstructSQLInsertThreadPool() {
+        _sqlInsertThreadPool = new List<SQLLogInsertThread>();
+    }
+    public SQLLogInsertThread CreateNewSQLInsertThread() {
+        if (_sqlInsertThreadPool.Count > 0) {
+            SQLLogInsertThread data = _sqlInsertThreadPool[0];
+            _sqlInsertThreadPool.RemoveAt(0);
+            return data;
+        }
+        return new SQLLogInsertThread();
     }
     #endregion
 

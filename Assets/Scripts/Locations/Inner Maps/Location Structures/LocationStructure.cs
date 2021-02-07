@@ -373,6 +373,17 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
+        public TileObject GetUnoccupiedTileObject(TILE_OBJECT_TYPE type) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi.IsAvailable() && poi is TileObject tileObj) {
+                    if (type == tileObj.tileObjectType && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                        return tileObj;
+                    }
+                }
+            }
+            return null;
+        }
         public IDamageable GetNearestDamageableThatContributeToHP(LocationGridTile fromTile) {
             IDamageable nearest = null;
             float nearestDist = 9999f;

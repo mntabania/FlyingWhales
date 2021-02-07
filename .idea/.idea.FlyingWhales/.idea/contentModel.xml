@@ -2951,11 +2951,13 @@
             <e p="DatabaseThreadPool.cs" t="Include" />
             <e p="GoapThread.cs" t="Include" />
             <e p="InnerPathfindingThread.cs" t="Include" />
-            <e p="LogDatabaseThread.cs" t="Include" />
             <e p="Multithread.cs" t="Include" />
             <e p="MultiThreadPool.cs" t="Include" />
             <e p="PathFindingThread.cs" t="Include" />
             <e p="PathfindingThreadPool.cs" t="Include" />
+            <e p="SQLLogInsertThread.cs" t="Include" />
+            <e p="SQLWorkerItem.cs" t="Include" />
+            <e p="UpdateCharacterNameThread.cs" t="Include" />
           </e>
           <e p="Tile Maps" t="Include">
             <e p="StructureFloorTile.cs" t="Include" />
