@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
 using BayatGames.SaveGameFree;
+using Object_Pools;
 using Settings;
 using TMPro;
 
@@ -47,6 +48,7 @@ public class MainMenuManager : MonoBehaviour {
 
     private void Initialize() {
         SaveManager.Instance.LoadSaveDataPlayer();
+        LogPool.WarmUp(10000);
     }
 
     public void LoadMainGameScene() {

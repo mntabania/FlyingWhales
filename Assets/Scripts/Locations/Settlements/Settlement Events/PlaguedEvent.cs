@@ -88,7 +88,7 @@ namespace Locations.Settlements.Settlement_Events {
             log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
             if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
         #endregion
         
@@ -134,7 +134,7 @@ namespace Locations.Settlements.Settlement_Events {
                 if (p_leader != null) { log.AddToFillers(p_leader, p_leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER); }
                 if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             }
         }
         private void SetLeaderResponse(PLAGUE_EVENT_RESPONSE p_response) {

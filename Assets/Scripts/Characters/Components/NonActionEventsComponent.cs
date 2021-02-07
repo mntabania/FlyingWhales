@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Object_Pools;
 using Plague.Transmission;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class NonActionEventsComponent : CharacterComponent {
 
@@ -70,7 +72,7 @@ public class NonActionEventsComponent : CharacterComponent {
     //    }
     //    return false;
     //}
-    public bool ForceChatCharacter(Character target, ref Log overrideLog) {
+    public bool ForceChatCharacter(Character target, Log overrideLog) {
         //if (!CanInteract(target)) {
         //    return false;
         //}
@@ -83,12 +85,12 @@ public class NonActionEventsComponent : CharacterComponent {
             disguisedTarget = target.reactionComponent.disguisedCharacter;
         }
         if (!disguisedActor.IsHostileWith(disguisedTarget)) {
-            TriggerChatCharacter(target, ref overrideLog);
+            TriggerChatCharacter(target, overrideLog);
             return true;
         }
         return false;
     }
-    private void TriggerChatCharacter(Character target, ref Log overrideLog) {
+    private void TriggerChatCharacter(Character target, Log overrideLog) {
         string strLog = $"{owner.name} chat with {target.name}";
 
         Character disguisedActor = owner;
@@ -359,10 +361,10 @@ public class NonActionEventsComponent : CharacterComponent {
             }
             
             GameDate dueDate = GameManager.Instance.Today();
+            if (overrideLog != null) { LogPool.Release(overrideLog); }
             overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Chat", result, providedTags: LOG_TAG.Social);
             overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             owner.SetIsConversing(true);
             target.SetIsConversing(true);
             
@@ -394,14 +396,14 @@ public class NonActionEventsComponent : CharacterComponent {
 
         Log log;
         if (!string.IsNullOrEmpty(reason)) {
-            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up_reason", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
+            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up_reason", null, LogUtilities.Break_Up_Tags);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         } else {
-            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
+            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up", null, LogUtilities.Break_Up_Tags);
         }
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+        owner.logComponent.RegisterLog(log, true);
 
         if (relationship == RELATIONSHIP_TYPE.LOVER) {
             //**Effect 1**: Actor - Remove Lover relationship with Character 2
@@ -414,10 +416,7 @@ public class NonActionEventsComponent : CharacterComponent {
     #endregion
 
     #region Flirt
-    public bool NormalFlirtCharacter(Character target, ref Log overrideLog) {
-        //if (!CanInteract(target)) {
-        //    return false;
-        //}
+    public bool NormalFlirtCharacter(Character target, Log overrideLog) {
         Character disguisedActor = owner;
         Character disguisedTarget = target;
         if (owner.reactionComponent.disguisedCharacter != null) {
@@ -437,10 +436,10 @@ public class NonActionEventsComponent : CharacterComponent {
             }
             
             GameDate dueDate = GameManager.Instance.Today();
+            if (overrideLog != null) { LogPool.Release(overrideLog); }
             overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Flirt", result, providedTags: LOG_TAG.Social);
             overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             owner.SetIsConversing(true);
             target.SetIsConversing(true);
 

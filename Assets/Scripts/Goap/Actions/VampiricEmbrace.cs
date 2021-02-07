@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Object_Pools;
 using UnityEngine;  
 using Traits;
 using UtilityScripts;
@@ -152,6 +153,7 @@ public class VampiricEmbrace : GoapAction {
                 } else {
                     actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
                 }
+                LogPool.Release(log);
             } else {
                 if (targetCharacter.isDead) {
                     targetCharacter.ReturnToLife();
@@ -165,7 +167,7 @@ public class VampiricEmbrace : GoapAction {
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddLogToDatabase();
-                    PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+                    PlayerManager.Instance.player.ShowNotificationFrom(actor, log, true);
                 }
 
                 if (targetCharacter.isNormalCharacter) {

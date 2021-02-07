@@ -116,7 +116,7 @@ namespace Traits {
             owner.traitContainer.AddTrait(owner, "Ashamed");
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Lycanthrope", "resist_hunger", null, LOG_TAG.Needs);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
             if (owner.lycanData.isInWerewolfForm) {
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Werewolf, owner);    
             }

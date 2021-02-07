@@ -108,7 +108,7 @@ namespace Traits {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", this.name, "trap_activated", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
                 DamageTargetByTrap(actor, target);
                 willStillContinueAction = false;
                 return true;

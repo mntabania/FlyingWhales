@@ -11,7 +11,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
             interruptHolder.actor.AssignClass("Vampire Lord");
             Traits.Vampire vampire = interruptHolder.actor.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
             Assert.IsNotNull(vampire, $"{interruptHolder.actor.name}");

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Object_Pools;
 using UnityEngine;
 
 public class CharacterState {
@@ -175,15 +176,21 @@ public class CharacterState {
         //StartStatePerTick();
         DoMovementBehavior();
     }
-    protected virtual void OnJobSet() { }
-    protected virtual void CreateThoughtBubbleLog() {
+    private void CreateThoughtBubbleLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble")) {
-            thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Work);
-            thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Work);
+            log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetPOI != null) {
-                thoughtBubbleLog.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+                log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
+            SetThoughtBubbleLog(log);
         }
+    }
+    protected void SetThoughtBubbleLog(Log p_log) {
+        if (thoughtBubbleLog != null) {
+            LogPool.Release(thoughtBubbleLog);
+        }
+        thoughtBubbleLog = p_log;
     }
     public virtual void Reset() {
         currentDuration = 0;
@@ -291,19 +298,7 @@ public class CharacterState {
             if (targetPOI != null) {
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
-            //if(targetNpcSettlement != null) {
-            //    log.AddToFillers(targetNpcSettlement, targetNpcSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
-            //}
-            log.AddLogToDatabase();
-
-            // PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
-        }
-    }
-    private void CreateTravellingThoughtBubbleLog(NPCSettlement targetLocation) {
-        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble_m")) {
-            thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble_m", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Work);
-            thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddLogToDatabase(true);
         }
     }
     public void SetTargetPOI(IPointOfInterest poi) {

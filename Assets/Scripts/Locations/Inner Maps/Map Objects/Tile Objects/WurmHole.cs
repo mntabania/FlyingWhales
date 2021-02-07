@@ -32,7 +32,7 @@ public class WurmHole : TileObject{
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddToFillers(wurmHoleConnection, wurmHoleConnection.name, LOG_IDENTIFIER.CHARACTER_3);
-        log.AddLogToDatabase();
+        log.AddLogToDatabase(true);
         if (gridTileLocation != null) {
             GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Teleport);    
         }

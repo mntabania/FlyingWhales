@@ -13,9 +13,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            interruptHolder.actor.nonActionEventsComponent.ForceChatCharacter(interruptHolder.target as Character, ref overrideEffectLog);
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            interruptHolder.actor.nonActionEventsComponent.ForceChatCharacter(interruptHolder.target as Character, overrideEffectLog);
             return true;
         }
         #endregion

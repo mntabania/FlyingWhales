@@ -4,6 +4,7 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Object_Pools;
 
 public class DragonBehaviour : BaseMonsterBehaviour {
 	public DragonBehaviour() {
@@ -24,6 +25,7 @@ public class DragonBehaviour : BaseMonsterBehaviour {
                     deathLog.AddToFillers(dragon, dragon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     deathLog.AddLogToDatabase();
                     dragon.Death(_deathLog: deathLog);
+                    LogPool.Release(deathLog);
                     if(UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == dragon) {
                         UIManager.Instance.monsterInfoUI.CloseMenu();
                     }

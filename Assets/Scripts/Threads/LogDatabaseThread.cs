@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using UtilityScripts;
 
 public class LogDatabaseThread : Multithread {
 
@@ -27,5 +28,6 @@ public class LogDatabaseThread : Multithread {
             log.ReEvaluateWholeText();
             DatabaseManager.Instance.mainSQLDatabase.InsertLog(log);
         }
+        logs.ReleaseLogInstancesAndLogList();
     }
 }

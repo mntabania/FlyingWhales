@@ -6,6 +6,7 @@ using System.Linq;
 using Factions.Faction_Types;
 using Factions.Faction_Succession;
 using Inner_Maps;
+using Object_Pools;
 using UnityEngine.UI;
 using UtilityScripts;
 using Traits;
@@ -501,7 +502,9 @@ public class FactionManager : BaseMonoBehaviour {
                 log.AddToFillers(dislikeLog.fillers);
                 log.AddToFillers(null, dislikeLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                 log.AddLogToDatabase();    
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+                
+                LogPool.Release(dislikeLog);
             } else if (status == FACTION_RELATIONSHIP_STATUS.Friendly) {
                 //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
                 Log likeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "like_leader", null, LOG_TAG.Major);
@@ -514,7 +517,9 @@ public class FactionManager : BaseMonoBehaviour {
                 log.AddToFillers(likeLog.fillers);
                 log.AddToFillers(null, likeLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+                
+                LogPool.Release(likeLog);
             }    
         }
     }

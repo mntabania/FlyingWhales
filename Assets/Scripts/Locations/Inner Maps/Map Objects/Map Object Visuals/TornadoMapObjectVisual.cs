@@ -267,7 +267,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 //    }
                 //} else {
                     Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
-                    if (distance.magnitude < 3f) {
+                    if (distance.magnitude < 2f) { //3
                         DealDamage(damageable);
                     } else {
                         //check for suck in

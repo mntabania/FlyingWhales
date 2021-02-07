@@ -914,6 +914,8 @@ public class LocationStructureObject : PooledObject {
                 }
             }
         }
+        wallTileMap.enabled = false;
+        wallTileMap.GetComponent<TilemapRenderer>().enabled = false;
     }
 
     [ContextMenu("Set Pivot Point")]
