@@ -11,7 +11,9 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
     public int cooldown;
     public int threat;
     public int threatPerHour;
-
+    public int unlockCost;
+    public int currentLevel;
+    public List<int> upgradeCost;
     public int currentCooldownTick;
 
     #region Overrides
@@ -24,6 +26,8 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
         threat = data.baseThreat;
         threatPerHour = data.threatPerHour;
         currentCooldownTick = data.currentCooldownTick;
+        currentLevel = data.currentLevel;
+
     }
     public override SkillData Load() {
         SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(type);
@@ -35,6 +39,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
 
         data.SetCurrentCooldownTick(currentCooldownTick);
         data.SetMaxCharges(maxCharges);
+        data.SetCurrentLevel(currentLevel);
         return data;
     }
     #endregion

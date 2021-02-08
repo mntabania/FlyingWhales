@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 public class PlayerSkillComponent {
-    public Player player { get; private set; }
     //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
     public List<PLAYER_SKILL_TYPE> spells { get; protected set; }
     public List<PLAYER_SKILL_TYPE> afflictions { get; protected set; }
@@ -18,8 +17,11 @@ public class PlayerSkillComponent {
     //public bool canTriggerFlaw { get; protected set; }
     //public bool canRemoveTraits { get; protected set; }
 
-    public PlayerSkillComponent(Player player) {
-        this.player = player;
+    public int tier1Count { get; protected set; }
+    public int tier2Count { get; protected set; }
+    public int tier3Count { get; protected set; }
+
+    public PlayerSkillComponent() {
         //nodesData = new List<PlayerSkillTreeNodeData>();
         spells = new List<PLAYER_SKILL_TYPE>();
         afflictions = new List<PLAYER_SKILL_TYPE>();
@@ -33,18 +35,9 @@ public class PlayerSkillComponent {
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
     }
-    public PlayerSkillComponent() {
-        spells = new List<PLAYER_SKILL_TYPE>();
-        afflictions = new List<PLAYER_SKILL_TYPE>();
-        schemes = new List<PLAYER_SKILL_TYPE>();
-        playerActions = new List<PLAYER_SKILL_TYPE>();
-        demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>();
-        minionsSkills = new List<PLAYER_SKILL_TYPE>();
-        summonsSkills = new List<PLAYER_SKILL_TYPE>();
-        passiveSkills = new List<PASSIVE_SKILL>();
-    }
+
     public void SetPlayer(Player player) {
-        this.player = player;
+        
     }
 
     #region Loading
@@ -74,6 +67,7 @@ public class PlayerSkillComponent {
             spellData.AdjustCharges(amount);
         } else {
             AddPlayerSkill(spellData, amount, -1, -1, 0, 0);
+            UpdateTierCount(PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type));
         }
     }
     public void LoadPlayerSkillTreeOrLoadout(SaveDataPlayer save) {
@@ -114,6 +108,46 @@ public class PlayerSkillComponent {
     //    }
     //}
     #endregion
+
+    private void UpdateTierCount(PlayerSkillData playerSkillData) {
+        switch (playerSkillData.tier) {
+            case 1: tier1Count++;
+            break;
+            case 2: tier2Count++;
+            break;
+            case 3: tier3Count++;
+            break;
+        }
+    }
+
+    public int GetLevelOfSkill(SkillData p_targetSkill) {
+        int currentLevel = 0;
+        switch (p_targetSkill.category) {
+            case PLAYER_SKILL_CATEGORY.PLAYER_ACTION:
+            playerActions.ForEach((eachSkill) => {
+                if (eachSkill == p_targetSkill.type) {
+                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
+                }
+            });
+            break;
+            case PLAYER_SKILL_CATEGORY.SPELL:
+            spells.ForEach((eachSkill) => {
+                if (eachSkill == p_targetSkill.type) {
+                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
+                }
+            });
+            break;
+            case PLAYER_SKILL_CATEGORY.AFFLICTION:
+            afflictions.ForEach((eachSkill) => {
+                if (eachSkill == p_targetSkill.type) {
+                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
+                }
+            });
+            break;
+        }
+        
+        return currentLevel;
+    }
 
     #region Utilities
     public bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {

@@ -15,6 +15,11 @@ public class PlayerSkillData : ScriptableObject {
     public Sprite buttonSprite;
     public VideoClip tooltipVideoClip;
     public Texture tooltipImage;
+
+    public List<int> upgradeCosts;
+    public int unlockCost = 0;
+    public RequirementData requirementData;
+    public int tier;
     
     [Header("Context Menu")]
     public Sprite contextMenuIcon;

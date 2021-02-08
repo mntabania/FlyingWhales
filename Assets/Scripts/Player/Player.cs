@@ -57,7 +57,7 @@ public class Player : ILeader, IObjectManipulator {
         mana = EditableValuesManager.Instance.startingMana;
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
-        playerSkillComponent = new PlayerSkillComponent(this);
+        playerSkillComponent = new PlayerSkillComponent();
         plagueComponent = new PlagueComponent();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         AddListeners();
