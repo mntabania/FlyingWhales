@@ -164,6 +164,17 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return null;
     }
+    public Character GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE type) {
+        foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
+            if (kvp.Value.HasRelationship(type)) {
+                Character character = CharacterManager.Instance.GetCharacterByID(kvp.Key);
+                if (character != null) {
+                    return character;    
+                }
+            }
+        }
+        return null;
+    }
     public bool IsRelativeLoverOrAffairAndNotRival(Character character) {
         return (IsFamilyMember(character) || HasRelationshipWith(character, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) && GetOpinionLabel(character) != RelationshipManager.Rival;
     }

@@ -461,16 +461,17 @@ public class CombatState : CharacterState {
             string reasonKey = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
 
             if (string.IsNullOrEmpty(reasonKey)) {
-                thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_no_reason", providedTags: LOG_TAG.Combat);
-                thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_no_reason", providedTags: LOG_TAG.Combat);
+                log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                SetThoughtBubbleLog(log);
             } else {
-                thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_with_reason", providedTags: LOG_TAG.Combat);
-                thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_with_reason", providedTags: LOG_TAG.Combat);
+                log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", reasonKey)) {
                     string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", reasonKey);
-                    thoughtBubbleLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
                 }
+                SetThoughtBubbleLog(log);
             }
         } else {
             actionIconString = GoapActionStateDB.Flee_Icon;
@@ -710,7 +711,7 @@ public class CombatState : CharacterState {
             }
             log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.owner.logComponent.RegisterLog(log, null, false);
+            stateComponent.owner.logComponent.RegisterLog(log, true);
         }
     }
     private float timeElapsed;
@@ -947,11 +948,10 @@ public class CombatState : CharacterState {
         if (shouldLog) {
             Log fleeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee", providedTags: LOG_TAG.Combat);
             fleeLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name,
-                LOG_IDENTIFIER.TARGET_CHARACTER);
+            fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             fleeLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
-            stateComponent.owner.logComponent.RegisterLog(fleeLog, null, false);
-            thoughtBubbleLog = fleeLog;
+            stateComponent.owner.logComponent.RegisterLog(fleeLog);
+            SetThoughtBubbleLog(fleeLog);
         }
     }
     public void OnReachLowFleeSpeedThreshold() {

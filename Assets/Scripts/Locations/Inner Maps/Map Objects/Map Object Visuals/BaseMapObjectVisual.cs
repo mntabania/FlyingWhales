@@ -188,12 +188,12 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         }
         SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
     }
-    void OnEnable() {
-        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
-    }
-    void OnDisable() {
-        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
-    }
+    // void OnEnable() {
+    //     Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+    // }
+    // void OnDisable() {
+    //     Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
+    // }
     public override void BeforeDestroyActions() {
         base.BeforeDestroyActions();
         DestroyExistingGUS();
@@ -201,13 +201,13 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #endregion
 
     #region Tweening
-    private void OnGamePaused(bool state) {
-        if (state) {
-            transform.DOPause();
-        } else {
-            transform.DOPlay();
-        }
-    }
+    // private void OnGamePaused(bool state) {
+    //     if (state) {
+    //         transform.DOPause();
+    //     } else {
+    //         transform.DOPlay();
+    //     }
+    // }
     public bool IsTweening() {
         return DOTween.IsTweening(this.transform);
     }

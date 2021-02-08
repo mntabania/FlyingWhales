@@ -6,6 +6,7 @@ using Interrupts;
 using UnityEngine.Assertions;
 using Crime_System;
 using Logs;
+using Object_Pools;
 
 public class ReportCrime : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
@@ -29,8 +30,8 @@ public class ReportCrime : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         OtherData[] otherData = node.otherData;
@@ -130,7 +131,7 @@ public class ReportCrime : GoapAction {
             log.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.CHARACTER_3);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
             return;
         }
 
@@ -213,19 +214,20 @@ public class ReportCrime : GoapAction {
                 } else {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "not_crime", providedTags: LOG_TAG.Crimes);
                     log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             } else {
                 //Recipient does not believe
                 CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, crime as ActualGoapNode);
 
                 //Will only log on not believe because the log for believe report crime is already in the crime system
-                Log believeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, result, shareActionItself, LOG_TAG.Crimes, LOG_TAG.Major);
+                Log believeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, result, shareActionItself, logTags);
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 believeLog.AddToFillers(null, "crime", LOG_IDENTIFIER.STRING_1);
                 believeLog.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(actor, believeLog);
+                LogPool.Release(believeLog);
             }
         }
     }

@@ -14,6 +14,7 @@ using UtilityScripts;
 using JetBrains.Annotations;
 using Plague.Transmission;
 using Locations;
+using Object_Pools;
 using UnityEngine.Profiling;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
@@ -606,6 +607,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         log.AddToFillers(null, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        LogPool.Release(log);
     }
     private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
         if (p_trait is Burning burning) {
@@ -636,7 +638,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             currentActionNode.thoughtBubbleMovingLog.TryUpdateLogAfterRename(p_character);
             currentActionNode.descriptionLog.TryUpdateLogAfterRename(p_character);
         }
-        if (deathLog.hasValue) {
+        if (deathLog != null) {
             deathLog.TryUpdateLogAfterRename(p_character);
         }
         stateComponent.currentState?.thoughtBubbleLog.TryUpdateLogAfterRename(p_character, true);
@@ -799,6 +801,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            LogPool.Release(log);
             traitContainer.AddTrait(this, "Blessed");
         }
     }
@@ -2175,7 +2178,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan", providedTags: LOG_TAG.Work);
         log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
-        logComponent.RegisterLog(log);    
+        logComponent.RegisterLog(log, true);    
     }
     #endregion    
 
@@ -3318,7 +3321,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //if(carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside) {
         //    return;
         //}
-        if (interruptComponent.NecromanticTranform()) {
+        if (interruptComponent.NecromanticTransform()) {
             return;
         }
         string idleLog = OtherIdlePlans();
@@ -4423,7 +4426,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             log.AddToFillers(null, jobName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
-            logComponent.RegisterLog(log, onlyClickedCharacter: false);
+            logComponent.RegisterLog(log, true);
         }
         //if (actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
         //    if (reason != "") {
@@ -5414,7 +5417,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.ResetHappinessMeter();
     }
 
-    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
+    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
@@ -5613,10 +5616,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
             }
-
-            //SetNumWaitingForGoapThread(0); //for raise dead
-            //Dead dead = new Dead();
-            //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
 
             if(cause == "attacked" && responsibleCharacter != null && responsibleCharacter.isInWerewolfForm) {
@@ -5624,12 +5623,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
 
             logComponent.PrintLogIfActive($"{name} died of {cause}");
-            Log localDeathLog;
-            if (!_deathLog.hasValue) {
+            if (_deathLog == null) {
                 if (cause == "attacked" && responsibleCharacter == null) {
                     logComponent.PrintLogErrorIfActive($"{name} died, and reason was attacked, but no responsible character was provided!");
                 }
-                localDeathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
+                Log localDeathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
                 localDeathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     localDeathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -5640,15 +5638,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
-                //AddHistory(deathLog);
                 localDeathLog.AddLogToDatabase();
-                //specificLocation.AddHistory(deathLog);
                 PlayerManager.Instance.player?.ShowNotificationFrom(this, localDeathLog);
+                SetDeathLog(localDeathLog);
+                LogPool.Release(localDeathLog);
             } else {
-                localDeathLog = _deathLog;
+                SetDeathLog(_deathLog);
             }
-            SetDeathLog(localDeathLog);
-            deathStr = localDeathLog.logText;
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
 
             List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
@@ -5663,7 +5659,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void SetDeathLog(Log log) {
-        deathLog = log;
+        if (deathLog != null) {
+            LogPool.Release(deathLog);
+        }
+        deathLog = GameManager.CreateNewLog();
+        deathLog.Copy(log);
+        deathStr = deathLog.logText;
     }
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
@@ -5825,7 +5826,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!string.IsNullOrEmpty(data.connectedFoodPile)) {
             connectedFoodPile = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.connectedFoodPile) as FoodPile;
         }
-        if (data.deathLog.hasValue) {
+        if (data.deathLog != null) {
             deathLog = data.deathLog;
             // deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
         }

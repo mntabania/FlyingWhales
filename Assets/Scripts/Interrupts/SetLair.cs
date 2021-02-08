@@ -14,7 +14,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            Log overrideEffectLog, ActualGoapNode goapNode = null) {
             string log = "Setting new lair for " + interruptHolder.actor.name;
             log += "\n-Setting lair in current region";
             Region currentRegion = interruptHolder.actor.currentRegion;

@@ -19,7 +19,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Injured_Icon;
-            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Life_Changes};
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Player};
         }
 
         #region Overrides
@@ -33,21 +33,20 @@ namespace Interrupts {
             //If not, add a dfferent log
             //https://trello.com/c/8sAgvnbE/2210-torture-argumentexception
             if (string.IsNullOrEmpty(randomNegativeTrait) || string.IsNullOrEmpty(randomNegativeStatus)) {
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "cannot_torture", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "cannot_torture", null, logTags);
                 log.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                interruptHolder.actor.logComponent.RegisterLog(log, true);
             } else {
-                List<string> tortureTexts =
-                LocalizationManager.Instance.GetKeysLike("Interrupt", "Being Tortured", "torture");
+                List<string> tortureTexts = LocalizationManager.Instance.GetKeysLike("Interrupt", "Being Tortured", "torture");
                 string chosenTortureKey = CollectionUtilities.GetRandomElement(tortureTexts);
-                Log randomTorture = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Tortured", chosenTortureKey, null, LOG_TAG.Life_Changes, LOG_TAG.Player);
+                Log randomTorture = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Tortured", chosenTortureKey, null, logTags);
                 randomTorture.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "full_text", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "full_text", null, logTags);
                 log.AddToFillers(null, randomTorture.unReplacedText, LOG_IDENTIFIER.APPEND);
                 log.AddToFillers(randomTorture.fillers);
                 log.AddToFillers(null, randomNegativeStatus, LOG_IDENTIFIER.STRING_1);
                 log.AddToFillers(null, randomNegativeTrait, LOG_IDENTIFIER.STRING_2);
-                interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                interruptHolder.actor.logComponent.RegisterLog(log, true);
 
                 interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeStatus);
                 interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeTrait);

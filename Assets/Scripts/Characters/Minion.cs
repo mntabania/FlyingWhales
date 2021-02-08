@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Object_Pools;
 using Traits;
 using UnityEngine.Profiling;
 
@@ -50,7 +51,7 @@ public class Minion {
             SubscribeListeners();
         }
     }
-    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null) {
+    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null) {
         if (!character.isDead) {
             Region deathLocation = character.currentRegion;
             LocationStructure deathStructure = character.currentStructure;
@@ -128,10 +129,9 @@ public class Minion {
             character.behaviourComponent.OnDeath();
             character.jobQueue.CancelAllJobs();
             // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);
-
-            Log deathLog;
-            if (!_deathLog.hasValue) {
-                deathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
+            
+            if (_deathLog == null) {
+                Log deathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
                 deathLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -144,10 +144,11 @@ public class Minion {
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
                 deathLog.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(character, deathLog);
+                character.SetDeathLog(deathLog);
+                LogPool.Release(deathLog);
             } else {
-                deathLog = _deathLog;
+                character.SetDeathLog(_deathLog);
             }
-            character.SetDeathLog(deathLog);
             List<Trait> afterDeathTraitOverrideFunctions = character.traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {
                 for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {

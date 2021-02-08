@@ -15,18 +15,16 @@ public class DestroyData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         LocationGridTile targetTile = targetPOI.gridTileLocation;
         if (targetTile != null) {
             GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Destroy_Explosion);    
         }
         targetPOI.AdjustHP(-targetPOI.currentHP, ELEMENTAL_TYPE.Normal, true);
-        // targetTile.structure.RemovePOI(targetPOI);
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention", null, LOG_TAG.Player);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "destroyed", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
 
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == targetPOI) {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();

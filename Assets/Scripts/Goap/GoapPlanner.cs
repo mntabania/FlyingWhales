@@ -148,7 +148,7 @@ public class GoapPlanner {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan", providedTags: LOG_TAG.Work);
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
-                        owner.logComponent.RegisterLog(log);
+                        owner.logComponent.RegisterLog(log, true);
                     }
                 }
                 if (goapThread.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {

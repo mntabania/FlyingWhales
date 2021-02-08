@@ -115,7 +115,7 @@ public class GoapAction {
     protected virtual int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 0;
     }
-    public virtual void AddFillersToLog(ref Log log, ActualGoapNode node) {
+    public virtual void AddFillersToLog(Log log, ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         LocationStructure targetStructure = node.targetStructure;
@@ -127,9 +127,6 @@ public class GoapAction {
         if (targetStructure != null) {
             log.AddToFillers(targetStructure, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         }
-        // else {
-        //     log.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-        // }
     }
     public virtual bool IsInvalidOnVision(ActualGoapNode node, out string reason) {
         IPointOfInterest poiTarget = node.poiTarget;
@@ -398,8 +395,8 @@ public class GoapAction {
         string invalidKey = goapActionInvalidity.stateName.ToLower() + "_description";
         if (goapActionInvalidity.stateName != "Target Missing" && LocalizationManager.Instance.HasLocalizedValue("GoapAction", name, invalidKey)) {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, invalidKey, providedTags: LOG_TAG.Work);
-            AddFillersToLog(ref log, node);
-            log.AddLogToDatabase();
+            AddFillersToLog(log, node);
+            log.AddLogToDatabase(true);
         } else {
             string reason = goapActionInvalidity.reason;
             string reasonText = null;
@@ -415,11 +412,11 @@ public class GoapAction {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Generic", key, providedTags: LOG_TAG.Work);
             log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, goapName, LOG_IDENTIFIER.STRING_1);
             if(!string.IsNullOrEmpty(reasonText) && key == "Invalid_with_reason") {
                 log.AddToFillers(null, reasonText, LOG_IDENTIFIER.STRING_2);
             }
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
     }
     #endregion

@@ -40,6 +40,7 @@ public interface IRelationshipContainer {
     Character GetMissingCharacterWithOpinion(string opinionLabel);
     Character GetMissingCharacterThatMeetCriteria(Func<Character, bool> checker);
     Character GetFirstCharacterWithRelationship(params RELATIONSHIP_TYPE[] type);
+    Character GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE type);
     bool IsRelativeLoverOrAffairAndNotRival(Character character);
     #endregion
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Object_Pools;
 using Ruinarch;
 using Traits;
 using UnityEngine;
@@ -664,15 +665,46 @@ public class GameManager : BaseMonoBehaviour {
     #endregion
 
     public static Log CreateNewLog() {
-        return new Log();
+        return LogPool.Claim();
     }
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, params LOG_TAG[] providedTags) {
-        return new Log(date, category, file, key, node, providedTags);
+        Log log = CreateNewLog();
+        log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());
+        log.SetDate(date);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetConnectedAction(node);
+        log.AddTag(providedTags);
+        log.DetermineInitialLogText();
+        return log;
     }
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTags = LOG_TAG.Work) {
-        return new Log(date, category, file, key, node, providedTags);
+        Log log = CreateNewLog();
+        log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());
+        log.SetDate(date);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetConnectedAction(node);
+        log.AddTag(providedTags);
+        log.DetermineInitialLogText();
+        return log;
     }
     public static Log CreateNewLog(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
-        return new Log(id, date, logText, category, key, file, involvedObjects, providedTags, rawText, fillers);
+        Log log = CreateNewLog();
+        log.SetPersistentID(id);
+        log.SetDate(date);
+        log.SetLogText(logText);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetInvolvedObjects(involvedObjects);
+        log.AddTag(providedTags);
+        log.SetRawText(rawText);
+        if (fillers != null) {
+            log.SetFillers(fillers);    
+        }
+        return log;
     }
 }

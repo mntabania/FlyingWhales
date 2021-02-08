@@ -61,7 +61,7 @@ namespace Traits {
                     characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Agoraphobic", "on_see_first", null, LOG_TAG.Social);
                     log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                     hasReactedThisTick = true;
 
                     GameDate date = GameManager.Instance.Today();
@@ -73,30 +73,6 @@ namespace Traits {
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override string TriggerFlaw(Character character) {
-            //If outside and the character lives in a house, the character will flee and go back home.
-            //string successLogKey = base.TriggerFlaw(character);
-            //if (character.homeStructure != null) {
-            //    if (character.currentStructure != character.homeStructure) {
-            //        if (character.currentActionNode != null) {
-            //            character.StopCurrentActionNode(false);
-            //        }
-            //        if (character.stateComponent.currentState != null) {
-            //            character.stateComponent.ExitCurrentState();
-            //        }
-            //        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
-            //        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, character);
-            //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.RETURN_HOME, character, character);
-            //        goapPlan.SetDoNotRecalculate(true);
-            //        job.SetCannotBePushedBack(true);
-            //        job.SetAssignedPlan(goapPlan);
-            //        character.jobQueue.AddJobInQueue(job);
-            //        return successLogKey;
-            //    } else {
-            //        return "fail_at_home";
-            //    }
-            //} else {
-            //    return "fail_no_home";
-            //}
             ApplyAgoraphobicEffect(character, JOB_TYPE.TRIGGER_FLAW);
             return base.TriggerFlaw(character);
 

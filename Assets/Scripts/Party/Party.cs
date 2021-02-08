@@ -6,6 +6,7 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UtilityScripts;
 using Logs;
+using Object_Pools;
 using UnityEngine.Profiling;
 
 public class Party : ILogFiller, ISavable, IJobOwner {
@@ -541,12 +542,13 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             currentQuest.SetAssignedParty(this);
             SetPartyState(PARTY_STATE.Waiting);
 
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", null, LOG_TAG.Party, LOG_TAG.Major);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", null, LogUtilities.Party_Quest_Tags);
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-
+            LogPool.Release(log);
+            
             OnAcceptQuest(quest);
         }
     }
@@ -565,7 +567,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
 
             OnDropQuest(currentQuest);
             ClearMembersThatJoinedQuest(shouldDropQuest: false);
@@ -952,11 +954,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     #endregion
 
     #region Disbandment
-    public void DisbandParty() {
+    private void DisbandParty() {
         if (isDisbanded) { return; }
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
         log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
-        log.AddLogToDatabase();
+        log.AddLogToDatabase(true);
 
         if (members.Count > 0) {
             for (int i = 0; i < members.Count; i++) {

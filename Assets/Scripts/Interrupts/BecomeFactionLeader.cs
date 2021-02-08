@@ -5,7 +5,7 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 using Locations.Settlements;
-
+using Object_Pools;
 namespace Interrupts {
     public class BecomeFactionLeader : Interrupt {
         public BecomeFactionLeader() : base(INTERRUPT.Become_Faction_Leader) {
@@ -17,7 +17,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
 
             actor.faction.SetLeader(actor);
@@ -93,7 +93,7 @@ namespace Interrupts {
 
             Log changeIdeologyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", null, LOG_TAG.Life_Changes);
             changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
-            changeIdeologyLog.AddLogToDatabase();
+            changeIdeologyLog.AddLogToDatabase(true);
 
 
             //check if faction characters still meets ideology requirements
@@ -106,6 +106,7 @@ namespace Interrupts {
             }
             ObjectPoolManager.Instance.ReturnCharactersListToPool(charactersToCheck);
 
+            if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader", null, LOG_TAG.Major);
             overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(actor.faction, actor.faction.name, LOG_IDENTIFIER.FACTION_1);

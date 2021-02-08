@@ -35,13 +35,13 @@
             SubscribeListeners();
             p_settlement.settlementClassTracker.AddNeededClass("Shaman");
             
-            Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Werewolf Hunt", "started", null, LOG_TAG.Major);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Werewolf Hunt", "started", null, LOG_TAG.Major);
             log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
             if (p_settlement.owner != null) {
                 log.AddInvolvedObjectManual(p_settlement.owner.persistentID);    
             }
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
         public override void DeactivateEvent(NPCSettlement p_settlement) {
             for (int i = 0; i < p_settlement.residents.Count; i++) {
@@ -52,14 +52,14 @@
             UnsubscribeListeners();
             p_settlement.settlementClassTracker.RemoveNeededClass("Shaman");
 
-            Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Werewolf Hunt", "ended", null, LOG_TAG.Major);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Werewolf Hunt", "ended", null, LOG_TAG.Major);
             log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
             if (p_settlement.owner != null) {
                 //in case when this event ends and a faction no longer owns the settlement that has this event
                 log.AddInvolvedObjectManual(p_settlement.owner.persistentID);    
             }
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             
             if (!string.IsNullOrEmpty(_currentScheduleKey)) {
                 SchedulingManager.Instance.RemoveSpecificEntry(_currentScheduleKey);

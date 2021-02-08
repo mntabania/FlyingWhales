@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Logs;
+using Object_Pools;
+using UtilityScripts;
 
 public class CultistBoobyTrapData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP;
@@ -86,17 +88,17 @@ public class CultistBoobyTrapData : PlayerAction {
         if (obj is Character targetCharacter) {
             UIManager.Instance.HideObjectPicker();
             
-            Log instructedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_trap", null, LOG_TAG.Player, LOG_TAG.Crimes);
+            Log instructedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_trap", null, LogUtilities.Cultist_Instruct_Tags);
             instructedLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             instructedLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             instructedLog.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(instructedLog);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(instructedLog, true);
             
             if (actor.jobComponent.CreatePlaceTrapJob(targetCharacter, JOB_TYPE.CULTIST_BOOBY_TRAP) == false) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cultist_no_trap_target", null, LOG_TAG.Player);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             }
             base.ActivateAbility(actor);
         }

@@ -47,7 +47,7 @@ namespace Traits {
                 if (_hasTendedAtLeastOnce) {
                     Log endLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Behaviour", "TendFarmBehaviour", "end", null, LOG_TAG.Work);
                     endLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    endLog.AddLogToDatabase();    
+                    endLog.AddLogToDatabase(true);    
                 }
 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(TendFarmBehaviour));

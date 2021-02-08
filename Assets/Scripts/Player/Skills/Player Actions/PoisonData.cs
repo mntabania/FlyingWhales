@@ -19,7 +19,7 @@ public class PoisonData : PlayerAction {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {

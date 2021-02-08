@@ -27,7 +27,7 @@ public class Initializer : MonoBehaviour {
         WorldMapCameraMove.Instance.Initialize();
         InnerMapManager.Instance.Initialize();
         yield return null;
-        ObjectPoolManager.Instance.InitializeObjectPools();
+        // ObjectPoolManager.Instance.InitializeObjectPools();
         UIManager.Instance.InitializeUI();
         InteractionManager.Instance.Initialize();
         yield return null;

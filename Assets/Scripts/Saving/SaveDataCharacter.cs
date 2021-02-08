@@ -217,7 +217,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.connectedFoodPile != null) {
             connectedFoodPile = data.connectedFoodPile.persistentID;
         }
-        if (data.deathLog.hasValue) {
+        if (data.deathLog != null) {
             deathLog = data.deathLog;
             // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.deathLog);
         }

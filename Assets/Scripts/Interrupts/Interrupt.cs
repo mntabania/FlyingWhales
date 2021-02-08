@@ -4,6 +4,7 @@ using UnityEngine;
 using Inner_Maps;
 using Interrupts;
 using Logs;
+using Object_Pools;
 namespace Interrupts {
     public class Interrupt {
         public INTERRUPT type { get; protected set; }
@@ -32,7 +33,7 @@ namespace Interrupts {
 
         #region Virtuals
         public virtual bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) { return false; }
-        public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) { return false; }
+        public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) { return false; }
         public virtual bool OnForceEndInterrupt(InterruptHolder interruptHolder) { return false; }
 
         //PerTickInterrupt does not trigger on the last tick of the interrupt because ExecuteInterruptEndEffect is triggered
@@ -167,8 +168,12 @@ namespace Interrupts {
         }
 
         #region General
-        public void SetEffectLog(Log effectLog) {
-            this.effectLog = effectLog;
+        public void SetEffectLog(Log p_effectLog) {
+            if (effectLog != null) {
+                //release previous effect log.
+                LogPool.Release(p_effectLog);
+            }
+            effectLog = p_effectLog;
         }
         public void SetIdentifier(string identifier) {
             this.identifier = identifier;
@@ -260,7 +265,10 @@ namespace Interrupts {
             target = null;
             disguisedActor = null;
             disguisedTarget = null;
-            effectLog = default;
+            if (effectLog != null) {
+                LogPool.Release(effectLog);
+            }
+            effectLog = null;
             rumor = null;
             identifier = string.Empty;
             crimeType = CRIME_TYPE.Unset;
@@ -297,7 +305,7 @@ namespace Interrupts {
             }
 
             effectLog = default;
-            if (data.effectLog.hasValue) {
+            if (data.effectLog != null) {
                 effectLog = data.effectLog;
             }
 
@@ -366,7 +374,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
         }
 
         effectLog = default;
-        if (data.effectLog.hasValue) {
+        if (data.effectLog != null) {
             effectLog = data.effectLog;
         }
         // if (data.effectLog != null) {
