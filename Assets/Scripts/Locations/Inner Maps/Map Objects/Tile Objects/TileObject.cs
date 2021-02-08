@@ -688,6 +688,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool IsUnpassable() {
         return false;
     }
+    public virtual bool IsUnpassable() {
+        return false;
+    }
     #endregion
 
     #region Traits

@@ -9,7 +9,6 @@ using Locations.Settlements;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
@@ -302,7 +301,8 @@ namespace Inner_Maps {
         #endregion
 
         #region Data Getting
-        public void GetUnoccupiedTilesInRadius(List<LocationGridTile> tiles, LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+        public List<LocationGridTile> GetUnoccupiedTilesInRadius(LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+            List<LocationGridTile> tiles = new List<LocationGridTile>();
             int mapSizeX = map.GetUpperBound(0);
             int mapSizeY = map.GetUpperBound(1);
             int x = centerTile.localPlace.x;
@@ -331,6 +331,7 @@ namespace Inner_Maps {
                     }
                 }
             }
+            return tiles;
         }
         public LocationGridTile GetRandomUnoccupiedEdgeTile() {
             List<LocationGridTile> unoccupiedEdgeTiles = new List<LocationGridTile>();
@@ -426,6 +427,9 @@ namespace Inner_Maps {
                 }
                 from.RemoveCharacterHere(character);
                 to.AddCharacterHere(character);
+                Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, character as IPointOfInterest);
+                Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, character as IPointOfInterest);
+                Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.KNOCKOUT, character as IPointOfInterest);
             }
         
         }
@@ -737,6 +741,7 @@ namespace Inner_Maps {
         private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
             yield return StartCoroutine(GroundPerlin(tiles, xSize, ySize, xSeed, ySeed));
             // yield return StartCoroutine(GenerateBiomeTransitions());
+            
             int batchCount = 0;
             //flower, rock and garbage
             for (int i = 0; i < tiles.Count; i++) {
@@ -776,8 +781,7 @@ namespace Inner_Maps {
                             TileBase tileBase = null;
                             //plant or herb plant
 
-                            //35
-                            tileBase = UtilityScripts.GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
+                            tileBase = UtilityScripts.GameUtilities.RollChance(35) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                             if (currTile.biomeType == BIOMES.FOREST || currTile.biomeType == BIOMES.GRASSLAND) {
                                 if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
                                     if (UtilityScripts.GameUtilities.RollChance(10)) {

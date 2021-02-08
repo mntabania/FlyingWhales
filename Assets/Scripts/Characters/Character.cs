@@ -5804,6 +5804,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool IsUnpassable() {
         return false;
     }
+    public bool IsUnpassable() {
+        return false;
+    }
     #endregion
 
     #region Loading

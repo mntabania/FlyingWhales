@@ -13,10 +13,9 @@ namespace Quests {
         public override Type serializedData => typeof(SaveDataCreateDemonCultFaction);
         #endregion
 
-        public CreateDemonCultFaction() : base($"Grow your own Cult") { }
+        public CreateDemonCultFaction() : base($"Create Demon Cult Faction and have 15 members") { }
         protected override void ConstructSteps() {
-            QuestStep turnVillagerToPsychopathStep = new CreateDemonFactionStep(GetCreateCultFactionDescription).SetHoverOverAction(OnHoverOverStep1)
-                .SetHoverOutAction(UIManager.Instance.HideSmallInfo); ;
+            QuestStep turnVillagerToPsychopathStep = new CreateDemonFactionStep(GetCreateCultFactionDescription);
             _eliminateVillagerStep = new RecruitFifteenMembersDemonCultStep(GetRecruitFifteenCultist);   
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(turnVillagerToPsychopathStep),
@@ -24,27 +23,20 @@ namespace Quests {
             };
         }
 
-        private void OnHoverOverStep1(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo(
-                "HINT: After recruiting enough cultists, one may eventually become a Cult Leader. You can directly order a Cult Leader to start its own Demon Cult faction.",
-                stepItem.hoverPosition, "Cult Faction"
-            );
-        }
-
         #region Step Helpers
         private string GetCreateCultFactionDescription() {
-            return $"Start a Demon Cult"; // /{totalCharactersToEliminate.ToString()}
+            return $"Create a demon cult faction"; // /{totalCharactersToEliminate.ToString()}
         }
 
-        private string GetRecruitFifteenCultist(int p_cultistCount) {
-            return $"Demon Cult Members: " + p_cultistCount + "/12"; // /{totalCharactersToEliminate.ToString()}
+        private string GetRecruitFifteenCultist(int p_remainingCultistcount) {
+            return $"Remaing cultist to recruit: " + (15 - p_remainingCultistcount); // /{totalCharactersToEliminate.ToString()}
         }
         #endregion
     }
 
     public class SaveDataCreateDemonCultFaction : SaveDataReactionQuest {
         public override ReactionQuest Load() {
-            return new CreateDemonCultFaction();
+            return new KillVillagersByPsychopath();
         }
     }
 }

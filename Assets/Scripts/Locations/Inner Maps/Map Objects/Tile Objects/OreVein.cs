@@ -97,12 +97,6 @@ public class OreVein : TileObject {
         }
         return true;
     }
-    public override void LoadAdditionalInfo(SaveDataTileObject data) {
-        if (mapVisual != null) {
-            //since ore veins need to updated after all cave walls have been placed
-            mapVisual.UpdateTileObjectVisual(this);
-        }
-    }
     #endregion
 
 }

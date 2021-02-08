@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using Inner_Maps;
 using PathFinding;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 public class PathfindingManager : BaseMonoBehaviour {
 
     public static PathfindingManager Instance = null;
-    private const float nodeSize = 0.3f; //0.4
+    private const float nodeSize = 0.35f; //0.3
 
     [SerializeField] private AstarPath aStarPath;
 
@@ -122,7 +121,7 @@ public class PathfindingManager : BaseMonoBehaviour {
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        gg.collision.diameter = 0.8f;
+        gg.collision.diameter = 0.7f;
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         return gg;
     }
@@ -146,9 +145,7 @@ public class PathfindingManager : BaseMonoBehaviour {
     private void Update() {
         for (int i = 0; i < _allAgents.Count; i++) {
             CharacterAIPath currentAI = _allAgents[i];
-            Profiler.BeginSample($"{currentAI.marker.character.name} - Pathfinding Update");
             currentAI.marker.ManualUpdate();
-            Profiler.EndSample();
         }
     }
     protected override void OnDestroy() {
