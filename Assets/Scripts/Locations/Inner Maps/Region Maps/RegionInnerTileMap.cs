@@ -56,18 +56,41 @@ namespace Inner_Maps {
         private Vector2Int CreateTileCollectionGrid(MapGenerationComponent mapGenerationComponent) {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            int gridWidth;
+            // int gridWidth;
+            // int maxX = region.tiles.Max(t => t.data.xCoordinate);
+            // int minX = region.tiles.Min(t => t.data.xCoordinate);
+            //
+            // int difference = ((maxX - minX) + 1) * 2;
+            //
+            // if (region.AreLeftAndRightMostTilesInSameRowType()) {
+            //     gridWidth = difference;
+            // } else {
+            //     gridWidth = difference + 1;
+            // }
+            //
+            // int maxY = region.tiles.Max(t => t.data.yCoordinate);
+            // int minY = region.tiles.Min(t => t.data.yCoordinate);
+            // int gridHeight = ((maxY - minY) + 1) * 2;
+            //
+            // locationGridTileCollections = new LocationGridTileCollection[gridWidth, gridHeight];
+            // for (int x = 0; x < gridWidth; x++) {
+            //     for (int y = 0; y < gridHeight; y++) {
+            //         GameObject collectionGO = Instantiate(tileCollectionPrefab, structureTilemap.transform);
+            //         float xPos = (x + 1) * (InnerMapManager.BuildingSpotSize.x) - (InnerMapManager.BuildingSpotSize.x / 2f);
+            //         float yPos = (y + 1) * (InnerMapManager.BuildingSpotSize.y) - (InnerMapManager.BuildingSpotSize.y / 2f);
+            //         collectionGO.transform.localPosition = new Vector2(xPos, yPos);
+            //         
+            //         LocationGridTileCollectionItem locationGridTileCollectionItem = collectionGO.GetComponent<LocationGridTileCollectionItem>();
+            //         LocationGridTileCollection collection = new LocationGridTileCollection(new Vector2Int(x, y), locationGridTileCollectionItem);
+            //         locationGridTileCollectionItem.Initialize(this);
+            //         locationGridTileCollections[x, y] = collection;
+            //     }
+            // }
             
             int maxX = region.tiles.Max(t => t.data.xCoordinate);
             int minX = region.tiles.Min(t => t.data.xCoordinate);
-
-            int difference = ((maxX - minX) + 1) * 2;
-
-            if (region.AreLeftAndRightMostTilesInSameRowType()) {
-                gridWidth = difference;
-            } else {
-                gridWidth = difference + 1;
-            }
+            
+            int gridWidth = ((maxX - minX) + 1) * 2;
             
             int maxY = region.tiles.Max(t => t.data.yCoordinate);
             int minY = region.tiles.Min(t => t.data.yCoordinate);
@@ -85,9 +108,6 @@ namespace Inner_Maps {
                     LocationGridTileCollection collection = new LocationGridTileCollection(new Vector2Int(x, y), locationGridTileCollectionItem);
                     locationGridTileCollectionItem.Initialize(this);
                     locationGridTileCollections[x, y] = collection;
-
-                    // spotItem.SetBuildingSpot(newSpot);
-                    // newSpot.SetBuildSpotItem(spotItem);
                 }
             }
             
@@ -124,26 +144,24 @@ namespace Inner_Maps {
                     if (tile.region == region) {
                         //the row will be indented if its row type (odd/even) is not the same as the row type of the left most tile.
                         //and the first tile in it's row is not null.
-                        bool isIndented = UtilityScripts.Utilities.IsEven(tile.yCoordinate) !=
-                                          UtilityScripts.Utilities.IsEven(leftMostTile.yCoordinate);
+                        // bool isIndented = UtilityScripts.Utilities.IsEven(tile.yCoordinate) != UtilityScripts.Utilities.IsEven(leftMostTile.yCoordinate);
 
                         int buildSpotColumn1 = localX * 2;
                         int buildSpotColumn2 = buildSpotColumn1 + 1;
                         
-                        if (isIndented) {
-                            buildSpotColumn1 += 1;
-                            buildSpotColumn2 += 1;
-                            if (firstTileInRow.region != region) {
-                                buildSpotColumn1 -= 2;
-                                buildSpotColumn2 -= 2;
-                            }
-                        }
+                        // if (isIndented) {
+                        //     buildSpotColumn1 += 1;
+                        //     buildSpotColumn2 += 1;
+                        //     if (firstTileInRow.region != region) {
+                        //         buildSpotColumn1 -= 2;
+                        //         buildSpotColumn2 -= 2;
+                        //     }
+                        // }
 
 
                         int buildSpotRow1 = localY * 2;
                         int buildSpotRow2 = buildSpotRow1 + 1;
-                        AssignTileCollectionsToHexTile(tile, buildSpotColumn1, buildSpotColumn2,
-                            buildSpotRow1, buildSpotRow2);    
+                        AssignTileCollectionsToHexTile(tile, buildSpotColumn1, buildSpotColumn2, buildSpotRow1, buildSpotRow2);    
                     }
                 }
             }
