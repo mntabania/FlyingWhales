@@ -1767,6 +1767,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Utilities
+    public bool IsUndead() {
+        if (characterClass.IsZombie() || (this is Summon summon && 
+            (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Skeleton || 
+             summon.summonType == SUMMON_TYPE.Vengeful_Ghost || summon.summonType == SUMMON_TYPE.Revenant))) {
+            return true;
+        }
+        return false;
+    }
     private bool AssignRace(RACE race, bool isInitial = false) {
         if(_raceSetting == null || _raceSetting.race != race) {
             if (_raceSetting != null) {
@@ -5347,12 +5355,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ReturnToLife(Faction faction, RACE race, string className) {
         if (_isDead) {
             //SetRaisedFromDeadAsSkeleton(true);
-            ChangeFactionTo(faction);
             AssignRace(race);
             AssignClass(className);
 
             ReturnToLife();
 
+            //Change faction should be called last so that the character's nameplate in the Faction UI is updated when he transfers faction
+            ChangeFactionTo(faction);
         }
     }
     public bool ReturnToLife() {
@@ -5384,6 +5393,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.SetHappinessForcedTick();
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
+            visuals.UpdateAllVisuals(this);
             ConstructDefaultActions();
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");

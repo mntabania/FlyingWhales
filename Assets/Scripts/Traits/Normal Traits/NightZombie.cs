@@ -131,7 +131,7 @@ namespace Traits {
                 owner.visuals.UsePreviousClassAsset(false);
             }
             CharacterManager.Instance.RaiseFromDeadRetainCharacterInstance(owner, FactionManager.Instance.undeadFaction, owner.race, owner.characterClass.className);
-            owner.visuals.UpdateAllVisuals(owner);
+            //owner.visuals.UpdateAllVisuals(owner);
             // SetColor(Color.grey);
         }
         private void SetMovementSpeed() {

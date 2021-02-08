@@ -287,14 +287,22 @@ public class PlagueLifespan {
     #endregion
 
     #region Utilities
-    public int GetLifespanInHoursOfPlagueOn(IPointOfInterest p_poi) {
+    private int GetLifespanInHoursOfPlagueOn(IPointOfInterest p_poi) {
         if(p_poi is Character character) {
             if(character.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return monsterInfectionTimeInHours;
             } else if (character.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return undeadInfectionTimeInHours;
             } else {
-                return GetSapientLifespanOfPlagueInHours(character.race);
+                if (character is Summon summon) {
+                    if (summon.IsUndead()) {
+                        return undeadInfectionTimeInHours;                        
+                    } else {
+                        return monsterInfectionTimeInHours;        
+                    }
+                } else {
+                    return GetSapientLifespanOfPlagueInHours(character.race);    
+                }
             }
         } else if (p_poi is TileObject tileObject) {
             return tileObjectInfectionTimeInHours;
