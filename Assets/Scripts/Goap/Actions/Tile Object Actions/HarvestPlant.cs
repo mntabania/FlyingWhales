@@ -65,8 +65,8 @@ public class HarvestPlant : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         log.AddToFillers(null, GetTargetString(node.poiTarget), LOG_IDENTIFIER.STRING_2);
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {

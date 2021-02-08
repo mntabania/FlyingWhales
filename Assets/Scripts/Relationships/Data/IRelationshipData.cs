@@ -18,6 +18,7 @@ public interface IRelationshipData {
     /// <param name="rels">The relationships to watch out for.</param>
     /// <returns>True or false</returns>
     bool HasRelationship(params RELATIONSHIP_TYPE[] rels);
+    bool HasRelationship(RELATIONSHIP_TYPE rels);
     void SetTargetName(string name);
     void SetTargetGender(GENDER gender);
     bool IsFamilyMember();

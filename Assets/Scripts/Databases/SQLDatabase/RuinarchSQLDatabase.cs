@@ -8,6 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Object_Pools;
+using Threads;
 using UnityEngine;
 using UtilityScripts;
 using Debug = UnityEngine.Debug;
@@ -148,10 +150,13 @@ namespace Databases.SQLDatabase {
         #endregion
 
         #region Logs
+        public void InsertLogUsingMultiThread(Log log) {
+            SQLLogInsertThread thread = ObjectPoolManager.Instance.CreateNewSQLInsertThread();
+            thread.Initialize(log);
+            DatabaseThreadPool.Instance.AddToThreadPool(thread);
+        }
         public void InsertLog(Log log) {
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-            log.FinalizeText();
+             log.FinalizeText();
             SQLiteCommand command = _dbConnection.CreateCommand();
             //Need to replace single quotes in log message to two single quotes to prevent SQL command errors
             //Reference: https://stackoverflow.com/questions/603572/escape-single-quote-character-for-use-in-an-sqlite-query
@@ -193,13 +198,7 @@ namespace Databases.SQLDatabase {
             } else {
                 valuesStr = $"{valuesStr})"; //closing parenthesis if no tags were provided
             }
-            
-           
-            
             string commandStr = $"{insertStr} {valuesStr}";
-            // Debug.Log($"Insert command was {commandStr}");
-            
-            // DatabaseThreadPool.Instance.AddToThreadPool(commandStr);
             
             command.CommandType = CommandType.Text;
             command.CommandText = commandStr;
@@ -219,9 +218,6 @@ namespace Databases.SQLDatabase {
                 DeleteOldestLog();
             }
             command.Dispose();
-
-            timer.Stop();
-            // Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         }
         public void ExecuteInsertCommand(string commandStr) {
             if (_dbConnection != null) {
@@ -286,7 +282,7 @@ namespace Databases.SQLDatabase {
             // Debug.Log($"Trying to get logs that match criteria, full query command is {commandStr}");
             command.CommandText = commandStr;
             IDataReader dataReader = command.ExecuteReader();
-            List<Log> logs = new List<Log>();
+            List<Log> logs = RuinarchListPool<Log>.Claim();
             while (dataReader.Read()) {
                 Log log = ConvertToBareBonesLog(dataReader);
                 logs.Add(log);
@@ -424,7 +420,7 @@ namespace Databases.SQLDatabase {
             command.Dispose();
             //Fire signal that log was deleted.
             Messenger.Broadcast(UISignals.LOG_REMOVED_FROM_DATABASE, deletedLog);
-            
+            LogPool.Release(deletedLog);
         }
         public List<Log> GetFullLogsMentioning(string persistentID) {
             SQLiteCommand command = _dbConnection.CreateCommand();
@@ -432,7 +428,7 @@ namespace Databases.SQLDatabase {
             string commandStr = $"SELECT {_fullLogsFields} FROM Logs WHERE involvedObjects LIKE '%{persistentID}%'";
             command.CommandText = commandStr;
             IDataReader dataReader = command.ExecuteReader();
-            List<Log> logs = new List<Log>();
+            List<Log> logs = RuinarchListPool<Log>.Claim();
             while (dataReader.Read()) {
                 Log log = ConvertToFullLog(dataReader);
                 logs.Add(log);
@@ -440,7 +436,7 @@ namespace Databases.SQLDatabase {
             return logs;
         }
         private void OnCharacterNameUpdated(Character character) {
-            LogDatabaseThread databaseThread = ObjectPoolManager.Instance.CreateNewLogDatabaseThread();
+            UpdateCharacterNameThread databaseThread = ObjectPoolManager.Instance.CreateNewLogDatabaseThread();
             databaseThread.Initialize(character);
             DatabaseThreadPool.Instance.AddToThreadPool(databaseThread);
         }

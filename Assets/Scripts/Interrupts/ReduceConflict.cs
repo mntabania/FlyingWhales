@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 using Traits;
 
@@ -14,8 +15,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character targetCharacter = interruptHolder.target as Character;
             List<Character> enemyOrRivalCharacters = targetCharacter.relationshipContainer.GetEnemyCharacters();
             if(enemyOrRivalCharacters.Count > 0) {
@@ -26,6 +26,7 @@ namespace Interrupts {
                 } else {
                     targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, chosenEnemyOrRival, "Base", 15);
                 }
+                if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
                 overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey, null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

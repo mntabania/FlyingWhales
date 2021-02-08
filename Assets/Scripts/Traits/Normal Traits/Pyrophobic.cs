@@ -112,7 +112,7 @@ namespace Traits {
             
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Pyrophobic", "on_see_first", null, LOG_TAG.Combat);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
 
         #region Listeners

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class RelationshipManager : BaseMonoBehaviour {
@@ -175,10 +176,10 @@ public class RelationshipManager : BaseMonoBehaviour {
             rel2.relationshipProcessor?.OnRelationshipAdded(rel2, rel1, pair);
         }
         if (rel == RELATIONSHIP_TYPE.AFFAIR) {
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "Affair", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "Affair", null, LogUtilities.Social_Life_Changes_Tags);
             log.AddToFillers(rel1 as Character, rel1.relatableName, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(rel2 as Character, rel2.relatableName, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }

@@ -67,8 +67,8 @@ public class BuildBlueprint : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(ref log, goapNode);
+    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(log, goapNode);
         if (goapNode.poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
             log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
         }

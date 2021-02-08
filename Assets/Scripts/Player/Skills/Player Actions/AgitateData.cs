@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Object_Pools;
+using UtilityScripts;
 
 public class AgitateData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AGITATE;
@@ -23,10 +25,11 @@ public class AgitateData : PlayerAction {
                 targetCharacter.behaviourComponent.AddBehaviourComponent(typeof(AttackVillageBehaviour));
                 targetCharacter.behaviourComponent.SetIsAgitated(true);
 
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "agitated", null, LOG_TAG.Player, LOG_TAG.Combat);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "agitated", null, LogUtilities.Agitate_Tags);
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                LogPool.Release(log);
             } else {
                 targetCharacter.movementComponent.SetEnableDigging(false);
                 PlayerUI.Instance.ShowGeneralConfirmation("AGITATE FAILED", "Cannot find a valid village target.");

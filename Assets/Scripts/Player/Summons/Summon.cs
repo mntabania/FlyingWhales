@@ -6,6 +6,7 @@ using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
 using Interrupts;
+using Object_Pools;
 using UnityEngine.Profiling;
 
 public class Summon : Character {
@@ -148,9 +149,9 @@ public class Summon : Character {
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 
-            Log localDeathLog;
-            if (!_deathLog.hasValue) {
-                localDeathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", null, LOG_TAG.Life_Changes);
+            
+            if (_deathLog == null) {
+                Log localDeathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", null, LOG_TAG.Life_Changes);
                 localDeathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     localDeathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -165,10 +166,12 @@ public class Summon : Character {
                 if (showNotificationOnDeath) {
                     PlayerManager.Instance.player.ShowNotificationFrom(this, localDeathLog);    
                 }
+                SetDeathLog(localDeathLog);
+                LogPool.Release(localDeathLog);
             } else {
-                localDeathLog = _deathLog;
+                SetDeathLog(_deathLog);
             }
-            SetDeathLog(localDeathLog);
+            
             AfterDeath(deathTile);
         }
     }

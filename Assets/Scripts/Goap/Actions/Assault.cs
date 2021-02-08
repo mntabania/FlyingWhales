@@ -310,8 +310,8 @@ public class Assault : GoapAction {
         IPointOfInterest target = node.poiTarget;
         return actor.combatComponent.GetCombatStateIconString(target, node);
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         string reason = GetReason(node);
         log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
     }

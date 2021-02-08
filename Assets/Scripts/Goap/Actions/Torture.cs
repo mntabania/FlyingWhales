@@ -49,7 +49,7 @@ public class Torture : GoapAction {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode, LOG_TAG.Life_Changes);
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
         }

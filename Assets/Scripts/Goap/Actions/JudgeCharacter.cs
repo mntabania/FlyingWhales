@@ -14,7 +14,6 @@ public class JudgeCharacter : GoapAction {
     public JudgeCharacter() : base(INTERACTION_TYPE.JUDGE_CHARACTER) {
         actionIconString = GoapActionStateDB.Judge_Icon;
         doesNotStopTargetCharacter = true;
-        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes, LOG_TAG.Crimes};
     }
@@ -270,10 +269,7 @@ public class JudgeCharacter : GoapAction {
     #endregion
 
     private void CreateJudgeLog(ActualGoapNode goapNode, string result) {
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode, LOG_TAG.Crimes, LOG_TAG.Life_Changes, LOG_TAG.Work);
-        // if (goapNode != null) {
-        //     log.SetLogType(LOG_TYPE.Action);
-        // }
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode, logTags);
         log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddToFillers(null, result, LOG_IDENTIFIER.STRING_1);

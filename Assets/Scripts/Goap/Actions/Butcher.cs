@@ -215,8 +215,8 @@ public class Butcher : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         IPointOfInterest poiTarget = node.poiTarget;
         if(node.poiTarget is Tombstone) {
             poiTarget = (node.poiTarget as Tombstone).character;

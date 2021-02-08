@@ -58,8 +58,8 @@ public class RepairStructure : GoapAction {
         isOverridden = true;
         return p;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         log.AddToFillers(node.poiTarget.gridTileLocation.structure, node.poiTarget.gridTileLocation.structure.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public override void Perform(ActualGoapNode goapNode) {

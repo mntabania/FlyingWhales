@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 
 public class Assumption : IReactable {
@@ -34,6 +35,7 @@ public class Assumption : IReactable {
         this.assumedAction = assumedAction;
     }
     public void SetAssumptionLog(Log p_log) {
+        if (assumptionLog != null) { LogPool.Release(assumptionLog); }
         assumptionLog = p_log;
     }
 

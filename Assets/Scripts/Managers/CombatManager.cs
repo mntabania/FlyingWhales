@@ -128,35 +128,13 @@ public class CombatManager : BaseMonoBehaviour {
             Profiler.EndSample();
         }
     }
-    public void DamageModifierByElementsAndTraits(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
+    public void ModifyDamage(ref int damage, ELEMENTAL_TYPE elementalType, float piercingPower, ITraitable target) {
         if(damage < 0) {
-            if (target.traitContainer.HasTrait("Immune")) {
-                damage = 0;
+            if(target is Character targetCharacter) {
+                //Piercing and Resistances
+                targetCharacter.piercingAndResistancesComponent.ModifyValueByResistance(ref damage, elementalType, piercingPower);
             } else {
-                if (target.traitContainer.HasTrait("Protection")) {
-                    //Protected - less 85% damage
-                    damage = Mathf.RoundToInt(damage * 0.5f);
-                    if (damage >= 0) {
-                        damage = -1;
-                    }
-                }
-                if (IsImmuneToElement(target, elementalType)) {
-                    if (target is Vapor) {
-                        damage = 0;
-                    } else {
-                        //Immunity - less 85% damage
-                        damage = Mathf.RoundToInt(damage * 0.15f);
-                        if (damage >= 0) {
-                            damage = -1;
-                        }
-                    }
-                    return;
-                }
-                if (elementalType == ELEMENTAL_TYPE.Fire) {
-                    if (target.traitContainer.HasTrait("Fire Prone")) {
-                        damage *= 2;
-                    }
-                } else if(elementalType == ELEMENTAL_TYPE.Electric) {
+                if (elementalType == ELEMENTAL_TYPE.Electric) {
                     if ((target is TileObject || target is StructureWallObject) && !(target is GenericTileObject)) {
                         damage = Mathf.RoundToInt(damage * 0.25f);
                         if (damage >= 0) {
@@ -165,6 +143,41 @@ public class CombatManager : BaseMonoBehaviour {
                     }
                 }
             }
+            //if (target.traitContainer.HasTrait("Immune")) {
+            //    damage = 0;
+            //} else {
+            //    if (target.traitContainer.HasTrait("Protection")) {
+            //        //Protected - less 85% damage
+            //        damage = Mathf.RoundToInt(damage * 0.5f);
+            //        if (damage >= 0) {
+            //            damage = -1;
+            //        }
+            //    }
+            //    if (IsImmuneToElement(target, elementalType)) {
+            //        if (target is Vapor) {
+            //            damage = 0;
+            //        } else {
+            //            //Immunity - less 85% damage
+            //            damage = Mathf.RoundToInt(damage * 0.15f);
+            //            if (damage >= 0) {
+            //                damage = -1;
+            //            }
+            //        }
+            //        return;
+            //    }
+            //    if (elementalType == ELEMENTAL_TYPE.Fire) {
+            //        if (target.traitContainer.HasTrait("Fire Prone")) {
+            //            damage *= 2;
+            //        }
+            //    } else if(elementalType == ELEMENTAL_TYPE.Electric) {
+            //        if ((target is TileObject || target is StructureWallObject) && !(target is GenericTileObject)) {
+            //            damage = Mathf.RoundToInt(damage * 0.25f);
+            //            if (damage >= 0) {
+            //                damage = -1;
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
     public bool IsImmuneToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {

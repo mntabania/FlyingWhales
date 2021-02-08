@@ -17,7 +17,7 @@ public class Necronomicon : Artifact {
         if(isBeingCarriedBy != p_newOwner) {
             base.SetInventoryOwner(p_newOwner);
             if (isBeingCarriedBy != null) {
-                isBeingCarriedBy.interruptComponent.NecromanticTranform();
+                isBeingCarriedBy.interruptComponent.NecromanticTransform();
             }
         }
     }

@@ -9,6 +9,7 @@ using Locations.Settlements;
 using Traits;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Object_Pools;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
@@ -167,7 +168,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "disband", providedTags: LOG_TAG.Major);
                 log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
             }
             return true;
@@ -238,7 +239,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                             log.AddToFillers(newCharacterLeader, newCharacterLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             log.AddToFillers(previousRuler, previousRuler.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                             log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
-                            log.AddLogToDatabase();
+                            log.AddLogToDatabase(true);
                         }
                     } else {
                         //If the game has not yet started yet, just set the ruler and do not log it because this is the first state of the world/game
@@ -1097,7 +1098,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                         log.AddToFillers(crime.descriptionLog.fillers);
                         log.AddToFillers(null, crime.descriptionLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                         log.AddLogToDatabase();    
-                        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                     } else {
                         debugLog += $"\nCould not set {name} and {targetFaction.name} as Hostile.";
                     }

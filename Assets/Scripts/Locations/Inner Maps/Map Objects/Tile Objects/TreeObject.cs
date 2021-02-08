@@ -107,9 +107,9 @@ public class TreeObject : TileObject {
         return data;
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null,
-        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
         LocationGridTile location = gridTileLocation;
-        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar);
+        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar, piercingPower);
         if (CanBeDamaged() && amount < 0) {
             //check if can awaken an ent
             switch (occupiedState) {

@@ -16,7 +16,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
             if (!actor.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, interruptHolder.actor, interruptHolder.actor);
@@ -39,7 +39,7 @@ namespace Interrupts {
                 //}
                 return true;
             }
-            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
         }
         #endregion
     }

@@ -18,7 +18,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(interruptHolder.target != null) {
                 //This means that the new home is predetermined
                 if(interruptHolder.target is Character targetCharacter) {

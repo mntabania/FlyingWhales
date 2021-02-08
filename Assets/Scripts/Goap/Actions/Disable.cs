@@ -47,10 +47,10 @@ public class Disable : GoapAction {
     private void DisableEffect(ITraitable traitable, Character actor) {
         if (traitable is Character targetCharacter && actor.IsHostileWith(targetCharacter)) {
             targetCharacter.traitContainer.AddTrait(traitable, "Ensnared", actor);  
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Disable", "effect", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Disable", "effect", null, logTags);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
     }
     #endregion

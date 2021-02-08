@@ -8,7 +8,7 @@ namespace EZObjectPools
     public class EZObjectPool : MonoBehaviour
     {
         static Dictionary<string, EZObjectPool> SharedPools = new Dictionary<string, EZObjectPool>();
-        static GameObject Marker;
+        public static GameObject Marker;
 
         /// <summary>
         /// The template GameObject this pool uses.
