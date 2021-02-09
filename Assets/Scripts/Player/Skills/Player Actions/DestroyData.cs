@@ -5,6 +5,9 @@ using Inner_Maps;
 using Logs;
 
 public class DestroyData : PlayerAction {
+    private SkillData m_skillData;
+    private PlayerSkillData m_playerSkillData;
+
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DESTROY;
     public override string name => "Destroy";
     public override string description => "This Action destroys an object.";
@@ -16,6 +19,8 @@ public class DestroyData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         LocationGridTile targetTile = targetPOI.gridTileLocation;
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.DESTROY);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.DESTROY);
         if (targetTile != null) {
             GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Destroy_Explosion);    
         }
@@ -29,6 +34,17 @@ public class DestroyData : PlayerAction {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == targetPOI) {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
+
+        targetTile.GetTilesInRadius(1).ForEach((eachTile) => {
+            if (eachTile != null) {
+                GameManager.Instance.CreateParticleEffectAt(eachTile, PARTICLE_EFFECT.Destroy_Explosion);
+                eachTile.charactersHere.ForEach((eachCharacters) => {
+                    eachCharacters.AdjustHP((int)m_playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(m_skillData.currentLevel) * -1,
+                        ELEMENTAL_TYPE.Normal, showHPBar: true,
+                        piercingPower: (int)m_playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(m_skillData.currentLevel));
+                });
+            }
+        });
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {

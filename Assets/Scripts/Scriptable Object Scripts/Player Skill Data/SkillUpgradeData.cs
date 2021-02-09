@@ -11,7 +11,7 @@ public class SkillUpgradeData
     [HideInInspector]
     public List<UPGRADE_BONUS> bonuses = new List<UPGRADE_BONUS>();
     [HideInInspector]
-    public List<float> additionalDamagePerLevel;
+    public List<int> additionalDamagePerLevel;
     [HideInInspector]
     public List<float> additionalPiercePerLevel;
     [HideInInspector]

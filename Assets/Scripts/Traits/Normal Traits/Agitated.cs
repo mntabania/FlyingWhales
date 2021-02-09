@@ -21,7 +21,6 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.AGITATE);
             m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.AGITATE);
-            m_skillData.currentLevel = 1;
         }
 
         #region Overrides

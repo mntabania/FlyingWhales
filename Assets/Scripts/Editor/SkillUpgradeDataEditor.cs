@@ -33,7 +33,7 @@ public class SkillUpgradeDataEditor : Editor {
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Damage)) {
-                DisplayFloatList(data.skillUpgradeData.additionalDamagePerLevel, "Damages per level");
+                DisplayIntList(data.skillUpgradeData.additionalDamagePerLevel, "Damages per level");
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Pierce)) {
