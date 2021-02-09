@@ -58,6 +58,9 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         areaData.yCoordinate = y;
 
         //Components
+        locationCharacterTracker = new LocationCharacterTracker();
+        locationAwareness = new LocationAwareness();
+        featureComponent = new TileFeatureComponent();
         spellsComponent = new AreaSpellsComponent(); spellsComponent.SetOwner(this);
         biomeEffectTrigger = new AreaBiomeEffectTrigger(); biomeEffectTrigger.SetOwner(this);
         gridTileComponent = new AreaGridTileComponent(); gridTileComponent.SetOwner(this);
@@ -75,6 +78,9 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         neighbourComponent = new AreaNeighbourComponent(); neighbourComponent.SetOwner(this);
         tileObjectComponent = new AreaTileObjectComponent(); tileObjectComponent.SetOwner(this);
         biomeComponent = new AreaBiomeComponent(); biomeComponent.SetOwner(this);
+        locationCharacterTracker = new LocationCharacterTracker();
+        locationAwareness = new LocationAwareness();
+        featureComponent = new TileFeatureComponent();
     }
 
     #region Elevation
