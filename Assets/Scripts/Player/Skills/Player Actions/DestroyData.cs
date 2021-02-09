@@ -21,6 +21,7 @@ public class DestroyData : PlayerAction {
         LocationGridTile targetTile = targetPOI.gridTileLocation;
         m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.DESTROY);
         m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.DESTROY);
+        
         if (targetTile != null) {
             GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Destroy_Explosion);    
         }
@@ -35,16 +36,19 @@ public class DestroyData : PlayerAction {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
 
-        targetTile.GetTilesInRadius(1).ForEach((eachTile) => {
-            if (eachTile != null) {
-                GameManager.Instance.CreateParticleEffectAt(eachTile, PARTICLE_EFFECT.Destroy_Explosion);
-                eachTile.charactersHere.ForEach((eachCharacters) => {
-                    eachCharacters.AdjustHP((int)m_playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(m_skillData.currentLevel) * -1,
-                        ELEMENTAL_TYPE.Normal, showHPBar: true,
-                        piercingPower: (int)m_playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(m_skillData.currentLevel));
-                });
-            }
-        });
+        if (m_skillData.currentLevel > 0) {
+            targetTile.GetTilesInRadius(1).ForEach((eachTile) => {
+                if (eachTile != null) {
+                    GameManager.Instance.CreateParticleEffectAt(eachTile, PARTICLE_EFFECT.Destroy_Explosion);
+                    eachTile.charactersHere.ForEach((eachCharacters) => {
+                        eachCharacters.AdjustHP((int)m_playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(m_skillData.currentLevel) * -1,
+                            ELEMENTAL_TYPE.Normal, showHPBar: true,
+                            piercingPower: (int)m_playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(m_skillData.currentLevel));
+                    });
+                }
+            });
+        }
+        
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {

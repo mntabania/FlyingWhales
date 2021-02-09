@@ -287,8 +287,7 @@ public class PlayerSkillComponent {
         spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(spellData.maxCharges);
         spellData.SetCooldown(skillData.cooldown);
-        Debug.LogError(spellData.name + " " + playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
-        
+       
         spellData.SetPierce(playerSkillData.GetPierceBaseOnLevel(spellData.currentLevel));
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);
