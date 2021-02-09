@@ -36,24 +36,11 @@ public class PlayerSkillData : ScriptableObject {
     public SkillUpgradeData skillUpgradeData;
 
     public int GetManaCostBaseOnLevel(int level) {
-        if (level <= 0) {
-            return manaCost;
-        }
-        return skillUpgradeData.GetManaCostPerLevel(level - 1);
+        return skillUpgradeData.GetManaCostPerLevel(level);
     }
 
     public int GetMaxChargesBaseOnLevel(int level) {
-        if (level <= 0) {
-            return charges;
-        }
-        return skillUpgradeData.GetChargesBaseOnLevel(level - 1);
-    }
-
-    public float GetPierceBaseOnLevel(int level) {
-        if (level <= 0) {
-            return pierce;
-        }
-        return skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(level - 1);
+        return skillUpgradeData.GetChargesBaseOnLevel(level);
     }
 }
 

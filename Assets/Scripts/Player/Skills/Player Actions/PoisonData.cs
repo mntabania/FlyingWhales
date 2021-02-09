@@ -5,6 +5,8 @@ using Traits;
 using UnityEngine;
 
 public class PoisonData : PlayerAction {
+    private SkillData m_skillData;
+    private PlayerSkillData m_playerSkillData;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.POISON;
     public override string name => "Poison";
     public override string description => "This Action can be used to apply Poisoned on an object.";
@@ -14,8 +16,10 @@ public class PoisonData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.POISON);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.POISON);
         //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
-        targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned");
+        targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned", overrideDuration: (int)m_playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(m_skillData.currentLevel));
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToDatabase();

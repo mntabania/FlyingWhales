@@ -71,7 +71,7 @@ public class PlayerSkillComponent {
         spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(charges);
         spellData.SetCooldown(cooldown);
-        spellData.SetPierce(playerSkillData.GetPierceBaseOnLevel(spellData.currentLevel));
+        spellData.SetPierce(playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(spellData.currentLevel));
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(threat);
         spellData.SetThreatPerHour(threatPerHour);
@@ -272,7 +272,7 @@ public class PlayerSkillComponent {
         }
         spellData.SetCooldown(skillData.cooldown);
         
-        spellData.SetPierce(playerSkillData.GetPierceBaseOnLevel(spellData.currentLevel));
+        spellData.SetPierce(playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(spellData.currentLevel));
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
@@ -288,7 +288,7 @@ public class PlayerSkillComponent {
         spellData.SetCharges(spellData.maxCharges);
         spellData.SetCooldown(skillData.cooldown);
        
-        spellData.SetPierce(playerSkillData.GetPierceBaseOnLevel(spellData.currentLevel));
+        spellData.SetPierce(playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(spellData.currentLevel));
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);

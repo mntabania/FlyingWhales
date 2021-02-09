@@ -7,6 +7,8 @@ using UnityEngine;
 using Traits;
 
 public class IgniteData : PlayerAction {
+    private SkillData m_skillData;
+    private PlayerSkillData m_playerSkillData;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.IGNITE;
     public override string name => "Ignite";
     public override string description => "This Action can be used to apply Burning to an object.";
@@ -17,6 +19,8 @@ public class IgniteData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.IGNITE);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.IGNITE);
         LocationGridTile targetTile = targetPOI.gridTileLocation;
 
         if (targetTile != null) {
@@ -46,7 +50,8 @@ public class IgniteData : PlayerAction {
     private void IgniteEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }
         Trait trait = null;
-        if (traitable.traitContainer.AddTrait(traitable, "Burning", out trait, bypassElementalChance: true)) {
+        if (traitable.traitContainer.AddTrait(traitable, "Burning", out trait, bypassElementalChance: true, 
+            overrideDuration: (int)m_playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(m_skillData.currentLevel))) {
             TraitManager.Instance.ProcessBurningTrait(traitable, trait, ref bs);
         }
     }
