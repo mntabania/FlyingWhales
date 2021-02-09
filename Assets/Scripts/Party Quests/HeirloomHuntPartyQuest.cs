@@ -156,7 +156,7 @@ public class HeirloomHuntPartyQuest : PartyQuest {
                 targetHeirloom = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(subData.targetHeirloom) as Heirloom;
             }
             if (!string.IsNullOrEmpty(subData.targetHex)) {
-                targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);
+                targetHex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(subData.targetHex);
             }
             if (!string.IsNullOrEmpty(subData.regionToSearch)) {
                 regionToSearch = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionToSearch);

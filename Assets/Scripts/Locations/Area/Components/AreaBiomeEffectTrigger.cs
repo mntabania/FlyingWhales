@@ -1,14 +1,14 @@
 ﻿using System;
 
-public class HexTileBiomeEffectTrigger {
+public class AreaBiomeEffectTrigger : AreaComponent {
 
-    private HexTile _hexTile;
+    public bool hasBeenInitialized { get; private set; }
 
-    private bool _hasBeenInitialized;
-
-    public HexTileBiomeEffectTrigger(HexTile hexTile) {
-        _hexTile = hexTile;
-        _hasBeenInitialized = false;
+    public AreaBiomeEffectTrigger() {
+        hasBeenInitialized = false;
+    }
+    public AreaBiomeEffectTrigger(SaveDataAreaBiomeEffectTrigger data) {
+        hasBeenInitialized = data.hasBeenInitialized;
     }
 
     #region Events
@@ -16,12 +16,12 @@ public class HexTileBiomeEffectTrigger {
         AddListenersBasedOnBiome();
     }
     public void ProcessBeforeBiomeChange() {
-        if (_hasBeenInitialized) {
+        if (hasBeenInitialized) {
             RemoveListenersBasedOnBiome();    
         }
     }
     public void ProcessAfterBiomeChange() {
-        if (_hasBeenInitialized) {
+        if (hasBeenInitialized) {
             AddListenersBasedOnBiome();    
         }
     }
@@ -29,7 +29,7 @@ public class HexTileBiomeEffectTrigger {
 
     #region Listeners
     private void AddListenersBasedOnBiome() {
-        switch (_hexTile.biomeType) {
+        switch (owner.areaData.biomeType) {
             case BIOMES.GRASSLAND:
                 break;
             case BIOMES.SNOW:
@@ -44,7 +44,7 @@ public class HexTileBiomeEffectTrigger {
         }
     }
     private void RemoveListenersBasedOnBiome() {
-        switch (_hexTile.biomeType) {
+        switch (owner.areaData.biomeType) {
             case BIOMES.GRASSLAND:
                 break;
             case BIOMES.SNOW:
@@ -74,4 +74,17 @@ public class HexTileBiomeEffectTrigger {
         }
     }
     #endregion
+}
+
+public class SaveDataAreaBiomeEffectTrigger : SaveData<AreaBiomeEffectTrigger> {
+    public bool hasBeenInitialized;
+
+    public override void Save(AreaBiomeEffectTrigger data) {
+        base.Save(data);
+        hasBeenInitialized = data.hasBeenInitialized;
+    }
+    public override AreaBiomeEffectTrigger Load() {
+        AreaBiomeEffectTrigger component = new AreaBiomeEffectTrigger(this);
+        return component;
+    }
 }

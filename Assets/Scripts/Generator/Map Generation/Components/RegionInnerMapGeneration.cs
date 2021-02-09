@@ -120,7 +120,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             manMadeStructure.SetStructureObject(structureObject);
 
             if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
+                HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
                 structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
             }
             
@@ -150,7 +150,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             demonicStructure.SetStructureObject(structureObject);
 
             if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
+                HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
                 structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
             }
             
@@ -165,7 +165,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 cave.LoadOccupiedHexTiles(saveDataCave);
             } else {
                 if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                    HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
+                    HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
                     structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
                 }
             }

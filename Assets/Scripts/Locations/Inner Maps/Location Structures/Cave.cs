@@ -39,7 +39,7 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < saveDataCave.occupiedHextiles.Count; i++) {
                 string hexTileID = saveDataCave.occupiedHextiles[i];
                 if (!string.IsNullOrEmpty(hexTileID)) {
-                    HexTile hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(hexTileID);
+                    HexTile hexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(hexTileID);
                     caveHexTiles.Add(hexTile.innerMapHexTile);
                 }
             }

@@ -994,11 +994,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             targetRestingTavern = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetRestingTavern);
         }
         if (!string.IsNullOrEmpty(data.targetCamp)) {
-            targetCamp = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.targetCamp);
+            targetCamp = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.targetCamp);
         }
         if (!string.IsNullOrEmpty(data.targetDestination)) {
-            if(data.targetDestinationType == PARTY_TARGET_DESTINATION_TYPE.Hextile) {
-                targetDestination = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.targetDestination);
+            if(data.targetDestinationType == PARTY_TARGET_DESTINATION_TYPE.Area) {
+                targetDestination = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.targetDestination);
             } else if (data.targetDestinationType == PARTY_TARGET_DESTINATION_TYPE.Structure) {
                 targetDestination = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetDestination);
             } else if (data.targetDestinationType == PARTY_TARGET_DESTINATION_TYPE.Settlement) {

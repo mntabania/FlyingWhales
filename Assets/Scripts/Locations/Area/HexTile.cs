@@ -94,7 +94,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
     private int _isBeingDefendedCount;
-    private HexTileBiomeEffectTrigger _hexTileBiomeEffectTrigger;
+    private AreaBiomeEffectTrigger _hexTileBiomeEffectTrigger;
     /// <summary>
     /// Number of blueprint LocationGridTiles on this.
     /// NOTE: This is not saved because this is filled out by <see cref="LocationGridTile.SetHasBlueprint"/>
@@ -102,11 +102,11 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private int _blueprintsOnTile;
 
     //Components
-    public HexTileSpellsComponent spellsComponent { get; private set; }
+    public AreaSpellsComponent spellsComponent { get; private set; }
 
     #region getters/setters
     public string persistentID => data.persistentID;
-    public OBJECT_TYPE objectType => OBJECT_TYPE.Hextile;
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Area;
     public Type serializedData => typeof(SaveDataHextile);
     public int id => data.id;
     public int xCoordinate => data.xCoordinate;
@@ -124,7 +124,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public bool isCorrupted => _isCorrupted;
     public bool isBeingDefended => _isBeingDefendedCount > 0;
     public bool hasBeenDestroyed => false;
-    public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Hextile;
+    public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Area;
     public Vector3 worldPosition {
         get {
             Vector2 pos = innerMapHexTile.gridTileCollections[0].locationGridTileCollectionItem.transform.position;
@@ -148,8 +148,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public void Initialize(bool listenForGameLoad = true) {
         featureComponent = new TileFeatureComponent();
         itemsInHex = new List<TileObject>();
-        spellsComponent = new HexTileSpellsComponent(this);
-        _hexTileBiomeEffectTrigger = new HexTileBiomeEffectTrigger(this);
+        spellsComponent = new AreaSpellsComponent(null);
+        _hexTileBiomeEffectTrigger = new AreaBiomeEffectTrigger(null);
         selectableSize = new Vector2Int(12, 12);
         locationCharacterTracker = new LocationCharacterTracker();
         SetBordersState(false, false, Color.red);
@@ -1610,16 +1610,6 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public void DecreaseIsBeingDefendedCount() {
         _isBeingDefendedCount--;
-    }
-    #endregion
-
-    #region Freezing Trap
-    public int freezingTraps { get; private set; }
-    public void AddFreezingTrapInHexTile() {
-        freezingTraps++;
-    }
-    public void RemoveFreezingTrapInHexTile() {
-        freezingTraps--;
     }
     #endregion
 

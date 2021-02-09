@@ -258,7 +258,7 @@ public class LoadSecondWave : MapGenerationComponent {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Area Spells...");
         for (int i = 0; i < saveData.worldMapSave.hextileSaves.Count; i++) {
             SaveDataHextile saveDataHextile = saveData.worldMapSave.hextileSaves[i];
-            HexTile hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHextile.persistentID);
+            HexTile hexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataHextile.persistentID);
             hexTile.spellsComponent.Load(saveDataHextile.saveDataHexTileSpellsComponent);
         }
         yield return null;

@@ -21,7 +21,7 @@ public class GridMap : BaseMonoBehaviour {
     public HexTile[,] map;
 
     #region getters
-    public List<HexTile> normalHexTiles => DatabaseManager.Instance.hexTileDatabase.allHexTiles;
+    public List<HexTile> normalHexTiles => DatabaseManager.Instance.areaDatabase.allAreas;
     public Region[] allRegions => DatabaseManager.Instance != null ? DatabaseManager.Instance.regionDatabase.allRegions : null;
     #endregion
     
@@ -39,7 +39,7 @@ public class GridMap : BaseMonoBehaviour {
         this.map = map;
         for (int i = 0; i < normalHexTiles.Count; i++) {
             HexTile hexTile = normalHexTiles[i];
-            DatabaseManager.Instance.hexTileDatabase.RegisterHexTile(hexTile);
+            DatabaseManager.Instance.areaDatabase.RegisterHexTile(hexTile);
         }
     }
     public void SetOuterGridList(HashSet<HexTile> outerTiles) {

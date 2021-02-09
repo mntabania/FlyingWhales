@@ -26,13 +26,13 @@ public class WorldMapSave {
     //     SaveSettlements(settlementDatabase.allSettlements);
     //     SaveStructures(structureDatabase.allStructures);
     // }
-    public IEnumerator SaveWorldCoroutine(WorldMapTemplate _worldMapTemplate, HexTileDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, 
+    public IEnumerator SaveWorldCoroutine(WorldMapTemplate _worldMapTemplate, AreaDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, 
         LocationStructureDatabase structureDatabase, List<WorldEvent> activeEvents) {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving world map...");
         //if saved world is tutorial, set world type as custom, this is so that tutorials will not spawn again when loading from a map from the tutorial
         worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
         worldMapTemplate = _worldMapTemplate;
-        yield return SaveManager.Instance.StartCoroutine(SaveHexTilesCoroutine(hexTileDatabase.allHexTiles));
+        yield return SaveManager.Instance.StartCoroutine(SaveHexTilesCoroutine(hexTileDatabase.allAreas));
         yield return SaveManager.Instance.StartCoroutine(SaveRegionsCoroutine(regionDatabase.allRegions));
         yield return SaveManager.Instance.StartCoroutine(SaveSettlementsCoroutine(settlementDatabase.allSettlements));
         yield return SaveManager.Instance.StartCoroutine(SaveStructuresCoroutine(structureDatabase.allStructures));

@@ -115,10 +115,10 @@ public class MonsterInvadeGathering : Gathering {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
             if (!string.IsNullOrEmpty(subData.targetHex)) {
-                targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);
+                targetHex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(subData.targetHex);
             }
             if (!string.IsNullOrEmpty(subData.hexForJoining)) {
-                hexForJoining = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.hexForJoining);
+                hexForJoining = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(subData.hexForJoining);
             }
             if (isWaitTimeOver && !isDisbanded) {
                 Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);

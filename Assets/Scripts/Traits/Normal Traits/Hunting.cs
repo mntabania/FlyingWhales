@@ -25,7 +25,7 @@ namespace Traits {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataHunting saveDataHunting = saveDataTrait as SaveDataHunting;
             Assert.IsNotNull(saveDataHunting);
-            targetTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHunting.targetTileID);
+            targetTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataHunting.targetTileID);
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);

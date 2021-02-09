@@ -70,7 +70,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
 
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
-        yield return StartCoroutine(worldMapSave.SaveWorldCoroutine(WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, DatabaseManager.Instance.hexTileDatabase,
+        yield return StartCoroutine(worldMapSave.SaveWorldCoroutine(WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, DatabaseManager.Instance.areaDatabase,
             DatabaseManager.Instance.regionDatabase, DatabaseManager.Instance.settlementDatabase, DatabaseManager.Instance.structureDatabase, WorldEventManager.Instance.activeEvents));
         currentSaveDataProgress.worldMapSave = worldMapSave;
         yield return StartCoroutine(currentSaveDataProgress.SaveTileObjectsCoroutine());
