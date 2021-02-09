@@ -1182,3 +1182,11 @@ public enum VICTORY_CONDITION {
 public enum RESISTANCE {
     None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
 }
+
+public enum UPGRADE_BONUS {
+    Damage = 0, Pierce, HP_Percentage, HP_Actual_Amount, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Increase_Stats_Percentage, Duration,
+}
+
+public enum UNLOCKING_SKILL_REQUIREMENT {
+    Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count,
+}

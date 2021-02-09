@@ -14,14 +14,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill: 92
   manaCost: 10
-  charges: 3
+  charges: 1
   cooldown: 144
   threat: 0
   threatPerHour: 0
   expCost: 300
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 2
+  baseLoadoutWeight: 300
+  resistanceType: 0
+  archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 21300000, guid: 98f616a5f4907024cb549bb65aea1c63, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
+  requirementData:
+    requirements: 02000000
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 2
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+  skillUpgradeData:
+    upgradeCosts: c80000002c01000090010000
+    manacostPerLevel: 
+    chargesPerLevel: 020000000300000004000000
+    bonuses: 0100000002000000
+    additionalDamagePerLevel: []
+    additionalPiercePerLevel:
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel:
+    - 65
+    - 80
+    - 100
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: []
+    additionalAttackValuePerLevel: []
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: []

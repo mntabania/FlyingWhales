@@ -12,21 +12,28 @@ public class PlayerSkillData : ScriptableObject {
     public int threat;
     public int threatPerHour;
     public int expCost;
+    public float pierce;
     public Sprite buttonSprite;
     public VideoClip tooltipVideoClip;
     public Texture tooltipImage;
 
-    public List<int> upgradeCosts;
     public int unlockCost = 0;
-    public RequirementData requirementData;
     public int tier;
-    
+    public int baseLoadoutWeight;
+    public RESISTANCE resistanceType;
+    public PLAYER_ARCHETYPE archetypeWeightedBonus;
+
     [Header("Context Menu")]
     public Sprite contextMenuIcon;
     public int contextMenuColumn;
 
     [Header("Player Action Icon")]
     public Sprite playerActionIcon;
+
+    [Space]
+    [Header("--------------Upgrade Related---------------")]
+    public RequirementData requirementData;
+    public SkillUpgradeData skillUpgradeData;
 }
 
 //[System.Serializable]

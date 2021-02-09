@@ -21,16 +21,21 @@ public class SkillProgressionManager {
 		return success;
 	}
 
-	private bool CheckRequirement(PlayerSkillComponent p_skills, CurrenciesComponent p_currencies, SkillData p_targetSkillData) {
+	private bool CheckRequirement(PlayerSkillComponent p_availablePlayerSkills, CurrenciesComponent p_currencies, SkillData p_targetSkillData) {
 		PlayerSkillData playerSkilldata = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_targetSkillData.type);
 
-		if (playerSkilldata.requirementData.actionCount <= p_skills.playerActions.Count &&
-			playerSkilldata.requirementData.afflictionCount <= p_skills.afflictions.Count &&
-			playerSkilldata.requirementData.spellsCount <= p_skills.spells.Count &&
-			playerSkilldata.requirementData.tier1Count <= p_skills.tier1Count &&
-			playerSkilldata.requirementData.tier2Count <= p_skills.tier2Count &&
-			playerSkilldata.requirementData.tier3Count <= p_skills.tier3Count &&
-			playerSkilldata.upgradeCosts[p_skills.GetLevelOfSkill(p_targetSkillData)] <= p_currencies.ChaoticEnergy) {
+		for (int x = 0; x < playerSkilldata.requirementData.requiredSkills.Count; ++x) {
+			if (!p_availablePlayerSkills.CheckIfSkillIsAvailable(playerSkilldata.requirementData.requiredSkills[x])) {
+				return false;
+			}
+		}
+		if (playerSkilldata.requirementData.actionCount <= p_availablePlayerSkills.playerActions.Count &&
+			playerSkilldata.requirementData.afflictionCount <= p_availablePlayerSkills.afflictions.Count &&
+			playerSkilldata.requirementData.spellsCount <= p_availablePlayerSkills.spells.Count &&
+			playerSkilldata.requirementData.tier1Count <= p_availablePlayerSkills.tier1Count &&
+			playerSkilldata.requirementData.tier2Count <= p_availablePlayerSkills.tier2Count &&
+			playerSkilldata.requirementData.tier3Count <= p_availablePlayerSkills.tier3Count &&
+			playerSkilldata.skillUpgradeData.upgradeCosts[p_availablePlayerSkills.GetLevelOfSkill(p_targetSkillData)] <= p_currencies.ChaoticEnergy) {
 
 			return true;
 		}

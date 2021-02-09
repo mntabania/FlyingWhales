@@ -15,6 +15,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
     public int currentLevel;
     public List<int> upgradeCost;
     public int currentCooldownTick;
+    public float basePierce;
 
     #region Overrides
     public override void Save(SkillData data) {
@@ -27,6 +28,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
         threatPerHour = data.threatPerHour;
         currentCooldownTick = data.currentCooldownTick;
         currentLevel = data.currentLevel;
+        basePierce = data.basePierce;
 
     }
     public override SkillData Load() {
@@ -34,6 +36,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
         data.SetCharges(charges);
         data.SetCooldown(cooldown);
         data.SetManaCost(manaCost);
+        data.SetPierce(basePierce);
         data.SetThreat(threat);
         data.SetThreatPerHour(threatPerHour);
 

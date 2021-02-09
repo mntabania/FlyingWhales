@@ -40,6 +40,19 @@ public class PlayerSkillComponent {
         
     }
 
+    public bool CheckIfSkillIsAvailable(PLAYER_SKILL_TYPE p_targetSkill) {
+        if (spells.Contains(p_targetSkill)) {
+            return true;
+        }
+        if (playerActions.Contains(p_targetSkill)) {
+            return true;
+        }
+        if (afflictions.Contains(p_targetSkill)) {
+            return true;
+        }
+        return false;
+    }
+
     #region Loading
     public void LoadSkills(List<SaveDataPlayerSkill> data) {
         if(data != null) {
@@ -52,11 +65,12 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Skill Tree
-    public void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour) {
+    public void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
         spellData.SetMaxCharges(charges);
         spellData.SetCharges(charges);
         spellData.SetCooldown(cooldown);
         spellData.SetManaCost(manaCost);
+        spellData.SetPierce(pierce);
         spellData.SetThreat(threat);
         spellData.SetThreatPerHour(threatPerHour);
         CategorizePlayerSkill(spellData);
@@ -66,7 +80,7 @@ public class PlayerSkillComponent {
         if (spellData.isInUse) {
             spellData.AdjustCharges(amount);
         } else {
-            AddPlayerSkill(spellData, amount, -1, -1, 0, 0);
+            AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
             UpdateTierCount(PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type));
         }
     }
@@ -255,6 +269,7 @@ public class PlayerSkillComponent {
         }
         spellData.SetCooldown(skillData.cooldown);
         spellData.SetManaCost(skillData.manaCost);
+        spellData.SetPierce(skillData.pierce);
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);
@@ -267,6 +282,7 @@ public class PlayerSkillComponent {
         spellData.SetMaxCharges(skillData.charges);
         spellData.SetCharges(spellData.maxCharges);
         spellData.SetCooldown(skillData.cooldown);
+        spellData.SetPierce(skillData.pierce);
         spellData.SetManaCost(skillData.manaCost);
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
