@@ -698,8 +698,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Character resident = residents[i];
             if(resident.limiterComponent.canPerform && !resident.isDead 
                 && !resident.isBeingSeized
-                && resident.gridTileLocation != null 
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && resident.gridTileLocation != null
                 && resident.gridTileLocation.IsPartOfSettlement(this)) {
                 return true;
             }

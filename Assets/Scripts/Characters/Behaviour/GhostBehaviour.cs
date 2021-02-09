@@ -21,7 +21,7 @@ public class GhostBehaviour : BaseMonsterBehaviour {
             }
             if (!character.HasTerritory()) {
                 log += "\n-No territory, will set nearest hex tile as territory";
-                HexTile hex = character.gridTileLocation.collectionOwner.GetNearestPlainHexTileWithNoResident();
+                HexTile hex = character.hexTileLocation.GetNearestPlainHexTileWithNoResident();
                 if(hex != null) {
                     character.SetTerritory(hex);
                 }

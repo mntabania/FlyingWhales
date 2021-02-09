@@ -33,7 +33,7 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void AfterStructureDestruction() {
             structureObj.OnOwnerStructureDestroyed(region.innerMap); 
-            HexTile hexTile = occupiedHexTile.hexTileOwner;
+            HexTile hexTile = occupiedHexTile;
             base.AfterStructureDestruction();
             hexTile.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();

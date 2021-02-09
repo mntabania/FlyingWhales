@@ -749,7 +749,7 @@ public class Region : ISavable, ILogFiller {
         foreach (List<LocationStructure> structureList in structures.Values) {
             for (int i = 0; i < structureList.Count; i++) {
                 LocationStructure currStructure = structureList[i];
-                if (currStructure.occupiedHexTile != null && currStructure.occupiedHexTile.hexTileOwner.settlementOnTile == character.homeSettlement) {
+                if (currStructure.occupiedHexTile != null && currStructure.occupiedHexTile.settlementOnTile == character.homeSettlement) {
                     for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = currStructure.pointsOfInterest.ElementAt(j);
                         if(poi.gridTileLocation != null && poi.IsOwnedBy(character)) {
@@ -1015,7 +1015,7 @@ public class Region : ISavable, ILogFiller {
             for (int i = 0; i < shuffledNonMountainWaterTiles.Count; i++) {
                 if (shuffledNonMountainWaterTiles[i].settlementOnTile == null) {
                     HexTile hex = shuffledNonMountainWaterTiles[i];
-                    LocationGridTile potentialTile = hex.locationGridTiles[UnityEngine.Random.Range(0, hex.locationGridTiles.Count)];
+                    LocationGridTile potentialTile = hex.locationGridTiles[UnityEngine.Random.Range(0, hex.locationGridTiles.Length)];
                     if(character.movementComponent.HasPathToEvenIfDiffRegion(potentialTile)) {
                         chosenTile = potentialTile;
                         break;

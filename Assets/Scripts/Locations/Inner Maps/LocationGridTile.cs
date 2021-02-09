@@ -31,6 +31,7 @@ namespace Inner_Maps {
         public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
+        public HexTile parentArea { get; }
         public Vector3Int localPlace { get; }
         public Vector3 worldLocation { get; private set; }
         public Vector3 centeredWorldLocation { get; private set; }
@@ -45,7 +46,7 @@ namespace Inner_Maps {
         public List<Character> charactersHere { get; private set; }
         public GenericTileObject genericTileObject { get; private set; }
         public List<StructureWallObject> walls { get; private set; }
-        public LocationGridTileCollection collectionOwner { get; private set; }
+        // public LocationGridTileCollection collectionOwner { get; private set; }
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
@@ -85,10 +86,8 @@ namespace Inner_Maps {
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
         public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
-        public List<Trait> traits => genericTileObject.traitContainer.traits;
-        public List<Status> statuses => genericTileObject.traitContainer.statuses;
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
-        public BIOMES biomeType => collectionOwner.GetConnectedHextileOrNearestHextile().biomeType;
+        public BIOMES biomeType => parentArea.biomeType;
         #endregion
         
         #region Pathfinding
@@ -99,17 +98,17 @@ namespace Inner_Maps {
             get {
                 return neighbourList.Where(o =>
                         !o.isOccupied && o.charactersHere.Count <= 0 && o.structure == structure &&
-                        o.collectionOwner.isPartOfParentRegionMap &&
-                        o.collectionOwner.partOfHextile.hexTileOwner == collectionOwner.partOfHextile.hexTileOwner)
+                        o.parentArea == parentArea)
                     .ToList();
             }
         }
         #endregion
         
-        public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap parentMap) {
+        public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap p_parentMap, HexTile p_area) {
             persistentID = System.Guid.NewGuid().ToString();
-            this.parentMap = parentMap;
+            parentMap = p_parentMap;
             parentTileMap = tilemap;
+            parentArea = p_area;
             localPlace = new Vector3Int(x, y, 0);
             worldLocation = tilemap.CellToWorld(localPlace);
             localLocation = tilemap.CellToLocal(localPlace);
@@ -126,10 +125,11 @@ namespace Inner_Maps {
             connectorsOnTile = 0;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
-        public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap parentMap) {
+        public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap p_parentMap, HexTile p_area) {
             persistentID = data.persistentID;
-            this.parentMap = parentMap;
+            parentMap = p_parentMap;
             parentTileMap = tilemap;
+            parentArea = p_area;
             localPlace = new Vector3Int((int)data.localPlace.x, (int)data.localPlace.y, 0);
             worldLocation = data.worldLocation;
             localLocation = data.localLocation;
@@ -184,9 +184,6 @@ namespace Inner_Maps {
         }
         public void LoadGenericTileObject(GenericTileObject genericTileObject) {
             this.genericTileObject = genericTileObject;
-        }
-        public void SetCollectionOwner(LocationGridTileCollection _collectionOwner) {
-            collectionOwner = _collectionOwner;
         }
         private void SetGroundType(Ground_Type newGroundType, bool isInitial = false) {
             Ground_Type previousType = this.groundType;
@@ -581,7 +578,7 @@ namespace Inner_Maps {
             if (character.race.IsSapient()) {
                 if (character.currentSettlement != null) {
                     character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
-                    collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddCharacterToSettlement(character);
+                    parentArea.settlementOnTile.SettlementResources?.AddCharacterToSettlement(character);
                 }
             }
                 
@@ -650,13 +647,13 @@ namespace Inner_Maps {
                         //The reason for this is so that if the corrupted hex is too far away the character will not try to run from it, and thus, the flee path will not be messed up
                         //Right now, the flee path sometimes gets messed up when the character tries to run from another character, sometimes they go to the same direction, it is because right now, we always take into account the corrupted hex tile even if they are too far
                         if (character.marker && character.marker.hasFleePath && character.isNormalCharacter) {
-                            if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                                //TileObject genericTileObject = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile().genericTileObject;
+                            if (character.gridTileLocation != null) {
+                                //TileObject genericTileObject = character.gridTileLocation.hexTileOwner.GetCenterLocationGridTile().genericTileObject;
                                 character.movementComponent.SetHasMovedOnCorruption(true);
                                 //character.marker.AddPOIAsInVisionRange(genericTileObject);
                                 //character.combatComponent.Flight(genericTileObject, "saw something frightening", forcedFlight: true);
                                 //genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
-                                character.marker.AddAvoidPositions(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile().worldLocation);
+                                character.marker.AddAvoidPositions(character.gridTileLocation.parentArea.GetCenterLocationGridTile().worldLocation);
                                 return;
                             }
                         }
@@ -666,8 +663,7 @@ namespace Inner_Maps {
                     //Reporting does not trigger until Tutorial is over
                     //https://trello.com/c/OmmyR6go/1239-reporting-does-not-trigger-until-tutorial-is-over
 
-                    LocationStructure mostImportantStructureOnTile =
-                        collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
+                    LocationStructure mostImportantStructureOnTile = parentArea.GetMostImportantStructureOnTile();
                     if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
                         if (!character.behaviourComponent.isAttackingDemonicStructure 
                             && character.homeSettlement != null && character.necromancerTrait == null && character.race.IsSapient()
@@ -731,10 +727,8 @@ namespace Inner_Maps {
             } else if (character.homeStructure != null) {
                 return structure == character.homeStructure;
             } else if (character.HasTerritory()) {
-                if (collectionOwner.isPartOfParentRegionMap) {
-                    HexTile hex = collectionOwner.partOfHextile.hexTileOwner;
-                    return hex == character.territory;
-                }
+                HexTile hex = parentArea;
+                return hex == character.territory;
             }
             return false;
         }
@@ -940,8 +934,8 @@ namespace Inner_Maps {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (_neighbours.Values.ElementAt(i).collectionOwner.partOfHextile.hexTileOwner &&
-                    _neighbours.Values.ElementAt(i).collectionOwner.partOfHextile.hexTileOwner.elevationType == elevation) {
+                if (_neighbours.Values.ElementAt(i).parentArea &&
+                    _neighbours.Values.ElementAt(i).parentArea.elevationType == elevation) {
                     return true;
                 }
             }
@@ -1476,24 +1470,24 @@ namespace Inner_Maps {
             return count;
         }
         public bool IsPartOfSettlement(out BaseSettlement settlement) {
-            if (collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                settlement = collectionOwner.partOfHextile.hexTileOwner.settlementOnTile;
+            if (parentArea.settlementOnTile != null) {
+                settlement = parentArea.settlementOnTile;
                 return true;
             }
             settlement = null;
             return false;
         }
         public bool IsPartOfSettlement(BaseSettlement settlement) {
-            return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == settlement;
+            return parentArea.settlementOnTile == settlement;
         }
         public bool IsPartOfSettlement() {
-            return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null;
+            return parentArea.settlementOnTile != null;
         }
         public bool IsPartOfHumanElvenSettlement() {
-            return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE;
+            return parentArea.settlementOnTile != null && parentArea.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE;
         }
         public bool IsPartOfActiveHumanElvenSettlement() {
-            return IsPartOfHumanElvenSettlement() && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.residents.Count > 0;
+            return IsPartOfHumanElvenSettlement() && parentArea.settlementOnTile.residents.Count > 0;
         }
         public bool IsNextToSettlement(out BaseSettlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {
@@ -1529,10 +1523,7 @@ namespace Inner_Maps {
         /// <param name="settlement">The settlement to check</param>
         /// <returns>True or false.</returns>
         public bool IsNextToSettlementArea(BaseSettlement settlement) {
-            if (collectionOwner.isPartOfParentRegionMap == false) {
-                return false;
-            }
-            HexTile hexTile = collectionOwner.partOfHextile.hexTileOwner;
+            HexTile hexTile = parentArea;
             for (int i = 0; i < hexTile.AllNeighbours.Count; i++) {
                 HexTile neighbour = hexTile.AllNeighbours[i];
                 if (neighbour.settlementOnTile == settlement) {
@@ -1720,15 +1711,11 @@ namespace Inner_Maps {
                 SetIsDefault(false);
                 hasFreezingTrap = state;
                 if (hasFreezingTrap) {
-                    if (collectionOwner.isPartOfParentRegionMap) {
-                        collectionOwner.partOfHextile.hexTileOwner.AddFreezingTrapInHexTile();
-                    }
+                    parentArea.AddFreezingTrapInHexTile();
                     this.freezingTrapExclusions = new List<RACE>(freezingTrapExclusions);
                     _freezingTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Freezing_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
                 } else {
-                    if (collectionOwner.isPartOfParentRegionMap) {
-                        collectionOwner.partOfHextile.hexTileOwner.RemoveFreezingTrapInHexTile();
-                    }
+                    parentArea.RemoveFreezingTrapInHexTile();
                     ObjectPoolManager.Instance.DestroyObject(_freezingTrapEffect);
                     _freezingTrapEffect = null;
                     this.freezingTrapExclusions = null;
@@ -1771,17 +1758,15 @@ namespace Inner_Maps {
 
         #region Hextile
         public HexTile GetNearestHexTileWithinRegion() {
-            if (collectionOwner.isPartOfParentRegionMap) {
-                HexTile hex = collectionOwner.partOfHextile.hexTileOwner;
-                if (hex.elevationType != ELEVATION.WATER && hex.elevationType != ELEVATION.MOUNTAIN) {
-                    return hex;
-                }
+            if (parentArea.elevationType != ELEVATION.WATER && parentArea.elevationType != ELEVATION.MOUNTAIN) {
+                return parentArea;
             }
+            
 
             HexTile nearestHex = null;
             float nearestDist = 0f;
-            for (int i = 0; i < collectionOwner.region.tiles.Count; i++) {
-                HexTile hex = collectionOwner.region.tiles[i];
+            for (int i = 0; i < parentArea.region.tiles.Count; i++) {
+                HexTile hex = parentArea.region.tiles[i];
                 if (hex.elevationType != ELEVATION.WATER && hex.elevationType != ELEVATION.MOUNTAIN) {
                     float dist = GetDistanceTo(hex.GetCenterLocationGridTile());
                     if (nearestHex == null || dist < nearestDist) {
@@ -1793,17 +1778,15 @@ namespace Inner_Maps {
             return nearestHex;
         }
         public HexTile GetNearestHexTileWithinRegionThatMeetCriteria(System.Func<HexTile, bool> validityChecker) {
-            if (collectionOwner.isPartOfParentRegionMap) {
-                HexTile hex = collectionOwner.partOfHextile.hexTileOwner;
-                if (validityChecker.Invoke(hex)) {
-                    return hex;
-                }
+            if (validityChecker.Invoke(parentArea)) {
+                return parentArea;
             }
+            
 
             HexTile nearestHex = null;
             float nearestDist = 0f;
-            for (int i = 0; i < collectionOwner.region.tiles.Count; i++) {
-                HexTile hex = collectionOwner.region.tiles[i];
+            for (int i = 0; i < parentArea.region.tiles.Count; i++) {
+                HexTile hex = parentArea.region.tiles[i];
                 if (validityChecker.Invoke(hex)) {
                     float dist = GetDistanceTo(hex.GetCenterLocationGridTile());
                     if (nearestHex == null || dist < nearestDist) {
@@ -1819,12 +1802,10 @@ namespace Inner_Maps {
         #region Blueprints
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
-            if (collectionOwner.isPartOfParentRegionMap) {
-                if (hasBlueprint) {
-                    collectionOwner.partOfHextile.hexTileOwner.AddBlueprint();
-                } else {
-                    collectionOwner.partOfHextile.hexTileOwner.RemoveBlueprint();
-                }
+            if (hasBlueprint) {
+                parentArea.AddBlueprint();
+            } else {
+                parentArea.RemoveBlueprint();
             }
         }
         #endregion

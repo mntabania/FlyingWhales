@@ -128,7 +128,7 @@ public class HexTileSpellsComponent {
         currentEarthquakeDuration = 0;
         _centerEarthquakeTile = owner.GetCenterLocationGridTile();
         earthquakeTileObjects.Clear();
-        for (int i = 0; i < owner.locationGridTiles.Count; i++) {
+        for (int i = 0; i < owner.locationGridTiles.Length; i++) {
             IPointOfInterest poi = owner.locationGridTiles[i].objHere;
             if (poi != null) {
                 AddEarthquakeTileObject(poi);
@@ -322,7 +322,7 @@ public class HexTileSpellsComponent {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
-            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
+            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Length)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
             // chosenTile.PerformActionOnTraitables(BrimstoneEffect);
         }
@@ -403,7 +403,7 @@ public class HexTileSpellsComponent {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
-            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
+            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Length)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Lightning_Strike);
             chosenTile.genericTileObject.traitContainer.AddTrait(chosenTile.genericTileObject, "Danger Remnant");
             // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
@@ -457,7 +457,7 @@ public class HexTileSpellsComponent {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
-            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
+            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Length)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Iceteroids);
             // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
             // for (int i = 0; i < pois.Count; i++) {

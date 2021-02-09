@@ -77,7 +77,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
         //    if(party.waitingHexArea != null) {
         //        log += $"\n-Party has waiting area";
         //        if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-        //            if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == party.waitingHexArea) {
+        //            if (character.gridTileLocation.hexTileOwner == party.waitingHexArea) {
         //                log += $"\n-Character is in waiting area, roam";
         //                character.jobComponent.TriggerRoamAroundTile(out producedJob);
         //            } else {
@@ -123,7 +123,6 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                 && !resident.isDead
                 && !resident.isBeingSeized
                 && resident.gridTileLocation != null
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(settlement)
                 && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))) {
                 if (choices == null) { choices = new List<Character>(); }

@@ -89,7 +89,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 		if (!npcSettlement.HasStructure(STRUCTURE_TYPE.CITY_CENTER)) {
 			StructureSetting cityCenter = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, npcSettlement.owner.factionType.mainResource, npcSettlement.owner.factionType.usesCorruptedStructures);
-			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, cityCenter));
+			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceFirstStructureForSettlement(npcSettlement, region.innerMap, cityCenter));
 			structuresToPlace.Remove(cityCenter);	
 		}
 

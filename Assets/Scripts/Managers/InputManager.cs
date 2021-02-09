@@ -97,8 +97,8 @@ namespace Ruinarch {
                                     } 
                                     break; 
                                 case SPELL_TARGET.HEX: 
-                                    if (hoveredTile != null && hoveredTile.collectionOwner.isPartOfParentRegionMap && hoveredTile.collectionOwner.partOfHextile.hexTileOwner) { 
-                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.collectionOwner.partOfHextile.hexTileOwner); 
+                                    if (hoveredTile != null && hoveredTile.parentArea) { 
+                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.parentArea); 
                                     } 
                                     break;
                                 case SPELL_TARGET.SETTLEMENT:

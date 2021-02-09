@@ -1307,7 +1307,6 @@
           <e p="Editor" t="Include">
             <e p="ArtifactUnlockableDrawer.cs" t="Include" />
             <e p="Builder.cs" t="Include" />
-            <e p="BuildingSpotMonobehaviourEditor.cs" t="Include" />
             <e p="CharacterManagerEditor.cs" t="Include" />
             <e p="HexTileEditor.cs" t="Include" />
             <e p="InteractionLocalizedTextCreatorEditor.cs" t="Include" />
@@ -1899,7 +1898,7 @@
               </e>
               <e p="BiomeTileObjectTileSetting.cs" t="Include" />
               <e p="Building Spots" t="Include">
-                <e p="LocationGridTileCollectionItem.cs" t="Include" />
+                <e p="AreaItem.cs" t="Include" />
               </e>
               <e p="BurningSource.cs" t="Include" />
               <e p="Collision Triggers" t="Include">
@@ -1918,7 +1917,6 @@
               </e>
               <e p="InnerMapAssetManager.cs" t="Include" />
               <e p="InnerMapCenter.cs" t="Include" />
-              <e p="InnerMapHexTile.cs" t="Include" />
               <e p="InnerMapManager.cs" t="Include" />
               <e p="InnerTileMap.cs" t="Include" />
               <e p="Lights" t="Include">
@@ -1996,7 +1994,7 @@
                 <e p="Wilderness.cs" t="Include" />
               </e>
               <e p="LocationGridTile.cs" t="Include" />
-              <e p="LocationGridTileCollection.cs" t="Include" />
+              <e p="LocationGridTileArray.cs" t="Include" />
               <e p="LocationGridTileGUS.cs" t="Include" />
               <e p="Map Objects" t="Include">
                 <e p="Map Object Visuals" t="Include">

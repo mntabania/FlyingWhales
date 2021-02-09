@@ -120,8 +120,8 @@ public class MineBehaviour : CharacterBehaviourComponent {
     // }
 
     private HexTile GetNearestCaveTile(Character character) {
-        if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            HexTile originTile = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        if (character.gridTileLocation != null) {
+            HexTile originTile = character.hexTileLocation;
             HexTile nearestTile = null;
             float nearestDist = 9999f;
             for (int i = 0; i < character.currentRegion.tiles.Count; i++) {

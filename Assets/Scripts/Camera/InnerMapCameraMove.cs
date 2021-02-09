@@ -105,7 +105,7 @@ public class InnerMapCameraMove : BaseCameraMove {
         if (instantCenter) {
             MoveCamera(tile.worldPosition);
         } else {
-            target = tile.innerMapHexTile.gridTileCollections.FirstOrDefault()?.locationGridTileCollectionItem.transform;    
+            target = tile.areaItem.transform;    
         }
     }
     private void Zooming() {

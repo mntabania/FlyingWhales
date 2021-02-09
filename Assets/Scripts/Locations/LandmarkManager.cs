@@ -452,10 +452,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
     /// <param name="structureResource">The resource the structures should be made of.</param>
     /// <param name="structureTypes">The structure types to create.</param>
-    public IEnumerator PlaceBuiltStructuresForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, RESOURCE structureResource, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
+    public IEnumerator PlaceBuiltLandmark(BaseSettlement settlement, InnerTileMap innerTileMap, RESOURCE structureResource, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
         for (int i = 0; i < structureTypes.Length; i++) {
             STRUCTURE_TYPE structureType = structureTypes[i];
-            HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
+            HexTile chosenTile = settlement.tiles[0];
             Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureType.ToString()} for settlement {settlement.name}");
             PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType, structureResource);
             yield return null;
@@ -475,8 +475,8 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
-    public IEnumerator PlaceIndividualBuiltStructureForSettlementCoroutine(BaseSettlement settlement, InnerTileMap innerTileMap, StructureSetting structureSetting) {
-        HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
+    public IEnumerator PlaceFirstStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, StructureSetting structureSetting) {
+        HexTile chosenTile = settlement.tiles[0];
         Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
         PlaceIndividualBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
         yield return null;

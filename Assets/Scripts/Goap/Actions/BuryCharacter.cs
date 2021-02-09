@@ -58,7 +58,7 @@ public class BuryCharacter : GoapAction {
                     List<LocationGridTile> validTiles = null;
                     for (int i = 0; i < surroundingAreas.Count; i++) {
                         HexTile surroundingArea = surroundingAreas[i];
-                        for (int j = 0; j < surroundingArea.locationGridTiles.Count; j++) {
+                        for (int j = 0; j < surroundingArea.locationGridTiles.Length; j++) {
                             LocationGridTile tileInSurroundingArea = surroundingArea.locationGridTiles[j];
                             if (!tileInSurroundingArea.isOccupied && tileInSurroundingArea.IsNextToSettlement(goapNode.actor.homeSettlement) && tileInSurroundingArea.structure is Wilderness) {
                                 if (validTiles == null) { validTiles = new List<LocationGridTile>(); }

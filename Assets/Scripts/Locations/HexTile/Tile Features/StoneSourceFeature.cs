@@ -41,14 +41,14 @@ namespace Locations.Tile_Features {
         #endregion
     
         private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
-            if (tile.collectionOwner.isPartOfParentRegionMap && tile.collectionOwner.partOfHextile.hexTileOwner == owner) {
+            if (tile.parentArea == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ROCK) {
                     AdjustRockCount(1);    
                 }
             }
         }
         private void OnTileObjectRemoved(TileObject tileObject, Character character, LocationGridTile tile) {
-            if (tile.collectionOwner.isPartOfParentRegionMap && tile.collectionOwner.partOfHextile.hexTileOwner == owner) {
+            if (tile.parentArea == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ROCK) {
                     AdjustRockCount(-1);    
                 }

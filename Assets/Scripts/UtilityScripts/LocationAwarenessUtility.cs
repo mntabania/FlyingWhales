@@ -16,8 +16,8 @@ namespace UtilityScripts {
             ILocationAwareness locationAwareness = null;
             if (gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && gridTileLocation.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                 locationAwareness = gridTileLocation.structure.locationAwareness;
-            } else if (gridTileLocation.collectionOwner != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                locationAwareness = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.locationAwareness;
+            } else {
+                locationAwareness = gridTileLocation.parentArea.locationAwareness;
             }
             if (locationAwareness != null) {
                 //locationAwareness.RemoveAwarenessFromPendingRemoveList(poi);
@@ -51,8 +51,8 @@ namespace UtilityScripts {
                     ILocationAwareness locationAwareness = null;
                     if (gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && gridTileLocation.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                         locationAwareness = gridTileLocation.structure.locationAwareness;
-                    } else if (gridTileLocation.collectionOwner != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                        locationAwareness = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.locationAwareness;
+                    } else {
+                        locationAwareness = gridTileLocation.parentArea.locationAwareness;
                     }
                     if (locationAwareness != null) {
                         locationAwareness.RemoveAwarenessFromMainList(poi);

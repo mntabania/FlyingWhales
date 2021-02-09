@@ -611,7 +611,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.trapStructure.IsTrappedAndTrapStructureIsNot(destinationTile.structure)) {
             character.trapStructure.ResetAllTrapStructures();
         }
-        if (destinationTile.collectionOwner.isPartOfParentRegionMap && character.trapStructure.IsTrappedAndTrapHexIsNot(destinationTile.collectionOwner.partOfHextile.hexTileOwner)) {
+        if (character.trapStructure.IsTrappedAndTrapHexIsNot(destinationTile.parentArea)) {
             character.trapStructure.ResetAllTrapHexes();
         }
         pathfindingAI.ClearAllCurrentPathData();
@@ -1094,8 +1094,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             Profiler.EndSample();
             if(character != null) {
                 previousGridTile = character.gridTileLocation;
-                if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
-                    _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                if (_previousHexTileLocation == null || (_previousHexTileLocation != character.hexTileLocation)) {
                     if (_previousHexTileLocation != null) {
                         _previousHexTileLocation.locationCharacterTracker.RemoveCharacterFromLocation(character);
                         
@@ -1109,22 +1108,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
                         }
                         Profiler.EndSample();
                     }
-                    if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                        //When character enters new hex tile it becomes the previous hex tile altogether
-                        _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                        
-                        _previousHexTileLocation.locationCharacterTracker.AddCharacterAtLocation(character);
-                        
-                        Profiler.BeginSample($"{character.name} Character Entered Hextile Broadcast");
-                        Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
-                        Profiler.EndSample();
-                        
-                        Profiler.BeginSample($"{character.name} Add To Awareness List");
-                        LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
-                        Profiler.EndSample();
-                    } else {
-                        _previousHexTileLocation = null;
-                    }
+                    
+                    //When character enters new hex tile it becomes the previous hex tile altogether
+                    _previousHexTileLocation = character.hexTileLocation;
+                    
+                    _previousHexTileLocation.locationCharacterTracker.AddCharacterAtLocation(character);
+                    
+                    Profiler.BeginSample($"{character.name} Character Entered Hextile Broadcast");
+                    Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.hexTileOwner
+                    Profiler.EndSample();
+                    
+                    Profiler.BeginSample($"{character.name} Add To Awareness List");
+                    LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+                    Profiler.EndSample();
                 }
             }
         }
@@ -1751,8 +1747,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 for (int i = 0; i < playerHexes.Count; i++) {
                     HexTile corruptedHex = playerHexes[i];
                     if (corruptedHex.region == character.currentRegion) {
-                        if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                            if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == corruptedHex) {
+                        if (character.gridTileLocation != null) {
+                            if (character.hexTileLocation == corruptedHex) {
                                 avoidThisPositions.Add(corruptedHex.GetCenterLocationGridTile().worldLocation);
                             }
                         }
@@ -1794,26 +1790,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetHasFleePath(true);
         LocationGridTile chosenTile = null;
         if(character.currentStructure != null && character.currentStructure.structureType.IsSpecialStructure()) {
-            if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                HexTile hex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                hexInWildernessForFlee.Clear();
-                for (int i = 0; i < hex.AllNeighbours.Count; i++) {
-                    HexTile neighbour = hex.AllNeighbours[i];
-                    LocationGridTile neighbourCenter = neighbour.GetCenterLocationGridTile();
-                    if (character.movementComponent.HasPathTo(neighbourCenter)) {
-                        if(neighbourCenter.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                            BaseSettlement settlement = null;
-                            character.gridTileLocation?.IsPartOfSettlement(out settlement);
-                            if(settlement == null || neighbour.settlementOnTile == null || neighbour.settlementOnTile != settlement) {
-                                hexInWildernessForFlee.Add(neighbour);
-                            }
+            HexTile hex = character.hexTileLocation;
+            hexInWildernessForFlee.Clear();
+            for (int i = 0; i < hex.AllNeighbours.Count; i++) {
+                HexTile neighbour = hex.AllNeighbours[i];
+                LocationGridTile neighbourCenter = neighbour.GetCenterLocationGridTile();
+                if (character.movementComponent.HasPathTo(neighbourCenter)) {
+                    if(neighbourCenter.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                        BaseSettlement settlement = null;
+                        character.gridTileLocation?.IsPartOfSettlement(out settlement);
+                        if(settlement == null || neighbour.settlementOnTile == null || neighbour.settlementOnTile != settlement) {
+                            hexInWildernessForFlee.Add(neighbour);
                         }
                     }
                 }
-                if(hexInWildernessForFlee.Count > 0) {
-                    HexTile randomHex = CollectionUtilities.GetRandomElement(hexInWildernessForFlee);
-                    chosenTile = randomHex.GetCenterLocationGridTile();
-                }
+            }
+            if(hexInWildernessForFlee.Count > 0) {
+                HexTile randomHex = CollectionUtilities.GetRandomElement(hexInWildernessForFlee);
+                chosenTile = randomHex.GetCenterLocationGridTile();
             }
         }
         if (chosenTile != null) {

@@ -50,17 +50,15 @@ public class TreeObject : TileObject {
     }
 
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
-            }
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
-                if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
-                   parentSettlement = eachNeighboringHexTile.settlementOnTile;
-                }
-            });
+        if (gridTileLocation.parentArea.settlementOnTile != null) {
+            gridTileLocation.parentArea.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
         }
+        gridTileLocation.parentArea.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+            if (eachNeighboringHexTile.settlementOnTile != null) {
+                eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+               parentSettlement = eachNeighboringHexTile.settlementOnTile;
+            }
+        });
     }
 
     public override void RemoveFromSettlementResourcesParent() {
@@ -171,7 +169,7 @@ public class TreeObject : TileObject {
             if (location.isCorrupted) {
                 entType = SUMMON_TYPE.Corrupt_Ent;
             } else {
-                HexTile hex = location.collectionOwner.GetConnectedHextileOrNearestHextile();
+                HexTile hex = location.parentArea;
                 BIOMES biome = hex.biomeType;
                 switch (biome) {
                     case BIOMES.DESERT:

@@ -25,8 +25,8 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                     int currentCapacity = 0;
                     if(character.homeSettlement != null) {
                         currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
-                    } else if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                        HexTile hex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                    } else {
+                        HexTile hex = character.hexTileLocation;
                         currentCapacity = hex.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
                     }
                     if(currentCapacity < 8) {
@@ -44,8 +44,8 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                 int currentCapacity = 0;
                 if (character.homeSettlement != null) {
                     currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
-                } else if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    HexTile hex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                } else {
+                    HexTile hex = character.hexTileLocation;
                     currentCapacity = hex.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
                 }
                 if (currentCapacity >= 5) {

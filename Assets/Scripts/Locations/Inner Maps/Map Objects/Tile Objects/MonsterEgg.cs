@@ -85,9 +85,9 @@ public abstract class MonsterEgg : TileObject {
         if(characterThatLay != null) {
             Summon monster = CharacterManager.Instance.CreateNewSummon(summonType, faction: characterThatLay.faction, homeLocation: characterThatLay.homeSettlement, homeRegion: characterThatLay.homeRegion, homeStructure: characterThatLay.homeStructure, bypassIdeologyChecking: true);
             CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
-            if (!monster.HasHome() && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (!monster.HasHome()) {
                 monster.ClearTerritory();
-                monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+                monster.SetTerritory(gridTileLocation.parentArea);
             }
         }
 

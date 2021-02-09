@@ -30,7 +30,7 @@ public class PartyJobTriggerComponent : JobTriggerComponent {
     }
     public void CreateHaulForCampJob(ResourcePile target, HexTile hex) {
         if (_owner.jobBoard.HasJob(JOB_TYPE.HAUL, target) == false) {
-            if (target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex) {
+            if (target.gridTileLocation.parentArea == hex) {
                 //Only create haul job for camp if resource pile is not in camp
             } else {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, _owner);

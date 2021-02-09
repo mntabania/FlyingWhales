@@ -178,7 +178,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
     public Minion minion => _minion;
-    public BaseSettlement currentSettlement => gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
+    public BaseSettlement currentSettlement => gridTileLocation != null ? hexTileLocation.settlementOnTile : null;
     public ProjectileReceiver projectileReceiver {
         get {
             if (hasMarker && marker.visionTrigger != null) {
@@ -220,14 +220,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
         }
     }
-    public HexTile hexTileLocation {
-        get {
-            if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                return gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-            }
-            return null;
-        }
-    }
+    public HexTile hexTileLocation => gridTileLocation?.parentArea;
     public LocationStructure currentStructure {
         get {
             Character carrier = carryComponent.isBeingCarriedBy;
@@ -2874,11 +2867,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isNormalCharacter) {
                 behaviourComponent.UpdateDefaultBehaviourSet();
             }
-            if(homeSettlement != null && gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == homeSettlement) {
+            if(homeSettlement != null && gridTileLocation != null && hexTileLocation.settlementOnTile == homeSettlement) {
                 stateAwarenessComponent.StopMissingTimer();
             } else if(homeSettlement == null) {
                 stateAwarenessComponent.StartMissingTimer();
-            } else if(homeSettlement != null && gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != homeSettlement){
+            } else if(homeSettlement != null && gridTileLocation != null && hexTileLocation.settlementOnTile != homeSettlement){
                 stateAwarenessComponent.StartMissingTimer();
             }
             if(faction != null) {
@@ -5320,7 +5313,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         LocationGridTile chosenTile = null;
         if (HasTerritory()) {
             //while (chosenTile == null) {
-            LocationGridTile chosenGridTile = territory.locationGridTiles[UnityEngine.Random.Range(0, territory.locationGridTiles.Count)];
+            LocationGridTile chosenGridTile = territory.locationGridTiles[UnityEngine.Random.Range(0, territory.locationGridTiles.Length)];
             if (movementComponent.HasPathToEvenIfDiffRegion(chosenGridTile)) {
                 chosenTile = chosenGridTile;
             }

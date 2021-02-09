@@ -41,17 +41,14 @@ public class DemonicStructurePlayerSkill : SkillData {
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         Color color = Color.green;
         color.a = 0.3f;
-        TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner, color);
+        TileHighlighter.Instance.PositionHighlight(tile.parentArea, color);
     }
     public override bool InvalidHighlight(LocationGridTile tile, ref string invalidText) {
-        if (tile.collectionOwner.isPartOfParentRegionMap) {
-            Color color = Color.red;
-            color.a = 0.3f;
-            TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner, color);
-            invalidText = InvalidMessage(tile);
-            return true;    
-        }
-        return false;
+        Color color = Color.red;
+        color.a = 0.3f;
+        TileHighlighter.Instance.PositionHighlight(tile.parentArea, color);
+        invalidText = InvalidMessage(tile);
+        return true;
     }
     protected virtual string InvalidMessage(LocationGridTile tile) { return string.Empty; }
 }

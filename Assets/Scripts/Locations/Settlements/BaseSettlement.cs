@@ -447,9 +447,9 @@ namespace Locations.Settlements {
                     for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
                         if (connector.isOpen) {
-                            if (connector.tileLocation != null && connector.tileLocation.collectionOwner.isPartOfParentRegionMap &&
-                                (connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                            if (connector.tileLocation != null &&
+                                (connector.tileLocation.parentArea.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
                                 connectors.Add(connector);    
                             }
                         }
@@ -465,9 +465,9 @@ namespace Locations.Settlements {
                     for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
                         if (connector.isOpen) {
-                            if (connector.tileLocation != null && connector.tileLocation.collectionOwner.isPartOfParentRegionMap &&
-                                (connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                            if (connector.tileLocation != null && 
+                                (connector.tileLocation.parentArea.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
                                 return true;
                             }
                         }
@@ -480,7 +480,7 @@ namespace Locations.Settlements {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.rocks.Count; i++) {
                 Rock rock = SettlementResources.rocks[i];
-                if (rock.structureConnector != null && rock.structureConnector.isOpen && rock.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (rock.structureConnector != null && rock.structureConnector.isOpen) {
                     connectors.Add(rock.structureConnector);
                 }
             }
@@ -490,7 +490,7 @@ namespace Locations.Settlements {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.trees.Count; i++) {
                 TreeObject treeObject = SettlementResources.trees[i];
-                if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen && treeObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
                     connectors.Add(treeObject.structureConnector);
                 }
             }
@@ -500,7 +500,7 @@ namespace Locations.Settlements {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
                 FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
-                if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen && fishingSpot.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen) {
                     connectors.Add(fishingSpot.structureConnector);
                 }
             }
@@ -510,7 +510,7 @@ namespace Locations.Settlements {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
                 OreVein oreVein = SettlementResources.oreVeins[i];
-                if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen && oreVein.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen) {
                     connectors.Add(oreVein.structureConnector);
                 }
             }
@@ -581,26 +581,6 @@ namespace Locations.Settlements {
             }
             return false;
         }
-        public HexTile GetRandomUnoccupiedHexTile() {
-            List<HexTile> choices = new List<HexTile>();
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile tile = tiles[i];
-                if (tile.innerMapHexTile.isOccupied == false) {
-                    choices.Add(tile);
-                }
-            }
-            return UtilityScripts.CollectionUtilities.GetRandomElement(choices);
-        }
-        public HexTile GetFirstUnoccupiedHexTile() {
-            List<HexTile> choices = new List<HexTile>();
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile tile = tiles[i];
-                if (tile.innerMapHexTile.isOccupied == false) {
-                    return tile;
-                }
-            }
-            return null;
-        }
         public HexTile GetRandomHexTile() {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         }
@@ -643,7 +623,7 @@ namespace Locations.Settlements {
             List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile tile = tiles[i];
-                for (int j = 0; j < tile.locationGridTiles.Count; j++) {
+                for (int j = 0; j < tile.locationGridTiles.Length; j++) {
                     LocationGridTile locationGridTile = tile.locationGridTiles[j];
                     if (validityChecker.Invoke(locationGridTile)) {
                         locationGridTiles.Add(locationGridTile);

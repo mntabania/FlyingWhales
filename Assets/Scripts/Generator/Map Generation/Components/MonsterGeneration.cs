@@ -47,14 +47,13 @@ public class MonsterGeneration : MapGenerationComponent {
 		var chosenTile = homeStructure != null ? CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : CollectionUtilities.GetRandomElement(locationChoices);
 		
 		Assert.IsNotNull(chosenTile, $"Chosen tile for {summonType.ToString()} is null!");
-		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
 
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, faction ?? FactionManager.Instance.GetDefaultFactionForMonster(summonType), null, chosenTile.parentMap.region, className: className);
 		CharacterManager.Instance.PlaceSummonInitially(summon, chosenTile);
 		if (homeStructure != null) {
 			summon.MigrateHomeStructureTo(homeStructure);	
 		} else {
-			summon.SetTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner, false);
+			summon.SetTerritory(chosenTile.parentArea, false);
 			if (territories != null) {
 				for (int i = 0; i < territories.Length; i++) {
 					HexTile territory = territories[i];
@@ -271,7 +270,7 @@ public class MonsterGeneration : MapGenerationComponent {
 							//if cave already has occupants, then do not generate monsters for that cave
 							continue;
 						}
-						RegionDivision regionDivision = cave.occupiedHexTile.hexTileOwner.regionDivision;
+						RegionDivision regionDivision = cave.occupiedHexTile.regionDivision;
 						if (GameUtilities.RollChance(70)) {
 							locationChoices.Clear();
 							locationChoices.AddRange(cave.passableTiles);
@@ -312,8 +311,8 @@ public class MonsterGeneration : MapGenerationComponent {
 		List<HexTile> tiles = new List<HexTile>();
 		for (int i = 0; i < caveStructure.unoccupiedTiles.Count; i++) {
 			LocationGridTile tile = caveStructure.unoccupiedTiles.ElementAt(i);
-			if (tile.collectionOwner.isPartOfParentRegionMap && tiles.Contains(tile.collectionOwner.partOfHextile.hexTileOwner) == false) {
-				tiles.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
+			if (tiles.Contains(tile.parentArea) == false) {
+				tiles.Add(tile.parentArea);
 			}
 		}
 		return tiles;

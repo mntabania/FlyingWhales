@@ -239,7 +239,7 @@ namespace Traits {
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
-                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.parentArea });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
@@ -283,7 +283,7 @@ namespace Traits {
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
-                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.parentArea });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
