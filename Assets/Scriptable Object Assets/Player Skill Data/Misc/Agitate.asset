@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill: 89
   manaCost: 15
-  charges: 3
+  charges: 1
   cooldown: 96
   threat: 0
   threatPerHour: 0
   expCost: 0
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
@@ -31,6 +32,7 @@ MonoBehaviour:
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
   requirementData:
+    requirements: 
     requiredArchetype: 0
     requiredSkills: 
     actionCount: 0
@@ -43,7 +45,6 @@ MonoBehaviour:
     upgradeCosts: 6400000096000000c8000000
     manacostPerLevel: 190000001e00000023000000
     chargesPerLevel: 010000000200000003000000
-    chaosPerLevel: 6400000096000000c8000000
     bonuses: 000000000100000004000000
     additionalDamagePerLevel:
     - 25
@@ -61,3 +62,5 @@ MonoBehaviour:
     additionalHpValuePerLevel: []
     additionalAttackValuePerLevel: []
     additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: []

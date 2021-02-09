@@ -5,6 +5,10 @@ using Random = UnityEngine.Random;
 
 namespace Traits {
     public class Agitated : Status {
+
+        private SkillData m_skillData;
+        private PlayerSkillData m_playerSkillData;
+        private float m_addedAtk = 0f;
         public override bool isSingleton => true;
         
         public Agitated() {
@@ -15,6 +19,9 @@ namespace Traits {
             ticksDuration = 0;
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
+            m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.AGITATE);
+            m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.AGITATE);
+            m_skillData.currentLevel = 1;
         }
 
         #region Overrides
@@ -24,6 +31,11 @@ namespace Traits {
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
+                m_addedAtk = m_playerSkillData.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(m_skillData.currentLevel);
+                character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk);
+
+                float hpAmount = character.maxHP * m_playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(m_skillData.currentLevel);
+                character.AdjustHP((int)hpAmount, ELEMENTAL_TYPE.Normal);
             }
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
@@ -42,6 +54,8 @@ namespace Traits {
                         character.marker.UnberserkedMarker();
                     }
                 }
+                character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk);
+                m_addedAtk = 0f;
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
@@ -63,4 +77,3 @@ namespace Traits {
         #endregion
     }
 }
-

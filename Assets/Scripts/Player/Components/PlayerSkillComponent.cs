@@ -66,11 +66,13 @@ public class PlayerSkillComponent {
 
     #region Skill Tree
     public void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
-        spellData.SetMaxCharges(charges);
+
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+        spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(charges);
         spellData.SetCooldown(cooldown);
-        spellData.SetManaCost(manaCost);
-        spellData.SetPierce(pierce);
+        spellData.SetPierce(playerSkillData.GetPierceBaseOnLevel(spellData.currentLevel));
+        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(threat);
         spellData.SetThreatPerHour(threatPerHour);
         CategorizePlayerSkill(spellData);
@@ -255,6 +257,7 @@ public class PlayerSkillComponent {
     private void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType) {
         PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         if (spellData == null) {
             Debug.LogError(skillType.ToString() + " data is null!");
         }
@@ -264,26 +267,30 @@ public class PlayerSkillComponent {
             spellData.SetMaxCharges(1);  
             spellData.SetCharges(1);
         } else {
-            spellData.SetMaxCharges(skillData.charges);    
+            spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
             spellData.SetCharges(spellData.maxCharges);
         }
         spellData.SetCooldown(skillData.cooldown);
-        spellData.SetManaCost(skillData.manaCost);
-        spellData.SetPierce(skillData.pierce);
+        
+        spellData.SetPierce(playerSkillData.GetPierceBaseOnLevel(spellData.currentLevel));
+        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);
     }
     private void SetPlayerSkillData(PlayerSkillData skillData) {
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         if(spellData == null) {
             Debug.LogError(skillData.skill.ToString() + " data is null!");
         }
-        spellData.SetMaxCharges(skillData.charges);
+        spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(spellData.maxCharges);
         spellData.SetCooldown(skillData.cooldown);
-        spellData.SetPierce(skillData.pierce);
-        spellData.SetManaCost(skillData.manaCost);
+        Debug.LogError(spellData.name + " " + playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
+        
+        spellData.SetPierce(playerSkillData.GetPierceBaseOnLevel(spellData.currentLevel));
+        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);

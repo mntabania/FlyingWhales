@@ -1087,6 +1087,15 @@ public class CombatComponent : CharacterComponent {
         attackModification += modification;
         UpdateAttack();
     }
+
+    public void AddAttackBaseOnPercentage(float modification) {
+        attackModification += (int)(modification * attack);
+        UpdateAttack();
+    }
+    public void SubtractAttackBaseOnPercentage(float modification) {
+        attackModification -= (int)(modification * attack);
+        UpdateAttack();
+    }
     #endregion
 
     #region Prisoner

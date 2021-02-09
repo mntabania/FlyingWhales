@@ -32,7 +32,15 @@ public class SkillData : IPlayerSkill {
     public float basePierce { get; private set; }
     public int baseCooldown { get; private set; }
     public int baseThreat { get; private set; }
-    public int currentLevel { get; private set; }
+    public int currentLevel { get; set; }
+
+    public void LevelUp() {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
+        currentLevel = Mathf.Clamp(++currentLevel, 0, playerSkillData.skillUpgradeData.upgradeCosts.Count);
+        SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
+        SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
+        SetPierce(playerSkillData.GetPierceBaseOnLevel(currentLevel));
+    }
     
     protected SkillData() {
         ResetData();
@@ -262,9 +270,6 @@ public class SkillData : IPlayerSkill {
     #region Attributes
     public void SetMaxCharges(int amount) {
         baseMaxCharges = amount;
-        if (currentLevel > 0) {
-            baseMaxCharges = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type).skillUpgradeData.GetChargesBaseOnLevel(currentLevel);
-        }
     }
     public void SetCharges(int amount) {
         charges = amount;
@@ -280,16 +285,10 @@ public class SkillData : IPlayerSkill {
 
     public void SetPierce(float amount) {
         basePierce = amount;
-        if (currentLevel > 0) {
-            basePierce = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type).skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(currentLevel);
-        }
     }
 
     public void SetManaCost(int amount) {
         baseManaCost = amount;
-        if (currentLevel > 0) {
-            baseManaCost = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type).skillUpgradeData.GetManaCostPerLevel(currentLevel);
-        }
     }
     public void SetCooldown(int amount) {
         baseCooldown = amount;
