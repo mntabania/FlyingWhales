@@ -90,6 +90,7 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.requirementData.requirements.Contains(UNLOCKING_SKILL_REQUIREMENT.Skills)) {
+                data.requirementData.isOR = EditorGUILayout.Toggle("Is OR", data.requirementData.isOR);
                 DisplaySkillListReqruiements(data.requirementData.requiredSkills, "required skill(s)");
                 EditorGUILayout.Space();
             }

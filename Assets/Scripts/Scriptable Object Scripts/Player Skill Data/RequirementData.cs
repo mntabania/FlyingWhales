@@ -24,4 +24,6 @@ public class RequirementData {
     public int tier2Count;
     [HideInInspector]
     public int tier3Count;
+    [HideInInspector]
+    public bool isOR;
 }
