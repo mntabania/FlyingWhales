@@ -250,7 +250,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         return gridTileComponent.GetRandomPassableTile();
     }
     public bool IsAtTargetDestination(Character character) {
-        return character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == this;
+        return character.gridTileLocation != null && character.gridTileLocation.area == this;
     }
     #endregion
 

@@ -49,6 +49,7 @@ namespace Inner_Maps {
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
+        public Area area { get; private set; }
         /// <summary>
         /// Does this tile have a blueprint on it.
         /// NOTE: This is not saved since blueprint placement is handled by GenericTileObject loading
@@ -1847,6 +1848,12 @@ namespace Inner_Maps {
         }
         public void RemoveMeteor() {
             meteorCount--;
+        }
+        #endregion
+
+        #region Area
+        public void SetArea(Area p_area) {
+            area = p_area;
         }
         #endregion
 
