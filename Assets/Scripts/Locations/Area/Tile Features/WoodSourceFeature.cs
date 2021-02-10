@@ -3,12 +3,12 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
-namespace Locations.Tile_Features {
-    public class WoodSourceFeature : TileFeature {
+namespace Locations.Area_Features {
+    public class WoodSourceFeature : AreaFeature {
         private const int MaxBigTrees = 4;
         private const int MaxSmallTrees = 8;
     
-        private HexTile owner;
+        private Area owner;
         private int currentBigTreeCount;
         private int currentSmallTreeCount;
         private bool isGeneratingBigTreePerHour;
@@ -20,12 +20,12 @@ namespace Locations.Tile_Features {
         }  
     
         #region Overrides
-        public override void GameStartActions(HexTile tile) {
-            owner = tile;
+        public override void GameStartActions(Area p_area) {
+            owner = p_area;
             Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
             Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         
-            int bigTreesCount = tile.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
+            int bigTreesCount = p_area.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
             currentBigTreeCount = bigTreesCount;
             if (bigTreesCount < MaxBigTrees) {
                 int missingTrees = MaxBigTrees - bigTreesCount;
@@ -36,7 +36,7 @@ namespace Locations.Tile_Features {
                 }
             }
         
-            int smallTreesCount = tile.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
+            int smallTreesCount = p_area.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
             currentSmallTreeCount = smallTreesCount;
             if (smallTreesCount < MaxSmallTrees) {
                 int missingTrees = MaxSmallTrees - smallTreesCount;
@@ -47,15 +47,15 @@ namespace Locations.Tile_Features {
                 }
             }
         }
-        public override void OnRemoveFeature(HexTile tile) {
-            base.OnRemoveFeature(tile);
+        public override void OnRemoveFeature(Area p_area) {
+            base.OnRemoveFeature(p_area);
             Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateBigTreePerHour);
             Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateSmallTreePerHour);
         }
         #endregion
     
         private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
-            if (tile.parentArea == owner) {
+            if (tile.area == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                     AdjustBigTreeCount(1);    
                 } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
@@ -65,7 +65,7 @@ namespace Locations.Tile_Features {
             }
         }
         private void OnTileObjectRemoved(TileObject tileObject, Character character, LocationGridTile tile) {
-            if (tile.parentArea == owner) {
+            if (tile.area == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                     AdjustBigTreeCount(-1);    
                 } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {

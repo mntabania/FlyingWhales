@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using UnityEngine;
 using UtilityScripts;
 namespace Locations.Region_Features {
@@ -13,12 +13,12 @@ namespace Locations.Region_Features {
                 //choose from random flat/tree tile without game feature
                 List<HexTile> choices = region.tiles
                     .Where(x => (x.elevationType == ELEVATION.PLAIN || x.elevationType == ELEVATION.TREES) &&
-                                x.featureComponent.HasFeature(TileFeatureDB.Game_Feature) == false && x.landmarkOnTile == null).ToList();
+                                x.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) == false && x.landmarkOnTile == null).ToList();
                 
                 for (int i = 0; i < missing; i++) {
                     if (choices.Count == 0) { break; }
                     HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-                    GameFeature feature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+                    GameFeature feature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
                     chosenTile.featureComponent.AddFeature(feature, chosenTile);
                     gameFeatures.Add(feature);
                     choices.Remove(chosenTile);

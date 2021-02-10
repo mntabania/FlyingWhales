@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using UnityEngine;
 
 [System.Serializable]
@@ -18,7 +18,7 @@ public class SaveDataHextile : SaveData<HexTile> {
     public ELEVATION elevationType;
 
     //Tile Features
-    public List<SaveDataTileFeature> tileFeatureSaveData;
+    public List<SaveDataAreaFeature> areaFeatureSaveData;
     
     public LANDMARK_TYPE landmarkType;
     
@@ -39,12 +39,12 @@ public class SaveDataHextile : SaveData<HexTile> {
         landmarkType = tile.landmarkOnTile?.specificLandmarkType ?? LANDMARK_TYPE.NONE;
         
         //tile features
-        tileFeatureSaveData = new List<SaveDataTileFeature>();
+        areaFeatureSaveData = new List<SaveDataAreaFeature>();
         for (int i = 0; i < tile.featureComponent.features.Count; i++) {
-            TileFeature feature = tile.featureComponent.features[i];
-            SaveDataTileFeature saveDataTileFeature = SaveManager.ConvertTileFeatureToSaveData(feature);
+            AreaFeature feature = tile.featureComponent.features[i];
+            SaveDataAreaFeature saveDataTileFeature = SaveManager.ConvertAreaFeatureToSaveData(feature);
             saveDataTileFeature.Save(feature);
-            tileFeatureSaveData.Add(saveDataTileFeature);
+            areaFeatureSaveData.Add(saveDataTileFeature);
         }
         //saveDataHexTileSpellsComponent = new SaveDataHexTileSpellsComponent();
         //saveDataHexTileSpellsComponent.Save(tile.spellsComponent);

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using UnityEngine;
 
 public class HeatWaveData : SkillData {
@@ -14,7 +14,7 @@ public class HeatWaveData : SkillData {
     }
 
     public override void ActivateAbility(HexTile targetHex) {
-        targetHex.featureComponent.AddFeature(TileFeatureDB.Heat_Wave_Feature, targetHex);
+        targetHex.featureComponent.AddFeature(AreaFeatureDB.Heat_Wave_Feature, targetHex);
         base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
@@ -22,7 +22,7 @@ public class HeatWaveData : SkillData {
         if (canPerform) {
             return targetHex != null
                    && targetHex.biomeType != BIOMES.SNOW
-                   && targetHex.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature) == false;
+                   && targetHex.featureComponent.HasFeature(AreaFeatureDB.Heat_Wave_Feature) == false;
         }
         return canPerform;
     }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Locations.Settlements;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Scenario_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -46,9 +46,9 @@ public class PlayerSettlementGeneration : MapGenerationComponent {
 		}  else {
 			validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
 				(h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)
-				&& h.region.HasTileWithFeature(TileFeatureDB.Inhabited_Feature)
+				&& h.region.HasTileWithFeature(AreaFeatureDB.Inhabited_Feature)
 				&& HasSettlementNeighbour(h) == false 
-				&& h.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false
+				&& h.featureComponent.HasFeature(AreaFeatureDB.Inhabited_Feature) == false
 			).ToList();
 		}
 		
@@ -61,7 +61,7 @@ public class PlayerSettlementGeneration : MapGenerationComponent {
 	private bool HasSettlementNeighbour(HexTile tile) {
 		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
 			HexTile neighbour = tile.AllNeighbours[i];
-			if (neighbour.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
+			if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Inhabited_Feature)) {
 				return true;
 			}
 		}

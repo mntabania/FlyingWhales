@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using System.Linq;
 using Inner_Maps.Location_Structures;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
@@ -52,7 +52,7 @@ namespace Generator.Map_Generation.Components {
             Area surroundingArea = CollectionUtilities.GetRandomElement(surroundingAreas);
             if (p_foodProducingStructure.structureType == STRUCTURE_TYPE.HUNTER_LODGE) {
                 //add game feature to a surrounding area
-                surroundingArea.featureComponent.AddFeature(TileFeatureDB.Game_Feature, surroundingArea);
+                surroundingArea.featureComponent.AddFeature(AreaFeatureDB.Game_Feature, surroundingArea);
             }
             ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
         }

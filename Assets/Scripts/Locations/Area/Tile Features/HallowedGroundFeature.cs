@@ -1,5 +1,5 @@
-﻿namespace Locations.Tile_Features {
-    public class HallowedGroundFeature : TileFeature {
+﻿namespace Locations.Area_Features {
+    public class HallowedGroundFeature : AreaFeature {
 
         public HallowedGroundFeature() {
             name = "Hallowed Ground";

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Logs;
 using UnityEngine;
 
@@ -42,7 +42,7 @@ namespace Interrupts {
                 if (poisonBloomFeature != null) {
                     poisonBloomFeature.ResetDuration();
                 } else {
-                    hexTile.featureComponent.AddFeature(TileFeatureDB.Poison_Bloom_Feature, hexTile);
+                    hexTile.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, hexTile);
                     // PlayerSkillManager.Instance.GetSpellData(SPELL_TYPE.POISON_BLOOM).ActivateAbility(hexTile);
                 }
             } else if (interruptHolder.actor.characterClass.className.Equals("Mage")) { 

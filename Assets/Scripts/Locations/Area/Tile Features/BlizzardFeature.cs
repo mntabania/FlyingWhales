@@ -2,8 +2,8 @@
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
-namespace Locations.Tile_Features {
-    public class BlizzardFeature : TileFeature {
+namespace Locations.Area_Features {
+    public class BlizzardFeature : AreaFeature {
 
         private List<Character> _charactersOutside;
         private string _currentFreezingCheckSchedule;
@@ -142,16 +142,16 @@ namespace Locations.Tile_Features {
     }
 
     [System.Serializable]
-    public class SaveDataBlizzardFeature : SaveDataTileFeature {
+    public class SaveDataBlizzardFeature : SaveDataAreaFeature {
 
         public int expiryInTicks;
-        public override void Save(TileFeature tileFeature) {
+        public override void Save(AreaFeature tileFeature) {
             base.Save(tileFeature);
             BlizzardFeature blizzardFeature = tileFeature as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {tileFeature?.ToString() ?? "Null"}");
             expiryInTicks = GameManager.Instance.Today().GetTickDifference(blizzardFeature.expiryDate);
         }
-        public override TileFeature Load() {
+        public override AreaFeature Load() {
             BlizzardFeature blizzardFeature = base.Load() as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {blizzardFeature?.ToString() ?? "Null"}");
             blizzardFeature.SetExpiryInTicks(expiryInTicks);

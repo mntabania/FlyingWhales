@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using UnityEngine;
 
 public class PoisonBloomData : SkillData {
@@ -15,13 +15,13 @@ public class PoisonBloomData : SkillData {
     }
 
     public override void ActivateAbility(HexTile targetHex) {
-        targetHex.featureComponent.AddFeature(TileFeatureDB.Poison_Bloom_Feature, targetHex);
+        targetHex.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, targetHex);
         base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         bool canPerform = base.CanPerformAbilityTowards(targetHex);
         if (canPerform) {
-            return targetHex != null && targetHex.featureComponent.HasFeature(TileFeatureDB.Poison_Bloom_Feature) == false;
+            return targetHex != null && targetHex.featureComponent.HasFeature(AreaFeatureDB.Poison_Bloom_Feature) == false;
         }
         return canPerform;
     }

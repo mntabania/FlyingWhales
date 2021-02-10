@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Locations.Region_Features;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
@@ -474,7 +474,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private bool IsAdjacentToSettlement(HexTile tile) {
 		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
 			HexTile neighbour = tile.AllNeighbours[i];
-			if (neighbour.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
+			if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Inhabited_Feature)) {
 				return true;
 			}
 		}
@@ -484,7 +484,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		List<HexTile> tilesInRange = tile.GetTilesInRange(range);
 		for (int i = 0; i < tilesInRange.Count; i++) {
 			HexTile tileInRange = tilesInRange[i];
-			if (tileInRange.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
+			if (tileInRange.featureComponent.HasFeature(AreaFeatureDB.Inhabited_Feature)) {
 				return true;
 			}
 		}

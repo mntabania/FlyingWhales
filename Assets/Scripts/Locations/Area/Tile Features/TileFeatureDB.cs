@@ -1,5 +1,5 @@
-﻿namespace Locations.Tile_Features {
-    public static class TileFeatureDB {
+﻿namespace Locations.Area_Features {
+    public static class AreaFeatureDB {
 
         //All Features
         public static string Wood_Source_Feature = "WoodSourceFeature";

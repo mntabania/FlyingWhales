@@ -1,5 +1,5 @@
-﻿namespace Locations.Tile_Features {
-	public class InhabitedFeature : TileFeature {
+﻿namespace Locations.Area_Features {
+	public class InhabitedFeature : AreaFeature {
 
 		public InhabitedFeature() {
 			name = "Inhabited";

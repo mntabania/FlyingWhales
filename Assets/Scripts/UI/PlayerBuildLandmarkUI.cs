@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 
 public class PlayerBuildLandmarkUI : MonoBehaviour {
 

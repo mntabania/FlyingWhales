@@ -8,7 +8,7 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 using Logs;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 
 namespace Locations.Settlements {
     public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, IPlayerActionTarget, ILocation {
@@ -448,8 +448,8 @@ namespace Locations.Settlements {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
                         if (connector.isOpen) {
                             if (connector.tileLocation != null &&
-                                (connector.tileLocation.parentArea.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                (connector.tileLocation.parentArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
                                 connectors.Add(connector);    
                             }
                         }
@@ -466,8 +466,8 @@ namespace Locations.Settlements {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
                         if (connector.isOpen) {
                             if (connector.tileLocation != null && 
-                                (connector.tileLocation.parentArea.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                (connector.tileLocation.parentArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
                                 return true;
                             }
                         }

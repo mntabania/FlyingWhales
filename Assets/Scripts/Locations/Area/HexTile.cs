@@ -8,7 +8,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Locations.Settlements;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Ruinarch;
 using SpriteGlow;
 using UnityEngine.Assertions;
@@ -74,7 +74,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     //properties
     public BaseLandmark landmarkOnTile { get; private set; }
     public Region region { get; private set; }
-    public TileFeatureComponent featureComponent { get; private set; }
+    public AreaFeatureComponent featureComponent { get; private set; }
     public BaseSettlement settlementOnTile { get; private set; }
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
@@ -145,7 +145,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         locationAwareness = new LocationAwareness();
     }
     public void Initialize(bool listenForGameLoad = true) {
-        featureComponent = new TileFeatureComponent();
+        featureComponent = new AreaFeatureComponent();
         itemsInHex = new List<TileObject>();
         spellsComponent = new AreaSpellsComponent(null);
         _hexTileBiomeEffectTrigger = new AreaBiomeEffectTrigger(null);
@@ -937,7 +937,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         summary += $"\nElevation: {elevationType.ToString()}";
         summary += "\nFeatures:";
         for (int i = 0; i < featureComponent.features.Count; i++) {
-            TileFeature feature = featureComponent.features[i];
+            AreaFeature feature = featureComponent.features[i];
             summary += $"{feature.name}, ";
         }
         if (regionDivision != null) {

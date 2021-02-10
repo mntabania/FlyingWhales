@@ -3,7 +3,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
@@ -86,7 +86,7 @@ public class WolfBehaviour : BaseMonsterBehaviour {
         if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().day) &&
             GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && Random.Range(0, 2) == 1) {
             log += $"\n-Chance to hunt met. Will try to find target tile to hunt at.";
-            List<HexTile> choices = character.currentRegion.GetTilesWithFeature(TileFeatureDB.Game_Feature).OrderBy(x =>
+            List<HexTile> choices = character.currentRegion.GetTilesWithFeature(AreaFeatureDB.Game_Feature).OrderBy(x =>
                     Vector2.Distance(x.GetCenterLocationGridTile().centeredWorldLocation, character.worldPosition))
                 .ToList();
             if (choices.Count > 0) {

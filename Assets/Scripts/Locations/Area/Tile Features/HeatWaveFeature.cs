@@ -2,8 +2,8 @@
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
-namespace Locations.Tile_Features {
-    public class HeatWaveFeature : TileFeature {
+namespace Locations.Area_Features {
+    public class HeatWaveFeature : AreaFeature {
 
         private List<Character> _charactersOutside;
         private string _currentRainCheckSchedule;
@@ -20,32 +20,32 @@ namespace Locations.Tile_Features {
         }
 
         #region Override
-        public override void OnAddFeature(HexTile tile) {
-            base.OnAddFeature(tile);
-            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, (character, structure) => OnCharacterArrivedAtStructure(character, structure, tile));
-            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, (character, structure) => OnCharacterLeftStructure(character, structure, tile));
-            Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
-            Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
+        public override void OnAddFeature(Area p_area) {
+            base.OnAddFeature(p_area);
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, (character, structure) => OnCharacterArrivedAtStructure(character, structure, p_area));
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, (character, structure) => OnCharacterLeftStructure(character, structure, p_area));
+            Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, p_area));
+            Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, p_area));
 
-            PopulateInitialCharactersOutside(tile);
-            RescheduleHeatWaveCheck(tile);
+            PopulateInitialCharactersOutside(p_area);
+            RescheduleHeatWaveCheck(p_area);
 
             //schedule removal of this feature after x amount of ticks.
             expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
-            SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
+            SchedulingManager.Instance.AddEntry(expiryDate, () => p_area.featureComponent.RemoveFeature(this, p_area), this);
             if (GameManager.Instance.gameHasStarted) {
                 //only create effect if game has started when this is added.
                 //if this was added before game was started then CreateEffect will be
                 //handled by GameStartActions()
-                CreateEffect(tile);    
+                CreateEffect(p_area);    
             }
         }
-        public override void OnRemoveFeature(HexTile tile) {
-            base.OnRemoveFeature(tile);
-            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, (character, structure) => OnCharacterArrivedAtStructure(character, structure, tile));
-            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, (character, structure) => OnCharacterLeftStructure(character, structure, tile));
-            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
-            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
+        public override void OnRemoveFeature(Area p_area) {
+            base.OnRemoveFeature(p_area);
+            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, (character, structure) => OnCharacterArrivedAtStructure(character, structure, p_area));
+            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, (character, structure) => OnCharacterLeftStructure(character, structure, p_area));
+            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, p_area));
+            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, p_area));
             //Messenger.RemoveListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED,
             //    (character, gridTile) => OnTileObjectPlaced(character, gridTile, tile));
             if (string.IsNullOrEmpty(_currentRainCheckSchedule) == false) {
@@ -53,14 +53,14 @@ namespace Locations.Tile_Features {
             }
             ObjectPoolManager.Instance.DestroyObject(_effect);
         }
-        public override void GameStartActions(HexTile tile) {
-            base.GameStartActions(tile);
-            CreateEffect(tile);
+        public override void GameStartActions(Area p_area) {
+            base.GameStartActions(p_area);
+            CreateEffect(p_area);
         }
         #endregion
 
         #region Listeners
-        private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure, HexTile featureOwner) {
+        private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure, Area featureOwner) {
             if (structure != null && structure.isInterior == false && character.gridTileLocation != null && character.hexTileLocation == featureOwner) {
                 AddCharacterOutside(character);
                 //if (!character.traitContainer.HasTrait("Wet")) {
@@ -68,20 +68,20 @@ namespace Locations.Tile_Features {
                 //}
             }
         }
-        private void OnCharacterLeftStructure(Character character, LocationStructure structure, HexTile featureOwner) {
+        private void OnCharacterLeftStructure(Character character, LocationStructure structure, Area featureOwner) {
             //character left a structure that was outside. If the character entered a structure that is outside. That 
             //is handled at OnCharacterArrivedAtStructure
             if (structure.isInterior == false && character.gridTileLocation != null && character.hexTileLocation == featureOwner) {
                 RemoveCharacterOutside(character);
             }
         }
-        private void OnCharacterLeftHexTile(Character character, HexTile exitedTile, HexTile featureOwner) {
+        private void OnCharacterLeftHexTile(Character character, HexTile exitedTile, Area featureOwner) {
             if (exitedTile == featureOwner) {
                 //character left the hextile that owns this feature
                 RemoveCharacterOutside(character);
             }
         }
-        private void OnCharacterEnteredHexTile(Character character, HexTile enteredTile, HexTile featureOwner) {
+        private void OnCharacterEnteredHexTile(Character character, HexTile enteredTile, Area featureOwner) {
             if (enteredTile == featureOwner && character.currentStructure.isInterior == false) {
                 AddCharacterOutside(character);
                 //if (!character.traitContainer.HasTrait("Wet")) {
@@ -110,37 +110,37 @@ namespace Locations.Tile_Features {
         #endregion
 
         #region Effects
-        private void CreateEffect(HexTile tile) {
+        private void CreateEffect(Area p_area) {
             GameObject go =
-                GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Heat_Wave);
+                GameManager.Instance.CreateParticleEffectAt(p_area.gridTileComponent.centerGridTile, PARTICLE_EFFECT.Heat_Wave);
             _effect = go;
         }
-        private void PopulateInitialCharactersOutside(HexTile hex) {
-            List<Character> allCharactersInHex = ObjectPoolManager.Instance.CreateNewCharactersList();
-            hex.PopulateCharacterListInsideHexThatMeetCriteria(allCharactersInHex, c => !c.isDead);
-            if (allCharactersInHex != null) {
-                for (int i = 0; i < allCharactersInHex.Count; i++) {
-                    Character character = allCharactersInHex[i];
+        private void PopulateInitialCharactersOutside(Area p_area) {
+            List<Character> allCharactersInArea = ObjectPoolManager.Instance.CreateNewCharactersList();
+            p_area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(allCharactersInArea, c => !c.isDead);
+            if (allCharactersInArea != null) {
+                for (int i = 0; i < allCharactersInArea.Count; i++) {
+                    Character character = allCharactersInArea[i];
                     if (!character.currentStructure.isInterior) {
                         AddCharacterOutside(character);
                     }
                 }
             }
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(allCharactersInHex);
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(allCharactersInArea);
         }
-        private void CheckForOverheating(HexTile hex) {
+        private void CheckForOverheating(Area p_area) {
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
                 if(UnityEngine.Random.Range(0, 100) < 15) {
                     character.traitContainer.AddTrait(character, "Overheating");
                 }
             }
-            RescheduleHeatWaveCheck(hex);
+            RescheduleHeatWaveCheck(p_area);
         }
-        private void RescheduleHeatWaveCheck(HexTile hex) {
-            if (hex.featureComponent.HasFeature(name) == false) { return; }
+        private void RescheduleHeatWaveCheck(Area p_area) {
+            if (p_area.featureComponent.HasFeature(name) == false) { return; }
             GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(10));
-            _currentRainCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForOverheating(hex), this);
+            _currentRainCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForOverheating(p_area), this);
         }
         #endregion
         
@@ -152,16 +152,16 @@ namespace Locations.Tile_Features {
     }
     
     [System.Serializable]
-    public class SaveDataHeatWaveFeature : SaveDataTileFeature {
+    public class SaveDataHeatWaveFeature : SaveDataAreaFeature {
 
         public int expiryInTicks;
-        public override void Save(TileFeature tileFeature) {
+        public override void Save(AreaFeature tileFeature) {
             base.Save(tileFeature);
             HeatWaveFeature heatWaveFeature = tileFeature as HeatWaveFeature;
             Assert.IsNotNull(heatWaveFeature, $"Passed feature is not Heat Wave! {tileFeature?.ToString() ?? "Null"}");
             expiryInTicks = GameManager.Instance.Today().GetTickDifference(heatWaveFeature.expiryDate);
         }
-        public override TileFeature Load() {
+        public override AreaFeature Load() {
             HeatWaveFeature heatWaveFeature = base.Load() as HeatWaveFeature;
             Assert.IsNotNull(heatWaveFeature, $"Passed feature is not Heat Wave! {heatWaveFeature?.ToString() ?? "Null"}");
             heatWaveFeature.SetExpiryInTicks(expiryInTicks);

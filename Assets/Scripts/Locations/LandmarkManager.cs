@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 using Locations.Region_Features;
 using Locations.Settlements;
 using Locations.Settlements.Settlement_Types;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -523,8 +523,8 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Tile Features
-    public T CreateTileFeature<T>([NotNull] string featureName) where T : TileFeature {
+    #region Area Features
+    public T CreateAreaFeature<T>([NotNull] string featureName) where T : AreaFeature {
         string typeName = $"Locations.Tile_Features.{featureName}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         Assert.IsNotNull(type, $"type for {featureName} is null!");
