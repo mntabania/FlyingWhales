@@ -2931,8 +2931,7 @@ PrefabInstance:
         Special fixed loadout.
 
 
-        <color="green">Unlocks:</color> <b>Affatt</b>
-        and <b>Custom</b>.'
+        <color="green">Unlocks:</color> <b>Affatt</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3178,7 +3177,7 @@ PrefabInstance:
         residents, the surrounding caves are filled with danger. \r\n\r\nThere is
         a strange artifact of unknown origin somewhere nearby - is it connected to
         the dozens of various crystals scattered around the place?\n\n<color=\"green\">Unlocks:</color>
-        <b>Icalawa</b> and <b>Pangat Loo</b>."
+        <b>Icalawa</b>, <b>Pangat Loo</b> and <b>Custom</b>."
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3415,7 +3414,11 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: Walks you through the basics of the game.
+      value: 'Walks you through the basics of the game.
+
+
+        <color="green">Unlocks:</color>
+        <b>Custom</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3926,7 +3929,7 @@ PrefabInstance:
 
 
         <color="green">Unlocks:</color>
-        <b>Affatt</b> and <b>Custom</b>.'
+        <b>Affatt</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

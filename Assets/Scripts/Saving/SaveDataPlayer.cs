@@ -417,14 +417,17 @@ public class SaveDataPlayer {
     }
     public void OnWorldCompleted(WorldSettingsData.World_Type worldType) {
         switch (worldType) {
+            case WorldSettingsData.World_Type.Tutorial:
+                UnlockWorld(WorldSettingsData.World_Type.Custom);
+                break;
             case WorldSettingsData.World_Type.Oona:
                 UnlockWorld(WorldSettingsData.World_Type.Icalawa);
                 UnlockWorld(WorldSettingsData.World_Type.Pangat_Loo);
+                UnlockWorld(WorldSettingsData.World_Type.Custom);
                 break;
             case WorldSettingsData.World_Type.Icalawa:
             case WorldSettingsData.World_Type.Pangat_Loo:
                 UnlockWorld(WorldSettingsData.World_Type.Affatt);
-                UnlockWorld(WorldSettingsData.World_Type.Custom);
                 break;
             case WorldSettingsData.World_Type.Affatt:
                 UnlockWorld(WorldSettingsData.World_Type.Zenko);
@@ -445,6 +448,13 @@ public class SaveDataPlayer {
         gameVersion = Application.version;
         if (unlockedWorlds == null) {
             InitializeUnlockedWorlds();
+        } else {
+            //Make sure custom is also unlocked if Icalawa and Pangat Loo are unlocked
+            //this is so that players that have already unlocked Icalawa and Pangat Loo will have custom unlocked
+            //so they do not need to replay Tutorial/Oona again.
+            if (IsWorldUnlocked(WorldSettingsData.World_Type.Icalawa) || IsWorldUnlocked(WorldSettingsData.World_Type.Pangat_Loo) ) {
+                UnlockWorld(WorldSettingsData.World_Type.Custom);
+            }
         }
     }
     #endregion
