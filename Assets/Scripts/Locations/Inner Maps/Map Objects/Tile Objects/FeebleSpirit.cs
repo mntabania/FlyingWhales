@@ -8,10 +8,14 @@ using UnityEngine.Assertions;
 
 public class FeebleSpirit : TileObject {
 
+    private SkillData m_skillData;
+    private PlayerSkillData m_playerSkillData;
+
     public Character possessionTarget { get; private set; }
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
+    private int _baseEdergyDrainAmount = -35;
 
     #region getters
     public int currentDuration => _currentDuration;
@@ -43,6 +47,8 @@ public class FeebleSpirit : TileObject {
         _spiritGO.SetIsRoaming(true);
         GoToRandomTileInRadius();
         _spiritGO.SetRegion(gridTileLocation.parentMap.region);
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FEEBLE_SPIRIT);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FEEBLE_SPIRIT);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
@@ -126,7 +132,8 @@ public class FeebleSpirit : TileObject {
         }
     }
     private void FeebleEffect() {
-        possessionTarget.needsComponent.AdjustTiredness(-35);
+        float processedEnergyDrain = _baseEdergyDrainAmount - (_baseEdergyDrainAmount * m_playerSkillData.skillUpgradeData.GetDrainEnergyBonus(m_skillData.currentCooldownTick));
+        possessionTarget.needsComponent.AdjustTiredness(processedEnergyDrain);
     }
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);

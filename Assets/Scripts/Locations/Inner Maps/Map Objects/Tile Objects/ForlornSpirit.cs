@@ -8,10 +8,14 @@ using UnityEngine.Assertions;
 
 public class ForlornSpirit : TileObject {
 
+    private SkillData m_skillData;
+    private PlayerSkillData m_playerSkillData;
+
     public Character possessionTarget { get; private set; }
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
+    private int _baseHappinessDrain = -35;
     
     #region getters
     public int currentDuration => _currentDuration;
@@ -19,11 +23,15 @@ public class ForlornSpirit : TileObject {
     #endregion
     
     public ForlornSpirit() {
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FIRE_BALL);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FIRE_BALL);
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
         Initialize(TILE_OBJECT_TYPE.FORLORN_SPIRIT, false);
         traitContainer.AddTrait(this, "Forlorn");
     }
     public ForlornSpirit(SaveDataForlornSpirit data) {
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FIRE_BALL);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FIRE_BALL);
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
         //SaveDataForlornSpirit saveDataForlornSpirit = data as SaveDataForlornSpirit;
         Assert.IsNotNull(data);
@@ -129,7 +137,8 @@ public class ForlornSpirit : TileObject {
     }
 
     private void ForlornEffect() {
-        possessionTarget.needsComponent.AdjustHappiness(-35);
+        _baseHappinessDrain -= (_baseHappinessDrain * (int)m_playerSkillData.skillUpgradeData.GetDrainHappinessBonus(m_skillData.currentLevel));
+        possessionTarget.needsComponent.AdjustHappiness(_baseHappinessDrain);
     }
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);

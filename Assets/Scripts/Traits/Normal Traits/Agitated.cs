@@ -9,6 +9,7 @@ namespace Traits {
         private SkillData m_skillData;
         private PlayerSkillData m_playerSkillData;
         private float m_addedAtk = 0f;
+        private float m_addedMaxHP = 0f;
         public override bool isSingleton => true;
         
         public Agitated() {
@@ -33,8 +34,8 @@ namespace Traits {
                 m_addedAtk = m_playerSkillData.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(m_skillData.currentLevel);
                 character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk);
 
-                float hpAmount = character.maxHP * m_playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(m_skillData.currentLevel);
-                character.AdjustHP((int)hpAmount, ELEMENTAL_TYPE.Normal);
+                float m_addedMaxHP = character.maxHP * m_playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(m_skillData.currentLevel);
+                character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
             }
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
@@ -53,7 +54,8 @@ namespace Traits {
                         character.marker.UnberserkedMarker();
                     }
                 }
-                character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk);
+                character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP * -1);
+                character.combatComponent.SubtractAttackBaseOnPercentage(m_addedAtk);
                 m_addedAtk = 0f;
             }
         }

@@ -68,12 +68,29 @@ public class SkillUpgradeDataEditor : Editor {
                 DisplayFloatList(data.skillUpgradeData.additionalmanaReceivedPercentagePerLevel, "Mana(%) received per level");
                 EditorGUILayout.Space();
             }
+            /*
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Increase_Stats_Percentage)) {
                 DisplayFloatList(data.skillUpgradeData.statsIncreasedPercentagePerLevel, "Stats Bonus(%) per level");
                 EditorGUILayout.Space();
-            }
+            }*/
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Duration)) {
                 DisplayFloatList(data.skillUpgradeData.statsIncreasedPercentagePerLevel, "Duration Bonus(min) per level");
+                EditorGUILayout.Space();
+            }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Chance_Bonus_Percentage)) {
+                DisplayFloatList(data.skillUpgradeData.additionalChanceBonusPercentagePerLevel, "Chance Bonus(%) per level");
+                EditorGUILayout.Space();
+            }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Tile_Range)) {
+                DisplayIntList(data.skillUpgradeData.additionalTileRangeBonusPerLevel, "Tile Range Bonus per level");
+                EditorGUILayout.Space();
+            }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Energy_Drain)) {
+                DisplayIntList(data.skillUpgradeData.drainEnergyBonus, "Drain Energy(%) per level");
+                EditorGUILayout.Space();
+            }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Energy_Drain)) {
+                DisplayIntList(data.skillUpgradeData.drainHappinessBonus, "Drain Happiness(%) per level");
                 EditorGUILayout.Space();
             }
         }

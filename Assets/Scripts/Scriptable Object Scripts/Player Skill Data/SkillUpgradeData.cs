@@ -32,6 +32,14 @@ public class SkillUpgradeData
     public List<float> additionalMaxHPPercentagePerLevel;
     [HideInInspector]
     public List<float> additionalMaxHPActualPerLevel;
+    [HideInInspector]
+    public List<float> additionalChanceBonusPercentagePerLevel;
+    [HideInInspector]
+    public List<int> additionalTileRangeBonusPerLevel;
+    [HideInInspector]
+    public List<int> drainEnergyBonus;
+    [HideInInspector]
+    public List<int> drainHappinessBonus;
 
     public int GetUpgradeCostBaseOnLevel(int p_currentLevel) {
         return upgradeCosts[p_currentLevel];
@@ -51,6 +59,14 @@ public class SkillUpgradeData
 
     public float GetAdditionalHpPercentagePerLevelBaseOnLevel(int p_currentLevel) {
         return additionalHpPercentagePerLevel[p_currentLevel];
+    }
+
+    public float GetAdditionalMaxHpActualPerLevelBaseOnLevel(int p_currentLevel) {
+        return additionalMaxHPActualPerLevel[p_currentLevel];
+    }
+
+    public float GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(int p_currentLevel) {
+        return additionalMaxHPPercentagePerLevel[p_currentLevel];
     }
 
     public float GetAdditionalHpActualPerLevelBaseOnLevel(int p_currentLevel) {
@@ -75,5 +91,20 @@ public class SkillUpgradeData
 
     public float GetDurationBonusPerLevel(int p_currentLevel) {
         return durationBonusPerLevel[p_currentLevel];
+    }
+
+    public int GetTileRangeBonusPerLevel(int p_currentLevel) {
+        return additionalTileRangeBonusPerLevel[p_currentLevel];
+    }
+
+    public float GetChanceBonusPerLevel(int p_currentLevel) {
+        return additionalChanceBonusPercentagePerLevel[p_currentLevel];
+    }
+    public float GetDrainEnergyBonus(int p_currentLevel) {
+        return drainEnergyBonus[p_currentLevel];
+    }
+
+    public float GetDrainHappinessBonus(int p_currentLevel) {
+        return drainHappinessBonus[p_currentLevel];
     }
 }
