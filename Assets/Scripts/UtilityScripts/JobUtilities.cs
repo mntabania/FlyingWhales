@@ -203,7 +203,7 @@ namespace UtilityScripts {
                 for (int i = 0; i < hunterLodge.Count; i++) {
                     var lodge = hunterLodge[i];
                     job.AddPriorityLocation(INTERACTION_TYPE.NONE, lodge);
-                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, lodge.occupiedHexTile);
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, lodge.occupiedArea);
                 }
             }
         }
@@ -213,7 +213,7 @@ namespace UtilityScripts {
             if (lumberyards != null) {
                 for (int i = 0; i < lumberyards.Count; i++) {
                     job.AddPriorityLocation(INTERACTION_TYPE.NONE, lumberyards[i]);
-                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, lumberyards[i].occupiedHexTile);
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, lumberyards[i].occupiedArea);
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace UtilityScripts {
             if (quarries != null) {
                 for (int i = 0; i < quarries.Count; i++) {
                     job.AddPriorityLocation(INTERACTION_TYPE.NONE, quarries[i]);
-                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, quarries[i].occupiedHexTile);
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, quarries[i].occupiedArea);
                 }
             }
         }

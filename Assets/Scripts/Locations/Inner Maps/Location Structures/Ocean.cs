@@ -10,13 +10,13 @@
             if (region.innerMap.isShowing == false) {
                 InnerMapManager.Instance.ShowInnerMap(region);
             }
-            if (occupiedHexTile != null) {
-                InnerMapCameraMove.Instance.CenterCameraOn(occupiedHexTile.GetCenterLocationGridTile().centeredWorldLocation);
+            if (occupiedArea != null) {
+                InnerMapCameraMove.Instance.CenterCameraOn(occupiedArea.GetCenterLocationGridTile().centeredWorldLocation);
             }
         }
         public override void ShowSelectorOnStructure() {
-            if (occupiedHexTile != null) {
-                Selector.Instance.Select(occupiedHexTile);
+            if (occupiedArea != null) {
+                Selector.Instance.Select(occupiedArea);
             }
         }
     }

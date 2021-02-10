@@ -16,6 +16,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public Region region { get; private set; }
     public BaseSettlement settlementOnArea { get; private set; }
     public RegionDivision regionDivision { get; protected set; }
+    public AreaItem areaItem { get; private set; }
 
     /// <summary>
     /// Number of blueprint LocationGridTiles on this.
@@ -90,6 +91,9 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     #endregion
 
     #region Area Utilities
+    public void SetAreaItem(AreaItem p_areaItem) {
+        areaItem = p_areaItem;
+    }
     public bool IsNextToOrPartOfVillage() {
         return IsPartOfVillage() || neighbourComponent.IsNextToVillage();
     }
@@ -135,7 +139,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
                     continue;
                 }
                 LocationStructure structure = pair.Value[i];
-                if (structure.HasTileOnHexTile(this)) {
+                if (structure.HasTileOnArea(this)) {
                     int value = pair.Key.StructurePriority();
                     if (value > mostImportant.structureType.StructurePriority()) {
                         mostImportant = structure;
@@ -180,17 +184,15 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public void SetSettlementOnArea(BaseSettlement settlement) {
         settlementOnArea = settlement;
         region.UpdateSettlementsInRegion();
-
-        //TODO:
-        //if (GameManager.Instance.gameHasStarted) {
-        //    UpdatePathfindingGraphOnTile();
-        //}
+        if (GameManager.Instance.gameHasStarted) {
+             areaItem.UpdatePathfindingGraph();
+        }
     }
     public void CheckIfSettlementIsStillOnArea() {
         if (settlementOnArea != null) {
             for (int i = 0; i < settlementOnArea.allStructures.Count; i++) {
                 LocationStructure structure = settlementOnArea.allStructures[i];
-                if (structure.HasTileOnHexTile(this)) {
+                if (structure.HasTileOnArea(this)) {
                     return; //there is still a structure on this hex tile.
                 }
             }

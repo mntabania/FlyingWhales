@@ -270,7 +270,7 @@ public class MonsterGeneration : MapGenerationComponent {
 							//if cave already has occupants, then do not generate monsters for that cave
 							continue;
 						}
-						RegionDivision regionDivision = cave.occupiedHexTile.regionDivision;
+						RegionDivision regionDivision = cave.occupiedArea.regionDivision;
 						if (GameUtilities.RollChance(70)) {
 							locationChoices.Clear();
 							locationChoices.AddRange(cave.passableTiles);

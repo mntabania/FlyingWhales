@@ -526,7 +526,7 @@ namespace Inner_Maps {
                     manMadeStructure.SetStructureObject(structureObject);    
                 }
                 
-                structure.SetOccupiedHexTile(hexTile);
+                structure.SetOccupiedArea(hexTile);
                 structureObject.OnBuiltStructureObjectPlaced(this, structure, out int createdWalls, out int totalWalls);
                 structure.CreateRoomsBasedOnStructureObject(structureObject);
                 structure.OnBuiltNewStructure();
@@ -573,7 +573,7 @@ namespace Inner_Maps {
                 manMadeStructure.SetStructureObject(structureObject);    
             }
             
-            structure.SetOccupiedHexTile(centerTile.parentArea);
+            structure.SetOccupiedArea(centerTile.parentArea);
             structureObject.OnBuiltStructureObjectPlaced(this, structure, out int createdWalls, out int totalWalls);
             structure.CreateRoomsBasedOnStructureObject(structureObject);
             structure.OnBuiltNewStructure();

@@ -82,7 +82,7 @@ public class RegionDivision {
             for (int i = 0; i < region.allStructures.Count; i++) {
                 LocationStructure structure = region.allStructures[i];
                 if (structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR || structure.structureType == STRUCTURE_TYPE.CAVE) {
-                    if (structure.occupiedHexTile.regionDivision == this) {
+                    if (structure.occupiedArea.regionDivision == this) {
                         if (!structure.IsOccupied()) {
                             homeStructureOfNewMonsters = structure;
                             break;

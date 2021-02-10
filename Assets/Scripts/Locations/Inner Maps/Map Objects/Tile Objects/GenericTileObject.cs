@@ -297,7 +297,7 @@ public class GenericTileObject : TileObject {
         }
         Profiler.EndSample();
         
-        structure.SetOccupiedHexTile(hexTile);
+        structure.SetOccupiedArea(hexTile);
         
         Profiler.BeginSample($"Build Blueprint - OnBuiltStructureObjectPlaced");
         blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);

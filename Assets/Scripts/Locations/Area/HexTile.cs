@@ -1059,7 +1059,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (settlementOnTile != null) {
             for (int i = 0; i < settlementOnTile.allStructures.Count; i++) {
                 LocationStructure structure = settlementOnTile.allStructures[i];
-                if (structure.HasTileOnHexTile(this)) {
+                if (structure.HasTileOnArea(this)) {
                     return; //there is still a structure on this hex tile.
                 }
             }
@@ -1236,7 +1236,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         Messenger.AddListener<LocationStructure, HexTile>(StructureSignals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
     }
     private void OnStructurePlaced(LocationStructure structure) {
-        if (this == structure.occupiedHexTile) {
+        if (this == structure.occupiedArea) {
             CheckIfStructureVisualsAreStillValid();
         }
     }
@@ -1253,7 +1253,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
                     continue;
                 }
                 LocationStructure structure = pair.Value[i];
-                if (structure.HasTileOnHexTile(this)) {
+                if (structure.HasTileOnArea(this)) {
                     int value = pair.Key.StructurePriority(); 
                     if (value > mostImportant.structureType.StructurePriority()) {
                         mostImportant = structure;

@@ -82,7 +82,7 @@ public class BuildWolfLair : GoapAction {
         LocationStructure wilderness = targetHex.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, targetHex.region, wilderness);
 
-        structure.SetOccupiedHexTile(targetHex);
+        structure.SetOccupiedArea(targetHex);
         
         List<BlockWall> walls = structure.GetTileObjectsOfType<BlockWall>();
         for (int i = 0; i < walls.Count; i++) {

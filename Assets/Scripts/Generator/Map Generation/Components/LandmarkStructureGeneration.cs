@@ -39,7 +39,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		
 		InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region, wilderness);
 		
-		structure.SetOccupiedHexTile(hexTile);
+		structure.SetOccupiedArea(hexTile);
 		yield return null;
 	}
 	#endregion

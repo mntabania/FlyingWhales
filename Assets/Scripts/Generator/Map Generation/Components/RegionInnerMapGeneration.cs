@@ -119,9 +119,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             manMadeStructure.SetStructureObject(structureObject);
 
-            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                structure.SetOccupiedHexTile(occupiedHexTile);
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                structure.SetOccupiedArea(occupiedArea);
             }
             
             structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
@@ -149,9 +149,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             demonicStructure.SetStructureObject(structureObject);
 
-            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                structure.SetOccupiedHexTile(occupiedHexTile);
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                structure.SetOccupiedArea(occupiedArea);
             }
             
             structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
@@ -161,14 +161,14 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             yield return null;
         } else if (structure is NaturalStructure naturalStructure && saveDataLocationStructure is SaveDataNaturalStructure saveDataNaturalStructure) {
             //natural structures
-            if (naturalStructure is Cave cave && saveDataNaturalStructure is SaveDataCave saveDataCave) {
-                cave.LoadOccupiedHexTiles(saveDataCave);
-            } else {
-                if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                    HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                    structure.SetOccupiedHexTile(occupiedHexTile);
+            //if (naturalStructure is Cave cave && saveDataNaturalStructure is SaveDataCave saveDataCave) {
+            //    cave.LoadOccupiedHexTiles(saveDataCave);
+            //} else {
+                if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                    Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                    structure.SetOccupiedArea(occupiedArea);
                 }
-            }
+            //}
             
         }
     }

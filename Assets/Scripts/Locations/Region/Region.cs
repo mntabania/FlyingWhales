@@ -750,7 +750,7 @@ public class Region : ISavable, ILogFiller {
         foreach (List<LocationStructure> structureList in structures.Values) {
             for (int i = 0; i < structureList.Count; i++) {
                 LocationStructure currStructure = structureList[i];
-                if (currStructure.occupiedHexTile != null && currStructure.occupiedHexTile.settlementOnTile == character.homeSettlement) {
+                if (currStructure.occupiedArea != null && currStructure.occupiedArea.settlementOnTile == character.homeSettlement) {
                     for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = currStructure.pointsOfInterest.ElementAt(j);
                         if(poi.gridTileLocation != null && poi.IsOwnedBy(character)) {
