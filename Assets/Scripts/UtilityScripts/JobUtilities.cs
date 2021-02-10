@@ -31,7 +31,7 @@ namespace UtilityScripts {
                     ILocation currentLocation = currentStructure;
                     if (currentStructure == null || currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || currentStructure.structureType == STRUCTURE_TYPE.OCEAN) {
                         if (actor.gridTileLocation != null) {
-                            currentLocation = actor.hexTileLocation;
+                            currentLocation = actor.areaLocation;
                         }
                     }
                     if (currentLocation != null) {
@@ -60,7 +60,7 @@ namespace UtilityScripts {
                     ILocation currentLocation = currentStructure;
                     if (currentStructure == null || currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || currentStructure.structureType == STRUCTURE_TYPE.OCEAN) {
                         if (actor.gridTileLocation != null) {
-                            currentLocation = actor.hexTileLocation;
+                            currentLocation = actor.areaLocation;
                         }
                     }
                     if (currentLocation != null) {
@@ -140,7 +140,7 @@ namespace UtilityScripts {
                     ILocation currentLocation = currentStructure;
                     if (currentStructure == null || currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || currentStructure.structureType == STRUCTURE_TYPE.OCEAN) {
                         if (actor.gridTileLocation != null) {
-                            currentLocation = actor.hexTileLocation;
+                            currentLocation = actor.areaLocation;
                         }
                     }
                     if (currentLocation != null) {

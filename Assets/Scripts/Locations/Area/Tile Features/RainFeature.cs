@@ -28,13 +28,13 @@ namespace Locations.Area_Features {
                 (character, structure) => OnCharacterArrivedAtStructure(character, structure, p_area));
             Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE,
                 (character, structure) => OnCharacterLeftStructure(character, structure, p_area));
-            Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE,
-                (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, p_area));
-            Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE,
-                (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, p_area));
+            Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA,
+                (character, area) => OnCharacterLeftArea(character, area, p_area));
+            Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA,
+                (character, area) => OnCharacterEnteredArea(character, area, p_area));
             //Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED,
             //    (character, gridTile) => OnTileObjectPlaced(character, gridTile, tile));
-            
+
             RescheduleRainCheck(p_area); //this will start the rain check loop
             //CheckForWet(tile);
 
@@ -56,10 +56,10 @@ namespace Locations.Area_Features {
                 (character, structure) => OnCharacterArrivedAtStructure(character, structure, p_area));
             Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE,
                 (character, structure) => OnCharacterLeftStructure(character, structure, p_area));
-            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE,
-                (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, p_area));
-            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE,
-                (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, p_area));
+            Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA,
+                (character, area) => OnCharacterLeftArea(character, area, p_area));
+            Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA,
+                (character, area) => OnCharacterEnteredArea(character, area, p_area));
             //Messenger.RemoveListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED,
             //    (character, gridTile) => OnTileObjectPlaced(character, gridTile, tile));
             if (string.IsNullOrEmpty(_currentRainCheckSchedule) == false) {
@@ -77,7 +77,7 @@ namespace Locations.Area_Features {
 
         #region Listeners
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure, Area featureOwner) {
-            if (structure != null && structure.isInterior == false && character.gridTileLocation != null && character.hexTileLocation == featureOwner) {
+            if (structure != null && structure.isInterior == false && character.gridTileLocation != null && character.areaLocation == featureOwner) {
                 AddCharacterOutside(character);
                 //if (!character.traitContainer.HasTrait("Wet")) {
                 //    character.traitContainer.AddTrait(character, "Wet");
@@ -87,18 +87,18 @@ namespace Locations.Area_Features {
         private void OnCharacterLeftStructure(Character character, LocationStructure structure, Area featureOwner) {
             //character left a structure that was outside. If the character entered a structure that is outside. That 
             //is handled at OnCharacterArrivedAtStructure
-            if (structure.isInterior == false && character.gridTileLocation != null && character.hexTileLocation == featureOwner) {
+            if (structure.isInterior == false && character.gridTileLocation != null && character.areaLocation == featureOwner) {
                 RemoveCharacterOutside(character);
             }
         }
-        private void OnCharacterLeftHexTile(Character character, HexTile exitedTile, Area featureOwner) {
-            if (exitedTile == featureOwner) {
+        private void OnCharacterLeftArea(Character character, Area exitedArea, Area featureOwner) {
+            if (exitedArea == featureOwner) {
                 //character left the hextile that owns this feature
                 RemoveCharacterOutside(character);
             }
         }
-        private void OnCharacterEnteredHexTile(Character character, HexTile enteredTile, Area featureOwner) {
-            if (enteredTile == featureOwner && character.currentStructure.isInterior == false) {
+        private void OnCharacterEnteredArea(Character character, Area enteredArea, Area featureOwner) {
+            if (enteredArea == featureOwner && character.currentStructure.isInterior == false) {
                 AddCharacterOutside(character);
                 //if (!character.traitContainer.HasTrait("Wet")) {
                 //    character.traitContainer.AddTrait(character, "Wet");

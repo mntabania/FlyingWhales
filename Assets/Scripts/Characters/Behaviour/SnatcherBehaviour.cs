@@ -11,8 +11,8 @@ namespace Characters.Behaviour {
         }
         
         public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-            if (character.hexTileLocation != null) {
-                if (!character.hexTileLocation.isCorrupted) {
+            if (character.areaLocation != null) {
+                if (!character.areaLocation.isCorrupted) {
                     //character is not yet at demonic structure, get nearest one then go there.
                     HexTile nearestDemonicArea = GetNearestDemonicStructure(character);
                     if (nearestDemonicArea != null) {
@@ -30,7 +30,7 @@ namespace Characters.Behaviour {
                         Debug.LogWarning($"{character.name} could not find a near demonic structure!");
                     }
                 } else {
-                    List<LocationGridTile> choices = character.hexTileLocation.locationGridTiles.Where(
+                    List<LocationGridTile> choices = character.areaLocation.locationGridTiles.Where(
                         t => !t.structure.IsTilePartOfARoom(t, out var room) && t.IsPassable() && PathfindingManager.Instance.HasPath(character.gridTileLocation, t)
                     ).ToList();
                     if (choices.Count > 0) {
@@ -61,12 +61,12 @@ namespace Characters.Behaviour {
             character.behaviourComponent.OnBecomeSnatcher();
         }
         private HexTile GetNearestDemonicStructure(Character character) {
-            if (character.hexTileLocation != null) {
+            if (character.areaLocation != null) {
                 HexTile nearest = null;
                 float nearestDist = 99999f;
                 for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.areas.Count; i++) {
                     HexTile hexTile = PlayerManager.Instance.player.playerSettlement.areas[i];
-                    float dist = Vector2.Distance(hexTile.transform.position, character.hexTileLocation.transform.position);
+                    float dist = Vector2.Distance(hexTile.transform.position, character.areaLocation.transform.position);
                     if (dist < nearestDist) {
                         nearest = hexTile;
                         nearestDist = dist;

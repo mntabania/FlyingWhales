@@ -26,7 +26,7 @@ namespace Interrupts {
             //Removed this because overridden logs are already added after in AddEffectLog
             //interruptHolder.actor.logComponent.RegisterLog(overrideEffectLog, onlyClickedCharacter: false);
 
-            HexTile hexTile = interruptHolder.actor.hexTileLocation;
+            HexTile hexTile = interruptHolder.actor.areaLocation;
             if (interruptHolder.actor.characterClass.className.Equals("Druid")) {
                 //Electric storm
                 if (hexTile.spellsComponent.hasElectricStorm) {

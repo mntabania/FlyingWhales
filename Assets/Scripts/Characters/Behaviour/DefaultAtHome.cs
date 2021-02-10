@@ -176,7 +176,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 }
 
                 log += "\n-If it is Early Night, 10% chance to Host Social Party at Inn";
-                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInHex() == false) {
+                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance.ToString()}";
@@ -227,7 +227,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance.ToString()}";
-                    if (chance < 30 && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInHex() == false) {
+                    if (chance < 30 && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
                         Character chosenCharacter =
                             character.GetDisabledCharacterToCheckOutThatMeetCriteria(c =>
                                 character.homeSettlement != null && c.currentSettlement != null && 
@@ -269,7 +269,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n-Otherwise, if it is Morning or Lunch Time or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
                 if ((currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || 
                      currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) 
-                    && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInHex() == false) {
+                    && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     if (GameUtilities.RollChance(25) && CanCreateCraftMissingBedJob(character, ref log)) {
                         log += $"\n  -No Available bed will create craft missing bed job";
@@ -297,7 +297,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance.ToString()}";
-                    if (chance < 25 && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInHex() == false) {
+                    if (chance < 25 && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
                         WeightedDictionary<Character> visitWeights = GetCharacterToVisitWeights(character);
                         if (visitWeights.GetTotalOfWeights() > 0) {
                             Character targetCharacter = visitWeights.PickRandomElementGivenWeights();

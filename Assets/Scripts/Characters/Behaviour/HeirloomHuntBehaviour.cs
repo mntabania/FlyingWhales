@@ -116,7 +116,7 @@ public class HeirloomHuntBehaviour : CharacterBehaviourComponent {
     private bool RoamAroundStructureOrHex(Character actor, IPartyQuestTarget target, out JobQueueItem producedJob) {
         if(target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
             if(target is Character targetCharacter) {
-                HexTile targetHex = targetCharacter.hexTileLocation;
+                HexTile targetHex = targetCharacter.areaLocation;
                 return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetHex.GetRandomTile());
             }
         }

@@ -15,8 +15,8 @@ public class TrapStructure {
     //setting this is manual, and is in no way related to the trap structures duration
     public LocationStructure forcedStructure { get; private set; }
 
-    //Works the same as forced structure but with hex tile
-    public HexTile forcedHex { get; private set; }
+    //Works the same as forced structure but with area
+    public Area forcedArea { get; private set; }
 
     public TrapStructure() {
 
@@ -57,14 +57,14 @@ public class TrapStructure {
     #endregion
 
     #region Forced HexTile
-    public void SetForcedHex(HexTile hex) {
-        forcedHex = hex;
+    public void SetForcedArea(Area p_area) {
+        forcedArea = p_area;
     }
-    public bool SatisfiesForcedHex(IPointOfInterest target) {
-        if (forcedHex == null) {
+    public bool SatisfiesForcedArea(IPointOfInterest target) {
+        if (forcedArea == null) {
             return true;
         }
-        return target.gridTileLocation != null && target.gridTileLocation.parentArea == forcedHex;
+        return target.gridTileLocation != null && target.gridTileLocation.area == forcedArea;
     }
     #endregion
 
@@ -73,15 +73,15 @@ public class TrapStructure {
         SetStructureAndDuration(null, 0);
         SetForcedStructure(null);
     }
-    public void ResetAllTrapHexes() {
-        SetForcedHex(null);
+    public void ResetTrapArea() {
+        SetForcedArea(null);
     }
     public void ResetAllTrappedValues() {
         if (IsTrapped()) {
             ResetAllTrapStructures();
         }
-        if (IsTrappedInHex()) {
-            ResetAllTrapHexes();
+        if (IsTrappedInArea()) {
+            ResetTrapArea();
         }
     }
     public bool IsTrapped() {
@@ -96,17 +96,17 @@ public class TrapStructure {
     public bool IsTrappedAndTrapStructureIsNot(LocationStructure structure) {
         return IsTrapped() && !IsTrapStructure(structure);
     }
-    public bool IsTrappedInHex() {
-        return forcedHex != null;
+    public bool IsTrappedInArea() {
+        return forcedArea != null;
     }
-    public bool IsTrapHex(HexTile hex) {
-        return forcedHex != null && forcedHex == hex;
+    public bool IsTrapArea(Area p_area) {
+        return forcedArea != null && forcedArea == p_area;
     }
-    public bool IsTrappedAndTrapHexIs(HexTile hex) {
-        return IsTrappedInHex() && IsTrapHex(hex);
+    public bool IsTrappedAndTrapAreaIs(Area p_area) {
+        return IsTrappedInArea() && IsTrapArea(p_area);
     }
-    public bool IsTrappedAndTrapHexIsNot(HexTile hex) {
-        return IsTrappedInHex() && !IsTrapHex(hex);
+    public bool IsTrappedAndTrapAreaIsNot(Area p_area) {
+        return IsTrappedInArea() && !IsTrapArea(p_area);
     }
     #endregion
 
@@ -119,7 +119,7 @@ public class TrapStructure {
             forcedStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.forcedStructure);
         }
         if (!string.IsNullOrEmpty(data.forcedHex)) {
-            forcedHex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.forcedHex);
+            forcedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.forcedHex);
         }
     }
     #endregion
@@ -145,8 +145,8 @@ public class SaveDataTrapStructure : SaveData<TrapStructure> {
         if (data.forcedStructure != null) {
             forcedStructure = data.forcedStructure.persistentID;
         }
-        if (data.forcedHex != null) {
-            forcedHex = data.forcedHex.persistentID;
+        if (data.forcedArea != null) {
+            forcedHex = data.forcedArea.persistentID;
         }
     }
     public override TrapStructure Load() {

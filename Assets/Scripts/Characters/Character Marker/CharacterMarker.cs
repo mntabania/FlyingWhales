@@ -79,12 +79,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool useCanTraverse;
     
     private LocationGridTile _previousGridTile;
-    private HexTile _previousHexTileLocation;
+    private Area _previousAreaLocation;
     private CharacterMarkerNameplate _nameplate;
     private LocationGridTile _destinationTile;
     private string _destroySchedule;
     private GameDate _destroyDate;
-    private List<HexTile> hexInWildernessForFlee;
+    private List<Area> areasInWildernessForFlee;
     private List<Vector3> avoidThisPositions;
     private int _currentColliderSize;
 
@@ -122,8 +122,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         UpdateHairState();
 
-        if(hexInWildernessForFlee == null) {
-            hexInWildernessForFlee = new List<HexTile>();
+        if(areasInWildernessForFlee == null) {
+            areasInWildernessForFlee = new List<Area>();
         }
 
         AddListeners();
@@ -567,7 +567,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
         DestroyAllParticles();
 
-        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_AREA, character, _previousAreaLocation);
         visionCollider.Reset();
         GameObject.Destroy(visionTrigger.gameObject);
         visionTrigger = null;
@@ -575,8 +575,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI.ResetThis();
         character = null;
         // previousGridTile = null;
-        _previousHexTileLocation = null;
-        hexInWildernessForFlee.Clear();
+        _previousAreaLocation = null;
+        areasInWildernessForFlee.Clear();
     }
     protected override void OnDestroy() {
         pathfindingAI = null;    
@@ -611,8 +611,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.trapStructure.IsTrappedAndTrapStructureIsNot(destinationTile.structure)) {
             character.trapStructure.ResetAllTrapStructures();
         }
-        if (character.trapStructure.IsTrappedAndTrapHexIsNot(destinationTile.parentArea)) {
-            character.trapStructure.ResetAllTrapHexes();
+        if (character.trapStructure.IsTrappedAndTrapAreaIsNot(destinationTile.area)) {
+            character.trapStructure.ResetTrapArea();
         }
         pathfindingAI.ClearAllCurrentPathData();
         //pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
@@ -1094,28 +1094,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
             Profiler.EndSample();
             if(character != null) {
                 previousGridTile = character.gridTileLocation;
-                if (_previousHexTileLocation == null || (_previousHexTileLocation != character.hexTileLocation)) {
-                    if (_previousHexTileLocation != null) {
-                        _previousHexTileLocation.locationCharacterTracker.RemoveCharacterFromLocation(character);
+                if (_previousAreaLocation == null || (_previousAreaLocation != character.areaLocation)) {
+                    if (_previousAreaLocation != null) {
+                        _previousAreaLocation.locationCharacterTracker.RemoveCharacterFromLocation(character);
                         
                         Profiler.BeginSample($"{character.name} Character Exited Hextile Broadcast");
-                        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+                        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_AREA, character, _previousAreaLocation);
                         Profiler.EndSample();
 
                         Profiler.BeginSample($"{character.name} Remove From Awareness List");
-                        if(character.currentLocationAwareness == _previousHexTileLocation.locationAwareness) {
+                        if(character.currentLocationAwareness == _previousAreaLocation.locationAwareness) {
                             LocationAwarenessUtility.RemoveFromAwarenessList(character);
                         }
                         Profiler.EndSample();
                     }
                     
                     //When character enters new hex tile it becomes the previous hex tile altogether
-                    _previousHexTileLocation = character.hexTileLocation;
+                    _previousAreaLocation = character.areaLocation;
                     
-                    _previousHexTileLocation.locationCharacterTracker.AddCharacterAtLocation(character);
+                    _previousAreaLocation.locationCharacterTracker.AddCharacterAtLocation(character);
                     
                     Profiler.BeginSample($"{character.name} Character Entered Hextile Broadcast");
-                    Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.hexTileOwner
+                    Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_AREA, character, _previousAreaLocation); //character.gridTileLocation.hexTileOwner
                     Profiler.EndSample();
                     
                     Profiler.BeginSample($"{character.name} Add To Awareness List");
@@ -1724,7 +1724,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
 
-        List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.areas;
+        List<Area> playerAreas = PlayerManager.Instance.player.playerSettlement.areas;
         if (avoidThisPositions == null) {
             avoidThisPositions = new List<Vector3>();
         } else {
@@ -1743,13 +1743,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //Corrupted hexes should also be avoided
         //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
         if (character.isNormalCharacter) {
-            if (playerHexes.Count > 0) {
-                for (int i = 0; i < playerHexes.Count; i++) {
-                    HexTile corruptedHex = playerHexes[i];
-                    if (corruptedHex.region == character.currentRegion) {
+            if (playerAreas.Count > 0) {
+                for (int i = 0; i < playerAreas.Count; i++) {
+                    Area corruptedArea = playerAreas[i];
+                    if (corruptedArea.region == character.currentRegion) {
                         if (character.gridTileLocation != null) {
-                            if (character.hexTileLocation == corruptedHex) {
-                                avoidThisPositions.Add(corruptedHex.GetCenterLocationGridTile().worldLocation);
+                            if (character.areaLocation == corruptedArea) {
+                                avoidThisPositions.Add(corruptedArea.gridTileComponent.centerGridTile.worldLocation);
                             }
                         }
                     }
@@ -1790,24 +1790,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetHasFleePath(true);
         LocationGridTile chosenTile = null;
         if(character.currentStructure != null && character.currentStructure.structureType.IsSpecialStructure()) {
-            HexTile hex = character.hexTileLocation;
-            hexInWildernessForFlee.Clear();
-            for (int i = 0; i < hex.AllNeighbours.Count; i++) {
-                HexTile neighbour = hex.AllNeighbours[i];
-                LocationGridTile neighbourCenter = neighbour.GetCenterLocationGridTile();
+            Area area = character.areaLocation;
+            areasInWildernessForFlee.Clear();
+            for (int i = 0; i < area.neighbourComponent.neighbours.Count; i++) {
+                Area neighbour = area.neighbourComponent.neighbours[i];
+                LocationGridTile neighbourCenter = neighbour.gridTileComponent.centerGridTile;
                 if (character.movementComponent.HasPathTo(neighbourCenter)) {
                     if(neighbourCenter.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                         BaseSettlement settlement = null;
                         character.gridTileLocation?.IsPartOfSettlement(out settlement);
-                        if(settlement == null || neighbour.settlementOnTile == null || neighbour.settlementOnTile != settlement) {
-                            hexInWildernessForFlee.Add(neighbour);
+                        if(settlement == null || neighbour.settlementOnArea == null || neighbour.settlementOnArea != settlement) {
+                            areasInWildernessForFlee.Add(neighbour);
                         }
                     }
                 }
             }
-            if(hexInWildernessForFlee.Count > 0) {
-                HexTile randomHex = CollectionUtilities.GetRandomElement(hexInWildernessForFlee);
-                chosenTile = randomHex.GetCenterLocationGridTile();
+            if(areasInWildernessForFlee.Count > 0) {
+                Area randomArea = CollectionUtilities.GetRandomElement(areasInWildernessForFlee);
+                chosenTile = randomArea.gridTileComponent.centerGridTile;
             }
         }
         if (chosenTile != null) {

@@ -45,7 +45,7 @@ public class BoneGolemBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            HexTile hex = actor.hexTileLocation;
+            HexTile hex = actor.areaLocation;
             if(hex != null) {
                 Character chosenTarget = hex.GetFirstCharacterInsideHexThatMeetCriteria<Character>(target => IsCharacterConsideredTargetOf(actor, target));
                 if(chosenTarget != null) {

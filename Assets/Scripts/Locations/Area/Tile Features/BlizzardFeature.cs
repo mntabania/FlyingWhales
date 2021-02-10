@@ -20,76 +20,76 @@ namespace Locations.Area_Features {
         }
 
         #region Override
-        public override void OnAddFeature(HexTile tile) {
-            base.OnAddFeature(tile);
+        public override void OnAddFeature(Area p_area) {
+            base.OnAddFeature(p_area);
             Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE,
-                (character, structure) => OnCharacterArrivedAtStructure(character, structure, tile));
+                (character, structure) => OnCharacterArrivedAtStructure(character, structure, p_area));
             Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, 
-                (character, structure) => OnCharacterLeftStructure(character, structure, tile));
-            Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, 
-                (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
-            Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE,
-                (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
-            RescheduleFreezingCheck(tile); //this will start the freezing check loop
+                (character, structure) => OnCharacterLeftStructure(character, structure, p_area));
+            Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, 
+                (character, area) => OnCharacterLeftArea(character, area, p_area));
+            Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA,
+                (character, area) => OnCharacterEnteredArea(character, area, p_area));
+            RescheduleFreezingCheck(p_area); //this will start the freezing check loop
         
             //schedule removal of this feature after x amount of ticks.
             expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
-            SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
+            SchedulingManager.Instance.AddEntry(expiryDate, () => p_area.featureComponent.RemoveFeature(this, p_area), this);
             
             if (GameManager.Instance.gameHasStarted) {
                 //only create blizzard effect if game has started when this is added.
                 //if this was added before game was started then CreateBlizzardEffect will be
                 //handled by GameStartActions()
-                CreateBlizzardEffect(tile);    
+                CreateBlizzardEffect(p_area);    
             }
         }
-        public override void OnRemoveFeature(HexTile tile) {
-            base.OnRemoveFeature(tile);
+        public override void OnRemoveFeature(Area p_area) {
+            base.OnRemoveFeature(p_area);
             Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE,
-                (character, structure) => OnCharacterArrivedAtStructure(character, structure, tile));
+                (character, structure) => OnCharacterArrivedAtStructure(character, structure, p_area));
             Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, 
-                (character, structure) => OnCharacterLeftStructure(character, structure, tile));
-            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, 
-                (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
-            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE,
-                (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
+                (character, structure) => OnCharacterLeftStructure(character, structure, p_area));
+            Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, 
+                (character, area) => OnCharacterLeftArea(character, area, p_area));
+            Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA,
+                (character, area) => OnCharacterEnteredArea(character, area, p_area));
             if (string.IsNullOrEmpty(_currentFreezingCheckSchedule) == false) {
                 SchedulingManager.Instance.RemoveSpecificEntry(_currentFreezingCheckSchedule); //this will stop the freezing check loop 
             }
             ObjectPoolManager.Instance.DestroyObject(_effect);
         }
-        public override void GameStartActions(HexTile tile) {
-            base.GameStartActions(tile);
-            CreateBlizzardEffect(tile);
+        public override void GameStartActions(Area p_area) {
+            base.GameStartActions(p_area);
+            CreateBlizzardEffect(p_area);
         }
-        private void CreateBlizzardEffect(HexTile tile) {
-            GameObject go = GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Blizzard);
+        private void CreateBlizzardEffect(Area p_area) {
+            GameObject go = GameManager.Instance.CreateParticleEffectAt(p_area.gridTileComponent.centerGridTile, PARTICLE_EFFECT.Blizzard);
             _effect = go;
         }
         #endregion
 
         #region Listeners
-        private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure, HexTile featureOwner) {
+        private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure, Area featureOwner) {
             if (structure != null && structure.isInterior == false && character.gridTileLocation != null
-                && character.hexTileLocation == featureOwner) {
+                && character.areaLocation == featureOwner) {
                 AddCharacterOutside(character);
             }
         }
-        private void OnCharacterLeftStructure(Character character, LocationStructure structure, HexTile featureOwner) {
+        private void OnCharacterLeftStructure(Character character, LocationStructure structure, Area featureOwner) {
             //character left a structure that was outside. If the character entered a structure that is outside. That 
             //is handled at OnCharacterArrivedAtStructure
-            if (structure.isInterior == false && character.gridTileLocation != null && character.hexTileLocation == featureOwner) {
+            if (structure.isInterior == false && character.gridTileLocation != null && character.areaLocation == featureOwner) {
                 RemoveCharacterOutside(character);
             }
         }
-        private void OnCharacterLeftHexTile(Character character, HexTile exitedTile, HexTile featureOwner) {
-            if (exitedTile == featureOwner) {
+        private void OnCharacterLeftArea(Character character, Area exitedArea, Area featureOwner) {
+            if (exitedArea == featureOwner) {
                 //character left the hextile that owns this feature
                 RemoveCharacterOutside(character);
             }
         }
-        private void OnCharacterEnteredHexTile(Character character, HexTile enteredTile, HexTile featureOwner) {
-            if (enteredTile == featureOwner && character.currentStructure.isInterior == false) {
+        private void OnCharacterEnteredArea(Character character, Area enteredArea, Area featureOwner) {
+            if (enteredArea == featureOwner && character.currentStructure.isInterior == false) {
                 AddCharacterOutside(character);
             }
         }
@@ -109,7 +109,7 @@ namespace Locations.Area_Features {
         #endregion
 
         #region Effects
-        private void CheckForFreezing(HexTile hex) {
+        private void CheckForFreezing(Area p_area) {
             string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
             int chance = 35;
             for (int i = 0; i < _charactersOutside.Count; i++) {
@@ -124,13 +124,13 @@ namespace Locations.Area_Features {
                 }
             }
             //reschedule 15 minutes after.
-            RescheduleFreezingCheck(hex);
+            RescheduleFreezingCheck(p_area);
             Debug.Log(summary);
         }
-        private void RescheduleFreezingCheck(HexTile hex) {
-            if (hex.featureComponent.HasFeature(name) == false) { return; }
+        private void RescheduleFreezingCheck(Area p_area) {
+            if (p_area.featureComponent.HasFeature(name) == false) { return; }
             GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(10));
-            _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForFreezing(hex), this);
+            _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForFreezing(p_area), this);
         }
         #endregion
 

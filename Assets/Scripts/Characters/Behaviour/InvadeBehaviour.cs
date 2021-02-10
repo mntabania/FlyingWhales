@@ -22,7 +22,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             return true;
         } else {
             log += $"\n-Already has village target";
-            if (character.hexTileLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(character.hexTileLocation)) {
+            if (character.areaLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(character.areaLocation)) {
                 log += $"\n-Already att village target, will find character to attack";
                 //character is already at target village
                 List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();

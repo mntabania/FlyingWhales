@@ -935,16 +935,16 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Dazed
     public void OnBecomeDazed() {
-        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
         Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
     }
-    private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
+    private void OnCharacterEnteredArea(Character character, Area p_area) {
         if (character == owner) {
-            if (character.homeSettlement != null && character.homeSettlement.areas.Contains(tile)) {
+            if (character.homeSettlement != null && character.homeSettlement.areas.Contains(p_area)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");
-            } else if (character.IsTerritory(tile)) {
+            } else if (character.IsTerritory(p_area)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");    
             }
         }
@@ -965,7 +965,7 @@ public class BehaviourComponent : CharacterComponent {
         }
     }
     public void OnNoLongerDazed() {
-        Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
         Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
         Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);

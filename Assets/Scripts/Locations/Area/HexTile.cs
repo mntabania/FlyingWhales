@@ -814,14 +814,14 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             }
         }
         MouseOver();
-        Messenger.Broadcast(HexTileSignals.HEXTILE_LEFT_CLICKED, this);
+        Messenger.Broadcast(AreaSignals.AREA_LEFT_CLICKED, this);
     }
     private void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() ||
             GameManager.Instance.gameHasStarted == false) {
             return;
         }
-        Messenger.Broadcast(HexTileSignals.HEXTILE_RIGHT_CLICKED, this);
+        Messenger.Broadcast(AreaSignals.AREA_RIGHT_CLICKED, this);
     }
     private void MouseOver() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
@@ -843,7 +843,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (GameManager.showAllTilesTooltip) {
             ShowTileInfo();    
         }
-        Messenger.Broadcast(HexTileSignals.HEXTILE_HOVERED_OVER, this);
+        Messenger.Broadcast(AreaSignals.AREA_HOVERED_OVER, this);
     }
     private void MouseExit() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
@@ -861,7 +861,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (GameManager.showAllTilesTooltip) {
             UIManager.Instance.HideSmallInfo();    
         }
-        Messenger.Broadcast(HexTileSignals.HEXTILE_HOVERED_OUT, this);
+        Messenger.Broadcast(AreaSignals.AREA_HOVERED_OUT, this);
     }
     private void DoubleLeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || 
@@ -872,7 +872,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         //     InnerMapManager.Instance.TryShowLocationMap(region);
         //     InnerMapCameraMove.Instance.CenterCameraOnTile(this);
         // }
-        Messenger.Broadcast(HexTileSignals.HEXTILE_DOUBLE_CLICKED, this);
+        Messenger.Broadcast(AreaSignals.AREA_DOUBLE_CLICKED, this);
     }
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;

@@ -65,7 +65,7 @@ public class WolfBehaviour : BaseMonsterBehaviour {
             }
 
             HexTile chosenHex = null;
-            HexTile targetHex = character.hexTileLocation;
+            HexTile targetHex = character.areaLocation;
             if(targetHex != null && targetHex.elevationType != ELEVATION.WATER && targetHex.elevationType != ELEVATION.MOUNTAIN && targetHex.landmarkOnTile == null && !targetHex.IsNextToOrPartOfVillage()) {
                 chosenHex = targetHex;
             }
