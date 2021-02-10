@@ -20,9 +20,9 @@ public class WurmBehaviour : BaseMonsterBehaviour {
         //        if (roll < 1) {
         //            HexTile chosenHex = null;
         //            if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-        //                chosenHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetRandomAdjacentHextileWithinRegion(true);
+        //                chosenHex = character.gridTileLocation.hexTileOwner.GetRandomAdjacentHextileWithinRegion(true);
         //                if(chosenHex == null) {
-        //                    chosenHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        //                    chosenHex = character.gridTileLocation.hexTileOwner;
         //                }
         //            } else {
         //                chosenHex = character.gridTileLocation.GetNearestHexTileWithinRegion();
@@ -60,7 +60,7 @@ public class WurmBehaviour : BaseMonsterBehaviour {
 			List<LocationGridTile> settlementTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
 			for (int i = 0; i < p_character.homeSettlement.tiles.Count; i++) {
 				HexTile hexTile = p_character.homeSettlement.tiles[i];
-				for (int j = 0; j < hexTile.locationGridTiles.Count; j++) {
+				for (int j = 0; j < hexTile.locationGridTiles.Length; j++) {
 					LocationGridTile tile = hexTile.locationGridTiles[j];
 					if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS || tile.structure.structureType == STRUCTURE_TYPE.CAVE) {
 						settlementTiles.Add(tile);
@@ -80,7 +80,7 @@ public class WurmBehaviour : BaseMonsterBehaviour {
 			}
 		} else if (p_character.HasTerritory()) {
 			List<LocationGridTile> territoryTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
-			for (int j = 0; j < p_character.territory.locationGridTiles.Count; j++) {
+			for (int j = 0; j < p_character.territory.locationGridTiles.Length; j++) {
 				LocationGridTile tile = p_character.territory.locationGridTiles[j];
 				if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS || tile.structure.structureType == STRUCTURE_TYPE.CAVE) {
 					territoryTiles.Add(tile);

@@ -22,7 +22,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
         bool isCorrupted = tileObject.gridTileLocation.isCorrupted;
-        HexTile hex = tileObject.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
+        HexTile hex = tileObject.gridTileLocation.parentArea;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state, 
             hex.biomeType,
@@ -65,7 +65,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        HexTile hex = tileObject.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
+        HexTile hex = tileObject.gridTileLocation.parentArea;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
             tileObject.state,
             hex.biomeType,

@@ -64,8 +64,7 @@ public class TrapStructure {
         if (forcedHex == null) {
             return true;
         }
-        return target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap 
-            && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == forcedHex;
+        return target.gridTileLocation != null && target.gridTileLocation.parentArea == forcedHex;
     }
     #endregion
 

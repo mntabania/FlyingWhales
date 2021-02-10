@@ -35,7 +35,6 @@ namespace UtilityScripts {
         private static int _lastRegionID;
         private static int _lastJobID;
         private static int _lastBurningSourceID;
-        private static int _lastTileCollectionID;
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
         public static string gameSavePath => $"{Application.persistentDataPath}/Ruinarch Game Saves/";
@@ -96,10 +95,6 @@ namespace UtilityScripts {
                 _lastBurningSourceID += 1;
                 return _lastBurningSourceID;
             }
-            if (obj is LocationGridTileCollection) {
-                _lastTileCollectionID += 1;
-                return _lastTileCollectionID;
-            }
             return 0;
         }
 
@@ -130,8 +125,6 @@ namespace UtilityScripts {
                 if (_lastJobID <= idToUse) { _lastJobID = idToUse; }
             } else if (obj is BurningSource) {
                 if (_lastBurningSourceID <= idToUse) { _lastBurningSourceID = idToUse; }
-            } else if (obj is LocationGridTileCollection) {
-                if (_lastTileCollectionID <= idToUse) { _lastTileCollectionID = idToUse; }
             }
             return idToUse;
         }

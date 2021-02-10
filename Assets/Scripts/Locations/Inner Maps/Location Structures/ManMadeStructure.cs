@@ -163,10 +163,10 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void AfterStructureDestruction() {
             structureObj.OnOwnerStructureDestroyed(region.innerMap);
-            InnerMapHexTile innerMapHexTile = occupiedHexTile;
+            HexTile hexTile = occupiedHexTile;
             base.AfterStructureDestruction();
-            if (innerMapHexTile != null && innerMapHexTile.hexTileOwner != null) {
-                innerMapHexTile.hexTileOwner.CheckIfSettlementIsStillOnTile();
+            if (hexTile != null) {
+                hexTile.CheckIfSettlementIsStillOnTile();
             }
         }
         #endregion

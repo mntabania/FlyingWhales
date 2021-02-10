@@ -21,7 +21,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 				landmark.tileLocation.settlementOnTile.GenerateStructures(structure);
 				yield return MapGenerator.Instance.StartCoroutine(GenerateMonsterLair(landmark.tileLocation, structure));
 			} else if (landmark.specificLandmarkType != LANDMARK_TYPE.VILLAGE) {
-				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(landmark.tileLocation.settlementOnTile, 
+				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltLandmark(landmark.tileLocation.settlementOnTile, 
 						landmark.tileLocation.region.innerMap, RESOURCE.NONE, landmark.specificLandmarkType.GetStructureType()));
 			}
 		}
@@ -39,16 +39,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		
 		InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region, wilderness);
 		
-		structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
-		hexTile.innerMapHexTile.Occupy();
-		// for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
-		// 	BuildingSpot spot = hexTile.ownedBuildSpots[j];
-		// 	if (spot.isOccupied == false) {
-		// 		spot.SetIsOccupied(true);
-		// 		spot.UpdateAdjacentSpotsOccupancy(hexTile.region.innerMap);	
-		// 	}
-		// }
-		
+		structure.SetOccupiedHexTile(hexTile);
 		yield return null;
 	}
 	#endregion

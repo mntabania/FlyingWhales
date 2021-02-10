@@ -748,24 +748,16 @@ public class LocationStructureObject : PooledObject {
         if (tile.IsAtEdgeOfMap()) {
             return false;
         }
-        if (GameManager.Instance.gameHasStarted) {
-            if (!tile.collectionOwner.isPartOfParentRegionMap) {
-                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement
-            }    
-        } else {
+        if (!GameManager.Instance.gameHasStarted) {
             //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
             //since we expect that they will be generated later
-            if (tile.collectionOwner.isPartOfParentRegionMap) {
-                HexTile hexTileOwner = tile.collectionOwner.partOfHextile.hexTileOwner;
-                if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
-                    return false;
-                }
-                if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
-                    return false;
-                }
-            } else {
-                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement 
-            }    
+            HexTile hexTileOwner = tile.parentArea;
+            if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
+                return false;
+            }
+            if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
+                return false;
+            }
         }
         
         

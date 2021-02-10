@@ -30,8 +30,7 @@ public class MonsterInvadeGathering : Gathering {
 
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
-        return character.race == host.race && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && hexForJoining != null
-            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hexForJoining;
+        return character.race == host.race && hexForJoining != null && character.hexTileLocation == hexForJoining;
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
@@ -54,9 +53,7 @@ public class MonsterInvadeGathering : Gathering {
     protected override void OnSetHost() {
         base.OnSetHost();
         if (host != null) {
-            if (host.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                hexForJoining = host.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-            }
+            hexForJoining = host.hexTileLocation;
         }
     }
     #endregion

@@ -79,7 +79,7 @@ namespace Plague.Death_Effect {
             if (chosenTile != null) {
                 Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Fire_Elemental, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
                 CharacterManager.Instance.PlaceSummonInitially(summon, chosenTile);
-                summon.SetTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner, false);
+                summon.SetTerritory(chosenTile.parentArea, false);
             }
         }
         private void Meteor(Character p_character) {

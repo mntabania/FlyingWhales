@@ -496,10 +496,7 @@ public class GoapPlanner {
                 }
             }
 
-            HexTile currentHex = null;
-            if (currentGridTile.collectionOwner.isPartOfParentRegionMap) {
-                currentHex = currentGridTile.collectionOwner.partOfHextile.hexTileOwner;
-            }
+            HexTile currentHex = currentGridTile.parentArea;
 
             if (currentHex != null) {
                 //Second step: Process current hex, if there is an action, skip next processing

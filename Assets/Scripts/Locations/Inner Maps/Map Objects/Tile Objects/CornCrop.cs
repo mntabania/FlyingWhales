@@ -16,9 +16,7 @@ public class CornCrop : Crops {
     #region Growth State
     public override int GetRipeningTicks() {
         int ticks;
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap 
-            && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.
-                featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
+        if (gridTileLocation.parentArea.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
             ticks = GameManager.Instance.GetTicksBasedOnHour(96);
         } else {
             ticks = GameManager.Instance.GetTicksBasedOnHour(120);

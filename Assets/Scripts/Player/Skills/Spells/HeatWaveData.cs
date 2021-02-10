@@ -27,6 +27,6 @@ public class HeatWaveData : SkillData {
         return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);
+        TileHighlighter.Instance.PositionHighlight(tile.parentArea);
     }
 }

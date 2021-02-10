@@ -45,7 +45,7 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
             } else {
                 log += $"\n-Party has no target structure";
                 MonsterInvadeGathering gathering = monsterInvadeGathering as MonsterInvadeGathering;
-                if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == gathering.targetHex) {
+                if (character.hexTileLocation == gathering.targetHex) {
                     log += "\n-Already in the target hex, will try to combat residents";
                     Character target = gathering.targetHex.GetRandomCharacterInsideHexThatMeetCriteria<Character>(c => !c.isDead && c.IsTerritory(gathering.targetHex));
                     if (target != null) {
@@ -58,7 +58,7 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
                 } else {
                     log += $"\n-Character is not in target hex, go to it";
                     HexTile targetHex = gathering.targetHex;
-                    LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];
+                    LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Length)];
                     character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
                 }
             }

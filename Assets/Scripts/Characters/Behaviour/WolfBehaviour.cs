@@ -65,11 +65,9 @@ public class WolfBehaviour : BaseMonsterBehaviour {
             }
 
             HexTile chosenHex = null;
-            if(character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                HexTile targetHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                if(targetHex != null && targetHex.elevationType != ELEVATION.WATER && targetHex.elevationType != ELEVATION.MOUNTAIN && targetHex.landmarkOnTile == null && !targetHex.IsNextToOrPartOfVillage()) {
-                    chosenHex = targetHex;
-                }
+            HexTile targetHex = character.hexTileLocation;
+            if(targetHex != null && targetHex.elevationType != ELEVATION.WATER && targetHex.elevationType != ELEVATION.MOUNTAIN && targetHex.landmarkOnTile == null && !targetHex.IsNextToOrPartOfVillage()) {
+                chosenHex = targetHex;
             }
             if (chosenHex == null) {
                 chosenHex = GetNoStructurePlainHexInRegion(character.currentRegion);

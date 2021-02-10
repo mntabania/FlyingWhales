@@ -11,12 +11,12 @@
                 InnerMapManager.Instance.ShowInnerMap(region);
             }
             if (occupiedHexTile != null) {
-                InnerMapCameraMove.Instance.CenterCameraOn(occupiedHexTile.hexTileOwner.GetCenterLocationGridTile().centeredWorldLocation);
+                InnerMapCameraMove.Instance.CenterCameraOn(occupiedHexTile.GetCenterLocationGridTile().centeredWorldLocation);
             }
         }
         public override void ShowSelectorOnStructure() {
             if (occupiedHexTile != null) {
-                Selector.Instance.Select(occupiedHexTile.hexTileOwner);
+                Selector.Instance.Select(occupiedHexTile);
             }
         }
     }

@@ -55,7 +55,7 @@ namespace Locations.Tile_Features {
         #endregion
     
         private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
-            if (tile.collectionOwner.isPartOfParentRegionMap && tile.collectionOwner.partOfHextile.hexTileOwner == owner) {
+            if (tile.parentArea == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                     AdjustBigTreeCount(1);    
                 } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
@@ -65,7 +65,7 @@ namespace Locations.Tile_Features {
             }
         }
         private void OnTileObjectRemoved(TileObject tileObject, Character character, LocationGridTile tile) {
-            if (tile.collectionOwner.isPartOfParentRegionMap && tile.collectionOwner.partOfHextile.hexTileOwner == owner) {
+            if (tile.parentArea == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                     AdjustBigTreeCount(-1);    
                 } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {

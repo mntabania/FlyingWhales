@@ -64,9 +64,9 @@ public class TakeShelter : GoapAction {
 
     #region State Effects
     public void AfterTakeShelterSuccess(ActualGoapNode goapNode) {
-        bool shouldSetShelter = goapNode.actor.gridTileLocation != null && goapNode.actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
-            (goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) 
-            || goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature));
+        bool shouldSetShelter = goapNode.actor.gridTileLocation != null && 
+            (goapNode.actor.hexTileLocation.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) 
+            || goapNode.actor.hexTileLocation.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature));
         if (shouldSetShelter) {
             if (goapNode.actor.traitContainer.HasTrait("Freezing")) {
                 Freezing freezing = goapNode.actor.traitContainer.GetTraitOrStatus<Freezing>("Freezing");

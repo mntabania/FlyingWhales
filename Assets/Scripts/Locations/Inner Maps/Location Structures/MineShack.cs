@@ -33,7 +33,7 @@ namespace Inner_Maps.Location_Structures {
             connectedCave = p_usedConnector.structure as Cave;
             
             //Create a path inside
-            HexTile hexTile = p_usedConnector.collectionOwner.partOfHextile.hexTileOwner;
+            HexTile hexTile = p_usedConnector.parentArea;
             LocationGridTile centerTile = hexTile.GetCenterLocationGridTile();
             List<LocationGridTile> path = PathGenerator.Instance.GetPath(p_usedConnector, centerTile, GRID_PATHFINDING_MODE.UNCONSTRAINED, includeFirstTile: true);
             if (path != null) {

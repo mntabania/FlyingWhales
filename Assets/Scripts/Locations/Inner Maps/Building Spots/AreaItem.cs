@@ -6,7 +6,7 @@ using Pathfinding;
 using TMPro;
 using UnityEngine;
 
-public class LocationGridTileCollectionItem : BaseMonoBehaviour {
+public class AreaItem : BaseMonoBehaviour {
 
     [SerializeField] private Collider2D boundsCollider;
 
@@ -19,7 +19,7 @@ public class LocationGridTileCollectionItem : BaseMonoBehaviour {
     void OnDrawGizmos() {
         Gizmos.color = Color.blue;
         Vector3 position = transform.position;
-        Gizmos.DrawWireCube(position, new Vector3(InnerMapManager.BuildingSpotSize.x - 0.5f, InnerMapManager.BuildingSpotSize.y - 0.5f, 0));    
+        Gizmos.DrawWireCube(position, new Vector3(InnerMapManager.AreaLocationGridTileSize.x - 0.5f, InnerMapManager.AreaLocationGridTileSize.y - 0.5f, 0));    
     }
 
 
@@ -27,7 +27,6 @@ public class LocationGridTileCollectionItem : BaseMonoBehaviour {
     public void UpdatePathfindingGraph() {
         GraphUpdateObject graphUpdateObject = new TagGraphUpdateObject(boundsCollider.bounds) {nnConstraint = _innerTileMap.onlyPathfindingGraph, updatePhysics = true, modifyWalkability = false};
         PathfindingManager.Instance.UpdatePathfindingGraphPartialCoroutine(graphUpdateObject);
-        // AstarPath.active.UpdateGraphs(boundsCollider.bounds);
     }
     protected override void OnDestroy() {
         base.OnDestroy();

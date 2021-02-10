@@ -81,19 +81,19 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public List<HexTile> ValidTilesWithinRegion { get { return AllNeighbours.Where(o => o.region == region && o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public List<HexTile> ValidTilesNoSettlementWithinRegion { get { return AllNeighbours.Where(o => o.settlementOnTile == null && o.region == region && o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public bool isCurrentlyBeingCorrupted { get; private set; }
-    public List<LocationGridTile> locationGridTiles { get; private set; }
+    public LocationGridTile[] locationGridTiles => locationGridTileArray.tiles;
     public List<LocationGridTile> borderTiles { get; private set; }
     public Sprite baseSprite { get; private set; }
     public Vector2 selectableSize { get; private set; }
-    public InnerMapHexTile innerMapHexTile { get; private set; }
+    public AreaItem areaItem { get; private set; }
     public List<TileObject> itemsInHex { get; protected set; }
     public RegionDivision regionDivision { get; protected set; }
     public LocationCharacterTracker locationCharacterTracker { get; private set; }
+    public LocationGridTileArray locationGridTileArray { get; private set; }
 
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
-    private int _isBeingDefendedCount;
     private AreaBiomeEffectTrigger _hexTileBiomeEffectTrigger;
     /// <summary>
     /// Number of blueprint LocationGridTiles on this.
@@ -122,14 +122,13 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private GameObject highlightGO => _highlightGO;
     private Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections => _neighbourDirections;
     public bool isCorrupted => _isCorrupted;
-    public bool isBeingDefended => _isBeingDefendedCount > 0;
     public bool hasBeenDestroyed => false;
     public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Area;
     public Vector3 worldPosition {
         get {
-            Vector2 pos = innerMapHexTile.gridTileCollections[0].locationGridTileCollectionItem.transform.position;
-            pos.x += 3.5f;
-            pos.y += 3.5f;
+            Vector2 pos = areaItem.transform.position;
+            // pos.x += 3.5f;
+            // pos.y += 3.5f;
             return pos;
         }
     }
@@ -152,6 +151,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         _hexTileBiomeEffectTrigger = new AreaBiomeEffectTrigger(null);
         selectableSize = new Vector2Int(12, 12);
         locationCharacterTracker = new LocationCharacterTracker();
+        locationGridTileArray = new LocationGridTileArray(InnerMapManager.AreaLocationGridTileSize.x * InnerMapManager.AreaLocationGridTileSize.y);
         SetBordersState(false, false, Color.red);
         if (listenForGameLoad) {
             Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);    
@@ -278,41 +278,6 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     #endregion
 
     #region Tile Utilities
-    //NOTE: Commented this because no one is using this during this time
-    //public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter) {
-    //    List<HexTile> tilesInRange = new List<HexTile>();
-    //    List<HexTile> checkedTiles = new List<HexTile>();
-    //    List<HexTile> tilesToAdd = new List<HexTile>();
-
-    //    for (int i = 0; i < range; i++) {
-    //        if (tilesInRange.Count <= 0) {
-    //            //tilesInRange = this.AllNeighbours;
-    //            for (int j = 0; j < AllNeighbours.Count; j++) {
-    //                tilesInRange.Add(AllNeighbours[j]);
-    //            }
-    //            checkedTiles.Add(this);
-    //        } else {
-    //            tilesToAdd.Clear();
-    //            int tilesInRangeCount = tilesInRange.Count;
-    //            for (int j = 0; j < tilesInRangeCount; j++) {
-    //                if (!checkedTiles.Contains(tilesInRange[j])) {
-    //                    checkedTiles.Add(tilesInRange[j]);
-    //                    List<HexTile> neighbors = tilesInRange[j].AllNeighbours;
-    //                    for (int k = 0; k < neighbors.Count; k++) {
-    //                        if (!tilesInRange.Contains(neighbors[k])) {
-    //                            tilesToAdd.Add(neighbors[k]);
-    //                        }
-    //                    }
-    //                    tilesInRange.AddRange(tilesToAdd);
-    //                }
-    //            }
-    //            if (i == range - 1 && isOnlyOuter) {
-    //                return tilesToAdd;
-    //            }
-    //        }
-    //    }
-    //    return tilesInRange;
-    //}
     public List<HexTile> GetTilesInRange(int range, bool sameRegionOnly = true) {
         List<HexTile> tilesInRange = new List<HexTile>();
         CubeCoordinate cube = GridMap.Instance.OddRToCube(new HexCoordinate(xCoordinate, yCoordinate));
@@ -334,7 +299,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         }
         return tilesInRange;
     }
-    public bool IsAtEdgeOfMap() {
+    private bool IsAtEdgeOfMap() {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
     }
     public bool HasNeighbourAtEdgeOfMap() {
@@ -415,8 +380,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             if (isCorrupted) {
                 displayName = "Corrupted ";
             }
-            displayName +=
-                $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
+            displayName = $"{displayName}{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
             return displayName;
         }
     }
@@ -427,25 +391,11 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return string.Empty;
     }
     public LocationGridTile GetRandomTile() {
-        return locationGridTiles[UnityEngine.Random.Range(0, locationGridTiles.Count)];
-    }
-    public LocationGridTile GetRandomUnoccupiedTile() {
-        List<LocationGridTile> tiles = null;
-        for (int i = 0; i < locationGridTiles.Count; i++) {
-            LocationGridTile tile = locationGridTiles[i];
-            if(tile.objHere == null) {
-                if(tiles == null) { tiles = new List<LocationGridTile>(); }
-                tiles.Add(tile);
-            }
-        }
-        if(tiles != null && tiles.Count > 0) {
-            return UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
-        }
-        return null;
+        return locationGridTiles[UnityEngine.Random.Range(0, locationGridTiles.Length)];
     }
     public LocationGridTile GetRandomTileThatMeetCriteria(Func<LocationGridTile, bool> checker) {
         List<LocationGridTile> tiles = null;
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (checker.Invoke(tile)) {
                 if (tiles == null) { tiles = new List<LocationGridTile>(); }
@@ -459,7 +409,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public List<LocationGridTile> GetUnoccupiedTiles() {
         List<LocationGridTile> tiles = null;
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (tile.objHere == null) {
                 if (tiles == null) { tiles = new List<LocationGridTile>(); }
@@ -519,6 +469,29 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             List<HexTile> neighbours = ValidTilesNoSettlementWithinRegion;
             if (neighbours != null && neighbours.Count > 0) {
                 return neighbours[UnityEngine.Random.Range(0, neighbours.Count)];
+            }
+        }
+        return null;
+    }
+    public HexTile GetNearestPlainHexTileWithNoResident() {
+        if(elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN) {
+            if (!HasAliveVillagerResident()) {
+                return this;
+            }
+        }
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if (neighbour.elevationType != ELEVATION.WATER && neighbour.elevationType != ELEVATION.MOUNTAIN) {
+                if (!neighbour.HasAliveVillagerResident()) {
+                    return neighbour;
+                }
+            }
+        }
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            HexTile nearestHex = neighbour.GetNearestPlainHexTileWithNoResident();
+            if (nearestHex != null) {
+                return nearestHex;
             }
         }
         return null;
@@ -658,21 +631,14 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     [ContextMenu("Update Pathfinding Graph")]
     public void UpdatePathfindingGraph() {
-        for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
-            LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
-            collection.UpdatePathfindingGraph();
-        }
+        areaItem.UpdatePathfindingGraph();
     }
     public void UpdatePathfindingGraphCoroutine() {
         StartCoroutine(UpdatePathfinding());
     }
     private IEnumerator UpdatePathfinding() {
         yield return null;
-        for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
-            LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
-            collection.UpdatePathfindingGraph();
-            yield return null;
-        }
+        areaItem.UpdatePathfindingGraph();
     }
     #endregion
 
@@ -1044,13 +1010,13 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public void RemoveCorruption() {
         PlayerManager.Instance.player.playerSettlement.RemoveTileFromSettlement(this);
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             tile.UnCorruptTile();
         }
     }
     public void InstantlyCorruptAllOwnedInnerMapTiles() {
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             tile.CorruptTile();
         }
@@ -1124,10 +1090,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return travelLine;
     }
     private void UpdatePathfindingGraphOnTile() {
-        for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
-            LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
-            collection.locationGridTileCollectionItem.UpdatePathfindingGraph();
-        }
+        areaItem.UpdatePathfindingGraph();
     }
     #endregion
 
@@ -1187,22 +1150,16 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     #endregion
 
     #region Inner Map
-    public void SetInnerMapHexTileData(InnerMapHexTile _innerMapHexTile) {
-        innerMapHexTile = _innerMapHexTile;
-        Assert.IsNotNull(innerMapHexTile.gridTileCollections, $"InnerMapHexTile data for {this} does not have location grid tile collections!");
-        locationGridTiles = new List<LocationGridTile>();
-        for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
-            LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
-            locationGridTiles.AddRange(collection.tilesInTerritory);
-        }
+    public void SetAreaItem(AreaItem p_item) {
+        areaItem = p_item;
         PopulateBorderTiles();
     }
     private void PopulateBorderTiles() {
         borderTiles = new List<LocationGridTile>();
         InnerTileMap tileMap = region.innerMap;
         //To populate border tiles we need to know the width and height of hextile in the inner map, which is currently InnerMapManager.BuildingSpotSize x 2
-        int hexWidth = InnerMapManager.BuildingSpotSize.x * 2;
-        int hexHeight = InnerMapManager.BuildingSpotSize.y * 2;
+        int hexWidth = InnerMapManager.AreaLocationGridTileSize.x;
+        int hexHeight = InnerMapManager.AreaLocationGridTileSize.y;
 
         //Our origin point will always be the first entry in the locationGridTiles list, assuming that the first entry is always the lower left corner of the hex tile
         int originX = locationGridTiles[0].localPlace.x;
@@ -1241,7 +1198,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     }
     public void PopulateTileObjectsInHexTile(List<TileObject> p_tileObjectList, TILE_OBJECT_TYPE type) {
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (tile.objHere != null && tile.objHere is TileObject obj && obj.tileObjectType == type) {
                 p_tileObjectList.Add(obj);
@@ -1250,7 +1207,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
         int count = 0;
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (tile.objHere != null && tile.objHere is TileObject obj && obj.tileObjectType == type) {
                 count++;
@@ -1260,7 +1217,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public List<T> GetTileObjectsInHexTile<T>() where T : TileObject {
         List<T> tileObjects = null;
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (tile.objHere is T obj) {
                 if (tileObjects == null) {
@@ -1276,15 +1233,15 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     #region Listeners
     private void SubscribeListeners() {    
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
-        Messenger.AddListener<LocationStructure, InnerMapHexTile>(StructureSignals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
+        Messenger.AddListener<LocationStructure, HexTile>(StructureSignals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
     }
     private void OnStructurePlaced(LocationStructure structure) {
-        if (innerMapHexTile != null && innerMapHexTile == structure.occupiedHexTile) {
+        if (this == structure.occupiedHexTile) {
             CheckIfStructureVisualsAreStillValid();
         }
     }
-    private void OnStructureRemoved(LocationStructure structure, InnerMapHexTile removedFrom) {
-        if (innerMapHexTile != null && innerMapHexTile == removedFrom) {
+    private void OnStructureRemoved(LocationStructure structure, HexTile removedFrom) {
+        if (this == removedFrom) {
             CheckIfStructureVisualsAreStillValid();
         }
     }
@@ -1518,7 +1475,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public List<T> GetAllDeadAndAliveCharactersInsideHex<T>() where T : Character {
         List<T> characters = null;
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (tile.charactersHere.Count > 0) {
                 for (int j = 0; j < tile.charactersHere.Count; j++) {
@@ -1542,11 +1499,11 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return locationCharacterTracker.GetNumOfCharactersInsideHexThatMeetCriteria(criteria);
     }
     public LocationGridTile GetCenterLocationGridTile() {
-        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
+        LocationGridTile lowerLeftCornerTile = locationGridTileArray.tiles[0];
         int xMin = lowerLeftCornerTile.localPlace.x;
         int yMin = lowerLeftCornerTile.localPlace.y;
-        int xMax = xMin + InnerMapManager.BuildingSpotSize.x;
-        int yMax = yMin + InnerMapManager.BuildingSpotSize.y;
+        int xMax = xMin + (InnerMapManager.AreaLocationGridTileSize.x / 2);
+        int yMax = yMin + (InnerMapManager.AreaLocationGridTileSize.y / 2);
         return region.innerMap.map[xMax, yMax];
     }
     #endregion
@@ -1558,7 +1515,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         ChangeGridTilesBiome();
     }
     private void ChangeGridTilesBiome() {
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile currTile = locationGridTiles[i];
             Vector3Int position = currTile.localPlace;
             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, biomeType);
@@ -1583,7 +1540,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private IEnumerator ChangeGridTilesBiomeCoroutine(System.Action onFinishChangeAction) {
         // List<LocationGridTile> gridTiles = new List<LocationGridTile>(locationGridTiles);
         // gridTiles = UtilityScripts.CollectionUtilities.Shuffle(gridTiles);
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile currTile = locationGridTiles[i];
             Vector3Int position = currTile.localPlace;
             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, biomeType);
@@ -1606,10 +1563,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     #region Defend
     public void IncreaseIsBeingDefendedCount() {
-        _isBeingDefendedCount++;
     }
     public void DecreaseIsBeingDefendedCount() {
-        _isBeingDefendedCount--;
     }
     #endregion
 
@@ -1617,7 +1572,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public LocationGridTile GetRandomPassableTile() {
         LocationGridTile chosenTile = null;
         List<LocationGridTile> passableTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (tile.IsPassable()) {
                 passableTiles.Add(tile);
@@ -1630,7 +1585,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return chosenTile;
     }
     public bool IsAtTargetDestination(Character character) {
-        return character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == this;
+        return character.gridTileLocation != null && character.gridTileLocation.parentArea == this;
     }
     #endregion
 
@@ -1648,7 +1603,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     #region Tile Object
     public bool HasTileObjectInsideHexThatMeetCriteria(Func<TileObject, bool> criteria) {
-        for (int i = 0; i < locationGridTiles.Count; i++) {
+        for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (tile.objHere != null) {
                 TileObject obj = tile.objHere as TileObject;

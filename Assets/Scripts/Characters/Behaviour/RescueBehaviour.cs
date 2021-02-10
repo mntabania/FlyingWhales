@@ -126,8 +126,8 @@ public class RescueBehaviour : CharacterBehaviourComponent {
 
     private bool RoamAroundStructureOrHex(Character actor, IPartyQuestTarget target, out JobQueueItem producedJob) {
         if(target != null && target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-            if(target is Character targetCharacter && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                HexTile targetHex = targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+            if(target is Character targetCharacter && targetCharacter.gridTileLocation != null) {
+                HexTile targetHex = targetCharacter.hexTileLocation;
                 //Job type is Roam Around Structure because the Roam Around Tile job priority is less than the Rescue Behaviour
                 return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetHex.GetRandomTile());
             }

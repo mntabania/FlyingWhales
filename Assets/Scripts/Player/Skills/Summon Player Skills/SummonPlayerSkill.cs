@@ -26,9 +26,7 @@ public class SummonPlayerSkill : SkillData {
         if (targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN && targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
             summon.MigrateHomeStructureTo(targetTile.structure);
         } else {
-            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                summon.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
-            }
+            summon.SetTerritory(targetTile.parentArea, false);
         }
         summon.jobQueue.CancelAllJobs();
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
@@ -59,7 +57,7 @@ public class SummonPlayerSkill : SkillData {
                     return false;
                 }
             }
-            if (!targetTile.collectionOwner.isPartOfParentRegionMap || !targetTile.IsPassable()) {
+            if (!targetTile.IsPassable()) {
                 //only allow summoning on linked tiles
                 return false;
             }

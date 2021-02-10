@@ -99,8 +99,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                         }
                                     }
                                 } else if (party.targetCamp != null) {
-                                    if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                                        && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == party.targetCamp) {
+                                    if (character.gridTileLocation != null && character.hexTileLocation == party.targetCamp) {
                                         //Removed this because this is the reason why the characters in party are not eating on adjacent hex tiles
                                         //because they are forced to do actions inside the forced hex only
                                         //character.trapStructure.SetForcedHex(party.targetCamp);
@@ -178,7 +177,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         //}
 
         if (GameUtilities.RollChance(50)) {
-            Campfire campfire = GetPartyCampfireInHex(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner, character, party);
+            Campfire campfire = GetPartyCampfireInHex(character.hexTileLocation, character, party);
             if(campfire != null) {
                 hasJob = character.jobComponent.TriggerWarmUp(campfire, out producedJob);
                 if (hasJob) {
@@ -210,7 +209,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         bool hasJob = false;
 
-        Campfire campfire = GetPartyCampfireInHex(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner, character, party);
+        Campfire campfire = GetPartyCampfireInHex(character.hexTileLocation, character, party);
         if (campfire == null) {
             hasJob = character.jobComponent.TriggerBuildCampfireJob(JOB_TYPE.BUILD_CAMP, out producedJob);
         }
@@ -221,7 +220,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         bool hasJob = false;
 
-        if(HasMemberThatIsHungryOrStarvingAndThereIsNoFoodInCamp(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner, party)) {
+        if(HasMemberThatIsHungryOrStarvingAndThereIsNoFoodInCamp(character.hexTileLocation, party)) {
             hasJob = character.jobComponent.CreateProduceFoodForCampJob(out producedJob);
         }
         return hasJob;
@@ -229,7 +228,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
 
     private Campfire GetPartyCampfireInHex(HexTile hex, Character character, Party party) {
         Campfire chosenCampfire = null;
-        for (int i = 0; i < hex.locationGridTiles.Count; i++) {
+        for (int i = 0; i < hex.locationGridTiles.Length; i++) {
             LocationGridTile tile = hex.locationGridTiles[i];
             if (tile.objHere != null && tile.objHere is Campfire campfire) {
                 if (campfire.characterOwner == null 
@@ -260,7 +259,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
 
     private FoodPile GetFoodPileInCamp(HexTile hex, Party party) {
         FoodPile chosenFoodPile = null;
-        for (int i = 0; i < hex.locationGridTiles.Count; i++) {
+        for (int i = 0; i < hex.locationGridTiles.Length; i++) {
             LocationGridTile tile = hex.locationGridTiles[i];
             if (tile.objHere != null && tile.objHere is FoodPile foodPile && foodPile.storedResources[RESOURCE.FOOD] >= 12) {
                 chosenFoodPile = foodPile;

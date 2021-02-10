@@ -82,9 +82,6 @@ public class BuildVampireCastle : GoapAction {
                 if (genericTileObject.blueprintOnTile != null) {
                     return false;
                 }
-                if (!genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    return false;
-                }
                 if (genericTileObject.gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
                     return false;
                 }
@@ -137,10 +134,8 @@ public class BuildVampireCastle : GoapAction {
                     // }
                 }
 
-                if (genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    settlement.AddTileToSettlement(genericTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
-                }
-                
+                settlement.AddTileToSettlement(genericTileObject.gridTileLocation.parentArea);
+
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));
 

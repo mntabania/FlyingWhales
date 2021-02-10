@@ -211,9 +211,9 @@ public static class Extensions {
     public static bool IsValidCenterTileForStructure(this STRUCTURE_TYPE structureType, LocationGridTile p_tile) {
         switch (structureType) {
             case STRUCTURE_TYPE.LUMBERYARD:
-                return p_tile.collectionOwner.isPartOfParentRegionMap && p_tile.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature);
+                return p_tile.parentArea.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature);
             case STRUCTURE_TYPE.HUNTER_LODGE:
-                return p_tile.collectionOwner.isPartOfParentRegionMap && p_tile.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature);
+                return p_tile.parentArea.featureComponent.HasFeature(TileFeatureDB.Game_Feature);
             default:
                 return true;
         }

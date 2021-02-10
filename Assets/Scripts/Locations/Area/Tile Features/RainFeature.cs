@@ -77,9 +77,7 @@ namespace Locations.Tile_Features {
 
         #region Listeners
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure, HexTile featureOwner) {
-            if (structure != null && structure.isInterior == false && character.gridTileLocation != null 
-                && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap 
-                && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == featureOwner) {
+            if (structure != null && structure.isInterior == false && character.gridTileLocation != null && character.hexTileLocation == featureOwner) {
                 AddCharacterOutside(character);
                 //if (!character.traitContainer.HasTrait("Wet")) {
                 //    character.traitContainer.AddTrait(character, "Wet");
@@ -89,8 +87,7 @@ namespace Locations.Tile_Features {
         private void OnCharacterLeftStructure(Character character, LocationStructure structure, HexTile featureOwner) {
             //character left a structure that was outside. If the character entered a structure that is outside. That 
             //is handled at OnCharacterArrivedAtStructure
-            if (structure.isInterior == false && character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                                              && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == featureOwner) {
+            if (structure.isInterior == false && character.gridTileLocation != null && character.hexTileLocation == featureOwner) {
                 RemoveCharacterOutside(character);
             }
         }
@@ -155,7 +152,7 @@ namespace Locations.Tile_Features {
                 Character character = _charactersOutside[i];
                 character.traitContainer.AddTrait(character, "Wet");
             }
-            for (int i = 0; i < hex.locationGridTiles.Count; i++) {
+            for (int i = 0; i < hex.locationGridTiles.Length; i++) {
                 LocationGridTile gridTile = hex.locationGridTiles[i];
                 if (!gridTile.structure.isInterior) {
                     gridTile.genericTileObject.traitContainer.AddTrait(gridTile.genericTileObject, "Wet");

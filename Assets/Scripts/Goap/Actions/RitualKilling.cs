@@ -142,7 +142,7 @@ public class RitualKilling : GoapAction {
             bool isSatisfied = false;
             if(otherData.Length == 1) {
                 if(otherData[0] is HexTileOtherData hex) {
-                    isSatisfied = targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex.hexTile;
+                    isSatisfied = target.gridTileLocation.parentArea == hex.hexTile;
                 } else if (otherData[0] is LocationStructureOtherData structure) {
                     isSatisfied = targetCharacter.currentStructure == structure.locationStructure;
                 } else if (otherData[0] is LocationGridTileOtherData gridTile) {

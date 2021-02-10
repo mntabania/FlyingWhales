@@ -20,6 +20,7 @@ namespace Inner_Maps {
         public static InnerMapManager Instance;
         
         public static readonly Vector2Int BuildingSpotSize = new Vector2Int(7, 7);
+        public static readonly Vector2Int AreaLocationGridTileSize = new Vector2Int(14, 14);
         public const int DefaultCharacterSortingOrder = 82;
         public const int GroundTilemapSortingOrder = 10;
         public const int DetailsTilemapSortingOrder = 40;
@@ -187,32 +188,31 @@ namespace Inner_Maps {
                 }
             }
 
-            if (tile.collectionOwner.isPartOfParentRegionMap) {
-                if (tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
-                    && tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+            
+            if (tile.parentArea.landmarkOnTile != null 
+                && tile.parentArea.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+                if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                    return room;
+                } else {
+                    return tile.structure;    
+                }
+                
+            }
+            else {
+                if (tile.structure != null) {
                     if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                         return room;
-                    } else {
+                    } else if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) ||
+                               (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && 
+                               tile.structure is CityCenter == false) {
+                        return tile.structure;    
+                    } else if (tile.structure is Cave || tile.structure is MonsterLair) {
                         return tile.structure;    
                     }
-                    
                 }
-                else {
-                    if (tile.structure != null) {
-                        if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
-                            return room;
-                        } else if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) ||
-                                   (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && 
-                                   tile.structure is CityCenter == false) {
-                            return tile.structure;    
-                        } else if (tile.structure is Cave || tile.structure is MonsterLair) {
-                            return tile.structure;    
-                        }
-                    }
-                    // return tile.collectionOwner.partOfHextile.hexTileOwner;
-                }
+                // return tile.hexTileOwner;
             }
-            
+
             return null;
         }
         private bool TryGetSelectablesOnTile(LocationGridTile tile, out List<ISelectable> selectables) {
@@ -240,32 +240,31 @@ namespace Inner_Maps {
                 }
             }
             
-            if (tile.collectionOwner.isPartOfParentRegionMap) {
-                if (tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
-                    && tile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+            
+            if (tile.parentArea.landmarkOnTile != null 
+                && tile.parentArea.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+                if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                    selectables.Add(room);
+                }
+                selectables.Add(tile.structure is DemonicStructure
+                    ? tile.structure
+                    : tile.parentArea.GetMostImportantStructureOnTile());
+            } else {
+                if (tile.structure != null) {
                     if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                         selectables.Add(room);
                     }
-                    selectables.Add(tile.structure is DemonicStructure
-                        ? tile.structure
-                        : tile.collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile());
-                }
-                else {
-                    if (tile.structure != null) {
-                        if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
-                            selectables.Add(room);
-                        }
-                        if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) || //if man made structure check if structure object has not yet been destroyed 
-                            (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed
-                            tile.structure is CityCenter == false) {
-                            selectables.Add(tile.structure);
-                        } else if (tile.structure is Cave || tile.structure is MonsterLair) {
-                            selectables.Add(tile.structure);    
-                        }
+                    if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) || //if man made structure check if structure object has not yet been destroyed 
+                        (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed
+                        tile.structure is CityCenter == false) {
+                        selectables.Add(tile.structure);
+                    } else if (tile.structure is Cave || tile.structure is MonsterLair) {
+                        selectables.Add(tile.structure);    
                     }
-                    // selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
                 }
+                // selectables.Add(tile.hexTileOwner);
             }
+            
             return true;
         }
         private void Update() {
@@ -385,7 +384,7 @@ namespace Inner_Maps {
             //|| DEVELOPMENT_BUILD
 #if UNITY_EDITOR
             Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
-            HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
+            HexTile hexTile = tile.parentArea;
             string summary = tile.localPlace.ToString();
             // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             // summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";

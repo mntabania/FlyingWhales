@@ -124,10 +124,10 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             return character.homeSettlement.GetSurroundingAreas().Where(x => x.region == character.homeRegion && x.freezingTraps < 4).ToList();
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles).hexTileOwner;
+                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles);
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
             } else {
-                HexTile homeTile = character.homeStructure.occupiedHexTile.hexTileOwner;
+                HexTile homeTile = character.homeStructure.occupiedHexTile;
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();    
             }
         } else if (character.HasTerritory()) {
@@ -162,10 +162,10 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             return character.homeSettlement.GetSurroundingAreas();
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles).hexTileOwner;
+                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles);
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();
             } else {
-                HexTile homeTile = character.homeStructure.occupiedHexTile.hexTileOwner;
+                HexTile homeTile = character.homeStructure.occupiedHexTile;
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();    
             }
         } else if (character.HasTerritory()) {

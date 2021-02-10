@@ -22,17 +22,15 @@ public class OreVein : TileObject {
     public OreVein(SaveDataTileObject data) { }
     
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
-            }
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
-                if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
-                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
-                }
-            });
+        if (gridTileLocation.parentArea.settlementOnTile != null) {
+            gridTileLocation.parentArea.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
         }
+        gridTileLocation.parentArea.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+            if (eachNeighboringHexTile.settlementOnTile != null) {
+                eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
+                parentSettlement = eachNeighboringHexTile.settlementOnTile;
+            }
+        });
     }
 
     public override void RemoveFromSettlementResourcesParent() {

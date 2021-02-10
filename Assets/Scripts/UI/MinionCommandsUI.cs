@@ -145,7 +145,7 @@ public class MinionCommandsUI : MonoBehaviour {
         HideUI();
     }
     private bool CanAbduct() {
-        return !(targetPOI.traitContainer.HasTrait("Restrained") && targetPOI.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == PlayerManager.Instance.player.portalTile);
+        return !(targetPOI.traitContainer.HasTrait("Restrained") && targetPOI.gridTileLocation.parentArea == PlayerManager.Instance.player.portalTile);
     }
     #endregion
 

@@ -69,7 +69,7 @@ public class SnatchData : PlayerAction {
             
             List<LocationGridTile> choices;
             if (structure is Kennel) {
-                HexTile hexTile = structure.occupiedHexTile.hexTileOwner;
+                HexTile hexTile = structure.occupiedHexTile;
                 choices = hexTile.locationGridTiles.Where(t => t.structure is Wilderness && t.IsPassable() && !t.isOccupied).ToList();  
             } else {
                 choices = structure.passableTiles.Where(t => !t.structure.IsTilePartOfARoom(t, out var room)).ToList();

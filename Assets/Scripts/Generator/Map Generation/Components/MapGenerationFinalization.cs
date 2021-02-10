@@ -99,9 +99,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		// 	LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 		// 	List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
 		// 		t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
-		// 		t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
-		// 		!t.collectionOwner.partOfHextile.hexTileOwner.IsAtEdgeOfMap() &&
-		// 		t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
+		// 		t.hexTileOwner.settlementOnTile == null &&
+		// 		!t.hexTileOwner.IsAtEdgeOfMap() &&
+		// 		t.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
 		// 	LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
 		// 	desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);
 		// 	locationChoices.Remove(desertRoseLocation);
@@ -161,9 +161,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Region region = GridMap.Instance.allRegions[i];
 			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
-				t.collectionOwner.isPartOfParentRegionMap &&
-				t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
-				t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
+				t.parentArea.settlementOnTile == null && t.parentArea.elevationType == ELEVATION.PLAIN).ToList();
 			if (locationChoices.Count > 0) {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					if (i == 1) {
@@ -290,8 +288,8 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		List<HexTile> tiles = new List<HexTile>();
 		for (int i = 0; i < caveStructure.unoccupiedTiles.Count; i++) {
 			LocationGridTile tile = caveStructure.unoccupiedTiles.ElementAt(i);
-			if (tile.collectionOwner.isPartOfParentRegionMap && tiles.Contains(tile.collectionOwner.partOfHextile.hexTileOwner) == false) {
-				tiles.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
+			if (tiles.Contains(tile.parentArea) == false) {
+				tiles.Add(tile.parentArea);
 			}
 		}
 		return tiles.Count;

@@ -49,7 +49,7 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
         //    if(party.waitingHexArea != null) {
         //        log += $"\n-Party has waiting area";
         //        if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-        //            if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == party.waitingHexArea) {
+        //            if (character.gridTileLocation.hexTileOwner == party.waitingHexArea) {
         //                log += $"\n-Character is in waiting area, roam";
         //                character.jobComponent.TriggerRoamAroundTile(out producedJob);
         //            } else {

@@ -29,7 +29,7 @@ public class BedObjectGameObject : TileObjectGameObject {
     }
 
     public override void UpdateTileObjectVisual(TileObject bed) {
-        HexTile hex = bed.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
+        HexTile hex = bed.gridTileLocation.parentArea;
         int userCount = bed.users.Length;
         if (userCount == 0) {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 

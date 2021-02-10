@@ -22,7 +22,7 @@ public class WaterWell : TileObject {
     // public override void UpdateSettlementResourcesParent() {
     //     BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
     //     if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-    //         gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+    //         gridTileLocation.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
     //             if (eachNeighboringHexTile.settlementOnTile != null) {
     //                 if (!eachNeighboringHexTile.settlementOnTile.SettlementResources.fishingSpots.Contains(this)) {
     //                     eachNeighboringHexTile.settlementOnTile.SettlementResources.fishingSpots.Add(this);

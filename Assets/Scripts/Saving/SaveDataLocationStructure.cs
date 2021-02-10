@@ -64,7 +64,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         
         //occupied hex tile
         if (structure.occupiedHexTile != null) {
-            occupiedHexTileID = structure.occupiedHexTile.hexTileOwner.persistentID;    
+            occupiedHexTileID = structure.occupiedHexTile.persistentID;    
         } else {
             occupiedHexTileID = string.Empty;
             Debug.Log($"{structure.name} has no occupied hextile!");

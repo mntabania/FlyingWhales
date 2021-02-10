@@ -469,7 +469,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         Character firstActiveMember = null;
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             Character member = membersThatJoinedQuest[i];
-            if (member.gridTileLocation != null && member.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (member.gridTileLocation != null) {
                 if (IsMemberActive(member)) {
                     firstActiveMember = member;
                     break;
@@ -477,12 +477,12 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             }
         }
         if (firstActiveMember != null) {
-            HexTile activeMemberCurrentHex = firstActiveMember.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+            HexTile activeMemberCurrentHex = firstActiveMember.gridTileLocation.parentArea;
             if(activeMemberCurrentHex != null && activeMemberCurrentHex.settlementOnTile != null && activeMemberCurrentHex.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE) {
                 //Hex tile within a village cannot be a camp
                 activeMemberCurrentHex = null;
             }
-            List<HexTile> nearbyHexes = firstActiveMember.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetTilesInRange(3);
+            List<HexTile> nearbyHexes = firstActiveMember.gridTileLocation.parentArea.GetTilesInRange(3);
             if (nearbyHexes != null && nearbyHexes.Count > 0) {
                 for (int i = 0; i < nearbyHexes.Count; i++) {
                     HexTile hex = nearbyHexes[i];
@@ -776,8 +776,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                         }
                     }
                 } else if (targetCamp != null) {
-                    if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                        && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == targetCamp) {
+                    if (character.gridTileLocation != null && character.gridTileLocation.parentArea == targetCamp) {
                         isActive = true;
                     } else {
                         LocationGridTile tile = targetCamp.GetCenterLocationGridTile();

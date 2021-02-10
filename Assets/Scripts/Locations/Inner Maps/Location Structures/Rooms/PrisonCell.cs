@@ -125,7 +125,7 @@ namespace Inner_Maps.Location_Structures {
                 // modifiedX = Mathf.Max(modifiedX, 0);
                 // LocationGridTile outsideTile = tortureChamber.region.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
 
-                List<LocationGridTile> dropChoices = parentStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(t => 
+                List<LocationGridTile> dropChoices = parentStructure.occupiedHexTile.locationGridTiles.Where(t => 
                     t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
 
                 LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);

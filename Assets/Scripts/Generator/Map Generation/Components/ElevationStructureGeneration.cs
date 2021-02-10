@@ -115,18 +115,6 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		} else if (island.elevation == ELEVATION.MOUNTAIN) {
 			yield return MapGenerator.Instance.StartCoroutine(MountainCellAutomata(locationGridTiles, elevationStructure, island));
 		}
-
-		for (int i = 0; i < island.tilesInIsland.Count; i++) {
-			HexTile hexTile = island.tilesInIsland[i];
-			hexTile.innerMapHexTile.Occupy();
-			// for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
-			// 	BuildingSpot spot = hexTile.ownedBuildSpots[j];
-			// 	if (spot.isOccupied == false) {
-			// 		spot.SetIsOccupied(true);
-			// 		spot.UpdateAdjacentSpotsOccupancy(hexTile.region.innerMap);	
-			// 	}
-			// }
-		}
 		yield return null;
 	}
 	private IEnumerator WaterCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
@@ -170,8 +158,17 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		tile.SetStructure(structure);
 		tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, "Wet", overrideDuration: 0);
 	}
+	private bool ShouldTileBePartOfMountain(LocationGridTile p_tile, List<LocationGridTile> locationGridTiles) {
+		if (p_tile.HasNeighbourNotInList(locationGridTiles)) {
+			return false;
+		}
+		if (p_tile.IsAtEdgeOfMap()) {
+			return false;
+		}
+		return true;
+	}
 	private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, ElevationIsland elevationIsland) {
-		List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
+		List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => ShouldTileBePartOfMountain(t, locationGridTiles)).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
 		int fillPercent = 12;

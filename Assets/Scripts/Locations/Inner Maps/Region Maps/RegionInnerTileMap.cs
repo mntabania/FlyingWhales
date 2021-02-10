@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -18,13 +19,10 @@ namespace Inner_Maps {
             name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
             ClearAllTileMaps();
-            Vector2Int buildSpotGridSize = CreateTileCollectionGrid(mapGenerationComponent);
-            int tileMapWidth = buildSpotGridSize.x * InnerMapManager.BuildingSpotSize.x;
-            int tileMapHeight = buildSpotGridSize.y * InnerMapManager.BuildingSpotSize.y;
-            yield return StartCoroutine(GenerateGrid(tileMapWidth, tileMapHeight, mapGenerationComponent));
-            InitializeTileCollections(mapGenerationComponent);
-            ConnectHexTilesToTileCollections(mapGenerationComponent);
-            SetFogOfWar();
+            Vector2Int regionDimensions = GetRegionDimensions(region);
+            Vector2Int innerMapSize = GetInnerMapSizeGivenRegionDimensions(regionDimensions);
+            yield return StartCoroutine(GenerateGrid(innerMapSize.x, innerMapSize.y, mapGenerationComponent));
+            CreateAreaItemGrid(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
             yield return StartCoroutine(GenerateDetails(mapGenerationComponent));
             groundMapLocalBounds = groundTilemap.localBounds;
         }
@@ -32,14 +30,10 @@ namespace Inner_Maps {
             name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
             ClearAllTileMaps();
-            Vector2Int buildSpotGridSize = CreateTileCollectionGrid(mapGenerationComponent);
-            int tileMapWidth = buildSpotGridSize.x * InnerMapManager.BuildingSpotSize.x;
-            int tileMapHeight = buildSpotGridSize.y * InnerMapManager.BuildingSpotSize.y;
-            yield return StartCoroutine(LoadGrid(tileMapWidth, tileMapHeight, mapGenerationComponent, saveDataInnerMap, saveData));
-            InitializeTileCollections(mapGenerationComponent);
-            ConnectHexTilesToTileCollections(mapGenerationComponent);
-            SetFogOfWar();
-            
+            Vector2Int regionDimensions = GetRegionDimensions(region);
+            Vector2Int innerMapSize = GetInnerMapSizeGivenRegionDimensions(regionDimensions);
+            yield return StartCoroutine(LoadGrid(innerMapSize.x, innerMapSize.y, mapGenerationComponent, saveDataInnerMap, saveData));
+            CreateAreaItemGrid(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
             int minX = allTiles.Min(t => t.localPlace.x);
             int maxX = allTiles.Max(t => t.localPlace.x);
             int minY = allTiles.Min(t => t.localPlace.y);
@@ -53,151 +47,28 @@ namespace Inner_Maps {
         }
 
         #region Build Spots
-        private Vector2Int CreateTileCollectionGrid(MapGenerationComponent mapGenerationComponent) {
+        private void CreateAreaItemGrid(MapGenerationComponent mapGenerationComponent, int gridWidth, int gridHeight) {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            // int gridWidth;
-            // int maxX = region.tiles.Max(t => t.data.xCoordinate);
-            // int minX = region.tiles.Min(t => t.data.xCoordinate);
-            //
-            // int difference = ((maxX - minX) + 1) * 2;
-            //
-            // if (region.AreLeftAndRightMostTilesInSameRowType()) {
-            //     gridWidth = difference;
-            // } else {
-            //     gridWidth = difference + 1;
-            // }
-            //
-            // int maxY = region.tiles.Max(t => t.data.yCoordinate);
-            // int minY = region.tiles.Min(t => t.data.yCoordinate);
-            // int gridHeight = ((maxY - minY) + 1) * 2;
-            //
-            // locationGridTileCollections = new LocationGridTileCollection[gridWidth, gridHeight];
-            // for (int x = 0; x < gridWidth; x++) {
-            //     for (int y = 0; y < gridHeight; y++) {
-            //         GameObject collectionGO = Instantiate(tileCollectionPrefab, structureTilemap.transform);
-            //         float xPos = (x + 1) * (InnerMapManager.BuildingSpotSize.x) - (InnerMapManager.BuildingSpotSize.x / 2f);
-            //         float yPos = (y + 1) * (InnerMapManager.BuildingSpotSize.y) - (InnerMapManager.BuildingSpotSize.y / 2f);
-            //         collectionGO.transform.localPosition = new Vector2(xPos, yPos);
-            //         
-            //         LocationGridTileCollectionItem locationGridTileCollectionItem = collectionGO.GetComponent<LocationGridTileCollectionItem>();
-            //         LocationGridTileCollection collection = new LocationGridTileCollection(new Vector2Int(x, y), locationGridTileCollectionItem);
-            //         locationGridTileCollectionItem.Initialize(this);
-            //         locationGridTileCollections[x, y] = collection;
-            //     }
-            // }
-            
-            int maxX = region.tiles.Max(t => t.data.xCoordinate);
-            int minX = region.tiles.Min(t => t.data.xCoordinate);
-            
-            int gridWidth = ((maxX - minX) + 1) * 2;
-            
-            int maxY = region.tiles.Max(t => t.data.yCoordinate);
-            int minY = region.tiles.Min(t => t.data.yCoordinate);
-            int gridHeight = ((maxY - minY) + 1) * 2;
-            
-            locationGridTileCollections = new LocationGridTileCollection[gridWidth, gridHeight];
+
             for (int x = 0; x < gridWidth; x++) {
                 for (int y = 0; y < gridHeight; y++) {
-                    GameObject collectionGO = Instantiate(tileCollectionPrefab, structureTilemap.transform);
-                    float xPos = (x + 1) * (InnerMapManager.BuildingSpotSize.x) - (InnerMapManager.BuildingSpotSize.x / 2f);
-                    float yPos = (y + 1) * (InnerMapManager.BuildingSpotSize.y) - (InnerMapManager.BuildingSpotSize.y / 2f);
+                    GameObject collectionGO = Instantiate(areaItemPrefab, structureTilemap.transform);
+                    float xPos = (x + 1) * (InnerMapManager.AreaLocationGridTileSize.x) - (InnerMapManager.AreaLocationGridTileSize.x / 2f);
+                    float yPos = (y + 1) * (InnerMapManager.AreaLocationGridTileSize.y) - (InnerMapManager.AreaLocationGridTileSize.y / 2f);
+
+                    HexTile tile = GridMap.Instance.map[x, y];
+                    
+                    AreaItem areaItem = collectionGO.GetComponent<AreaItem>();
+                    areaItem.Initialize(this);
                     collectionGO.transform.localPosition = new Vector2(xPos, yPos);
                     
-                    LocationGridTileCollectionItem locationGridTileCollectionItem = collectionGO.GetComponent<LocationGridTileCollectionItem>();
-                    LocationGridTileCollection collection = new LocationGridTileCollection(new Vector2Int(x, y), locationGridTileCollectionItem);
-                    locationGridTileCollectionItem.Initialize(this);
-                    locationGridTileCollections[x, y] = collection;
+                    tile.SetAreaItem(areaItem);
                 }
             }
             
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{base.region.name} CreateTileCollectionGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-            return new Vector2Int(gridWidth, gridHeight);
-        }
-        private void InitializeTileCollections(MapGenerationComponent mapGenerationComponent) {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            int upperBoundX = locationGridTileCollections.GetUpperBound(0);
-            int upperBoundY = locationGridTileCollections.GetUpperBound(1);
-            for (int x = 0; x <= upperBoundX; x++) {
-                for (int y = 0; y <= upperBoundY; y++) {
-                    LocationGridTileCollection collection = locationGridTileCollections[x, y];
-                    collection.Initialize(this);
-                    collection.FindNeighbours(this);
-                }
-            }
-            stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{base.region.name} initialize building spots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-        }
-        private void ConnectHexTilesToTileCollections(MapGenerationComponent mapGenerationComponent) {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            
-            HexTile leftMostTile = region.GetLeftMostTile();
-            int xBound = region.hexTileMap.GetUpperBound(0);
-            int yBound = region.hexTileMap.GetUpperBound(1);
-            for (int localX = 0; localX <= xBound; localX++) {
-                for (int localY = 0; localY <= yBound; localY++) {
-                    HexTile firstTileInRow = region.hexTileMap[0, localY];
-                    HexTile tile = region.hexTileMap[localX, localY];
-                    if (tile.region == region) {
-                        //the row will be indented if its row type (odd/even) is not the same as the row type of the left most tile.
-                        //and the first tile in it's row is not null.
-                        // bool isIndented = UtilityScripts.Utilities.IsEven(tile.yCoordinate) != UtilityScripts.Utilities.IsEven(leftMostTile.yCoordinate);
-
-                        int buildSpotColumn1 = localX * 2;
-                        int buildSpotColumn2 = buildSpotColumn1 + 1;
-                        
-                        // if (isIndented) {
-                        //     buildSpotColumn1 += 1;
-                        //     buildSpotColumn2 += 1;
-                        //     if (firstTileInRow.region != region) {
-                        //         buildSpotColumn1 -= 2;
-                        //         buildSpotColumn2 -= 2;
-                        //     }
-                        // }
-
-
-                        int buildSpotRow1 = localY * 2;
-                        int buildSpotRow2 = buildSpotRow1 + 1;
-                        AssignTileCollectionsToHexTile(tile, buildSpotColumn1, buildSpotColumn2, buildSpotRow1, buildSpotRow2);    
-                    }
-                }
-            }
-            
-            stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{base.region.name} ConnectHexTilesToBuildSpots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-        }
-        private void AssignTileCollectionsToHexTile(HexTile tile, int column1, int column2, int row1, int row2) {
-            int w = (column2 - column1) + 1;
-            int h = (row2 - row1) + 1;
-            LocationGridTileCollection[] gridTileCollections = new LocationGridTileCollection[w * h];
-            int index = 0;
-            InnerMapHexTile innerMapHexTile = new InnerMapHexTile(tile);
-            for (int column = column1; column <= column2; column++) {
-                for (int row = row1; row <= row2; row++) {
-                    LocationGridTileCollection collection = locationGridTileCollections[column, row];
-                    collection.SetAsPartOfHexTile(innerMapHexTile);
-                    gridTileCollections[index] = collection;
-                    index++;
-                }
-            }
-            innerMapHexTile.SetGridTileCollections(gridTileCollections);
-            tile.SetInnerMapHexTileData(innerMapHexTile);
-            // tile.SetOwnedBuildSpot(spots);
-        }
-        private void SetFogOfWar() {
-            //int upperBoundX = locationGridTileCollections.GetUpperBound(0);
-            //int upperBoundY = locationGridTileCollections.GetUpperBound(1);
-            //for (int x = 0; x <= upperBoundX; x++) {
-            //    for (int y = 0; y <= upperBoundY; y++) {
-            //        LocationGridTileCollection collection = locationGridTileCollections[x, y];
-            //        if (!collection.isPartOfParentRegionMap) {
-            //            GameManager.Instance.CreateParticleEffectAt(collection.locationGridTileCollectionItem.transform.position, this, PARTICLE_EFFECT.Fog_Of_War);
-            //        }
-            //    }
-            //}
         }
         #endregion
 
@@ -236,6 +107,24 @@ namespace Inner_Maps {
             int yCoordinate = Mathf.Clamp((int)coordinates.y, 0, height - 1);
             LocationGridTile targetTile = map[xCoordinate, yCoordinate];
             return targetTile;
+        }
+        #endregion
+
+        #region Utilities
+        private Vector2Int GetRegionDimensions(Region p_region) {
+            int maxX = p_region.tiles.Max(t => t.data.xCoordinate);
+            int minX = p_region.tiles.Min(t => t.data.xCoordinate);
+            
+            int gridWidth = maxX - minX;
+            
+            int maxY = p_region.tiles.Max(t => t.data.yCoordinate);
+            int minY = p_region.tiles.Min(t => t.data.yCoordinate);
+            int gridHeight = maxY - minY;
+            
+            return new Vector2Int(gridWidth + 1, gridHeight + 1);
+        }
+        private Vector2Int GetInnerMapSizeGivenRegionDimensions(Vector2Int p_dimensions) {
+            return new Vector2Int(p_dimensions.x * InnerMapManager.AreaLocationGridTileSize.x, p_dimensions.y * InnerMapManager.AreaLocationGridTileSize.y);
         }
         #endregion
     }

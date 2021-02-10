@@ -121,7 +121,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
 
             if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
                 HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+                structure.SetOccupiedHexTile(occupiedHexTile);
             }
             
             structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
@@ -151,7 +151,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
 
             if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
                 HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+                structure.SetOccupiedHexTile(occupiedHexTile);
             }
             
             structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
@@ -166,7 +166,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             } else {
                 if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
                     HexTile occupiedHexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                    structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+                    structure.SetOccupiedHexTile(occupiedHexTile);
                 }
             }
             

@@ -78,7 +78,7 @@ public class HeirloomHuntPartyQuest : PartyQuest {
     //    if (foundHeirloom) {
     //    } else {
     //        //if(targetHeirloom.isBeingCarriedBy != null || !targetHeirloom.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-    //        //    || targetHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType != BIOMES.DESERT) {
+    //        //    || targetHeirloom.gridTileLocation.hexTileOwner.biomeType != BIOMES.DESERT) {
     //        //    DisbandParty();
     //        //} else {
     //        if (UnityEngine.Random.Range(0, 100) < currentChance) {
