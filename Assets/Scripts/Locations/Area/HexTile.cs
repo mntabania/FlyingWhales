@@ -1009,7 +1009,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         OnCorruptSuccess();
     }
     public void RemoveCorruption() {
-        PlayerManager.Instance.player.playerSettlement.RemoveTileFromSettlement(this);
+        PlayerManager.Instance.player.playerSettlement.RemoveAreaFromSettlement(this);
         for (int i = 0; i < locationGridTiles.Length; i++) {
             LocationGridTile tile = locationGridTiles[i];
             tile.UnCorruptTile();
@@ -1031,7 +1031,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return null;
     }
     private void OnCorruptSuccess() {
-        PlayerManager.Instance.player.playerSettlement.AddTileToSettlement(this);
+        PlayerManager.Instance.player.playerSettlement.AddAreaToSettlement(this);
         // Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCorruption);
         // isCurrentlyBeingCorrupted = false;
         
@@ -1064,7 +1064,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
                 }
             }
             //if code reaches this, then there is no longer a structure from the settlement on this tile
-            settlementOnTile.RemoveTileFromSettlement(this);
+            settlementOnTile.RemoveAreaFromSettlement(this);
         }
     }
     #endregion

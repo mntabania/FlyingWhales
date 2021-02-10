@@ -1724,7 +1724,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
 
-        List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.tiles;
+        List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.areas;
         if (avoidThisPositions == null) {
             avoidThisPositions = new List<Vector3>();
         } else {

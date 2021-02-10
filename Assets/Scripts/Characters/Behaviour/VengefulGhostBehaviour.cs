@@ -124,7 +124,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
             settlement => settlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION && settlement.owner != null && settlement.owner != p_invader.faction && p_invader.faction.IsHostileWith(settlement.owner) && settlement.residents.Count(IsCharacterValidForInvade) > 0
         );
         if (validSettlementsInRegion != null) {
-            return CollectionUtilities.GetRandomElement(validSettlementsInRegion).tiles;
+            return CollectionUtilities.GetRandomElement(validSettlementsInRegion).areas;
         }
         return null;
     }

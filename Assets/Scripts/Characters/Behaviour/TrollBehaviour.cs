@@ -66,7 +66,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
             if (character.isAtHomeStructure || character.IsInHomeSettlement()) {
                 HexTile adjacentHextile = null;
                 if(character.homeSettlement != null) {
-                    adjacentHextile = character.homeSettlement.GetAPlainAdjacentHextile();
+                    adjacentHextile = character.homeSettlement.GetAPlainAdjacentArea();
                 } else {
                     adjacentHextile = character.hexTileLocation.GetRandomAdjacentNoSettlementHextileWithinRegion();
                 }
@@ -84,7 +84,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
                 } else {
                     HexTile adjacentHextile = null;
                     if (character.homeSettlement != null) {
-                        adjacentHextile = character.homeSettlement.GetAPlainAdjacentHextile();
+                        adjacentHextile = character.homeSettlement.GetAPlainAdjacentArea();
                     } else {
                         adjacentHextile = character.hexTileLocation.GetRandomAdjacentNoSettlementHextileWithinRegion();
                     }

@@ -73,13 +73,13 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             if (villageChoices.Count > 0) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
-                return new List<HexTile>(chosenVillage.tiles);
+                return new List<HexTile>(chosenVillage.areas);
             } else {
                 //a random special structure occupied by Villagers within current region
                 List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.DUNGEON).ToList();
                 if (specialStructureChoices.Count > 0) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
-                    return new List<HexTile>(chosenSpecialStructure.tiles);
+                    return new List<HexTile>(chosenSpecialStructure.areas);
                 }
             }
         } 

@@ -587,7 +587,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Character betrayer = revenant.GetRandomBetrayer();
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
             (ghost as Ghost).SetBetrayedBy(betrayer);
-            CharacterManager.Instance.PlaceSummonInitially(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
+            CharacterManager.Instance.PlaceSummonInitially(ghost, homeSettlement.GetRandomArea().GetRandomTile());
         }
 
 

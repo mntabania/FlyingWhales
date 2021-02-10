@@ -32,7 +32,8 @@ namespace Generator.Map_Generation.Components {
         #endregion
 
         private StructureSetting GenerateFoodProducingStructure(NPCSettlement settlement, Faction faction) {
-            List<HexTile> surroundingAreas = settlement.GetSurroundingAreas();
+            List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+            settlement.PopulateSurroundingAreas(surroundingAreas);
             WeightedDictionary<StructureSetting> choices = new WeightedDictionary<StructureSetting>();
             if (!faction.factionType.usesCorruptedStructures) {
                 //Added checking since there are no corrupted fishing shacks/Hunters lodge yet.
@@ -42,17 +43,19 @@ namespace Generator.Map_Generation.Components {
                 choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, faction.factionType.mainResource), 20);    
             }
             choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 20);
-
+            ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
             return choices.PickRandomElementGivenWeights();
         }
         private void ProcessBeforePlacingFoodProducingStructure(StructureSetting p_foodProducingStructure, NPCSettlement p_settlement) {
-            List<HexTile> surroundingAreas = p_settlement.GetSurroundingAreas();
-            HexTile surroundingArea = CollectionUtilities.GetRandomElement(surroundingAreas);
+            List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+            p_settlement.PopulateSurroundingAreas(surroundingAreas);
+            Area surroundingArea = CollectionUtilities.GetRandomElement(surroundingAreas);
             if (p_foodProducingStructure.structureType == STRUCTURE_TYPE.HUNTER_LODGE) {
                 //add game feature to a surrounding area
                 surroundingArea.featureComponent.AddFeature(TileFeatureDB.Game_Feature, surroundingArea);
             }
+            ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
         }
-        
+
     }
 }

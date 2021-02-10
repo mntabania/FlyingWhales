@@ -55,7 +55,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				var structureSettings = GenerateCityCenterAndDwellings(faction, villageSetting, npcSettlement);
 				
 				Assert.IsTrue(structureSettings.First().structureType == STRUCTURE_TYPE.CITY_CENTER);
-				Assert.IsTrue(npcSettlement.tiles.Count > 0);
+				Assert.IsTrue(npcSettlement.areas.Count > 0);
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
 				structureSettings = GenerateFacilities(npcSettlement, faction, villageSetting.GetRandomFacilityCount());
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
@@ -381,7 +381,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		List<StructureSetting> structures = new List<StructureSetting>(); //{ new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
 		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
 		for (int i = 0; i < facilityCount; i++) {
-			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction, settlement.tiles.First(), settlement);
+			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction, settlement.areas.First(), settlement);
 			StructureSetting chosenSetting = structuresChoices.PickRandomElementGivenWeights();
 			structures.Add(chosenSetting);
 			createdStructureTypes.Add(chosenSetting.structureType);

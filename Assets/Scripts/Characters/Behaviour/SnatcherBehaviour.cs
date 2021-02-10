@@ -64,8 +64,8 @@ namespace Characters.Behaviour {
             if (character.hexTileLocation != null) {
                 HexTile nearest = null;
                 float nearestDist = 99999f;
-                for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.tiles.Count; i++) {
-                    HexTile hexTile = PlayerManager.Instance.player.playerSettlement.tiles[i];
+                for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.areas.Count; i++) {
+                    HexTile hexTile = PlayerManager.Instance.player.playerSettlement.areas[i];
                     float dist = Vector2.Distance(hexTile.transform.position, character.hexTileLocation.transform.position);
                     if (dist < nearestDist) {
                         nearest = hexTile;

@@ -20,7 +20,7 @@ public class LandmarkNameplate : PooledObject {
 
     public void UpdateVisuals() {
         if (landmark.tileLocation.settlementOnTile != null) {
-            if (landmark.tileLocation.settlementOnTile.tiles[0] == landmark.tileLocation) {
+            if (landmark.tileLocation.settlementOnTile.areas[0] == landmark.tileLocation) {
                 gameObject.SetActive(true);
             }
             else {

@@ -265,7 +265,7 @@ public class GenericTileObject : TileObject {
     public LocationStructure BuildBlueprint(NPCSettlement npcSettlement, LocationGridTile p_usedConnector) {
         Profiler.BeginSample($"Build Blueprint - Add Tile To Settlement");
         HexTile hexTile = gridTileLocation.parentArea;
-        npcSettlement.AddTileToSettlement(hexTile);
+        npcSettlement.AddAreaToSettlement(hexTile);
         Profiler.EndSample();
         
         Profiler.BeginSample($"Build Blueprint - Set Visual Mode");

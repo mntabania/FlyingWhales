@@ -1483,8 +1483,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     continue;
                 }
                 bool itemHasBeenAdded = false;
-                for (int j = 0; j < owner.homeSettlement.tiles.Count; j++) {
-                    HexTile hexInSettlement = owner.homeSettlement.tiles[j];
+                for (int j = 0; j < owner.homeSettlement.areas.Count; j++) {
+                    HexTile hexInSettlement = owner.homeSettlement.areas[j];
                     for (int k = 0; k < hexInSettlement.itemsInHex.Count; k++) {
                         TileObject itemInHex = hexInSettlement.itemsInHex[k];
                         if (itemInHex.name == itemName) {

@@ -457,8 +457,8 @@ public class GoapPlanner {
                             hasSet = true;
                         }
                     }
-                    for (int j = 0; j < settlement.tiles.Count; j++) {
-                        HexTile hex = settlement.tiles[j];
+                    for (int j = 0; j < settlement.areas.Count; j++) {
+                        HexTile hex = settlement.areas[j];
                         if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
                             hasSet = true;
                         }

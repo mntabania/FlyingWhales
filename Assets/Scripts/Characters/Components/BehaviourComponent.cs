@@ -346,13 +346,13 @@ public class BehaviourComponent : CharacterComponent {
             if (villageChoices != null) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
-                return new List<HexTile>(chosenVillage.tiles);
+                return new List<HexTile>(chosenVillage.areas);
             } else {
                 //a random special structure occupied by Villagers within current region
                 List<BaseSettlement> specialStructureChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.DUNGEON, PlayerManager.Instance.player.playerFaction);
                 if (specialStructureChoices != null) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
-                    return new List<HexTile>(chosenSpecialStructure.tiles);
+                    return new List<HexTile>(chosenSpecialStructure.areas);
                 }
             }
         } 
@@ -942,7 +942,7 @@ public class BehaviourComponent : CharacterComponent {
     }
     private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
         if (character == owner) {
-            if (character.homeSettlement != null && character.homeSettlement.tiles.Contains(tile)) {
+            if (character.homeSettlement != null && character.homeSettlement.areas.Contains(tile)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");
             } else if (character.IsTerritory(tile)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");    

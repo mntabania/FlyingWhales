@@ -293,17 +293,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			CheckIfShouldStopWaterWellCheck();
 		}
 	}
-	public void OnSettlementTileRemoved(HexTile p_hexTile, NPCSettlement p_settlement) {
+	public void OnSettlementAreaRemoved(Area p_area, NPCSettlement p_settlement) {
 		for (int i = 0; i < poisonedTiles.Count; i++) {
 			LocationGridTile tile = poisonedTiles[i];
-			if (p_hexTile.locationGridTiles.Contains(tile)) {
+			if (p_area.gridTileComponent.gridTiles.Contains(tile)) {
 				RemovePoisonedTile(tile);
 				i--;
 			}
 		}
 		for (int i = 0; i < wetTiles.Count; i++) {
 			LocationGridTile tile = wetTiles[i];
-			if (p_hexTile.locationGridTiles.Contains(tile)) {
+			if (p_area.gridTileComponent.gridTiles.Contains(tile)) {
 				RemoveWetTile(tile);
 				i--;
 			}

@@ -234,7 +234,7 @@ namespace Traits {
                 LocationGridTile outsideSettlementTile = null;
                 BaseSettlement settlement = null;
                 if(character.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                    outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
+                    outsideSettlementTile = settlement.GetAPlainAdjacentArea()?.GetRandomTile();
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
@@ -278,7 +278,7 @@ namespace Traits {
                 LocationGridTile outsideSettlementTile = null;
                 BaseSettlement settlement = null;
                 if (targetVictim.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                    outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
+                    outsideSettlementTile = settlement.GetAPlainAdjacentArea()?.GetRandomTile();
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
