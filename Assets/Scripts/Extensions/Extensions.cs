@@ -1269,4 +1269,51 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Piercing and Resistances
+    public static ELEMENTAL_TYPE GetElement(this RESISTANCE p_resistance) {
+        switch (p_resistance) {
+            case RESISTANCE.Normal:
+                return ELEMENTAL_TYPE.Normal;
+            case RESISTANCE.Fire:
+                return ELEMENTAL_TYPE.Fire;
+            case RESISTANCE.Poison:
+                return ELEMENTAL_TYPE.Poison;
+            case RESISTANCE.Water:
+                return ELEMENTAL_TYPE.Water;
+            case RESISTANCE.Ice:
+                return ELEMENTAL_TYPE.Ice;
+            case RESISTANCE.Electric:
+                return ELEMENTAL_TYPE.Electric;
+            case RESISTANCE.Earth:
+                return ELEMENTAL_TYPE.Earth;
+            case RESISTANCE.Wind:
+                return ELEMENTAL_TYPE.Wind;
+            default:
+                return ELEMENTAL_TYPE.Normal;
+        }
+    }
+    public static RESISTANCE GetResistance(this ELEMENTAL_TYPE p_element) {
+        switch (p_element) {
+            case ELEMENTAL_TYPE.Normal:
+                return RESISTANCE.Normal;
+            case ELEMENTAL_TYPE.Fire:
+                return RESISTANCE.Fire;
+            case ELEMENTAL_TYPE.Poison:
+                return RESISTANCE.Poison;
+            case ELEMENTAL_TYPE.Water:
+                return RESISTANCE.Water;
+            case ELEMENTAL_TYPE.Ice:
+                return RESISTANCE.Ice;
+            case ELEMENTAL_TYPE.Electric:
+                return RESISTANCE.Electric;
+            case ELEMENTAL_TYPE.Earth:
+                return RESISTANCE.Earth;
+            case ELEMENTAL_TYPE.Wind:
+                return RESISTANCE.Wind;
+            default:
+                return RESISTANCE.Normal;
+        }
+    }
+    #endregion
 }

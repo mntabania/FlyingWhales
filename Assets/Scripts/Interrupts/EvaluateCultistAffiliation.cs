@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 using UtilityScripts;
 
@@ -14,7 +15,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
             int chance = 0;
             if (!actor.traitContainer.HasTrait("Cultist")) {
@@ -52,6 +53,7 @@ namespace Interrupts {
                 }
             }
             Faction prevFaction = actor.faction;
+            if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
             if (GameUtilities.RollChance(chance)) {
                 //Leave faction
                 if (actor.ChangeFactionTo(FactionManager.Instance.vagrantFaction)) {

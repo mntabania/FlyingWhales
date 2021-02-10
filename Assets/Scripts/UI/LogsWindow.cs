@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
 using UnityEngine.UI;
+using UtilityScripts;
+using Debug = UnityEngine.Debug;
 
 public class LogsWindow : MonoBehaviour {
     [Space(10)] [Header("Logs")]
@@ -139,6 +141,7 @@ public class LogsWindow : MonoBehaviour {
                 yield return null;
             }
         }
+        logs.ReleaseLogInstancesAndLogList();
 #if UNITY_EDITOR
         timer.Stop();
         UnityEngine.Debug.Log($"Log items creation time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");

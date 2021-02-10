@@ -29,8 +29,8 @@ public class TakeShelter : GoapAction {
         }
         return null;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         OtherData[] otherData = node.otherData;
         if (otherData != null && otherData.Length == 2) {
             if (otherData[0].obj is LocationStructure structure) {

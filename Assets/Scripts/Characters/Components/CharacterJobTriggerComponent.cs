@@ -1583,8 +1583,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine", null, LOG_TAG.Social, LOG_TAG.Crimes);
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddLogToDatabase();
-        // owner.logComponent.AddHistory(log);
+        log.AddLogToDatabase(true);
         return true;
     }
     private bool CreatePlaceTrapPOIJob(IPointOfInterest target, JOB_TYPE jobType = JOB_TYPE.PLACE_TRAP) {
@@ -1806,7 +1805,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
-            addLog.AddLogToDatabase();
+            addLog.AddLogToDatabase(true);
             owner.crimeComponent.AddReportedCrime(crimeData);
             if (owner.characterClass.className == "Shaman" && owner.relationshipContainer.IsFriendsWith(actor) && 
                 (crimeData.crimeType == CRIME_TYPE.Vampire || crimeData.crimeType == CRIME_TYPE.Werewolf)) {
@@ -1845,7 +1844,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
-            addLog.AddLogToDatabase();
+            addLog.AddLogToDatabase(true);
             owner.crimeComponent.AddReportedCrime(crimeData);
             
             //Try to Create Cure Magical Affliction job

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Locations.Area_Features;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 
 namespace Interrupts {
@@ -17,14 +18,11 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            //interruptHolder.actor.DecreaseCanMove();
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break", null, logTags);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, "Loss of Control", LOG_IDENTIFIER.STRING_1);
-            //Removed this because overridden logs are already added after in AddEffectLog
-            //interruptHolder.actor.logComponent.RegisterLog(overrideEffectLog, onlyClickedCharacter: false);
 
             HexTile hexTile = interruptHolder.actor.areaLocation;
             if (interruptHolder.actor.characterClass.className.Equals("Druid")) {
@@ -34,7 +32,6 @@ namespace Interrupts {
                     hexTile.spellsComponent.ResetElectricStormDuration();
                 } else {
                     hexTile.spellsComponent.SetHasElectricStorm(true);
-                    // PlayerSkillManager.Instance.GetSpellData(SPELL_TYPE.ELECTRIC_STORM).ActivateAbility(hexTile);
                 }
             } else if (interruptHolder.actor.characterClass.className.Equals("Shaman")) {
                 //Poison Bloom
@@ -43,7 +40,6 @@ namespace Interrupts {
                     poisonBloomFeature.ResetDuration();
                 } else {
                     hexTile.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, hexTile);
-                    // PlayerSkillManager.Instance.GetSpellData(SPELL_TYPE.POISON_BLOOM).ActivateAbility(hexTile);
                 }
             } else if (interruptHolder.actor.characterClass.className.Equals("Mage")) { 
                 //Brimstones
@@ -52,7 +48,6 @@ namespace Interrupts {
                     hexTile.spellsComponent.ResetBrimstoneDuration();
                 } else {
                     hexTile.spellsComponent.SetHasBrimstones(true);
-                    // PlayerSkillManager.Instance.GetSpellData(SPELL_TYPE.BRIMSTONES).ActivateAbility(hexTile);
                 }
             }
             else {
@@ -60,7 +55,7 @@ namespace Interrupts {
             }
             
             
-            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             //interruptHolder.actor.IncreaseCanMove();

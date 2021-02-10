@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using UtilityScripts;
 using Inner_Maps;
+using Object_Pools;
 
 public class DrinkBlood : GoapAction {
 
@@ -378,6 +379,7 @@ public class DrinkBlood : GoapAction {
                 } else {
                     actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
                 }
+                LogPool.Release(log);
             } else {
                 if (actor.currentSettlement is NPCSettlement currentSettlement && currentSettlement.eventManager.CanHaveEvents()) {
                     if (currentSettlement.owner != null && GameUtilities.RollChance(15)) { //15
@@ -398,13 +400,10 @@ public class DrinkBlood : GoapAction {
                     //Vampire vampire = TraitManager.Instance.CreateNewInstancedTraitClass<Vampire>("Vampire");
                     if(targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", actor)) {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
-                        // if(goapNode != null) {
-                        //     log.SetLogType(LOG_TYPE.Action);
-                        // }
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddLogToDatabase();
-                        PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+                        PlayerManager.Instance.player.ShowNotificationFrom(actor, log, true);
                     }
 
                     if (targetCharacter.isNormalCharacter) {

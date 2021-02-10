@@ -6,6 +6,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class BehaviourComponent : CharacterComponent {
@@ -380,7 +381,10 @@ public class BehaviourComponent : CharacterComponent {
                 log += $"\nBehaviour Component: {component.ToString()} cannot be done by {owner.name} skipping it...";
                 continue; //skip component
             }
-            if (component.TryDoBehaviour(owner, ref log, out JobQueueItem producedJob)) {
+            Profiler.BeginSample($"{component} - Try Do Behaviour");
+            bool behaviourSuccess = component.TryDoBehaviour(owner, ref log, out JobQueueItem producedJob);
+            Profiler.EndSample();
+            if (behaviourSuccess) {
                 bool isProducedJobValid = IsProducedJobValid(producedJob, owner);
                 if (producedJob == null || isProducedJobValid) {
                     if (producedJob != null) {

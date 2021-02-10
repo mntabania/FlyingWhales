@@ -78,9 +78,9 @@ public class Gathering : ISavable {
 
     }
     protected virtual void OnDisbandGathering() {
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", null, LOG_TAG.Party);
-        log.AddToFillers(host, host.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, gatheringName, LOG_IDENTIFIER.STRING_1);
+        // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", null, LOG_TAG.Party);
+        // log.AddToFillers(host, host.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        // log.AddToFillers(null, gatheringName, LOG_IDENTIFIER.STRING_1);
         //log.AddLogToDatabase();
 
         host.logComponent.PrintLogIfActive("Disbanded " + gatheringName + " Gathering of " + host.name);

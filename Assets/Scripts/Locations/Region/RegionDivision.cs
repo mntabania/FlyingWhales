@@ -113,7 +113,7 @@ public class RegionDivision {
             log.AddToFillers(null, monsterTypeStr, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(p_structure, p_structure.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
     }
     public MonsterMigrationBiomeAtomizedData GetRandomMonsterFromFaunaList() {

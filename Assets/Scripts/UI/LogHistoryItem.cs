@@ -15,7 +15,7 @@ public class LogHistoryItem : LogItem {
     [SerializeField] private LogsTagButton logsTagButton;
     private UIHoverPosition _hoverPosition;
     
-    public void SetLog(in Log log) {
+    public void SetLog(Log log) {
         name = log.persistentID;
         dateLbl.text = log.gameDate.ConvertToTime();
         logLbl.text = log.logText;

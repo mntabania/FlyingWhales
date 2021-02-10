@@ -30,7 +30,7 @@ public class DesertRose : TileObject {
             
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "DesertRose", "activated_village", providedTags: LOG_TAG.Player);
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             gridTileLocation.structure.RemovePOI(this);
         }
     }
@@ -46,7 +46,7 @@ public class DesertRose : TileObject {
             
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "DesertRose", "activated_portal", providedTags: LOG_TAG.Player);
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             gridTileLocation.structure.RemovePOI(this);
         }
     }

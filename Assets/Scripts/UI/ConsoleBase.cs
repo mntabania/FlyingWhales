@@ -13,6 +13,7 @@ using Tutorial;
 using UnityEngine.Events;
 using UtilityScripts;
 using Locations.Settlements;
+using Object_Pools;
 
 public class ConsoleBase : InfoUIBase {
 
@@ -123,6 +124,12 @@ public class ConsoleBase : InfoUIBase {
         if (AstarPath.active.graphs.Length > 0) {
             worldSettingsText = $"{worldSettingsText}\nTotal Nodes: {AstarPath.active.graphs[0].CountNodes().ToString()}";    
         }
+        
+        worldSettingsText = $"{worldSettingsText}\nObject Pooling:";
+        worldSettingsText = $"{worldSettingsText}\nLogs in Pool:";
+        worldSettingsText = $"{worldSettingsText} {LogPool.GetCurrentLogsInPool().ToString()}";
+        
+        
         
         
         // if (GameManager.Instance.showFullDebug) {

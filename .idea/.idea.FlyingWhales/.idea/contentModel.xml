@@ -2318,7 +2318,6 @@
             <e p="JobManager.cs" t="Include" />
             <e p="LevelLoaderManager.cs" t="Include" />
             <e p="MainMenuManager.cs" t="Include" />
-            <e p="ObjectPoolManager.cs" t="Include" />
             <e p="PartyManager.cs" t="Include" />
             <e p="PathfindingManager.cs" t="Include" />
             <e p="PlayerManager.cs" t="Include" />
@@ -2339,6 +2338,10 @@
             <e p="UIManager.cs" t="Include" />
             <e p="WorldConfigManager.cs" t="Include" />
             <e p="WorldEventManager.cs" t="Include" />
+          </e>
+          <e p="Object Pools" t="Include">
+            <e p="LogPool.cs" t="Include" />
+            <e p="ObjectPoolManager.cs" t="Include" />
           </e>
           <e p="Party" t="Include">
             <e p="Party.cs" t="Include" />
@@ -2963,11 +2966,13 @@
             <e p="DatabaseThreadPool.cs" t="Include" />
             <e p="GoapThread.cs" t="Include" />
             <e p="InnerPathfindingThread.cs" t="Include" />
-            <e p="LogDatabaseThread.cs" t="Include" />
             <e p="Multithread.cs" t="Include" />
             <e p="MultiThreadPool.cs" t="Include" />
             <e p="PathFindingThread.cs" t="Include" />
             <e p="PathfindingThreadPool.cs" t="Include" />
+            <e p="SQLLogInsertThread.cs" t="Include" />
+            <e p="SQLWorkerItem.cs" t="Include" />
+            <e p="UpdateCharacterNameThread.cs" t="Include" />
           </e>
           <e p="Tile Maps" t="Include">
             <e p="StructureFloorTile.cs" t="Include" />
@@ -3434,6 +3439,7 @@
             <e p="JobUtilities.cs" t="Include" />
             <e p="LocationAwarenessUtility.cs" t="Include" />
             <e p="LockRotation.cs" t="Include" />
+            <e p="LogUtilities.cs" t="Include" />
             <e p="MinionDraggable.cs" t="Include" />
             <e p="NewMinionDraggable.cs" t="Include" />
             <e p="ObjectCopier.cs" t="Include" />
@@ -3444,6 +3450,7 @@
             <e p="RectDrawer.cs" t="Include" />
             <e p="ReflectiveEnumerator.cs" t="Include" />
             <e p="RendererExtensions.cs" t="Include" />
+            <e p="RuinarchListPool.cs" t="Include" />
             <e p="SerializableDictionary.cs" t="Include" />
             <e p="Signals" t="Include">
               <e p="CharacterSignals.cs" t="Include" />

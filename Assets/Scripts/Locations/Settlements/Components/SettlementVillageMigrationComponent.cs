@@ -231,7 +231,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                     log.AddToFillers(newCharacter, newCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newCharacter.homeRegion, newCharacter.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
                     log.AddLogToDatabase();
-                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             } else {
                 debugLog += $"\nNo unspawned character to spawn for {owner.owner.race.ToString()}/{owner.owner.name}";

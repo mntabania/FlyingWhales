@@ -94,8 +94,8 @@ namespace Traits {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim", null, LOG_TAG.Crimes);
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
-                        PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
+                        character.logComponent.RegisterLog(log);
+                        PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log, true);
                         return true;
                     }
                 }
@@ -127,8 +127,8 @@ namespace Traits {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim", null, LOG_TAG.Crimes);
                     log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
-                    PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
+                    this.character.logComponent.RegisterLog(log);
+                    PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log, true);
                 }
                 if(targetVictim == null) {
                     return "no_target";
@@ -139,27 +139,19 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        //public override void OnTickStarted() {
-        //    base.OnTickStarted();
-        //    CheckPsychopath();
-        //}
         #endregion
 
-        public void SetVictimRequirements(SerialVictim serialVictim) {
+        private void SetVictimRequirements(SerialVictim serialVictim) {
             victim1Requirement = serialVictim;
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer", null, LOG_TAG.Crimes);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
         public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
             SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc));
-
         }
-        //public void SetVictim2Requirement(SerialVictim serialVictim) {
-        //    victim2Requirement = serialVictim;
-        //}
         public void SetTargetVictim(Character victim) {
             if (targetVictim != null) {
                 //TODO: Add checking if character is the target of any other psychopaths
@@ -311,60 +303,8 @@ namespace Traits {
             producedJob = job;
             return true;
         }
-        //private void GenerateSerialVictims() {
-        //    SetVictim1Requirement(new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false)));
-
-        //    //bool hasCreatedRequirement = false;
-        //    //while (!hasCreatedRequirement) {
-        //    //    SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
-        //    //    SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
-
-        //    //    string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
-        //    //    string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
-
-        //    //    if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
-        //    //        && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
-        //    //        continue;
-        //    //    } else {
-        //    //        SetVictim2Requirement(new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc));
-        //    //        hasCreatedRequirement = true;
-        //    //        break;
-        //    //    }
-        //    //}
-
-        //    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
-        //    log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
-        //    //log.AddToFillers(null, victim2Requirement.text, LOG_IDENTIFIER.STRING_2);
-        //    log.AddLogToInvolvedObjects();
-        //    PlayerManager.Instance.player.ShowNotification(log);
-        //}
-
-        //private SERIAL_VICTIM_TYPE RandomizeVictimType(bool isPrefix) {
-        //    int chance = UnityEngine.Random.Range(0, 2);
-        //    if (isPrefix) {
-        //        if (chance == 0) {
-        //            return SERIAL_VICTIM_TYPE.GENDER;
-        //        }
-        //        return SERIAL_VICTIM_TYPE.ROLE;
-        //    } else {
-        //        //if (chance == 0) {
-        //        //    return SERIAL_VICTIM_TYPE.TRAIT;
-        //        //}
-        //        return SERIAL_VICTIM_TYPE.STATUS;
-        //    }
-        //}
-
         private bool DoesCharacterFitAnyVictimRequirements(Character target) {
             return victim1Requirement.DoesCharacterFitVictimRequirements(target); //|| victim2Requirement.DoesCharacterFitVictimRequirements(target)
-        }
-
-        public void PsychopathSawButWillNotAssist(Character targetCharacter, Trait negativeTrait) {
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "psychopath_saw_no_assist", null, LOG_TAG.Crimes);
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);
-            character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
 
         #region Opinion

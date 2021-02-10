@@ -179,7 +179,7 @@ public class PsychopathUI : MonoBehaviour {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LOG_TAG.Life_Changes);
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Psychopath", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToDatabase();
+        log.AddLogToDatabase(true);
         // PlayerManager.Instance.player.ShowNotificationFrom(log);
         if(victimType1 == SERIAL_VICTIM_TYPE.None) {
             victimDescription1 = string.Empty;

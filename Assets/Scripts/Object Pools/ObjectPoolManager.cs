@@ -9,8 +9,9 @@ using Inner_Maps.Location_Structures;
 using Inner_Maps;
 using Locations.Settlements;
 using Locations;
+using Threads;
 
-public class ObjectPoolManager : BaseMonoBehaviour {
+public class ObjectPoolManager : MonoBehaviour {
 
     public static ObjectPoolManager Instance = null;
 
@@ -27,7 +28,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public List<InterruptHolder> _interruptPool { get; private set; }
     public List<Party> _partyPool { get; private set; }
     public List<GoapThread> _goapThreadPool { get; private set; }
-    private List<LogDatabaseThread> _logDatabaseThreadPool;
+    private List<UpdateCharacterNameThread> _updateCharacterNameThreadPool;
+    private List<SQLLogInsertThread> _sqlInsertThreadPool;
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
@@ -48,13 +50,17 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private void Awake() {
         if (Instance == null) {
             Instance = this;
-            DontDestroyOnLoad(this.gameObject);
-            allObjectPools = new Dictionary<string, EZObjectPool>();
+            DontDestroyOnLoad(gameObject);
+            InitializeObjectPools();
+            if (EZObjectPool.Marker != null) {
+                DontDestroyOnLoad(EZObjectPool.Marker);    
+            }
         } else {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
     public void InitializeObjectPools() {
+        allObjectPools = new Dictionary<string, EZObjectPool>();
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
             int size = 0;
@@ -67,7 +73,11 @@ public class ObjectPoolManager : BaseMonoBehaviour {
 
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //50    
+            int size = 0;
+            if (currPrefab.name == "TileObjectGameObject") {
+                size = 5000;
+            }
+            CreateNewPool(currPrefab, currPrefab.name, size, true, true, false); //50    
         }
 
         ConstructGoapNodes();
@@ -78,6 +88,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructPartyPool();
         ConstructGoapThreadPool();
         ConstructLogDatabaseThreadPool();
+        ConstructSQLInsertThreadPool();
         ConstructExpectedEffectsListPool();
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
@@ -162,16 +173,10 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         pooledObjects[0].SendObjectBackToPool();
         //pooledObjects[0].transform.SetParent(pooledObjects[0].ParentPool.transform);
     }
-
-    public EZObjectPool CreateNewPool(GameObject template, string poolName, int size, bool autoResize, bool instantiateImmediate, bool shared) {
+    private EZObjectPool CreateNewPool(GameObject template, string poolName, int size, bool autoResize, bool instantiateImmediate, bool shared) {
         poolName = poolName.ToUpper();
         EZObjectPool newPool = EZObjectPool.CreateObjectPool(template, poolName, size, autoResize, instantiateImmediate, shared);
-        //try {
-            allObjectPools.Add(poolName, newPool);
-        //}catch(Exception e) {
-        //    throw new Exception(e.Message + " Pool name " + poolName);
-        //}
-        
+        allObjectPools.Add(poolName, newPool);
         return newPool;
     }
 
@@ -315,19 +320,34 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     
     #region Database Thread
     private void ConstructLogDatabaseThreadPool() {
-        _logDatabaseThreadPool = new List<LogDatabaseThread>();
+        _updateCharacterNameThreadPool = new List<UpdateCharacterNameThread>();
     }
-    public LogDatabaseThread CreateNewLogDatabaseThread() {
-        if (_logDatabaseThreadPool.Count > 0) {
-            LogDatabaseThread data = _logDatabaseThreadPool[0];
-            _logDatabaseThreadPool.RemoveAt(0);
+    public UpdateCharacterNameThread CreateNewLogDatabaseThread() {
+        if (_updateCharacterNameThreadPool.Count > 0) {
+            UpdateCharacterNameThread data = _updateCharacterNameThreadPool[0];
+            _updateCharacterNameThreadPool.RemoveAt(0);
             return data;
         }
-        return new LogDatabaseThread();
+        return new UpdateCharacterNameThread();
     }
-    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
+    public void ReturnLogDatabaseThreadToPool(SQLWorkerItem data) {
         data.Reset();
-        _logDatabaseThreadPool.Add(data);
+        if (data is UpdateCharacterNameThread characterNameThread) {
+            _updateCharacterNameThreadPool.Add(characterNameThread);    
+        } else if (data is SQLLogInsertThread sqlLogInsertThread) {
+           _sqlInsertThreadPool.Add(sqlLogInsertThread); 
+        }
+    }
+    private void ConstructSQLInsertThreadPool() {
+        _sqlInsertThreadPool = new List<SQLLogInsertThread>();
+    }
+    public SQLLogInsertThread CreateNewSQLInsertThread() {
+        if (_sqlInsertThreadPool.Count > 0) {
+            SQLLogInsertThread data = _sqlInsertThreadPool[0];
+            _sqlInsertThreadPool.RemoveAt(0);
+            return data;
+        }
+        return new SQLLogInsertThread();
     }
     #endregion
 
@@ -617,7 +637,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _ilocationListPool.Add(data);
     }
     #endregion
-
+    
     #region Area
     private void ConstructAreaListPool() {
         _areaListPool = new List<List<Area>>();
@@ -636,63 +656,63 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
-    protected override void OnDestroy() {
-        if (allObjectPools != null) {
-            foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
-                pool.Value.ClearPool();
-            }
-            allObjectPools.Clear();
-            allObjectPools = null;
-        }
-        goapNodesPool?.Clear();
-        goapNodesPool = null;
-        opinionDataPool?.Clear();
-        opinionDataPool = null;
-        traitRemoveSchedulePool?.Clear();
-        traitRemoveSchedulePool = null;
-        combatDataPool?.Clear();
-        combatDataPool = null;
-        _interruptPool?.Clear();
-        _interruptPool = null;
-        _goapThreadPool?.Clear();
-        _goapThreadPool = null;
-        _partyPool?.Clear();
-        _partyPool = null;
-        _logDatabaseThreadPool?.Clear();
-        _logDatabaseThreadPool = null;
-        _expectedEffectsListPool?.Clear();
-        _expectedEffectsListPool = null;
-        _preconditionsListPool?.Clear();
-        _preconditionsListPool = null;
-        _characterListPool?.Clear();
-        _characterListPool = null;
-        _hexTileListPool?.Clear();
-        _hexTileListPool = null;
-        _structureListPool?.Clear();
-        _structureListPool = null;
-        _tileListPool?.Clear();
-        _tileListPool = null;
-        _factionListPool?.Clear();
-        _factionListPool = null;
-        _settlementListPool?.Clear();
-        _settlementListPool = null;
-        _goapJobPool?.Clear();
-        _goapJobPool = null;
-        _stateJobPool?.Clear();
-        _stateJobPool = null;
-        _conversationDataPool?.Clear();
-        _conversationDataPool = null;
-        _conversationDataListPool?.Clear();
-        _conversationDataListPool = null;
-        _emotionListPool?.Clear();
-        _emotionListPool = null;
-        _ilocationListPool?.Clear();
-        _ilocationListPool = null;
-        _tileObjectListPool?.Clear();
-        _tileObjectListPool = null;
+    // protected override void OnDestroy() {
+    //     if (allObjectPools != null) {
+    //         foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
+    //             pool.Value.ClearPool();
+    //         }
+    //         allObjectPools.Clear();
+    //         allObjectPools = null;
+    //     }
+    //     goapNodesPool?.Clear();
+    //     goapNodesPool = null;
+    //     opinionDataPool?.Clear();
+    //     opinionDataPool = null;
+    //     traitRemoveSchedulePool?.Clear();
+    //     traitRemoveSchedulePool = null;
+    //     combatDataPool?.Clear();
+    //     combatDataPool = null;
+    //     _interruptPool?.Clear();
+    //     _interruptPool = null;
+    //     _goapThreadPool?.Clear();
+    //     _goapThreadPool = null;
+    //     _partyPool?.Clear();
+    //     _partyPool = null;
+    //     _logDatabaseThreadPool?.Clear();
+    //     _logDatabaseThreadPool = null;
+    //     _expectedEffectsListPool?.Clear();
+    //     _expectedEffectsListPool = null;
+    //     _preconditionsListPool?.Clear();
+    //     _preconditionsListPool = null;
+    //     _characterListPool?.Clear();
+    //     _characterListPool = null;
+    //     _hexTileListPool?.Clear();
+    //     _hexTileListPool = null;
+    //     _structureListPool?.Clear();
+    //     _structureListPool = null;
+    //     _tileListPool?.Clear();
+    //     _tileListPool = null;
+    //     _factionListPool?.Clear();
+    //     _factionListPool = null;
+    //     _settlementListPool?.Clear();
+    //     _settlementListPool = null;
+    //     _goapJobPool?.Clear();
+    //     _goapJobPool = null;
+    //     _stateJobPool?.Clear();
+    //     _stateJobPool = null;
+    //     _conversationDataPool?.Clear();
+    //     _conversationDataPool = null;
+    //     _conversationDataListPool?.Clear();
+    //     _conversationDataListPool = null;
+    //     _emotionListPool?.Clear();
+    //     _emotionListPool = null;
+    //     _ilocationListPool?.Clear();
+    //     _ilocationListPool = null;
+    //     _tileObjectListPool?.Clear();
+    //     _tileObjectListPool = null;
+    //     base.OnDestroy();
+    //     Instance = null;
+    // }
         _areaListPool?.Clear();
         _areaListPool = null;
-        base.OnDestroy();
-        Instance = null;
-    }
 }

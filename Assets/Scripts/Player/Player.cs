@@ -14,6 +14,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using Interrupts;
 using Logs;
+using Object_Pools;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
@@ -504,25 +505,16 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(Character[] characters, in Log log) {
-        for (int i = 0; i < characters.Length; i++) {
-            if (ShouldShowNotificationFrom(characters[i], log)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public bool ShowNotificationFrom(Region location, Log log) {
+    public bool ShowNotificationFrom(Region location, Log log, bool releaseLogAfter = false) {
         if (ShouldShowNotificationFrom(location, log)) {
-            ShowNotification(log);
+            ShowNotification(log, releaseLogAfter);
             return true;
         }
         return false;
     }
-    public bool ShowNotificationFrom(Character character, Log log) {
+    public bool ShowNotificationFrom(Character character, Log log, bool releaseLogAfter = false) {
         if (ShouldShowNotificationFrom(character, log)) {
-            ShowNotification(log);
+            ShowNotification(log, releaseLogAfter);
             return true;
         }
         return false;
@@ -534,20 +526,18 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
-    public void ShowNotificationFrom(Log log, params Character[] characters) {
-        if (ShouldShowNotificationFrom(characters, log)) {
-            ShowNotification(log);
-        }
-    }
-    public void ShowNotificationFromPlayer(Log log) {
+    public void ShowNotificationFromPlayer(Log log, bool releaseLogAfter = false) {
         //Removed adding to database here because this function should only be for showing notification, if we want to add it to database, it should be called outside this function
         //This is also redundant because all the outside calls of ShowNotificationFromPlayer already calls AddLogToDatabase
         //log.AddLogToDatabase();
-        ShowNotification(log);
+        ShowNotification(log, releaseLogAfter);
     }
     
-    private void ShowNotification(Log log) {
+    private void ShowNotification(Log log, bool releaseLogAfter = false) {
         Messenger.Broadcast(UISignals.SHOW_PLAYER_NOTIFICATION, log);
+        if (releaseLogAfter) {
+            LogPool.Release(log);
+        }
     }
     private void ShowNotification(IIntel intel) {
         Messenger.Broadcast(UISignals.SHOW_INTEL_NOTIFICATION, intel);

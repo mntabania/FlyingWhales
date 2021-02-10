@@ -1319,7 +1319,7 @@ public class UIManager : BaseMonoBehaviour {
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem, log);
     }
-    private void PlaceNewNotification(PlayerNotificationItem newNotif, in Log shownLog) {
+    private void PlaceNewNotification(PlayerNotificationItem newNotif, Log shownLog) {
         //NOTE: Removed this since this was only needed when we would also show notifications of an action that the character is currently doing
         //but since we now only show logs after the fact, then this would be irrelevant and could cause notifications to get overwritten
         //example is Vampiric embrace that has a success log ([Actor Name] gave [Target Name] a Vampiric Embrace!) which is also an intel,

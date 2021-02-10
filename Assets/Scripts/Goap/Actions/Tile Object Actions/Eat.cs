@@ -5,6 +5,7 @@ using Traits;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
 using Locations.Settlements;
+using UtilityScripts;
 
 public class Eat : GoapAction {
 
@@ -29,8 +30,8 @@ public class Eat : GoapAction {
         }
         return base.ShouldActionBeAnIntel(node);
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         if (node.target is Table) {
             log.AddToFillers(node.target, "at a Table", LOG_IDENTIFIER.TARGET_CHARACTER);
         } else {
@@ -325,10 +326,10 @@ public class Eat : GoapAction {
         if (goapNode.actor.traitContainer.HasTrait("Cannibal") == false && 
             (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat) && goapNode.actor.isNotSummonAndDemon) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Cannibal");
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode, LOG_TAG.Life_Changes, LOG_TAG.Needs, LOG_TAG.Crimes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode, LogUtilities.Become_Cannibal_Tags);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
         if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is RatMeat) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");

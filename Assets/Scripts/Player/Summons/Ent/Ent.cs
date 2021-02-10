@@ -25,8 +25,8 @@ public abstract class Ent : Summon {
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Ent_Behaviour);
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
-        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar);
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
+        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar, piercingPower);
         if (amount < 0 && !isDead && !faction.isPlayerFaction) {
             if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
                 combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
