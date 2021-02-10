@@ -28,6 +28,10 @@ public class SkillUpgradeData
     public List<float> statsIncreasedPercentagePerLevel;
     [HideInInspector]
     public List<float> durationBonusPerLevel;
+    [HideInInspector]
+    public List<float> additionalMaxHPPercentagePerLevel;
+    [HideInInspector]
+    public List<float> additionalMaxHPActualPerLevel;
 
     public int GetUpgradeCostBaseOnLevel(int p_currentLevel) {
         return upgradeCosts[p_currentLevel];

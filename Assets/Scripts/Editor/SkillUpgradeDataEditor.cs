@@ -40,8 +40,16 @@ public class SkillUpgradeDataEditor : Editor {
                 DisplayFloatList(data.skillUpgradeData.additionalPiercePerLevel, "Pierce(%) per level");
                 EditorGUILayout.Space();
             }
-            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.HP_Percentage)) {
-                DisplayFloatList(data.skillUpgradeData.additionalHpPercentagePerLevel, "HP(%) per level");
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.HP_HEAL_Percentage)) {
+                DisplayFloatList(data.skillUpgradeData.additionalHpPercentagePerLevel, "Heal HP(%) per level");
+                EditorGUILayout.Space();
+            }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Max_HP_Percentage)) {
+                DisplayFloatList(data.skillUpgradeData.additionalMaxHPPercentagePerLevel, "Max HP(%) per level");
+                EditorGUILayout.Space();
+            }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Max_HP_Actual)) {
+                DisplayFloatList(data.skillUpgradeData.additionalMaxHPActualPerLevel, "Max HP Actual per level");
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.HP_Actual_Amount)) {

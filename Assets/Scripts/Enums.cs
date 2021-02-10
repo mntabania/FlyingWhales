@@ -1184,7 +1184,7 @@ public enum RESISTANCE {
 }
 
 public enum UPGRADE_BONUS {
-    Damage = 0, Pierce, HP_Percentage, HP_Actual_Amount, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Increase_Stats_Percentage, Duration,
+    Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Increase_Stats_Percentage, Duration, Max_HP_Percentage, Max_HP_Actual,
 }
 
 public enum UNLOCKING_SKILL_REQUIREMENT {
