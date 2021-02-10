@@ -124,8 +124,8 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return null;
 	}
 	private IEnumerator ExecuteLoadedFeatureInitialActions() {
-		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
-			HexTile tile = GridMap.Instance.normalHexTiles[i];
+		for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
+			HexTile tile = GridMap.Instance.allAreas[i];
 			for (int j = 0; j < tile.featureComponent.features.Count; j++) {
 				TileFeature feature = tile.featureComponent.features[j];
 				feature.LoadedGameStartActions(tile);
@@ -161,7 +161,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Region region = GridMap.Instance.allRegions[i];
 			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
-				t.parentArea.settlementOnTile == null && t.parentArea.elevationType == ELEVATION.PLAIN).ToList();
+				t.parentArea.settlementOnArea == null && t.parentArea.elevationType == ELEVATION.PLAIN).ToList();
 			if (locationChoices.Count > 0) {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					if (i == 1) {

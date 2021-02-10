@@ -3,39 +3,30 @@ namespace Scenario_Maps {
     [System.Serializable]
     public class ScenarioWorldMapSave {
         public WorldMapTemplate worldMapTemplate;
-        public List<SaveDataHextile> hextileSaves;
+        public List<SaveDataArea> hextileSaves;
         
-        public void SaveWorld(WorldMapTemplate _worldMapTemplate, List<HexTile> normalHexTiles) {
-            worldMapTemplate = _worldMapTemplate;
-            SaveHexTiles(normalHexTiles);
+        public void SaveWorld(WorldMapTemplate p_worldMapTemplate, List<Area> p_areas) {
+            worldMapTemplate = p_worldMapTemplate;
+            SaveAreas(p_areas);
         }
 
         #region Hex Tiles
-        public void SaveHexTiles(List<HexTile> tiles) {
-            hextileSaves = new List<SaveDataHextile>();
+        public void SaveAreas(List<Area> tiles) {
+            hextileSaves = new List<SaveDataArea>();
             for (int i = 0; i < tiles.Count; i++) {
-                HexTile currTile = tiles[i];
-                SaveDataHextile newSaveData = new SaveDataHextile();
+                Area currTile = tiles[i];
+                SaveDataArea newSaveData = new SaveDataArea();
                 newSaveData.Save(currTile);
                 hextileSaves.Add(newSaveData);
             }
         }
-        public SaveDataHextile[,] GetSaveDataMap() {
-            SaveDataHextile[,] map = new SaveDataHextile[worldMapTemplate.worldMapWidth, worldMapTemplate.worldMapHeight];
+        public SaveDataArea[,] GetSaveDataMap() {
+            SaveDataArea[,] map = new SaveDataArea[worldMapTemplate.worldMapWidth, worldMapTemplate.worldMapHeight];
             for (int i = 0; i < hextileSaves.Count; i++) {
-                SaveDataHextile currTile = hextileSaves[i];
-                map[currTile.xCoordinate, currTile.yCoordinate] = currTile;
+                SaveDataArea currTile = hextileSaves[i];
+                map[currTile.areaData.xCoordinate, currTile.areaData.yCoordinate] = currTile;
             }
             return map;
-        }
-        public SaveDataHextile GetHexTileDataWithLandmark(LANDMARK_TYPE landmarkType) {
-            for (int i = 0; i < hextileSaves.Count; i++) {
-                SaveDataHextile saveDataHextile = hextileSaves[i];
-                if (saveDataHextile.landmarkType == landmarkType) {
-                    return saveDataHextile;
-                }
-            }
-            return null;
         }
         public List<SaveDataHextile> GetAllTilesWithLandmarks() {
             List<SaveDataHextile> tiles = new List<SaveDataHextile>();

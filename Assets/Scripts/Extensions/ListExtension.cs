@@ -45,4 +45,10 @@ public static class ListExtension {
         }
         return false;
     }
+    public static void ListRemoveRange<T>(this List<T> sourceList, List<T> itemsToRemove) {
+        for (int i = 0; i < itemsToRemove.Count; i++) {
+            T currItem = itemsToRemove[i];
+            sourceList.Remove(currItem);
+        }
+    }
 }

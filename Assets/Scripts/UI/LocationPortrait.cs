@@ -36,7 +36,6 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
 
     public void SetLocation(Region region) {
         this.region = region;
-        SetPortrait(region.mainLandmark.specificLandmarkType);
     }
     public void SetLocation(BaseSettlement p_settlement) {
         region = null;

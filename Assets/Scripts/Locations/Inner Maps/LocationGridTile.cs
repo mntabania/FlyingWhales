@@ -31,7 +31,7 @@ namespace Inner_Maps {
         public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
-        public HexTile parentArea { get; }
+        public Area parentArea { get; }
         public Vector3Int localPlace { get; }
         public Vector3 worldLocation { get; private set; }
         public Vector3 centeredWorldLocation { get; private set; }
@@ -50,7 +50,6 @@ namespace Inner_Maps {
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
-        public Area area { get; private set; }
         /// <summary>
         /// Does this tile have a blueprint on it.
         /// NOTE: This is not saved since blueprint placement is handled by GenericTileObject loading
@@ -105,7 +104,7 @@ namespace Inner_Maps {
         }
         #endregion
         
-        public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap p_parentMap, HexTile p_area) {
+        public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap p_parentMap, Area p_area) {
             persistentID = System.Guid.NewGuid().ToString();
             parentMap = p_parentMap;
             parentTileMap = tilemap;
@@ -126,7 +125,7 @@ namespace Inner_Maps {
             connectorsOnTile = 0;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
-        public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap p_parentMap, HexTile p_area) {
+        public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap p_parentMap, Area p_area) {
             persistentID = data.persistentID;
             parentMap = p_parentMap;
             parentTileMap = tilemap;
@@ -579,7 +578,7 @@ namespace Inner_Maps {
             if (character.race.IsSapient()) {
                 if (character.currentSettlement != null) {
                     character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
-                    parentArea.settlementOnTile.SettlementResources?.AddCharacterToSettlement(character);
+                    parentArea.settlementOnArea.SettlementResources?.AddCharacterToSettlement(character);
                 }
             }
                 
@@ -1471,24 +1470,24 @@ namespace Inner_Maps {
             return count;
         }
         public bool IsPartOfSettlement(out BaseSettlement settlement) {
-            if (parentArea.settlementOnTile != null) {
-                settlement = parentArea.settlementOnTile;
+            if (parentArea.settlementOnArea != null) {
+                settlement = parentArea.settlementOnArea;
                 return true;
             }
             settlement = null;
             return false;
         }
         public bool IsPartOfSettlement(BaseSettlement settlement) {
-            return parentArea.settlementOnTile == settlement;
+            return parentArea.settlementOnArea == settlement;
         }
         public bool IsPartOfSettlement() {
-            return parentArea.settlementOnTile != null;
+            return parentArea.settlementOnArea != null;
         }
         public bool IsPartOfHumanElvenSettlement() {
-            return parentArea.settlementOnTile != null && parentArea.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE;
+            return parentArea.settlementOnArea != null && parentArea.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE;
         }
         public bool IsPartOfActiveHumanElvenSettlement() {
-            return IsPartOfHumanElvenSettlement() && parentArea.settlementOnTile.residents.Count > 0;
+            return IsPartOfHumanElvenSettlement() && parentArea.settlementOnArea.residents.Count > 0;
         }
         public bool IsNextToSettlement(out BaseSettlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {
@@ -1829,12 +1828,6 @@ namespace Inner_Maps {
         }
         public void RemoveMeteor() {
             meteorCount--;
-        }
-        #endregion
-
-        #region Area
-        public void SetArea(Area p_area) {
-            area = p_area;
         }
         #endregion
 

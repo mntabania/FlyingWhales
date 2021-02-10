@@ -77,9 +77,9 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 		RegionDivision regionDivision = new RegionDivision(p_biome);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {
-				HexTile tile = GridMap.Instance.map[x, y];
-				tile.SetBiome(p_biome);
-				regionDivision.AddTile(tile);
+				Area area = GridMap.Instance.map[x, y];
+				area.biomeComponent.SetBiome(p_biome);
+				regionDivision.AddTile(area);
 			}
 		}
 		p_region.regionDivisionComponent.AddRegionDivision(regionDivision);
@@ -123,8 +123,8 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 	}
 	private IEnumerator ElevationBiomeRefinement() {
 		int batchCount = 0;
-		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
-			HexTile tile = GridMap.Instance.normalHexTiles[i];
+		for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
+			HexTile tile = GridMap.Instance.allAreas[i];
 			if (tile.biomeType == BIOMES.FOREST && tile.elevationType == ELEVATION.PLAIN && GameUtilities.RollChance(75)) {
 				tile.SetElevation(ELEVATION.TREES);
 			} else if (tile.biomeType == BIOMES.DESERT) {

@@ -10,7 +10,7 @@ public class AreaDatabase {
         allAreas = new List<Area>();
     }
 
-    public void RegisterHexTile(Area p_area) {
+    public void RegisterArea(Area p_area) {
         areaByGUID.Add(p_area.areaData.persistentID, p_area);
         allAreas.Add(p_area);
     }

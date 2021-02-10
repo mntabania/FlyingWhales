@@ -51,8 +51,8 @@ public class Rock : TileObject{
 
     public override void UpdateSettlementResourcesParent() {
         if (gridTileLocation != null) {
-            if (gridTileLocation.parentArea.settlementOnTile != null) {
-                gridTileLocation.parentArea.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+            if (gridTileLocation.parentArea.settlementOnArea != null) {
+                gridTileLocation.parentArea.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
             }
             gridTileLocation.parentArea.AllNeighbours.ForEach((eachNeighboringHexTile) => {
                 if (eachNeighboringHexTile.settlementOnTile != null) {

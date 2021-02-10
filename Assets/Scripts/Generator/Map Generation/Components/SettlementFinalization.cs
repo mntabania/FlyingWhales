@@ -16,10 +16,10 @@ namespace Generator.Map_Generation.Components {
                 if (npcSettlement.locationType == LOCATION_TYPE.VILLAGE && !npcSettlement.HasFoodProducingStructure()) {
                     StructureSetting foodProducingStructure = GenerateFoodProducingStructure(npcSettlement, faction);
                     ProcessBeforePlacingFoodProducingStructure(foodProducingStructure, npcSettlement);
-                    yield return MapGenerator.Instance.StartCoroutine(SettlementGeneration.PlaceStructure(npcSettlement.region, foodProducingStructure, npcSettlement));
+                    yield return MapGenerator.Instance.StartCoroutine(VillageGeneration.PlaceStructure(npcSettlement.region, foodProducingStructure, npcSettlement));
                     if (!npcSettlement.HasStructure(foodProducingStructure.structureType)) {
                         //if structure was not placed, then just place a farm
-                        yield return MapGenerator.Instance.StartCoroutine(SettlementGeneration.PlaceStructure(npcSettlement.region, new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), npcSettlement));    
+                        yield return MapGenerator.Instance.StartCoroutine(VillageGeneration.PlaceStructure(npcSettlement.region, new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), npcSettlement));    
                     }
                 }
             }

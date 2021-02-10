@@ -15,50 +15,21 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate, data));
 	}
 	private IEnumerator DivideToRegions(WorldMapTemplate mapTemplate, MapGenerationData data) {
-		// int lastX = 0;
-		// int lastY = 0;
-		// Region[] allRegions = new Region[data.regionCount];
-		// int regionIndex = 0;
-		// foreach (var mapTemplateRegion in mapTemplate.regions) {
-		// 	for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
-		// 		RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
-		// 		Region region = CreateNewRegionFromTemplate(regionTemplate, lastX, lastY);
-		//
-		// 		lastX += regionTemplate.width;
-		// 		if (lastX == GridMap.Instance.width) {
-		// 			lastX = 0;
-		// 			lastY += regionTemplate.height;
-		// 		}
-		// 		allRegions[regionIndex] = region;
-		// 		regionIndex++;
-		//
-		// 	}
-		// }
-		
-		
 		int centerX = mapTemplate.worldMapWidth / 2;
 		int centerY = mapTemplate.worldMapHeight / 2;
-		HexTile center = GridMap.Instance.map[centerX, centerY];
+		Area center = GridMap.Instance.map[centerX, centerY];
 		string regionName = string.Empty;
 		if (WorldSettings.Instance.worldSettingsData.IsScenarioMap() && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
 			regionName = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(WorldSettings.Instance.worldSettingsData.worldType.ToString());
 		}
 		Region region = new Region(center, regionName);
 		Region[] allRegions = { region };
-		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
-			HexTile hexTile = GridMap.Instance.normalHexTiles[i];
+		for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
+			Area hexTile = GridMap.Instance.allAreas[i];
 			region.AddTile(hexTile);
 		}
 		
 		GridMap.Instance.SetRegions(allRegions);
-		// string summary = "Region Generation Summary: ";
-		// for (int i = 0; i < allRegions.Length; i++) {
-		// 	Region region = allRegions[i];
-  //           region.PopulateNeighbours();
-		// 	summary += $"\n{region.name} - {region.tiles.Count.ToString()}";
-		// }
-		// Debug.Log(summary);
-		
 		yield return null;
 	}
 	private RegionDivision CreateNewRegionDivisionFromTemplate(RegionTemplate template, int startingX, int startingY) {

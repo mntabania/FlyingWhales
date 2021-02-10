@@ -7,7 +7,7 @@ using UnityEngine;
 using UtilityScripts;
 using Object = UnityEngine.Object;
 
-public class WorldMapGridGeneration : MapGenerationComponent {
+public class AreaGeneration : MapGenerationComponent {
 
 	/// <summary>
 	/// Dictionary of world templates, grouped by the number of regions.
@@ -226,33 +226,16 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		float newX = MapGenerationData.XOffset * (data.width / 2f);
 		float newY = MapGenerationData.YOffset * (data.height / 2f);
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
-		HexTile[,] map = new HexTile[data.width, data.height];
-		List<HexTile> normalHexTiles = new List<HexTile>();
+		Area[,] map = new Area[data.width, data.height];
+		List<Area> areas = new List<Area>();
 		int id = 0;
 
 		int batchCount = 0;
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
-				float xPosition = x * MapGenerationData.XOffset;
-
-				float yPosition = y * MapGenerationData.YOffset;
-				if (y % 2 == 1) {
-					xPosition += MapGenerationData.XOffset / 2;
-				}
-
-				GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.transform, true) as GameObject;
-				hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-				hex.transform.localScale = new Vector3(MapGenerationData.TileSize, MapGenerationData.TileSize, 0f);
-				hex.name = $"{x},{y}";
-				HexTile currHex = hex.GetComponent<HexTile>();
-				currHex.Initialize();
-				currHex.data.persistentID = System.Guid.NewGuid().ToString();
-				currHex.data.id = id;
-				currHex.data.tileName = RandomNameGenerator.GetTileName();
-				currHex.data.xCoordinate = x;
-				currHex.data.yCoordinate = y;
-				normalHexTiles.Add(currHex);
-				map[x, y] = currHex;
+				Area area = new Area(id, x, y);
+				areas.Add(area);
+				map[x, y] = area;
 				id++;
 
 				batchCount++;
@@ -263,15 +246,11 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			}
 		}
 		
-		GridMap.Instance.SetMap(map, normalHexTiles);
+		GridMap.Instance.SetMap(map, areas);
 		//Find Neighbours for each hextile
-		Parallel.ForEach(normalHexTiles, (hexTile) => {
-			hexTile.FindNeighbours(map);
+		Parallel.ForEach(areas, (hexTile) => {
+			hexTile.neighbourComponent.FindNeighbours(hexTile, map);
 		});
-		// for (int i = 0; i < normalHexTiles.Count; i++) {
-		// 	HexTile hexTile = normalHexTiles[i];
-		// 	hexTile.FindNeighbours(map);
-		// }
 		yield return null;
 	}
 	#endregion
@@ -288,8 +267,8 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		float newX = MapGenerationData.XOffset * (data.width / 2f);
 		float newY = MapGenerationData.YOffset * (data.height / 2f);
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
-		HexTile[,] map = new HexTile[data.width, data.height];
-		List<HexTile> normalHexTiles = new List<HexTile>();
+		Area[,] map = new Area[data.width, data.height];
+		List<Area> normalHexTiles = new List<Area>();
 
 		SaveDataHextile[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
 		

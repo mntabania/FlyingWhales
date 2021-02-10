@@ -298,8 +298,8 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         if (GridMap.Instance.map == null) {
             return;
         }
-        HexTile topRightTile = GridMap.Instance.map[GridMap.Instance.width - 1, GridMap.Instance.height - 1];
-        Vector3 topRightTilePosition = topRightTile.transform.position;
+        Area topRightTile = GridMap.Instance.map[GridMap.Instance.width - 1, GridMap.Instance.height - 1];
+        // Vector3 topRightTilePosition = topRightTile.transform.position;
         
         Bounds newBounds = new Bounds {
             extents = new Vector3(Mathf.Abs(topRightTilePosition.x),

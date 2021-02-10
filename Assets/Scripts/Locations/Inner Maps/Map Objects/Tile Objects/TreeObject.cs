@@ -50,8 +50,8 @@ public class TreeObject : TileObject {
     }
 
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.parentArea.settlementOnTile != null) {
-            gridTileLocation.parentArea.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+        if (gridTileLocation.parentArea.settlementOnArea != null) {
+            gridTileLocation.parentArea.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
         }
         gridTileLocation.parentArea.AllNeighbours.ForEach((eachNeighboringHexTile) => {
             if (eachNeighboringHexTile.settlementOnTile != null) {

@@ -41,24 +41,24 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
-				List<HexTile> choices;
+				List<Area> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					if (i == 0) {
-						choices = new List<HexTile>() { GridMap.Instance.map[1, 4] };	
+						choices = new List<Area>() { GridMap.Instance.map[1, 4] };	
 					} else {
-						choices = new List<HexTile>() { GridMap.Instance.map[3, 7] };
+						choices = new List<Area>() { GridMap.Instance.map[3, 7] };
 					}
 				} else {
-					choices = GridMap.Instance.normalHexTiles
+					choices = GridMap.Instance.allAreas
 						.Where(x => x.elevationType == ELEVATION.PLAIN && //a random flat tile
 						            x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && //with no Features yet
-						            !IsAdjacentToPortal(x) && !IsInRangeOfSettlement(x, 3) && !IsAdjacentToSpecialStructure(x) //and not adjacent to player Portal, Settlement or other non-cave landmarks
+						            !IsInRangeOfSettlement(x, 3) && !IsAdjacentToSpecialStructure(x) //and not adjacent to player Portal, Settlement or other non-cave landmarks
 						)
 						.ToList();
 				}
 					
 				if (choices.Count > 0) {
-					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
+					Area chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LANDMARK_TYPE landmarkType = LANDMARK_TYPE.MONSTER_LAIR;
 					if (chosenTile.region.regionFeatureComponent.HasFeature<RuinsFeature>()) {
 						landmarkType = LANDMARK_TYPE.ANCIENT_RUIN;
@@ -84,7 +84,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
-				List<HexTile> choices = GridMap.Instance.normalHexTiles
+				List<HexTile> choices = GridMap.Instance.allAreas
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && 
 					            x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null &&  
 					            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
@@ -116,7 +116,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					choices = new List<HexTile>() { GridMap.Instance.map[6, 1] };	
 				} else {
-					choices = GridMap.Instance.normalHexTiles
+					choices = GridMap.Instance.allAreas
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && 
 						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 						).ToList();
@@ -150,7 +150,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
-				List<HexTile> choices = GridMap.Instance.normalHexTiles
+				List<HexTile> choices = GridMap.Instance.allAreas
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null &&  
 					            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 					).ToList();
@@ -189,7 +189,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 						};
 					}
 				} else {
-					choices = GridMap.Instance.normalHexTiles
+					choices = GridMap.Instance.allAreas
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
 						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 						).ToList();
@@ -217,7 +217,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 						GridMap.Instance.map[2, 3]
 					};
 				} else {
-					choices = GridMap.Instance.normalHexTiles
+					choices = GridMap.Instance.allAreas
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
 						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 						).ToList();
@@ -244,7 +244,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 						GridMap.Instance.map[3, 0]
 					};
 				} else {
-					choices = GridMap.Instance.normalHexTiles
+					choices = GridMap.Instance.allAreas
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
 						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 						).ToList();
@@ -480,19 +480,19 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		return false;
 	}
-	private bool IsInRangeOfSettlement(HexTile tile, int range) {
-		List<HexTile> tilesInRange = tile.GetTilesInRange(range);
+	private bool IsInRangeOfSettlement(Area tile, int range) {
+		List<Area> tilesInRange = tile.GetTilesInRange(range);
 		for (int i = 0; i < tilesInRange.Count; i++) {
-			HexTile tileInRange = tilesInRange[i];
+			Area tileInRange = tilesInRange[i];
 			if (tileInRange.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	private bool IsAdjacentToSpecialStructure(HexTile tile) {
-		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
-			HexTile neighbour = tile.AllNeighbours[i];
+	private bool IsAdjacentToSpecialStructure(Area p_area) {
+		for (int i = 0; i < p_area.AllNeighbours.Count; i++) {
+			Area neighbour = p_area.AllNeighbours[i];
 			if (neighbour.landmarkOnTile != null && 
 			    neighbour.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
 				return true;

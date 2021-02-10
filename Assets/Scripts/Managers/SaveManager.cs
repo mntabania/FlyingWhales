@@ -98,7 +98,7 @@ public class SaveManager : MonoBehaviour {
         ScenarioWorldMapSave worldMapSave = new ScenarioWorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles
+            GridMap.Instance.allAreas
         );
         scenarioSave.worldMapSave = worldMapSave;
 

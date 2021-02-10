@@ -100,6 +100,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     /// NOTE: This is not saved because this is filled out by <see cref="LocationGridTile.SetHasBlueprint"/>
     /// </summary>
     private int _blueprintsOnTile;
+    public int freezingTraps { get; private set; }
 
     //Components
     public AreaSpellsComponent spellsComponent { get; private set; }
@@ -287,10 +288,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
                 int dz = -dx - dy;
                 HexCoordinate hex = GridMap.Instance.CubeToOddR(new CubeCoordinate(cube.x + dx, cube.y + dy, cube.z + dz));
                 //Debug.Log("Hex neighbour: " + hex.col.ToString() + "," + hex.row.ToString());
-                if (hex.col >= 0 && hex.row >= 0
-                    && hex.col < GridMap.Instance.width && hex.row < GridMap.Instance.height
-                    && !(hex.col == xCoordinate && hex.row == yCoordinate)) {
-                    HexTile hextile = GridMap.Instance.map[hex.col, hex.row];
+                if (hex.x >= 0 && hex.y >= 0
+                    && hex.x < GridMap.Instance.width && hex.y < GridMap.Instance.height
+                    && !(hex.x == xCoordinate && hex.y == yCoordinate)) {
+                    HexTile hextile = GridMap.Instance.map[hex.x, hex.y];
                     if(!sameRegionOnly || hextile.region == region) {
                         tilesInRange.Add(hextile);
                     }

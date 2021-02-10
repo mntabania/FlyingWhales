@@ -48,8 +48,8 @@ public class FishingSpot : TileObject {
         _fishingSpotGameObject = null;
     }
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.parentArea.settlementOnTile != null) {
-            gridTileLocation.parentArea.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+        if (gridTileLocation.parentArea.settlementOnArea != null) {
+            gridTileLocation.parentArea.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
         }
         gridTileLocation.parentArea.AllNeighbours.ForEach((eachNeighboringHexTile) => {
             if (eachNeighboringHexTile.settlementOnTile != null) {

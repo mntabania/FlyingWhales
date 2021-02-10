@@ -21,11 +21,11 @@ namespace PathFinding {
 					Vector3 pos = (Vector3)node.position;
 					LocationGridTile tile = map.GetTileFromWorldPos(pos); 
 					if (tile != null) {
-						if (tile.parentArea.settlementOnTile != null && 
-						    tile.parentArea.settlementOnTile.locationType != LOCATION_TYPE.DUNGEON && 
-						    tile.parentArea.settlementOnTile.owner != null) {
+						if (tile.parentArea.settlementOnArea != null && 
+						    tile.parentArea.settlementOnArea.locationType != LOCATION_TYPE.DUNGEON && 
+						    tile.parentArea.settlementOnArea.owner != null) {
 							isPartOfSettlement = true;
-							settlementTagToUse = tile.parentArea.settlementOnTile.owner.pathfindingTag;
+							settlementTagToUse = tile.parentArea.settlementOnArea.owner.pathfindingTag;
 						}
 						break;
 					}

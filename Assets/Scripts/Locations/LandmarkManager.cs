@@ -203,7 +203,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     }
     public List<BaseLandmark> GetAllLandmarks() {
         List<BaseLandmark> landmarks = new List<BaseLandmark>();
-        List<HexTile> choices = GridMap.Instance.normalHexTiles;
+        List<HexTile> choices = GridMap.Instance.allAreas;
         for (int i = 0; i < choices.Count; i++) {
             HexTile currTile = choices[i];
             if (currTile.landmarkOnTile != null) {
@@ -247,7 +247,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     #endregion
 
     #region Settlements
-    public NPCSettlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, params HexTile[] tiles) {
+    public NPCSettlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, params Area[] tiles) {
         NPCSettlement newNpcSettlement = new NPCSettlement(region, locationType);
         if (tiles != null) {
             newNpcSettlement.AddTileToSettlement(tiles);    

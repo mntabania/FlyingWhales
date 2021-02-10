@@ -371,7 +371,7 @@ public class Biomes : MonoBehaviour {
     private void LoadBeachVisuals(HexTile tile) {
         tile.LoadBeaches();
     }
-	public IEnumerator GenerateElevation(List<HexTile> tiles, int mapWidth, int mapHeight) {
+	public void GenerateElevation(List<Area> tiles, int mapWidth, int mapHeight) {
         float elevationFrequency = WorldConfigManager.Instance.isTutorialWorld ? 15f : 8.93f;
         float moistureFrequency = 12.34f;
         float tempFrequency = 2.64f;
@@ -380,37 +380,27 @@ public class Biomes : MonoBehaviour {
         float moistureRand = UnityEngine.Random.Range(500f,2000f);
         float temperatureRand = UnityEngine.Random.Range(500f,2000f);
 
-        string[] splittedNameEq = EquatorGenerator.Instance.listEquator[0].name.Split(new char[]{','});
-        int equatorY = int.Parse (splittedNameEq [1]);
-
-        int batchCount = 0;
+        int equatorY = mapHeight / 2;
         
         for(int i = 0; i < tiles.Count; i++){
-            HexTile currTile = tiles[i];
+            Area currTile = tiles[i];
+            int x = currTile.areaData.xCoordinate;
+            int y = currTile.areaData.yCoordinate;
 
-            string[] splittedName = currTile.name.Split(new char[]{','});
-            int[] xy = {int.Parse(splittedName[0]), int.Parse(splittedName[1])};
-
-            float nx = ((float)xy[0]/mapWidth);
-            float ny = ((float)xy[1]/mapHeight);
+            float nx = ((float)x/mapWidth);
+            float ny = ((float)y/mapHeight);
 
             float elevationNoise = Mathf.PerlinNoise((nx + elevationRand) * elevationFrequency, (ny + elevationRand) * elevationFrequency);
             ELEVATION elevationType = GetElevationType(elevationNoise);
 
-            currTile.data.elevationNoise = elevationNoise;
+            currTile.areaData.elevationNoise = elevationNoise;
             currTile.SetElevation (elevationType);
-            currTile.data.moistureNoise = Mathf.PerlinNoise((nx + moistureRand) * moistureFrequency, (ny + moistureRand) * moistureFrequency);
+            currTile.areaData.moistureNoise = Mathf.PerlinNoise((nx + moistureRand) * moistureFrequency, (ny + moistureRand) * moistureFrequency);
 
-            int distanceToEquator = Mathf.Abs (xy [1] - equatorY);
+            int distanceToEquator = Mathf.Abs (y - equatorY);
             float tempGradient = 1.23f / mapHeight;
-            currTile.data.temperature = distanceToEquator * tempGradient;
-            currTile.data.temperature += (Mathf.PerlinNoise((nx + temperatureRand) * tempFrequency, (ny + temperatureRand) * tempFrequency)) * 0.6f;
-
-            batchCount++;
-            if (batchCount == MapGenerationData.WorldMapTileGenerationBatches) {
-                batchCount = 0;
-                yield return null;    
-            }
+            currTile.areaData.temperature = distanceToEquator * tempGradient;
+            currTile.areaData.temperature += (Mathf.PerlinNoise((nx + temperatureRand) * tempFrequency, (ny + temperatureRand) * tempFrequency)) * 0.6f;
         }
     }
     private ELEVATION GetElevationType(float elevationNoise){

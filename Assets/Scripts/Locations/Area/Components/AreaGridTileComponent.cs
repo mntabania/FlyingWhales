@@ -68,6 +68,21 @@ public class AreaGridTileComponent : AreaComponent {
         ObjectPoolManager.Instance.ReturnGridTileListToPool(tiles);
         return chosenTile;
     }
+    public LocationGridTile GetRandomTileThatCharacterCanReach(Character p_character) {
+        List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+        tiles.AddRange(gridTiles);
+        tiles.Shuffle();
+        LocationGridTile chosenTile = null;
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile tile = tiles[i];
+            if (p_character.movementComponent.HasPathToEvenIfDiffRegion(tile)) {
+                chosenTile = tile;
+                break;
+            }
+        }
+        ObjectPoolManager.Instance.ReturnGridTileListToPool(tiles);
+        return chosenTile;
+    }
     public void PopulateUnoccupiedTiles(List<LocationGridTile> tiles) {
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];

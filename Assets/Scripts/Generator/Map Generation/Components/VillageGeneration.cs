@@ -11,7 +11,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public class SettlementGeneration : MapGenerationComponent {
+public class VillageGeneration : MapGenerationComponent {
 
 	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
@@ -44,7 +44,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			faction.factionType.SetAsDefault();
 			LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
 			for (int i = 0; i < setting.Value.Count; i++) {
-				HexTile settlementTile = setting.Value[i];
+				Area settlementTile = setting.Value[i];
 				VillageSetting villageSetting = factionTemplate.villageSettings[i];
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
 				npcSettlement.SetName(villageSetting.villageName);
@@ -167,7 +167,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		if (scenarioMapData.villageSettlementTemplates != null) {
 			for (int i = 0; i < scenarioMapData.villageSettlementTemplates.Length; i++) {
 				SettlementTemplate settlementTemplate = scenarioMapData.villageSettlementTemplates[i];
-				HexTile[] tilesInSettlement = settlementTemplate.GetTilesInTemplate(GridMap.Instance.map);
+				Area[] tilesInSettlement = settlementTemplate.GetTilesInTemplate(GridMap.Instance.map);
 
 				Region region = tilesInSettlement[0].region;
 

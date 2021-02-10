@@ -25,11 +25,10 @@ public class MapGenerator : BaseMonoBehaviour {
         SaveManager.Instance.SetUseSaveData(false);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
-            new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
-            new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
-            new TileFeatureGeneration(), new RegionFeatureGeneration(), new WorldMapLandmarkGeneration(), 
-            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SettlementGeneration(), new FactionFinalization(),
-            new CharacterFinalization(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
+            new AreaGeneration(), new ElevationGeneration(), new SupportingFactionGeneration(), 
+            new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new TileFeatureGeneration(), 
+            new RegionFeatureGeneration(), new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new VillageGeneration(), new FactionFinalization(),
+            new CharacterFinalization(), new ElevationStructureGeneration(), new SpecialStructureGeneration(), 
             new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), new MapGenerationFinalization(),
         };
         yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
@@ -119,11 +118,11 @@ public class MapGenerator : BaseMonoBehaviour {
         SaveManager.Instance.SetUseSaveData(false);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
-            new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
+            new AreaGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
             new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
             //new PlayerSettlementGeneration(), 
             new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new FactionFinalization(), new CharacterFinalization(), new LandmarkStructureGeneration(), 
+            new RegionInnerMapGeneration(), new VillageGeneration(), new FactionFinalization(), new CharacterFinalization(), new LandmarkStructureGeneration(), 
             new ElevationStructureGeneration(), new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), 
             new MapGenerationFinalization(), 
             //new PlayerDataGeneration(),
@@ -223,7 +222,7 @@ public class MapGenerator : BaseMonoBehaviour {
         WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
-            new WorldMapGridGeneration(), new WorldMapRegionGeneration(),
+            new AreaGeneration(), new WorldMapRegionGeneration(),
             new WorldMapOuterGridGeneration(),
             new WorldMapLandmarkGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
             new RegionInnerMapGeneration(), new SingletonDataGeneration(), new PlayerDataGeneration(),

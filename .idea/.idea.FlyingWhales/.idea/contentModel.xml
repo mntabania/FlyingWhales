@@ -1348,7 +1348,15 @@
               <e p="WorldEvent.cs" t="Include" />
             </e>
           </e>
-          <e p="Extensions.cs" t="Include" />
+          <e p="Extensions" t="Include">
+            <e p="AreaExtensions.cs" t="Include" />
+            <e p="Extensions.cs" t="Include" />
+            <e p="JobsListExtension.cs" t="Include" />
+            <e p="ListExtension.cs" t="Include" />
+            <e p="LocationGridTileListExtension.cs" t="Include" />
+            <e p="SettlementListExtension.cs" t="Include" />
+            <e p="UIExtensions.cs" t="Include" />
+          </e>
           <e p="Factions" t="Include">
             <e p="Faction Components" t="Include">
               <e p="FactionComponent.cs" t="Include" />
@@ -1401,10 +1409,11 @@
             <e p="SocialGathering.cs" t="Include" />
           </e>
           <e p="Generator" t="Include">
-            <e p="EquatorGenerator.cs" t="Include" />
             <e p="Map Generation" t="Include">
               <e p="Components" t="Include">
+                <e p="AreaGeneration.cs" t="Include" />
                 <e p="CharacterFinalization.cs" t="Include" />
+                <e p="ElevationGeneration.cs" t="Include" />
                 <e p="ElevationStructureGeneration.cs" t="Include" />
                 <e p="FactionFinalization.cs" t="Include" />
                 <e p="FamilyTreeGeneration.cs" t="Include" />
@@ -1418,22 +1427,16 @@
                 <e p="MapGenerationFinalization.cs" t="Include" />
                 <e p="MonsterGeneration.cs" t="Include" />
                 <e p="PlayerDataGeneration.cs" t="Include" />
-                <e p="PlayerSettlementGeneration.cs" t="Include" />
                 <e p="RegionFeatureGeneration.cs" t="Include" />
                 <e p="RegionInnerMapGeneration.cs" t="Include" />
-                <e p="RegionInnerMapGeneration_BACKUP_152.cs" t="Include" />
-                <e p="RegionInnerMapGeneration_BASE_152.cs" t="Include" />
-                <e p="RegionInnerMapGeneration_LOCAL_152.cs" t="Include" />
-                <e p="RegionInnerMapGeneration_REMOTE_152.cs" t="Include" />
                 <e p="SettlementFinalization.cs" t="Include" />
-                <e p="SettlementGeneration.cs" t="Include" />
                 <e p="SettlementLoading.cs" t="Include" />
                 <e p="SingletonDataGeneration.cs" t="Include" />
+                <e p="SpecialStructureGeneration.cs" t="Include" />
                 <e p="SupportingFactionGeneration.cs" t="Include" />
                 <e p="TileFeatureGeneration.cs" t="Include" />
+                <e p="VillageGeneration.cs" t="Include" />
                 <e p="WorldMapBiomeGeneration.cs" t="Include" />
-                <e p="WorldMapElevationGeneration.cs" t="Include" />
-                <e p="WorldMapGridGeneration.cs" t="Include" />
                 <e p="WorldMapLandmarkGeneration.cs" t="Include" />
                 <e p="WorldMapOuterGridGeneration.cs" t="Include" />
                 <e p="WorldMapRegionGeneration.cs" t="Include" />
@@ -1858,15 +1861,12 @@
             </e>
             <e p="SettlementJobTriggerComponent.cs" t="Include" />
           </e>
-          <e p="JobsListExtension.cs" t="Include" />
-          <e p="ListExtension.cs" t="Include" />
           <e p="Localization" t="Include">
             <e p="LocalizationData.cs" t="Include" />
             <e p="LocalizationManager.cs" t="Include" />
             <e p="LogFiller.cs" t="Include" />
             <e p="LogFillers.cs" t="Include" />
           </e>
-          <e p="LocationGridTileListExtension.cs" t="Include" />
           <e p="Locations" t="Include">
             <e p="Area" t="Include">
               <e p="Area.cs" t="Include" />
@@ -2936,7 +2936,6 @@
           <e p="Settings" t="Include">
             <e p="Settings.cs" t="Include" />
           </e>
-          <e p="SettlementListExtension.cs" t="Include" />
           <e p="Steamworks.NET" t="Include">
             <e p="SteamManager.cs" t="Include" />
           </e>
@@ -3409,7 +3408,6 @@
             <e p="WorldPickerItem.cs" t="Include" />
             <e p="WorldSettings.cs" t="Include" />
           </e>
-          <e p="UIExtensions.cs" t="Include" />
           <e p="UtilityScripts" t="Include">
             <e p="ActionOptionHoverHandler.cs" t="Include" />
             <e p="BaseMonoBehaviour.cs" t="Include" />

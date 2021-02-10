@@ -253,15 +253,6 @@ namespace UtilityScripts {
             }
             return -1;
         }
-        public static List<HexTile> GetTilesFromIDs(List<int> ids) {
-            List<HexTile> tiles = new List<HexTile>();
-            for (int i = 0; i < ids.Count; i++) {
-                int currID = ids[i];
-                HexTile tile = GridMap.Instance.GetHexTile(currID);
-                tiles.Add(tile);
-            }
-            return tiles;
-        }
         public static GameObject FindParentWithTag(GameObject childObject, string tag) {
             Transform t = childObject.transform;
             while (t.parent != null) {

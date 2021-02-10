@@ -11,17 +11,17 @@ public class TileFeatureComponent {
 		features = new List<TileFeature>();
 	}
 	
-	public void AddFeature(TileFeature feature, HexTile tile) {
+	public void AddFeature(TileFeature feature, Area tile) {
 		if (!features.Contains(feature)) {
 			features.Add(feature);
 			// Debug.Log($"{GameManager.Instance.TodayLogString()}{feature.name} was added to {tile}");
 			feature.OnAddFeature(tile);
 		}
 	}
-	public void AddFeature(string featureName, HexTile tile) {
+	public void AddFeature(string featureName, Area tile) {
 		AddFeature(LandmarkManager.Instance.CreateTileFeature<TileFeature>(featureName), tile);
 	}
-	public bool RemoveFeature(TileFeature feature, HexTile tile) {
+	public bool RemoveFeature(TileFeature feature, Area tile) {
 		if (features.Remove(feature)) {
 			// Debug.Log($"{GameManager.Instance.TodayLogString()}{feature.name} was removed from {tile}");
 			feature.OnRemoveFeature(tile);
@@ -29,21 +29,21 @@ public class TileFeatureComponent {
 		}
 		return false;
 	}
-	public bool RemoveFeature(string featureName, HexTile tile) {
+	public bool RemoveFeature(string featureName, Area tile) {
 		TileFeature feature = GetFeature(featureName);
 		if (feature != null) {
 			return RemoveFeature(feature, tile);
 		}
 		return false;
 	}
-	public void RemoveAllFeatures(HexTile tile) {
+	public void RemoveAllFeatures(Area tile) {
 		for (int i = 0; i < features.Count; i++) {
 			if (RemoveFeature(features[i], tile)) {
 				i--;
 			}
 		}
 	}
-	public void RemoveAllFeaturesExcept(HexTile tile, params string[] except) {
+	public void RemoveAllFeaturesExcept(Area tile, params string[] except) {
 		for (int i = 0; i < features.Count; i++) {
 			TileFeature feature = features[i];
 			if (except.Contains(feature.name)) {

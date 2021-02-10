@@ -4166,10 +4166,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadOutMenu: {fileID: 1976008031}
-  regenerateWorldBtn: {fileID: 2042311043}
-  configureLoadoutBtn: {fileID: 1181329057}
   configureLoadoutBtnGO: {fileID: 1581220668}
   regenerateWorldBtnGO: {fileID: 1635846111}
+  placePortalBtnGO: {fileID: 0}
   pickPortalMessage: {fileID: 285831897}
   isPickingPortal: 0
 --- !u!1 &86861862
@@ -11381,7 +11380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4685787299916492, guid: 8833980ca3c7b1647b78dfdaecf949ff, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8833980ca3c7b1647b78dfdaecf949ff, type: 3}
@@ -15001,7 +15000,6 @@ Transform:
   m_Children:
   - {fileID: 1291439621}
   - {fileID: 1771222031}
-  - {fileID: 969004573}
   - {fileID: 258336045}
   - {fileID: 1476373592}
   - {fileID: 939821326}
@@ -38029,7 +38027,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fd8bf412ff0a564296f3c5247aef424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allCombatAbilities: 
   spellIcons:
     m_keys:
     - Track
@@ -49963,7 +49960,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 332590748}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &939833791
 GameObject:
@@ -51502,52 +51499,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 968679338}
   m_CullTransparentMesh: 0
---- !u!1 &969004572
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 969004573}
-  - component: {fileID: 969004574}
-  m_Layer: 0
-  m_Name: Equator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &969004573
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 969004572}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 332590748}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &969004574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 969004572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5503e8974090fe746aa1fc9c5ac25e18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  equatorLine: 0
-  hexEquatorName: 
-  listEquator: []
 --- !u!1 &971856374
 GameObject:
   m_ObjectHideFlags: 0
@@ -78375,7 +78326,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 332590748}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1476373593
 MonoBehaviour:
@@ -113906,7 +113857,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 332590748}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2038235864
 GameObject:

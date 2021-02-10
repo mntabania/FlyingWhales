@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using Locations;
 using Locations.Settlements;
 using Locations.Tile_Features;
@@ -37,7 +34,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
 
     #region getters
     public string name => locationName;
-    public string locationName => $"Area {areaData.xCoordinate}, {areaData.yCoordinate}";
+    public string locationName => $"Area {areaData.xCoordinate.ToString()}, {areaData.yCoordinate.ToString()}";
     public string persistentID => areaData.persistentID;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Area;
     public Type serializedData => typeof(SaveDataHextile);
@@ -49,6 +46,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public ELEVATION elevationType => areaData.elevationType;
     public bool hasBeenDestroyed => false;
     public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Area;
+    public LocationStructure primaryStructureInArea => GetMostImportantStructureOnTile();
     #endregion
 
     public Area (int id, int x, int y) {
@@ -141,22 +139,6 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
                         mostImportant = structure;
                     }
                 }
-
-                // if (structure is Cave cave) {
-                //     if (cave.occupiedHexTile != null && cave.caveHexTiles.Contains(innerMapHexTile)) {
-                //         int value = pair.Key.StructurePriority(); 
-                //         if (value > mostImportant.structureType.StructurePriority()) {
-                //             mostImportant = structure;
-                //         }    
-                //     }
-                // } else {
-                //     if (structure.occupiedHexTile != null && structure.occupiedHexTile == innerMapHexTile) {
-                //         int value = pair.Key.StructurePriority(); 
-                //         if (value > mostImportant.structureType.StructurePriority()) {
-                //             mostImportant = structure;
-                //         }    
-                //     }
-                // }
             }
         }
 

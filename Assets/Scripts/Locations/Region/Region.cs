@@ -20,14 +20,13 @@ public class Region : ISavable, ILogFiller {
     public string description => GetDescription();
     public Dictionary<GridNeighbourDirection, Region> neighboursWithDirection { get; private set; }
     public List<Region> neighbours { get; private set; }
-    public List<HexTile> tiles { get; private set; }
-    public List<HexTile> shuffledNonMountainWaterTiles { get; private set; }
-    public HexTile coreTile { get; private set; }
+    public List<Area> tiles { get; private set; }
+    public Area coreTile { get; private set; }
     public Color regionColor { get; }
     public List<Faction> factionsHere { get; private set; }
     public List<Character> residents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
-    public HexTile[,] hexTileMap { get; private set; }
+    public Area[,] hexTileMap { get; private set; }
     public Area[,] areaMap { get; private set; }
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
@@ -49,7 +48,6 @@ public class Region : ISavable, ILogFiller {
     private int _canShowNotificationVotes;
 
     #region getter/setter
-    public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
     public InnerTileMap innerMap => _regionInnerTileMap;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Region;
     public Type serializedData => typeof(SaveDataRegion);
@@ -66,12 +64,12 @@ public class Region : ISavable, ILogFiller {
         neighboursWithDirection = new Dictionary<GridNeighbourDirection, Region>();
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
     }
-    public Region(HexTile coreTile, string p_name = "") : this() {
+    public Region(Area coreTile, string p_name = "") : this() {
         persistentID = System.Guid.NewGuid().ToString();
         id = UtilityScripts.Utilities.SetID(this);
         name = string.IsNullOrEmpty(p_name) ? RandomNameGenerator.GetRegionName() : p_name;
         this.coreTile = coreTile;
-        tiles = new List<HexTile>();
+        tiles = new List<Area>();
         shuffledNonMountainWaterTiles = new List<HexTile>();
         AddTile(coreTile);
         regionColor = GenerateRandomRegionColor();
@@ -82,7 +80,7 @@ public class Region : ISavable, ILogFiller {
         persistentID = data.persistentID;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         name = data.name;
-        coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];
+        coreTile = GridMap.Instance.allAreas[data.coreTileID];
         tiles = new List<HexTile>();
         shuffledNonMountainWaterTiles = new List<HexTile>();
         regionColor = data.regionColor;
@@ -138,7 +136,7 @@ public class Region : ISavable, ILogFiller {
     #endregion
 
     #region Tiles
-    public void AddTile(HexTile tile) {
+    public void AddTile(Area tile) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             if(tile.elevationType != ELEVATION.MOUNTAIN && tile.elevationType != ELEVATION.WATER) {
@@ -1006,25 +1004,6 @@ public class Region : ISavable, ILogFiller {
         }
         ObjectPoolManager.Instance.ReturnHexTilesListToPool(hexes);
         return chosenHex;
-    }
-    #endregion
-
-    #region Location Grid Tiles
-    public LocationGridTile GetRandomOutsideSettlementLocationGridTileWithPathTo(Character character) {
-        LocationGridTile chosenTile = null;
-        //while(chosenTile == null) {
-            for (int i = 0; i < shuffledNonMountainWaterTiles.Count; i++) {
-                if (shuffledNonMountainWaterTiles[i].settlementOnTile == null) {
-                    HexTile hex = shuffledNonMountainWaterTiles[i];
-                    LocationGridTile potentialTile = hex.locationGridTiles[UnityEngine.Random.Range(0, hex.locationGridTiles.Length)];
-                    if(character.movementComponent.HasPathToEvenIfDiffRegion(potentialTile)) {
-                        chosenTile = potentialTile;
-                        break;
-                    }
-                }
-            }
-        //}
-        return chosenTile;
     }
     #endregion
 
