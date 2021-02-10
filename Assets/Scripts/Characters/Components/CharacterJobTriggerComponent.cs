@@ -64,8 +64,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
 		Messenger.AddListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
-		Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-		Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
+		Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
+		Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
@@ -81,8 +81,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
 		Messenger.RemoveListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
-		Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-		Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
+		Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
+		Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
@@ -183,12 +183,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
   //          }
   //      }
 	}
-	private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
+	private void OnCharacterEnteredArea(Character character, Area p_area) {
 		if (character == owner) {
 			TryCreateRemoveStatusJob();
 		}
 	}
-	private void OnCharacterExitedHexTile(Character character, HexTile tile) {
+	private void OnCharacterExitedArea(Character character, Area p_area) {
 		if (character == owner) {
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, owner as IPointOfInterest);
         }
@@ -815,7 +815,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
             } else {
                 if (owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-	                HexTile chosenHex = owner.hexTileLocation;
+	                HexTile chosenHex = owner.areaLocation;
                     chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
                 } else {
                     chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
@@ -871,7 +871,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    if (chosenTile == null) {
 			    if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
 				    Profiler.BeginSample($"Wilderness");
-				    HexTile chosenHex = owner.hexTileLocation;
+				    HexTile chosenHex = owner.areaLocation;
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
 				    Profiler.EndSample();
 			    } else {
@@ -913,7 +913,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     HexTile chosenTerritory = owner.territory;
                     chosenTile = chosenTerritory.GetRandomPassableTile();
                 } else {
-                    HexTile chosenTerritory = owner.hexTileLocation;
+                    HexTile chosenTerritory = owner.areaLocation;
                     chosenTile = chosenTerritory.GetRandomPassableTile();
                 }
             }
@@ -940,7 +940,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 } else if (owner.isAtHomeStructure) {
                     chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                 } else {
-				    HexTile chosenTerritory = owner.hexTileLocation;
+				    HexTile chosenTerritory = owner.areaLocation;
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    }
 		    }
@@ -989,7 +989,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.COUNTERATTACK)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
-			    HexTile chosenTerritory = owner.hexTileLocation;
+			    HexTile chosenTerritory = owner.areaLocation;
 				chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 		    }
 		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
@@ -1483,8 +1483,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     continue;
                 }
                 bool itemHasBeenAdded = false;
-                for (int j = 0; j < owner.homeSettlement.tiles.Count; j++) {
-                    HexTile hexInSettlement = owner.homeSettlement.tiles[j];
+                for (int j = 0; j < owner.homeSettlement.areas.Count; j++) {
+                    HexTile hexInSettlement = owner.homeSettlement.areas[j];
                     for (int k = 0; k < hexInSettlement.itemsInHex.Count; k++) {
                         TileObject itemInHex = hexInSettlement.itemsInHex[k];
                         if (itemInHex.name == itemName) {
@@ -2325,7 +2325,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return true;
     }
     private bool IsDecreaseMoodJobInTerritoryStillApplicable(Character target) {
-        HexTile hex = target.hexTileLocation;
+        HexTile hex = target.areaLocation;
         return hex != null && owner.IsTerritory(hex);
     }
     #endregion

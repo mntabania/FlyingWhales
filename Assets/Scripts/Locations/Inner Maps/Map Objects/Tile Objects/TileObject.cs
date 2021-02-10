@@ -359,7 +359,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
             //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
-            && actor.trapStructure.SatisfiesForcedHex(this)
+            && actor.trapStructure.SatisfiesForcedArea(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
             LocationGridTile tileLocation = gridTileLocation;
             if (isBeingCarriedBy != null) {

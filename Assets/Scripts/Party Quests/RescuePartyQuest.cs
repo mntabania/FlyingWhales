@@ -31,7 +31,7 @@ public class RescuePartyQuest : PartyQuest {
         if(targetCharacter.currentStructure != null && targetCharacter.currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS) {
             return targetCharacter.currentStructure;
         } else if(targetCharacter.gridTileLocation != null) {
-            return targetCharacter.hexTileLocation;
+            return targetCharacter.areaLocation;
         }
         return base.GetTargetDestination();
     }

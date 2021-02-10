@@ -17,9 +17,9 @@ namespace Scenario_Maps {
                 NPCSettlement settlement = villageSettlements[i];
                 
                 //save hex tiles
-                Point[] tileCoordinates = new Point[settlement.tiles.Count];
+                Point[] tileCoordinates = new Point[settlement.areas.Count];
                 for (int j = 0; j < tileCoordinates.Length; j++) {
-                    HexTile hexTile = settlement.tiles[j];
+                    HexTile hexTile = settlement.areas[j];
                     tileCoordinates[j] = new Point(hexTile.xCoordinate, hexTile.yCoordinate);
                 }
                 

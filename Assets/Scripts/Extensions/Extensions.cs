@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System;
 using Inner_Maps;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Traits;
 using UnityEngine;
 
@@ -211,9 +211,9 @@ public static class Extensions {
     public static bool IsValidCenterTileForStructure(this STRUCTURE_TYPE structureType, LocationGridTile p_tile) {
         switch (structureType) {
             case STRUCTURE_TYPE.LUMBERYARD:
-                return p_tile.parentArea.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature);
+                return p_tile.parentArea.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature);
             case STRUCTURE_TYPE.HUNTER_LODGE:
-                return p_tile.parentArea.featureComponent.HasFeature(TileFeatureDB.Game_Feature);
+                return p_tile.parentArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature);
             default:
                 return true;
         }

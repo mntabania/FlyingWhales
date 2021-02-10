@@ -10,14 +10,14 @@
             void OnHourStarted(NPCSettlement p_settlement);
         }
         public interface ITileListener {
-            void OnSettlementTileRemoved(HexTile p_hexTile, NPCSettlement p_settlement);
+            void OnSettlementAreaRemoved(Area p_area, NPCSettlement p_settlement);
         }
         #endregion
 
         private System.Action<Character, NPCSettlement> _settlementRulerChanged;
         private System.Action<Faction, Faction, NPCSettlement> _factionOwnerChanged;
         private System.Action<NPCSettlement> _hourStarted;
-        private System.Action<HexTile, NPCSettlement> _settlementTileRemoved;
+        private System.Action<Area, NPCSettlement> _settlementAreaRemoved;
 
         #region Settlement Ruler
         public void SubscribeToSettlementRulerChangedEvent(IListener p_listener) {
@@ -57,13 +57,13 @@
 
         #region Settlement Tiles
         public void SubscribeToTileRemovedEvent(ITileListener p_listener) {
-            _settlementTileRemoved += p_listener.OnSettlementTileRemoved;
+            _settlementAreaRemoved += p_listener.OnSettlementAreaRemoved;
         }
         public void UnsubscribeToTileRemovedEvent(ITileListener p_listener) {
-            _settlementTileRemoved -= p_listener.OnSettlementTileRemoved;
+            _settlementAreaRemoved -= p_listener.OnSettlementAreaRemoved;
         }
-        public void ExecuteTileRemovedEvent(HexTile p_tile, NPCSettlement p_settlement) {
-            _settlementTileRemoved?.Invoke(p_tile, p_settlement);
+        public void ExecuteTileRemovedEvent(Area p_area, NPCSettlement p_settlement) {
+            _settlementAreaRemoved?.Invoke(p_area, p_settlement);
         }
         #endregion
     }

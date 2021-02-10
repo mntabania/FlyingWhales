@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Scenario_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -18,7 +18,7 @@ public class VillageGeneration : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating settlements...");
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
-			Assert.IsTrue(region.HasTileWithFeature(TileFeatureDB.Inhabited_Feature));
+			Assert.IsTrue(region.HasTileWithFeature(AreaFeatureDB.Inhabited_Feature));
 			yield return MapGenerator.Instance.StartCoroutine(CreateSettlements(region, data));
 			
 		}
@@ -55,7 +55,7 @@ public class VillageGeneration : MapGenerationComponent {
 				var structureSettings = GenerateCityCenterAndDwellings(faction, villageSetting, npcSettlement);
 				
 				Assert.IsTrue(structureSettings.First().structureType == STRUCTURE_TYPE.CITY_CENTER);
-				Assert.IsTrue(npcSettlement.tiles.Count > 0);
+				Assert.IsTrue(npcSettlement.areas.Count > 0);
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
 				structureSettings = GenerateFacilities(npcSettlement, faction, villageSetting.GetRandomFacilityCount());
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
@@ -381,7 +381,7 @@ public class VillageGeneration : MapGenerationComponent {
 		List<StructureSetting> structures = new List<StructureSetting>(); //{ new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
 		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
 		for (int i = 0; i < facilityCount; i++) {
-			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction, settlement.tiles.First(), settlement);
+			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction, settlement.areas.First(), settlement);
 			StructureSetting chosenSetting = structuresChoices.PickRandomElementGivenWeights();
 			structures.Add(chosenSetting);
 			createdStructureTypes.Add(chosenSetting.structureType);
@@ -407,7 +407,7 @@ public class VillageGeneration : MapGenerationComponent {
 			// if (tilesInRange.HasTileWithFeature(TileFeatureDB.Fertile_Feature)) {
 			// 	structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 10); //15	
 			// }
-			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Wood_Source_Feature)) {
+			if (tilesInRange.HasTileWithFeature(AreaFeatureDB.Wood_Source_Feature)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 15);	
 			}
 		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire || settlement.settlementType.settlementType == SETTLEMENT_TYPE.Human_Village) {
@@ -435,7 +435,7 @@ public class VillageGeneration : MapGenerationComponent {
 				//Wooden Graveyard: +2 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE), 2);
 			}
-			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Metal_Source_Feature)) {
+			if (tilesInRange.HasTileWithFeature(AreaFeatureDB.Metal_Source_Feature)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 15);	
 			}
 			// if (tilesInRange.HasTileWithFeature(TileFeatureDB.Game_Feature)) {
@@ -718,7 +718,7 @@ public class VillageGeneration : MapGenerationComponent {
 		return chosenFaction;
 	}
 	private List<HexTileIsland> GetSettlementIslandsInRegion(Region region) {
-		List<HexTile> inhabitedTiles = region.GetTilesWithFeature(TileFeatureDB.Inhabited_Feature);
+		List<HexTile> inhabitedTiles = region.GetTilesWithFeature(AreaFeatureDB.Inhabited_Feature);
 		
 		List<HexTileIsland> islands = new List<HexTileIsland>();
 		for (int i = 0; i < inhabitedTiles.Count; i++) {

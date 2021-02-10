@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 
 public class RainData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RAIN;
@@ -16,7 +16,7 @@ public class RainData : SkillData {
     }
 
     public override void ActivateAbility(HexTile targetHex) {
-        targetHex.featureComponent.AddFeature(TileFeatureDB.Rain_Feature, targetHex);
+        targetHex.featureComponent.AddFeature(AreaFeatureDB.Rain_Feature, targetHex);
         base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
@@ -24,7 +24,7 @@ public class RainData : SkillData {
         if (canPerform) {
             return targetHex != null
                    // && targetHex.biomeType != BIOMES.DESERT
-                   && targetHex.featureComponent.HasFeature(TileFeatureDB.Rain_Feature) == false;
+                   && targetHex.featureComponent.HasFeature(AreaFeatureDB.Rain_Feature) == false;
         }
         return false;
     }

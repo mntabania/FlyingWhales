@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 using Locations.Region_Features;
 using Locations.Settlements;
 using Locations.Settlements.Settlement_Types;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -250,7 +250,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public NPCSettlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, params Area[] tiles) {
         NPCSettlement newNpcSettlement = new NPCSettlement(region, locationType);
         if (tiles != null) {
-            newNpcSettlement.AddTileToSettlement(tiles);    
+            newNpcSettlement.AddAreaToSettlement(tiles);    
         }
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
@@ -262,7 +262,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         NPCSettlement newNpcSettlement = new NPCSettlement(saveDataNpcSettlement);
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
-            newNpcSettlement.AddTileToSettlement(tile);
+            newNpcSettlement.AddAreaToSettlement(tile);
         }
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
@@ -270,7 +270,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     }
     public PlayerSettlement CreateNewPlayerSettlement(params HexTile[] tiles) {
         PlayerSettlement newPlayerSettlement = new PlayerSettlement();
-        newPlayerSettlement.AddTileToSettlement(tiles);
+        newPlayerSettlement.AddAreaToSettlement(tiles);
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
@@ -281,7 +281,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         List<HexTile> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataPlayerSettlement.tileCoordinates, GridMap.Instance.map);
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
-            newPlayerSettlement.AddTileToSettlement(tile);
+            newPlayerSettlement.AddAreaToSettlement(tile);
         }
 
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
@@ -455,7 +455,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public IEnumerator PlaceBuiltLandmark(BaseSettlement settlement, InnerTileMap innerTileMap, RESOURCE structureResource, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
         for (int i = 0; i < structureTypes.Length; i++) {
             STRUCTURE_TYPE structureType = structureTypes[i];
-            HexTile chosenTile = settlement.tiles[0];
+            HexTile chosenTile = settlement.areas[0];
             Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureType.ToString()} for settlement {settlement.name}");
             PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType, structureResource);
             yield return null;
@@ -476,7 +476,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
     public IEnumerator PlaceFirstStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, StructureSetting structureSetting) {
-        HexTile chosenTile = settlement.tiles[0];
+        HexTile chosenTile = settlement.areas[0];
         Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
         PlaceIndividualBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
         yield return null;
@@ -523,8 +523,8 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Tile Features
-    public T CreateTileFeature<T>([NotNull] string featureName) where T : TileFeature {
+    #region Area Features
+    public T CreateAreaFeature<T>([NotNull] string featureName) where T : AreaFeature {
         string typeName = $"Locations.Tile_Features.{featureName}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         Assert.IsNotNull(type, $"type for {featureName} is null!");

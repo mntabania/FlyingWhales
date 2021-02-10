@@ -151,7 +151,7 @@ public class Drop : GoapAction {
                 }    
             } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
                 //snatcher specific behaviour
-                HexTile hexTileLocation = targetCharacter.hexTileLocation;
+                HexTile hexTileLocation = targetCharacter.areaLocation;
                 if(hexTileLocation != null) {
                     LocationStructure structure = hexTileLocation.GetMostImportantStructureOnTile();
                     if (structure is DemonicStructure) {

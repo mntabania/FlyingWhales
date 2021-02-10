@@ -53,13 +53,14 @@ public class BuryCharacter : GoapAction {
             LocationStructure targetStructure = GetTargetStructure(goapNode);
             if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                 if(goapNode.actor.homeSettlement != null) {
-                    List<HexTile> surroundingAreas = goapNode.actor.homeSettlement.GetSurroundingAreas();
+                    List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+                    goapNode.actor.homeSettlement.PopulateSurroundingAreas(surroundingAreas);
                     surroundingAreas = CollectionUtilities.Shuffle(surroundingAreas);
                     List<LocationGridTile> validTiles = null;
                     for (int i = 0; i < surroundingAreas.Count; i++) {
-                        HexTile surroundingArea = surroundingAreas[i];
-                        for (int j = 0; j < surroundingArea.locationGridTiles.Length; j++) {
-                            LocationGridTile tileInSurroundingArea = surroundingArea.locationGridTiles[j];
+                        Area surroundingArea = surroundingAreas[i];
+                        for (int j = 0; j < surroundingArea.gridTileComponent.gridTiles.Count; j++) {
+                            LocationGridTile tileInSurroundingArea = surroundingArea.gridTileComponent.gridTiles[j];
                             if (!tileInSurroundingArea.isOccupied && tileInSurroundingArea.IsNextToSettlement(goapNode.actor.homeSettlement) && tileInSurroundingArea.structure is Wilderness) {
                                 if (validTiles == null) { validTiles = new List<LocationGridTile>(); }
                                 validTiles.Add(tileInSurroundingArea);
@@ -67,6 +68,7 @@ public class BuryCharacter : GoapAction {
                         }
                         if (validTiles != null) { break; }
                     }
+                    ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
                     if (validTiles == null) {
                         //fallback
                         validTiles = targetStructure.unoccupiedTiles.Where(tile => tile.IsNextToSettlement(goapNode.actor.homeSettlement)).ToList(); 

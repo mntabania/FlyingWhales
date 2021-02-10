@@ -186,8 +186,8 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
-        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OVER, OnHoverOverTile);
-        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OUT, OnHoverOutTile);
+        Messenger.AddListener<HexTile>(AreaSignals.AREA_HOVERED_OVER, OnHoverOverTile);
+        Messenger.AddListener<HexTile>(AreaSignals.AREA_HOVERED_OUT, OnHoverOutTile);
         
         Messenger.AddListener(UISignals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(UISignals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);

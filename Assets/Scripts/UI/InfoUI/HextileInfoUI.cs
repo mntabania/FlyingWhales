@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using TMPro;
 using UnityEngine.UI;
 
@@ -60,7 +60,7 @@ public class HextileInfoUI : InfoUIBase {
             featuresLbl.text = $"{featuresLbl.text}None";
         } else {
             for (int i = 0; i < activeHex.featureComponent.features.Count; i++) {
-                TileFeature feature = activeHex.featureComponent.features[i];
+                AreaFeature feature = activeHex.featureComponent.features[i];
                 if (i != 0) {
                     featuresLbl.text = $"{featuresLbl.text}, ";
                 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Scenario_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -44,9 +44,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int y = 0; y < GridMap.Instance.height; y++) {
 				Area tile = GridMap.Instance.map[x, y];
 				if (tile.elevationType == ELEVATION.TREES) {
-					tile.featureComponent.AddFeature(TileFeatureDB.Wood_Source_Feature, tile);
+					tile.featureComponent.AddFeature(AreaFeatureDB.Wood_Source_Feature, tile);
 				} else if (tile.elevationType == ELEVATION.MOUNTAIN) {
-					tile.featureComponent.AddFeature(TileFeatureDB.Metal_Source_Feature, tile);	
+					tile.featureComponent.AddFeature(AreaFeatureDB.Metal_Source_Feature, tile);	
 				} else if (tile.elevationType == ELEVATION.PLAIN && tile.featureComponent.features.Count == 0) {
 					flatTilesWithNoFeatures.Add(tile);	
 				}
@@ -66,7 +66,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		for (int i = 0; i < stoneSourceCount; i++) {
 			if (flatTilesWithNoFeatures.Count <= 0) { break; }
 			Area tile = CollectionUtilities.GetRandomElement(flatTilesWithNoFeatures);
-			tile.featureComponent.AddFeature(TileFeatureDB.Stone_Source_Feature, tile);
+			tile.featureComponent.AddFeature(AreaFeatureDB.Stone_Source_Feature, tile);
 			flatTilesWithNoFeatures.Remove(tile);
 			Debug.Log($"Added stone source feature to {tile}");
 		}		
@@ -77,7 +77,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		for (int i = 0; i < fertileCount; i++) {
 			if (flatTilesWithNoFeatures.Count <= 0) { break; }
 			Area tile = CollectionUtilities.GetRandomElement(flatTilesWithNoFeatures);
-			tile.featureComponent.AddFeature(TileFeatureDB.Fertile_Feature, tile);
+			tile.featureComponent.AddFeature(AreaFeatureDB.Fertile_Feature, tile);
 			flatTilesWithNoFeatures.Remove(tile);
 		}
 		
@@ -86,19 +86,19 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//pigs
 			Area pigTile = GridMap.Instance.map[2, 4];
-			GameFeature pigGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+			GameFeature pigGameFeature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
 			pigGameFeature.SetSpawnType(SUMMON_TYPE.Pig);
 			pigTile.featureComponent.AddFeature(pigGameFeature, pigTile);
 			
 			//sheep
 			Area sheepTile = GridMap.Instance.map[4, 3];
-			GameFeature sheepGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+			GameFeature sheepGameFeature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
 			sheepGameFeature.SetSpawnType(SUMMON_TYPE.Sheep);
 			sheepTile.featureComponent.AddFeature(sheepGameFeature, sheepTile);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			//Add 2 pigs 2 tiles away from village 
 			Area pigTile = GridMap.Instance.map[5, 5];
-			GameFeature pigGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+			GameFeature pigGameFeature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
 			pigGameFeature.SetSpawnType(SUMMON_TYPE.Pig);
 			pigTile.featureComponent.AddFeature(pigGameFeature, pigTile);
 			pigTile.SetElevation(ELEVATION.PLAIN);
@@ -108,7 +108,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int i = 0; i < gameCount; i++) {
 				if (gameChoices.Count <= 0) { break; }
 				Area tile = CollectionUtilities.GetRandomElement(gameChoices);
-				tile.featureComponent.AddFeature(TileFeatureDB.Game_Feature, tile);
+				tile.featureComponent.AddFeature(AreaFeatureDB.Game_Feature, tile);
 				gameChoices.Remove(tile);
 			}	
 		}
@@ -138,23 +138,23 @@ public class TileFeatureGeneration : MapGenerationComponent {
 						}
 
 						if (tile.biomeType == BIOMES.FOREST || tile.biomeType == BIOMES.SNOW) {
-							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature)) {
+							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature)) {
 								habitability += 3;
 							}	
-							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Metal_Source_Feature)) {
+							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
 								habitability += 4;
 							}
-							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
+							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Fertile_Feature)) {
 								habitability += 5;
 							}
 						} else if (tile.biomeType == BIOMES.GRASSLAND || tile.biomeType == BIOMES.DESERT) {
-							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Stone_Source_Feature)) {
+							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Stone_Source_Feature)) {
 								habitability += 3;
 							}
-							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Metal_Source_Feature)) {
+							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
 								habitability += 4;
 							}
-							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Game_Feature)) {
+							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Game_Feature)) {
 								habitability += 5;
 							}
 						}
@@ -242,9 +242,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				}
 				Assert.IsNotNull(chosenTile, $"Could not find village spot for {factionTemplate.name}'s Village #{j.ToString()}");
 				data.AddDeterminedVillage(factionTemplate, chosenTile);
-				chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+				chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 				//remove game feature from settlement tiles
-				chosenTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, chosenTile);
+				chosenTile.featureComponent.RemoveFeature(AreaFeatureDB.Game_Feature, chosenTile);
 				//remove chosen tile and neighbours from choices.
 				List<Area> neighbours = chosenTile.GetTilesInRange(tilesInRange, false);
 				neighbours.Add(chosenTile);
@@ -380,10 +380,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int y = 0; y < data.height; y++) {
 				SaveDataHextile savedHexTile = savedMap[x, y];
 				Area hexTile = GridMap.Instance.map[x, y];
-				if (savedHexTile.tileFeatureSaveData?.Count > 0) {
-					for (int i = 0; i < savedHexTile.tileFeatureSaveData.Count; i++) {
-						SaveDataTileFeature saveDataTileFeature = savedHexTile.tileFeatureSaveData[i];
-						TileFeature tileFeature = saveDataTileFeature.Load();
+				if (savedHexTile.areaFeatureSaveData?.Count > 0) {
+					for (int i = 0; i < savedHexTile.areaFeatureSaveData.Count; i++) {
+						SaveDataAreaFeature saveDataTileFeature = savedHexTile.areaFeatureSaveData[i];
+						AreaFeature tileFeature = saveDataTileFeature.Load();
 						hexTile.featureComponent.AddFeature(tileFeature, hexTile);
 					}
 				}
@@ -403,7 +403,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 		}
 		
 		List<Area> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
@@ -426,7 +426,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			data.AddDeterminedVillage(factionTemplate, chosenTile);
 		}
 	}
@@ -442,7 +442,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			data.AddDeterminedVillage(factionTemplate, chosenTile);
 		}
 	}
@@ -458,7 +458,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			data.AddDeterminedVillage(factionTemplate, chosenTile);
 		}
 	}
@@ -479,7 +479,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			if (i == 0 || i == 1) {
 				data.AddDeterminedVillage(factionTemplate1, chosenTile);
 			} else {
@@ -518,7 +518,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			if (i == 0) {
 				data.AddDeterminedVillage(factionTemplate1, chosenTile);
 			} else if (i == 1) {
@@ -546,7 +546,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			if (i == 0) {
 				data.AddDeterminedVillage(factionTemplate1, chosenTile);
 			} else {
@@ -570,7 +570,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			if (i == 0) {
 				data.AddDeterminedVillage(factionTemplate1, chosenTile);
 			} else {
@@ -587,10 +587,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int y = 0; y < data.height; y++) {
 				SaveDataHextile savedHexTile = savedMap[x, y];
 				Area hexTile = GridMap.Instance.map[x, y];
-				if (savedHexTile.tileFeatureSaveData?.Count > 0) {
-					for (int i = 0; i < savedHexTile.tileFeatureSaveData.Count; i++) {
-						SaveDataTileFeature saveDataTileFeature = savedHexTile.tileFeatureSaveData[i];
-						TileFeature tileFeature = saveDataTileFeature.Load();
+				if (savedHexTile.areaFeatureSaveData?.Count > 0) {
+					for (int i = 0; i < savedHexTile.areaFeatureSaveData.Count; i++) {
+						SaveDataAreaFeature saveDataTileFeature = savedHexTile.areaFeatureSaveData[i];
+						AreaFeature tileFeature = saveDataTileFeature.Load();
 						hexTile.featureComponent.AddFeature(tileFeature, hexTile);
 					}
 				}

@@ -41,7 +41,7 @@ public class Golem : Summon {
             return;
         }
         base.SubscribeToSignals();
-        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
+        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedHexTile);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     public override void UnsubscribeSignals() {
@@ -49,7 +49,7 @@ public class Golem : Summon {
             return;
         }
         base.UnsubscribeSignals();
-        Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
+        Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedHexTile);
         Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     //public override void OnPlaceSummon(LocationGridTile tile) {

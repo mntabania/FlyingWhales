@@ -99,15 +99,15 @@ namespace UtilityScripts {
             List<NPCSettlement> settlements = new List<NPCSettlement>();
             for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
                 NPCSettlement npcSettlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
-                if (npcSettlement.HasTileInRegion(region)) {
+                //if (npcSettlement.HasAreaInRegion(region)) {
                     settlements.Add(npcSettlement);
-                }
+                //}
             }
             return settlements;
         }
 
         #region Character
-         public static void ShowCharacterTestingInfo(Character activeCharacter) {
+        public static void ShowCharacterTestingInfo(Character activeCharacter) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}";
         summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";

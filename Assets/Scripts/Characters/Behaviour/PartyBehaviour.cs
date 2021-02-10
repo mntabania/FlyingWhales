@@ -99,7 +99,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                         }
                                     }
                                 } else if (party.targetCamp != null) {
-                                    if (character.gridTileLocation != null && character.hexTileLocation == party.targetCamp) {
+                                    if (character.gridTileLocation != null && character.areaLocation == party.targetCamp) {
                                         //Removed this because this is the reason why the characters in party are not eating on adjacent hex tiles
                                         //because they are forced to do actions inside the forced hex only
                                         //character.trapStructure.SetForcedHex(party.targetCamp);
@@ -177,7 +177,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         //}
 
         if (GameUtilities.RollChance(50)) {
-            Campfire campfire = GetPartyCampfireInHex(character.hexTileLocation, character, party);
+            Campfire campfire = GetPartyCampfireInHex(character.areaLocation, character, party);
             if(campfire != null) {
                 hasJob = character.jobComponent.TriggerWarmUp(campfire, out producedJob);
                 if (hasJob) {
@@ -209,7 +209,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         bool hasJob = false;
 
-        Campfire campfire = GetPartyCampfireInHex(character.hexTileLocation, character, party);
+        Campfire campfire = GetPartyCampfireInHex(character.areaLocation, character, party);
         if (campfire == null) {
             hasJob = character.jobComponent.TriggerBuildCampfireJob(JOB_TYPE.BUILD_CAMP, out producedJob);
         }
@@ -220,7 +220,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         bool hasJob = false;
 
-        if(HasMemberThatIsHungryOrStarvingAndThereIsNoFoodInCamp(character.hexTileLocation, party)) {
+        if(HasMemberThatIsHungryOrStarvingAndThereIsNoFoodInCamp(character.areaLocation, party)) {
             hasJob = character.jobComponent.CreateProduceFoodForCampJob(out producedJob);
         }
         return hasJob;

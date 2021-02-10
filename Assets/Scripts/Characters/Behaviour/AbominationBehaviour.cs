@@ -29,9 +29,9 @@ public class AbominationBehaviour : BaseMonsterBehaviour {
 
     private List<HexTile> GetTargetChoices(Character actor) {
         List<HexTile> choices = null;
-        if (actor.hexTileLocation != null) {
-            for (int i = 0; i < actor.hexTileLocation.AllNeighbours.Count; i++) {
-                HexTile neighbour = actor.hexTileLocation.AllNeighbours[i];
+        if (actor.areaLocation != null) {
+            for (int i = 0; i < actor.areaLocation.AllNeighbours.Count; i++) {
+                HexTile neighbour = actor.areaLocation.AllNeighbours[i];
                 if (neighbour.elevationType != ELEVATION.WATER && neighbour.region == actor.currentRegion && actor.movementComponent.HasPathTo(neighbour)) {
                     if (choices == null) {
                         choices = new List<HexTile>();

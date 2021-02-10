@@ -47,7 +47,7 @@ public class Drink : GoapAction {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && actor.gridTileLocation != null) {
                     LocationGridTile centerGridTileOfTarget = target.gridTileLocation.parentArea.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.hexTileLocation.GetCenterLocationGridTile();
+                    LocationGridTile centerGridTileOfActor = actor.areaLocation.GetCenterLocationGridTile();
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
                     int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 

@@ -393,8 +393,8 @@ namespace Traits {
             if (form.trapStructure.IsTrapped()) {
                 form.trapStructure.ResetAllTrapStructures();
             }
-            if (form.trapStructure.IsTrappedInHex()) {
-                form.trapStructure.ResetAllTrapHexes();
+            if (form.trapStructure.IsTrappedInArea()) {
+                form.trapStructure.ResetTrapArea();
             }
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, form as IPointOfInterest, "");

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Locations;
 using Locations.Settlements;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
@@ -13,6 +13,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public Region region { get; private set; }
     public BaseSettlement settlementOnArea { get; private set; }
     public RegionDivision regionDivision { get; protected set; }
+    public AreaItem areaItem { get; private set; }
 
     /// <summary>
     /// Number of blueprint LocationGridTiles on this.
@@ -22,7 +23,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public int freezingTraps { get; private set; }
 
     //Components
-    public TileFeatureComponent featureComponent { get; private set; }
+    public AreaFeatureComponent featureComponent { get; private set; }
     public LocationAwareness locationAwareness { get; private set; }
     public LocationCharacterTracker locationCharacterTracker { get; private set; }
     public AreaSpellsComponent spellsComponent { get; private set; }
@@ -58,7 +59,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         //Components
         locationCharacterTracker = new LocationCharacterTracker();
         locationAwareness = new LocationAwareness();
-        featureComponent = new TileFeatureComponent();
+        featureComponent = new AreaFeatureComponent();
         spellsComponent = new AreaSpellsComponent(); spellsComponent.SetOwner(this);
         biomeEffectTrigger = new AreaBiomeEffectTrigger(); biomeEffectTrigger.SetOwner(this);
         gridTileComponent = new AreaGridTileComponent(); gridTileComponent.SetOwner(this);
@@ -78,7 +79,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         biomeComponent = new AreaBiomeComponent(); biomeComponent.SetOwner(this);
         locationCharacterTracker = new LocationCharacterTracker();
         locationAwareness = new LocationAwareness();
-        featureComponent = new TileFeatureComponent();
+        featureComponent = new AreaFeatureComponent();
     }
 
     #region Elevation
@@ -88,6 +89,9 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     #endregion
 
     #region Area Utilities
+    public void SetAreaItem(AreaItem p_areaItem) {
+        areaItem = p_areaItem;
+    }
     public bool IsNextToOrPartOfVillage() {
         return IsPartOfVillage() || neighbourComponent.IsNextToVillage();
     }
@@ -133,7 +137,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
                     continue;
                 }
                 LocationStructure structure = pair.Value[i];
-                if (structure.HasTileOnHexTile(this)) {
+                if (structure.HasTileOnArea(this)) {
                     int value = pair.Key.StructurePriority();
                     if (value > mostImportant.structureType.StructurePriority()) {
                         mostImportant = structure;
@@ -162,17 +166,15 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public void SetSettlementOnArea(BaseSettlement settlement) {
         settlementOnArea = settlement;
         region.UpdateSettlementsInRegion();
-
-        //TODO:
-        //if (GameManager.Instance.gameHasStarted) {
-        //    UpdatePathfindingGraphOnTile();
-        //}
+        if (GameManager.Instance.gameHasStarted) {
+             areaItem.UpdatePathfindingGraph();
+        }
     }
     public void CheckIfSettlementIsStillOnArea() {
         if (settlementOnArea != null) {
             for (int i = 0; i < settlementOnArea.allStructures.Count; i++) {
                 LocationStructure structure = settlementOnArea.allStructures[i];
-                if (structure.HasTileOnHexTile(this)) {
+                if (structure.HasTileOnArea(this)) {
                     return; //there is still a structure on this hex tile.
                 }
             }
@@ -263,7 +265,7 @@ public class SaveDataArea : SaveData<Area> {
     public AreaData areaData;
 
     //Tile Features
-    public List<SaveDataTileFeature> tileFeatureSaveData;
+    public List<SaveDataAreaFeature> tileFeatureSaveData;
 
     //Components
     public SaveDataAreaSpellsComponent spellsComponent;
@@ -273,10 +275,10 @@ public class SaveDataArea : SaveData<Area> {
         areaData = p_data.areaData;
 
         //tile features
-        tileFeatureSaveData = new List<SaveDataTileFeature>();
+        tileFeatureSaveData = new List<SaveDataAreaFeature>();
         for (int i = 0; i < p_data.featureComponent.features.Count; i++) {
-            TileFeature feature = p_data.featureComponent.features[i];
-            SaveDataTileFeature saveDataTileFeature = SaveManager.ConvertTileFeatureToSaveData(feature);
+            AreaFeature feature = p_data.featureComponent.features[i];
+            SaveDataAreaFeature saveDataTileFeature = SaveManager.ConvertAreaFeatureToSaveData(feature);
             saveDataTileFeature.Save(feature);
             tileFeatureSaveData.Add(saveDataTileFeature);
         }

@@ -967,7 +967,7 @@ public class CombatComponent : CharacterComponent {
                     return CombatManager.Defending_Home;
                 }
             } else if (owner.IsInTerritory()) {
-                if (!targetCharacter.IsTerritory(owner.hexTileLocation) && targetCharacter.IsInTerritoryOf(owner)) {
+                if (!targetCharacter.IsTerritory(owner.areaLocation) && targetCharacter.IsInTerritoryOf(owner)) {
                     return CombatManager.Defending_Territory;
                 }
             }

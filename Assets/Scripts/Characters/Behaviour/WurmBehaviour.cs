@@ -58,8 +58,8 @@ public class WurmBehaviour : BaseMonsterBehaviour {
 	private LocationGridTile GetBurrowTargetTile(Character p_character) {
 		if (p_character.homeSettlement != null) {
 			List<LocationGridTile> settlementTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
-			for (int i = 0; i < p_character.homeSettlement.tiles.Count; i++) {
-				HexTile hexTile = p_character.homeSettlement.tiles[i];
+			for (int i = 0; i < p_character.homeSettlement.areas.Count; i++) {
+				HexTile hexTile = p_character.homeSettlement.areas[i];
 				for (int j = 0; j < hexTile.locationGridTiles.Length; j++) {
 					LocationGridTile tile = hexTile.locationGridTiles[j];
 					if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS || tile.structure.structureType == STRUCTURE_TYPE.CAVE) {

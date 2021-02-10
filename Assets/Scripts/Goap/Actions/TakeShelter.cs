@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Logs;
 using UnityEngine;
 using Traits;
@@ -65,8 +65,8 @@ public class TakeShelter : GoapAction {
     #region State Effects
     public void AfterTakeShelterSuccess(ActualGoapNode goapNode) {
         bool shouldSetShelter = goapNode.actor.gridTileLocation != null && 
-            (goapNode.actor.hexTileLocation.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) 
-            || goapNode.actor.hexTileLocation.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature));
+            (goapNode.actor.areaLocation.featureComponent.HasFeature(AreaFeatureDB.Blizzard_Feature) 
+            || goapNode.actor.areaLocation.featureComponent.HasFeature(AreaFeatureDB.Heat_Wave_Feature));
         if (shouldSetShelter) {
             if (goapNode.actor.traitContainer.HasTrait("Freezing")) {
                 Freezing freezing = goapNode.actor.traitContainer.GetTraitOrStatus<Freezing>("Freezing");

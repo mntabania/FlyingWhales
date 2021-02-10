@@ -146,8 +146,8 @@ namespace Traits {
                 //clear all trap structures when triggering flaw
                 character.trapStructure.ResetAllTrapStructures();
             }
-            if (character.trapStructure.IsTrappedInHex()) {
-                character.trapStructure.ResetAllTrapHexes();
+            if (character.trapStructure.IsTrappedInArea()) {
+                character.trapStructure.ResetTrapArea();
             }
             return "flaw_effect";
         }

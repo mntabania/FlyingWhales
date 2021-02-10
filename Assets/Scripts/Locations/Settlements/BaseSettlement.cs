@@ -8,7 +8,7 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 using Logs;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 
 namespace Locations.Settlements {
     public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, IPlayerActionTarget, ILocation {
@@ -20,7 +20,7 @@ namespace Locations.Settlements {
         public LOCATION_TYPE locationType { get; private set; }
         public string name { get; private set; }
         public Faction owner { get; private set; }
-        public List<HexTile> tiles { get; }
+        public List<Area> areas { get; }
         public List<Character> residents { get; protected set; }
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
         public List<IPointOfInterest> firesInSettlement { get; }
@@ -45,7 +45,7 @@ namespace Locations.Settlements {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             id = UtilityScripts.Utilities.SetID(this);
             SetName(RandomNameGenerator.GenerateSettlementName(RACE.HUMANS));
-            tiles = new List<HexTile>();
+            areas = new List<Area>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             firesInSettlement = new List<IPointOfInterest>();
@@ -59,7 +59,7 @@ namespace Locations.Settlements {
             persistentID = saveDataBaseSettlement._persistentID;
             SetName(saveDataBaseSettlement.name);
             id = UtilityScripts.Utilities.SetID(this, saveDataBaseSettlement.id);
-            tiles = new List<HexTile>();
+            areas = new List<Area>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             firesInSettlement = new List<IPointOfInterest>();
@@ -257,14 +257,14 @@ namespace Locations.Settlements {
             this.owner = p_newOwner;
         
             bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile tile = tiles[i];
-                tile.SetCorruption(isCorrupted);
-                if (tile.landmarkOnTile != null) {
-                    tile.UpdateLandmarkVisuals();
-                    tile.landmarkOnTile?.nameplate.UpdateVisuals();
-                }
-                tile.UpdatePathfindingGraph();
+            for (int i = 0; i < areas.Count; i++) {
+                Area area = areas[i];
+                //area.SetCorruption(isCorrupted);
+                //if (area.landmarkOnTile != null) {
+                //    area.UpdateLandmarkVisuals();
+                //    area.landmarkOnTile?.nameplate.UpdateVisuals();
+                //}
+                area.areaItem.UpdatePathfindingGraph();
             }
         }
         #endregion
@@ -448,8 +448,8 @@ namespace Locations.Settlements {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
                         if (connector.isOpen) {
                             if (connector.tileLocation != null &&
-                                (connector.tileLocation.parentArea.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                (connector.tileLocation.parentArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
                                 connectors.Add(connector);    
                             }
                         }
@@ -466,8 +466,8 @@ namespace Locations.Settlements {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
                         if (connector.isOpen) {
                             if (connector.tileLocation != null && 
-                                (connector.tileLocation.parentArea.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                (connector.tileLocation.parentArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
                                 return true;
                             }
                         }
@@ -535,36 +535,36 @@ namespace Locations.Settlements {
         #endregion
 
         #region Tiles
-        public void AddTileToSettlement(HexTile tile) {
-            if (tile.settlementOnTile != null) {
+        public void AddAreaToSettlement(Area p_area) {
+            if (p_area.settlementOnArea != null) {
                 return;
             }
-            if (tiles.Contains(tile) == false) {
-                tiles.Add(tile);
-                Debug.Log($"Added tile {tile.ToString()} to settlement {name}");
-                tile.SetSettlementOnTile(this);
-                if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-                    tile.SetCorruption(true);
-                }
-                if (tile.landmarkOnTile != null) {
-                    tile.UpdateLandmarkVisuals();    
-                }
+            if (areas.Contains(p_area) == false) {
+                areas.Add(p_area);
+                Debug.Log($"Added tile {p_area.ToString()} to settlement {name}");
+                p_area.SetSettlementOnArea(this);
+                //if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
+                //    p_area.SetCorruption(true);
+                //}
+                //if (p_area.landmarkOnTile != null) {
+                //    p_area.UpdateLandmarkVisuals();    
+                //}
             }
         }
-        public void AddTileToSettlement(params HexTile[] tiles) {
-            for (int i = 0; i < tiles.Length; i++) {
-                HexTile tile = tiles[i];
-                AddTileToSettlement(tile);
+        public void AddAreaToSettlement(params Area[] p_areas) {
+            for (int i = 0; i < p_areas.Length; i++) {
+                Area area = p_areas[i];
+                AddAreaToSettlement(area);
             }
         }
-        public virtual bool RemoveTileFromSettlement(HexTile tile) {
-            if (tiles.Remove(tile)) {
-                Debug.Log($"Removed tile {tile.ToString()} from settlement {name}");
-                tile.SetSettlementOnTile(null);
-                if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-                    tile.SetCorruption(false);
-                }
-                if (tiles.Count <= 0) {
+        public virtual bool RemoveAreaFromSettlement(Area p_area) {
+            if (areas.Remove(p_area)) {
+                Debug.Log($"Removed tile {p_area.ToString()} from settlement {name}");
+                p_area.SetSettlementOnArea(null);
+                //if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
+                //    p_area.SetCorruption(false);
+                //}
+                if (areas.Count <= 0) {
                     //when a settlement loses all its tiles consider it as wiped out
                     SettlementWipedOut();
                 }
@@ -572,17 +572,17 @@ namespace Locations.Settlements {
             }
             return false;
         }
-        public bool HasTileInRegion(Region region) {
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile tile = tiles[i];
-                if (tile.region == region) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public HexTile GetRandomHexTile() {
-            return tiles[UnityEngine.Random.Range(0, tiles.Count)];
+        //public bool HasAreaInRegion(Region region) {
+        //    for (int i = 0; i < areas.Count; i++) {
+        //        Area area = areas[i];
+        //        if (area.region == region) {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+        public Area GetRandomArea() {
+            return areas[UnityEngine.Random.Range(0, areas.Count)];
         }
         public LocationGridTile GetFirstPassableGridTileInSettlementThatMeetCriteria(System.Func<LocationGridTile, bool> validityChecker) {
             for (int i = 0; i < allStructures.Count; i++) {
@@ -619,54 +619,53 @@ namespace Locations.Settlements {
                 p_tiles.AddRange(structure.passableTiles);
             }
         }
-        private List<LocationGridTile> GetLocationGridTilesInSettlement(System.Func<LocationGridTile, bool> validityChecker) {
-            List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile tile = tiles[i];
-                for (int j = 0; j < tile.locationGridTiles.Length; j++) {
-                    LocationGridTile locationGridTile = tile.locationGridTiles[j];
+        private void PopulateGridTilesInSettlementThatMeetCriteria(List<LocationGridTile> gridTiles, System.Func<LocationGridTile, bool> validityChecker) {
+            for (int i = 0; i < areas.Count; i++) {
+                Area area = areas[i];
+                for (int j = 0; j < area.gridTileComponent.gridTiles.Count; j++) {
+                    LocationGridTile locationGridTile = area.gridTileComponent.gridTiles[j];
                     if (validityChecker.Invoke(locationGridTile)) {
-                        locationGridTiles.Add(locationGridTile);
+                        gridTiles.Add(locationGridTile);
                     }
                 }
             }
-            return locationGridTiles;
         }
-        public HexTile GetAPlainAdjacentHextile() {
-            List<HexTile> choices = null;
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile hex = tiles[i];
-                for (int j = 0; j < hex.AllNeighbours.Count; j++) {
-                    HexTile neighbour = hex.AllNeighbours[j];
-                    if (neighbour.region != hex.region) {
+        public Area GetAPlainAdjacentArea() {
+            List<Area> choices = ObjectPoolManager.Instance.CreateNewAreaList();
+            Area chosenArea = null;
+            for (int i = 0; i < areas.Count; i++) {
+                Area area = areas[i];
+                for (int j = 0; j < area.neighbourComponent.neighbours.Count; j++) {
+                    Area neighbour = area.neighbourComponent.neighbours[j];
+                    if (neighbour.region != area.region) {
                         continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
                     }
-                    if (neighbour.elevationType != ELEVATION.MOUNTAIN && neighbour.elevationType != ELEVATION.WATER && neighbour.settlementOnTile == null) {
-                        if (!tiles.Contains(neighbour)) {
-                            if(choices == null) { choices = new List<HexTile>(); }
+                    if (neighbour.elevationType != ELEVATION.MOUNTAIN && neighbour.elevationType != ELEVATION.WATER && neighbour.settlementOnArea == null) {
+                        if (!areas.Contains(neighbour)) {
                             choices.Add(neighbour);
                         }
                     }
                 }
             }
             if(choices != null && choices.Count > 0) {
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
+                chosenArea = choices[UnityEngine.Random.Range(0, choices.Count)];
             }
-            return null;
+            ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
+            return chosenArea;
         }
-        public HexTile GetAPlainAdjacentHextileThatMeetCriteria(System.Func<HexTile, bool> checker) {
-            List<HexTile> choices = null;
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile hex = tiles[i];
-                for (int j = 0; j < hex.AllNeighbours.Count; j++) {
-                    HexTile neighbour = hex.AllNeighbours[j];
-                    if (neighbour.region != hex.region) {
+        public Area GetAPlainAdjacentAreaThatMeetCriteria(System.Func<Area, bool> checker) {
+            List<Area> choices = ObjectPoolManager.Instance.CreateNewAreaList();
+            Area chosenArea = null;
+            for (int i = 0; i < areas.Count; i++) {
+                Area area = areas[i];
+                for (int j = 0; j < area.neighbourComponent.neighbours.Count; j++) {
+                    Area neighbour = area.neighbourComponent.neighbours[j];
+                    if (neighbour.region != area.region) {
                         continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
                     }
-                    if (neighbour.elevationType != ELEVATION.MOUNTAIN && neighbour.elevationType != ELEVATION.WATER && neighbour.settlementOnTile == null) {
-                        if (!tiles.Contains(neighbour)) {
+                    if (neighbour.elevationType != ELEVATION.MOUNTAIN && neighbour.elevationType != ELEVATION.WATER && neighbour.settlementOnArea == null) {
+                        if (!areas.Contains(neighbour)) {
                             if (checker.Invoke(neighbour)) {
-                                if (choices == null) { choices = new List<HexTile>(); }
                                 choices.Add(neighbour);
                             }
                         }
@@ -674,9 +673,10 @@ namespace Locations.Settlements {
                 }
             }
             if (choices != null && choices.Count > 0) {
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
+                chosenArea = choices[UnityEngine.Random.Range(0, choices.Count)];
             }
-            return null;
+            ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
+            return chosenArea;
         }
         #endregion
 
@@ -712,39 +712,79 @@ namespace Locations.Settlements {
         #region Utilities
         protected virtual void SettlementWipedOut() { }
         public bool HasPathTowardsTileInSettlement(Character character, int tileCount) {
-            List<LocationGridTile> locationGridTilesInSettlement = GetLocationGridTilesInSettlement(tile => tile.isOccupied == false);
+            bool hasPath = false;
+            List<LocationGridTile> locationGridTilesInSettlement = ObjectPoolManager.Instance.CreateNewGridTileList();
+            PopulateGridTilesInSettlementThatMeetCriteria(locationGridTilesInSettlement, tile => tile.IsPassable());
             if (locationGridTilesInSettlement.Count > 0) {
                 for (int i = 0; i < tileCount; i++) {
                     if (locationGridTilesInSettlement.Count == 0) {
                         //no more unoccupied tiles, but other tiles passed, return true
-                        return true;
+                        //hasPath = true;
+                        break;
                     }
-                    LocationGridTile randomTile = CollectionUtilities.GetRandomElement(locationGridTilesInSettlement);
-                    if (character.movementComponent.HasPathToEvenIfDiffRegion(randomTile) == false) {
+                    int index = GameUtilities.RandomBetweenTwoNumbers(0, locationGridTilesInSettlement.Count - 1);
+                    LocationGridTile randomTile = locationGridTilesInSettlement[index];
+                    if (character.movementComponent.HasPathToEvenIfDiffRegion(randomTile)) {
                         //no path towards random unoccupied tile in settlement, return false
-                        return false;
+                        hasPath = true;
+                        break;
+                    } else {
+                        hasPath = false;
                     }
-                    locationGridTilesInSettlement.Remove(randomTile);
+                    locationGridTilesInSettlement.RemoveAt(index);
                 }    
             }
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(locationGridTilesInSettlement);
             //default to true even if there are no unoccupied tiles in settlement 
-            return true;
+            return hasPath;
         }
-        public List<HexTile> GetSurroundingAreas() {
-            List<HexTile> areas = new List<HexTile>();
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile tile = tiles[i];
-                if (this is NPCSettlement npcSettlement && tile.region != npcSettlement.region) {
+        public List<Area> GetSurroundingAreas() {
+            List<Area> areas = new List<Area>();
+            for (int i = 0; i < this.areas.Count; i++) {
+                Area area = this.areas[i];
+                if (this is NPCSettlement npcSettlement && area.region != npcSettlement.region) {
                     continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
                 }
-                for (int j = 0; j < tile.AllNeighbours.Count; j++) {
-                    HexTile neighbour = tile.AllNeighbours[j];
-                    if (neighbour.settlementOnTile == null || neighbour.settlementOnTile != this) {
+                for (int j = 0; j < area.neighbourComponent.neighbours.Count; j++) {
+                    Area neighbour = area.neighbourComponent.neighbours[j];
+                    if (neighbour.settlementOnArea == null || neighbour.settlementOnArea != this) {
                         areas.Add(neighbour);
                     }
                 }
             }
             return areas;
+        }
+        public List<Area> GetSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(Region region, int numOfFreezingTraps) {
+            List<Area> areas = new List<Area>();
+            for (int i = 0; i < this.areas.Count; i++) {
+                Area area = this.areas[i];
+                if (this is NPCSettlement npcSettlement && area.region != npcSettlement.region) {
+                    continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
+                }
+                for (int j = 0; j < area.neighbourComponent.neighbours.Count; j++) {
+                    Area neighbour = area.neighbourComponent.neighbours[j];
+                    if (neighbour.settlementOnArea == null || neighbour.settlementOnArea != this) {
+                        if(neighbour.region == region && neighbour.freezingTraps < numOfFreezingTraps) {
+                            areas.Add(neighbour);
+                        }
+                    }
+                }
+            }
+            return areas;
+        }
+        public void PopulateSurroundingAreas(List<Area> areas) {
+            for (int i = 0; i < this.areas.Count; i++) {
+                Area area = this.areas[i];
+                if (this is NPCSettlement npcSettlement && area.region != npcSettlement.region) {
+                    continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
+                }
+                for (int j = 0; j < area.neighbourComponent.neighbours.Count; j++) {
+                    Area neighbour = area.neighbourComponent.neighbours[j];
+                    if (neighbour.settlementOnArea == null || neighbour.settlementOnArea != this) {
+                        areas.Add(neighbour);
+                    }
+                }
+            }
         }
         #endregion
 

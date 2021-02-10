@@ -130,15 +130,15 @@ namespace Traits {
             if (_owner.gridTileLocation?.structure is Ocean) {
                 return; //do not make ocean frozen if it is part of snow biome
             }
-            Messenger.AddListener<HexTile>(HexTileSignals.FREEZE_WET_OBJECTS_IN_TILE, TryFreezeWetObject);
+            Messenger.AddListener<Area>(AreaSignals.FREEZE_WET_OBJECTS_IN_AREA, TryFreezeWetObject);
         }
         private void StopListenForBiomeEffect() {
-            Messenger.RemoveListener<HexTile>(HexTileSignals.FREEZE_WET_OBJECTS_IN_TILE, TryFreezeWetObject);
+            Messenger.RemoveListener<Area>(AreaSignals.FREEZE_WET_OBJECTS_IN_AREA, TryFreezeWetObject);
         }
-        private void TryFreezeWetObject(HexTile hexTile) {
+        private void TryFreezeWetObject(Area p_area) {
             if (GameUtilities.RollChance(25)) {
                 if (_owner.gridTileLocation != null) {
-                    if (_owner.gridTileLocation.parentArea == hexTile) {
+                    if (_owner.gridTileLocation.area == p_area) {
                         _owner.traitContainer.AddTrait(_owner, "Frozen", bypassElementalChance: true);
                     }
                 }    

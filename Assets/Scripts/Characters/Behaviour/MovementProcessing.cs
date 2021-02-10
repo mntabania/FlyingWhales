@@ -9,7 +9,7 @@ public class MovementProcessing : CharacterBehaviourComponent {
     }
 
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if(character.gridTileLocation != null && character.hexTileLocation == null) {
+        if(character.gridTileLocation != null && character.areaLocation == null) {
             log += $"\n-{character.name} is in a grid tile location with no hex tile, must go to nearest hex tile";
 
             HexTile nearestHex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => character.movementComponent.HasPathTo(h));

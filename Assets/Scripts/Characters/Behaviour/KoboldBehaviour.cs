@@ -121,13 +121,13 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
     }
     private List<HexTile> GetValidHexTilesNextToHome(Character character) {
         if (character.homeSettlement != null) {
-            return character.homeSettlement.GetSurroundingAreas().Where(x => x.region == character.homeRegion && x.freezingTraps < 4).ToList();
+            return character.homeSettlement.GetSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(character.homeRegion, 4);
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles);
+                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveAreas);
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
             } else {
-                HexTile homeTile = character.homeStructure.occupiedHexTile;
+                HexTile homeTile = character.homeStructure.occupiedArea;
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();    
             }
         } else if (character.HasTerritory()) {
@@ -162,10 +162,10 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             return character.homeSettlement.GetSurroundingAreas();
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles);
+                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveAreas);
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();
             } else {
-                HexTile homeTile = character.homeStructure.occupiedHexTile;
+                HexTile homeTile = character.homeStructure.occupiedArea;
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();    
             }
         } else if (character.HasTerritory()) {

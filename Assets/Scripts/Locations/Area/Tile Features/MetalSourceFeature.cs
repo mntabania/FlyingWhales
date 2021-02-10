@@ -3,8 +3,8 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
-namespace Locations.Tile_Features {
-    public class MetalSourceFeature : TileFeature {
+namespace Locations.Area_Features {
+    public class MetalSourceFeature : AreaFeature {
         
         public MetalSourceFeature() {
             name = "Metal Source";

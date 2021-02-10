@@ -81,7 +81,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
     private bool InvadeBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.behaviourComponent.invadeVillageTarget != null) {
             log += $"\n-Already has village target";
-            if (character.hexTileLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(character.hexTileLocation)) {
+            if (character.areaLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(character.areaLocation)) {
                 log += $"\n-Already at village target, will find character to attack";
                 //character is already at target village
                 List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
@@ -124,7 +124,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
             settlement => settlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION && settlement.owner != null && settlement.owner != p_invader.faction && p_invader.faction.IsHostileWith(settlement.owner) && settlement.residents.Count(IsCharacterValidForInvade) > 0
         );
         if (validSettlementsInRegion != null) {
-            return CollectionUtilities.GetRandomElement(validSettlementsInRegion).tiles;
+            return CollectionUtilities.GetRandomElement(validSettlementsInRegion).areas;
         }
         return null;
     }

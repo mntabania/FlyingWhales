@@ -7,7 +7,7 @@ using Events.World_Events;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Managers;
 using Pathfinding;
 using Scenario_Maps;
@@ -127,7 +127,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
 			HexTile tile = GridMap.Instance.allAreas[i];
 			for (int j = 0; j < tile.featureComponent.features.Count; j++) {
-				TileFeature feature = tile.featureComponent.features[j];
+				AreaFeature feature = tile.featureComponent.features[j];
 				feature.LoadedGameStartActions(tile);
 			}
 			yield return null;

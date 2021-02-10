@@ -830,7 +830,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             Character member = membersThatJoinedQuest[i];
             member.jobQueue.CancelAllJobs(JOB_TYPE.PARTY_GO_TO, JOB_TYPE.GO_TO_WAITING);
             member.trapStructure.ResetAllTrapStructures();
-            member.trapStructure.ResetAllTrapHexes();
+            member.trapStructure.ResetTrapArea();
         }
     }
     private bool HasActiveMemberThatMustDoNeedsRecovery() {

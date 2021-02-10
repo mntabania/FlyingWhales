@@ -70,7 +70,7 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
             log += "\n-Roam there";
             HexTile targetHex = character.behaviourComponent.attackHexTarget;
             if (character.behaviourComponent.attackVillageTarget != null) {
-                targetHex = character.behaviourComponent.attackVillageTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.attackVillageTarget.tiles.Count)];
+                targetHex = character.behaviourComponent.attackVillageTarget.areas[UnityEngine.Random.Range(0, character.behaviourComponent.attackVillageTarget.areas.Count)];
             }
             LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Length)];
             character.jobComponent.CreateGoToJob(targetTile, out producedJob);

@@ -37,7 +37,7 @@ public class AreaBiomeEffectTrigger : AreaComponent {
                 Messenger.AddListener(Signals.HOUR_STARTED, TryFreezeWetObjects);
                 break;
             case BIOMES.DESERT:
-                Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, TryRemoveFreezing);
+                Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, TryRemoveFreezing);
                 break;
             case BIOMES.FOREST:
                 break;
@@ -52,7 +52,7 @@ public class AreaBiomeEffectTrigger : AreaComponent {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, TryFreezeWetObjects);
                 break;
             case BIOMES.DESERT:
-                Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, TryRemoveFreezing);
+                Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, TryRemoveFreezing);
                 break;
             case BIOMES.FOREST:
                 break;
@@ -62,13 +62,13 @@ public class AreaBiomeEffectTrigger : AreaComponent {
 
     #region Snow
     private void TryFreezeWetObjects() {
-        Messenger.Broadcast(HexTileSignals.FREEZE_WET_OBJECTS_IN_TILE, _hexTile);
+        Messenger.Broadcast(AreaSignals.FREEZE_WET_OBJECTS_IN_AREA, owner);
     }
     #endregion
     
     #region Desert
-    private void TryRemoveFreezing(Character character, HexTile hexTile) {
-        if (_hexTile == hexTile) {
+    private void TryRemoveFreezing(Character character, Area p_area) {
+        if (owner == p_area) {
             character.traitContainer.RemoveTrait(character, "Freezing");
             character.traitContainer.RemoveTrait(character, "Frozen");
         }

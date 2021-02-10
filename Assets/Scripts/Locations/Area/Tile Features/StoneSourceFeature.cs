@@ -3,12 +3,12 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
-namespace Locations.Tile_Features {
-    public class StoneSourceFeature : TileFeature {
+namespace Locations.Area_Features {
+    public class StoneSourceFeature : AreaFeature {
 
         private const int MaxRocks = 8;
     
-        private HexTile owner;
+        private Area owner;
         private int currentRockCount;
         private bool isGeneratingRockPerHour;
         
@@ -18,12 +18,12 @@ namespace Locations.Tile_Features {
         }
 
         #region Overrides
-        public override void GameStartActions(HexTile tile) {
-            owner = tile;
+        public override void GameStartActions(Area p_area) {
+            owner = p_area;
             Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
             Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         
-            int rocksCount = tile.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.ROCK);
+            int rocksCount = p_area.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.ROCK);
             currentRockCount = rocksCount;
             if (rocksCount < MaxRocks) {
                 int missingTrees = MaxRocks - rocksCount;
@@ -34,21 +34,21 @@ namespace Locations.Tile_Features {
                 }
             }
         }
-        public override void OnRemoveFeature(HexTile tile) {
-            base.OnRemoveFeature(tile);
+        public override void OnRemoveFeature(Area p_area) {
+            base.OnRemoveFeature(p_area);
             Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateRockPerHour);
         }
         #endregion
     
         private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
-            if (tile.parentArea == owner) {
+            if (tile.area == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ROCK) {
                     AdjustRockCount(1);    
                 }
             }
         }
         private void OnTileObjectRemoved(TileObject tileObject, Character character, LocationGridTile tile) {
-            if (tile.parentArea == owner) {
+            if (tile.area == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ROCK) {
                     AdjustRockCount(-1);    
                 }
@@ -77,7 +77,7 @@ namespace Locations.Tile_Features {
             }
         }
         private bool CreateNewRock() {
-            List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.objHere == null && x.structure.structureType.IsOpenSpace()).ToList();
+            List<LocationGridTile> choices = owner.gridTileComponent.gridTiles.Where(x => x.objHere == null && x.structure.structureType.IsOpenSpace()).ToList();
             if (choices.Count > 0) {
                 LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
                 chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ROCK), chosenTile);

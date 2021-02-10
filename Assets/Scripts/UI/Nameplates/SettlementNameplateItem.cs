@@ -26,8 +26,8 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
         
     }
     private void UpdateVisuals() {
-        if (_settlement.tiles.Count > 0) {
-            BaseLandmark firstLandmark = _settlement.tiles[0].landmarkOnTile;
+        if (_settlement.areas.Count > 0) {
+            BaseLandmark firstLandmark = _settlement.areas[0].landmarkOnTile;
             portrait.SetPortrait(firstLandmark?.specificLandmarkType ?? LANDMARK_TYPE.HOUSES);    
         }
         mainLbl.text = _settlement.name;

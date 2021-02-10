@@ -29,7 +29,7 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
                 }
             }
             if (character.behaviourComponent.arsonVillageTarget != null) {
-                if (character.hexTileLocation != null && character.behaviourComponent.arsonVillageTarget.Contains(character.hexTileLocation)) {
+                if (character.areaLocation != null && character.behaviourComponent.arsonVillageTarget.Contains(character.areaLocation)) {
                     //character is already at village target, do arson job on random object inside village target
                     List<TileObject> arsonChoices = GetArsonTargetChoices(character);
                     if (arsonChoices != null) {

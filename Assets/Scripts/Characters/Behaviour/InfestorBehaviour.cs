@@ -26,7 +26,7 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                     if(character.homeSettlement != null) {
                         currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
                     } else {
-                        HexTile hex = character.hexTileLocation;
+                        HexTile hex = character.areaLocation;
                         currentCapacity = hex.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
                     }
                     if(currentCapacity < 8) {
@@ -45,7 +45,7 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                 if (character.homeSettlement != null) {
                     currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
                 } else {
-                    HexTile hex = character.hexTileLocation;
+                    HexTile hex = character.areaLocation;
                     currentCapacity = hex.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
                 }
                 if (currentCapacity >= 5) {

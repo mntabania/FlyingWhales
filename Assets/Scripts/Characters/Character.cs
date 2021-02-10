@@ -78,7 +78,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<string> interestedItemNames { get; private set; }
     public string previousClassName { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
-    public HexTile territory { get; private set; }
+    public Area territory { get; private set; }
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
     public POI_STATE state { get; private set; }
@@ -178,7 +178,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
     public Minion minion => _minion;
-    public BaseSettlement currentSettlement => gridTileLocation != null ? hexTileLocation.settlementOnTile : null;
+    public BaseSettlement currentSettlement => gridTileLocation != null ? areaLocation.settlementOnArea : null;
     public ProjectileReceiver projectileReceiver {
         get {
             if (hasMarker && marker.visionTrigger != null) {
@@ -220,7 +220,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
         }
     }
-    public HexTile hexTileLocation => gridTileLocation?.parentArea;
+    public Area areaLocation => gridTileLocation?.area;
     public LocationStructure currentStructure {
         get {
             Character carrier = carryComponent.isBeingCarriedBy;
@@ -587,7 +587,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Character betrayer = revenant.GetRandomBetrayer();
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
             (ghost as Ghost).SetBetrayedBy(betrayer);
-            CharacterManager.Instance.PlaceSummonInitially(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
+            Area randomArea = homeSettlement.GetRandomArea();
+            if(randomArea != null) {
+                CharacterManager.Instance.PlaceSummonInitially(ghost, randomArea.gridTileComponent.GetRandomTile());
+            }
         }
 
 
@@ -2867,11 +2870,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isNormalCharacter) {
                 behaviourComponent.UpdateDefaultBehaviourSet();
             }
-            if(homeSettlement != null && gridTileLocation != null && hexTileLocation.settlementOnTile == homeSettlement) {
+            if(homeSettlement != null && gridTileLocation != null && areaLocation?.settlementOnArea == homeSettlement) {
                 stateAwarenessComponent.StopMissingTimer();
             } else if(homeSettlement == null) {
                 stateAwarenessComponent.StartMissingTimer();
-            } else if(homeSettlement != null && gridTileLocation != null && hexTileLocation.settlementOnTile != homeSettlement){
+            } else if(homeSettlement != null && gridTileLocation != null && areaLocation?.settlementOnArea != homeSettlement){
                 stateAwarenessComponent.StartMissingTimer();
             }
             if(faction != null) {
@@ -3883,7 +3886,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
             //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
-            && actor.trapStructure.SatisfiesForcedHex(this)
+            && actor.trapStructure.SatisfiesForcedArea(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
             && (action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation))) {
             OtherData[] data = job.GetOtherDataFor(action.goapType);
@@ -4624,8 +4627,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (trapStructure.IsTrapped()) {
             trapStructure.ResetAllTrapStructures();
         }
-        if (trapStructure.IsTrappedInHex()) {
-            trapStructure.ResetAllTrapHexes();
+        if (trapStructure.IsTrappedInArea()) {
+            trapStructure.ResetTrapArea();
         }
         //if(partyComponent.hasParty && partyComponent.currentParty.partyType != PARTY_QUEST_TYPE.Counterattack) {
         //    //Once a character is seized, leave party also - except counter attack
@@ -5271,9 +5274,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
     
     #region Territorries
-    public void SetTerritory([NotNull]HexTile tile, bool returnHome = true) {
-        if (territory != tile) {
-            territory = tile;
+    public void SetTerritory([NotNull]Area p_area, bool returnHome = true) {
+        if (territory != p_area) {
+            territory = p_area;
             if(territory.region != homeRegion) {
                 if(homeRegion != null) {
                     homeRegion.RemoveResident(this);
@@ -5295,25 +5298,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool HasTerritory() {
         return territory != null;
     }
-    public bool IsTerritory(HexTile hex) {
+    public bool IsTerritory(Area p_area) {
         if(HasTerritory()) {
-            return territory == hex;
+            return territory == p_area;
         }
         return false;
     }
     public bool IsInTerritory() {
-        HexTile hex = hexTileLocation;
-        return hex != null && IsTerritory(hex);
+        Area area = areaLocation;
+        return area != null && IsTerritory(area);
     }
     public bool IsInTerritoryOf(Character character) {
-        HexTile hex = hexTileLocation;
-        return hex != null && character.IsTerritory(hex);
+        Area area = areaLocation;
+        return area != null && character.IsTerritory(area);
     }
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;
         if (HasTerritory()) {
             //while (chosenTile == null) {
-            LocationGridTile chosenGridTile = territory.locationGridTiles[UnityEngine.Random.Range(0, territory.locationGridTiles.Length)];
+            LocationGridTile chosenGridTile = territory.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, territory.gridTileComponent.gridTiles.Count)];
             if (movementComponent.HasPathToEvenIfDiffRegion(chosenGridTile)) {
                 chosenTile = chosenGridTile;
             }

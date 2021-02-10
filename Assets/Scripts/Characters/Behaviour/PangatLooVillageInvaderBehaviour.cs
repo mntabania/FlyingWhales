@@ -17,7 +17,7 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Already at village target, will find character to attack";
                 //character is already at target village
                 List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
-                PopulateTargetChoices(targets, targetSettlement.tiles);
+                PopulateTargetChoices(targets, targetSettlement.areas);
                 if (targets.Count > 0) {
                     //Fight a random target
                     Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
@@ -34,7 +34,7 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
             } else {
                 log += $"\n-character is not yet at village target, will go there now...";
                 //character is not yet at target village
-                HexTile targetHextile = CollectionUtilities.GetRandomElement(targetSettlement.tiles);
+                HexTile targetHextile = CollectionUtilities.GetRandomElement(targetSettlement.areas);
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
             }    

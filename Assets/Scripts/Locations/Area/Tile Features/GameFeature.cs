@@ -6,12 +6,12 @@ using UnityEngine.Assertions;
 using UtilityScripts; //using UnityEditor.VersionControl;
 using Random = UnityEngine.Random;
 
-namespace Locations.Tile_Features {
-    public class GameFeature : TileFeature {
+namespace Locations.Area_Features {
+    public class GameFeature : AreaFeature {
 
         private const int MaxAnimals = 6;
 
-        private HexTile owner;
+        private Area owner;
         private bool isGeneratingPerHour;
     
         public SUMMON_TYPE animalTypeBeingSpawned { get; private set; }
@@ -31,9 +31,9 @@ namespace Locations.Tile_Features {
         }
     
         #region Overrides
-        public override void GameStartActions(HexTile tile) {
-            owner = tile;
-            List<Animal> animals = tile.GetAllCharactersInsideHex<Animal>();
+        public override void GameStartActions(Area p_area) {
+            owner = p_area;
+            List<Animal> animals = p_area.locationCharacterTracker.GetAllCharactersInsideHex<Animal>();
             if (animals != null) {
                 for (int i = 0; i < animals.Count; i++) {
                     Animal animal = animals[i];
@@ -51,11 +51,11 @@ namespace Locations.Tile_Features {
                 }
             }
         }
-        public override void LoadedGameStartActions(HexTile tile) {
+        public override void LoadedGameStartActions(Area p_area) {
             //Do not do anything when loading a saved game. Since animals are saved and loaded elsewhere.
         }
-        public override void OnRemoveFeature(HexTile tile) {
-            base.OnRemoveFeature(tile);
+        public override void OnRemoveFeature(Area p_area) {
+            base.OnRemoveFeature(p_area);
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             if (ownedAnimals != null) {
@@ -120,7 +120,7 @@ namespace Locations.Tile_Features {
         }
 
         private void SpawnNewAnimal() {
-            LocationGridTile chosenTile = owner.GetRandomTileThatMeetCriteria(x => x.IsPassable() && x.structure.structureType.IsOpenSpace());
+            LocationGridTile chosenTile = owner.gridTileComponent.GetRandomTileThatMeetCriteria(x => x.IsPassable() && x.structure.structureType.IsOpenSpace());
             //Assert.IsTrue(choices.Count > 0, $"{owner} is trying to spawn an {animalTypeBeingSpawned.ToString()} but no valid tiles were found!");
             if(chosenTile != null) {
                 Animal newAnimal = CharacterManager.Instance.CreateNewSummon(animalTypeBeingSpawned, FactionManager.Instance.neutralFaction, homeRegion: owner.region) as Animal;
@@ -134,18 +134,18 @@ namespace Locations.Tile_Features {
     }
     
     [System.Serializable]
-    public class SaveDataGameFeature : SaveDataTileFeature {
+    public class SaveDataGameFeature : SaveDataAreaFeature {
 
         public SUMMON_TYPE summon;
         private List<string> ownedAnimals;
-        public override void Save(TileFeature tileFeature) {
+        public override void Save(AreaFeature tileFeature) {
             base.Save(tileFeature);
             GameFeature gameFeature = tileFeature as GameFeature;
             Assert.IsNotNull(gameFeature);
             summon = gameFeature.animalTypeBeingSpawned;
             ownedAnimals = SaveUtilities.ConvertSavableListToIDs(gameFeature.ownedAnimals);
         }
-        public override TileFeature Load() {
+        public override AreaFeature Load() {
             GameFeature gameFeature = base.Load() as GameFeature;
             Assert.IsNotNull(gameFeature);
             gameFeature.SetSpawnType(summon);
