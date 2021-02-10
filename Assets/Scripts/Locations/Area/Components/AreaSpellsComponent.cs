@@ -10,9 +10,7 @@ using UnityEngine.Profiling;
 using Packages.Rider.Editor;
 #endif
 
-public class HexTileSpellsComponent {
-    public HexTile owner { get; private set; }
-    
+public class AreaSpellsComponent : AreaComponent {
     
     #region Earthquake Variables
     public bool hasEarthquake { get; private set; }
@@ -38,15 +36,20 @@ public class HexTileSpellsComponent {
     public int currentIceteroidsDuration  { get; private set; }
     #endregion
 
-    public HexTileSpellsComponent(HexTile owner) {
-        this.owner = owner;
+    public AreaSpellsComponent() {
+        earthquakeTileObjects = new List<IPointOfInterest>();
+        pendingEarthquakeTileObjects = new List<IPointOfInterest>();
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+    }
+
+    public AreaSpellsComponent(SaveDataAreaSpellsComponent saveData) {
         earthquakeTileObjects = new List<IPointOfInterest>();
         pendingEarthquakeTileObjects = new List<IPointOfInterest>();
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
     }
 
     #region Loading
-    public void Load(SaveDataHexTileSpellsComponent saveData) {
+    public void LoadReferences(SaveDataAreaSpellsComponent saveData) {
         if (saveData.hasEarthquake) {
             SetHasEarthquake(true);
             currentEarthquakeDuration = saveData.remainingEarthquakeDuration;
@@ -65,7 +68,7 @@ public class HexTileSpellsComponent {
         }
     }
     #endregion
-    
+
     #region Listeners
     private void OnGamePaused(bool state) {
         if (hasEarthquake) {
@@ -126,10 +129,10 @@ public class HexTileSpellsComponent {
     }
     private void StartEarthquake() {
         currentEarthquakeDuration = 0;
-        _centerEarthquakeTile = owner.GetCenterLocationGridTile();
+        _centerEarthquakeTile = owner.gridTileComponent.centerGridTile;
         earthquakeTileObjects.Clear();
-        for (int i = 0; i < owner.locationGridTiles.Length; i++) {
-            IPointOfInterest poi = owner.locationGridTiles[i].objHere;
+        for (int i = 0; i < owner.gridTileComponent.gridTiles.Count; i++) {
+            IPointOfInterest poi = owner.gridTileComponent.gridTiles[i].objHere;
             if (poi != null) {
                 AddEarthquakeTileObject(poi);
             }
@@ -149,7 +152,7 @@ public class HexTileSpellsComponent {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickEarthquake);
 
         List<Character> charactersInsideHex = ObjectPoolManager.Instance.CreateNewCharactersList();
-        owner.PopulateCharacterListInsideHexThatMeetCriteria(charactersInsideHex, c => !c.isDead);
+        owner.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(charactersInsideHex, c => !c.isDead);
         if (charactersInsideHex != null) {
             for (int i = 0; i < charactersInsideHex.Count; i++) {
                 Character character = charactersInsideHex[i];
@@ -212,7 +215,7 @@ public class HexTileSpellsComponent {
         //tween.OnComplete(OnCompleteCameraShake);
     }
     private void StopCameraShake() {
-        owner.StartCoroutine(StopCameraShakeCoroutine());
+        GameManager.Instance.StartCoroutine(StopCameraShakeCoroutine());
     }
     private IEnumerator StopCameraShakeCoroutine() {
         yield return null;
@@ -309,11 +312,11 @@ public class HexTileSpellsComponent {
     }
     private void StartBrimstones() {
         currentBrimstonesDuration = 0;
-        owner.StartCoroutine(CommenceFallingBrimstones());
+        GameManager.Instance.StartCoroutine(CommenceFallingBrimstones());
         Messenger.AddListener(Signals.TICK_STARTED, PerTickBrimstones);
     }
     private void StopBrimstones() {
-        owner.StopCoroutine(CommenceFallingBrimstones());
+        GameManager.Instance.StopCoroutine(CommenceFallingBrimstones());
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBrimstones);
     }
     private IEnumerator CommenceFallingBrimstones() {
@@ -322,7 +325,7 @@ public class HexTileSpellsComponent {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
-            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Length)];
+            LocationGridTile chosenTile = owner.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, owner.gridTileComponent.gridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
             // chosenTile.PerformActionOnTraitables(BrimstoneEffect);
         }
@@ -390,11 +393,11 @@ public class HexTileSpellsComponent {
     }
     private void StartElectricStorm() {
         currentElectricStormDuration = 0;
-        owner.StartCoroutine(CommenceElectricStorm());
+        GameManager.Instance.StartCoroutine(CommenceElectricStorm());
         Messenger.AddListener(Signals.TICK_STARTED, PerTickElectricStorm);
     }
     private void StopElectricStorm() {
-        owner.StopCoroutine(CommenceElectricStorm());
+        GameManager.Instance.StopCoroutine(CommenceElectricStorm());
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickElectricStorm);
     }
     private IEnumerator CommenceElectricStorm() {
@@ -403,7 +406,7 @@ public class HexTileSpellsComponent {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
-            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Length)];
+            LocationGridTile chosenTile = owner.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, owner.gridTileComponent.gridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Lightning_Strike);
             chosenTile.genericTileObject.traitContainer.AddTrait(chosenTile.genericTileObject, "Danger Remnant");
             // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
@@ -444,11 +447,11 @@ public class HexTileSpellsComponent {
     }
     private void StartIceteroids() {
         currentIceteroidsDuration = 0;
-        owner.StartCoroutine(CommenceFallingIceteroids());
+        GameManager.Instance.StartCoroutine(CommenceFallingIceteroids());
         Messenger.AddListener(Signals.TICK_STARTED, PerTickIceteroids);
     }
     private void StopIceteroids() {
-        owner.StopCoroutine(CommenceFallingIceteroids());
+        GameManager.Instance.StopCoroutine(CommenceFallingIceteroids());
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickIceteroids);
     }
     private IEnumerator CommenceFallingIceteroids() {
@@ -457,7 +460,7 @@ public class HexTileSpellsComponent {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
-            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Length)];
+            LocationGridTile chosenTile = owner.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, owner.gridTileComponent.gridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Iceteroids);
             // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
             // for (int i = 0; i < pois.Count; i++) {
@@ -479,8 +482,7 @@ public class HexTileSpellsComponent {
     #endregion
 }
 
-#region Save Data
-public class SaveDataHexTileSpellsComponent : SaveData<HexTileSpellsComponent> {
+public class SaveDataAreaSpellsComponent : SaveData<AreaSpellsComponent> {
     //earthquake
     public bool hasEarthquake;
     public int remainingEarthquakeDuration;
@@ -494,7 +496,7 @@ public class SaveDataHexTileSpellsComponent : SaveData<HexTileSpellsComponent> {
     public bool hasIceteroids;
     public int remainingIceteroidsDuration;
     
-    public override void Save(HexTileSpellsComponent data) {
+    public override void Save(AreaSpellsComponent data) {
         base.Save(data);
         hasEarthquake = data.hasEarthquake;
         remainingEarthquakeDuration = data.currentEarthquakeDuration;
@@ -508,5 +510,8 @@ public class SaveDataHexTileSpellsComponent : SaveData<HexTileSpellsComponent> {
         hasIceteroids = data.hasIceteroids;
         remainingIceteroidsDuration = data.currentIceteroidsDuration;
     }
+    public override AreaSpellsComponent Load() {
+        AreaSpellsComponent component = new AreaSpellsComponent(this);
+        return component;
+    }
 }
-#endregion

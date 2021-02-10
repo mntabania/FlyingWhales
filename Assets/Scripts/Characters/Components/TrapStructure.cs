@@ -119,7 +119,7 @@ public class TrapStructure {
             forcedStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.forcedStructure);
         }
         if (!string.IsNullOrEmpty(data.forcedHex)) {
-            forcedHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.forcedHex);
+            forcedHex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.forcedHex);
         }
     }
     #endregion

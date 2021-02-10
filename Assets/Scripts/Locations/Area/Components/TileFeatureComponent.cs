@@ -5,7 +5,6 @@ using Locations.Tile_Features;
 using UnityEngine;
 
 public class TileFeatureComponent {
-
 	public List<TileFeature> features { get; private set; }
 
 	public TileFeatureComponent() {

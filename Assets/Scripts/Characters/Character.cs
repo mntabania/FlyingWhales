@@ -5850,7 +5850,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             previousCurrentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.previousCurrentActionNode);
         }
         if (!string.IsNullOrEmpty(data.territory)) {
-            territory = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territory);
+            territory = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.territory);
         }
         for (int i = 0; i < data.items.Count; i++) {
             TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);

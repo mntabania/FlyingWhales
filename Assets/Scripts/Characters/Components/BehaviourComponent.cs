@@ -1030,7 +1030,7 @@ public class BehaviourComponent : CharacterComponent {
             attackVillageTarget = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.attackVillageTarget) as NPCSettlement;
         }
         if (!string.IsNullOrEmpty(data.attackHexTarget)) {
-            attackHexTarget = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.attackHexTarget);
+            attackHexTarget = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.attackHexTarget);
         }
         if (!string.IsNullOrEmpty(data.attackDemonicStructureTarget)) {
             attackDemonicStructureTarget = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.attackDemonicStructureTarget) as DemonicStructure;
@@ -1057,26 +1057,26 @@ public class BehaviourComponent : CharacterComponent {
             nest = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(data.nest);
         }
         if (!string.IsNullOrEmpty(data.abominationTarget)) {
-            abominationTarget = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.abominationTarget);
+            abominationTarget = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.abominationTarget);
         }
         if (data.deMoodVillageTarget != null) {
             deMoodVillageTarget = new List<HexTile>();
             for (int i = 0; i < data.deMoodVillageTarget.Count; i++) {
-                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.deMoodVillageTarget[i]);
+                HexTile hex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.deMoodVillageTarget[i]);
                 deMoodVillageTarget.Add(hex);
             }
         }
         if (data.invadeVillageTarget != null) {
             invadeVillageTarget = new List<HexTile>();
             for (int i = 0; i < data.invadeVillageTarget.Count; i++) {
-                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.invadeVillageTarget[i]);
+                HexTile hex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.invadeVillageTarget[i]);
                 invadeVillageTarget.Add(hex);
             }
         }
         if (data.arsonVillageTarget != null) {
             arsonVillageTarget = new List<HexTile>();
             for (int i = 0; i < data.arsonVillageTarget.Count; i++) {
-                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.arsonVillageTarget[i]);
+                HexTile hex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.arsonVillageTarget[i]);
                 arsonVillageTarget.Add(hex);
             }
         }

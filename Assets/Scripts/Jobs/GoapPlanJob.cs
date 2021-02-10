@@ -98,8 +98,8 @@ public class GoapPlanJob : JobQueueItem {
                             if (structure != null) {
                                 priorityLocations[item.Key].Add(structure);
                             }
-                        } else if (ilocationSaveData.objectType == OBJECT_TYPE.Hextile) {
-                            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(ilocationSaveData.persistentID);
+                        } else if (ilocationSaveData.objectType == OBJECT_TYPE.Area) {
+                            HexTile hex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(ilocationSaveData.persistentID);
                             if (hex != null) {
                                 priorityLocations[item.Key].Add(hex);
                             }

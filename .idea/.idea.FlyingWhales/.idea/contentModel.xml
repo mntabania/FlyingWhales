@@ -1285,11 +1285,11 @@
           </e>
           <e p="Databases" t="Include">
             <e p="ActionDatabase.cs" t="Include" />
+            <e p="AreaDatabase.cs" t="Include" />
             <e p="CharacterDatabase.cs" t="Include" />
             <e p="CrimeDatabase.cs" t="Include" />
             <e p="FactionDatabase.cs" t="Include" />
             <e p="GatheringDatabase.cs" t="Include" />
-            <e p="HexTileDatabase.cs" t="Include" />
             <e p="InterruptDatabase.cs" t="Include" />
             <e p="JobDatabase.cs" t="Include" />
             <e p="LocationGridTileDatabase.cs" t="Include" />
@@ -1421,6 +1421,10 @@
                 <e p="PlayerSettlementGeneration.cs" t="Include" />
                 <e p="RegionFeatureGeneration.cs" t="Include" />
                 <e p="RegionInnerMapGeneration.cs" t="Include" />
+                <e p="RegionInnerMapGeneration_BACKUP_152.cs" t="Include" />
+                <e p="RegionInnerMapGeneration_BASE_152.cs" t="Include" />
+                <e p="RegionInnerMapGeneration_LOCAL_152.cs" t="Include" />
+                <e p="RegionInnerMapGeneration_REMOTE_152.cs" t="Include" />
                 <e p="SettlementFinalization.cs" t="Include" />
                 <e p="SettlementGeneration.cs" t="Include" />
                 <e p="SettlementLoading.cs" t="Include" />
@@ -1864,12 +1868,17 @@
           </e>
           <e p="LocationGridTileListExtension.cs" t="Include" />
           <e p="Locations" t="Include">
-            <e p="Biomes.cs" t="Include" />
-            <e p="GridMap.cs" t="Include" />
-            <e p="HexTile" t="Include">
+            <e p="Area" t="Include">
+              <e p="Area.cs" t="Include" />
               <e p="Components" t="Include">
-                <e p="HexTileBiomeEffectTrigger.cs" t="Include" />
-                <e p="HexTileSpellsComponent.cs" t="Include" />
+                <e p="AreaBiomeComponent.cs" t="Include" />
+                <e p="AreaBiomeEffectTrigger.cs" t="Include" />
+                <e p="AreaCharacterComponent.cs" t="Include" />
+                <e p="AreaComponent.cs" t="Include" />
+                <e p="AreaGridTileComponent.cs" t="Include" />
+                <e p="AreaNeighbourComponent.cs" t="Include" />
+                <e p="AreaSpellsComponent.cs" t="Include" />
+                <e p="AreaTileObjectComponent.cs" t="Include" />
                 <e p="TileFeatureComponent.cs" t="Include" />
               </e>
               <e p="HexTile.cs" t="Include" />
@@ -1890,6 +1899,8 @@
                 <e p="WoodSourceFeature.cs" t="Include" />
               </e>
             </e>
+            <e p="Biomes.cs" t="Include" />
+            <e p="GridMap.cs" t="Include" />
             <e p="Inner Maps" t="Include">
               <e p="Area Maps" t="Include">
                 <e p="Structure Template Creator" t="Include">
@@ -2425,6 +2436,13 @@
                 <e p="PhysicalContactTransmission.cs" t="Include" />
                 <e p="Transmission.cs" t="Include" />
               </e>
+            </e>
+            <e p="Player Input" t="Include">
+              <e p="IntelInputModule.cs" t="Include" />
+              <e p="PickPortalInputModule.cs" t="Include" />
+              <e p="PlayerInputModule.cs" t="Include" />
+              <e p="SeizeInputModule.cs" t="Include" />
+              <e p="SpellInputModule.cs" t="Include" />
             </e>
             <e p="Player.cs" t="Include" />
             <e p="PlayerDB.cs" t="Include" />

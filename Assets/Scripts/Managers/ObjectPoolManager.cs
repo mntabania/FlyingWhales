@@ -43,10 +43,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<ConversationData>> _conversationDataListPool;
     private List<List<EMOTION>> _emotionListPool;
     private List<List<ILocation>> _ilocationListPool;
+    private List<List<Area>> _areaListPool;
 
     private void Awake() {
-        Instance = this;
-        allObjectPools = new Dictionary<string, EZObjectPool>();
+        if (Instance == null) {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
+            allObjectPools = new Dictionary<string, EZObjectPool>();
+        } else {
+            Destroy(this.gameObject);
+        }
     }
     public void InitializeObjectPools() {
         for (int i = 0; i < UIPrefabs.Length; i++) {
@@ -594,7 +600,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Emotions
+    #region ILocation
     private void ConstructILocationListPool() {
         _ilocationListPool = new List<List<ILocation>>();
     }
@@ -609,6 +615,24 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public void ReturnILocationListToPool(List<ILocation> data) {
         data.Clear();
         _ilocationListPool.Add(data);
+    }
+    #endregion
+
+    #region Area
+    private void ConstructAreaListPool() {
+        _areaListPool = new List<List<Area>>();
+    }
+    public List<Area> CreateNewAreaList() {
+        if (_areaListPool.Count > 0) {
+            List<Area> data = _areaListPool[0];
+            _areaListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<Area>();
+    }
+    public void ReturnAreaListToPool(List<Area> data) {
+        data.Clear();
+        _areaListPool.Add(data);
     }
     #endregion
 
@@ -666,6 +690,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _ilocationListPool = null;
         _tileObjectListPool?.Clear();
         _tileObjectListPool = null;
+        _areaListPool?.Clear();
+        _areaListPool = null;
         base.OnDestroy();
         Instance = null;
     }

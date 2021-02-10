@@ -23,7 +23,7 @@ public class SaveDataHextile : SaveData<HexTile> {
     public LANDMARK_TYPE landmarkType;
     
     //Components
-    public SaveDataHexTileSpellsComponent saveDataHexTileSpellsComponent;
+    //public SaveDataHexTileSpellsComponent saveDataHexTileSpellsComponent;
 
     public override void Save(HexTile tile) {
         persistentID = tile.persistentID;
@@ -46,8 +46,8 @@ public class SaveDataHextile : SaveData<HexTile> {
             saveDataTileFeature.Save(feature);
             tileFeatureSaveData.Add(saveDataTileFeature);
         }
-        saveDataHexTileSpellsComponent = new SaveDataHexTileSpellsComponent();
-        saveDataHexTileSpellsComponent.Save(tile.spellsComponent);
+        //saveDataHexTileSpellsComponent = new SaveDataHexTileSpellsComponent();
+        //saveDataHexTileSpellsComponent.Save(tile.spellsComponent);
     }
     public void Load(HexTile tile) {
         if (string.IsNullOrEmpty(persistentID)) {

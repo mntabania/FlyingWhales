@@ -50,8 +50,8 @@ public class HextileInfoUI : InfoUIBase {
                 ? LANDMARK_TYPE.CAVE
                 : LANDMARK_TYPE.NONE);
         }
-        nameLbl.text = activeHex.GetDisplayName();
-        tileTypeLbl.text = activeHex.GetSubName();
+        //nameLbl.text = activeHex.GetDisplayName();
+        //tileTypeLbl.text = activeHex.GetSubName();
     }
     
     public void UpdateHexTileInfo() {

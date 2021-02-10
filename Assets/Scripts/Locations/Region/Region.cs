@@ -28,6 +28,7 @@ public class Region : ISavable, ILogFiller {
     public List<Character> residents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
     public HexTile[,] hexTileMap { get; private set; }
+    public Area[,] areaMap { get; private set; }
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }

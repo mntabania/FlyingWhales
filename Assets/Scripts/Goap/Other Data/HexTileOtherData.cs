@@ -8,7 +8,7 @@ public class HexTileOtherData : OtherData {
         this.hexTile = hexTile;
     }
     public HexTileOtherData(SaveDataHexTileOtherData hexTile) {
-        this.hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(hexTile.hexTileID);
+        this.hexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(hexTile.hexTileID);
     }
     
     public override SaveDataOtherData Save() {
