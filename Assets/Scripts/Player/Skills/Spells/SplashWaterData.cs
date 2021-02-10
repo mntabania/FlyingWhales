@@ -3,16 +3,25 @@ using Inner_Maps;
 using Traits;
 
 public class SplashWaterData : SkillData {
+
+    PlayerSkillData m_playerSkillData;
+    SkillData m_skillData;
+
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPLASH_WATER;
     public override string name => "Splash Water";
     public override string description => "This Spell applies Wet to a 3x3 tile floor.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
+    public int m_baseTileRange = 1;
+
     public SplashWaterData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.SPLASH_WATER);
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SPLASH_WATER);
+        int processedTileRange = m_baseTileRange + m_playerSkillData.skillUpgradeData.GetTileRangeBonusPerLevel(m_skillData.currentLevel);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(MakeTraitbleWet);
@@ -23,7 +32,7 @@ public class SplashWaterData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitbleWet(ITraitable traitable) {
-        traitable.traitContainer.AddTrait(traitable, "Wet", bypassElementalChance: true);
+        traitable.traitContainer.AddTrait(traitable, "Wet", bypassElementalChance: true, overrideDuration: (int)m_playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(m_skillData.currentLevel));
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);

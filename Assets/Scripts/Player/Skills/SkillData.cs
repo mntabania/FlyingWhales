@@ -194,8 +194,9 @@ public class SkillData : IPlayerSkill {
         }
     }
     public void OnExecutePlayerSkill() {
+        currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type).cheatedLevel;
         if (!PlayerSkillManager.Instance.unlimitedCast) {
-            if(hasCharges) {
+            if (hasCharges) {
                 if(charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
                     AdjustCharges(-1);
                 }

@@ -1738,12 +1738,14 @@ namespace Inner_Maps {
         private void TriggerFreezingTrap(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
             AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, this, 1, false);
+            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FREEZING_TRAP);
             SetHasFreezingTrap(false);
             for (int i = 0; i < 3; i++) {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {
                     break;
                 } else {
-                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true);
+                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: (int)playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
                 }
             }
         }
@@ -1763,9 +1765,11 @@ namespace Inner_Maps {
             }
         }
         private void TriggerSnareTrap(Character triggeredBy) {
+            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.SNARE_TRAP);
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SNARE_TRAP);
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
             SetHasSnareTrap(false);
-            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared");
+            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: (int)playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
         }
         #endregion
 

@@ -8,11 +8,14 @@ using UnityEngine.Assertions;
 
 public class RavenousSpirit : TileObject {
 
+    private SkillData m_skillData;
+    private PlayerSkillData m_playerSkillData;
+
     public Character possessionTarget { get; private set; }
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
-    
+    private int _baseFullness = -35;
     #region getters
     public int currentDuration => _currentDuration;
     public override System.Type serializedData => typeof(SaveDataRavenousSpirit);
@@ -34,6 +37,8 @@ public class RavenousSpirit : TileObject {
         return $"Ravenous Spirit {id.ToString()}";
     }
     public override void OnPlacePOI() {
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
         base.OnPlacePOI();
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
@@ -127,7 +132,8 @@ public class RavenousSpirit : TileObject {
     }
 
     private void RavenousEffect() {
-        possessionTarget.needsComponent.AdjustFullness(-35);
+        int processedEffect = _baseFullness - (int)(_baseFullness * m_playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(m_skillData.currentLevel));
+        possessionTarget.needsComponent.AdjustFullness(processedEffect);
     }
 
     private void DonePossession() {

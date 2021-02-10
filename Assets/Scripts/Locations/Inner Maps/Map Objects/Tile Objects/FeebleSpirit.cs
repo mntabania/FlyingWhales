@@ -132,7 +132,7 @@ public class FeebleSpirit : TileObject {
         }
     }
     private void FeebleEffect() {
-        float processedEnergyDrain = _baseEdergyDrainAmount - (_baseEdergyDrainAmount * m_playerSkillData.skillUpgradeData.GetDrainEnergyBonus(m_skillData.currentCooldownTick));
+        float processedEnergyDrain = _baseEdergyDrainAmount - (_baseEdergyDrainAmount * m_playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(m_skillData.currentCooldownTick));
         possessionTarget.needsComponent.AdjustTiredness(processedEnergyDrain);
     }
     private void DonePossession() {

@@ -12,6 +12,7 @@ public class PlayerSkillData : ScriptableObject {
     public int threat;
     public int threatPerHour;
     public int expCost;
+    public int cheatedLevel;
     public float pierce;
     public Sprite buttonSprite;
     public VideoClip tooltipVideoClip;

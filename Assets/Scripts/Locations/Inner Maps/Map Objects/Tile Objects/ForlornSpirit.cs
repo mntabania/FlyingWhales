@@ -23,15 +23,15 @@ public class ForlornSpirit : TileObject {
     #endregion
     
     public ForlornSpirit() {
-        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FIRE_BALL);
-        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FIRE_BALL);
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
         Initialize(TILE_OBJECT_TYPE.FORLORN_SPIRIT, false);
         traitContainer.AddTrait(this, "Forlorn");
     }
     public ForlornSpirit(SaveDataForlornSpirit data) {
-        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FIRE_BALL);
-        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FIRE_BALL);
+        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
+        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
         //SaveDataForlornSpirit saveDataForlornSpirit = data as SaveDataForlornSpirit;
         Assert.IsNotNull(data);
@@ -137,8 +137,8 @@ public class ForlornSpirit : TileObject {
     }
 
     private void ForlornEffect() {
-        _baseHappinessDrain -= (_baseHappinessDrain * (int)m_playerSkillData.skillUpgradeData.GetDrainHappinessBonus(m_skillData.currentLevel));
-        possessionTarget.needsComponent.AdjustHappiness(_baseHappinessDrain);
+        float processedHappinessDrain = _baseHappinessDrain - (_baseHappinessDrain * (int)m_playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(m_skillData.currentLevel));
+        possessionTarget.needsComponent.AdjustHappiness(processedHappinessDrain);
     }
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);

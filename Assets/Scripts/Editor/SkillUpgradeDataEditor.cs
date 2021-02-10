@@ -3,7 +3,7 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(PlayerSkillData))]
+[CustomEditor(typeof(PlayerSkillData), true)]
 public class SkillUpgradeDataEditor : Editor {
 
     PlayerSkillData data;
@@ -16,7 +16,9 @@ public class SkillUpgradeDataEditor : Editor {
     }
 
     public override void OnInspectorGUI() {
-
+        EditorGUILayout.Space();
+        base.OnInspectorGUI();
+        EditorGUILayout.Space();
         DrawDefaultInspector();
         EditorGUILayout.Space();
         EditorGUILayout.TextArea("REQUIREMENTS FOR UNLOCKING");
@@ -24,6 +26,7 @@ public class SkillUpgradeDataEditor : Editor {
         EditorGUILayout.Space();
         EditorGUILayout.TextArea("UPGRADE BONUS STATS");
         DisplayUpgradeBonus();
+        
     }
 
     void DisplayUpgradeBonus() {
@@ -68,11 +71,10 @@ public class SkillUpgradeDataEditor : Editor {
                 DisplayFloatList(data.skillUpgradeData.additionalmanaReceivedPercentagePerLevel, "Mana(%) received per level");
                 EditorGUILayout.Space();
             }
-            /*
-            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Increase_Stats_Percentage)) {
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Amplify_Effect_By_Percentage)) {
                 DisplayFloatList(data.skillUpgradeData.statsIncreasedPercentagePerLevel, "Stats Bonus(%) per level");
                 EditorGUILayout.Space();
-            }*/
+            }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Duration)) {
                 DisplayFloatList(data.skillUpgradeData.statsIncreasedPercentagePerLevel, "Duration Bonus(min) per level");
                 EditorGUILayout.Space();
@@ -83,14 +85,6 @@ public class SkillUpgradeDataEditor : Editor {
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Tile_Range)) {
                 DisplayIntList(data.skillUpgradeData.additionalTileRangeBonusPerLevel, "Tile Range Bonus per level");
-                EditorGUILayout.Space();
-            }
-            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Energy_Drain)) {
-                DisplayIntList(data.skillUpgradeData.drainEnergyBonus, "Drain Energy(%) per level");
-                EditorGUILayout.Space();
-            }
-            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Energy_Drain)) {
-                DisplayIntList(data.skillUpgradeData.drainHappinessBonus, "Drain Happiness(%) per level");
                 EditorGUILayout.Space();
             }
         }
