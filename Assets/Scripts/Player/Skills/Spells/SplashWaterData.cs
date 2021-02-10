@@ -32,7 +32,7 @@ public class SplashWaterData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitbleWet(ITraitable traitable) {
-        traitable.traitContainer.AddTrait(traitable, "Wet", bypassElementalChance: true, overrideDuration: (int)m_playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(m_skillData.currentLevel));
+        traitable.traitContainer.AddTrait(traitable, "Wet", bypassElementalChance: true, overrideDuration: m_playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(m_skillData.currentLevel));
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);

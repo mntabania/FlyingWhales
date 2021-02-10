@@ -19,25 +19,27 @@ public class SkillUpgradeData
     [HideInInspector]
     public List<float> additionalAttackPercentagePerLevel;
     [HideInInspector]
-    public List<float> additionalHpValuePerLevel;
+    public List<int> additionalHpValuePerLevel;
     [HideInInspector]
-    public List<float> additionalAttackValuePerLevel;
+    public List<int> additionalAttackValuePerLevel;
     [HideInInspector]
     public List<float> additionalmanaReceivedPercentagePerLevel;
     [HideInInspector]
     public List<float> statsIncreasedPercentagePerLevel;
     [HideInInspector]
-    public List<float> durationBonusPerLevel;
+    public List<int> durationBonusPerLevel;
     [HideInInspector]
     public List<float> additionalMaxHPPercentagePerLevel;
     [HideInInspector]
-    public List<float> additionalMaxHPActualPerLevel;
+    public List<int> additionalMaxHPActualPerLevel;
     [HideInInspector]
     public List<float> additionalChanceBonusPercentagePerLevel;
     [HideInInspector]
     public List<int> additionalTileRangeBonusPerLevel;
     [HideInInspector]
-    
+    public List<int> decreaseMovementSpeedPerLevel;
+    [HideInInspector]
+
     public int GetUpgradeCostBaseOnLevel(int p_currentLevel) {
         if (upgradeCosts == null || upgradeCosts.Count <= 0) {
             return 0;
@@ -52,7 +54,7 @@ public class SkillUpgradeData
         return chargesPerLevel[p_currentLevel];
     }
 
-    public float GetAdditionalDamageBaseOnLevel(int p_currentLevel) {
+    public int GetAdditionalDamageBaseOnLevel(int p_currentLevel) {
         if (additionalDamagePerLevel == null || additionalDamagePerLevel.Count <= 0) {
             return 0;
         }
@@ -73,7 +75,7 @@ public class SkillUpgradeData
         return additionalHpPercentagePerLevel[p_currentLevel];
     }
 
-    public float GetAdditionalMaxHpActualPerLevelBaseOnLevel(int p_currentLevel) {
+    public int GetAdditionalMaxHpActualPerLevelBaseOnLevel(int p_currentLevel) {
         if (additionalMaxHPActualPerLevel == null || additionalMaxHPActualPerLevel.Count <= 0) {
             return 0;
         }
@@ -87,7 +89,7 @@ public class SkillUpgradeData
         return additionalMaxHPPercentagePerLevel[p_currentLevel];
     }
 
-    public float GetAdditionalHpActualPerLevelBaseOnLevel(int p_currentLevel) {
+    public int GetAdditionalHpActualPerLevelBaseOnLevel(int p_currentLevel) {
         if (additionalHpValuePerLevel == null || additionalHpValuePerLevel.Count <= 0) {
             return 0;
         }
@@ -101,7 +103,7 @@ public class SkillUpgradeData
         return additionalAttackPercentagePerLevel[p_currentLevel];
     }
 
-    public float GetAdditionalAttackActualPerLevelBaseOnLevel(int p_currentLevel) {
+    public int GetAdditionalAttackActualPerLevelBaseOnLevel(int p_currentLevel) {
         if (additionalAttackValuePerLevel == null || additionalAttackValuePerLevel.Count <= 0) {
             return 0;
         }
@@ -122,7 +124,7 @@ public class SkillUpgradeData
         return statsIncreasedPercentagePerLevel[p_currentLevel];
     }
 
-    public float GetDurationBonusPerLevel(int p_currentLevel) {
+    public int GetDurationBonusPerLevel(int p_currentLevel) {
         if (durationBonusPerLevel == null || durationBonusPerLevel.Count <= 0) {
             return 0;
         }

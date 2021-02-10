@@ -1686,6 +1686,9 @@ namespace Inner_Maps {
         private IEnumerator TriggerLandmine(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Landmine_Explosion);
             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LANDMINE);
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.LANDMINE);
+            int baseDamage = -500;
             yield return new WaitForSeconds(0.5f);
             SetHasLandmine(false);
             List<LocationGridTile> tiles = GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
@@ -1698,16 +1701,17 @@ namespace Inner_Maps {
                     if (poi.gridTileLocation == null) {
                         continue; //skip
                     }
+                    int processedDamage = baseDamage + playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(skillData.currentLevel);
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                         } else {
                             CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj);
                         }
                     } else if (poi is Character character) {
-                        character.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     } else {
-                        poi.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     }
                 }
             }
@@ -1745,7 +1749,7 @@ namespace Inner_Maps {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {
                     break;
                 } else {
-                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: (int)playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
+                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
                 }
             }
         }
@@ -1769,7 +1773,7 @@ namespace Inner_Maps {
             SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SNARE_TRAP);
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
             SetHasSnareTrap(false);
-            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: (int)playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
+            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
         }
         #endregion
 

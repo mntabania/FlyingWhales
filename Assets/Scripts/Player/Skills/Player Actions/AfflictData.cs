@@ -49,8 +49,13 @@ public class AfflictData : PlayerAction {
     }
     #endregion
 
-    protected void AfflictPOIWith(string traitName, IPointOfInterest target, string logName) {
-        target.traitContainer.AddTrait(target, traitName);
+    protected void AfflictPOIWith(string traitName, IPointOfInterest target, string logName, int overridenDuration = 0) {
+        if (overridenDuration > 0) {
+            target.traitContainer.AddTrait(target, traitName, overrideDuration: overridenDuration);
+        } else {
+            target.traitContainer.AddTrait(target, traitName);
+        }
+        
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LogUtilities.Player_Life_Changes_Tags);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, logName, LOG_IDENTIFIER.STRING_1);

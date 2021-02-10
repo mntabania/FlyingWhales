@@ -64,7 +64,7 @@ public class FireBall : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            amount += (int)m_playerSkillData.skillUpgradeData.GetAdditionalAttackActualPerLevelBaseOnLevel(m_skillData.currentLevel);
+            amount += m_playerSkillData.skillUpgradeData.GetAdditionalAttackActualPerLevelBaseOnLevel(m_skillData.currentLevel);
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Water) {

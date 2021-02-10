@@ -3,6 +3,8 @@ using Inner_Maps;
 using Traits;
 
 public class WallData : SkillData {
+
+    private int m_baseExpiryTick = 5;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WALL;
     public override string name => "Wall";
     public override string description => "This Spell spawns a single tile of durable wall. Can be chained together to block someone's path. Wall degrades and disappears after 5 hours.";
@@ -16,10 +18,13 @@ public class WallData : SkillData {
         if(targetTile.objHere != null && targetTile.objHere is TileObject tileObject && !tileObject.tileObjectType.IsTileObjectImportant()) {
             targetTile.structure.RemovePOI(targetTile.objHere);
         }
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.WALL);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.WALL);
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
         wall.SetWallType(WALL_TYPE.Demon_Stone);
         GameDate expiryDate = GameManager.Instance.Today();
-        expiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
+        int processedTick = m_baseExpiryTick + (playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
+        expiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(processedTick));
         wall.SetExpiry(expiryDate);
         targetTile.structure.AddPOI(wall, targetTile);
         //IncreaseThreatThatSeesTile(targetTile, 10);

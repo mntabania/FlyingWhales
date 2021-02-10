@@ -15,7 +15,9 @@ public class CowardiceData : AfflictData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        AfflictPOIWith("Coward", targetPOI, name);
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.COWARDICE);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.COWARDICE);
+        AfflictPOIWith("Coward", targetPOI, name, playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
         OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {

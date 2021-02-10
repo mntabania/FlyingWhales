@@ -52,11 +52,11 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Max_HP_Actual)) {
-                DisplayFloatList(data.skillUpgradeData.additionalMaxHPActualPerLevel, "Max HP Actual per level");
+                DisplayIntList(data.skillUpgradeData.additionalMaxHPActualPerLevel, "Max HP Actual per level");
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.HP_Actual_Amount)) {
-                DisplayFloatList(data.skillUpgradeData.additionalHpValuePerLevel, "HP(amount) per level");
+                DisplayIntList(data.skillUpgradeData.additionalHpValuePerLevel, "HP(amount) per level");
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Atk_Percentage)) {
@@ -64,7 +64,7 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Atk_Actual_Amount)) {
-                DisplayFloatList(data.skillUpgradeData.additionalAttackValuePerLevel, "Atk(amount) per level");
+                DisplayIntList(data.skillUpgradeData.additionalAttackValuePerLevel, "Atk(amount) per level");
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Mana_Received)) {
@@ -85,6 +85,10 @@ public class SkillUpgradeDataEditor : Editor {
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Tile_Range)) {
                 DisplayIntList(data.skillUpgradeData.additionalTileRangeBonusPerLevel, "Tile Range Bonus per level");
+                EditorGUILayout.Space();
+            }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Decrease_Movement_Speed)) {
+                DisplayIntList(data.skillUpgradeData.decreaseMovementSpeedPerLevel, "Decrese Movement Speed per level");
                 EditorGUILayout.Space();
             }
         }
