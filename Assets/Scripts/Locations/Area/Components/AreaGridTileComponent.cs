@@ -70,9 +70,22 @@ public class AreaGridTileComponent : AreaComponent {
     #endregion
     
     #region Utilities
-    
     public LocationGridTile GetRandomTile() {
         return gridTiles[UnityEngine.Random.Range(0, gridTiles.Count)];
+    }
+    public LocationGridTile GetRandomTileThatMeetCriteria(Func<LocationGridTile, bool> checker) {
+        List<LocationGridTile> tiles = null;
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile tile = gridTiles[i];
+            if (checker.Invoke(tile)) {
+                if (tiles == null) { tiles = new List<LocationGridTile>(); }
+                tiles.Add(tile);
+            }
+        }
+        if (tiles != null && tiles.Count > 0) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
+        }
+        return null;
     }
     public LocationGridTile GetRandomPassableTile() {
         LocationGridTile chosenTile = null;
@@ -220,6 +233,21 @@ public class AreaGridTileComponent : AreaComponent {
             }
         }
         return false;
+    }
+    public void StartCorruption(Area p_area) {
+        InstantlyCorruptAllOwnedInnerMapTiles();
+        OnCorruptSuccess(p_area);
+    }
+    private void InstantlyCorruptAllOwnedInnerMapTiles() {
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile tile = gridTiles[i];
+            tile.CorruptTile();
+        }
+    }
+    private void OnCorruptSuccess(Area p_area) {
+        PlayerManager.Instance.player.playerSettlement.AddAreaToSettlement(p_area);
+        //remove features
+        p_area.featureComponent.RemoveAllFeatures(p_area);
     }
     #endregion
 }

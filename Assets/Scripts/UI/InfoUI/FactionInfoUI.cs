@@ -187,7 +187,7 @@ public class FactionInfoUI : InfoUIBase {
     }
     private void OnClickSettlementItem(BaseSettlement settlement) {
         if (settlement.areas.Count > 0) {
-            HexTile tile = settlement.areas[0];
+            Area tile = settlement.areas[0];
             if (InnerMapManager.Instance.isAnInnerMapShowing) {
                 //if inner map is showing, open inner map of hextile then center on it
                 if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {

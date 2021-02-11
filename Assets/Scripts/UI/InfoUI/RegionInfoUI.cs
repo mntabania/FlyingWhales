@@ -65,7 +65,6 @@ public class RegionInfoUI : InfoUIBase {
 
     public override void OpenMenu() {
         Region previousRegion = activeRegion;
-        previousRegion?.HideBorders();
         activeRegion = _data as Region;
         base.OpenMenu();
         UpdateBasicInfo();
@@ -75,7 +74,6 @@ public class RegionInfoUI : InfoUIBase {
         //ShowAppropriateContentOnOpen();
     }
     public override void CloseMenu() {
-        activeRegion.HideBorders();
         activeRegion = null;
         base.CloseMenu();
     }
@@ -245,14 +243,6 @@ public class RegionInfoUI : InfoUIBase {
     }
     public void StopSettlementInvasion() {
         
-    }
-    #endregion
-
-    #region Demolish
-    public void OnClickDemolish() {
-        Region region = activeRegion;
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, LANDMARK_TYPE.NONE);
-        UIManager.Instance.ShowRegionInfo(region);
     }
     #endregion
 

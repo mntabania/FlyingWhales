@@ -825,7 +825,6 @@ namespace Inner_Maps.Location_Structures {
                         return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()
                                                           && x.groundType != LocationGridTile.Ground_Type.Cave 
                                                           && x.groundType != LocationGridTile.Ground_Type.Water
-                                                          && x.area 
                                                           && x.area.elevationType == ELEVATION.PLAIN
                                                           && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
                                                           && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)
@@ -860,8 +859,16 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Tiles
-        protected virtual void OnTileAddedToStructure(LocationGridTile tile) { }
-        protected virtual void OnTileRemovedFromStructure(LocationGridTile tile) { }
+        protected virtual void OnTileAddedToStructure(LocationGridTile tile) {
+            if (structureType != STRUCTURE_TYPE.WILDERNESS) {
+                tile.area.structureComponent.AddStructureInArea(this);    
+            }
+        }
+        protected virtual void OnTileRemovedFromStructure(LocationGridTile tile) {
+            if (structureType != STRUCTURE_TYPE.WILDERNESS && !HasTileOnArea(tile.area)) {
+                tile.area.structureComponent.RemoveStructureInArea(this);
+            }
+        }
         public void AddTile(LocationGridTile tile) {
             if (!tiles.Contains(tile)) {
                 tiles.Add(tile);
