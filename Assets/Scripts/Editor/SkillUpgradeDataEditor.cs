@@ -17,8 +17,6 @@ public class SkillUpgradeDataEditor : Editor {
 
     public override void OnInspectorGUI() {
         EditorGUILayout.Space();
-        base.OnInspectorGUI();
-        EditorGUILayout.Space();
         DrawDefaultInspector();
         EditorGUILayout.Space();
         EditorGUILayout.TextArea("REQUIREMENTS FOR UNLOCKING");
