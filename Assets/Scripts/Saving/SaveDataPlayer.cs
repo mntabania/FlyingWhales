@@ -438,6 +438,10 @@ public class SaveDataPlayer {
                 UnlockWorld(WorldSettingsData.World_Type.Aneem);
                 UnlockWorld(WorldSettingsData.World_Type.Pitto);    
                 break;
+            case WorldSettingsData.World_Type.Custom:
+                //This is so that the game will still unlock custom if player finishes tutorial from save data
+                UnlockWorld(WorldSettingsData.World_Type.Custom);
+                break;
         }
         SaveManager.Instance.savePlayerManager.SavePlayerData();
     }
