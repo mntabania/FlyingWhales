@@ -5,19 +5,19 @@ using UnityEngine;
 using UtilityScripts;
 namespace Locations.Region_Features {
     public class TeemingFeature : RegionFeature {
-        public override void LandmarkGenerationSecondPassActions(Region region) {
-            base.LandmarkGenerationSecondPassActions(region);
+        public override void SpecialStructureGenerationSecondPassActions(Region region) {
+            base.SpecialStructureGenerationSecondPassActions(region);
             List<GameFeature> gameFeatures = GetGameFeaturesInRegion(region);
             if (gameFeatures.Count < 6) {
                 int missing = Random.Range(6, 9) - gameFeatures.Count;
                 //choose from random flat/tree tile without game feature
-                List<HexTile> choices = region.areas
+                List<Area> choices = region.areas
                     .Where(x => (x.elevationType == ELEVATION.PLAIN || x.elevationType == ELEVATION.TREES) &&
-                                x.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) == false && x.landmarkOnTile == null).ToList();
+                                x.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) == false && !x.structureComponent.HasStructureInArea()).ToList();
                 
                 for (int i = 0; i < missing; i++) {
                     if (choices.Count == 0) { break; }
-                    HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
+                    Area chosenTile = CollectionUtilities.GetRandomElement(choices);
                     GameFeature feature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
                     chosenTile.featureComponent.AddFeature(feature, chosenTile);
                     gameFeatures.Add(feature);
@@ -36,7 +36,7 @@ namespace Locations.Region_Features {
         private List<GameFeature> GetGameFeaturesInRegion(Region region) {
             List<GameFeature> gameFeatures = new List<GameFeature>();
             for (int i = 0; i < region.areas.Count; i++) {
-                HexTile tile = region.areas[i];
+                Area tile = region.areas[i];
                 GameFeature feature = tile.featureComponent.GetFeature<GameFeature>();
                 if (feature != null) {
                     gameFeatures.Add(feature);

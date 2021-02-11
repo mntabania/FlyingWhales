@@ -49,7 +49,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     }
     private IEnumerator SaveCoroutine(string fileName, Action saveCallback = null) {
         isSaving = true;
-        WorldMapCameraMove.Instance.DisableMovement();
         InnerMapCameraMove.Instance.DisableMovement();
         UIManager.Instance.optionsMenu.ShowSaveLoading();
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving current progress");
@@ -114,7 +113,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         
         UIManager.Instance.optionsMenu.HideSaveLoading();
         isSaving = false;
-        WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
         saveCallback?.Invoke();
     }

@@ -143,8 +143,6 @@ public class PlayerUI : BaseMonoBehaviour {
         summonList.Initialize();
         plaguePointsContainer.gameObject.SetActive(false);
 
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(PlayerSignals.UPDATED_CURRENCIES, UpdateUI);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
@@ -299,18 +297,6 @@ public class PlayerUI : BaseMonoBehaviour {
     private void OnNecromancerSpawned(Character character) {
         OnCharacterBecomesNecromancer(character);
     }
-    private void OnMenuOpened(InfoUIBase @base) {
-        if (@base is CharacterInfoUI || @base is TileObjectInfoUI) {
-            // HideKillSummary();
-        }else if (@base is HextileInfoUI || @base is RegionInfoUI) {
-            UpdateRegionNameState();
-        }
-    }
-    private void OnMenuClosed(InfoUIBase @base) {
-        if (@base is HextileInfoUI || @base is RegionInfoUI) {
-            UpdateRegionNameState();
-        }
-    }
     private void OnThreatUpdated() {
         threatLbl.text = PlayerManager.Instance.player.threatComponent.threat.ToString();
         //threatLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f);
@@ -338,16 +324,8 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
 
     private void UpdateRegionNameState() {
-        if (UIManager.Instance.regionInfoUI.isShowing || UIManager.Instance.hexTileInfoUI.isShowing 
-            || InnerMapManager.Instance.isAnInnerMapShowing) {
-            Region location;
-            if (UIManager.Instance.regionInfoUI.isShowing) {
-                location = UIManager.Instance.regionInfoUI.activeRegion;
-            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
-                location = UIManager.Instance.hexTileInfoUI.activeHex.region;
-            } else {
-                location = InnerMapManager.Instance.currentlyShowingMap.region as Region;
-            }
+        if (InnerMapManager.Instance.isAnInnerMapShowing) {
+            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
             Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
             regionNameTopMenuText.text = location.name;
             regionNameTopMenuGO.SetActive(true);

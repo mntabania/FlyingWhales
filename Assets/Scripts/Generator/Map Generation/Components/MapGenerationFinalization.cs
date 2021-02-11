@@ -249,6 +249,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				}
 			}
 		}
+		RuinarchListPool<LocationStructure>.Release(allSpecialStructures);
 	}
 	private IEnumerator CaveItemGeneration() {
 		LandmarkData caveData = LandmarkManager.Instance.GetLandmarkData(LANDMARK_TYPE.CAVE);

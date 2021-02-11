@@ -21,7 +21,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public const int REGION_VILLAGE_CAPACITY = 3;
     
     [SerializeField] private List<LandmarkData> landmarkData;
-    public List<BaseLandmark> allLandmarks;
     [SerializeField] private GameObject landmarkGO;
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
     
@@ -38,7 +37,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     #endregion
     
     public void Initialize() {
-        allLandmarks = new List<BaseLandmark>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
         ConstructRaceStructureRequirements();
@@ -68,51 +66,8 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             landmarkDataDict.Add(data.landmarkType, data);
         }
     }
-    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
-        if (location.landmarkOnTile != null) {
-            //Destroy landmark on tile
-            DestroyLandmarkOnTile(location);
-        }
-        BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
-        newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        // location.UpdateBuildSprites();
-        allLandmarks.Add(newLandmark);
-        Messenger.Broadcast(LandmarkSignals.LANDMARK_CREATED, newLandmark);
-        return newLandmark;
-    }
-    public void DestroyLandmarkOnTile(HexTile tile) {
-        BaseLandmark landmarkOnTile = tile.landmarkOnTile;
-        if (landmarkOnTile == null) {
-            return;
-        }
-        landmarkOnTile.DestroyLandmark();
-        // tile.UpdateBuildSprites();
-        tile.RemoveLandmarkVisuals();
-        tile.RemoveLandmarkOnTile();
-        allLandmarks.Remove(landmarkOnTile);
-        Messenger.Broadcast(LandmarkSignals.LANDMARK_DESTROYED, landmarkOnTile, tile);
-    }
-    public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
-        BaseLandmark newLandmark = location.LoadLandmark(landmark);
-        return newLandmark;
-    }
     public GameObject GetLandmarkGO() {
         return this.landmarkGO;
-    }
-    public BaseLandmark CreateNewLandmarkInstance(HexTile location, LANDMARK_TYPE type) {
-        return new BaseLandmark(location, type);
-    }
-    public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
-        if (data.landmarkType.IsPlayerLandmark()) {
-            var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-            System.Type systemType = System.Type.GetType(typeName);
-            if (systemType != null) {
-                return System.Activator.CreateInstance(systemType, location, data) as BaseLandmark;
-            }
-            return null;
-        } else {
-            return new BaseLandmark(location, data);
-        }
     }
     #endregion
 
@@ -157,7 +112,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         return structures;
     }
     public List<LocationStructure> GetAllSpecialStructures() {
-        List<LocationStructure> specialStructures = new List<LocationStructure>();
+        List<LocationStructure> specialStructures = RuinarchListPool<LocationStructure>.Claim();
         foreach (var regionStructure in GridMap.Instance.mainRegion.structures) {
             if (regionStructure.Key.IsSpecialStructure()) {
                 specialStructures.AddRange(regionStructure.Value);
@@ -184,18 +139,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             }
         }
         
-    }
-    public List<Character> GetAllDeadCharactersInLocation(Region location) {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.isDead && character.currentRegion == location && !(character is Summon)) {
-                if(character.marker || character.grave != null) { //Only resurrect characters who are in the tombstone or still has a marker in the npcSettlement
-                    characters.Add(character);
-                }
-            }
-        }
-        return characters;
     }
     #endregion
 

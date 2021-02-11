@@ -186,20 +186,6 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private void SetLandmarkOnTile(BaseLandmark landmarkOnTile) {
         this.landmarkOnTile = landmarkOnTile;
     }
-    public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType));
-        //Create Landmark Game Object on tile
-        CreateLandmarkVisual();
-        SetElevation(landmarkType == LANDMARK_TYPE.CAVE ? ELEVATION.MOUNTAIN : ELEVATION.PLAIN);
-        Biomes.Instance.UpdateTileVisuals(this);
-        return landmarkOnTile;
-    }
-    public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
-        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
-        //Create Landmark Game Object on tile
-        CreateLandmarkVisual();
-        return landmarkOnTile;
-    }
     private void CreateLandmarkVisual() {
         GameObject landmarkGO = Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
         landmarkGO.transform.localPosition = Vector3.zero;

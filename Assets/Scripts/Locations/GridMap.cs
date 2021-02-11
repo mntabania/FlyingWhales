@@ -8,12 +8,10 @@ using UtilityScripts;
 public class GridMap : BaseMonoBehaviour {
 	public static GridMap Instance;
 
-	public GameObject goHex;
     [Space(10)]
     [Header("Map Settings")]
     public int width;
 	public int height;
-    [FormerlySerializedAs("_borderParent")] public Transform borderParent;
     [SerializeField] internal int _borderThickness;
     
     [Space(10)]

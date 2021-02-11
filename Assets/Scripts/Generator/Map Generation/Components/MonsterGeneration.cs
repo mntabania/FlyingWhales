@@ -99,7 +99,8 @@ public class MonsterGeneration : MapGenerationComponent {
                     }
                 }
 			}
-		}	
+		}
+		RuinarchListPool<LocationStructure>.Release(allSpecialStructures);
 		yield return null;
 	}
 	private IEnumerator CaveMonsterGeneration() {

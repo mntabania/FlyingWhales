@@ -1860,14 +1860,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }  
         } else {
             if (marker) {
-                if (carryComponent.masterCharacter.movementComponent.isTravellingInWorld) {
-                    if (InnerMapManager.Instance.isAnInnerMapShowing) {
-                        InnerMapManager.Instance.HideAreaMap();
-                    }
-                    if(carryComponent.masterCharacter.currentRegion != null) {
-                        WorldMapCameraMove.Instance.CenterCameraOn(carryComponent.masterCharacter.currentRegion.coreTile.gameObject);
-                    }
-                } else if (carryComponent.masterCharacter.gridTileLocation != null) {
+                if (carryComponent.masterCharacter.gridTileLocation != null) {
                     bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
                     if (instantCenter) {
                         InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);

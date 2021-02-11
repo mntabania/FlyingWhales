@@ -94,15 +94,6 @@ public class Player : ILeader, IObjectManipulator {
 
     #region Listeners
     private void AddListeners() {
-        //goap
-        // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
-        // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
-
-        //minions
-        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
-        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
         Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
         Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
 
@@ -117,31 +108,8 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Settlement
-    public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
-        PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
-        npcSettlement.SetName("Demonic Intrusion");
-        SetPlayerArea(npcSettlement);
-        // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
-        return npcSettlement;
-    }
-    public void LoadPlayerArea(SaveDataPlayerGame saveDataPlayerGame) {
-        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataPlayerGame.settlementID);
-        PlayerSettlement pSettlement = settlement as PlayerSettlement;
-        Assert.IsNotNull(pSettlement, $"Could not load player settlement because it is either null or not a PlayerSettlement type {settlement?.ToString() ?? "Null"}");
-        SetPlayerArea(pSettlement);
-    }
     public void SetPlayerArea(PlayerSettlement npcSettlement) {
         playerSettlement = npcSettlement;
-    }
-    private void OnInnerMapOpened(Region area) {
-        //for (int i = 0; i < minions.Count; i++) {
-        //    minions[i].ResetCombatAbilityCD();
-        //}
-        //ResetInterventionAbilitiesCD();
-        //currentTargetFaction = npcSettlement.owner;
-    }
-    private void OnInnerMapClosed(Region area) {
-        //currentTargetFaction = null;
     }
     #endregion
 
@@ -308,7 +276,7 @@ public class Player : ILeader, IObjectManipulator {
                     break;
                 case SPELL_TARGET.HEX:
                     hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                    if (hoveredTile != null && hoveredTile.area) {
+                    if (hoveredTile != null) {
                         if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.area)) {
                             currentActivePlayerSpell.ActivateAbility(hoveredTile.area);
                             activatedAction = true;
@@ -662,11 +630,6 @@ public class Player : ILeader, IObjectManipulator {
         }
         //Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
-    #endregion
-
-    #region The Eye
-    private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) { }
-    private void OnMinionUnassignedFromPlayerLandmark(Minion minion, BaseLandmark landmark) { }
     #endregion
 
     #region Mana

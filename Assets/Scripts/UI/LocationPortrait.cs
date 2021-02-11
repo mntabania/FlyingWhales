@@ -18,13 +18,7 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
 
     public void OnPointerClick(PointerEventData eventData) {
         if (!disableInteraction) {
-            if (eventData.button == PointerEventData.InputButton.Left) {
-                if (region != null) {
-                    if (!UIManager.Instance.regionInfoUI.isShowing) {
-                        UIManager.Instance.ShowRegionInfo(region);
-                    }
-                }    
-            } else if (eventData.button == PointerEventData.InputButton.Right) {
+            if (eventData.button == PointerEventData.InputButton.Right) {
                 if (_settlement != null) {
                     UIManager.Instance.ShowPlayerActionContextMenu(_settlement, Input.mousePosition, true);
                 }

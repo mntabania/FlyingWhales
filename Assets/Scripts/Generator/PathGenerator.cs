@@ -86,17 +86,6 @@ public class PathGenerator : MonoBehaviour {
     //    MultiThreadPool.Instance.AddToThreadPool(newThread);
     //    return newThread;
     //}
-    public PathFindingThread CreatePath(BaseLandmark landmark, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
-        if (startingTile == null || destinationTile == null) {
-            return null;
-        }
-        //if (startingTile.tileTag != destinationTile.tileTag) {
-        //    return null;
-        //}
-        PathFindingThread newThread = new PathFindingThread(landmark, startingTile, destinationTile, pathfindingMode, data);
-        MultiThreadPool.Instance.AddToThreadPool(newThread);
-        return newThread;
-    }
     public int GetTravelTime(HexTile from, HexTile to) {
         float distance = Vector3.Distance(from.transform.position, to.transform.position);
         return (Mathf.CeilToInt(distance / 2.315188f)) * 2;

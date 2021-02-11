@@ -5,6 +5,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Region_Features;
+using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
 namespace Generator.Map_Generation.Components {
@@ -32,7 +33,28 @@ namespace Generator.Map_Generation.Components {
 			        Debug.LogWarning($"Could not find areas to spawn {structureType.ToString()}");
 		        }
 	        }
+	        SpecialStructureSecondPass();
         }
+        private void SpecialStructureSecondPass() {
+			for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+				Region region = GridMap.Instance.allRegions[i];
+				for (int j = 0; j < region.regionFeatureComponent.features.Count; j++) {
+					RegionFeature feature = region.regionFeatureComponent.features[j];
+					feature.SpecialStructureGenerationSecondPassActions(region);
+				}
+			}
+		}
+        
+        #region Scenario Maps
+		public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+			for (int i = 0; i < scenarioMapData.worldMapSave.specialStructureSaves.Count; i++) {
+				SpecialStructureSetting specialStructureSetting = scenarioMapData.worldMapSave.specialStructureSaves[i];
+				Area area = GridMap.Instance.map[specialStructureSetting.location.x, specialStructureSetting.location.y];
+				yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(specialStructureSetting.structureType, area.region, area));
+			}
+			yield return null;
+		}
+		#endregion
 
         private IEnumerator TryCreateSpecialStructure(STRUCTURE_TYPE p_structureType, List<Area> p_choices, int p_loopCount, int p_chancePerLoop) {
 	        int createdCount = 0;

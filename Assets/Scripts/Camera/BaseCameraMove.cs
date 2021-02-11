@@ -294,19 +294,6 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
     #endregion
     
     #region Bounds
-    protected void CalculateCameraBounds(Camera camera) {
-        if (GridMap.Instance.map == null) {
-            return;
-        }
-        Area topRightTile = GridMap.Instance.map[GridMap.Instance.width - 1, GridMap.Instance.height - 1];
-        // Vector3 topRightTilePosition = topRightTile.transform.position;
-        
-        Bounds newBounds = new Bounds {
-            extents = new Vector3(Mathf.Abs(topRightTilePosition.x),
-                Mathf.Abs(topRightTilePosition.y), 0f)
-        };
-        SetCameraBounds(newBounds);
-    }
     protected void ConstrainCameraBounds(Camera camera) {
         float xLowerBound = MIN_X;
         float xUpperBound = MAX_X;

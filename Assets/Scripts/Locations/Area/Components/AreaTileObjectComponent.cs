@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class AreaTileObjectComponent : AreaComponent {
     public List<TileObject> itemsInArea { get; private set; }

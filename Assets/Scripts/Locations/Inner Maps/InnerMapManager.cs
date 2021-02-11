@@ -189,8 +189,7 @@ namespace Inner_Maps {
             }
 
             
-            if (tile.area.landmarkOnTile != null 
-                && tile.area.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+            if (tile.structure is DemonicStructure) {
                 if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                     return room;
                 } else {
@@ -241,14 +240,13 @@ namespace Inner_Maps {
             }
             
             
-            if (tile.area.landmarkOnTile != null 
-                && tile.area.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+            if (tile.structure is DemonicStructure) {
                 if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                     selectables.Add(room);
                 }
                 selectables.Add(tile.structure is DemonicStructure
                     ? tile.structure
-                    : tile.area.GetMostImportantStructureOnTile());
+                    : tile.area.primaryStructureInArea);
             } else {
                 if (tile.structure != null) {
                     if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
@@ -375,16 +373,10 @@ namespace Inner_Maps {
                 (UIManager.Instance.poiTestingUI.gridTile == tile || UIManager.Instance.poiTestingUI.poi == tile.objHere 
                 || UIManager.Instance.poiTestingUI.poi == character)) {
                 return; //do not show tooltip if right click menu is currently targeting the hovered object
-            } else if (UIManager.Instance.minionCommandsUI.gameObject.activeSelf && 
-                       (UIManager.Instance.minionCommandsUI.targetPOI == tile.objHere 
-                        || UIManager.Instance.minionCommandsUI.targetPOI == character)) {
-                return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
-
-            //|| DEVELOPMENT_BUILD
-#if UNITY_EDITOR
-            Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
-            HexTile hexTile = tile.area;
+            
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Area hexTile = tile.area;
             string summary = tile.localPlace.ToString();
             // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             // summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
