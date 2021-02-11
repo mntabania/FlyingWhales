@@ -89,7 +89,6 @@ public class SkillTreeSelector : MonoBehaviour {
         GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
         
-        WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.gameObject);
         InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
         InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
     }
@@ -99,7 +98,6 @@ public class SkillTreeSelector : MonoBehaviour {
         GameManager.Instance.LoadProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
 
-        WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.gameObject);
         InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
         InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
     }

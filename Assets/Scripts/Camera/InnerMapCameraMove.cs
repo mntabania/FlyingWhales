@@ -101,11 +101,11 @@ public class InnerMapCameraMove : BaseCameraMove {
             target = GO.transform;
         }
     }
-    public void CenterCameraOnTile(HexTile tile, bool instantCenter = true) {
+    public void CenterCameraOnTile(Area area, bool instantCenter = true) {
         if (instantCenter) {
-            MoveCamera(tile.worldPosition);
+            MoveCamera(area.worldPosition);
         } else {
-            target = tile.areaItem.transform;    
+            target = area.areaItem.transform;    
         }
     }
     private void Zooming() {

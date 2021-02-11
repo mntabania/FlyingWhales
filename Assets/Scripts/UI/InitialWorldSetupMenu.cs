@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Locations.Settlements;
@@ -29,30 +30,30 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         //pick tile to place portal.
         configureLoadoutBtnGO.gameObject.SetActive(false);
         pickPortalMessage.gameObject.SetActive(true);
-        Messenger.AddListener<HexTile>(AreaSignals.AREA_LEFT_CLICKED, OnTileLeftClicked);
+        throw new NotImplementedException();
+        // Messenger.AddListener<HexTile>(AreaSignals.AREA_LEFT_CLICKED, OnTileLeftClicked);
         
         pickPortalMessage.anchoredPosition = new Vector2(0f, -110);
         pickPortalMessage.DOAnchorPosY(110f, 0.5f).SetEase(Ease.OutBack);
     }
-    private void OnTileLeftClicked(HexTile hexTile) {
-        if (hexTile.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL)) {
-            UIManager.Instance.ShowYesNoConfirmation("Build Portal", "Are you sure you want to build your portal here?", () => PlacePortal(hexTile), showCover: true, layer: 50);
-        }
-    }
-    private void PlacePortal(HexTile hexTile) {
-        Debug.Log($"Placed portal at {hexTile}");
+    // private void OnTileLeftClicked(Area p_area) {
+    //     if (p_area.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL)) {
+    //         UIManager.Instance.ShowYesNoConfirmation("Build Portal", "Are you sure you want to build your portal here?", () => PlacePortal(p_area), showCover: true, layer: 50);
+    //     }
+    // }
+    private void PlacePortal(Area p_area) {
+        Debug.Log($"Placed portal at {p_area}");
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-        Messenger.RemoveListener<HexTile>(AreaSignals.AREA_LEFT_CLICKED, OnTileLeftClicked);
+        // Messenger.RemoveListener<HexTile>(AreaSignals.AREA_LEFT_CLICKED, OnTileLeftClicked);
         
-        hexTile.SetElevation(ELEVATION.PLAIN);
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(hexTile, LANDMARK_TYPE.THE_PORTAL);
-        PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(hexTile);
+        p_area.SetElevation(ELEVATION.PLAIN);
+        PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(p_area);
         playerSettlement.SetName("Demonic Intrusion");
-        WorldConfigManager.Instance.mapGenerationData.portal = hexTile;
-        PlayerManager.Instance.InitializePlayer(hexTile);
+        WorldConfigManager.Instance.mapGenerationData.portal = p_area;
+        PlayerManager.Instance.InitializePlayer(p_area);
         
-        hexTile.StartCorruption();
-        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(hexTile.settlementOnTile, hexTile.region.innerMap, hexTile, STRUCTURE_TYPE.THE_PORTAL, RESOURCE.NONE);
+        p_area.gridTileComponent.StartCorruption(p_area);
+        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(p_area.settlementOnArea, p_area.region.innerMap, p_area, STRUCTURE_TYPE.THE_PORTAL, RESOURCE.NONE);
 
         isPickingPortal = false;
         

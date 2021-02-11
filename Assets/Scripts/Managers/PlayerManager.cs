@@ -50,11 +50,11 @@ public class PlayerManager : BaseMonoBehaviour {
         // Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
         Messenger.AddListener<string>(PlayerSignals.WIN_GAME, WinGame);
     }
-    public void InitializePlayer(HexTile portal) {
+    public void InitializePlayer(Area portal) {
         player = new Player();
         player.CreatePlayerFaction();
         player.SetPortalTile(portal);
-        PlayerSettlement existingPlayerNpcSettlement = portal.settlementOnTile as PlayerSettlement;
+        PlayerSettlement existingPlayerNpcSettlement = portal.settlementOnArea as PlayerSettlement;
         Assert.IsNotNull(existingPlayerNpcSettlement, $"Portal does not have a player settlement on its tile");
         player.SetPlayerArea(existingPlayerNpcSettlement);
         

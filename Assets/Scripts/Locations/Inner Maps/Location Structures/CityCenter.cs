@@ -45,10 +45,10 @@ namespace Inner_Maps.Location_Structures {
 
         private void OnDayStarted() {
             if (GameUtilities.RollChance(50)) {
-                HexTile hex = occupiedArea;
-                LocationGridTile tile = hex.GetRandomTileThatMeetCriteria(t => t.objHere == null && t.structure != this && t.IsPassable());
+                Area hex = occupiedArea;
+                LocationGridTile tile = hex.gridTileComponent.GetRandomTileThatMeetCriteria(t => t.objHere == null && t.structure != this && t.IsPassable());
                 if(tile != null) {
-                    int numberOfHerbPlants = hex.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.HERB_PLANT);
+                    int numberOfHerbPlants = hex.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.HERB_PLANT);
                     if(numberOfHerbPlants < 4) {
                         tile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HERB_PLANT), tile);
                     }

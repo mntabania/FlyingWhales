@@ -88,8 +88,8 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
 
-    public void SetPortalTile(HexTile tile) {
-        portalTile = tile;
+    public void SetPortalTile(Area tile) {
+        portalArea = tile;
     }
 
     #region Listeners

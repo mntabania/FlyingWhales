@@ -554,7 +554,7 @@ namespace Inner_Maps {
             if (structureObject == null) {
                 throw new Exception($"No LocationStructureObject for {p_structurePrefab.name}");
             }
-            HexTile hexTile = centerTile.area;
+            Area hexTile = centerTile.area;
             p_settlement.AddAreaToSettlement(hexTile);
             structureObject.RefreshAllTilemaps();
             List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
@@ -739,8 +739,7 @@ namespace Inner_Maps {
                  || currTile.area.elevationType == ELEVATION.WATER)) {
                 return;
             }
-            if (currTile.area.landmarkOnTile != null
-                && currTile.area.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
+            if (currTile.area.primaryStructureInArea != null && currTile.area.primaryStructureInArea.structureType == STRUCTURE_TYPE.MONSTER_LAIR) {
                 return;
             }
             

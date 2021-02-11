@@ -95,7 +95,6 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Right Click Commands")]
     public POITestingUI poiTestingUI;
-    public MinionCommandsUI minionCommandsUI;
 
     [Space(10)]
     [Header("Combat")]

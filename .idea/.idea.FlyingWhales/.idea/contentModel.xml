@@ -3225,7 +3225,6 @@
             <e p="ISelectable.cs" t="Include" />
             <e p="ItemItem.cs" t="Include" />
             <e p="LandmarkCharacterItem.cs" t="Include" />
-            <e p="LandmarkNameplate.cs" t="Include" />
             <e p="LevelCollapseUI.cs" t="Include" />
             <e p="LoadWindow.cs" t="Include" />
             <e p="LocationPortrait.cs" t="Include" />
@@ -3245,7 +3244,6 @@
             <e p="MemoryItem.cs" t="Include" />
             <e p="MeterMark.cs" t="Include" />
             <e p="MinionCard.cs" t="Include" />
-            <e p="MinionCommandsUI.cs" t="Include" />
             <e p="MinionLeaderPicker.cs" t="Include" />
             <e p="MinionPicker.cs" t="Include" />
             <e p="Models" t="Include">

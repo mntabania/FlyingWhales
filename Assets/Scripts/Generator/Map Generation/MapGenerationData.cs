@@ -38,7 +38,7 @@ public class MapGenerationData {
 	public int[,] habitabilityValues;
 	public List<Area> villageSpots;
 	public Dictionary<FactionTemplate, List<Area>> determinedVillages;
-	public HexTile portal;
+	public Area portal;
 
 	public MapGenerationData() {
 		villageSpots = new List<Area>();

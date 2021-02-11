@@ -5,7 +5,7 @@ using Locations.Settlements;
 using Locations.Area_Features;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-
+using UnityEngine;
 
 public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public AreaData areaData { get; private set; }
@@ -48,7 +48,15 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public ELEVATION elevationType => areaData.elevationType;
     public bool hasBeenDestroyed => false;
     public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Area;
-    public LocationStructure primaryStructureInArea => GetMostImportantStructureOnTile();
+    public LocationStructure primaryStructureInArea => structureComponent.GetMostImportantStructureOnTile();
+    public Vector3 worldPosition {
+        get {
+            Vector2 pos = areaItem.transform.position;
+            // pos.x += 3.5f;
+            // pos.y += 3.5f;
+            return pos;
+        }
+    }
     #endregion
 
     public Area (int id, int x, int y) {
