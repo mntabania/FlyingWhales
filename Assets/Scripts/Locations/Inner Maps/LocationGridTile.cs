@@ -1778,25 +1778,23 @@ namespace Inner_Maps {
             }
             return nearestHex;
         }
-        public HexTile GetNearestHexTileWithinRegionThatMeetCriteria(System.Func<HexTile, bool> validityChecker) {
-            if (validityChecker.Invoke(parentArea)) {
-                return parentArea;
+        public Area GetNearestHexTileWithinRegionThatMeetCriteria(System.Func<Area, bool> validityChecker) {
+            if (validityChecker.Invoke(area)) {
+                return area;
             }
-            
-
-            HexTile nearestHex = null;
+            Area nearestArea = null;
             float nearestDist = 0f;
-            for (int i = 0; i < parentArea.region.tiles.Count; i++) {
-                HexTile hex = parentArea.region.tiles[i];
-                if (validityChecker.Invoke(hex)) {
-                    float dist = GetDistanceTo(hex.GetCenterLocationGridTile());
-                    if (nearestHex == null || dist < nearestDist) {
-                        nearestHex = hex;
+            for (int i = 0; i < area.region.areas.Count; i++) {
+                Area a = area.region.areas[i];
+                if (validityChecker.Invoke(a)) {
+                    float dist = GetDistanceTo(a.gridTileComponent.centerGridTile);
+                    if (nearestArea == null || dist < nearestDist) {
+                        nearestArea = a;
                         nearestDist = dist;
                     }
                 }
             }
-            return nearestHex;
+            return nearestArea;
         }
         #endregion
 

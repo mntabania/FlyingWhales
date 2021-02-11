@@ -57,13 +57,13 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         producedJob = null;
                         return true;
                     } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
-                        HexTile targetTile = GetNoStructurePlainHexInAllRegions();
-                        if (targetTile != null) {
-                            log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetTile}";
+                        Area targetArea = GetNoStructurePlainAreaInAllRegions();
+                        if (targetArea != null) {
+                            log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetArea}";
                             //Build vampire castle
                             List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                            return character.jobComponent.TriggerBuildVampireCastle(targetTile.GetCenterLocationGridTile(), out producedJob, chosenStructurePrefab.name);    
+                            return character.jobComponent.TriggerBuildVampireCastle(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);    
                         } else {
                             log += $"\n-Could not find valid Area in wild to build a vampire castle.";
                         }
@@ -152,19 +152,19 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
         return null;
     }
-    private HexTile GetNoStructurePlainHexInAllRegions() {
-        HexTile chosenHex = null;
+    private Area GetNoStructurePlainAreaInAllRegions() {
+        Area area = null;
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            chosenHex = GetNoStructurePlainHexInRegion(region);
-            if (chosenHex != null) {
-                return chosenHex;
+            area = GetNoStructurePlainAreaInRegion(region);
+            if (area != null) {
+                return area;
             }
         }
-        return chosenHex;
+        return area;
     }
-    private HexTile GetNoStructurePlainHexInRegion(Region region) {
-        return region.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+    private Area GetNoStructurePlainAreaInRegion(Region region) {
+        return region.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
     }
 
     public static WeightedDictionary<Character> GetVampiricEmbraceTargetWeights(Character character) {

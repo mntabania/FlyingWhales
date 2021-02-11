@@ -35,6 +35,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public AreaNeighbourComponent neighbourComponent { get; private set; }
     public AreaTileObjectComponent tileObjectComponent { get; private set; }
     public AreaBiomeComponent biomeComponent { get; private set; }
+    public AreaStructureComponent structureComponent { get; private set; }
 
     #region getters
     public string name => locationName;
@@ -68,6 +69,8 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         neighbourComponent = new AreaNeighbourComponent(); neighbourComponent.SetOwner(this);
         tileObjectComponent = new AreaTileObjectComponent(); tileObjectComponent.SetOwner(this);
         biomeComponent = new AreaBiomeComponent(); biomeComponent.SetOwner(this);
+        structureComponent = new AreaStructureComponent(); structureComponent.SetOwner(this);
+
     }
 
     public Area (SaveDataArea data) {
@@ -79,6 +82,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         neighbourComponent = new AreaNeighbourComponent(); neighbourComponent.SetOwner(this);
         tileObjectComponent = new AreaTileObjectComponent(); tileObjectComponent.SetOwner(this);
         biomeComponent = new AreaBiomeComponent(); biomeComponent.SetOwner(this);
+        structureComponent = new AreaStructureComponent(); structureComponent.SetOwner(this);
         locationCharacterTracker = new LocationCharacterTracker();
         locationAwareness = new LocationAwareness();
         featureComponent = new AreaFeatureComponent();
@@ -131,41 +135,6 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         //Does not count if hextile is only a territory
         return settlementOnArea != null && settlementOnArea.HasResidentThatMeetsCriteria(resident => !resident.isDead && resident.isNormalCharacter);
     }
-    public LocationStructure GetMostImportantStructureOnTile() {
-        LocationStructure mostImportant = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> pair in region.structures) {
-            for (int i = 0; i < pair.Value.Count; i++) {
-                if (pair.Key == STRUCTURE_TYPE.WILDERNESS) {
-                    continue;
-                }
-                LocationStructure structure = pair.Value[i];
-                if (structure.HasTileOnArea(this)) {
-                    int value = pair.Key.StructurePriority();
-                    if (value > mostImportant.structureType.StructurePriority()) {
-                        mostImportant = structure;
-                    }
-                }
-
-                // if (structure is Cave cave) {
-                //     if (cave.occupiedHexTile != null && cave.caveHexTiles.Contains(innerMapHexTile)) {
-                //         int value = pair.Key.StructurePriority(); 
-                //         if (value > mostImportant.structureType.StructurePriority()) {
-                //             mostImportant = structure;
-                //         }    
-                //     }
-                // } else {
-                //     if (structure.occupiedHexTile != null && structure.occupiedHexTile == innerMapHexTile) {
-                //         int value = pair.Key.StructurePriority(); 
-                //         if (value > mostImportant.structureType.StructurePriority()) {
-                //             mostImportant = structure;
-                //         }    
-                //     }
-                // }
-            }
-        }
-
-        return mostImportant;
-    }
     #endregion
 
     #region Region
@@ -197,7 +166,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
                 }
             }
             //if code reaches this, then there is no longer a structure from the settlement on this tile
-            settlementOnArea.RemoveTileFromSettlement(this);
+            settlementOnArea.RemoveAreaFromSettlement(this);
         }
     }
     #endregion

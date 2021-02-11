@@ -24,7 +24,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public Faction partyFaction { get; private set; }
     public LocationStructure meetingPlace { get; private set; }
     public LocationStructure targetRestingTavern { get; private set; }
-    public HexTile targetCamp { get; private set; }
+    public Area targetCamp { get; private set; }
     public IPartyTargetDestination targetDestination { get; private set; }
     public PartyQuest currentQuest { get; private set; }
 
@@ -477,17 +477,18 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             }
         }
         if (firstActiveMember != null) {
-            HexTile activeMemberCurrentHex = firstActiveMember.gridTileLocation.parentArea;
-            if(activeMemberCurrentHex != null && activeMemberCurrentHex.settlementOnTile != null && activeMemberCurrentHex.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE) {
-                //Hex tile within a village cannot be a camp
-                activeMemberCurrentHex = null;
+            Area activeMemberCurrentArea = firstActiveMember.gridTileLocation.area;
+            if(activeMemberCurrentArea != null && activeMemberCurrentArea.settlementOnArea != null && activeMemberCurrentArea.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE) {
+                //Area within a village cannot be a camp
+                activeMemberCurrentArea = null;
             }
-            List<HexTile> nearbyHexes = firstActiveMember.gridTileLocation.parentArea.GetTilesInRange(3);
-            if (nearbyHexes != null && nearbyHexes.Count > 0) {
-                for (int i = 0; i < nearbyHexes.Count; i++) {
-                    HexTile hex = nearbyHexes[i];
+            List<Area> nearbyAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+            firstActiveMember.gridTileLocation.area.PopulateAreasInRange(nearbyAreas, 3);
+            if (nearbyAreas != null && nearbyAreas.Count > 0) {
+                for (int i = 0; i < nearbyAreas.Count; i++) {
+                    Area area = nearbyAreas[i];
                     BaseSettlement settlement;
-                    if (hex.IsPartOfVillage(out settlement)) {
+                    if (area.IsPartOfVillage(out settlement)) {
                         if (settlement == partySettlement && targetDestination == partySettlement) {
                             //If the nearby tavern is in the home settlement of the party and the home settlement is the target destination (meaning the quest is done and the party is going home), return immeditately
                             //This would mean the no resting tavern or camp will be set
@@ -502,15 +503,15 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                             }
                         }
                     } else {
-                        if(activeMemberCurrentHex == null && hex.elevationType != ELEVATION.WATER && (hex.settlementOnTile == null || hex.settlementOnTile.locationType != LOCATION_TYPE.VILLAGE)) {
-                            activeMemberCurrentHex = hex;
+                        if(activeMemberCurrentArea == null && area.elevationType != ELEVATION.WATER && (area.settlementOnArea == null || area.settlementOnArea.locationType != LOCATION_TYPE.VILLAGE)) {
+                            activeMemberCurrentArea = area;
                         }
                     }
                 }
             }
 
             if (targetRestingTavern == null) {
-                targetCamp = activeMemberCurrentHex;
+                targetCamp = activeMemberCurrentArea;
             }
         }
     }
@@ -776,10 +777,10 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                         }
                     }
                 } else if (targetCamp != null) {
-                    if (character.gridTileLocation != null && character.gridTileLocation.parentArea == targetCamp) {
+                    if (character.gridTileLocation != null && character.gridTileLocation.area == targetCamp) {
                         isActive = true;
                     } else {
-                        LocationGridTile tile = targetCamp.GetCenterLocationGridTile();
+                        LocationGridTile tile = targetCamp.gridTileComponent.centerGridTile;
                         if (character.movementComponent.HasPathToEvenIfDiffRegion(tile)) {
                             isActive = true;
                         }

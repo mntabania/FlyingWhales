@@ -11,10 +11,12 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n{character.name} is an Invader";
-        if (character.behaviourComponent.invadeVillageTarget == null) {
+        if (character.behaviourComponent.invadeVillageTarget.Count <= 0) {
             log += $"\n-No invade target yet, setting one...";
-            character.behaviourComponent.SetInvadeVillageTarget(GetVillageTargetsByPriority(character));
-            if (character.behaviourComponent.invadeVillageTarget == null) {
+            character.behaviourComponent.ResetInvadeVillageTarget();
+            PopulateVillageTargetsByPriority(character.behaviourComponent.invadeVillageTarget, character);
+            //character.behaviourComponent.SetInvadeVillageTarget(PopulateVillageTargetsByPriority(character));
+            if (character.behaviourComponent.invadeVillageTarget.Count <= 0) {
                 log += $"\n-Still no invade target, roam around.";
                 return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
             }
@@ -22,7 +24,8 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             return true;
         } else {
             log += $"\n-Already has village target";
-            if (character.areaLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(character.areaLocation)) {
+            Area areaLocation = character.areaLocation;
+            if (areaLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(areaLocation)) {
                 log += $"\n-Already att village target, will find character to attack";
                 //character is already at target village
                 List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
@@ -35,7 +38,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
                 } else {
                     log += $"\n-No more valid targets, clearing target village data...";
                     //No more valid targets exist, clearing village target. 
-                    character.behaviourComponent.SetInvadeVillageTarget(null);
+                    character.behaviourComponent.ResetInvadeVillageTarget();
                 }
                 ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
                 producedJob = null;
@@ -43,24 +46,24 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             } else {
                 log += $"\n-character is not yet at village target, will go there now...";
                 //character is not yet at target village
-                HexTile targetHextile =
+                Area targetArea =
                     CollectionUtilities.GetRandomElement(character.behaviourComponent.invadeVillageTarget);
-                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.gridTiles);
                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
             }
         }
     }
-    private void PopulateTargetChoicesFor(List<Character> p_targetChoices, Character source, List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            tile.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c => c != source && IsCharacterValidForInvade(c));
+    private void PopulateTargetChoicesFor(List<Character> p_targetChoices, Character source, List<Area> p_areas) {
+        for (int i = 0; i < p_areas.Count; i++) {
+            Area area = p_areas[i];
+            area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c => c != source && IsCharacterValidForInvade(c));
         }
     }
     private bool IsCharacterValidForInvade(Character character) {
         return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false && !character.traitContainer.HasTrait("Hibernating", "Indestructible")
             && !character.isInLimbo && !character.isBeingSeized && character.carryComponent.IsNotBeingCarried();
     }
-    private List<HexTile> GetVillageTargetsByPriority(Character owner) {
+    private void PopulateVillageTargetsByPriority(List<Area> areas, Character owner) {
         //get settlements in region that have normal characters living there.
         List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
             settlement => settlement.residents.Count(IsCharacterValidForInvade) > 0
@@ -73,13 +76,13 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             if (villageChoices.Count > 0) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
-                return new List<HexTile>(chosenVillage.areas);
+                areas.AddRange(chosenVillage.areas);
             } else {
                 //a random special structure occupied by Villagers within current region
                 List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.DUNGEON).ToList();
                 if (specialStructureChoices.Count > 0) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
-                    return new List<HexTile>(chosenSpecialStructure.areas);
+                    areas.AddRange(chosenSpecialStructure.areas);
                 }
             }
         } 
@@ -90,7 +93,6 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
         //     HexTile randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
         //     return new List<HexTile>() { randomArea };
         // }
-        return null;
     }
     // public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
     //     producedJob = null;

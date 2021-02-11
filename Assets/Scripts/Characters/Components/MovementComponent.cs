@@ -330,8 +330,8 @@ public class MovementComponent : CharacterComponent {
             return true;
         }
     }
-    public bool HasPathTo(HexTile toTile) {
-        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(toTile.locationGridTiles);
+    public bool HasPathTo(Area toArea) {
+        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(toArea.gridTileComponent.gridTiles);
         return HasPathTo(targetTile);
     }
     /// <summary>

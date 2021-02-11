@@ -27,7 +27,8 @@ public class Player : ILeader, IObjectManipulator {
     public List<Summon> summons { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
-    public HexTile portalTile { get; private set; }
+    //public HexTile portalTile { get; private set; }
+    public Area portalArea { get; private set; }
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
     public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }

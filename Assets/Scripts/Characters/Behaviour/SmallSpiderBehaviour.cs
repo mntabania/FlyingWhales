@@ -31,7 +31,7 @@ public class SmallSpiderBehaviour : BaseMonsterBehaviour {
         if (character.homeStructure != null) {
             character.homeStructure.PopulateCharacterListThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
         } else if (character.HasTerritory()) {
-            character.territory.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
+            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
         }
     }
 }

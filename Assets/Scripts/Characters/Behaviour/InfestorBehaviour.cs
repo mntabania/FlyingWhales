@@ -26,8 +26,8 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                     if(character.homeSettlement != null) {
                         currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
                     } else {
-                        HexTile hex = character.areaLocation;
-                        currentCapacity = hex.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
+                        Area area = character.areaLocation;
+                        currentCapacity = area.locationCharacterTracker.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
                     }
                     if(currentCapacity < 8) {
                         character.jobComponent.TriggerLayEgg(out producedJob);
@@ -45,18 +45,20 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                 if (character.homeSettlement != null) {
                     currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
                 } else {
-                    HexTile hex = character.areaLocation;
-                    currentCapacity = hex.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
+                    Area area = character.areaLocation;
+                    currentCapacity = area.locationCharacterTracker.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
                 }
                 if (currentCapacity >= 5) {
-                    List<HexTile> targets = character.behaviourComponent.GetVillageTargetsByPriority();
+                    List<Area> targets = ObjectPoolManager.Instance.CreateNewAreaList();
+                    character.behaviourComponent.PopulateVillageTargetsByPriority(targets);
                     if (targets != null && targets.Count > 0) {
-                        HexTile targetHex = targets[0];
+                        Area targetArea = targets[0];
+                        ObjectPoolManager.Instance.ReturnAreaListToPool(targets);
                         log += $"\n-Will attack";
-                        if (targetHex.settlementOnTile != null && targetHex.settlementOnTile is NPCSettlement settlement) {
+                        if (targetArea.settlementOnArea != null && targetArea.settlementOnArea is NPCSettlement settlement) {
                             return character.jobComponent.TriggerMonsterInvadeJob(settlement.mainStorage, out producedJob);
                         } else {
-                            return character.jobComponent.TriggerMonsterInvadeJob(targetHex, out producedJob);
+                            return character.jobComponent.TriggerMonsterInvadeJob(targetArea, out producedJob);
                         }
                     }
                 }

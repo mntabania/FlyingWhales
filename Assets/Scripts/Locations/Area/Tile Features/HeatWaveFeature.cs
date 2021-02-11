@@ -75,8 +75,8 @@ namespace Locations.Area_Features {
                 RemoveCharacterOutside(character);
             }
         }
-        private void OnCharacterLeftArea(Character character, Area exitedArea, Area featureOwner) {
-            if (exitedArea == featureOwner) {
+        private void OnCharacterLeftArea(Character character, Area exitedTile, Area featureOwner) {
+            if (exitedTile == featureOwner) {
                 //character left the hextile that owns this feature
                 RemoveCharacterOutside(character);
             }

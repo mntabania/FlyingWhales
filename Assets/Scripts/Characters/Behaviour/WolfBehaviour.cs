@@ -64,19 +64,19 @@ public class WolfBehaviour : BaseMonsterBehaviour {
                 }
             }
 
-            HexTile chosenHex = null;
-            HexTile targetHex = character.areaLocation;
-            if(targetHex != null && targetHex.elevationType != ELEVATION.WATER && targetHex.elevationType != ELEVATION.MOUNTAIN && targetHex.landmarkOnTile == null && !targetHex.IsNextToOrPartOfVillage()) {
-                chosenHex = targetHex;
+            Area chosenArea = null;
+            Area targetArea = character.areaLocation;
+            if(targetArea != null && targetArea.elevationType != ELEVATION.WATER && targetArea.elevationType != ELEVATION.MOUNTAIN && !targetArea.structureComponent.HasStructureInArea() && !targetArea.IsNextToOrPartOfVillage()) {
+                chosenArea = targetArea;
             }
-            if (chosenHex == null) {
-                chosenHex = GetNoStructurePlainHexInRegion(character.currentRegion);
+            if (chosenArea == null) {
+                chosenArea = GetNoStructurePlainAreaInRegion(character.currentRegion);
             }
-            if (chosenHex == null) {
-                chosenHex = GetNoStructurePlainHexInAllRegions();
+            if (chosenArea == null) {
+                chosenArea = GetNoStructurePlainAreaInAllRegions();
             }
             log += $"\n-{character.name} could not find valid home settlement and structure, will do build lair.";
-            LocationGridTile centerTileOfHex = chosenHex.GetCenterLocationGridTile();
+            LocationGridTile centerTileOfHex = chosenArea.gridTileComponent.centerGridTile;
             //if none, wolf will create a monster lair away from village.
             //NOTE: Create monster lair action should check if a monster lair is already being built on a tile, to avoid conflicts    
             character.jobComponent.TriggerSpawnWolfLair(centerTileOfHex, out producedJob);
@@ -112,18 +112,18 @@ public class WolfBehaviour : BaseMonsterBehaviour {
         base.OnRemoveBehaviourFromCharacter(character);
         character.RemoveAdvertisedAction(INTERACTION_TYPE.BUILD_WOLF_LAIR);
     }
-    private HexTile GetNoStructurePlainHexInAllRegions() {
-        HexTile chosenHex = null;
+    private Area GetNoStructurePlainAreaInAllRegions() {
+        Area chosenArea = null;
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            chosenHex = GetNoStructurePlainHexInRegion(region);
-            if (chosenHex != null) {
-                return chosenHex;
+            chosenArea = GetNoStructurePlainAreaInRegion(region);
+            if (chosenArea != null) {
+                return chosenArea;
             }
         }
-        return chosenHex;
+        return chosenArea;
     }
-    private HexTile GetNoStructurePlainHexInRegion(Region region) {
-        return region.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+    private Area GetNoStructurePlainAreaInRegion(Region region) {
+        return region.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
     }
 }

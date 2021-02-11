@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class AreaNeighbourComponent : AreaComponent {
     public List<Area> neighbours { get; private set; }
@@ -68,6 +69,83 @@ public class AreaNeighbourComponent : AreaComponent {
             }
         }
         return false;
+    }
+    public Area GetRandomAdjacentHextileWithinRegion(bool includeSelf = false) {
+        if (includeSelf && GameUtilities.RollChance(15)) {
+            return owner;
+        } else {
+            List<Area> neighbours = ObjectPoolManager.Instance.CreateNewAreaList();
+            PopulatePlainNeighboursWithinRegion(neighbours);
+            Area chosenArea = null;
+            if (neighbours.Count > 0) {
+                chosenArea = neighbours[UnityEngine.Random.Range(0, neighbours.Count)];
+            }
+            ObjectPoolManager.Instance.ReturnAreaListToPool(neighbours);
+            return chosenArea;
+        }
+    }
+    public Area GetRandomAdjacentNoSettlementHextileWithinRegion(bool includeSelf = false) {
+        if (includeSelf && GameUtilities.RollChance(15)) {
+            return owner;
+        } else {
+            List<Area> neighbours = ObjectPoolManager.Instance.CreateNewAreaList();
+            PopulatePlainNoSettlementNeighboursWithinRegion(neighbours);
+            Area chosenArea = null;
+            if (neighbours.Count > 0) {
+                chosenArea = neighbours[UnityEngine.Random.Range(0, neighbours.Count)];
+            }
+            ObjectPoolManager.Instance.ReturnAreaListToPool(neighbours);
+            return chosenArea;
+        }
+    }
+    public Area GetNearestPlainAreaWithNoResident() {
+        if (owner.areaData.elevationType != ELEVATION.WATER && owner.areaData.elevationType != ELEVATION.MOUNTAIN) {
+            if (!owner.HasAliveVillagerResident()) {
+                return owner;
+            }
+        }
+        for (int i = 0; i < neighbours.Count; i++) {
+            Area neighbour = neighbours[i];
+            if (neighbour.elevationType != ELEVATION.WATER && neighbour.elevationType != ELEVATION.MOUNTAIN) {
+                if (!neighbour.HasAliveVillagerResident()) {
+                    return neighbour;
+                }
+            }
+        }
+
+        //Stopped this first because this can cause infinite loop since we do not flag neighbour that is already checked
+        //for (int i = 0; i < neighbours.Count; i++) {
+        //    Area neighbour = neighbours[i];
+        //    Area nearestArea = neighbour.neighbourComponent.GetNearestPlainAreaWithNoResident();
+        //    if (nearestArea != null) {
+        //        return nearestArea;
+        //    }
+        //}
+        return null;
+    }
+    public void PopulatePlainNeighbours(List<Area> areas) {
+        for (int i = 0; i < neighbours.Count; i++) {
+            Area area = neighbours[i];
+            if(area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
+                areas.Add(area);
+            }
+        }
+    }
+    public void PopulatePlainNeighboursWithinRegion(List<Area> areas) {
+        for (int i = 0; i < neighbours.Count; i++) {
+            Area area = neighbours[i];
+            if (owner.region == area.region && area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
+                areas.Add(area);
+            }
+        }
+    }
+    public void PopulatePlainNoSettlementNeighboursWithinRegion(List<Area> areas) {
+        for (int i = 0; i < neighbours.Count; i++) {
+            Area area = neighbours[i];
+            if (owner.region == area.region && area.settlementOnArea == null && area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
+                areas.Add(area);
+            }
+        }
     }
     #endregion
 }

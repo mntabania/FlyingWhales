@@ -20,6 +20,7 @@ public class Region : ISavable, ILogFiller {
     public string description => GetDescription();
     public Dictionary<GridNeighbourDirection, Region> neighboursWithDirection { get; private set; }
     public List<Region> neighbours { get; private set; }
+    public List<Area> areas { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public List<HexTile> shuffledNonMountainWaterTiles { get; private set; }
     public HexTile coreTile { get; private set; }
@@ -308,20 +309,15 @@ public class Region : ISavable, ILogFiller {
         }
         return tilesWithFeature;
     }
-    public List<HexTile> GetAreasOccupiedByVillagers() {
-        List<HexTile> areas = null;
+    public void PopulateAreasOccupiedByVillagers(List<Area> areas) {
         for (int i = 0; i < residents.Count; i++) {
             Character regionResident = residents[i];
             if (regionResident.isNormalCharacter && regionResident.HasTerritory()) {
-                if (areas == null) {
-                    areas = new List<HexTile>();
-                }
                 if (areas.Contains(regionResident.territory) == false) {
                     areas.Add(regionResident.territory);
                 }
             }
         }
-        return areas;
     }
     public void PopulateNeighbours() {
         for (int i = 0; i < tiles.Count; i++) {
@@ -992,20 +988,20 @@ public class Region : ISavable, ILogFiller {
         }
         return count;
     }
-    public HexTile GetRandomHexThatMeetCriteria(System.Func<HexTile, bool> validityChecker) {
-        List<HexTile> hexes = ObjectPoolManager.Instance.CreateNewHexTilesList();
-        HexTile chosenHex = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currHex = tiles[i];
-            if (validityChecker.Invoke(currHex)) {
-                hexes.Add(currHex);
+    public Area GetRandomHexThatMeetCriteria(System.Func<Area, bool> validityChecker) {
+        List<Area> choices = ObjectPoolManager.Instance.CreateNewAreaList();
+        Area chosenArea = null;
+        for (int i = 0; i < areas.Count; i++) {
+            Area currArea = areas[i];
+            if (validityChecker.Invoke(currArea)) {
+                choices.Add(currArea);
             }
         }
-        if (hexes != null && hexes.Count > 0) {
-            chosenHex = hexes[UnityEngine.Random.Range(0, hexes.Count)];
+        if (choices != null && choices.Count > 0) {
+            chosenArea = choices[UnityEngine.Random.Range(0, choices.Count)];
         }
-        ObjectPoolManager.Instance.ReturnHexTilesListToPool(hexes);
-        return chosenHex;
+        ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
+        return chosenArea;
     }
     #endregion
 

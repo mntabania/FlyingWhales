@@ -10,11 +10,13 @@ public class AbominationBehaviour : BaseMonsterBehaviour {
     protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.behaviourComponent.abominationTarget == null) {
             //determine new abomination target
-            List<HexTile> targetChoices = GetTargetChoices(character);
+            List<Area> targetChoices = ObjectPoolManager.Instance.CreateNewAreaList();
+            PopulateTargetChoices(targetChoices, character);
             if (targetChoices != null) {
-                HexTile chosenTarget = CollectionUtilities.GetRandomElement(targetChoices);
+                Area chosenTarget = CollectionUtilities.GetRandomElement(targetChoices);
                 character.behaviourComponent.SetAbominationTarget(chosenTarget);
             }
+            ObjectPoolManager.Instance.ReturnAreaListToPool(targetChoices);
         }
 
         if (character.behaviourComponent.abominationTarget == null) {
@@ -22,25 +24,21 @@ public class AbominationBehaviour : BaseMonsterBehaviour {
             return character.jobComponent.TriggerRoamAroundTile(out producedJob);
         } else {
             LocationGridTile targetTile =
-                CollectionUtilities.GetRandomElement(character.behaviourComponent.abominationTarget.locationGridTiles);
+                CollectionUtilities.GetRandomElement(character.behaviourComponent.abominationTarget.gridTileComponent.gridTiles);
             return character.jobComponent.TriggerRoamAroundTile(out producedJob, targetTile);
         }
     }
 
-    private List<HexTile> GetTargetChoices(Character actor) {
-        List<HexTile> choices = null;
-        if (actor.areaLocation != null) {
-            for (int i = 0; i < actor.areaLocation.AllNeighbours.Count; i++) {
-                HexTile neighbour = actor.areaLocation.AllNeighbours[i];
+    private void PopulateTargetChoices(List<Area> areas, Character actor) {
+        Area areaLocation = actor.areaLocation;
+        if (areaLocation != null) {
+            for (int i = 0; i < areaLocation.neighbourComponent.neighbours.Count; i++) {
+                Area neighbour = areaLocation.neighbourComponent.neighbours[i];
                 if (neighbour.elevationType != ELEVATION.WATER && neighbour.region == actor.currentRegion && actor.movementComponent.HasPathTo(neighbour)) {
-                    if (choices == null) {
-                        choices = new List<HexTile>();
-                    }
-                    choices.Add(neighbour);
+                    areas.Add(neighbour);
                 }
             }
         }
-        return choices;
     }
    
 }

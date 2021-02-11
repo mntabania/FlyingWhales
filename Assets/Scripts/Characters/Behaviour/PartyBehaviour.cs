@@ -177,7 +177,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         //}
 
         if (GameUtilities.RollChance(50)) {
-            Campfire campfire = GetPartyCampfireInHex(character.areaLocation, character, party);
+            Campfire campfire = GetPartyCampfireInArea(character.areaLocation, character, party);
             if(campfire != null) {
                 hasJob = character.jobComponent.TriggerWarmUp(campfire, out producedJob);
                 if (hasJob) {
@@ -209,7 +209,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         bool hasJob = false;
 
-        Campfire campfire = GetPartyCampfireInHex(character.areaLocation, character, party);
+        Campfire campfire = GetPartyCampfireInArea(character.areaLocation, character, party);
         if (campfire == null) {
             hasJob = character.jobComponent.TriggerBuildCampfireJob(JOB_TYPE.BUILD_CAMP, out producedJob);
         }
@@ -226,10 +226,10 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         return hasJob;
     }
 
-    private Campfire GetPartyCampfireInHex(HexTile hex, Character character, Party party) {
+    private Campfire GetPartyCampfireInArea(Area p_area, Character character, Party party) {
         Campfire chosenCampfire = null;
-        for (int i = 0; i < hex.locationGridTiles.Length; i++) {
-            LocationGridTile tile = hex.locationGridTiles[i];
+        for (int i = 0; i < p_area.gridTileComponent.gridTiles.Count; i++) {
+            LocationGridTile tile = p_area.gridTileComponent.gridTiles[i];
             if (tile.objHere != null && tile.objHere is Campfire campfire) {
                 if (campfire.characterOwner == null 
                     || campfire.IsOwnedBy(character) 
@@ -243,7 +243,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         return chosenCampfire;
     }
 
-    private bool HasMemberThatIsHungryOrStarvingAndThereIsNoFoodInCamp(HexTile hex, Party party) {
+    private bool HasMemberThatIsHungryOrStarvingAndThereIsNoFoodInCamp(Area p_area, Party party) {
         bool hasHungryStarvingMember = false;
         for (int i = 0; i < party.membersThatJoinedQuest.Count; i++) {
             Character character = party.membersThatJoinedQuest[i];
@@ -254,13 +254,13 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
-        return hasHungryStarvingMember && GetFoodPileInCamp(hex, party) == null;
+        return hasHungryStarvingMember && GetFoodPileInCamp(p_area, party) == null;
     }
 
-    private FoodPile GetFoodPileInCamp(HexTile hex, Party party) {
+    private FoodPile GetFoodPileInCamp(Area p_area, Party party) {
         FoodPile chosenFoodPile = null;
-        for (int i = 0; i < hex.locationGridTiles.Length; i++) {
-            LocationGridTile tile = hex.locationGridTiles[i];
+        for (int i = 0; i < p_area.gridTileComponent.gridTiles.Count; i++) {
+            LocationGridTile tile = p_area.gridTileComponent.gridTiles[i];
             if (tile.objHere != null && tile.objHere is FoodPile foodPile && foodPile.storedResources[RESOURCE.FOOD] >= 12) {
                 chosenFoodPile = foodPile;
                 break;
