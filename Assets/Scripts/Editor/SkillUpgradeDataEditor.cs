@@ -91,6 +91,10 @@ public class SkillUpgradeDataEditor : Editor {
                 DisplayIntList(data.skillUpgradeData.decreaseMovementSpeedPerLevel, "Decrese Movement Speed per level");
                 EditorGUILayout.Space();
             }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Cooldown)) {
+                DisplayIntList(data.skillUpgradeData.cooldownPerLevel, "Cooldown per level");
+                EditorGUILayout.Space();
+            }
         }
     }
 
