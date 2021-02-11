@@ -46,9 +46,9 @@ public class DefendBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            HexTile hex = actor.areaLocation;
-            if(hex != null) {
-                Character chosenTarget = hex.GetFirstCharacterInsideHexThatMeetCriteria<Character>(target => actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer
+            Area area = actor.areaLocation;
+            if(area != null) {
+                Character chosenTarget = area.locationCharacterTracker.GetFirstCharacterInsideHexThatMeetCriteria<Character>(target => actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer
                     && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation) && !target.isInLimbo && !target.isBeingSeized && target.carryComponent.IsNotBeingCarried());
                 if(chosenTarget != null) {
                     return chosenTarget;

@@ -15,8 +15,8 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
         if (character.gridTileLocation != null) {
             if (!character.HasTerritory()) {
                 log += "\n-No territory, will set nearest hex tile as territory";
-                HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegion();
-                character.SetTerritory(hex);
+                //HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegion();
+                character.SetTerritory(character.gridTileLocation.area);
             }
             if (character.faction != null && character.faction.IsHostileWith(PlayerManager.Instance.player.playerFaction)) {
                 log += $"\n-Hostile with player faction, will attack player";
@@ -70,18 +70,20 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
         if (InvadeBehaviour(p_character, ref p_log, out p_producedJob)) {
             return true;
         } else if (GameUtilities.RollChance(10)) {
-            if (p_character.behaviourComponent.invadeVillageTarget == null) {
+            if (p_character.behaviourComponent.invadeVillageTarget.Count <= 0) {
                 p_log += $"\n-No invade target yet, setting one...";
-                p_character.behaviourComponent.SetInvadeVillageTarget(GetVillageTargetsByPriority(p_character));
+                PopulateVillageTargetsByPriority(p_character.behaviourComponent.invadeVillageTarget, p_character);
+                //p_character.behaviourComponent.SetInvadeVillageTarget(PopulateVillageTargetsByPriority(p_character));
             } 
         }
         return TriggerRoamAroundTerritory(p_character, ref p_log, out p_producedJob);
     }
 
     private bool InvadeBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.behaviourComponent.invadeVillageTarget != null) {
+        if (character.behaviourComponent.invadeVillageTarget.Count > 0) {
             log += $"\n-Already has village target";
-            if (character.areaLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(character.areaLocation)) {
+            Area areaLocation = character.areaLocation;
+            if (areaLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(areaLocation)) {
                 log += $"\n-Already at village target, will find character to attack";
                 //character is already at target village
                 List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
@@ -94,7 +96,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
                 } else {
                     log += $"\n-No more valid targets, clearing target village data...";
                     //No more valid targets exist, clearing village target. 
-                    character.behaviourComponent.SetInvadeVillageTarget(null);
+                    character.behaviourComponent.ResetInvadeVillageTarget();
                 }
                 ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
                 producedJob = null;
@@ -102,30 +104,44 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
             } else {
                 log += $"\n-character is not yet at village target, will go there now...";
                 //character is not yet at target village
-                HexTile targetHextile = CollectionUtilities.GetRandomElement(character.behaviourComponent.invadeVillageTarget);
-                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
+                Area targetArea = CollectionUtilities.GetRandomElement(character.behaviourComponent.invadeVillageTarget);
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.gridTiles);
                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
             }
         }
         producedJob = null;
         return false;
     }
-    private void PopulateTargetChoicesFor(List<Character> p_targetChoices, Character p_invader, List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            tile.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c => c != p_invader && p_invader.IsHostileWith(c) && IsCharacterValidForInvade(c));
+    private void PopulateTargetChoicesFor(List<Character> p_targetChoices, Character p_invader, List<Area> p_areas) {
+        for (int i = 0; i < p_areas.Count; i++) {
+            Area area = p_areas[i];
+            area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c => c != p_invader && p_invader.IsHostileWith(c) && IsCharacterValidForInvade(c));
         }
     }
     private bool IsCharacterValidForInvade(Character character) {
         return !character.isDead && !character.traitContainer.HasTrait("Hibernating", "Indestructible") && !character.isInLimbo && !character.isBeingSeized && character.carryComponent.IsNotBeingCarried();
     }
-    private List<HexTile> GetVillageTargetsByPriority(Character p_invader) {
-        List<BaseSettlement> validSettlementsInRegion = p_invader.currentRegion?.GetSettlementsInRegion(
-            settlement => settlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION && settlement.owner != null && settlement.owner != p_invader.faction && p_invader.faction.IsHostileWith(settlement.owner) && settlement.residents.Count(IsCharacterValidForInvade) > 0
-        );
-        if (validSettlementsInRegion != null) {
-            return CollectionUtilities.GetRandomElement(validSettlementsInRegion).areas;
+    private void PopulateVillageTargetsByPriority(List<Area> areas, Character p_invader) {
+        if(p_invader.currentRegion != null) {
+            List<BaseSettlement> validSettlementsInRegion = ObjectPoolManager.Instance.CreateNewSettlementList();
+            for (int i = 0; i < p_invader.currentRegion.settlementsInRegion.Count; i++) {
+                BaseSettlement settlement = p_invader.currentRegion.settlementsInRegion[i];
+                if(settlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION && settlement.owner != null && settlement.owner != p_invader.faction && p_invader.faction.IsHostileWith(settlement.owner) && settlement.residents.Count(IsCharacterValidForInvade) > 0) {
+                    validSettlementsInRegion.Add(settlement);
+                }
+            }
+            if(validSettlementsInRegion.Count > 0) {
+                BaseSettlement chosenSettlement = validSettlementsInRegion[GameUtilities.RandomBetweenTwoNumbers(0, validSettlementsInRegion.Count - 1)];
+                areas.AddRange(chosenSettlement.areas);
+            }
+            ObjectPoolManager.Instance.ReturnSettlementListToPool(validSettlementsInRegion);
         }
-        return null;
+        //List<BaseSettlement> validSettlementsInRegion = p_invader.currentRegion?.GetSettlementsInRegion(
+        //    settlement => settlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION && settlement.owner != null && settlement.owner != p_invader.faction && p_invader.faction.IsHostileWith(settlement.owner) && settlement.residents.Count(IsCharacterValidForInvade) > 0
+        //);
+        //if (validSettlementsInRegion != null) {
+        //    return CollectionUtilities.GetRandomElement(validSettlementsInRegion).areas;
+        //}
+        //return null;
     }
 }

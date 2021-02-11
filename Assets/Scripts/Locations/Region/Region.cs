@@ -125,21 +125,6 @@ public class Region : ISavable, ILogFiller {
             tile.SetRegion(this);
         }
     }
-    public Area GetRandomHexThatMeetCriteria(System.Func<Area, bool> validityChecker) {
-        List<Area> hexes = RuinarchListPool<Area>.Claim();
-        Area chosenHex = null;
-        for (int i = 0; i < areas.Count; i++) {
-            Area currHex = areas[i];
-            if (validityChecker.Invoke(currHex)) {
-                hexes.Add(currHex);
-            }
-        }
-        if (hexes != null && hexes.Count > 0) {
-            chosenHex = CollectionUtilities.GetRandomElement(hexes);
-        }
-        RuinarchListPool<Area>.Release(hexes);
-        return chosenHex;
-    }
     #endregion
 
     #region Utilities
@@ -190,20 +175,15 @@ public class Region : ISavable, ILogFiller {
         }
         return tilesWithFeature;
     }
-    public List<Area> GetAreasOccupiedByVillagers() {
-        List<Area> areas = null;
+    public void PopulateAreasOccupiedByVillagers(List<Area> areas) {
         for (int i = 0; i < residents.Count; i++) {
             Character regionResident = residents[i];
             if (regionResident.isNormalCharacter && regionResident.HasTerritory()) {
-                if (areas == null) {
-                    areas = new List<Area>();
-                }
                 if (areas.Contains(regionResident.territory) == false) {
                     areas.Add(regionResident.territory);
                 }
             }
         }
-        return areas;
     }
     #endregion
 
@@ -555,6 +535,24 @@ public class Region : ISavable, ILogFiller {
             }
         }
         return objs;
+    }
+    #endregion
+
+    #region Hex Tile Map
+    public Area GetRandomHexThatMeetCriteria(System.Func<Area, bool> validityChecker) {
+        List<Area> hexes = RuinarchListPool<Area>.Claim();
+        Area chosenHex = null;
+        for (int i = 0; i < areas.Count; i++) {
+            Area currHex = areas[i];
+            if (validityChecker.Invoke(currHex)) {
+                hexes.Add(currHex);
+            }
+        }
+        if (hexes != null && hexes.Count > 0) {
+            chosenHex = CollectionUtilities.GetRandomElement(hexes);
+        }
+        RuinarchListPool<Area>.Release(hexes);
+        return chosenHex;
     }
     #endregion
 

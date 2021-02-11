@@ -141,8 +141,8 @@ public class RitualKilling : GoapAction {
             Character targetCharacter = target as Character;
             bool isSatisfied = false;
             if(otherData.Length == 1) {
-                if(otherData[0] is HexTileOtherData hex) {
-                    isSatisfied = target.gridTileLocation.area == hex.hexTile;
+                if(otherData[0] is AreaOtherData hex) {
+                    isSatisfied = target.gridTileLocation.area == hex.area;
                 } else if (otherData[0] is LocationStructureOtherData structure) {
                     isSatisfied = targetCharacter.currentStructure == structure.locationStructure;
                 } else if (otherData[0] is LocationGridTileOtherData gridTile) {

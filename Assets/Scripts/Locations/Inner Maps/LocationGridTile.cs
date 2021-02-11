@@ -663,7 +663,7 @@ namespace Inner_Maps {
                     //Reporting does not trigger until Tutorial is over
                     //https://trello.com/c/OmmyR6go/1239-reporting-does-not-trigger-until-tutorial-is-over
 
-                    LocationStructure mostImportantStructureOnTile = area.GetMostImportantStructureOnTile();
+                    LocationStructure mostImportantStructureOnTile = area.structureComponent.GetMostImportantStructureOnTile();
                     if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
                         if (!character.behaviourComponent.isAttackingDemonicStructure 
                             && character.homeSettlement != null && character.necromancerTrait == null && character.race.IsSapient()
@@ -1778,15 +1778,14 @@ namespace Inner_Maps {
             if (validityChecker.Invoke(area)) {
                 return area;
             }
-            
             Area nearestArea = null;
             float nearestDist = 0f;
             for (int i = 0; i < area.region.areas.Count; i++) {
-                Area otherArea = area.region.areas[i];
-                if (validityChecker.Invoke(otherArea)) {
-                    float dist = GetDistanceTo(otherArea.gridTileComponent.centerGridTile);
+                Area a = area.region.areas[i];
+                if (validityChecker.Invoke(a)) {
+                    float dist = GetDistanceTo(a.gridTileComponent.centerGridTile);
                     if (nearestArea == null || dist < nearestDist) {
-                        nearestArea = otherArea;
+                        nearestArea = a;
                         nearestDist = dist;
                     }
                 }

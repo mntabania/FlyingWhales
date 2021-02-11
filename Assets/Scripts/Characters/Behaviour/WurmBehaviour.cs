@@ -59,41 +59,39 @@ public class WurmBehaviour : BaseMonsterBehaviour {
 		if (p_character.homeSettlement != null) {
 			List<LocationGridTile> settlementTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
 			for (int i = 0; i < p_character.homeSettlement.areas.Count; i++) {
-				HexTile hexTile = p_character.homeSettlement.areas[i];
-				for (int j = 0; j < hexTile.locationGridTiles.Length; j++) {
-					LocationGridTile tile = hexTile.locationGridTiles[j];
+				Area area = p_character.homeSettlement.areas[i];
+				for (int j = 0; j < area.gridTileComponent.gridTiles.Count; j++) {
+					LocationGridTile tile = area.gridTileComponent.gridTiles[j];
 					if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS || tile.structure.structureType == STRUCTURE_TYPE.CAVE) {
 						settlementTiles.Add(tile);
 					}
 				}
 			}
-			if (settlementTiles.Count > 0) {
-				LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(settlementTiles);
-				ObjectPoolManager.Instance.ReturnGridTileListToPool(settlementTiles);
-				return chosenTile;
-			} else {
-				ObjectPoolManager.Instance.ReturnGridTileListToPool(settlementTiles);
+            LocationGridTile chosenTile = null;
+            if (settlementTiles.Count > 0) {
+				chosenTile = CollectionUtilities.GetRandomElement(settlementTiles);
 			}
-		} else if (p_character.homeStructure != null) {
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(settlementTiles);
+            return chosenTile;
+        } else if (p_character.homeStructure != null) {
 			if (p_character.homeStructure.tiles.Count > 0) {
 				return CollectionUtilities.GetRandomElement(p_character.homeStructure.tiles);
 			}
 		} else if (p_character.HasTerritory()) {
 			List<LocationGridTile> territoryTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
-			for (int j = 0; j < p_character.territory.locationGridTiles.Length; j++) {
-				LocationGridTile tile = p_character.territory.locationGridTiles[j];
+			for (int j = 0; j < p_character.territory.gridTileComponent.gridTiles.Count; j++) {
+				LocationGridTile tile = p_character.territory.gridTileComponent.gridTiles[j];
 				if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS || tile.structure.structureType == STRUCTURE_TYPE.CAVE) {
 					territoryTiles.Add(tile);
 				}
 			}
-			if (territoryTiles.Count > 0) {
-				LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(territoryTiles);
-				ObjectPoolManager.Instance.ReturnGridTileListToPool(territoryTiles);
-				return chosenTile;
-			} else {
-				ObjectPoolManager.Instance.ReturnGridTileListToPool(territoryTiles);
+            LocationGridTile chosenTile = null;
+            if (territoryTiles.Count > 0) {
+				chosenTile = CollectionUtilities.GetRandomElement(territoryTiles);
 			}
-		}
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(territoryTiles);
+            return chosenTile;
+        }
 		return null;
 	}
 }

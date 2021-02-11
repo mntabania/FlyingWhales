@@ -104,11 +104,41 @@ public class AreaGridTileComponent : AreaComponent {
         ObjectPoolManager.Instance.ReturnGridTileListToPool(tiles);
         return chosenTile;
     }
-    public LocationGridTile GetRandomTileThatMeetCriteria(Func<LocationGridTile, bool> checker) {
+    public LocationGridTile GetRandomPassableInOpenSpaceTile() {
         List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            if (checker.Invoke(tile)) {
+            if (tile.IsPassable() && tile.structure.structureType.IsOpenSpace()) {
+                tiles.Add(tile);
+            }
+        }
+        LocationGridTile chosenTile = null;
+        if (tiles != null && tiles.Count > 0) {
+            chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
+        }
+        ObjectPoolManager.Instance.ReturnGridTileListToPool(tiles);
+        return chosenTile;
+    }
+    public LocationGridTile GetRandomUnoccupiedNoFreezingTrapNotNextToSettlementTile() {
+        List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile tile = gridTiles[i];
+            if (tile.hasFreezingTrap == false && tile.isOccupied == false && tile.IsNextToSettlement() == false) {
+                tiles.Add(tile);
+            }
+        }
+        LocationGridTile chosenTile = null;
+        if (tiles != null && tiles.Count > 0) {
+            chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
+        }
+        ObjectPoolManager.Instance.ReturnGridTileListToPool(tiles);
+        return chosenTile;
+    }
+    public LocationGridTile GetRandomPassableUnoccupiedNonWaterTile() {
+        List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile tile = gridTiles[i];
+            if (tile.objHere == null && tile.groundType != LocationGridTile.Ground_Type.Water && tile.IsPassable()) {
                 tiles.Add(tile);
             }
         }
@@ -181,6 +211,15 @@ public class AreaGridTileComponent : AreaComponent {
             yield return null;
         }
         onFinishChangeAction.Invoke();
+    }
+    public bool HasCorruption() {
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile currTile = gridTiles[i];
+            if (currTile.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

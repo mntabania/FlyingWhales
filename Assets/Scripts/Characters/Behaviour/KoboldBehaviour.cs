@@ -16,25 +16,29 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         if (UnityEngine.Random.Range(0, 100) < 10) {
             log += $"\nChance to place freezing trap met.";
             Profiler.BeginSample($"Kobold Place Freezing Trap");
-            List<HexTile> hexTileChoices = GetValidHexTilesNextToHome(character);
-            if (hexTileChoices != null && hexTileChoices.Count > 0) {
-                HexTile chosenTile = CollectionUtilities.GetRandomElement(hexTileChoices);
-                List<LocationGridTile> locationGridTileChoices = chosenTile.locationGridTiles.Where(x => 
-                        x.hasFreezingTrap == false && x.isOccupied == false && x.IsNextToSettlement() == false).ToList();
-                if (locationGridTileChoices.Count > 0) {
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(locationGridTileChoices);
+            List<Area> areaChoices = ObjectPoolManager.Instance.CreateNewAreaList();
+            PopulateValidHexTilesNextToHome(areaChoices, character);
+            if (areaChoices.Count > 0) {
+                Area chosenArea = CollectionUtilities.GetRandomElement(areaChoices);
+                ObjectPoolManager.Instance.ReturnAreaListToPool(areaChoices);
+                LocationGridTile targetTile = chosenArea.gridTileComponent.GetRandomUnoccupiedNoFreezingTrapNotNextToSettlementTile();
+                //List<LocationGridTile> locationGridTileChoices = chosenArea.gridTileComponent.gridTiles.Where(x => 
+                //        x.hasFreezingTrap == false && x.isOccupied == false && x.IsNextToSettlement() == false).ToList();
+                if (targetTile != null) {
+                    //LocationGridTile targetTile = CollectionUtilities.GetRandomElement(locationGridTileChoices);
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, INTERACTION_TYPE.PLACE_FREEZING_TRAP, targetTile.genericTileObject, character);
                     producedJob = job;
                     log += $"\nCreated job to place trap at {targetTile}.";
                     Profiler.EndSample();
                     return true;
                 } else {
-                    log += $"\nNo valid tiles at {chosenTile} to place trap.";
+                    log += $"\nNo valid tiles at {chosenArea} to place trap.";
                     producedJob = null;
                     Profiler.EndSample();
                     return false;
                 }
             } else {
+                ObjectPoolManager.Instance.ReturnAreaListToPool(areaChoices);
                 log += $"\nNo valid areas to place freezing traps found.";
                 producedJob = null;
                 Profiler.EndSample();
@@ -57,8 +61,8 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {character.homeStructure});    
                 } else if (character.HasTerritory()) {
-                    HexTile chosenTerritory = character.territory;
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+                    Area chosenTerritory = character.territory;
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(chosenTerritory.gridTileComponent.gridTiles);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {targetTile.structure, targetTile});
                 }
                 ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
@@ -119,32 +123,43 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             
         }
     }
-    private List<HexTile> GetValidHexTilesNextToHome(Character character) {
+    private void PopulateValidHexTilesNextToHome(List<Area> areas, Character character) {
+        Area homeArea = null;
         if (character.homeSettlement != null) {
-            return character.homeSettlement.GetSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(character.homeRegion, 4);
+            character.homeSettlement.PopulateSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(areas, character.homeRegion, 4);
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveAreas);
-                return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
+                homeArea = CollectionUtilities.GetRandomElement(cave.occupiedAreas);
+                //return homeArea.neighbourComponent.neighbours.Where(x => x.region == homeArea.region && x.freezingTraps < 4).ToList();
             } else {
-                HexTile homeTile = character.homeStructure.occupiedArea;
-                return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();    
+                homeArea = character.homeStructure.occupiedArea;
+                //return homeArea.neighbourComponent.neighbours.Where(x => x.region == homeArea.region && x.freezingTraps < 4).ToList();    
             }
         } else if (character.HasTerritory()) {
-            HexTile homeTile = character.territory;
-            return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
+            homeArea = character.territory;
+            //return homeArea.AllNeighbours.Where(x => x.region == homeArea.region && x.freezingTraps < 4).ToList();
         }
-        return null;
+        if (homeArea != null) {
+            for (int i = 0; i < homeArea.neighbourComponent.neighbours.Count; i++) {
+                Area neighbour = homeArea.neighbourComponent.neighbours[i];
+                if (neighbour.region == homeArea.region && neighbour.freezingTraps < 4) {
+                    areas.Add(neighbour);
+                }
+            }
+        }
+        //return null;
     }
     private void PopulateFrozenCharactersSurroundingHome(List<Character> p_characterList, Character character) {
-        List<HexTile> surroundingAreas = GetAreasSurroundingHome(character);
-        if (surroundingAreas != null) {
+        List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+        PopulateAreasSurroundingHome(surroundingAreas, character);
+        //if (surroundingAreas != null) {
             for (int i = 0; i < surroundingAreas.Count; i++) {
-                HexTile tile = surroundingAreas[i];
-                tile.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD &&
+                Area area = surroundingAreas[i];
+                area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD &&
                                                                                                                   c.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER) == false);
-            }    
-        }
+            }
+        //}
+        ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
     }
     private void PopulateFrozenCharactersInHome(List<Character> p_characterList, Character character) {
         if (character.homeSettlement?.mainStorage != null) {
@@ -153,26 +168,36 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         } else if (character.homeStructure != null) {
             character.homeStructure.PopulateCharacterListThatMeetCriteria(p_characterList, x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD);
         } else if (character.HasTerritory()) {
-            character.territory.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
+            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
         }
     }
 
-    private List<HexTile> GetAreasSurroundingHome(Character character) {
+    private void PopulateAreasSurroundingHome(List<Area> areas, Character character) {
+        Area homeArea = null;
         if (character.homeSettlement != null) {
-            return character.homeSettlement.GetSurroundingAreas();
+            character.homeSettlement.PopulateSurroundingAreas(areas);
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveAreas);
-                return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region).ToList();
+                homeArea = CollectionUtilities.GetRandomElement(cave.occupiedAreas);
+                //return homeArea.AllNeighbours.Where(x => x.region == homeArea.region).ToList();
             } else {
-                HexTile homeTile = character.homeStructure.occupiedArea;
-                return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region).ToList();    
+                homeArea = character.homeStructure.occupiedArea;
+                //return homeArea.AllNeighbours.Where(x => x.region == homeArea.region).ToList();    
             }
         } else if (character.HasTerritory()) {
-            List<HexTile> surroundingAreas = character.territory.neighbourComponent.neighbours.Where(x => x.region == character.territory.region).ToList();
-            return surroundingAreas;
+            homeArea = character.territory;
+            //List<HexTile> surroundingAreas = character.territory.AllNeighbours.Where(x => x.region == character.territory.region).ToList();
+            //return surroundingAreas;
         }
-        return null;
+        if (homeArea != null) {
+            for (int i = 0; i < homeArea.neighbourComponent.neighbours.Count; i++) {
+                Area neighbour = homeArea.neighbourComponent.neighbours[i];
+                if (neighbour.region == homeArea.region) {
+                    areas.Add(neighbour);
+                }
+            }
+        }
+        //return null;
     }
 
     private List<FoodPile> GetFoodPilesAtHome(Character character) {
@@ -181,7 +206,7 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         } else if (character.homeStructure != null) {
             return character.homeStructure.GetTileObjectsOfType<FoodPile>();
         } else if (character.HasTerritory()) {
-            List<FoodPile> foodPiles = character.territory.GetTileObjectsInHexTile<FoodPile>();
+            List<FoodPile> foodPiles = character.territory.tileObjectComponent.GetTileObjectsInHexTile<FoodPile>();
             return foodPiles;
         }
         return null;

@@ -257,7 +257,7 @@ public class GoapPlanJob : JobQueueItem {
             } else if (obj is LocationStructure locationStructure) {
                 convertedData = new LocationStructureOtherData(locationStructure);
             } else if (obj is HexTile hexTile) {
-                convertedData = new HexTileOtherData(hexTile);
+                convertedData = new AreaOtherData(hexTile);
             } else if (obj is int integer) {
                 convertedData = new IntOtherData(integer);
             } else if (obj is TileObject tileObject) {

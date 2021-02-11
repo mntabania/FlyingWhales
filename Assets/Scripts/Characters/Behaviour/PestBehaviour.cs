@@ -17,9 +17,9 @@ public class PestBehaviour : CharacterBehaviourComponent {
                 BaseSettlement targetSettlement = character.behaviourComponent.pestSettlementTarget;
                 if (targetSettlement != null) {
                     if (character.currentRegion != null) {
-                        HexTile targetHex = character.currentRegion.GetRandomHexThatMeetCriteria(h => h.settlementOnTile == null && h.elevationType != ELEVATION.WATER && h.elevationType != ELEVATION.MOUNTAIN);
-                        if (targetHex != null) {
-                            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHex.locationGridTiles);
+                        Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(a => a.settlementOnArea == null && a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN);
+                        if (targetArea != null) {
+                            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.gridTiles);
                             if (targetTile != null) {
                                 character.behaviourComponent.SetPestSettlementTarget(null);
                                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);

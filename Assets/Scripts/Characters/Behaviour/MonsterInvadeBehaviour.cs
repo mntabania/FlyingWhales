@@ -47,7 +47,7 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
                 MonsterInvadeGathering gathering = monsterInvadeGathering as MonsterInvadeGathering;
                 if (character.areaLocation == gathering.targetArea) {
                     log += "\n-Already in the target hex, will try to combat residents";
-                    Character target = gathering.targetArea.GetRandomCharacterInsideHexThatMeetCriteria<Character>(c => !c.isDead && c.IsTerritory(gathering.targetArea));
+                    Character target = gathering.targetArea.locationCharacterTracker.GetRandomCharacterInsideHexThatMeetCriteria<Character>(c => !c.isDead && c.IsTerritory(gathering.targetArea));
                     if (target != null) {
                         log += $"\n-Chosen target is {target.name}";
                         character.combatComponent.Fight(target, CombatManager.Hostility);
@@ -57,8 +57,8 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
                     }
                 } else {
                     log += $"\n-Character is not in target hex, go to it";
-                    HexTile targetHex = gathering.targetArea;
-                    LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Length)];
+                    Area targetArea = gathering.targetArea;
+                    LocationGridTile targetTile = targetArea.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, targetArea.gridTileComponent.gridTiles.Count)];
                     character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
                 }
             }

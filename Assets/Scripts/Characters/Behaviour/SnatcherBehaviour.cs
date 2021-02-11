@@ -11,12 +11,13 @@ namespace Characters.Behaviour {
         }
         
         public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-            if (character.areaLocation != null) {
-                if (!character.areaLocation.isCorrupted) {
+            Area areaLocation = character.areaLocation;
+            if (areaLocation != null) {
+                if (!areaLocation.gridTileComponent.HasCorruption()) {
                     //character is not yet at demonic structure, get nearest one then go there.
-                    HexTile nearestDemonicArea = GetNearestDemonicStructure(character);
+                    Area nearestDemonicArea = GetNearestDemonicStructure(character);
                     if (nearestDemonicArea != null) {
-                        List<LocationGridTile> choices = nearestDemonicArea.locationGridTiles.Where(
+                        List<LocationGridTile> choices = nearestDemonicArea.gridTileComponent.gridTiles.Where(
                             t => !t.structure.IsTilePartOfARoom(t, out var room) && t.IsPassable() && PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, t)
                         ).ToList();
                         if (choices.Count > 0) {
@@ -30,7 +31,7 @@ namespace Characters.Behaviour {
                         Debug.LogWarning($"{character.name} could not find a near demonic structure!");
                     }
                 } else {
-                    List<LocationGridTile> choices = character.areaLocation.locationGridTiles.Where(
+                    List<LocationGridTile> choices = areaLocation.gridTileComponent.gridTiles.Where(
                         t => !t.structure.IsTilePartOfARoom(t, out var room) && t.IsPassable() && PathfindingManager.Instance.HasPath(character.gridTileLocation, t)
                     ).ToList();
                     if (choices.Count > 0) {
@@ -60,15 +61,16 @@ namespace Characters.Behaviour {
             base.OnLoadBehaviourToCharacter(character);
             character.behaviourComponent.OnBecomeSnatcher();
         }
-        private HexTile GetNearestDemonicStructure(Character character) {
-            if (character.areaLocation != null) {
-                HexTile nearest = null;
-                float nearestDist = 99999f;
+        private Area GetNearestDemonicStructure(Character character) {
+            Area areaLocation = character.areaLocation;
+            if (areaLocation != null) {
+                Area nearest = null;
+                float nearestDist = 0;
                 for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.areas.Count; i++) {
-                    HexTile hexTile = PlayerManager.Instance.player.playerSettlement.areas[i];
-                    float dist = Vector2.Distance(hexTile.transform.position, character.areaLocation.transform.position);
+                    Area area = PlayerManager.Instance.player.playerSettlement.areas[i];
+                    float dist = Vector2.Distance(area.gridTileComponent.centerGridTile.centeredWorldLocation, areaLocation.gridTileComponent.centerGridTile.centeredWorldLocation);
                     if (dist < nearestDist) {
-                        nearest = hexTile;
+                        nearest = area;
                         nearestDist = dist;
                     }
                 }

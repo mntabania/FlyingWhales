@@ -165,7 +165,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
             eggCount = character.homeStructure.GetNumberOfTileObjectsThatMeetCriteria(eggType, null);
         } else if (character.HasTerritory()) {
             residentCount = character.homeRegion.GetCountOfAliveCharacterWithSameTerritory(character);
-            eggCount = character.territory.GetNumberOfTileObjectsInHexTile(eggType);
+            eggCount = character.territory.tileObjectComponent.GetNumberOfTileObjectsInHexTile(eggType);
         }
         if (residentCount < maxResidentCount && eggCount < 2) {
             return character.jobComponent.TriggerLayEgg(out producedJob);

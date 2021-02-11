@@ -754,8 +754,7 @@ namespace Locations.Settlements {
             }
             return areas;
         }
-        public List<Area> GetSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(Region region, int numOfFreezingTraps) {
-            List<Area> areas = new List<Area>();
+        public void PopulateSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(List<Area> areas, Region region, int numOfFreezingTraps) {
             for (int i = 0; i < this.areas.Count; i++) {
                 Area area = this.areas[i];
                 if (this is NPCSettlement npcSettlement && area.region != npcSettlement.region) {
@@ -770,7 +769,6 @@ namespace Locations.Settlements {
                     }
                 }
             }
-            return areas;
         }
         public void PopulateSurroundingAreas(List<Area> areas) {
             for (int i = 0; i < this.areas.Count; i++) {

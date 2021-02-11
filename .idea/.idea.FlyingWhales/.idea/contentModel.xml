@@ -1880,6 +1880,7 @@
                 <e p="AreaGridTileComponent.cs" t="Include" />
                 <e p="AreaNeighbourComponent.cs" t="Include" />
                 <e p="AreaSpellsComponent.cs" t="Include" />
+                <e p="AreaStructureComponent.cs" t="Include" />
                 <e p="AreaTileObjectComponent.cs" t="Include" />
                 <e p="TileFeatureComponent.cs" t="Include" />
               </e>
