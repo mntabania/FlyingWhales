@@ -10,22 +10,35 @@ namespace Locations.Region_Features {
             int existingRuins = GetAncientGraveyardsInRegion(region); 
             if (existingRuins < 4) {
                 int missing = Random.Range(4, 7) - existingRuins;
-                List<HexTile> choices = region.areas
-                    .Where(x => (x.elevationType == ELEVATION.PLAIN || x.elevationType == ELEVATION.TREES) &&
-                                x.landmarkOnTile == null &&
-                                x.neighbourComponent.neighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-                                    n => n.landmarkOnTile != null && 
-                                         (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL ||
-                                          n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
-                    )
-                    .ToList();
+                List<Area> choices = ObjectPoolManager.Instance.CreateNewAreaList();
+                for (int i = 0; i < region.areas.Count; i++) {
+                    Area currArea = region.areas[i];
+                    if ((currArea.elevationType == ELEVATION.PLAIN || currArea.elevationType == ELEVATION.TREES) &&
+                                currArea.structureComponent.HasStructureInArea() == false && //with no Features yet
+                                currArea.neighbourComponent.neighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+                                    n => n.structureComponent.HasStructureInArea() &&
+                                         (n.structureComponent.structures[0].structureType == STRUCTURE_TYPE.THE_PORTAL ||
+                                          n.structureComponent.structures[0].structureType.IsSettlementStructure())) == false) {
+                        choices.Add(currArea);
+                    }
+                }
+                //List<HexTile> choices = region.areas
+                //    .Where(x => (x.elevationType == ELEVATION.PLAIN || x.elevationType == ELEVATION.TREES) &&
+                //                x.landmarkOnTile == null &&
+                //                x.neighbourComponent.neighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+                //                    n => n.landmarkOnTile != null && 
+                //                         (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL ||
+                //                          n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+                //    )
+                //    .ToList();
                 for (int i = 0; i < missing; i++) {
                     if (choices.Count == 0) { break; }
-                    HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-                    LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_GRAVEYARD);
-                    LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, chosenTile);
-                    choices.Remove(chosenTile);
+                    Area chosenArea = CollectionUtilities.GetRandomElement(choices);
+                    //LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenArea, LANDMARK_TYPE.ANCIENT_GRAVEYARD);
+                    LandmarkManager.Instance.CreateNewSettlement(chosenArea.region, LOCATION_TYPE.DUNGEON, chosenArea);
+                    choices.Remove(chosenArea);
                 }
+                ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
             }
         }
 

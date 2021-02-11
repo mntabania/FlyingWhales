@@ -825,15 +825,15 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Nameplate
-    public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
-        GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
-        nameplateGO.transform.localScale = Vector3.one;
-        LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
-        nameplate.SetLandmark(landmark);
-        return nameplate;
-    }
-    #endregion
+    //#region Nameplate
+    //public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
+    //    GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
+    //    nameplateGO.transform.localScale = Vector3.one;
+    //    LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
+    //    nameplate.SetLandmark(landmark);
+    //    return nameplate;
+    //}
+    //#endregion
 
     #region Object Picker
     public void ShowClickableObjectPicker<T>(List<T> choices, Action<object> onClickAction, IComparer<T> comparer = null
@@ -1211,19 +1211,19 @@ public class UIManager : BaseMonoBehaviour {
         bottomNotification.ShowMessage("Click on any tile to go there.");
     }
 
-    public void ToggleBetweenMaps() {
-        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            InnerMapManager.Instance.HideAreaMap();
-            OnCameraOutOfFocus();
-        } else {
-            if(regionInfoUI.activeRegion != null) {
-                InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
-            } else if(hexTileInfoUI.activeHex != null) {
-                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.activeHex.region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.activeHex);
-            }
-        }
-    }
+    //public void ToggleBetweenMaps() {
+    //    if (InnerMapManager.Instance.isAnInnerMapShowing) {
+    //        InnerMapManager.Instance.HideAreaMap();
+    //        OnCameraOutOfFocus();
+    //    } else {
+    //        if(regionInfoUI.activeRegion != null) {
+    //            InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
+    //        } else if(hexTileInfoUI.activeHex != null) {
+    //            InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.activeHex.region);
+    //            InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.activeHex);
+    //        }
+    //    }
+    //}
     public void ToggleMapsHover() {
         if (InnerMapManager.Instance.isAnInnerMapShowing) {
             ShowSmallInfo($"Click to exit {InnerMapManager.Instance.currentlyShowingLocation.name}.", returnToWorldBtnTooltipPos);

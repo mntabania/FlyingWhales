@@ -9,7 +9,7 @@ using System.Linq;
 
 public class BaseLandmark {
     public int id { get; }
-    public LandmarkNameplate nameplate { get; }
+    //public LandmarkNameplate nameplate { get; }
     public Vector2 nameplatePos { get; }
     public Sprite landmarkPortrait { get; private set; }
 
@@ -33,7 +33,7 @@ public class BaseLandmark {
         _specificLandmarkType = specificLandmarkType;
         SetName(RandomNameGenerator.GetLandmarkName(specificLandmarkType));
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
-        nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+        //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
         id = UtilityScripts.Utilities.SetID(this, data.id);
@@ -45,7 +45,7 @@ public class BaseLandmark {
 
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
-        nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+        //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
     private void SetName(string name) {
         _landmarkName = name;
@@ -70,11 +70,11 @@ public class BaseLandmark {
     #region Virtuals
     public virtual void Initialize() { }
     public virtual void DestroyLandmark() {
-        for (int i = 0; i < tileLocation.featureComponent.features.Count; i++) {
-            tileLocation.featureComponent.features[i].OnDemolishLandmark(tileLocation, specificLandmarkType);
-        }
-        ObjectPoolManager.Instance.DestroyObject(nameplate);
-        _location = null;
+        //for (int i = 0; i < tileLocation.featureComponent.features.Count; i++) {
+        //    tileLocation.featureComponent.features[i].OnDemolishLandmark(tileLocation, specificLandmarkType);
+        //}
+        //ObjectPoolManager.Instance.DestroyObject(nameplate);
+        //_location = null;
     }
     public virtual void OnFinishedBuilding() { }
     /// <summary>

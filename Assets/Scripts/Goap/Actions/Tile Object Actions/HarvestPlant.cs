@@ -46,8 +46,8 @@ public class HarvestPlant : GoapAction {
         }
         if(job.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
             if (target.gridTileLocation != null && actor.gridTileLocation != null) {
-                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.GetCenterLocationGridTile();
-                LocationGridTile centerGridTileOfActor = actor.areaLocation.GetCenterLocationGridTile();
+                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                LocationGridTile centerGridTileOfActor = actor.areaLocation.gridTileComponent.centerGridTile;
                 float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
                 int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 

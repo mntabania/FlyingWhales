@@ -136,17 +136,13 @@ public class VampireBehaviour : CharacterBehaviourComponent {
     }
 
     private LocationStructure GetFirstNonSettlementVampireCastles(Character character) {
-        List<Region> regionsToCheck = new List<Region> {character.currentRegion};
-        regionsToCheck.AddRange(character.currentRegion.neighbours);
-        for (int i = 0; i < regionsToCheck.Count; i++) {
-            Region region = regionsToCheck[i];
-            if (region.HasStructure(STRUCTURE_TYPE.VAMPIRE_CASTLE)) {
-                List<LocationStructure> vampireCastles = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.VAMPIRE_CASTLE);
-                for (int j = 0; j < vampireCastles.Count; j++) {
-                    LocationStructure structure = vampireCastles[j];
-                    if (structure.settlementLocation == null || structure.settlementLocation.owner == null) {
-                        return structure;
-                    }
+        Region region = character.currentRegion;
+        if (region != null && region.HasStructure(STRUCTURE_TYPE.VAMPIRE_CASTLE)) {
+            List<LocationStructure> vampireCastles = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.VAMPIRE_CASTLE);
+            for (int j = 0; j < vampireCastles.Count; j++) {
+                LocationStructure structure = vampireCastles[j];
+                if (structure.settlementLocation == null || structure.settlementLocation.owner == null) {
+                    return structure;
                 }
             }
         }

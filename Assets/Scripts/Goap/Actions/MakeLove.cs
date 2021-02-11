@@ -376,7 +376,7 @@ public class MakeLove : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.area)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             Character target = poiTarget as Character;

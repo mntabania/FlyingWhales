@@ -194,11 +194,12 @@ public class FactionInfoUI : InfoUIBase {
                     InnerMapManager.Instance.TryShowLocationMap(tile.region);    
                 }
                 InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
-            } else {
-                //if world map is showing, just center on hextile
-                tile.CenterCameraHere();
-            }
-            UIManager.Instance.ShowHexTileInfo(tile);
+            } 
+            //else {
+            //    //if world map is showing, just center on hextile
+            //    tile.CenterCameraHere();
+            //}
+            //UIManager.Instance.ShowHexTileInfo(tile);
         }
     }
     private SettlementNameplateItem GetLocationItem(BaseSettlement settlement) {

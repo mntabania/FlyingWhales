@@ -11,7 +11,7 @@
                 InnerMapManager.Instance.ShowInnerMap(region);
             }
             if (occupiedArea != null) {
-                InnerMapCameraMove.Instance.CenterCameraOn(occupiedArea.GetCenterLocationGridTile().centeredWorldLocation);
+                InnerMapCameraMove.Instance.CenterCameraOn(occupiedArea.gridTileComponent.centerGridTile.centeredWorldLocation);
             }
         }
         public override void ShowSelectorOnStructure() {

@@ -1496,7 +1496,7 @@ public class CharacterManager : BaseMonoBehaviour {
     }
     public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
         Player player = PlayerManager.Instance.player;
-        Minion minion = new Minion(CreateNewCharacter(className, race, GENDER.MALE, player.playerFaction, player.playerSettlement, player.portalTile.region), false);
+        Minion minion = new Minion(CreateNewCharacter(className, race, GENDER.MALE, player.playerFaction, player.playerSettlement, player.portalArea.region), false);
         if (initialize) {
             InitializeMinion(minion);
         }

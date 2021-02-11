@@ -9,16 +9,16 @@ public class IceteroidsData : SkillData {
     public virtual int abilityRadius => 1;
 
     public IceteroidsData() : base() {
-        targetTypes = new[]{ SPELL_TARGET.HEX };
+        targetTypes = new[]{ SPELL_TARGET.AREA };
     }
-    public override void ActivateAbility(HexTile targetHex) {
-        targetHex.spellsComponent.SetHasIceteroids(true);
-        base.ActivateAbility(targetHex);
+    public override void ActivateAbility(Area targetArea) {
+        targetArea.spellsComponent.SetHasIceteroids(true);
+        base.ActivateAbility(targetArea);
     }
-    public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+    public override bool CanPerformAbilityTowards(Area targetArea) {
+        bool canPerform = base.CanPerformAbilityTowards(targetArea);
         if (canPerform) {
-            return targetHex != null && !targetHex.spellsComponent.hasIceteroids;
+            return targetArea != null && !targetArea.spellsComponent.hasIceteroids;
         }
         return false;
     }

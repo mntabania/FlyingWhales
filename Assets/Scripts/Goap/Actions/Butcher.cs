@@ -39,8 +39,8 @@ public class Butcher : GoapAction {
         }
         if (job.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
             if (target.gridTileLocation != null && actor.gridTileLocation != null) {
-                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.GetCenterLocationGridTile();
-                LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.GetCenterLocationGridTile();
+                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.gridTileComponent.centerGridTile;
                 float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
                 int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 

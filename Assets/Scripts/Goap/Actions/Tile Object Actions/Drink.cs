@@ -46,8 +46,8 @@ public class Drink : GoapAction {
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && actor.gridTileLocation != null) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.areaLocation.GetCenterLocationGridTile();
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                    LocationGridTile centerGridTileOfActor = actor.areaLocation.gridTileComponent.centerGridTile;
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
                     int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
@@ -173,7 +173,7 @@ public class Drink : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.area)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             return poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN && poiTarget.IsAvailable() && !actor.traitContainer.HasTrait("Agoraphobic");

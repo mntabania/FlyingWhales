@@ -3,7 +3,7 @@ namespace Scenario_Maps {
     [System.Serializable]
     public class ScenarioWorldMapSave {
         public WorldMapTemplate worldMapTemplate;
-        public List<SaveDataArea> hextileSaves;
+        public List<SaveDataArea> areaSaves;
         
         public void SaveWorld(WorldMapTemplate p_worldMapTemplate, List<Area> p_areas) {
             worldMapTemplate = p_worldMapTemplate;
@@ -12,32 +12,32 @@ namespace Scenario_Maps {
 
         #region Hex Tiles
         public void SaveAreas(List<Area> tiles) {
-            hextileSaves = new List<SaveDataArea>();
+            areaSaves = new List<SaveDataArea>();
             for (int i = 0; i < tiles.Count; i++) {
                 Area currTile = tiles[i];
                 SaveDataArea newSaveData = new SaveDataArea();
                 newSaveData.Save(currTile);
-                hextileSaves.Add(newSaveData);
+                areaSaves.Add(newSaveData);
             }
         }
         public SaveDataArea[,] GetSaveDataMap() {
             SaveDataArea[,] map = new SaveDataArea[worldMapTemplate.worldMapWidth, worldMapTemplate.worldMapHeight];
-            for (int i = 0; i < hextileSaves.Count; i++) {
-                SaveDataArea currTile = hextileSaves[i];
+            for (int i = 0; i < areaSaves.Count; i++) {
+                SaveDataArea currTile = areaSaves[i];
                 map[currTile.areaData.xCoordinate, currTile.areaData.yCoordinate] = currTile;
             }
             return map;
         }
-        public List<SaveDataHextile> GetAllTilesWithLandmarks() {
-            List<SaveDataHextile> tiles = new List<SaveDataHextile>();
-            for (int i = 0; i < hextileSaves.Count; i++) {
-                SaveDataHextile saveDataHextile = hextileSaves[i];
-                if (saveDataHextile.landmarkType != LANDMARK_TYPE.NONE) {
-                    tiles.Add(saveDataHextile);
-                }
-            }
-            return tiles;
-        }
+        //public List<SaveDataArea> GetAllTilesWithLandmarks() {
+        //    List<SaveDataArea> tiles = new List<SaveDataArea>();
+        //    for (int i = 0; i < areaSaves.Count; i++) {
+        //        SaveDataArea saveDataArea = areaSaves[i];
+        //        if (saveDataArea.landmarkType != LANDMARK_TYPE.NONE) {
+        //            tiles.Add(saveDataArea);
+        //        }
+        //    }
+        //    return tiles;
+        //}
         #endregion
     
     }

@@ -28,13 +28,13 @@ public class PartyJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public void CreateHaulForCampJob(ResourcePile target, HexTile hex) {
+    public void CreateHaulForCampJob(ResourcePile target, Area p_area) {
         if (_owner.jobBoard.HasJob(JOB_TYPE.HAUL, target) == false) {
-            if (target.gridTileLocation.area == hex) {
+            if (target.gridTileLocation.area == p_area) {
                 //Only create haul job for camp if resource pile is not in camp
             } else {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
-                job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { hex });
+                job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { p_area });
                 job.SetDoNotRecalculate(true);
                 _owner.jobBoard.AddToAvailableJobs(job);
             }

@@ -965,7 +965,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     //OPTIMIZE THIS!
                     //chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
                     if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                        chosenTile = owner.gridTileLocation.GetNearestHexTileWithinRegion().GetRandomTile();
+                        Area nearest = owner.gridTileLocation.GetNearestHexTileWithinRegion();
+                        if(nearest != null) {
+                            chosenTile = nearest.gridTileComponent.GetRandomTile();
+                        }
                     } else {
                         chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
                         //List<LocationGridTile> choices = owner.currentStructure.passableTiles.Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(owner.gridTileLocation, t)).ToList();
@@ -1910,37 +1913,37 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
-    #region Visit Different Region
-    public bool TriggerVisitDifferentRegion() {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.VISIT_DIFFERENT_REGION)) {
-            Region chosenRegion = null;
-            List<Region> adjacentRegions = owner.currentRegion.neighbours;
-            if(adjacentRegions != null && adjacentRegions.Count > 0) {
-                chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
-            }
-            if(chosenRegion != null) {
-                Area area = chosenRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN);
-                if(area != null) {
-                    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(area.gridTileComponent.gridTiles);
-                    if (owner.gridTileLocation != null && owner.movementComponent.HasPathToEvenIfDiffRegion(chosenTile)) {
-                        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-                        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.VISIT_DIFFERENT_REGION, INTERACTION_TYPE.ROAM, owner, owner);
-                        goapPlan.SetDoNotRecalculate(true);
-                        job.SetCannotBePushedBack(true);
-                        job.SetAssignedPlan(goapPlan);
-                        owner.jobQueue.AddJobInQueue(job);
-                        return true;
-                    }
-                }
-            }
-        } else {
-            //If already has a Visit Different Region Job in queue, return true so that the character will not Roam Around Tile
-            return true;
-        }
-        return false;
-    }
-    #endregion
+    //#region Visit Different Region
+    //public bool TriggerVisitDifferentRegion() {
+    //    if (!owner.jobQueue.HasJob(JOB_TYPE.VISIT_DIFFERENT_REGION)) {
+    //        Region chosenRegion = null;
+    //        List<Region> adjacentRegions = owner.currentRegion.neighbours;
+    //        if(adjacentRegions != null && adjacentRegions.Count > 0) {
+    //            chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
+    //        }
+    //        if(chosenRegion != null) {
+    //            Area area = chosenRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN);
+    //            if(area != null) {
+    //                LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(area.gridTileComponent.gridTiles);
+    //                if (owner.gridTileLocation != null && owner.movementComponent.HasPathToEvenIfDiffRegion(chosenTile)) {
+    //                    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+    //                    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+    //                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.VISIT_DIFFERENT_REGION, INTERACTION_TYPE.ROAM, owner, owner);
+    //                    goapPlan.SetDoNotRecalculate(true);
+    //                    job.SetCannotBePushedBack(true);
+    //                    job.SetAssignedPlan(goapPlan);
+    //                    owner.jobQueue.AddJobInQueue(job);
+    //                    return true;
+    //                }
+    //            }
+    //        }
+    //    } else {
+    //        //If already has a Visit Different Region Job in queue, return true so that the character will not Roam Around Tile
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //#endregion
 
     #region Bury
     public void TriggerBuryMe() {

@@ -117,13 +117,13 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Settlement
-    public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
-        PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
-        npcSettlement.SetName("Demonic Intrusion");
-        SetPlayerArea(npcSettlement);
-        // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
-        return npcSettlement;
-    }
+    //public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
+    //    PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
+    //    npcSettlement.SetName("Demonic Intrusion");
+    //    SetPlayerArea(npcSettlement);
+    //    // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
+    //    return npcSettlement;
+    //}
     public void LoadPlayerArea(SaveDataPlayerGame saveDataPlayerGame) {
         BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataPlayerGame.settlementID);
         PlayerSettlement pSettlement = settlement as PlayerSettlement;
@@ -306,9 +306,9 @@ public class Player : ILeader, IObjectManipulator {
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }
                     break;
-                case SPELL_TARGET.HEX:
+                case SPELL_TARGET.AREA:
                     hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                    if (hoveredTile != null && hoveredTile.area) {
+                    if (hoveredTile != null) {
                         if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.area)) {
                             currentActivePlayerSpell.ActivateAbility(hoveredTile.area);
                             activatedAction = true;

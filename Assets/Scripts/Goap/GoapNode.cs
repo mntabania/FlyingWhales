@@ -210,12 +210,17 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             targetTile = actor.gridTileLocation;
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
             if (actor.limiterComponent.canMove && !actor.movementComponent.isStationary) {
-                List<LocationGridTile> choices = action.NearbyLocationGetter(this) ?? actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
-                if (choices != null && choices.Count > 0) {
+                List<LocationGridTile> choices = ObjectPoolManager.Instance.CreateNewGridTileList();
+                action.PopulateNearbyLocation(choices, this);
+                if(choices.Count <= 0) {
+                    actor.gridTileLocation.PopulateTilesInRadius(choices, 3, includeImpassable: false);
+                }
+                if (choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
                 } else {
                     targetTile = actor.gridTileLocation;
                 }
+                ObjectPoolManager.Instance.ReturnGridTileListToPool(choices);
             } else {
                 targetTile = actor.gridTileLocation;
             }

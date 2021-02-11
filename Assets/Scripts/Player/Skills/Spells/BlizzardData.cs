@@ -11,19 +11,19 @@ public class BlizzardData : SkillData {
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public BlizzardData() : base() {
-        targetTypes = new[] { SPELL_TARGET.HEX };
+        targetTypes = new[] { SPELL_TARGET.AREA };
     }
 
-    public override void ActivateAbility(HexTile targetHex) {
-        targetHex.featureComponent.AddFeature(AreaFeatureDB.Blizzard_Feature, targetHex);
-        base.ActivateAbility(targetHex);
+    public override void ActivateAbility(Area targetArea) {
+        targetArea.featureComponent.AddFeature(AreaFeatureDB.Blizzard_Feature, targetArea);
+        base.ActivateAbility(targetArea);
     }
-    public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+    public override bool CanPerformAbilityTowards(Area targetArea) {
+        bool canPerform = base.CanPerformAbilityTowards(targetArea);
         if (canPerform) {
-            return targetHex != null
-                   && targetHex.biomeType != BIOMES.DESERT
-                   && targetHex.featureComponent.HasFeature(AreaFeatureDB.Blizzard_Feature) == false;
+            return targetArea != null
+                   && targetArea.biomeType != BIOMES.DESERT
+                   && targetArea.featureComponent.HasFeature(AreaFeatureDB.Blizzard_Feature) == false;
         }
         return canPerform;
     }

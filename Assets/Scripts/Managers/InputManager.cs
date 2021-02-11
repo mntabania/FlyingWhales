@@ -96,8 +96,8 @@ namespace Ruinarch {
                                         canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile); 
                                     } 
                                     break; 
-                                case SPELL_TARGET.HEX: 
-                                    if (hoveredTile != null && hoveredTile.area) { 
+                                case SPELL_TARGET.AREA: 
+                                    if (hoveredTile != null) { 
                                         canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.area); 
                                     } 
                                     break;
@@ -342,8 +342,7 @@ namespace Ruinarch {
                         UIManager.Instance.openedPopups.Last().Close();
                         return true;
                     } else {
-                        if (UIManager.Instance.poiTestingUI.gameObject.activeSelf ||
-                            UIManager.Instance.minionCommandsUI.gameObject.activeSelf) {
+                        if (UIManager.Instance.poiTestingUI.gameObject.activeSelf) { //|| UIManager.Instance.minionCommandsUI.gameObject.activeSelf
                             return true;
                         }
                         //close latest Info UI

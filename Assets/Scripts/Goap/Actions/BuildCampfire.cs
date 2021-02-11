@@ -26,27 +26,16 @@ public class BuildCampfire : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
-        HexTile hex = goapNode.actor.gridTileLocation.area;
-        
-        List<LocationGridTile> tiles = null;
-        if (hex != null) {
-            tiles = hex.GetUnoccupiedTiles();
-            if(tiles != null && tiles.Count > 0) {
-                return tiles;
-            } else {
-                return hex.locationGridTiles.ToList();
+    public override void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) {
+        Area area = goapNode.actor.gridTileLocation.area;
+        if (area != null) {
+            area.gridTileComponent.PopulateUnoccupiedTiles(gridTiles);
+            if(gridTiles.Count <= 0) {
+                gridTiles = area.gridTileComponent.gridTiles;
             }
         } else {
-            tiles = goapNode.actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
-            for (int i = 0; i < tiles.Count; i++) {
-                if (tiles[i].objHere != null) {
-                    tiles.RemoveAt(i);
-                    i--;
-                }
-            }
+            goapNode.actor.gridTileLocation.PopulateTilesInRadius(gridTiles, 3, includeImpassable: false, includeTilesWithObject: false);
         }
-        return tiles;
     }
     #endregion
 

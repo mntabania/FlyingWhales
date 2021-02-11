@@ -638,7 +638,7 @@ public enum SPELL_TARGET {
     CHARACTER,
     TILE_OBJECT,
     TILE,
-    HEX,
+    AREA,
     STRUCTURE,
     ROOM,
     SETTLEMENT,

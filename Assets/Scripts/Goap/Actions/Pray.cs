@@ -120,7 +120,7 @@ public class Pray : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.area)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             if (actor.traitContainer.HasTrait("Evil")) {

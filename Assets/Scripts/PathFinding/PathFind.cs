@@ -29,11 +29,11 @@ namespace PathFind {
                 double d;
                 Path<Node> newPath;
                 if (pathfindingMode == PATHFINDING_MODE.UNRESTRICTED) {
-                    foreach (Node n in path.LastStep.neighbourComponent.neighbours) {
-                        d = distance(path.LastStep, n);
-                        newPath = path.AddStep(n, d);
-                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                    }
+                    //foreach (Node n in path.LastStep.neighbourComponent.neighbours) {
+                    //    d = distance(path.LastStep, n);
+                    //    newPath = path.AddStep(n, d);
+                    //    queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    //}
                 } else {
                     foreach (Node n in path.LastStep.ValidTiles) {
                         d = distance(path.LastStep, n);

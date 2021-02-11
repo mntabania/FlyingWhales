@@ -1543,7 +1543,7 @@ namespace Inner_Maps {
         public bool IsNextToSettlementAreaOrPartOfSettlement(BaseSettlement settlement) {
             return IsPartOfSettlement(settlement) || IsNextToSettlementArea(settlement);
         }
-        public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false, bool includeImpassable = true) {
+        public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false, bool includeImpassable = true, bool includeTilesWithObject = true) {
             List<LocationGridTile> tiles = new List<LocationGridTile>();
             int mapSizeX = parentMap.map.GetUpperBound(0);
             int mapSizeY = parentMap.map.GetUpperBound(1);
@@ -1569,6 +1569,7 @@ namespace Inner_Maps {
                         }
                         LocationGridTile result = parentMap.map[dx, dy];
                         if (result.structure == null) { continue; } //do not include tiles with no structures
+                        if (!includeTilesWithObject && result.objHere != null) { continue; }
                         if (!includeTilesInDifferentStructure 
                             && (result.structure != structure && (!result.structure.structureType.IsOpenSpace() || !structure.structureType.IsOpenSpace()))) { continue; }
                         if(!includeImpassable && !result.IsPassable()) { continue; }
@@ -1577,6 +1578,40 @@ namespace Inner_Maps {
                 }
             }
             return tiles;
+        }
+        public void PopulateTilesInRadius(List<LocationGridTile> tiles, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false, bool includeImpassable = true, bool includeTilesWithObject = true) {
+            int mapSizeX = parentMap.map.GetUpperBound(0);
+            int mapSizeY = parentMap.map.GetUpperBound(1);
+            int x = localPlace.x;
+            int y = localPlace.y;
+            if (includeCenterTile) {
+                tiles.Add(this);
+            }
+            int xLimitLower = x - radiusLimit;
+            int xLimitUpper = x + radiusLimit;
+            int yLimitLower = y - radiusLimit;
+            int yLimitUpper = y + radiusLimit;
+
+
+            for (int dx = x - radius; dx <= x + radius; dx++) {
+                for (int dy = y - radius; dy <= y + radius; dy++) {
+                    if (dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
+                        if (dx == x && dy == y) {
+                            continue;
+                        }
+                        if (radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
+                            continue;
+                        }
+                        LocationGridTile result = parentMap.map[dx, dy];
+                        if (result.structure == null) { continue; } //do not include tiles with no structures
+                        if (!includeTilesWithObject && result.objHere != null) { continue; }
+                        if (!includeTilesInDifferentStructure
+                            && (result.structure != structure && (!result.structure.structureType.IsOpenSpace() || !structure.structureType.IsOpenSpace()))) { continue; }
+                        if (!includeImpassable && !result.IsPassable()) { continue; }
+                        tiles.Add(result);
+                    }
+                }
+            }
         }
         public bool IsPassable() {
             return (objHere == null || !objHere.IsUnpassable()) && groundType != Ground_Type.Water;
@@ -1760,19 +1795,19 @@ namespace Inner_Maps {
             if (area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
                 return area;
             }
-            Area nearestHex = null;
+            Area nearestArea = null;
             float nearestDist = 0f;
             for (int i = 0; i < area.region.areas.Count; i++) {
                 Area otherArea = area.region.areas[i];
                 if (otherArea.elevationType != ELEVATION.WATER && otherArea.elevationType != ELEVATION.MOUNTAIN) {
                     float dist = GetDistanceTo(otherArea.gridTileComponent.centerGridTile);
-                    if (nearestHex == null || dist < nearestDist) {
-                        nearestHex = otherArea;
+                    if (nearestArea == null || dist < nearestDist) {
+                        nearestArea = otherArea;
                         nearestDist = dist;
                     }
                 }
             }
-            return nearestHex;
+            return nearestArea;
         }
         public Area GetNearestHexTileWithinRegionThatMeetCriteria(System.Func<Area, bool> validityChecker) {
             if (validityChecker.Invoke(area)) {

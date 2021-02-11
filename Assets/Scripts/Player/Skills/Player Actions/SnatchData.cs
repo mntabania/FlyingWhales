@@ -66,13 +66,25 @@ public class SnatchData : PlayerAction {
             //get an available skeleton then add job to skeleton to drop character near chosen structure
             Character availableSkeletonOrCultist = GetNearestAvailableSkeletonOrCultist(targetCharacter);
             availableSkeletonOrCultist.jobQueue.CancelAllJobs();
-            
-            List<LocationGridTile> choices;
+
+            List<LocationGridTile> choices = ObjectPoolManager.Instance.CreateNewGridTileList();
             if (structure is Kennel) {
-                HexTile hexTile = structure.occupiedArea;
-                choices = hexTile.locationGridTiles.Where(t => t.structure is Wilderness && t.IsPassable() && !t.isOccupied).ToList();  
+                Area area = structure.occupiedArea;
+                for (int i = 0; i < area.gridTileComponent.gridTiles.Count; i++) {
+                    LocationGridTile t = area.gridTileComponent.gridTiles[i];
+                    if(t.structure is Wilderness && t.IsPassable() && !t.isOccupied) {
+                        choices.Add(t);
+                    }
+                }
+                //choices = hexTile.locationGridTiles.Where(t => t.structure is Wilderness && t.IsPassable() && !t.isOccupied).ToList();  
             } else {
-                choices = structure.passableTiles.Where(t => !t.structure.IsTilePartOfARoom(t, out var room)).ToList();
+                for (int i = 0; i < structure.passableTiles.Count; i++) {
+                    LocationGridTile t = structure.passableTiles[i];
+                    if (!t.structure.IsTilePartOfARoom(t, out var room)) {
+                        choices.Add(t);
+                    }
+                }
+                //choices = structure.passableTiles.Where(t => !t.structure.IsTilePartOfARoom(t, out var room)).ToList();
             }
             if (choices.Count > 0) {
                 availableSkeletonOrCultist.jobComponent.CreateSnatchJob(targetCharacter, CollectionUtilities.GetRandomElement(choices), structure);
@@ -85,6 +97,7 @@ public class SnatchData : PlayerAction {
                 Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
                 base.ActivateAbility(targetCharacter); //this is so that mana/charges/cooldown can be activated after picking structure to bring to
             }
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(choices);
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {

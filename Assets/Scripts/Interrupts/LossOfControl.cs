@@ -24,30 +24,30 @@ namespace Interrupts {
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, "Loss of Control", LOG_IDENTIFIER.STRING_1);
 
-            HexTile hexTile = interruptHolder.actor.areaLocation;
+            Area area = interruptHolder.actor.areaLocation;
             if (interruptHolder.actor.characterClass.className.Equals("Druid")) {
                 //Electric storm
-                if (hexTile.spellsComponent.hasElectricStorm) {
+                if (area.spellsComponent.hasElectricStorm) {
                     //reset electric storm
-                    hexTile.spellsComponent.ResetElectricStormDuration();
+                    area.spellsComponent.ResetElectricStormDuration();
                 } else {
-                    hexTile.spellsComponent.SetHasElectricStorm(true);
+                    area.spellsComponent.SetHasElectricStorm(true);
                 }
             } else if (interruptHolder.actor.characterClass.className.Equals("Shaman")) {
                 //Poison Bloom
-                PoisonBloomFeature poisonBloomFeature = hexTile.featureComponent.GetFeature<PoisonBloomFeature>();
+                PoisonBloomFeature poisonBloomFeature = area.featureComponent.GetFeature<PoisonBloomFeature>();
                 if (poisonBloomFeature != null) {
                     poisonBloomFeature.ResetDuration();
                 } else {
-                    hexTile.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, hexTile);
+                    area.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, area);
                 }
             } else if (interruptHolder.actor.characterClass.className.Equals("Mage")) { 
                 //Brimstones
-                if (hexTile.spellsComponent.hasBrimstones) {
+                if (area.spellsComponent.hasBrimstones) {
                     //reset electric storm
-                    hexTile.spellsComponent.ResetBrimstoneDuration();
+                    area.spellsComponent.ResetBrimstoneDuration();
                 } else {
-                    hexTile.spellsComponent.SetHasBrimstones(true);
+                    area.spellsComponent.SetHasBrimstones(true);
                 }
             }
             else {
