@@ -43,9 +43,7 @@ public class LightningData : SkillData {
     }
     private void LightningDamage(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.COWARDICE);
-            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.COWARDICE);
-            int processedDamage = m_lightningBaseDamage - playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(skillData.currentLevel);
+            int processedDamage = m_lightningBaseDamage - PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LIGHTNING);
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
         }
     }

@@ -24,7 +24,6 @@ public class SkillUpgradeDataEditor : Editor {
         EditorGUILayout.Space();
         EditorGUILayout.TextArea("UPGRADE BONUS STATS");
         DisplayUpgradeBonus();
-        
     }
 
     void DisplayUpgradeBonus() {
@@ -91,6 +90,10 @@ public class SkillUpgradeDataEditor : Editor {
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Cooldown)) {
                 DisplayIntList(data.skillUpgradeData.cooldownPerLevel, "Cooldown per level");
+                EditorGUILayout.Space();
+            }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Skill_Movement_Speed)) {
+                DisplayIntList(data.skillUpgradeData.skillMovementSpeed, "Skill Movement per level");
                 EditorGUILayout.Space();
             }
         }

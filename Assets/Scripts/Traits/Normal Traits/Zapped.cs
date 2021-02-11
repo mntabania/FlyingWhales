@@ -5,20 +5,15 @@ using UnityEngine;
 namespace Traits {
     public class Zapped : Status {
 
-        private SkillData m_skillData;
-        private PlayerSkillData m_playerSkillData;
-
         private GameObject electricEffectGO;
         private AudioObject _audioObject;
 
         public Zapped() {
             name = "Zapped";
             description = "Jolted and temporarily paralyzed.";
-            m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.ZAP);
-            m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.ZAP);
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            ticksDuration = (int)m_playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(m_skillData.currentLevel);
+            ticksDuration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ZAP);
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;

@@ -6,9 +6,6 @@ using UnityEngine.Assertions;
 
 public class FireBall : MovingTileObject {
 
-    private SkillData m_skillData;
-    private PlayerSkillData m_playerSkillData;
-
     private FireBallMapObjectVisual _fireBallMapVisual;
     public override string neutralizer => "Fire Master";
     public GameDate expiryDate { get; }
@@ -16,16 +13,12 @@ public class FireBall : MovingTileObject {
     public override System.Type serializedData => typeof(SaveDataFireBall);
     
     public FireBall() {
-        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FIRE_BALL);
-        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FIRE_BALL);
         Initialize(TILE_OBJECT_TYPE.FIRE_BALL, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2) + (int)m_playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(m_skillData.currentLevel));
+        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2) + (int)PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
     }
     public FireBall(SaveDataFireBall data) {
-        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FIRE_BALL);
-        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FIRE_BALL);
         //SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
@@ -64,7 +57,7 @@ public class FireBall : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            amount += m_playerSkillData.skillUpgradeData.GetAdditionalAttackActualPerLevelBaseOnLevel(m_skillData.currentLevel);
+            amount += PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL);
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Water) {

@@ -132,7 +132,7 @@ public class RavenousSpirit : TileObject {
     }
 
     private void RavenousEffect() {
-        int processedEffect = _baseFullness - (int)(_baseFullness * m_playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(m_skillData.currentLevel));
+        int processedEffect = _baseFullness - (int)(_baseFullness * PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT));
         possessionTarget.needsComponent.AdjustFullness(processedEffect);
     }
 

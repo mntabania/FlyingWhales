@@ -41,7 +41,9 @@ public class SkillUpgradeData
     [HideInInspector]
     public List<int> cooldownPerLevel;
     [HideInInspector]
-    
+    public List<int> skillMovementSpeed;
+    [HideInInspector]
+
     public int GetUpgradeCostBaseOnLevel(int p_currentLevel) {
         if (upgradeCosts == null || upgradeCosts.Count <= 0) {
             return 0;
@@ -151,5 +153,12 @@ public class SkillUpgradeData
             return 0;
         }
         return cooldownPerLevel[p_currentLevel];
+    }
+
+    public int GetSkillMovementSpeedDownPerLevel(int p_currentLevel) {
+        if (skillMovementSpeed == null || skillMovementSpeed.Count <= 0) {
+            return 0;
+        }
+        return skillMovementSpeed[p_currentLevel];
     }
 }

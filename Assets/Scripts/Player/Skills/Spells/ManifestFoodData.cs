@@ -4,9 +4,6 @@ using UnityEngine;
 using Inner_Maps;
 public class ManifestFoodData : SkillData {
 
-    private SkillData m_skillData;
-    private PlayerSkillData m_playerSkillData;
-
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.MANIFEST_FOOD;
     public override string name => "Manifest Food";
     public override string description => "This Spell produces a pile of food out of thin air. Use it to lure characters.";
@@ -17,14 +14,12 @@ public class ManifestFoodData : SkillData {
     public virtual int abilityRadius => 1;
 
     public ManifestFoodData() : base() {
-        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.MANIFEST_FOOD);
-        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.MANIFEST_FOOD);
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
-        m_baseAmountOfResources += (int)m_playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(m_skillData.currentLevel);
+        m_baseAmountOfResources += (int)PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.MANIFEST_FOOD);
         foodPile.SetResourceInPile(m_baseAmountOfResources);
         targetTile.structure.AddPOI(foodPile, targetTile);
         // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);

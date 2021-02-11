@@ -18,12 +18,10 @@ public class WallData : SkillData {
         if(targetTile.objHere != null && targetTile.objHere is TileObject tileObject && !tileObject.tileObjectType.IsTileObjectImportant()) {
             targetTile.structure.RemovePOI(targetTile.objHere);
         }
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.WALL);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.WALL);
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
         wall.SetWallType(WALL_TYPE.Demon_Stone);
         GameDate expiryDate = GameManager.Instance.Today();
-        int processedTick = m_baseExpiryTick + (playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel));
+        int processedTick = m_baseExpiryTick + (PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.WALL));
         expiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(processedTick));
         wall.SetExpiry(expiryDate);
         targetTile.structure.AddPOI(wall, targetTile);

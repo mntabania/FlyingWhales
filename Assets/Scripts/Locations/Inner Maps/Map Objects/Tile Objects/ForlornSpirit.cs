@@ -8,9 +8,6 @@ using UnityEngine.Assertions;
 
 public class ForlornSpirit : TileObject {
 
-    private SkillData m_skillData;
-    private PlayerSkillData m_playerSkillData;
-
     public Character possessionTarget { get; private set; }
     private SpiritGameObject _spiritGO;
     private int _duration;
@@ -23,15 +20,11 @@ public class ForlornSpirit : TileObject {
     #endregion
     
     public ForlornSpirit() {
-        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
-        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
         Initialize(TILE_OBJECT_TYPE.FORLORN_SPIRIT, false);
         traitContainer.AddTrait(this, "Forlorn");
     }
     public ForlornSpirit(SaveDataForlornSpirit data) {
-        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
-        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
         //SaveDataForlornSpirit saveDataForlornSpirit = data as SaveDataForlornSpirit;
         Assert.IsNotNull(data);
@@ -137,7 +130,7 @@ public class ForlornSpirit : TileObject {
     }
 
     private void ForlornEffect() {
-        float processedHappinessDrain = _baseHappinessDrain - (_baseHappinessDrain * (int)m_playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(m_skillData.currentLevel));
+        float processedHappinessDrain = _baseHappinessDrain - (_baseHappinessDrain * (int)PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.FORLORN_SPIRIT));
         possessionTarget.needsComponent.AdjustHappiness(processedHappinessDrain);
     }
     private void DonePossession() {

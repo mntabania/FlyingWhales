@@ -6,8 +6,6 @@ using Random = UnityEngine.Random;
 namespace Traits {
     public class Agitated : Status {
 
-        private SkillData m_skillData;
-        private PlayerSkillData m_playerSkillData;
         private float m_addedAtk = 0f;
         private float m_addedMaxHP = 0f;
         public override bool isSingleton => true;
@@ -20,8 +18,6 @@ namespace Traits {
             ticksDuration = 0;
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
-            m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.AGITATE);
-            m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.AGITATE);
         }
 
         #region Overrides
@@ -31,10 +27,10 @@ namespace Traits {
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
-                m_addedAtk = m_playerSkillData.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(m_skillData.currentLevel);
+                m_addedAtk = PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
                 character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk);
 
-                float m_addedMaxHP = character.maxHP * m_playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(m_skillData.currentLevel);
+                float m_addedMaxHP = character.maxHP * PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
                 character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
             }
         }
