@@ -31,7 +31,7 @@ public class SpiderEgg : MonsterEgg {
             //} else 
             if (!monster.HasHome()) {
                 monster.ClearTerritory();
-                monster.SetTerritory(gridTileLocation.parentArea);
+                monster.SetTerritory(gridTileLocation.area);
             }
         }
 

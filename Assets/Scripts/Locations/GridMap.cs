@@ -73,9 +73,6 @@ public class GridMap : BaseMonoBehaviour {
     #region Regions
     public void SetRegions(Region[] regions) {
         DatabaseManager.Instance.regionDatabase.RegisterRegions(regions);
-        for (int i = 0; i < allRegions.Length; i++) {
-            allRegions[i].FinalizeData();
-        }
     }
     public Region GetRegionByID(int id) {
         for (int i = 0; i < allRegions.Length; i++) {

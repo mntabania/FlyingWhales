@@ -22,7 +22,7 @@ public class MinionPlayerSkill : SkillData {
         if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE && targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN) {
             minion.character.MigrateHomeStructureTo(targetTile.structure);
         } else {
-            minion.character.SetTerritory(targetTile.parentArea, false);
+            minion.character.SetTerritory(targetTile.area, false);
         }
         minion.character.jobQueue.CancelAllJobs();
         base.ActivateAbility(targetTile);

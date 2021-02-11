@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Inner_Maps;
@@ -16,10 +17,60 @@ public class AreaGridTileComponent : AreaComponent {
         borderTiles = new List<LocationGridTile>();
     }
 
-    #region Utilities
+    #region Data Setting
     public void SetCenterGridTile(LocationGridTile p_gridTile) {
         centerGridTile = p_gridTile;
     }
+    public void AddGridTile(LocationGridTile p_gridTile) {
+        gridTiles.Add(p_gridTile);
+    }
+    public void PopulateBorderTiles(Area p_area) {
+        borderTiles.Clear();
+        InnerTileMap tileMap = p_area.region.innerMap;
+        //To populate border tiles we need to know the width and height of hextile in the inner map, which is currently InnerMapManager.BuildingSpotSize x 2
+        int hexWidth = InnerMapManager.AreaLocationGridTileSize.x;
+        int hexHeight = InnerMapManager.AreaLocationGridTileSize.y;
+
+        //Our origin point will always be the first entry in the locationGridTiles list, assuming that the first entry is always the lower left corner of the hex tile
+        int originX = gridTiles.Min(t => t.localPlace.x);
+        int originY = gridTiles.Min(t => t.localPlace.y);
+
+        //Let's get the actual width and height from the origin point
+        int actualHeight = originY + (hexHeight - 1);
+        int actualWidth = originX + (hexWidth - 1);
+
+        //Now, to calculate border tiles, we will simply add the origin points and the hex width and height and loop through all the tiles corresponding those points
+        //There are four sides to the borders since the hex tile in the inner map is a square, we will call it A - left side, B - up side, C - right side, and D - down side
+        
+        //To get A, we must increment from originY, while the originX is constant
+        for (int i = originY; i < actualHeight; i++) {
+            borderTiles.Add(tileMap.map[originX, i]);
+        }
+        //To get B, we must increment from originX, while actualHeight is constant
+        for (int i = originX; i < actualWidth; i++) {
+            borderTiles.Add(tileMap.map[i, actualHeight]);
+        }
+        //To get C, we must increment from originY, while actualWidth is constant
+        for (int i = originY; i <= actualHeight; i++) {
+            borderTiles.Add(tileMap.map[actualWidth, i]);
+        }
+        //To get D, we must increment from originX, while originY is constant
+        for (int i = originX + 1; i < actualWidth; i++) {
+            borderTiles.Add(tileMap.map[i, originY]);
+        }
+
+        //IMPORTANT NOTE BELOW! DO NOT DELETE COMMENT!
+        //Let's check using an example, if the origin point is (0, 0) and the actual width = 7, and the actual height = 7
+        //Then A = (0, 0) to (0, 6)
+        //B = (0, 7) to (6, 7)
+        //C = (7, 0) to (7, 7)
+        //D = (1, 0) to (6, 0)
+
+    }
+    #endregion
+    
+    #region Utilities
+    
     public LocationGridTile GetRandomTile() {
         return gridTiles[UnityEngine.Random.Range(0, gridTiles.Count)];
     }

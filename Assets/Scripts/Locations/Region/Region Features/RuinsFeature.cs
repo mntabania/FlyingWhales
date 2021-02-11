@@ -10,10 +10,10 @@ namespace Locations.Region_Features {
             int existingRuins = GetAncientRuinsInRegion(region); 
             if (existingRuins < 4) {
                 int missing = Random.Range(4, 7) - existingRuins;
-                List<HexTile> choices = region.tiles
+                List<HexTile> choices = region.areas
                     .Where(x => (x.elevationType == ELEVATION.PLAIN || x.elevationType == ELEVATION.TREES) &&
                                 x.landmarkOnTile == null && //with no Features yet
-                                x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+                                x.neighbourComponent.neighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
                                     n => n.landmarkOnTile != null && 
                                          (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL ||
                                           n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false

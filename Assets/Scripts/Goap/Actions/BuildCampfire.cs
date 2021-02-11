@@ -27,7 +27,7 @@ public class BuildCampfire : GoapAction {
         return 10;
     }
     public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
-        HexTile hex = goapNode.actor.gridTileLocation.parentArea;
+        HexTile hex = goapNode.actor.gridTileLocation.area;
         
         List<LocationGridTile> tiles = null;
         if (hex != null) {
@@ -66,7 +66,7 @@ public class BuildCampfire : GoapAction {
         LocationGridTile targetTile = actor.gridTileLocation;
 
         if (targetTile != null && targetTile.objHere != null) {
-            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.parentArea == targetTile.parentArea);
+            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.area == targetTile.area);
         }
         if (targetTile != null && targetTile.objHere != null) {
             targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());
@@ -79,7 +79,7 @@ public class BuildCampfire : GoapAction {
         goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
 
         if (targetTile != null) {
-            LocationGridTile foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.parentArea == targetTile.parentArea);
+            LocationGridTile foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.area == targetTile.area);
 
             if(foodPileTile == null) {
                 foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());

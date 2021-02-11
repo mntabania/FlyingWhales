@@ -22,10 +22,10 @@ public class OreVein : TileObject {
     public OreVein(SaveDataTileObject data) { }
     
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.parentArea.settlementOnArea != null) {
-            gridTileLocation.parentArea.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
+        if (gridTileLocation.area.settlementOnArea != null) {
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
         }
-        gridTileLocation.parentArea.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighboringHexTile) => {
             if (eachNeighboringHexTile.settlementOnTile != null) {
                 eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
                 parentSettlement = eachNeighboringHexTile.settlementOnTile;

@@ -91,6 +91,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     #region Area Utilities
     public void SetAreaItem(AreaItem p_areaItem) {
         areaItem = p_areaItem;
+        gridTileComponent.PopulateBorderTiles(this);
     }
     public bool IsNextToOrPartOfVillage() {
         return IsPartOfVillage() || neighbourComponent.IsNextToVillage();
@@ -179,7 +180,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
                 }
             }
             //if code reaches this, then there is no longer a structure from the settlement on this tile
-            settlementOnArea.RemoveTileFromSettlement(this);
+            settlementOnArea.RemoveAreaFromSettlement(this);
         }
     }
     #endregion

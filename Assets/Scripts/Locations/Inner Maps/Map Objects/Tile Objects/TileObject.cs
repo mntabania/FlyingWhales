@@ -285,7 +285,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 OccupyTiles(objData.occupiedSize, gridTileLocation);
             }
         }
-        gridTileLocation.parentArea.OnPlacePOIInHex(this);
+        gridTileLocation.area.OnPlacePOIInHex(this);
         SubscribeListeners();
         if (gridTileLocation.genericTileObject.traitContainer.HasTrait("Poisoned")) {
             //add poisoned to floor
@@ -300,8 +300,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //OnRemoveTileObject(removedBy, previousTile);
         //SetPOIState(POI_STATE.INACTIVE);
         OnDestroyPOI();
-        if (previousTile != null && previousTile.parentArea) {
-            previousTile.parentArea.OnRemovePOIInHex(this);
+        if (previousTile != null && previousTile.area) {
+            previousTile.area.OnRemovePOIInHex(this);
         }
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {

@@ -27,6 +27,6 @@ public class EarthquakeData : SkillData {
         return canPerform;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.parentArea);
+        TileHighlighter.Instance.PositionHighlight(tile.area);
     }
 }

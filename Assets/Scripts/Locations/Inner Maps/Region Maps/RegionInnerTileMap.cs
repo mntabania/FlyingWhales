@@ -22,7 +22,7 @@ namespace Inner_Maps {
             Vector2Int regionDimensions = GetRegionDimensions(region);
             Vector2Int innerMapSize = GetInnerMapSizeGivenRegionDimensions(regionDimensions);
             yield return StartCoroutine(GenerateGrid(innerMapSize.x, innerMapSize.y, mapGenerationComponent));
-            CreateAreaItemGrid(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
+            PopulateNeededAreaDataAfterGridGeneration(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
             yield return StartCoroutine(GenerateDetails(mapGenerationComponent));
             groundMapLocalBounds = groundTilemap.localBounds;
         }
@@ -33,7 +33,7 @@ namespace Inner_Maps {
             Vector2Int regionDimensions = GetRegionDimensions(region);
             Vector2Int innerMapSize = GetInnerMapSizeGivenRegionDimensions(regionDimensions);
             yield return StartCoroutine(LoadGrid(innerMapSize.x, innerMapSize.y, mapGenerationComponent, saveDataInnerMap, saveData));
-            CreateAreaItemGrid(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
+            PopulateNeededAreaDataAfterGridGeneration(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
             int minX = allTiles.Min(t => t.localPlace.x);
             int maxX = allTiles.Max(t => t.localPlace.x);
             int minY = allTiles.Min(t => t.localPlace.y);
@@ -46,8 +46,8 @@ namespace Inner_Maps {
             groundMapLocalBounds = groundTilemap.localBounds;
         }
 
-        #region Build Spots
-        private void CreateAreaItemGrid(MapGenerationComponent mapGenerationComponent, int gridWidth, int gridHeight) {
+        #region Areas
+        private void PopulateNeededAreaDataAfterGridGeneration(MapGenerationComponent mapGenerationComponent, int gridWidth, int gridHeight) {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -57,18 +57,26 @@ namespace Inner_Maps {
                     float xPos = (x + 1) * (InnerMapManager.AreaLocationGridTileSize.x) - (InnerMapManager.AreaLocationGridTileSize.x / 2f);
                     float yPos = (y + 1) * (InnerMapManager.AreaLocationGridTileSize.y) - (InnerMapManager.AreaLocationGridTileSize.y / 2f);
 
-                    HexTile tile = GridMap.Instance.map[x, y];
+                    Area area = GridMap.Instance.map[x, y];
                     
                     AreaItem areaItem = collectionGO.GetComponent<AreaItem>();
                     areaItem.Initialize(this);
                     collectionGO.transform.localPosition = new Vector2(xPos, yPos);
-                    
-                    tile.SetAreaItem(areaItem);
+                    area.SetAreaItem(areaItem);
+                    area.gridTileComponent.SetCenterGridTile(GetCenterLocationGridTile(area));
                 }
             }
             
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{base.region.name} CreateTileCollectionGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+        }
+        private LocationGridTile GetCenterLocationGridTile(Area p_area) {
+            LocationGridTile lowerLeftCornerTile = p_area.gridTileComponent.gridTiles[0];
+            int xMin = p_area.gridTileComponent.gridTiles.Min(t => t.localPlace.x);
+            int yMin = p_area.gridTileComponent.gridTiles.Min(t => t.localPlace.y);
+            int xMax = xMin + (InnerMapManager.AreaLocationGridTileSize.x / 2);
+            int yMax = yMin + (InnerMapManager.AreaLocationGridTileSize.y / 2);
+            return region.innerMap.map[xMax, yMax];
         }
         #endregion
 
@@ -80,12 +88,12 @@ namespace Inner_Maps {
         #endregion
 
         #region Other Regions
-        public void GenerateRegionDirectionObjects() {
+        private void GenerateRegionDirectionObjects() {
             otherRegionObjects = new Dictionary<Region, Transform>();
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region otherRegion = GridMap.Instance.allRegions[i];
                 if (otherRegion != region) {
-                    Vector3 directionToRegion = (otherRegion.coreTile.transform.position - region.coreTile.transform.position).normalized * (height + width);
+                    Vector3 directionToRegion = (otherRegion.coreTile.areaData.position - region.coreTile.areaData.position).normalized * (height + width);
                     GameObject regionDirectionGO = Instantiate(regionDirectionPrefab, centerGo.transform, true);
                     regionDirectionGO.name = $"{otherRegion.name} direction";
                     regionDirectionGO.transform.localPosition = directionToRegion;
@@ -112,13 +120,13 @@ namespace Inner_Maps {
 
         #region Utilities
         private Vector2Int GetRegionDimensions(Region p_region) {
-            int maxX = p_region.tiles.Max(t => t.data.xCoordinate);
-            int minX = p_region.tiles.Min(t => t.data.xCoordinate);
+            int maxX = p_region.areas.Max(t => t.areaData.xCoordinate);
+            int minX = p_region.areas.Min(t => t.areaData.xCoordinate);
             
             int gridWidth = maxX - minX;
             
-            int maxY = p_region.tiles.Max(t => t.data.yCoordinate);
-            int minY = p_region.tiles.Min(t => t.data.yCoordinate);
+            int maxY = p_region.areas.Max(t => t.areaData.yCoordinate);
+            int minY = p_region.areas.Min(t => t.areaData.yCoordinate);
             int gridHeight = maxY - minY;
             
             return new Vector2Int(gridWidth + 1, gridHeight + 1);

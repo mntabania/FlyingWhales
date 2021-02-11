@@ -478,12 +478,12 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             }
         }
         if (firstActiveMember != null) {
-            HexTile activeMemberCurrentHex = firstActiveMember.gridTileLocation.parentArea;
+            HexTile activeMemberCurrentHex = firstActiveMember.gridTileLocation.area;
             if(activeMemberCurrentHex != null && activeMemberCurrentHex.settlementOnTile != null && activeMemberCurrentHex.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE) {
                 //Hex tile within a village cannot be a camp
                 activeMemberCurrentHex = null;
             }
-            List<HexTile> nearbyHexes = firstActiveMember.gridTileLocation.parentArea.GetTilesInRange(3);
+            List<HexTile> nearbyHexes = firstActiveMember.gridTileLocation.area.GetTilesInRange(3);
             if (nearbyHexes != null && nearbyHexes.Count > 0) {
                 for (int i = 0; i < nearbyHexes.Count; i++) {
                     HexTile hex = nearbyHexes[i];
@@ -778,7 +778,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                         }
                     }
                 } else if (targetCamp != null) {
-                    if (character.gridTileLocation != null && character.gridTileLocation.parentArea == targetCamp) {
+                    if (character.gridTileLocation != null && character.gridTileLocation.area == targetCamp) {
                         isActive = true;
                     } else {
                         LocationGridTile tile = targetCamp.GetCenterLocationGridTile();

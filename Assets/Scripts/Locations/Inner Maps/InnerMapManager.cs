@@ -189,8 +189,8 @@ namespace Inner_Maps {
             }
 
             
-            if (tile.parentArea.landmarkOnTile != null 
-                && tile.parentArea.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+            if (tile.area.landmarkOnTile != null 
+                && tile.area.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
                 if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                     return room;
                 } else {
@@ -241,14 +241,14 @@ namespace Inner_Maps {
             }
             
             
-            if (tile.parentArea.landmarkOnTile != null 
-                && tile.parentArea.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+            if (tile.area.landmarkOnTile != null 
+                && tile.area.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
                 if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                     selectables.Add(room);
                 }
                 selectables.Add(tile.structure is DemonicStructure
                     ? tile.structure
-                    : tile.parentArea.GetMostImportantStructureOnTile());
+                    : tile.area.GetMostImportantStructureOnTile());
             } else {
                 if (tile.structure != null) {
                     if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
@@ -384,7 +384,7 @@ namespace Inner_Maps {
             //|| DEVELOPMENT_BUILD
 #if UNITY_EDITOR
             Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
-            HexTile hexTile = tile.parentArea;
+            HexTile hexTile = tile.area;
             string summary = tile.localPlace.ToString();
             // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             // summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";

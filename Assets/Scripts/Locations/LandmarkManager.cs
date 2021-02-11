@@ -132,85 +132,38 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
         throw new System.Exception($"There is no landmark data for {landmarkName}");
     }
-    public Island GetIslandOfRegion(Region region, List<Island> islands) {
-        for (int i = 0; i < islands.Count; i++) {
-            Island currIsland = islands[i];
-            if (currIsland.regionsInIsland.Contains(region)) {
-                return currIsland;
-            }
-        }
-        return null;
-    }
-    private void MergeIslands(Island island1, Island island2, ref List<Island> islands) {
-        island1.regionsInIsland.AddRange(island2.regionsInIsland);
-        islands.Remove(island2);
-    }
     #endregion
 
     #region Utilities
-    public BaseLandmark GetLandmarkByID(int id) {
-        List<BaseLandmark> landmarks = GetAllLandmarks();
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark currLandmark = landmarks[i];
-            if (currLandmark.id == id) {
-                return currLandmark;
-            }
-        }
-        return null;
-    }
-    public BaseLandmark GetLandmarkByName(string name) {
-        List<BaseLandmark> landmarks = GetAllLandmarks();
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark currLandmark = landmarks[i];
-            if (currLandmark.landmarkName.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
-                return currLandmark;
-            }
-        }
-        //for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-        //    Region currRegion = GridMap.Instance.allRegions[i];
-        //    if (currRegion.mainLandmark.landmarkName.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
-        //        return currRegion.mainLandmark;
-        //    }
-        //    for (int j = 0; j < currRegion.landmarks.Count; j++) {
-        //        BaseLandmark currLandmark = currRegion.landmarks[j];
-        //        if (currLandmark.landmarkName.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
-        //            return currLandmark;
-        //        }
-        //    }
-        //}
-        return null;
-    }
-    public BaseLandmark GetLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        List<BaseLandmark> _allLandmarks = GetAllLandmarks();
+    public LocationStructure GetSpecialStructureOfType(STRUCTURE_TYPE p_structureType) {
+        List<LocationStructure> _allLandmarks = GetAllSpecialStructures();
         for (int i = 0; i < _allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = _allLandmarks[i];
-            if (currLandmark.specificLandmarkType == landmarkType) {
-                return currLandmark;
+            LocationStructure structure = _allLandmarks[i];
+            if (structure.structureType == p_structureType) {
+                return structure;
             }
         }
         return null;
     }
-    public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
-        List<BaseLandmark> landmarks = new List<BaseLandmark>();
-        List<BaseLandmark> _allLandmarks = GetAllLandmarks();
+    public List<LocationStructure> GetSpecialStructuresOfType(STRUCTURE_TYPE p_structureType) {
+        List<LocationStructure> structures = new List<LocationStructure>();
+        List<LocationStructure> _allLandmarks = GetAllSpecialStructures();
         for (int i = 0; i < _allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = _allLandmarks[i];
-            if (currLandmark.specificLandmarkType == landmarkType) {
-                landmarks.Add(currLandmark);
+            LocationStructure currLandmark = _allLandmarks[i];
+            if (currLandmark.structureType == p_structureType) {
+                structures.Add(currLandmark);
             }
         }
-        return landmarks;
+        return structures;
     }
-    public List<BaseLandmark> GetAllLandmarks() {
-        List<BaseLandmark> landmarks = new List<BaseLandmark>();
-        List<HexTile> choices = GridMap.Instance.allAreas;
-        for (int i = 0; i < choices.Count; i++) {
-            HexTile currTile = choices[i];
-            if (currTile.landmarkOnTile != null) {
-                landmarks.Add(currTile.landmarkOnTile);
+    public List<LocationStructure> GetAllSpecialStructures() {
+        List<LocationStructure> specialStructures = new List<LocationStructure>();
+        foreach (var regionStructure in GridMap.Instance.mainRegion.structures) {
+            if (regionStructure.Key.IsSpecialStructure()) {
+                specialStructures.AddRange(regionStructure.Value);
             }
         }
-        return landmarks;
+        return specialStructures;
     }
     public List<LandmarkStructureSprite> GetLandmarkTileSprites(HexTile tile, LANDMARK_TYPE landmarkType, RACE race = RACE.NONE) {
         LandmarkData data = GetLandmarkData(landmarkType);
@@ -258,17 +211,17 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         return newNpcSettlement;
     }
     public NPCSettlement LoadNPCSettlement(SaveDataNPCSettlement saveDataNpcSettlement) {
-        List<HexTile> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.tileCoordinates, GridMap.Instance.map);
+        List<Area> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.tileCoordinates, GridMap.Instance.map);
         NPCSettlement newNpcSettlement = new NPCSettlement(saveDataNpcSettlement);
         for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
+            Area tile = tiles[i];
             newNpcSettlement.AddAreaToSettlement(tile);
         }
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
     }
-    public PlayerSettlement CreateNewPlayerSettlement(params HexTile[] tiles) {
+    public PlayerSettlement CreateNewPlayerSettlement(params Area[] tiles) {
         PlayerSettlement newPlayerSettlement = new PlayerSettlement();
         newPlayerSettlement.AddAreaToSettlement(tiles);
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
@@ -278,9 +231,9 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public PlayerSettlement LoadPlayerSettlement(SaveDataPlayerSettlement saveDataPlayerSettlement) {
         PlayerSettlement newPlayerSettlement = new PlayerSettlement(saveDataPlayerSettlement);
 
-        List<HexTile> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataPlayerSettlement.tileCoordinates, GridMap.Instance.map);
+        List<Area> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataPlayerSettlement.tileCoordinates, GridMap.Instance.map);
         for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
+            Area tile = tiles[i];
             newPlayerSettlement.AddAreaToSettlement(tile);
         }
 
@@ -455,7 +408,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public IEnumerator PlaceBuiltLandmark(BaseSettlement settlement, InnerTileMap innerTileMap, RESOURCE structureResource, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
         for (int i = 0; i < structureTypes.Length; i++) {
             STRUCTURE_TYPE structureType = structureTypes[i];
-            HexTile chosenTile = settlement.areas[0];
+            Area chosenTile = settlement.areas[0];
             Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureType.ToString()} for settlement {settlement.name}");
             PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType, structureResource);
             yield return null;
@@ -470,18 +423,18 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     /// <param name="tileLocation">The hextile to place the structure object at</param>
     /// <param name="structureType">The structure type to create</param>
     /// <param name="structureResource">The resource the structure should be made of.</param>
-    public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, STRUCTURE_TYPE structureType, RESOURCE structureResource) {
+    public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, Area tileLocation, STRUCTURE_TYPE structureType, RESOURCE structureResource) {
         List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType, structureResource);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
     public IEnumerator PlaceFirstStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, StructureSetting structureSetting) {
-        HexTile chosenTile = settlement.areas[0];
+        Area chosenTile = settlement.areas[0];
         Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
         PlaceIndividualBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
         yield return null;
     }
-    private List<LocationStructure> PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
+    private List<LocationStructure> PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, Area tileLocation, StructureSetting structureSetting) {
         List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
@@ -565,30 +518,4 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
     }
     #endregion
-}
-
-public class Island {
-
-    public List<Region> regionsInIsland;
-
-    public Island(Region region) {
-        regionsInIsland = new List<Region>();
-        regionsInIsland.Add(region);
-    }
-
-    public bool TryGetLandmarkThatCanConnectToOtherIsland(Island otherIsland, List<Island> allIslands, out Region regionToConnectTo, out Region regionThatWillConnect) {
-        for (int i = 0; i < regionsInIsland.Count; i++) {
-            Region currRegion = regionsInIsland[i];
-            List<Region> adjacent = currRegion.neighbours.Where(x => LandmarkManager.Instance.GetIslandOfRegion(x, allIslands) != this).ToList(); //get all adjacent regions, that does not belong to this island.
-            if (adjacent != null && adjacent.Count > 0) {
-                regionToConnectTo = adjacent[Random.Range(0, adjacent.Count)];
-                regionThatWillConnect = currRegion;
-                return true;
-
-            }
-        }
-        regionToConnectTo = null;
-        regionThatWillConnect = null;
-        return false;
-    }
 }

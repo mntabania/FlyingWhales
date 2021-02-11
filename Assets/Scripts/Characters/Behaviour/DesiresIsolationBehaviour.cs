@@ -46,7 +46,7 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
     }
 
     private LocationGridTile GetRandomTileOutsideSettlement(Region p_region, Character p_character) {
-        List<Area> areaChoices = p_region.tiles.Where(x => x.elevationType == ELEVATION.PLAIN && x.settlementOnArea == null).ToList();
+        List<Area> areaChoices = p_region.areas.Where(x => x.elevationType == ELEVATION.PLAIN && x.settlementOnArea == null).ToList();
         if (areaChoices.Count > 0) {
             Area chosenArea = CollectionUtilities.GetRandomElement(areaChoices);
             return chosenArea.gridTileComponent.GetRandomTileThatCharacterCanReach(p_character);

@@ -50,10 +50,10 @@ public class TreeObject : TileObject {
     }
 
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.parentArea.settlementOnArea != null) {
-            gridTileLocation.parentArea.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+        if (gridTileLocation.area.settlementOnArea != null) {
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
         }
-        gridTileLocation.parentArea.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighboringHexTile) => {
             if (eachNeighboringHexTile.settlementOnTile != null) {
                 eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
                parentSettlement = eachNeighboringHexTile.settlementOnTile;
@@ -169,7 +169,7 @@ public class TreeObject : TileObject {
             if (location.isCorrupted) {
                 entType = SUMMON_TYPE.Corrupt_Ent;
             } else {
-                HexTile hex = location.parentArea;
+                HexTile hex = location.area;
                 BIOMES biome = hex.biomeType;
                 switch (biome) {
                     case BIOMES.DESERT:

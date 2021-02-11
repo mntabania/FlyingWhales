@@ -1202,6 +1202,7 @@
               <e p="MovementComponent.cs" t="Include" />
               <e p="NonActionEventsComponent.cs" t="Include" />
               <e p="PartyComponent.cs" t="Include" />
+              <e p="PiercingAndResistancesComponent.cs" t="Include" />
               <e p="PreviousCharacterDataComponent.cs" t="Include" />
               <e p="ReactionComponent.cs" t="Include" />
               <e p="ReligionComponent.cs" t="Include" />
@@ -1875,6 +1876,7 @@
                 <e p="AreaBiomeEffectTrigger.cs" t="Include" />
                 <e p="AreaCharacterComponent.cs" t="Include" />
                 <e p="AreaComponent.cs" t="Include" />
+                <e p="AreaFeatureComponent.cs" t="Include" />
                 <e p="AreaGridTileComponent.cs" t="Include" />
                 <e p="AreaNeighbourComponent.cs" t="Include" />
                 <e p="AreaSpellsComponent.cs" t="Include" />
@@ -1884,6 +1886,7 @@
               <e p="HexTile.cs" t="Include" />
               <e p="LocationAwareness.cs" t="Include" />
               <e p="Tile Features" t="Include">
+                <e p="AreaFeature.cs" t="Include" />
                 <e p="BlizzardFeature.cs" t="Include" />
                 <e p="FertileFeature.cs" t="Include" />
                 <e p="GameFeature.cs" t="Include" />
@@ -2439,13 +2442,6 @@
                 <e p="PhysicalContactTransmission.cs" t="Include" />
                 <e p="Transmission.cs" t="Include" />
               </e>
-            </e>
-            <e p="Player Input" t="Include">
-              <e p="IntelInputModule.cs" t="Include" />
-              <e p="PickPortalInputModule.cs" t="Include" />
-              <e p="PlayerInputModule.cs" t="Include" />
-              <e p="SeizeInputModule.cs" t="Include" />
-              <e p="SpellInputModule.cs" t="Include" />
             </e>
             <e p="Player.cs" t="Include" />
             <e p="PlayerDB.cs" t="Include" />

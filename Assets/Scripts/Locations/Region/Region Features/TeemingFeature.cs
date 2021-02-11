@@ -11,7 +11,7 @@ namespace Locations.Region_Features {
             if (gameFeatures.Count < 6) {
                 int missing = Random.Range(6, 9) - gameFeatures.Count;
                 //choose from random flat/tree tile without game feature
-                List<HexTile> choices = region.tiles
+                List<HexTile> choices = region.areas
                     .Where(x => (x.elevationType == ELEVATION.PLAIN || x.elevationType == ELEVATION.TREES) &&
                                 x.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) == false && x.landmarkOnTile == null).ToList();
                 
@@ -35,8 +35,8 @@ namespace Locations.Region_Features {
 
         private List<GameFeature> GetGameFeaturesInRegion(Region region) {
             List<GameFeature> gameFeatures = new List<GameFeature>();
-            for (int i = 0; i < region.tiles.Count; i++) {
-                HexTile tile = region.tiles[i];
+            for (int i = 0; i < region.areas.Count; i++) {
+                HexTile tile = region.areas[i];
                 GameFeature feature = tile.featureComponent.GetFeature<GameFeature>();
                 if (feature != null) {
                     gameFeatures.Add(feature);

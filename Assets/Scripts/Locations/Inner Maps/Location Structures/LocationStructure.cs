@@ -680,7 +680,7 @@ namespace Inner_Maps.Location_Structures {
                     } else {
                         groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
                     }
-                    if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.parentArea.settlementOnArea is NPCSettlement npcSettlement) {
+                    if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.area.settlementOnArea is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemAddedToLocation(tileObject, this);
                     }
                     // if (tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
@@ -750,7 +750,7 @@ namespace Inner_Maps.Location_Structures {
                     //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
                 }
                 if (poi is TileObject tileObject) {
-                    if (tileLocation.parentArea.settlementOnArea is NPCSettlement npcSettlement) {
+                    if (tileLocation.area.settlementOnArea is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemRemovedFromLocation(tileObject, this, tileLocation);    
                     }
                 }
@@ -778,7 +778,7 @@ namespace Inner_Maps.Location_Structures {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
                     groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
-                    if (poi.gridTileLocation.parentArea.settlementOnArea is NPCSettlement npcSettlement) {
+                    if (poi.gridTileLocation.area.settlementOnArea is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemRemovedFromLocation(tileObject, this, poi.gridTileLocation);    
                     }
                 }
@@ -825,8 +825,8 @@ namespace Inner_Maps.Location_Structures {
                         return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()
                                                           && x.groundType != LocationGridTile.Ground_Type.Cave 
                                                           && x.groundType != LocationGridTile.Ground_Type.Water
-                                                          && x.parentArea 
-                                                          && x.parentArea.elevationType == ELEVATION.PLAIN
+                                                          && x.area 
+                                                          && x.area.elevationType == ELEVATION.PLAIN
                                                           && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
                                                           && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)
                                                           && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Water)

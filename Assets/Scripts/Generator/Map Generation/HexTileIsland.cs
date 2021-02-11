@@ -16,8 +16,8 @@ public class HexTileIsland {
     public bool IsConnectedToThisIsland(HexTileIsland otherIsland) {
         for (int i = 0; i < tilesInIsland.Count; i++) {
             HexTile tileInIsland = tilesInIsland[i];
-            for (int j = 0; j < tileInIsland.AllNeighbours.Count; j++) {
-                HexTile neighbour = tileInIsland.AllNeighbours[j];
+            for (int j = 0; j < tileInIsland.neighbourComponent.neighbours.Count; j++) {
+                HexTile neighbour = tileInIsland.neighbourComponent.neighbours[j];
                 if (otherIsland.tilesInIsland.Contains(neighbour)) {
                     return true;
                 }	

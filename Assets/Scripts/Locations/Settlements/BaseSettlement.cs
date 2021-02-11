@@ -448,8 +448,8 @@ namespace Locations.Settlements {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
                         if (connector.isOpen) {
                             if (connector.tileLocation != null &&
-                                (connector.tileLocation.parentArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
+                                (connector.tileLocation.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.area.neighbourComponent.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
                                 connectors.Add(connector);    
                             }
                         }
@@ -466,8 +466,8 @@ namespace Locations.Settlements {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
                         if (connector.isOpen) {
                             if (connector.tileLocation != null && 
-                                (connector.tileLocation.parentArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.parentArea.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
+                                (connector.tileLocation.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.area.neighbourComponent.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
                                 return true;
                             }
                         }

@@ -29,7 +29,7 @@ namespace Generator.Map_Generation.Components {
         
         private IEnumerator ExecuteFeatureInitialActions() {
             for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
-                HexTile tile = GridMap.Instance.allAreas[i];
+                Area tile = GridMap.Instance.allAreas[i];
                 for (int j = 0; j < tile.featureComponent.features.Count; j++) {
                     AreaFeature feature = tile.featureComponent.features[j];
                     feature.GameStartActions(tile);

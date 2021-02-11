@@ -26,7 +26,7 @@ public class SummonPlayerSkill : SkillData {
         if (targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN && targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
             summon.MigrateHomeStructureTo(targetTile.structure);
         } else {
-            summon.SetTerritory(targetTile.parentArea, false);
+            summon.SetTerritory(targetTile.area, false);
         }
         summon.jobQueue.CancelAllJobs();
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);

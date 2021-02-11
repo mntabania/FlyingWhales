@@ -124,19 +124,19 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 	private IEnumerator ElevationBiomeRefinement() {
 		int batchCount = 0;
 		for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
-			HexTile tile = GridMap.Instance.allAreas[i];
-			if (tile.biomeType == BIOMES.FOREST && tile.elevationType == ELEVATION.PLAIN && GameUtilities.RollChance(75)) {
-				tile.SetElevation(ELEVATION.TREES);
-			} else if (tile.biomeType == BIOMES.DESERT) {
+			Area area = GridMap.Instance.allAreas[i];
+			if (area.biomeType == BIOMES.FOREST && area.elevationType == ELEVATION.PLAIN && GameUtilities.RollChance(75)) {
+				area.SetElevation(ELEVATION.TREES);
+			} else if (area.biomeType == BIOMES.DESERT) {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-					if (tile.elevationType == ELEVATION.WATER || tile.elevationType == ELEVATION.MOUNTAIN) {
-						tile.SetElevation(GameUtilities.RollChance(65) ? ELEVATION.PLAIN : ELEVATION.TREES);
+					if (area.elevationType == ELEVATION.WATER || area.elevationType == ELEVATION.MOUNTAIN) {
+						area.SetElevation(GameUtilities.RollChance(65) ? ELEVATION.PLAIN : ELEVATION.TREES);
 					}
 				} else {
-					if (tile.elevationType == ELEVATION.WATER && GameUtilities.RollChance(75)) {
-						tile.SetElevation(ELEVATION.PLAIN);	
-					} else if (tile.elevationType == ELEVATION.TREES && GameUtilities.RollChance(50)) {
-						tile.SetElevation(ELEVATION.PLAIN);	
+					if (area.elevationType == ELEVATION.WATER && GameUtilities.RollChance(75)) {
+						area.SetElevation(ELEVATION.PLAIN);	
+					} else if (area.elevationType == ELEVATION.TREES && GameUtilities.RollChance(50)) {
+						area.SetElevation(ELEVATION.PLAIN);	
 					}	
 				}
 			}

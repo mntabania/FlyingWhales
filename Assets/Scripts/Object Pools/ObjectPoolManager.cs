@@ -710,9 +710,10 @@ public class ObjectPoolManager : MonoBehaviour {
     //     _ilocationListPool = null;
     //     _tileObjectListPool?.Clear();
     //     _tileObjectListPool = null;
+    //     _areaListPool?.Clear();
+    //     _areaListPool = null;
     //     base.OnDestroy();
     //     Instance = null;
     // }
-        _areaListPool?.Clear();
-        _areaListPool = null;
+        
 }

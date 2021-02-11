@@ -14,10 +14,10 @@ public class WinterRose : TileObject {
     public void WinterRoseEffect() {
         if(gridTileLocation != null) {
             _particleEffect = GameManager.Instance.CreateParticleEffectAt(
-                gridTileLocation.parentArea.GetCenterLocationGridTile(),
+                gridTileLocation.area.GetCenterLocationGridTile(),
                 PARTICLE_EFFECT.Winter_Rose).GetComponent<AutoDestroyParticle>();
             //gridTileLocation.hexTileOwner.ChangeBiomeType(BIOMES.SNOW);
-            gridTileLocation.parentArea.GradualChangeBiomeType(BIOMES.SNOW, OnDoneChangingBiome);
+            gridTileLocation.area.GradualChangeBiomeType(BIOMES.SNOW, OnDoneChangingBiome);
             gridTileLocation.structure.RemovePOI(this);
         }
     }

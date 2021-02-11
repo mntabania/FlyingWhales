@@ -161,7 +161,6 @@ public class UIManager : BaseMonoBehaviour {
         if (isHoveringTile) {
             currentTileHovered.region?.OnHoverOverAction();
         }
-        UpdateTransitionRegionUI();
         if (Input.GetMouseButtonDown(0) && GameManager.Instance.gameHasStarted && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI()
             HidePlayerActionContextMenu();
         }
@@ -997,14 +996,9 @@ public class UIManager : BaseMonoBehaviour {
     #region Region Info
     [Space(10)]
     [Header("Region Info")] public RegionInfoUI regionInfoUI;
-    public void ShowRegionInfo(Region region, bool centerOnRegion = true) {
+    public void ShowRegionInfo(Region region) {
         regionInfoUI.SetData(region);
         regionInfoUI.OpenMenu();
-
-        if (centerOnRegion) {
-            region.CenterCameraOnRegion();
-            region.ShowBorders(Color.yellow, true);
-        }
     }
     public void UpdateRegionInfo() {
         if (regionInfoUI.isShowing) {
@@ -1690,74 +1684,6 @@ public class UIManager : BaseMonoBehaviour {
             return logTagSpriteDictionary[tag];
         }
         throw new System.Exception($"No Log tag sprite for tag {tag.ToString()}");
-    }
-    #endregion
-
-    #region Transition Region UI
-    private void UpdateTransitionRegionUI() {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            transitionRegionUIGO.SetActive(true);
-            if (InnerMapCameraMove.Instance.HasReachedMapMinXBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMinXBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.West)) {
-                    leftTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    leftTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                leftTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMaxXBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMaxXBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.East)) {
-                    rightTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    rightTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                rightTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMinYBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMinYBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.South)) {
-                    downTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    downTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                downTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMaxYBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMaxYBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.North)) {
-                    upTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    upTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                upTransitionBtn.gameObject.SetActive(false);
-            }
-        } else {
-            transitionRegionUIGO.SetActive(false);
-        }
-    }
-    public void OnClickRegionTransition(string direction) {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            GridNeighbourDirection dir = (GridNeighbourDirection) System.Enum.Parse(typeof(GridNeighbourDirection), direction);
-            Region region = InnerMapManager.Instance.currentlyShowingLocation.GetNeighbourInDirection(dir);
-            if(region != null) {
-                InnerMapManager.Instance.TryShowLocationMap(region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(region.coreTile);
-            }
-        }
-    }
-    public void OnHoverRegionTransitionBtn(string direction) {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            GridNeighbourDirection dir = (GridNeighbourDirection) System.Enum.Parse(typeof(GridNeighbourDirection), direction);
-            Region region = InnerMapManager.Instance.currentlyShowingLocation.GetNeighbourInDirection(dir);
-            if (region != null) {
-                ShowSmallInfo("Go To " + region.name);
-            }
-        }
-    }
-    public void OnHoverOutRegionTransitionBtn() {
-        HideSmallInfo();
     }
     #endregion
 

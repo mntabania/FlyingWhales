@@ -70,7 +70,7 @@ public class BuildWolfLair : GoapAction {
         Character actor = goapNode.actor;
 
         LocationGridTile targetTile = otherData[0].obj as LocationGridTile;
-        HexTile targetHex = targetTile.parentArea;
+        HexTile targetHex = targetTile.area;
         LandmarkManager.Instance.CreateNewLandmarkOnTile(targetHex, LANDMARK_TYPE.MONSTER_LAIR);
         NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(targetHex.region, LOCATION_TYPE.DUNGEON, targetHex);
 

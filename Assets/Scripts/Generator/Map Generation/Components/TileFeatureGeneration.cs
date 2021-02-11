@@ -119,16 +119,16 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		int batchCount = 0;
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
-				Area tile = GridMap.Instance.map[x, y];
+				Area area = GridMap.Instance.map[x, y];
 				int habitability = 0;
-				if (tile.elevationType == ELEVATION.WATER || tile.elevationType == ELEVATION.MOUNTAIN) {
+				if (area.elevationType == ELEVATION.WATER || area.elevationType == ELEVATION.MOUNTAIN) {
 					habitability = 0;
 				} else {
 					int adjacentWaterTiles = 0;
 					int adjacentFlatTiles = 0;
-					for (int i = 0; i < tile.AllNeighbours.Count; i++) {
-						Area neighbour = tile.AllNeighbours[i];
-						if (neighbour.region != tile.region) {
+					for (int i = 0; i < area.neighbourComponent.neighbours.Count; i++) {
+						Area neighbour = area.neighbourComponent.neighbours[i];
+						if (neighbour.region != area.region) {
 							continue; //do not include neighbour if part of another region
 						}
 						if (neighbour.elevationType == ELEVATION.PLAIN) {
@@ -137,7 +137,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 							adjacentWaterTiles += 1;
 						}
 
-						if (tile.biomeType == BIOMES.FOREST || tile.biomeType == BIOMES.SNOW) {
+						if (area.biomeType == BIOMES.FOREST || area.biomeType == BIOMES.SNOW) {
 							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature)) {
 								habitability += 3;
 							}	
@@ -147,7 +147,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Fertile_Feature)) {
 								habitability += 5;
 							}
-						} else if (tile.biomeType == BIOMES.GRASSLAND || tile.biomeType == BIOMES.DESERT) {
+						} else if (area.biomeType == BIOMES.GRASSLAND || area.biomeType == BIOMES.DESERT) {
 							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Stone_Source_Feature)) {
 								habitability += 3;
 							}
@@ -182,8 +182,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				int currentTileHabitability = p_data.GetHabitabilityValue(currentTile);
 				if (currentTileHabitability >= MapGenerationData.MinimumHabitabilityForVillage) {
 					int adjacentHabitable = 0;
-					for (int i = 0; i < currentTile.AllNeighbours.Count; i++) {
-						Area neighbour = currentTile.AllNeighbours[i];
+					for (int i = 0; i < currentTile.neighbourComponent.neighbours.Count; i++) {
+						Area neighbour = currentTile.neighbourComponent.neighbours[i];
 						int habitability = p_data.GetHabitabilityValue(neighbour);
 						if (habitability > 0) {
 							adjacentHabitable++;
@@ -279,7 +279,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		// 		if (highestHabitabilityTile == null) {
 		// 			continue;
 		// 		}
-		// 		List<HexTile> habitableNeighbours = highestHabitabilityTile.AllNeighbours.Where(t => t.region == region && data.GetHabitabilityValue(t) > 0).ToList();
+		// 		List<HexTile> habitableNeighbours = highestHabitabilityTile.neighbourComponent.neighbours.Where(t => t.region == region && data.GetHabitabilityValue(t) > 0).ToList();
 		// 		if (habitableNeighbours.Count >= 2) {
 		// 			if (GameUtilities.RollChance(chanceToCreateSettlement)) {
 		// 				List<HexTile> villageTiles = new List<HexTile>();
@@ -362,8 +362,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		List<Area> neighbouringTiles = new List<Area>();
 		for (int i = 0; i < tiles.Count; i++) {
 			Area tile = tiles[i];
-			for (int j = 0; j < tile.AllNeighbours.Count; j++) {
-				Area neighbour = tile.AllNeighbours[j];
+			for (int j = 0; j < tile.neighbourComponent.neighbours.Count; j++) {
+				Area neighbour = tile.neighbourComponent.neighbours[j];
 				if (tiles.Contains(neighbour) == false && neighbouringTiles.Contains(neighbour) == false) {
 					neighbouringTiles.Add(neighbour);
 				}
@@ -375,14 +375,14 @@ public class TileFeatureGeneration : MapGenerationComponent {
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-		SaveDataHextile[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
+		SaveDataArea[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
-				SaveDataHextile savedHexTile = savedMap[x, y];
+				SaveDataArea savedHexTile = savedMap[x, y];
 				Area hexTile = GridMap.Instance.map[x, y];
-				if (savedHexTile.areaFeatureSaveData?.Count > 0) {
-					for (int i = 0; i < savedHexTile.areaFeatureSaveData.Count; i++) {
-						SaveDataAreaFeature saveDataTileFeature = savedHexTile.areaFeatureSaveData[i];
+				if (savedHexTile.tileFeatureSaveData?.Count > 0) {
+					for (int i = 0; i < savedHexTile.tileFeatureSaveData.Count; i++) {
+						SaveDataAreaFeature saveDataTileFeature = savedHexTile.tileFeatureSaveData[i];
 						AreaFeature tileFeature = saveDataTileFeature.Load();
 						hexTile.featureComponent.AddFeature(tileFeature, hexTile);
 					}
@@ -582,14 +582,14 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		SaveDataHextile[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
+		SaveDataArea[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
-				SaveDataHextile savedHexTile = savedMap[x, y];
+				SaveDataArea savedHexTile = savedMap[x, y];
 				Area hexTile = GridMap.Instance.map[x, y];
-				if (savedHexTile.areaFeatureSaveData?.Count > 0) {
-					for (int i = 0; i < savedHexTile.areaFeatureSaveData.Count; i++) {
-						SaveDataAreaFeature saveDataTileFeature = savedHexTile.areaFeatureSaveData[i];
+				if (savedHexTile.tileFeatureSaveData?.Count > 0) {
+					for (int i = 0; i < savedHexTile.tileFeatureSaveData.Count; i++) {
+						SaveDataAreaFeature saveDataTileFeature = savedHexTile.tileFeatureSaveData[i];
 						AreaFeature tileFeature = saveDataTileFeature.Load();
 						hexTile.featureComponent.AddFeature(tileFeature, hexTile);
 					}

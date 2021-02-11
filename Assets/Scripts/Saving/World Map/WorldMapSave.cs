@@ -11,7 +11,7 @@ using UnityEngine;
 public class WorldMapSave {
     public WorldSettingsData.World_Type worldType;
     public WorldMapTemplate worldMapTemplate;
-    public List<SaveDataHextile> hextileSaves;
+    public List<SaveDataArea> areaSaves;
     public List<SaveDataRegion> regionSaves;
     public List<SaveDataBaseSettlement> settlementSaves;
     public List<SaveDataLocationStructure> structureSaves;
@@ -40,23 +40,14 @@ public class WorldMapSave {
     }
 
     #region Hex Tiles
-    public void SaveHexTiles(List<HexTile> tiles) {
-        hextileSaves = new List<SaveDataHextile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            SaveDataHextile newSaveData = new SaveDataHextile();
-            newSaveData.Save(currTile);
-            hextileSaves.Add(newSaveData);
-        }
-    }
-    public IEnumerator SaveHexTilesCoroutine(List<HexTile> tiles) {
+    public IEnumerator SaveHexTilesCoroutine(List<Area> tiles) {
         int batchCount = 0;
-        hextileSaves = new List<SaveDataHextile>();
+        areaSaves = new List<SaveDataArea>();
         for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            SaveDataHextile newSaveData = new SaveDataHextile();
+            Area currTile = tiles[i];
+            SaveDataArea newSaveData = new SaveDataArea();
             newSaveData.Save(currTile);
-            hextileSaves.Add(newSaveData);
+            areaSaves.Add(newSaveData);
             batchCount++;
             if (batchCount >= SaveManager.HexTile_Save_Batches) {
                 batchCount = 0;
@@ -64,33 +55,33 @@ public class WorldMapSave {
             }
         }
     }
-    public SaveDataHextile[,] GetSaveDataMap() {
-        SaveDataHextile[,] map = new SaveDataHextile[worldMapTemplate.worldMapWidth, worldMapTemplate.worldMapHeight];
-        for (int i = 0; i < hextileSaves.Count; i++) {
-            SaveDataHextile currTile = hextileSaves[i];
-            map[currTile.xCoordinate, currTile.yCoordinate] = currTile;
+    public SaveDataArea[,] GetSaveDataMap() {
+        SaveDataArea[,] map = new SaveDataArea[worldMapTemplate.worldMapWidth, worldMapTemplate.worldMapHeight];
+        for (int i = 0; i < areaSaves.Count; i++) {
+            SaveDataArea currTile = areaSaves[i];
+            map[currTile.areaData.xCoordinate, currTile.areaData.yCoordinate] = currTile;
         }
         return map;
     }
-    public SaveDataHextile GetHexTileDataWithLandmark(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < hextileSaves.Count; i++) {
-            SaveDataHextile saveDataHextile = hextileSaves[i];
-            if (saveDataHextile.landmarkType == landmarkType) {
-                return saveDataHextile;
-            }
-        }
-        return null;
-    }
-    public List<SaveDataHextile> GetAllTilesWithLandmarks() {
-        List<SaveDataHextile> tiles = new List<SaveDataHextile>();
-        for (int i = 0; i < hextileSaves.Count; i++) {
-            SaveDataHextile saveDataHextile = hextileSaves[i];
-            if (saveDataHextile.landmarkType != LANDMARK_TYPE.NONE) {
-                tiles.Add(saveDataHextile);
-            }
-        }
-        return tiles;
-    }
+    // public SaveDataHextile GetHexTileDataWithLandmark(LANDMARK_TYPE landmarkType) {
+    //     for (int i = 0; i < areaSaves.Count; i++) {
+    //         SaveDataHextile saveDataHextile = areaSaves[i];
+    //         if (saveDataHextile.landmarkType == landmarkType) {
+    //             return saveDataHextile;
+    //         }
+    //     }
+    //     return null;
+    // }
+    // public List<SaveDataHextile> GetAllTilesWithLandmarks() {
+    //     List<SaveDataHextile> tiles = new List<SaveDataHextile>();
+    //     for (int i = 0; i < areaSaves.Count; i++) {
+    //         SaveDataHextile saveDataHextile = areaSaves[i];
+    //         if (saveDataHextile.landmarkType != LANDMARK_TYPE.NONE) {
+    //             tiles.Add(saveDataHextile);
+    //         }
+    //     }
+    //     return tiles;
+    // }
     #endregion
 
     #region Regions

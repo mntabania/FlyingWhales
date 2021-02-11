@@ -54,7 +54,7 @@ public class BoneGolem : Summon {
         if (character != this && combatComponent.isInCombat) {
             if (HasTerritory()) {
                 if (IsTerritory(tile)) {
-                    bool isCharacterInStillInTerritory = IsTerritory(character.gridTileLocation.parentArea);
+                    bool isCharacterInStillInTerritory = IsTerritory(character.gridTileLocation.area);
                     if (!isCharacterInStillInTerritory) {
                         combatComponent.RemoveHostileInRange(character);
                     }

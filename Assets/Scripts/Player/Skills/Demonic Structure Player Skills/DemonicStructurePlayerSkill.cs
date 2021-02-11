@@ -41,12 +41,12 @@ public class DemonicStructurePlayerSkill : SkillData {
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         Color color = Color.green;
         color.a = 0.3f;
-        TileHighlighter.Instance.PositionHighlight(tile.parentArea, color);
+        TileHighlighter.Instance.PositionHighlight(tile.area, color);
     }
     public override bool InvalidHighlight(LocationGridTile tile, ref string invalidText) {
         Color color = Color.red;
         color.a = 0.3f;
-        TileHighlighter.Instance.PositionHighlight(tile.parentArea, color);
+        TileHighlighter.Instance.PositionHighlight(tile.area, color);
         invalidText = InvalidMessage(tile);
         return true;
     }

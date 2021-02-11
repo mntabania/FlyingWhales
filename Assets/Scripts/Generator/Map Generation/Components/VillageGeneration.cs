@@ -388,9 +388,9 @@ public class VillageGeneration : MapGenerationComponent {
 		}
 		return structures;
 	}
-	private WeightedDictionary<StructureSetting> GetStructureWeights(List<STRUCTURE_TYPE> structureTypes, Faction faction, HexTile villageCenterTile, NPCSettlement settlement) {
+	private WeightedDictionary<StructureSetting> GetStructureWeights(List<STRUCTURE_TYPE> structureTypes, Faction faction, Area villageCenterTile, NPCSettlement settlement) {
 		WeightedDictionary<StructureSetting> structureWeights = new WeightedDictionary<StructureSetting>();
-		List<HexTile> tilesInRange = villageCenterTile.GetTilesInRange(3);
+		List<Area> tilesInRange = villageCenterTile.GetTilesInRange(3);
 		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom || settlement.settlementType.settlementType == SETTLEMENT_TYPE.Elven_Hamlet) {
 			if (!structureTypes.Contains(STRUCTURE_TYPE.HOSPICE)) {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
@@ -683,14 +683,6 @@ public class VillageGeneration : MapGenerationComponent {
 	#endregion
 
 	#region Settlement Generation Utilities
-	private RACE GetFactionRaceForRegion(Region region) {
-		if (region.coreTile.biomeType == BIOMES.FOREST || region.coreTile.biomeType == BIOMES.SNOW) {
-			return RACE.ELVES;
-		} else if (region.coreTile.biomeType == BIOMES.DESERT || region.coreTile.biomeType == BIOMES.GRASSLAND) {
-			return RACE.HUMANS;
-		}
-		throw new Exception($"Could not get race type for region with biome type {region.coreTile.biomeType.ToString()}");
-	}
 	private LOCATION_TYPE GetLocationTypeForRace(RACE race) {
 		switch (race) {
 			case RACE.HUMANS:
@@ -699,47 +691,6 @@ public class VillageGeneration : MapGenerationComponent {
 			default:
 				throw new Exception($"There was no location type provided for race {race.ToString()}");
 		}
-	}
-	private Faction GetFactionToOccupySettlement(RACE race) {
-		FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForRace(race);
-		List<Faction> factions = FactionManager.Instance.GetMajorFactionWithRace(race);
-		Faction chosenFaction;
-		if (factions == null) {
-			chosenFaction = FactionManager.Instance.CreateNewFaction(factionType);
-			chosenFaction.factionType.SetAsDefault();
-		} else {
-			if (GameUtilities.RollChance(35)) {
-				chosenFaction = CollectionUtilities.GetRandomElement(factions);
-			} else {
-				chosenFaction = FactionManager.Instance.CreateNewFaction(factionType);
-				chosenFaction.factionType.SetAsDefault();
-			}
-		}
-		return chosenFaction;
-	}
-	private List<HexTileIsland> GetSettlementIslandsInRegion(Region region) {
-		List<HexTile> inhabitedTiles = region.GetTilesWithFeature(AreaFeatureDB.Inhabited_Feature);
-		
-		List<HexTileIsland> islands = new List<HexTileIsland>();
-		for (int i = 0; i < inhabitedTiles.Count; i++) {
-			HexTile tile = inhabitedTiles[i];
-			HexTileIsland island = new HexTileIsland(tile);
-			islands.Add(island);
-		}
-
-		for (int i = 0; i < islands.Count; i++) {
-			HexTileIsland island = islands[i];
-			for (int j = 0; j < islands.Count; j++) {
-				HexTileIsland otherIsland = islands[j];
-				if (island != otherIsland) {
-					if (island.IsConnectedToThisIsland(otherIsland)) {
-						island.MergeIsland(otherIsland);
-					}
-				}
-			}
-		}
-
-		return islands.Where(x => x.tilesInIsland.Count > 0).ToList();
 	}
 	#endregion
 	

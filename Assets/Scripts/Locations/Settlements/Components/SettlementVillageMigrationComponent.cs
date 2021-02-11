@@ -182,7 +182,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                 List<LocationGridTile> edgeTileChoices = null;
                 for (int i = 0; i < owner.region.innerMap.allEdgeTiles.Count; i++) {
                     LocationGridTile tile = owner.region.innerMap.allEdgeTiles[i];
-                    HexTile connectedHextileOrNearestHextile = tile.parentArea;
+                    HexTile connectedHextileOrNearestHextile = tile.area;
                     if (!tile.isCorrupted && !connectedHextileOrNearestHextile.isCorrupted) {
                         if (edgeTileChoices == null) { edgeTileChoices = new List<LocationGridTile>(); }
                         edgeTileChoices.Add(tile);

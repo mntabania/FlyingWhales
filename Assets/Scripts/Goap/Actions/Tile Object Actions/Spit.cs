@@ -45,8 +45,8 @@ public class Spit : GoapAction {
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && actor.gridTileLocation != null) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.parentArea.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.parentArea.GetCenterLocationGridTile();
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.GetCenterLocationGridTile();
+                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.GetCenterLocationGridTile();
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
                     int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
@@ -136,7 +136,7 @@ public class Spit : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.parentArea)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             if (poiTarget is Tombstone tombstone) {

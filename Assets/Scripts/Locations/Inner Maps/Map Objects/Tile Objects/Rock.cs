@@ -51,10 +51,10 @@ public class Rock : TileObject{
 
     public override void UpdateSettlementResourcesParent() {
         if (gridTileLocation != null) {
-            if (gridTileLocation.parentArea.settlementOnArea != null) {
-                gridTileLocation.parentArea.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+            if (gridTileLocation.area.settlementOnArea != null) {
+                gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
             }
-            gridTileLocation.parentArea.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+            gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighboringHexTile) => {
                 if (eachNeighboringHexTile.settlementOnTile != null) {
                     eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
                     parentSettlement = eachNeighboringHexTile.settlementOnTile;

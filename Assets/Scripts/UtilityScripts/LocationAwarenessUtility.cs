@@ -17,7 +17,7 @@ namespace UtilityScripts {
             if (gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && gridTileLocation.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                 locationAwareness = gridTileLocation.structure.locationAwareness;
             } else {
-                locationAwareness = gridTileLocation.parentArea.locationAwareness;
+                locationAwareness = gridTileLocation.area.locationAwareness;
             }
             if (locationAwareness != null) {
                 //locationAwareness.RemoveAwarenessFromPendingRemoveList(poi);
@@ -52,7 +52,7 @@ namespace UtilityScripts {
                     if (gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && gridTileLocation.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                         locationAwareness = gridTileLocation.structure.locationAwareness;
                     } else {
-                        locationAwareness = gridTileLocation.parentArea.locationAwareness;
+                        locationAwareness = gridTileLocation.area.locationAwareness;
                     }
                     if (locationAwareness != null) {
                         locationAwareness.RemoveAwarenessFromMainList(poi);

@@ -1586,7 +1586,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return chosenTile;
     }
     public bool IsAtTargetDestination(Character character) {
-        return character.gridTileLocation != null && character.gridTileLocation.parentArea == this;
+        return character.gridTileLocation != null && character.gridTileLocation.area == this;
     }
     #endregion
 

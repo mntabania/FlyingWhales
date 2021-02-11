@@ -36,9 +36,9 @@ public static class ListExtension {
             ts[r] = tmp;
         }
     }
-    public static bool HasTileWithFeature(this List<HexTile> p_list, string p_featureName) {
+    public static bool HasTileWithFeature(this List<Area> p_list, string p_featureName) {
         for (int i = 0; i < p_list.Count; i++) {
-            HexTile tile = p_list[i];
+            Area tile = p_list[i];
             if (tile.featureComponent.HasFeature(p_featureName)) {
                 return true;
             }

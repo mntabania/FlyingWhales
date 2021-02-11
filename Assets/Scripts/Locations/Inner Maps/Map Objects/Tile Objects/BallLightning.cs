@@ -58,7 +58,7 @@ public class BallLightning : MovingTileObject {
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Ice) {
             //Electric Storm
-            tileLocation.parentArea.spellsComponent.SetHasElectricStorm(true);
+            tileLocation.area.spellsComponent.SetHasElectricStorm(true);
             
             _ballLightningMapVisual.Expire();
         } else if (currentHP == 0) {

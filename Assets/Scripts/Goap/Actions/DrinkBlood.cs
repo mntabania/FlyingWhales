@@ -90,8 +90,8 @@ public class DrinkBlood : GoapAction {
                     }
                 }
                 if (target.gridTileLocation != null && actor.gridTileLocation != null) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.parentArea.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.parentArea.GetCenterLocationGridTile();
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.GetCenterLocationGridTile();
+                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.GetCenterLocationGridTile();
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
                     int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 

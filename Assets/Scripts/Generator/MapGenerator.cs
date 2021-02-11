@@ -118,12 +118,9 @@ public class MapGenerator : BaseMonoBehaviour {
         SaveManager.Instance.SetUseSaveData(false);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
-            new AreaGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
-            new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
-            //new PlayerSettlementGeneration(), 
-            new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
-            new RegionInnerMapGeneration(), new VillageGeneration(), new FactionFinalization(), new CharacterFinalization(), new LandmarkStructureGeneration(), 
-            new ElevationStructureGeneration(), new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), 
+            new AreaGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
+            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new VillageGeneration(), new FactionFinalization(), new CharacterFinalization(), 
+            new ElevationStructureGeneration(), new SpecialStructureGeneration(), new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), 
             new MapGenerationFinalization(), 
             //new PlayerDataGeneration(),
         };
@@ -222,9 +219,7 @@ public class MapGenerator : BaseMonoBehaviour {
         WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
-            new AreaGeneration(), new WorldMapRegionGeneration(),
-            new WorldMapOuterGridGeneration(),
-            new WorldMapLandmarkGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
+            new AreaGeneration(), new WorldMapRegionGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
             new RegionInnerMapGeneration(), new SingletonDataGeneration(), new PlayerDataGeneration(),
             new LoadFirstWave(), new LoadSecondWave(), new TileFeatureGeneration(), new MapGenerationFinalization(),
             new LoadCharactersCurrentAction(), new LoadPlayerQuests(),

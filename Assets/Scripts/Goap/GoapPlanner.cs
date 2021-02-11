@@ -496,7 +496,7 @@ public class GoapPlanner {
                 }
             }
 
-            HexTile currentHex = currentGridTile.parentArea;
+            HexTile currentHex = currentGridTile.area;
 
             if (currentHex != null) {
                 //Second step: Process current hex, if there is an action, skip next processing
@@ -506,7 +506,7 @@ public class GoapPlanner {
                 }
 
                 //Second step: Process adjacent hexes, if there is an action, skip next processing
-                List<HexTile> adjacentHexes = currentHex.AllNeighbours;
+                List<HexTile> adjacentHexes = currentHex.neighbourComponent.neighbours;
                 for (int i = 0; i < adjacentHexes.Count; i++) {
                     HexTile hex = adjacentHexes[i];
                     SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);

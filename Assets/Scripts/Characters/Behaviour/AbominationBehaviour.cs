@@ -30,8 +30,8 @@ public class AbominationBehaviour : BaseMonsterBehaviour {
     private List<HexTile> GetTargetChoices(Character actor) {
         List<HexTile> choices = null;
         if (actor.areaLocation != null) {
-            for (int i = 0; i < actor.areaLocation.AllNeighbours.Count; i++) {
-                HexTile neighbour = actor.areaLocation.AllNeighbours[i];
+            for (int i = 0; i < actor.areaLocation.neighbourComponent.neighbours.Count; i++) {
+                HexTile neighbour = actor.areaLocation.neighbourComponent.neighbours[i];
                 if (neighbour.elevationType != ELEVATION.WATER && neighbour.region == actor.currentRegion && actor.movementComponent.HasPathTo(neighbour)) {
                     if (choices == null) {
                         choices = new List<HexTile>();

@@ -23,6 +23,6 @@ public class IceteroidsData : SkillData {
         return false;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.parentArea);
+        TileHighlighter.Instance.PositionHighlight(tile.area);
     }
 }

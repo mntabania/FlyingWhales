@@ -125,14 +125,14 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
                 HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveAreas);
-                return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
+                return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
             } else {
                 HexTile homeTile = character.homeStructure.occupiedArea;
-                return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();    
+                return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();    
             }
         } else if (character.HasTerritory()) {
             HexTile homeTile = character.territory;
-            return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
+            return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
         }
         return null;
     }
@@ -163,13 +163,13 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
                 HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveAreas);
-                return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();
+                return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region).ToList();
             } else {
                 HexTile homeTile = character.homeStructure.occupiedArea;
-                return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();    
+                return homeTile.neighbourComponent.neighbours.Where(x => x.region == homeTile.region).ToList();    
             }
         } else if (character.HasTerritory()) {
-            List<HexTile> surroundingAreas = character.territory.AllNeighbours.Where(x => x.region == character.territory.region).ToList();
+            List<HexTile> surroundingAreas = character.territory.neighbourComponent.neighbours.Where(x => x.region == character.territory.region).ToList();
             return surroundingAreas;
         }
         return null;

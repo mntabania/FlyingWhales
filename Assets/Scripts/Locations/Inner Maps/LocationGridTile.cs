@@ -31,7 +31,7 @@ namespace Inner_Maps {
         public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
-        public Area parentArea { get; }
+        public Area area { get; }
         public Vector3Int localPlace { get; }
         public Vector3 worldLocation { get; private set; }
         public Vector3 centeredWorldLocation { get; private set; }
@@ -87,7 +87,7 @@ namespace Inner_Maps {
         public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
-        public BIOMES biomeType => parentArea.biomeType;
+        public BIOMES biomeType => area.biomeType;
         #endregion
         
         #region Pathfinding
@@ -98,7 +98,7 @@ namespace Inner_Maps {
             get {
                 return neighbourList.Where(o =>
                         !o.isOccupied && o.charactersHere.Count <= 0 && o.structure == structure &&
-                        o.parentArea == parentArea)
+                        o.area == area)
                     .ToList();
             }
         }
@@ -108,7 +108,7 @@ namespace Inner_Maps {
             persistentID = System.Guid.NewGuid().ToString();
             parentMap = p_parentMap;
             parentTileMap = tilemap;
-            parentArea = p_area;
+            area = p_area;
             localPlace = new Vector3Int(x, y, 0);
             worldLocation = tilemap.CellToWorld(localPlace);
             localLocation = tilemap.CellToLocal(localPlace);
@@ -129,7 +129,7 @@ namespace Inner_Maps {
             persistentID = data.persistentID;
             parentMap = p_parentMap;
             parentTileMap = tilemap;
-            parentArea = p_area;
+            area = p_area;
             localPlace = new Vector3Int((int)data.localPlace.x, (int)data.localPlace.y, 0);
             worldLocation = data.worldLocation;
             localLocation = data.localLocation;
@@ -578,7 +578,7 @@ namespace Inner_Maps {
             if (character.race.IsSapient()) {
                 if (character.currentSettlement != null) {
                     character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
-                    parentArea.settlementOnArea.SettlementResources?.AddCharacterToSettlement(character);
+                    area.settlementOnArea.SettlementResources?.AddCharacterToSettlement(character);
                 }
             }
                 
@@ -653,7 +653,7 @@ namespace Inner_Maps {
                                 //character.marker.AddPOIAsInVisionRange(genericTileObject);
                                 //character.combatComponent.Flight(genericTileObject, "saw something frightening", forcedFlight: true);
                                 //genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
-                                character.marker.AddAvoidPositions(character.gridTileLocation.parentArea.GetCenterLocationGridTile().worldLocation);
+                                character.marker.AddAvoidPositions(character.gridTileLocation.area.gridTileComponent.centerGridTile.worldLocation);
                                 return;
                             }
                         }
@@ -663,7 +663,7 @@ namespace Inner_Maps {
                     //Reporting does not trigger until Tutorial is over
                     //https://trello.com/c/OmmyR6go/1239-reporting-does-not-trigger-until-tutorial-is-over
 
-                    LocationStructure mostImportantStructureOnTile = parentArea.GetMostImportantStructureOnTile();
+                    LocationStructure mostImportantStructureOnTile = area.GetMostImportantStructureOnTile();
                     if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
                         if (!character.behaviourComponent.isAttackingDemonicStructure 
                             && character.homeSettlement != null && character.necromancerTrait == null && character.race.IsSapient()
@@ -727,7 +727,7 @@ namespace Inner_Maps {
             } else if (character.homeStructure != null) {
                 return structure == character.homeStructure;
             } else if (character.HasTerritory()) {
-                HexTile hex = parentArea;
+                Area hex = area;
                 return hex == character.territory;
             }
             return false;
@@ -934,8 +934,7 @@ namespace Inner_Maps {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (_neighbours.Values.ElementAt(i).parentArea &&
-                    _neighbours.Values.ElementAt(i).parentArea.elevationType == elevation) {
+                if (_neighbours.Values.ElementAt(i).area.elevationType == elevation) {
                     return true;
                 }
             }
@@ -1470,24 +1469,24 @@ namespace Inner_Maps {
             return count;
         }
         public bool IsPartOfSettlement(out BaseSettlement settlement) {
-            if (parentArea.settlementOnArea != null) {
-                settlement = parentArea.settlementOnArea;
+            if (area.settlementOnArea != null) {
+                settlement = area.settlementOnArea;
                 return true;
             }
             settlement = null;
             return false;
         }
         public bool IsPartOfSettlement(BaseSettlement settlement) {
-            return parentArea.settlementOnArea == settlement;
+            return area.settlementOnArea == settlement;
         }
         public bool IsPartOfSettlement() {
-            return parentArea.settlementOnArea != null;
+            return area.settlementOnArea != null;
         }
         public bool IsPartOfHumanElvenSettlement() {
-            return parentArea.settlementOnArea != null && parentArea.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE;
+            return area.settlementOnArea != null && area.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE;
         }
         public bool IsPartOfActiveHumanElvenSettlement() {
-            return IsPartOfHumanElvenSettlement() && parentArea.settlementOnArea.residents.Count > 0;
+            return IsPartOfHumanElvenSettlement() && area.settlementOnArea.residents.Count > 0;
         }
         public bool IsNextToSettlement(out BaseSettlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {
@@ -1523,10 +1522,10 @@ namespace Inner_Maps {
         /// <param name="settlement">The settlement to check</param>
         /// <returns>True or false.</returns>
         public bool IsNextToSettlementArea(BaseSettlement settlement) {
-            HexTile hexTile = parentArea;
-            for (int i = 0; i < hexTile.AllNeighbours.Count; i++) {
-                HexTile neighbour = hexTile.AllNeighbours[i];
-                if (neighbour.settlementOnTile == settlement) {
+            Area hexTile = area;
+            for (int i = 0; i < hexTile.neighbourComponent.neighbours.Count; i++) {
+                Area neighbour = hexTile.neighbourComponent.neighbours[i];
+                if (neighbour.settlementOnArea == settlement) {
                     return true;
                 }
             }
@@ -1711,11 +1710,11 @@ namespace Inner_Maps {
                 SetIsDefault(false);
                 hasFreezingTrap = state;
                 if (hasFreezingTrap) {
-                    parentArea.AddFreezingTrapInHexTile();
+                    area.AddFreezingTrapInArea();
                     this.freezingTrapExclusions = new List<RACE>(freezingTrapExclusions);
                     _freezingTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Freezing_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
                 } else {
-                    parentArea.RemoveFreezingTrapInHexTile();
+                    area.RemoveFreezingTrapInArea();
                     ObjectPoolManager.Instance.DestroyObject(_freezingTrapEffect);
                     _freezingTrapEffect = null;
                     this.freezingTrapExclusions = null;
@@ -1757,45 +1756,42 @@ namespace Inner_Maps {
         #endregion
 
         #region Hextile
-        public HexTile GetNearestHexTileWithinRegion() {
-            if (parentArea.elevationType != ELEVATION.WATER && parentArea.elevationType != ELEVATION.MOUNTAIN) {
-                return parentArea;
+        public Area GetNearestHexTileWithinRegion() {
+            if (area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
+                return area;
             }
-            
-
-            HexTile nearestHex = null;
+            Area nearestHex = null;
             float nearestDist = 0f;
-            for (int i = 0; i < parentArea.region.tiles.Count; i++) {
-                HexTile hex = parentArea.region.tiles[i];
-                if (hex.elevationType != ELEVATION.WATER && hex.elevationType != ELEVATION.MOUNTAIN) {
-                    float dist = GetDistanceTo(hex.GetCenterLocationGridTile());
+            for (int i = 0; i < area.region.areas.Count; i++) {
+                Area otherArea = area.region.areas[i];
+                if (otherArea.elevationType != ELEVATION.WATER && otherArea.elevationType != ELEVATION.MOUNTAIN) {
+                    float dist = GetDistanceTo(otherArea.gridTileComponent.centerGridTile);
                     if (nearestHex == null || dist < nearestDist) {
-                        nearestHex = hex;
+                        nearestHex = otherArea;
                         nearestDist = dist;
                     }
                 }
             }
             return nearestHex;
         }
-        public HexTile GetNearestHexTileWithinRegionThatMeetCriteria(System.Func<HexTile, bool> validityChecker) {
-            if (validityChecker.Invoke(parentArea)) {
-                return parentArea;
+        public Area GetNearestHexTileWithinRegionThatMeetCriteria(System.Func<Area, bool> validityChecker) {
+            if (validityChecker.Invoke(area)) {
+                return area;
             }
             
-
-            HexTile nearestHex = null;
+            Area nearestArea = null;
             float nearestDist = 0f;
-            for (int i = 0; i < parentArea.region.tiles.Count; i++) {
-                HexTile hex = parentArea.region.tiles[i];
-                if (validityChecker.Invoke(hex)) {
-                    float dist = GetDistanceTo(hex.GetCenterLocationGridTile());
-                    if (nearestHex == null || dist < nearestDist) {
-                        nearestHex = hex;
+            for (int i = 0; i < area.region.areas.Count; i++) {
+                Area otherArea = area.region.areas[i];
+                if (validityChecker.Invoke(otherArea)) {
+                    float dist = GetDistanceTo(otherArea.gridTileComponent.centerGridTile);
+                    if (nearestArea == null || dist < nearestDist) {
+                        nearestArea = otherArea;
                         nearestDist = dist;
                     }
                 }
             }
-            return nearestHex;
+            return nearestArea;
         }
         #endregion
 
@@ -1803,9 +1799,9 @@ namespace Inner_Maps {
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
             if (hasBlueprint) {
-                parentArea.AddBlueprint();
+                area.AddBlueprint();
             } else {
-                parentArea.RemoveBlueprint();
+                area.RemoveBlueprint();
             }
         }
         #endregion

@@ -31,19 +31,12 @@ public class MonsterGeneration : MapGenerationComponent {
 	#endregion
 
 	#region Helpers
-	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair, LocationStructure monsterLairStructure, Faction faction = null) {
-		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, faction ?? FactionManager.Instance.GetDefaultFactionForMonster(summonType), settlementOnTile, monsterLair.tileLocation.region, monsterLairStructure);
+	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, Region region, LocationStructure monsterLairStructure, Faction faction = null) {
+		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, faction ?? FactionManager.Instance.GetDefaultFactionForMonster(summonType), settlementOnTile, region, monsterLairStructure);
 		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles);
 		CharacterManager.Instance.PlaceSummonInitially(summon, targetTile);
-		//summon.AddTerritory(monsterLair.tileLocation);
-        // summon.MigrateHomeStructureTo(monsterLairStructure);
-        //summon.ChangeHomeStructure(monsterLairStructure);
-
-        //if (monsterLairStructure is LocationStructure homeStructure) {
-        //	summon.MigrateHomeStructureTo(homeStructure);	
-        //}
-    }
-    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, string className = "", Faction faction = null, params HexTile[] territories) {
+	}
+    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, string className = "", Faction faction = null, params Area[] territories) {
 		var chosenTile = homeStructure != null ? CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : CollectionUtilities.GetRandomElement(locationChoices);
 		
 		Assert.IsNotNull(chosenTile, $"Chosen tile for {summonType.ToString()} is null!");
@@ -53,10 +46,10 @@ public class MonsterGeneration : MapGenerationComponent {
 		if (homeStructure != null) {
 			summon.MigrateHomeStructureTo(homeStructure);	
 		} else {
-			summon.SetTerritory(chosenTile.parentArea, false);
+			summon.SetTerritory(chosenTile.area, false);
 			if (territories != null) {
 				for (int i = 0; i < territories.Length; i++) {
-					HexTile territory = territories[i];
+					Area territory = territories[i];
 					summon.SetTerritory(territory, false);
 				}
 			}	
@@ -71,128 +64,19 @@ public class MonsterGeneration : MapGenerationComponent {
     }
     #endregion
 
-    private IEnumerator RegionalMonsterGeneration() {
-	    Region region = GridMap.Instance.allRegions.First();
-		for (int i = 0; i < region.regionDivisionComponent.divisions.Count; i++) {
-			RegionDivision regionDivision = region.regionDivisionComponent.divisions[i];
-			if (region.regionFeatureComponent.HasFeature<TeemingFeature>()) {
-				continue; //do not generate monsters in region wilderness if region is Teeming
-			}
-			List<LocationGridTile> locationChoices = new List<LocationGridTile>();
-			regionDivision.tiles.Where(h => h.settlementOnTile == null && h.landmarkOnTile == null && (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES) && h.HasOwnedSettlementNeighbour() == false).
-				ToList().ForEach(h => locationChoices.AddRange(h.locationGridTiles));
-			if (locationChoices.Count == 0) {
-				Debug.LogWarning($"Could not find valid tiles to place monsters at {region.name}");
-				continue;
-			}
-
-			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-				//sludge
-				int randomSludge = 3;
-				for (int k = 0; k < randomSludge; k++) {
-					if (locationChoices.Count == 0) { break; }
-					Summon summon = CreateMonster(SUMMON_TYPE.Sludge, locationChoices);
-					locationChoices.Remove(summon.gridTileLocation);
-				}
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-				//Succubus
-				int randomSuccubus = 3;
-				for (int k = 0; k < randomSuccubus; k++) {
-					if (locationChoices.Count == 0) { break; }
-					Summon summon = CreateMonster(SUMMON_TYPE.Succubus, locationChoices);
-					locationChoices.Remove(summon.gridTileLocation);
-				}
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-				ZenkoRegionalMonsters(i, ref locationChoices);
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-				PangatLooRegionalMonsters(i, ref locationChoices);
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
-				AneemRegionalMonsters(i, ref locationChoices);
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
-				PittoRegionalMonsters(i, ref locationChoices);
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
-				if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
-					//spawn 4-8 ghosts
-					int ghosts = Random.Range(4, 9);
-					for (int j = 0; j < ghosts; j++) {
-						Summon summon = CreateMonster(SUMMON_TYPE.Ghost, locationChoices);
-						locationChoices.Remove(summon.gridTileLocation);
-						if (locationChoices.Count == 0) {
-							Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
-							break;
-						}
-					}
-					//spawn 4-8 to Skeletons
-					List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
-					int skeletons = Random.Range(4, 9);
-					for (int j = 0; j < skeletons; j++) {
-						Summon summon = CreateMonster(SUMMON_TYPE.Skeleton, locationChoices, className: CollectionUtilities.GetRandomElement(randomClassChoices), faction: FactionManager.Instance.undeadFaction);
-						locationChoices.Remove(summon.gridTileLocation);
-						if (locationChoices.Count == 0) {
-							Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
-							break;
-						}
-					}
-				} else {
-					MonsterMigrationBiomeAtomizedData chosenMMonster = regionDivision.GetRandomMonsterFromFaunaList();
-					int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
-					for (int k = 0; k < randomAmount; k++) {
-						Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices);
-						locationChoices.Remove(summon.gridTileLocation);
-					}
-					if (locationChoices.Count == 0) {
-						Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
-						break;
-					}
-					// //spawn monsters base on provided regional settings
-					// MonsterGenerationSetting monsterGenerationSetting = WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
-					// WeightedDictionary<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(regionDivision.coreTile.biomeType);
-					// if (monsterChoices != null) {
-					// 	MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-					// 	int randomAmount = Random.Range(3, 9);
-					// 	for (int k = 0; k < randomAmount; k++) {
-					// 		Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
-					// 		locationChoices.Remove(summon.gridTileLocation);
-					// 	}
-					// 	if (locationChoices.Count == 0) {
-					// 		Debug.LogWarning($"Ran out of grid tiles to place monsters at region {regionDivision.name}");
-					// 		break;
-					// 	}
-					// 		
-					// }	
-				}
-			}
-			yield return null;
-		}
-	}
-	private IEnumerator LandmarkMonsterGeneration() {
-		// if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-		// 	//no landmark monsters in tutorial world
-		// } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-		// 	OonaLandmarkMonsterGeneration();
-		// } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-		// 	PangatLooLandmarkMonsterGeneration();
-		// } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-		// 	ZenkoLandmarkMonsterGeneration();
-		// } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
-		// 	AneemLandmarkMonsterGeneration();
-		// }  else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
-		// 	PittoLandmarkMonsterGeneration();
-		// } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
-		
-		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+    private IEnumerator LandmarkMonsterGeneration() {
+	    if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			PangatLooLandmarkMonsterGeneration();
 		}
-		List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
+		List<LocationStructure> allSpecialStructures = LandmarkManager.Instance.GetAllSpecialStructures();
 		List<LocationGridTile> locationChoices = new List<LocationGridTile>();
-		for (int i = 0; i < allLandmarks.Count; i++) {
-			BaseLandmark landmark = allLandmarks[i];
-			if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
-				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo && landmark.specificLandmarkType == LANDMARK_TYPE.ANCIENT_GRAVEYARD) {
+		for (int i = 0; i < allSpecialStructures.Count; i++) {
+			LocationStructure structure = allSpecialStructures[i];
+			if (structure.structureType != STRUCTURE_TYPE.CAVE) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo && structure.structureType == STRUCTURE_TYPE.ANCIENT_GRAVEYARD) {
 					continue; //do not spawn other monsters in ancient graveyard for Pangat Loo since there are already skeletons there.
 				}
-				RegionDivision regionDivision = landmark.tileLocation.regionDivision;
-				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+				RegionDivision regionDivision = structure.occupiedArea.regionDivision;
 				if (structure is RuinedZoo) {
 					continue; //skip
 				}
@@ -307,150 +191,16 @@ public class MonsterGeneration : MapGenerationComponent {
 		}
 		yield return null;
 	}
-	private List<HexTile> GetHexTileCountOfCave(LocationStructure caveStructure) {
-		List<HexTile> tiles = new List<HexTile>();
+	private List<Area> GetHexTileCountOfCave(LocationStructure caveStructure) {
+		List<Area> tiles = new List<Area>();
 		for (int i = 0; i < caveStructure.unoccupiedTiles.Count; i++) {
 			LocationGridTile tile = caveStructure.unoccupiedTiles.ElementAt(i);
-			if (tiles.Contains(tile.parentArea) == false) {
-				tiles.Add(tile.parentArea);
+			if (tiles.Contains(tile.area) == false) {
+				tiles.Add(tile.area);
 			}
 		}
 		return tiles;
 	}
-
-	#region Tutorial
-	private void TutorialCaveMonsterGeneration(List<LocationStructure> caves) {
-		for (int j = 0; j < caves.Count; j++) {
-			LocationStructure cave = caves[j];
-			List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-			if (j == 0 || j == 1) {
-				//Giant spiders	
-				int randomGiantSpider = Random.Range(2, 5);
-				for (int k = 0; k < randomGiantSpider; k++) {
-					CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-				}
-			}
-			else if (j == 2) {
-				//Golem	
-				int randomGolem = Random.Range(3, 6);
-				for (int k = 0; k < randomGolem; k++) {
-					CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-				}
-			}
-			else {
-				break;
-			}
-		}
-	}
-	#endregion
-	
-	#region Zenko
-	private void ZenkoRegionalMonsters(int regionIndex, ref List<LocationGridTile> locationChoices) {
-		if (regionIndex == 0) {
-			//nymphs
-			int randomAmount = 8;
-			SUMMON_TYPE[] nymphTypes = new[] {SUMMON_TYPE.Ice_Nymph, SUMMON_TYPE.Water_Nymph, SUMMON_TYPE.Wind_Nymph};
-			for (int k = 0; k < randomAmount; k++) {
-				if (locationChoices.Count == 0) { break; }
-				Summon summon = CreateMonster(CollectionUtilities.GetRandomElement(nymphTypes), locationChoices);
-				locationChoices.Remove(summon.gridTileLocation);
-			}
-		} else if (regionIndex == 1) {
-			//fire elementals
-			int randomAmount = 5;
-			for (int k = 0; k < randomAmount; k++) {
-				if (locationChoices.Count == 0) { break; }
-				Summon summon = CreateMonster(SUMMON_TYPE.Fire_Elemental, locationChoices);
-				locationChoices.Remove(summon.gridTileLocation);
-			}
-		} else if (regionIndex == 2) {
-			//Kobolds
-			int randomAmount = 5;
-			for (int k = 0; k < randomAmount; k++) {
-				if (locationChoices.Count == 0) { break; }
-				Summon summon = CreateMonster(SUMMON_TYPE.Kobold, locationChoices);
-				locationChoices.Remove(summon.gridTileLocation);
-			}
-		}
-	}
-	private void ZenkoLandmarkMonsterGeneration() {
-		List<BaseLandmark> lairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-		for (int i = 0; i < lairs.Count; i++) {
-			BaseLandmark landmark = lairs[i];
-			if (i == 0) {
-				//Kobolds
-				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				int randomAmount = 4;
-				for (int k = 0; k < randomAmount; k++) {
-					CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
-				}
-			} else if (i == 1) {
-				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				int randomAmount = 3;
-				for (int k = 0; k < randomAmount; k++) {
-					CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
-				}
-			}
-		}
-	}
-	#endregion
-
-	#region Oona
-	private void OonaLandmarkMonsterGeneration() {
-		//wolves at monster lair
-		List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-		for (int i = 0; i < monsterLairs.Count; i++) {
-			BaseLandmark landmark = monsterLairs[i];
-			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-			int randomAmount = 3;
-			for (int k = 0; k < randomAmount; k++) {
-				CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);
-			}
-		}
-		//Spiders at Temple
-		List<BaseLandmark> temples = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.TEMPLE);
-		for (int i = 0; i < temples.Count; i++) {
-			BaseLandmark landmark = temples[i];
-			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-			// int randomAmount = 2;
-			// for (int k = 0; k < randomAmount; k++) {
-			// 	CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
-			// }
-			//Giant spiders	
-			int randomGiantSpider = Random.Range(2, 5);
-			for (int k = 0; k < randomGiantSpider; k++) {
-				CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure);
-			}
-		}
-	}
-	private void OonaCaveMonsterGeneration(List<LocationStructure> caves) {
-		for (int j = 0; j < caves.Count; j++) {
-			LocationStructure cave = caves[j];
-			if (cave.residents.Count > 0) {
-				//if cave already has occupants, then do not generate monsters for that cave
-				continue;
-			}
-			List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-			if (j == 0 || j == 1) {
-				//Trolls	
-				int randomTrolls = Random.Range(3, 6);
-				for (int k = 0; k < randomTrolls; k++) {
-					CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-				}
-			}
-			else if (j == 2) {
-				//Fire Elementals	
-				int fireElementals = 2;
-				for (int k = 0; k < fireElementals; k++) {
-					CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-				}
-			}
-			else {
-				break;
-			}
-		}
-	}
-	#endregion
 
 	#region Icalawa
 	private void IcalawaCaveMonsterGeneration(List<LocationStructure> caves) {
@@ -467,7 +217,7 @@ public class MonsterGeneration : MapGenerationComponent {
 				//if cave already has occupants, then do not generate monsters for that cave
 				continue;
 			}
-			List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+			List<Area> hexTilesOfCave = GetHexTileCountOfCave(cave);
 			if (j < 4) {
 				CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 			}
@@ -476,48 +226,18 @@ public class MonsterGeneration : MapGenerationComponent {
 	#endregion
 	
 	#region Pangat Loo
-	private void PangatLooRegionalMonsters(int regionIndex, ref List<LocationGridTile> locationChoices) {
-		if (regionIndex == 1) {
-			//ghosts
-			int randomAmount = 8;
-			for (int k = 0; k < randomAmount; k++) {
-				if (locationChoices.Count == 0) { break; }
-				Summon summon = CreateMonster(SUMMON_TYPE.Ghost, locationChoices, faction: FactionManager.Instance.undeadFaction);
-				locationChoices.Remove(summon.gridTileLocation);
-			}
-		}
-	}
 	private void PangatLooLandmarkMonsterGeneration() {
 		//skeletons at ancient graveyard
-		List<BaseLandmark> graveyards = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.ANCIENT_GRAVEYARD);
+		List<LocationStructure> graveyards = LandmarkManager.Instance.GetSpecialStructuresOfType(STRUCTURE_TYPE.ANCIENT_GRAVEYARD);
 		for (int i = 0; i < graveyards.Count; i++) {
-			BaseLandmark landmark = graveyards[i];
-			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+			LocationStructure structure = graveyards[i];
 			int randomAmount = 2;
 			for (int k = 0; k < randomAmount; k++) {
-				CreateMonster(SUMMON_TYPE.Skeleton, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.undeadFaction);
+				CreateMonster(SUMMON_TYPE.Skeleton, structure.settlementLocation, structure.region, structure, FactionManager.Instance.undeadFaction);
 			}
 		}
 	}
-	private void PangatLooCaveMonsterGeneration(List<LocationStructure> caves) {
-		for (int j = 0; j < caves.Count; j++) {
-			LocationStructure cave = caves[j];
-			if (cave.residents.Count > 0) {
-				//if cave already has occupants, then do not generate monsters for that cave
-				continue;
-			}
-			List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-			if (j == 0) {
-				for (int k = 0; k < 8; k++) {
-					CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-				}
-			}
-			else {
-				break;
-			}
-		}
-	}
-    #endregion
+	#endregion
 
     #region Ratmen Generation
     private bool GenerateRatmen(LocationStructure structure, int amount, int chance = 10) {
@@ -533,148 +253,6 @@ public class MonsterGeneration : MapGenerationComponent {
             return true;
         }
         return false;
-    }
-    #endregion
-
-    #region Aneem Generation
-    private void AneemRegionalMonsters(int regionIndex, ref List<LocationGridTile> locationChoices) {
-	    if (regionIndex == 0) {
-		    //Sludge
-		    int randomAmount = 8;
-		    for (int k = 0; k < randomAmount; k++) {
-			    if (locationChoices.Count == 0) { break; }
-			    Summon summon = CreateMonster(SUMMON_TYPE.Sludge, locationChoices);
-			    locationChoices.Remove(summon.gridTileLocation);
-		    }
-	    } else if (regionIndex == 1) {
-		    //Fire Elemental
-		    int randomAmount = 5;
-		    for (int k = 0; k < randomAmount; k++) {
-			    if (locationChoices.Count == 0) { break; }
-			    Summon summon = CreateMonster(SUMMON_TYPE.Fire_Elemental, locationChoices);
-			    locationChoices.Remove(summon.gridTileLocation);
-		    }
-	    }
-    }
-    private void AneemLandmarkMonsterGeneration() {
-	    List<BaseLandmark> lairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-	    for (int i = 0; i < lairs.Count; i++) {
-		    BaseLandmark landmark = lairs[i];
-		    if (i == 0) {
-			    //Kobolds
-			    LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-			    int randomAmount = 4;
-			    for (int k = 0; k < randomAmount; k++) {
-				    CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
-			    }
-		    } else if (i == 1) {
-			    LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-			    int randomAmount = 3;
-			    for (int k = 0; k < randomAmount; k++) {
-				    CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
-			    }
-		    }
-	    }
-	    List<BaseLandmark> mageTowers = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MAGE_TOWER);
-	    for (int i = 0; i < mageTowers.Count; i++) {
-		    BaseLandmark landmark = mageTowers[i];
-		    if (i == 0) {
-			    //Golems
-			    LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-			    int randomAmount = 4;
-			    for (int k = 0; k < randomAmount; k++) {
-				    CreateMonster(SUMMON_TYPE.Golem, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
-			    }
-		    }
-	    }
-    }
-    private void AneemCaveMonsterGeneration(List<LocationStructure> caves) {
-	    for (int j = 0; j < caves.Count; j++) {
-		    LocationStructure cave = caves[j];
-		    if (cave.residents.Count > 0) {
-			    //if cave already has occupants, then do not generate monsters for that cave
-			    continue;
-		    }
-		    List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-		    if (j == 0) {
-			    for (int k = 0; k < 8; k++) {
-				    CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-			    }
-		    }
-		    else {
-			    break;
-		    }
-	    }
-    }
-    #endregion
-
-    #region Pitto
-    private void PittoRegionalMonsters(int regionIndex, ref List<LocationGridTile> locationChoices) {
-	    if (regionIndex == 0) {
-		    //nymphs
-		    int randomAmount = 12;
-		    SUMMON_TYPE[] nymphTypes = new[] {SUMMON_TYPE.Ice_Nymph, SUMMON_TYPE.Water_Nymph, SUMMON_TYPE.Wind_Nymph};
-		    for (int k = 0; k < randomAmount; k++) {
-			    if (locationChoices.Count == 0) { break; }
-			    Summon summon = CreateMonster(CollectionUtilities.GetRandomElement(nymphTypes), locationChoices);
-			    locationChoices.Remove(summon.gridTileLocation);
-		    }
-		    //spawn 4-8 ghosts
-		    int ghosts = Random.Range(4, 9);
-		    for (int j = 0; j < ghosts; j++) {
-			    if (locationChoices.Count == 0) { break; }
-			    Summon summon = CreateMonster(SUMMON_TYPE.Ghost, locationChoices);
-			    locationChoices.Remove(summon.gridTileLocation);
-		    }
-	    }
-    }
-    private void PittoLandmarkMonsterGeneration() {
-	    List<BaseLandmark> graveyards = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.ANCIENT_GRAVEYARD);
-	    for (int i = 0; i < graveyards.Count; i++) {
-		    BaseLandmark landmark = graveyards[i];
-		    LocationStructure graveyard = landmark.tileLocation.GetMostImportantStructureOnTile();
-		    List<LocationGridTile> locationChoices = new List<LocationGridTile>(graveyard.tiles); 
-		    if (i == 0) {
-			    //spawn 4-8 to Skeletons
-			    List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
-			    int skeletons = Random.Range(4, 9);
-			    for (int j = 0; j < skeletons; j++) {
-				    if (locationChoices.Count == 0) { break; }
-				    Summon summon = CreateMonster(SUMMON_TYPE.Skeleton, locationChoices, graveyard, className: CollectionUtilities.GetRandomElement(randomClassChoices), faction: FactionManager.Instance.undeadFaction);
-				    locationChoices.Remove(summon.gridTileLocation);
-			    }
-		    }
-	    }
-	    List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-	    for (int i = 0; i < monsterLairs.Count; i++) {
-		    BaseLandmark landmark = monsterLairs[i];
-		    //Wolves
-		    LocationStructure monsterLair = landmark.tileLocation.GetMostImportantStructureOnTile();
-		    int randomAmount = 4;
-		    for (int k = 0; k < randomAmount; k++) {
-			    CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, monsterLair, FactionManager.Instance.neutralFaction);
-		    }
-	    }
-    }
-    private void PittoCaveMonsterGeneration(List<LocationStructure> caves) {
-	    int cavesWithWurms = 0;
-	    for (int j = 0; j < caves.Count; j++) {
-		    LocationStructure cave = caves[j];
-		    if (cave.residents.Count > 0) {
-			    //if cave already has occupants, then do not generate monsters for that cave
-			    continue;
-		    }
-		    if (cavesWithWurms >= 3) {
-			    break;
-		    }
-		    List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-		    int randomWurms = Random.Range(5, 9);
-		    for (int k = 0; k < randomWurms; k++) {
-			    CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-		    }
-		    cavesWithWurms++;
-
-	    }
     }
     #endregion
 }

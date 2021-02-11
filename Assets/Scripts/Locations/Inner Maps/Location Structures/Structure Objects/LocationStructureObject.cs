@@ -751,7 +751,7 @@ public class LocationStructureObject : PooledObject {
         if (!GameManager.Instance.gameHasStarted) {
             //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
             //since we expect that they will be generated later
-            HexTile hexTileOwner = tile.parentArea;
+            HexTile hexTileOwner = tile.area;
             if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
                 return false;
             }

@@ -57,7 +57,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        HexTile hex = tileObject.gridTileLocation.parentArea;
+        HexTile hex = tileObject.gridTileLocation.area;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state,
             hex.biomeType,

@@ -69,9 +69,9 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                 if (!character.currentStructure.isInterior) {
                     log += $"\n  -Character is in an exterior structure";
                     List<LocationStructure> structures = null;
-                    HexTile currentHex = character.gridTileLocation.parentArea;
-                    for (int i = 0; i < currentHex.AllNeighbours.Count; i++) {
-                        HexTile hex = currentHex.AllNeighbours[i];
+                    HexTile currentHex = character.gridTileLocation.area;
+                    for (int i = 0; i < currentHex.neighbourComponent.neighbours.Count; i++) {
+                        HexTile hex = currentHex.neighbourComponent.neighbours[i];
                         LocationGridTile centerTile = hex.GetCenterLocationGridTile();
                         //TODO: Enable digging
                         if (centerTile.structure.structureType.IsSpecialStructure() && centerTile.structure.isInterior && character.movementComponent.HasPathTo(centerTile)) {

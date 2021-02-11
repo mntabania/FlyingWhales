@@ -38,12 +38,12 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		
 		int centerX = startingX + (template.width / 2);
 		int centerY = startingY + (template.height / 2);
-		HexTile center = GridMap.Instance.map[centerX, centerY];
+		Area center = GridMap.Instance.map[centerX, centerY];
 
 		RegionDivision regionDivision = new RegionDivision(center.biomeType);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {
-				HexTile tile = GridMap.Instance.map[x, y];
+				Area tile = GridMap.Instance.map[x, y];
 				regionDivision.AddTile(tile);
 			}
 		}
@@ -56,11 +56,10 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
         int centerX = startingX + (template.width / 2);
         int centerY = startingY + (template.height / 2);
-        HexTile center = GridMap.Instance.map[centerX, centerY];
 
         for (int x = startingX; x < maxX; x++) {
             for (int y = startingY; y < maxY; y++) {
-                HexTile tile = GridMap.Instance.map[x, y];
+	            Area tile = GridMap.Instance.map[x, y];
                 regionDivision.AddTile(tile);
             }
         }
@@ -115,7 +114,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		string summary = "Region Generation Summary: ";
 		for (int i = 0; i < allRegions.Length; i++) {
 			Region region = allRegions[i];
-			summary += $"\n{region.name} - {region.tiles.Count.ToString()}";
+			summary += $"\n{region.name} - {region.areas.Count.ToString()}";
 		}
 		Debug.Log(summary);
 		
@@ -125,7 +124,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		Region region = new Region(saveDataRegion);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {
-				HexTile tile = GridMap.Instance.map[x, y];
+				Area tile = GridMap.Instance.map[x, y];
 				region.AddTile(tile);
 			}
 		}

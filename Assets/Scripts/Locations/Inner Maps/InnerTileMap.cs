@@ -129,10 +129,10 @@ namespace Inner_Maps {
                     var position = new Vector3Int(x, y, 0);
                     positionArray[count] = position;
                     groundTilesArray[count] = regionOutsideTile;
-                    HexTile hexTile = DetermineAreaGivenCoordinates(x, y);
-                    LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this, hexTile);
-                    hexTile.locationGridTileArray.AddTileToArray(tile);
-                    Debug.Log($"Added tile {tile} to {hexTile}");
+                    Area area = DetermineAreaGivenCoordinates(x, y);
+                    LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this, area);
+                    area.gridTileComponent.AddGridTile(tile);
+                    Debug.Log($"Added tile {tile} to {area}");
                     tile.CreateGenericTileObject();
                     tile.SetStructure(wilderness);
                     allTiles.Add(tile);
@@ -160,7 +160,7 @@ namespace Inner_Maps {
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} GridFindNeighbours took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
-        private HexTile DetermineAreaGivenCoordinates(int x, int y) {
+        private Area DetermineAreaGivenCoordinates(int x, int y) {
             int hexTileX = Mathf.FloorToInt((float)x / InnerMapManager.AreaLocationGridTileSize.x);
             int hexTileY = Mathf.FloorToInt((float)y / InnerMapManager.AreaLocationGridTileSize.y);
 
@@ -188,7 +188,7 @@ namespace Inner_Maps {
                     var position = new Vector3Int(x, y, 0);
                     positionArray[count] = position;
                     groundTilesArray[count] = regionOutsideTile;
-                    HexTile area = DetermineAreaGivenCoordinates(x, y);
+                    Area area = DetermineAreaGivenCoordinates(x, y);
                     LocationGridTile tile;
                     if (existingSaveData != null) {
                         //has existing save data
@@ -197,7 +197,7 @@ namespace Inner_Maps {
                         tile = new LocationGridTile(x, y, groundTilemap, this, area);
                         tile.CreateGenericTileObject();    
                     }
-                    area.locationGridTileArray.AddTileToArray(tile);
+                    area.gridTileComponent.AddGridTile(tile);
                     tile.SetStructure(wilderness);
                     tile.genericTileObject.SetGridTileLocation(tile); //had to do this since I could not set tile location before setting structure because awareness list depends on it.
                     allTiles.Add(tile);
@@ -407,9 +407,9 @@ namespace Inner_Maps {
                         throw new Exception($"{character.name} is going to tile {to} which does not have a structure!");
                     }
                 }
-                if (from.parentArea != to.parentArea) {
-                    from.parentArea.OnRemovePOIInHex(character);
-                    to.parentArea.OnPlacePOIInHex(character);
+                if (from.area != to.area) {
+                    from.area.OnRemovePOIInHex(character);
+                    to.area.OnPlacePOIInHex(character);
                 }
                 from.RemoveCharacterHere(character);
                 to.AddCharacterHere(character);
@@ -496,8 +496,8 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public List<LocationStructure> PlaceBuiltStructureTemplateAt(GameObject structurePrefab, HexTile hexTile, BaseSettlement settlement) {
-            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, hexTile.GetCenterLocationGridTile().centeredLocalLocation, Quaternion.identity, structureParent);
+        public List<LocationStructure> PlaceBuiltStructureTemplateAt(GameObject p_structurePrefab, Area p_area, BaseSettlement p_settlement) {
+            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_structurePrefab.name, p_area.gridTileComponent.centerGridTile.centeredLocalLocation, Quaternion.identity, structureParent);
             
             List<LocationStructure> createdStructures = new List<LocationStructure>();
             
@@ -506,13 +506,13 @@ namespace Inner_Maps {
             for (int i = 0; i < structureTemplate.structureObjects.Length; i++) {
                 LocationStructureObject structureObject = structureTemplate.structureObjects[i];
                 if (structureObject == null) {
-                    throw new Exception($"No LocationStructureObject for {structurePrefab.name}");
+                    throw new Exception($"No LocationStructureObject for {p_structurePrefab.name}");
                 }
                 structureObject.RefreshAllTilemaps();
                 List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
                 structureObject.SetTilesInStructure(occupiedTiles.ToArray());
                 structureObject.ClearOutUnimportantObjectsBeforePlacement();
-                LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(hexTile.region, structureObject.structureType, settlement);
+                LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(p_area.region, structureObject.structureType, p_settlement);
                 createdStructures.Add(structure);
                 for (int j = 0; j < occupiedTiles.Count; j++) {
                     LocationGridTile tile = occupiedTiles[j];
@@ -526,7 +526,7 @@ namespace Inner_Maps {
                     manMadeStructure.SetStructureObject(structureObject);    
                 }
                 
-                structure.SetOccupiedArea(hexTile);
+                structure.SetOccupiedArea(p_area);
                 structureObject.OnBuiltStructureObjectPlaced(this, structure, out int createdWalls, out int totalWalls);
                 structure.CreateRoomsBasedOnStructureObject(structureObject);
                 structure.OnBuiltNewStructure();
@@ -543,24 +543,24 @@ namespace Inner_Maps {
         /// Build a structure object at the given center tile.
         /// NOTE: This will also create a LocationStructure instance for the new structure.
         /// </summary>
-        /// <param name="structurePrefab">The structure prefab to use.</param>
+        /// <param name="p_structurePrefab">The structure prefab to use.</param>
         /// <param name="centerTile">The center tile to place the prefab at.</param>
-        /// <param name="settlement">The settlement that owns the structure that will be placed</param>
+        /// <param name="p_settlement">The settlement that owns the structure that will be placed</param>
         /// <returns>The instance of the placed structure.</returns>
-        public LocationStructure PlaceBuiltStructureTemplateAt(GameObject structurePrefab, LocationGridTile centerTile, BaseSettlement settlement) {
-            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, centerTile.centeredLocalLocation, Quaternion.identity, structureParent);
+        public LocationStructure PlaceBuiltStructureTemplateAt(GameObject p_structurePrefab, LocationGridTile centerTile, BaseSettlement p_settlement) {
+            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_structurePrefab.name, centerTile.centeredLocalLocation, Quaternion.identity, structureParent);
         
             LocationStructureObject structureObject = structureTemplateGO.GetComponent<LocationStructureObject>();
             if (structureObject == null) {
-                throw new Exception($"No LocationStructureObject for {structurePrefab.name}");
+                throw new Exception($"No LocationStructureObject for {p_structurePrefab.name}");
             }
-            HexTile hexTile = centerTile.parentArea;
-            settlement.AddAreaToSettlement(hexTile);
+            HexTile hexTile = centerTile.area;
+            p_settlement.AddAreaToSettlement(hexTile);
             structureObject.RefreshAllTilemaps();
             List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             structureObject.ClearOutUnimportantObjectsBeforePlacement();
-            LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(centerTile.parentMap.region, structureObject.structureType, settlement);
+            LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(centerTile.parentMap.region, structureObject.structureType, p_settlement);
             for (int j = 0; j < occupiedTiles.Count; j++) {
                 LocationGridTile tile = occupiedTiles[j];
                 tile.SetStructure(structure);
@@ -573,7 +573,7 @@ namespace Inner_Maps {
                 manMadeStructure.SetStructureObject(structureObject);    
             }
             
-            structure.SetOccupiedArea(centerTile.parentArea);
+            structure.SetOccupiedArea(centerTile.area);
             structureObject.OnBuiltStructureObjectPlaced(this, structure, out int createdWalls, out int totalWalls);
             structure.CreateRoomsBasedOnStructureObject(structureObject);
             structure.OnBuiltNewStructure();
@@ -735,12 +735,12 @@ namespace Inner_Maps {
             }
         }
         private void GenerateDetailOnTile(int xSize, int ySize, float xSeed, float ySeed, LocationGridTile currTile) {
-            if ((currTile.parentArea.elevationType == ELEVATION.MOUNTAIN
-                 || currTile.parentArea.elevationType == ELEVATION.WATER)) {
+            if ((currTile.area.elevationType == ELEVATION.MOUNTAIN
+                 || currTile.area.elevationType == ELEVATION.WATER)) {
                 return;
             }
-            if (currTile.parentArea.landmarkOnTile != null
-                && currTile.parentArea.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
+            if (currTile.area.landmarkOnTile != null
+                && currTile.area.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
                 return;
             }
             

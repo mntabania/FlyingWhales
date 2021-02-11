@@ -358,11 +358,11 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(p_min, p_max + 1);
             return roll;
         }
-        public static List<HexTile> GetHexTilesGivenCoordinates(List<Point> coordinates, HexTile[,] map) {
-            List<HexTile> tiles = new List<HexTile>();
+        public static List<Area> GetHexTilesGivenCoordinates(List<Point> coordinates, Area[,] map) {
+            List<Area> tiles = new List<Area>();
             for (int i = 0; i < coordinates.Count; i++) {
                 Point point = coordinates[i];
-                HexTile tile = map[point.X, point.Y];
+                Area tile = map[point.X, point.Y];
                 tiles.Add(tile);
             }
             return tiles;

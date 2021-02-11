@@ -22,8 +22,6 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
                 if (region != null) {
                     if (!UIManager.Instance.regionInfoUI.isShowing) {
                         UIManager.Instance.ShowRegionInfo(region);
-                    } else {
-                        region.CenterCameraOnRegion();
                     }
                 }    
             } else if (eventData.button == PointerEventData.InputButton.Right) {

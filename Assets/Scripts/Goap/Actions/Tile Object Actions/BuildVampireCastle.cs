@@ -134,7 +134,7 @@ public class BuildVampireCastle : GoapAction {
                     // }
                 }
 
-                settlement.AddAreaToSettlement(genericTileObject.gridTileLocation.parentArea);
+                settlement.AddAreaToSettlement(genericTileObject.gridTileLocation.area);
 
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));

@@ -396,7 +396,7 @@ public class CharacterAIPath : AILerp {
                     nodeGridTile = customPath.region.innerMap.map[localPlace.x, localPlace.y];
                 }
                 if (nodeGridTile != null && nodeGridTile.IsPartOfHumanElvenSettlement()) {
-                    Faction owner = nodeGridTile.parentArea.settlementOnArea.owner;
+                    Faction owner = nodeGridTile.area.settlementOnArea.owner;
                     if (owner != null && owner.IsHostileWith(marker.character.faction)) {
                         return 100000;
                     }

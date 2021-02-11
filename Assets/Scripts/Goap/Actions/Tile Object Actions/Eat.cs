@@ -123,7 +123,7 @@ public class Eat : GoapAction {
             }
         } else {
             if (target is Table table) {
-                bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure) || actor.trapStructure.IsTrapHex(table.gridTileLocation.parentArea);
+                bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure) || actor.trapStructure.IsTrapHex(table.gridTileLocation.area);
                 BaseSettlement settlementLocation = null;
                 if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(out settlementLocation) && actor.faction != null && settlementLocation.owner != null && settlementLocation.owner.IsHostileWith(actor.faction)) {
                     cost += 2000;
@@ -354,7 +354,7 @@ public class Eat : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.parentArea)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             if (actor.traitContainer.HasTrait("Vampire")) {

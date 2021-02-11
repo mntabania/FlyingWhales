@@ -104,12 +104,12 @@ public class PickUp : GoapAction {
                             cost += 2000;
                             costLog = $"{costLog} +2000(Job is remove status and object is NOT reachable and is NOT next to or part of actor's home settlement)";
                         }
-                    } else if (actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.parentArea.settlementOnArea == actor.homeSettlement) {
+                    } else if (actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.area.settlementOnArea == actor.homeSettlement) {
                         int randomCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                         cost += randomCost;
                         costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor home settlement)";
-                    } else if (!actor.isFactionless && !actor.isVagrantOrFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.parentArea.settlementOnArea != null
-                         && targetTileObject.gridTileLocation.parentArea.settlementOnArea.owner == actor.faction) {
+                    } else if (!actor.isFactionless && !actor.isVagrantOrFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.area.settlementOnArea != null
+                         && targetTileObject.gridTileLocation.area.settlementOnArea.owner == actor.faction) {
                         int randomCost = UtilityScripts.Utilities.Rng.Next(100, 121);
                         cost += randomCost;
                         costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor's faction owned settlement)";
