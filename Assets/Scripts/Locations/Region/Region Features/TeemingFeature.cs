@@ -5,8 +5,8 @@ using UnityEngine;
 using UtilityScripts;
 namespace Locations.Region_Features {
     public class TeemingFeature : RegionFeature {
-        public override void LandmarkGenerationSecondPassActions(Region region) {
-            base.LandmarkGenerationSecondPassActions(region);
+        public override void SpecialStructureGenerationSecondPassActions(Region region) {
+            base.SpecialStructureGenerationSecondPassActions(region);
             List<GameFeature> gameFeatures = GetGameFeaturesInRegion(region);
             if (gameFeatures.Count < 6) {
                 int missing = Random.Range(6, 9) - gameFeatures.Count;

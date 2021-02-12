@@ -94,15 +94,8 @@ public class Player : ILeader, IObjectManipulator {
 
     #region Listeners
     private void AddListeners() {
-        //goap
-        // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
-        // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
-
-        //minions
-        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
-        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
         Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
         Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
 
@@ -664,11 +657,6 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region The Eye
-    private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) { }
-    private void OnMinionUnassignedFromPlayerLandmark(Minion minion, BaseLandmark landmark) { }
-    #endregion
-
     #region Mana
     public void AdjustMana(int amount) {
         mana += amount;
@@ -681,28 +669,6 @@ public class Player : ILeader, IObjectManipulator {
         return PlayerManager.Instance.GetManaCostForSpell(tier);
     }
     #endregion
-
-    //#region Archetype
-    //public void SetArchetype(PLAYER_ARCHETYPE type) {
-    //    if(archetype == null || archetype.type != type) {
-    //        archetype = PlayerManager.CreateNewArchetype(type);
-    //        for (int i = 0; i < archetype.spells.Count; i++) {
-    //            unlearnedSpells.Remove(archetype.spells[i]);
-    //        }
-    //        for (int i = 0; i < archetype.afflictions.Count; i++) {
-    //            unlearnedAfflictions.Remove(archetype.afflictions[i]);
-    //        }
-    //    }
-    //}
-    //public void LearnSpell(SPELL_TYPE type) {
-    //    archetype.AddSpell(type);
-    //    unlearnedSpells.Remove(type);
-    //}
-    //public void LearnAffliction(SPELL_TYPE affliction) {
-    //    archetype.AddAffliction(affliction);
-    //    unlearnedAfflictions.Remove(affliction);
-    //}
-    //#endregion
 
     #region Utilities
     /// <summary>
@@ -874,18 +840,4 @@ public class Player : ILeader, IObjectManipulator {
         isCurrentlyBuildingDemonicStructure = state;
     }
     #endregion
-}
-
-[System.Serializable]
-public struct DemonicLandmarkBuildingData {
-    public LANDMARK_TYPE landmarkType;
-    public string landmarkName;
-    public int buildDuration;
-    public int currentDuration;
-}
-
-[System.Serializable]
-public struct DemonicLandmarkInvasionData {
-    public bool beingInvaded;
-    public int currentDuration;
 }

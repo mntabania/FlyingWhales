@@ -1884,6 +1884,7 @@
               <e p="LocationAwareness.cs" t="Include" />
               <e p="Tile Features" t="Include">
                 <e p="AreaFeature.cs" t="Include" />
+                <e p="AreaFeatureDB.cs" t="Include" />
                 <e p="BlizzardFeature.cs" t="Include" />
                 <e p="FertileFeature.cs" t="Include" />
                 <e p="GameFeature.cs" t="Include" />
@@ -1895,7 +1896,6 @@
                 <e p="RainFeature.cs" t="Include" />
                 <e p="StoneSourceFeature.cs" t="Include" />
                 <e p="TileFeature.cs" t="Include" />
-                <e p="TileFeatureDB.cs" t="Include" />
                 <e p="WoodSourceFeature.cs" t="Include" />
               </e>
             </e>
@@ -2249,6 +2249,9 @@
             <e p="LocationClassManager.cs" t="Include" />
             <e p="LocationEventManager.cs" t="Include" />
             <e p="Region" t="Include">
+              <e p="Landmarks" t="Include">
+                <e p="BaseLandmark.cs" t="Include" />
+              </e>
               <e p="Region Features" t="Include">
                 <e p="CrystalsFeature.cs" t="Include" />
                 <e p="DragonFeature.cs" t="Include" />

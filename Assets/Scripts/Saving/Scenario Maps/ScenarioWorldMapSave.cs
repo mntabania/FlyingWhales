@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 namespace Scenario_Maps {
     [System.Serializable]
     public class ScenarioWorldMapSave {
         public WorldMapTemplate worldMapTemplate;
         public List<SaveDataArea> areaSaves;
+        public List<SpecialStructureSetting> specialStructureSaves;
         
         public void SaveWorld(WorldMapTemplate p_worldMapTemplate, List<Area> p_areas) {
             worldMapTemplate = p_worldMapTemplate;
@@ -17,6 +19,10 @@ namespace Scenario_Maps {
                 Area currTile = tiles[i];
                 SaveDataArea newSaveData = new SaveDataArea();
                 newSaveData.Save(currTile);
+                if (currTile.primaryStructureInArea != null && currTile.primaryStructureInArea.structureType.IsSpecialStructure()) {
+                    SpecialStructureSetting specialStructureSetting = new SpecialStructureSetting(new Vector2Int(currTile.areaData.xCoordinate, currTile.areaData.yCoordinate), currTile.primaryStructureInArea.structureType);
+                    specialStructureSaves.Add(specialStructureSetting);
+                }
                 areaSaves.Add(newSaveData);
             }
         }
