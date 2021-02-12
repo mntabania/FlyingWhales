@@ -65,7 +65,7 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Skill Tree
-    public void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
+    private void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
 
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         spellData.SetCurrentLevel(playerSkillData.cheatedLevel);
@@ -257,7 +257,7 @@ public class PlayerSkillComponent {
             }
         }
     }
-    private void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType) {
+    public void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType) {
         PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
@@ -284,7 +284,8 @@ public class PlayerSkillComponent {
     private void SetPlayerSkillData(PlayerSkillData skillData) {
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
-        if(spellData == null) {
+        spellData.currentLevel = playerSkillData.cheatedLevel;
+        if (spellData == null) {
             Debug.LogError(skillData.skill.ToString() + " data is null!");
         }
         spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));

@@ -461,10 +461,11 @@ public class HexTileSpellsComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Iceteroids);
-            // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
-            // for (int i = 0; i < pois.Count; i++) {
-            //     pois[i].AdjustHP(-120, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
-            // }
+             List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
+             for (int i = 0; i < pois.Count; i++) {
+                 pois[i].AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), ELEMENTAL_TYPE.Ice, true, showHPBar: true,
+                     piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD));
+            }
         }
     }
     private void PerTickIceteroids() {
