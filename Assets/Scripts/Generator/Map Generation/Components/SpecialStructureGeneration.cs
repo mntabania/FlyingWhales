@@ -48,10 +48,22 @@ namespace Generator.Map_Generation.Components {
         
         #region Scenario Maps
 		public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+			// List<SaveDataArea> landmarks = scenarioMapData.worldMapSave.GetAllTilesWithLandmarks();
+			// for (int i = 0; i < landmarks.Count; i++) {
+			// 	SaveDataArea landmark = landmarks[i];
+			// 	Area area = GridMap.Instance.map[landmark.xCoordinate, landmark.yCoordinate];
+			// 	if (landmark.landmarkType.GetStructureType().IsSpecialStructure()) {
+			// 		NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(area.region, LOCATION_TYPE.DUNGEON, area);
+			// 		Assert.IsTrue(settlement.areas.Count > 0, $"{settlement.name} has no areas to place {landmark.landmarkType.ToString()}");
+			// 		yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(landmark.landmarkType.GetStructureType(), area.region, area, settlement));	
+			// 	}
+			// }
+			
 			for (int i = 0; i < scenarioMapData.worldMapSave.specialStructureSaves.Count; i++) {
 				SpecialStructureSetting specialStructureSetting = scenarioMapData.worldMapSave.specialStructureSaves[i];
-				Area area = GridMap.Instance.map[specialStructureSetting.location.x, specialStructureSetting.location.y];
-				yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(specialStructureSetting.structureType, area.region, area));
+				Area area = GridMap.Instance.map[specialStructureSetting.location.X, specialStructureSetting.location.Y];
+				NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(area.region, LOCATION_TYPE.DUNGEON, area);
+				yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(specialStructureSetting.structureType, area.region, area,settlement));
 			}
 			yield return null;
 		}
@@ -68,7 +80,8 @@ namespace Generator.Map_Generation.Components {
 				        chosenArea.SetElevation(ELEVATION.PLAIN);
 				        p_choices.Remove(chosenArea);
 				        p_choices.ListRemoveRange(chosenArea.neighbourComponent.neighbours);
-				        yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(structureType, chosenArea.region, chosenArea));
+				        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(chosenArea.region, LOCATION_TYPE.DUNGEON, chosenArea);
+				        yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(structureType, chosenArea.region, chosenArea, settlement));
 				        createdCount++;
 			        } else {
 				        break;
@@ -80,13 +93,12 @@ namespace Generator.Map_Generation.Components {
         }
 
         #region Structure Creation
-		private IEnumerator CreateSpecialStructure(STRUCTURE_TYPE p_structureType, Region p_region, Area p_area) {
-			NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(p_region, LOCATION_TYPE.DUNGEON, p_area);
+		private IEnumerator CreateSpecialStructure(STRUCTURE_TYPE p_structureType, Region p_region, Area p_area, NPCSettlement p_settlement) {
 			if (p_structureType == STRUCTURE_TYPE.MONSTER_LAIR) {
-				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(p_region, p_structureType, settlement);
+				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(p_region, p_structureType, p_settlement);
 				yield return MapGenerator.Instance.StartCoroutine(GenerateMonsterLair(p_area, structure));
 			} else {
-				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltLandmark(settlement, p_region.innerMap, RESOURCE.NONE, p_structureType));
+				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltLandmark(p_settlement, p_region.innerMap, RESOURCE.NONE, p_structureType));
 			}
 		}
 		private IEnumerator GenerateMonsterLair(Area hexTile, LocationStructure structure) {

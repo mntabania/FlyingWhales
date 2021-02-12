@@ -81,8 +81,17 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public Area (SaveDataArea data) {
         areaData = data.areaData;
 
-        spellsComponent = data.spellsComponent.Load(); spellsComponent.SetOwner(this);
-        biomeEffectTrigger = data.biomeEffectTrigger.Load(); biomeEffectTrigger.SetOwner(this);
+        if (data.spellsComponent != null) {
+            spellsComponent = data.spellsComponent.Load(); spellsComponent.SetOwner(this);    
+        } else {
+            spellsComponent = new AreaSpellsComponent(); spellsComponent.SetOwner(this);
+        }
+        if (data.biomeEffectTrigger != null) {
+            biomeEffectTrigger = data.biomeEffectTrigger.Load(); biomeEffectTrigger.SetOwner(this);
+        } else {
+            biomeEffectTrigger = new AreaBiomeEffectTrigger(); biomeEffectTrigger.SetOwner(this);
+        }
+        
         gridTileComponent = new AreaGridTileComponent(); gridTileComponent.SetOwner(this);
         neighbourComponent = new AreaNeighbourComponent(); neighbourComponent.SetOwner(this);
         tileObjectComponent = new AreaTileObjectComponent(); tileObjectComponent.SetOwner(this);
@@ -342,3 +351,34 @@ public class SaveDataArea : SaveData<Area> {
         return new Area(this);
     }
 }
+
+// [System.Serializable]
+// public class SaveDataAreaNew : SaveData<Area> {
+//     public AreaData areaData;
+//
+//     //Tile Features
+//     public List<SaveDataAreaFeature> tileFeatureSaveData;
+//
+//     //Components
+//     public SaveDataAreaSpellsComponent spellsComponent;
+//     public SaveDataAreaBiomeEffectTrigger biomeEffectTrigger;
+//
+//     public override void Save(Area p_data) {
+//         areaData = p_data.areaData;
+//
+//         //tile features
+//         tileFeatureSaveData = new List<SaveDataAreaFeature>();
+//         for (int i = 0; i < p_data.featureComponent.features.Count; i++) {
+//             AreaFeature feature = p_data.featureComponent.features[i];
+//             SaveDataAreaFeature saveDataTileFeature = SaveManager.ConvertAreaFeatureToSaveData(feature);
+//             saveDataTileFeature.Save(feature);
+//             tileFeatureSaveData.Add(saveDataTileFeature);
+//         }
+//         spellsComponent = new SaveDataAreaSpellsComponent(); spellsComponent.Save(p_data.spellsComponent);
+//         biomeEffectTrigger = new SaveDataAreaBiomeEffectTrigger(); biomeEffectTrigger.Save(p_data.biomeEffectTrigger);
+//     }
+//     public override Area Load() {
+//         // return new Area(this);
+//         return null;
+//     }
+// }

@@ -241,6 +241,7 @@ public class Player : ILeader, IObjectManipulator {
             SkillData previousActiveAction = currentActivePlayerSpell;
             currentActivePlayerSpell = action;
             if (currentActivePlayerSpell == null) {
+                PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.spellInputModule);
                 UIManager.Instance.SetTempDisableShowInfoUI(false); //allow UI clicks again after active spell has been set to null
                 Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
@@ -248,6 +249,7 @@ public class Player : ILeader, IObjectManipulator {
                 UIManager.Instance.HideSmallInfo(); //This is to hide the invalid messages.
                 Messenger.Broadcast(SpellSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
+                PlayerManager.Instance.AddPlayerInputModule(PlayerManager.spellInputModule);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
                 Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
                 Messenger.Broadcast(SpellSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
@@ -354,11 +356,6 @@ public class Player : ILeader, IObjectManipulator {
             intel.OnIntelRemoved();
         }
     }
-    public void LoadIntels(SaveDataPlayer data) {
-        //for (int i = 0; i < data.allIntel.Count; i++) {
-        //    AddIntel(data.allIntel[i].Load());
-        //}
-    }
     public void SetCurrentActiveIntel(IIntel intel) {
         if (currentActiveIntel == intel) {
             //Do not process when setting the same intel
@@ -373,12 +370,14 @@ public class Player : ILeader, IObjectManipulator {
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         }
         if (currentActiveIntel != null) {
+            PlayerManager.Instance.AddPlayerInputModule(PlayerManager.intelInputModule);
             Messenger.Broadcast(PlayerSignals.ACTIVE_INTEL_SET, currentActiveIntel);
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(currentActiveIntel);
             intelItem?.SetClickedState(true);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
             Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnIntelCast);
         } else {
+            PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.intelInputModule);
             Messenger.Broadcast(PlayerSignals.ACTIVE_INTEL_REMOVED);
         }
     }

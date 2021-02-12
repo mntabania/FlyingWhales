@@ -325,9 +325,6 @@ public class AreaGeneration : MapGenerationComponent {
 				Area area = savedHexTile.Load();
 				normalHexTiles.Add(area);
 				map[x, y] = area;
-				
-				normalHexTiles.Add(area);
-				map[x, y] = area;
 
 				batchCount++;
 				if (batchCount == MapGenerationData.WorldMapTileGenerationBatches) {

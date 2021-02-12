@@ -1881,7 +1881,7 @@ namespace Inner_Maps {
             neighbourList = null;
             objHere = null;
             charactersHere?.Clear();
-            charactersHere = null;
+            // charactersHere = null;
             genericTileObject = null;
             walls?.Clear();
             walls = null;

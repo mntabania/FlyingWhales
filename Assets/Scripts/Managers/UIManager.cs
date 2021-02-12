@@ -142,7 +142,7 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener(UISignals.UPDATE_UI, UpdateUI);
     }
     private void Update() {
-        if (Input.GetMouseButtonDown(0) && GameManager.Instance.gameHasStarted && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI()
+        if (Input.GetMouseButtonDown(0) && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI() && GameManager.Instance.gameHasStarted
             HidePlayerActionContextMenu();
         }
     }
@@ -883,9 +883,9 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
-        if (GameManager.Instance.gameHasStarted == false) {
-            return;
-        }
+        // if (GameManager.Instance.gameHasStarted == false) {
+        //     return;
+        // }
         Character characterToShow = character;
         if(character.isLycanthrope) {
             characterToShow = character.lycanData.activeForm;
@@ -1362,8 +1362,7 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private Button triggerFlawYesBtn;
     [SerializeField] private Button triggerFlawNoBtn;
     [SerializeField] private Button triggerFlawCloseBtn;
-    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, System.Action onClickYesAction = null,
-    bool showCover = false, int layer = 21, bool pauseAndResume = false) {
+    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, System.Action onClickYesAction = null, bool showCover = false, int layer = 21, bool pauseAndResume = false) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowTriggerFlawConfirmation(question, effect, manaCost, onClickYesAction, showCover, layer, pauseAndResume));
             return;
@@ -1621,38 +1620,27 @@ public class UIManager : BaseMonoBehaviour {
     #region Context Menu
     [Header("Context Menu")]
     public ContextMenuUIController contextMenuUIController;
-    [SerializeField] private UIHoverPosition _contextMenuTooltipHoverPosition;
-    public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Transform p_followTarget) {
-        PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
-        contextMenuUIController.SetFollowPosition(p_followTarget);
-        contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
-        Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
-    }
+    private bool _allowContextMenuInteractions = true;
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
+        if (!_allowContextMenuInteractions) { return; }
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
         List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
         contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
         contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
     public void RefreshPlayerActionContextMenuWithNewTarget(IPlayerActionTarget p_target) {
+        if (!_allowContextMenuInteractions) { return; }
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
         List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
         contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+    }
+    public void DisableContextMenuInteractions() {
+        _allowContextMenuInteractions = false;
+    }
+    public void EnableContextMenuInteractions() {
+        _allowContextMenuInteractions = true;
     }
     public void HidePlayerActionContextMenu() {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(null);

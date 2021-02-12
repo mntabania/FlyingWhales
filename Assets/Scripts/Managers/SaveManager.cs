@@ -107,7 +107,7 @@ public class SaveManager : MonoBehaviour {
         if (string.IsNullOrEmpty(fileName)) {
             fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
         }
-        string path = $"{Application.streamingAssetsPath}/Scenario Maps/{fileName}.sce";
+        string path = $"{Application.streamingAssetsPath}/Scenario Maps/{fileName}.json";
         SaveGame.Save(path, scenarioSave);
         
         Debug.Log($"Saved new scenario at {path}");

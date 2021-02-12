@@ -54,7 +54,6 @@ public class InnerMapCameraMove : BaseCameraMove {
 
     public override void Initialize() {
         base.Initialize();
-        gameObject.SetActive(false);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         

@@ -441,6 +441,16 @@ namespace UtilityScripts {
 
             return cornersOutside.Count == 0;
         }
+        public static Color GetValidTileHighlightColor() {
+            Color color = Color.green;
+            color.a = 0.3f;
+            return color;
+        }
+        public static Color GetInvalidTileHighlightColor() {
+            Color color = Color.red;
+            color.a = 0.3f;
+            return color;
+        }
     }    
 }
 

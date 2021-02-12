@@ -2437,6 +2437,13 @@
                 <e p="Transmission.cs" t="Include" />
               </e>
             </e>
+            <e p="Player Input" t="Include">
+              <e p="IntelInputModule.cs" t="Include" />
+              <e p="PickPortalInputModule.cs" t="Include" />
+              <e p="PlayerInputModule.cs" t="Include" />
+              <e p="SeizeInputModule.cs" t="Include" />
+              <e p="SpellInputModule.cs" t="Include" />
+            </e>
             <e p="Player.cs" t="Include" />
             <e p="PlayerDB.cs" t="Include" />
             <e p="PlayerSkillTreeNode.cs" t="Include" />
@@ -2845,7 +2852,6 @@
             <e p="SaveData.cs" t="Include" />
             <e p="SaveDataAlterEgo.cs" t="Include" />
             <e p="SaveDataCharacter.cs" t="Include" />
-            <e p="SaveDataCombatAbility.cs" t="Include" />
             <e p="SaveDataCurrentProgress.cs" t="Include" />
             <e p="SaveDataFaction.cs" t="Include" />
             <e p="SaveDataFactionRelationship.cs" t="Include" />

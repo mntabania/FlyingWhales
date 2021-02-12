@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class DemonicStructurePlayerSkill : SkillData {
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE;
@@ -39,14 +40,10 @@ public class DemonicStructurePlayerSkill : SkillData {
     }
     
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        Color color = Color.green;
-        color.a = 0.3f;
-        TileHighlighter.Instance.PositionHighlight(tile.area, color);
+        TileHighlighter.Instance.PositionHighlight(tile.area, GameUtilities.GetValidTileHighlightColor());
     }
     public override bool InvalidHighlight(LocationGridTile tile, ref string invalidText) {
-        Color color = Color.red;
-        color.a = 0.3f;
-        TileHighlighter.Instance.PositionHighlight(tile.area, color);
+        TileHighlighter.Instance.PositionHighlight(tile.area, GameUtilities.GetInvalidTileHighlightColor());
         invalidText = InvalidMessage(tile);
         return true;
     }

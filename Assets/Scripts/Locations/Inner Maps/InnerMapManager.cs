@@ -108,10 +108,10 @@ namespace Inner_Maps {
                 OnMiddleClick();
             } else if (keyCode == KeyCode.R) {
                 CycleRegions();
-            }
+            }    
         }
         private void OnRightClick() {
-            if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
+            if (!UIManager.Instance.IsMouseOnUI() && !ReferenceEquals(currentlyShowingMap, null) && GameManager.Instance.gameHasStarted) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
                 if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                     IPointOfInterest currentlySelectedPOI = UIManager.Instance.GetCurrentlySelectedPOI();
@@ -133,9 +133,7 @@ namespace Inner_Maps {
         }
         private void OnClickMapObject() {
             //TODO: Create system that disables normal clicks.
-            if (UIManager.Instance.IsMouseOnUI() == false
-                && ReferenceEquals(currentlyShowingMap, null) == false
-                && PlayerManager.Instance.player.IsPerformingPlayerAction() == false) {
+            if (!UIManager.Instance.IsMouseOnUI() && !ReferenceEquals(currentlyShowingMap, null) && !PlayerManager.Instance.player.IsPerformingPlayerAction()) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
                 if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                     if (selectables.Count > 0) {
@@ -188,21 +186,14 @@ namespace Inner_Maps {
                 }
             }
 
-            
-            if (tile.area.structureComponent.HasStructureInArea() 
-                && tile.area.structureComponent.GetMostImportantStructureOnTile().structureType.IsPlayerStructure()) {
+            if (tile.structure != null) {
                 if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                     return room;
-                } else {
-                    return tile.structure;    
                 }
-                
-            }
-            else {
-                if (tile.structure != null) {
-                    if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
-                        return room;
-                    } else if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) ||
+                if (tile.structure.structureType.IsPlayerStructure()) {
+                    return tile.structure;
+                } else {
+                    if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) ||
                                (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && 
                                tile.structure is CityCenter == false) {
                         return tile.structure;    
@@ -210,7 +201,6 @@ namespace Inner_Maps {
                         return tile.structure;    
                     }
                 }
-                // return tile.hexTileOwner;
             }
 
             return null;
@@ -239,23 +229,13 @@ namespace Inner_Maps {
                     }
                 }
             }
-            
-            
-            if (tile.area.structureComponent.HasStructureInArea()) {
-                LocationStructure mostImportantStructure = tile.area.structureComponent.GetMostImportantStructureOnTile();
-                if (mostImportantStructure.structureType.IsPlayerStructure()) {
-                    if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
-                        selectables.Add(room);
-                    }
-                    selectables.Add(tile.structure is DemonicStructure
-                        ? tile.structure
-                        : mostImportantStructure);
+            if (tile.structure != null) {
+                if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                    selectables.Add(room);
                 }
-            } else {
-                if (tile.structure != null) {
-                    if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
-                        selectables.Add(room);
-                    }
+                if (tile.structure.structureType.IsPlayerStructure()) {
+                    selectables.Add(tile.structure);
+                } else {
                     if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) || //if man made structure check if structure object has not yet been destroyed 
                         (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed
                         tile.structure is CityCenter == false) {
@@ -263,9 +243,9 @@ namespace Inner_Maps {
                     } else if (tile.structure is Cave || tile.structure is MonsterLair) {
                         selectables.Add(tile.structure);    
                     }
-                }
-                // selectables.Add(tile.hexTileOwner);
+                }    
             }
+            
             
             return true;
         }
@@ -293,9 +273,9 @@ namespace Inner_Maps {
             ShowInnerMap(location);
         }
         public void ShowInnerMap(Region location, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
-            if (GameManager.Instance.gameHasStarted == false) {
-                return;
-            }
+            // if (GameManager.Instance.gameHasStarted == false) {
+            //     return;
+            // }
             location.innerMap.Open();
             currentlyShowingMap = location.innerMap;
             currentlyShowingLocation = location;
@@ -646,7 +626,10 @@ namespace Inner_Maps {
         #region Structures
         public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type, RESOURCE resource) {
             StructureSetting structureSetting = new StructureSetting(type, resource);
-            return structurePrefabs[structureSetting];
+            if (structurePrefabs.ContainsKey(structureSetting)) {
+                return structurePrefabs[structureSetting];    
+            }
+            throw new Exception($"No structure prefabs for {structureSetting}");
         }
         public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
             if (structureSetting.isCorrupted) {
@@ -842,24 +825,24 @@ namespace Inner_Maps {
             ObjectPoolManager.Instance.ReturnGridTileListToPool(refinedTiles);
 	    }
 	    private void SetAsWall(LocationGridTile tile, LocationStructure structure) {
-            if (GameManager.Instance.gameHasStarted) {
+            // if (GameManager.Instance.gameHasStarted) {
                 if (tile.objHere != null) {
                     tile.structure.RemovePOI(tile.objHere);
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
-            }
+            // }
 		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);	
 		    tile.SetTileType(LocationGridTile.Tile_Type.Wall);
 		    tile.SetTileState(LocationGridTile.Tile_State.Occupied);
 		    tile.SetStructure(structure);
 	    }
 	    private void SetAsGround(LocationGridTile tile, LocationStructure structure) {
-            if (GameManager.Instance.gameHasStarted) {
+            // if (GameManager.Instance.gameHasStarted) {
                 if (tile.objHere != null) {
                     tile.structure.RemovePOI(tile.objHere);
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
-            }
+            // }
 		    tile.SetStructure(structure);
 		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);
 		    // tile.SetStructure(structure);

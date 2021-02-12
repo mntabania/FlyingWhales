@@ -21,14 +21,14 @@
 	
 	public class SaveDataAreaFeature {
 
-		public string areaFeatureName;
+		public string tileFeatureName;
 
 		public virtual void Save(AreaFeature areaFeature) {
-			areaFeatureName = areaFeature.GetType().Name;
+			tileFeatureName = areaFeature.GetType().Name;
 		}
 
 		public virtual AreaFeature Load() {
-			return LandmarkManager.Instance.CreateAreaFeature<AreaFeature>(areaFeatureName);
+			return LandmarkManager.Instance.CreateAreaFeature<AreaFeature>(tileFeatureName);
 		}
 	}
 }

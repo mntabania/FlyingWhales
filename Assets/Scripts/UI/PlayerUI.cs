@@ -770,19 +770,6 @@ public class PlayerUI : BaseMonoBehaviour {
     private void OnUnseizePOI(IPointOfInterest poi) {
         EnableTopMenuButtons();
     }
-    public void ShowSeizedObjectUI() {
-        // unseizeButton.gameObject.SetActive(true);
-    }
-    public void HideSeizedObjectUI() {
-        // unseizeButton.gameObject.SetActive(false);
-    }
-    //Not used right now, might be used in the future
-    public void UpdateSeizedObjectUI() {
-        unseizeButton.gameObject.SetActive(PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-    }
-    public void OnClickSeizedObject() {
-        // PlayerManager.Instance.player.seizeComponent.PrepareToUnseize();
-    }
     #endregion
 
     #region Spells
@@ -999,12 +986,12 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
 
     #region Top Menu
-    private void EnableTopMenuButtons() {
+    public void EnableTopMenuButtons() {
         for (int i = 0; i < topMenuButtons.Length; i++) {
             topMenuButtons[i].interactable = true;
         }
     }
-    private void DisableTopMenuButtons() {
+    public void DisableTopMenuButtons() {
         for (int i = 0; i < topMenuButtons.Length; i++) {
             topMenuButtons[i].interactable = false;
         }

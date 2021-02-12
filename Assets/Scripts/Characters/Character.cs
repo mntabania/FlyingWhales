@@ -1851,9 +1851,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
     }
     public void CenterOnCharacter() {
-        if (GameManager.Instance.gameHasStarted == false) {
-            return;
-        }
+        // if (GameManager.Instance.gameHasStarted == false) {
+        //     return;
+        // }
         if (isInLimbo) {
             if (isLycanthrope && lycanData.activeForm != this) {
                 lycanData.activeForm.CenterOnCharacter();

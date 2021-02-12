@@ -29,7 +29,7 @@ namespace Threads {
             for (int i = 0; i < logs.Count; i++) {
                 Log log = logs[i];
                 log.ReEvaluateWholeText();
-                DatabaseManager.Instance.mainSQLDatabase.InsertLog(log);
+                DatabaseManager.Instance.mainSQLDatabase.InsertLog(log, out var deletedLog);
             }
             logs.ReleaseLogInstancesAndLogList();
         }
