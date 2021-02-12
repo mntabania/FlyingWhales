@@ -14,6 +14,7 @@ public class SkillUpgradeDataEditor : Editor {
     void OnEnable() {
         
         data = (PlayerSkillData)target;
+        AssetDatabase.Refresh();
         EditorUtility.SetDirty(data);
     }
 
@@ -23,12 +24,18 @@ public class SkillUpgradeDataEditor : Editor {
         EditorGUILayout.Space();
         EditorGUILayout.TextArea("REQUIREMENTS FOR UNLOCKING");
         DisplayUnlockingRequirementBonus();
+        serializedObject.ApplyModifiedProperties();
         EditorGUILayout.Space();
         EditorGUILayout.TextArea("UPGRADE BONUS STATS");
         DisplayUpgradeBonus();
+        serializedObject.ApplyModifiedProperties();
     }
 
-    void DisplayUpgradeBonus() {
+	private void OnDisable() {
+        AssetDatabase.SaveAssets();
+    }
+
+	void DisplayUpgradeBonus() {
         foldUpgradeBonus = EditorGUILayout.InspectorTitlebar(foldUpgradeBonus, this);
         if (foldUpgradeBonus) {
             DisplayEnumList(data.skillUpgradeData.bonuses, "Bonus stats");
