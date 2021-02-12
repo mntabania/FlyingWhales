@@ -76,25 +76,29 @@ public class BuildLair : GoapAction {
         }
         
         LocationGridTile targetTile = otherData[0].obj as LocationGridTile;
-        Area targetHex = targetTile.area;
-        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(targetHex.region, LOCATION_TYPE.DUNGEON, targetHex);
+        Area targetArea = targetTile.area;
+        //LandmarkManager.Instance.CreateNewLandmarkOnTile(targetArea, LANDMARK_TYPE.MONSTER_LAIR);
+        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(targetArea.region, LOCATION_TYPE.DUNGEON, targetArea);
 
-        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(targetHex.region, STRUCTURE_TYPE.MONSTER_LAIR);
+        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(targetArea.region, STRUCTURE_TYPE.MONSTER_LAIR);
         settlement.GenerateStructures(structure);
 
-        List<LocationGridTile> locationGridTiles = targetHex.gridTileComponent.gridTiles.ToList(); // new List<LocationGridTile>(targetHex.locationGridTiles);
+        List<LocationGridTile> locationGridTiles = targetArea.gridTileComponent.gridTiles; //.ToList()// new List<LocationGridTile>(targetHex.locationGridTiles);
 
-        LocationStructure wilderness = targetHex.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-        InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, targetHex.region, wilderness);
+        LocationStructure wilderness = targetArea.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, targetArea.region, wilderness);
 
-        structure.SetOccupiedArea(targetHex);
-        
-        List<BlockWall> walls = structure.GetTileObjectsOfType<BlockWall>();
+        structure.SetOccupiedArea(targetArea);
+
+        List<TileObject> walls = ObjectPoolManager.Instance.CreateNewTileObjectList();
+        structure.PopulateTileObjectsList(walls, TILE_OBJECT_TYPE.BLOCK_WALL, null);
         for (int i = 0; i < walls.Count; i++) {
-            BlockWall blockWall = walls[i];
+            TileObject blockWall = walls[i];
             blockWall.baseMapObjectVisual.ApplyGraphUpdate();
         }
-        targetHex.areaItem.UpdatePathfindingGraph();
+        ObjectPoolManager.Instance.ReturnTileObjectListToPool(walls);
+        targetArea.areaItem.UpdatePathfindingGraph();
+        //targetHex.UpdatePathfindingGraphCoroutine();
 
         goapNode.actor.necromancerTrait.SetLairStructure(structure);
         goapNode.actor.MigrateHomeStructureTo(structure);

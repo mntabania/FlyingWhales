@@ -16,7 +16,8 @@ public class WinterRose : TileObject {
             _particleEffect = GameManager.Instance.CreateParticleEffectAt(
                 gridTileLocation.area.gridTileComponent.centerGridTile,
                 PARTICLE_EFFECT.Winter_Rose).GetComponent<AutoDestroyParticle>();
-            // gridTileLocation.area.GradualChangeBiomeType(BIOMES.SNOW, OnDoneChangingBiome);
+            //gridTileLocation.hexTileOwner.ChangeBiomeType(BIOMES.SNOW);
+            gridTileLocation.area.biomeComponent.GradualChangeBiomeType(BIOMES.SNOW, OnDoneChangingBiome);
             gridTileLocation.structure.RemovePOI(this);
         }
     }

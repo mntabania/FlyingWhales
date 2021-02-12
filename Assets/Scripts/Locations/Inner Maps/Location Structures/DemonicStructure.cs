@@ -33,9 +33,9 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void AfterStructureDestruction() {
             structureObj.OnOwnerStructureDestroyed(region.innerMap); 
-            Area area = occupiedArea;
+            //Area area = occupiedArea;
             base.AfterStructureDestruction();
-            area.gridTileComponent.RemoveCorruption(area);
+            //area.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
             currentAttackers.Clear();
             Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);

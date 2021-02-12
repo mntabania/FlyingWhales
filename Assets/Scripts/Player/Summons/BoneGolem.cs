@@ -29,7 +29,7 @@ public class BoneGolem : Summon {
             return;
         }
         base.SubscribeToSignals();
-        Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedHexTile);
+        Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     public override void UnsubscribeSignals() {
@@ -37,7 +37,7 @@ public class BoneGolem : Summon {
             return;
         }
         base.UnsubscribeSignals();
-        Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedHexTile);
+        Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     #endregion
@@ -50,10 +50,10 @@ public class BoneGolem : Summon {
         }
     }
 
-    private void OnCharacterExitedHexTile(Character character, Area tile) {
+    private void OnCharacterExitedArea(Character character, Area p_area) {
         if (character != this && combatComponent.isInCombat) {
             if (HasTerritory()) {
-                if (IsTerritory(tile)) {
+                if (IsTerritory(p_area)) {
                     bool isCharacterInStillInTerritory = IsTerritory(character.gridTileLocation.area);
                     if (!isCharacterInStillInTerritory) {
                         combatComponent.RemoveHostileInRange(character);

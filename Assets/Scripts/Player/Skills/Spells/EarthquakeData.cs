@@ -12,7 +12,7 @@ public class EarthquakeData : SkillData {
     public virtual int abilityRadius => 1;
 
     public EarthquakeData() : base() {
-        targetTypes = new[] { SPELL_TARGET.HEX };
+        targetTypes = new[] { SPELL_TARGET.AREA };
     }
 
     public override void ActivateAbility(Area targetArea) {

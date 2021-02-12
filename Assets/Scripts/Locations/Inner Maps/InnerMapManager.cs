@@ -189,7 +189,8 @@ namespace Inner_Maps {
             }
 
             
-            if (tile.structure is DemonicStructure) {
+            if (tile.area.structureComponent.HasStructureInArea() 
+                && tile.area.structureComponent.GetMostImportantStructureOnTile().structureType.IsPlayerStructure()) {
                 if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                     return room;
                 } else {
@@ -240,13 +241,16 @@ namespace Inner_Maps {
             }
             
             
-            if (tile.structure is DemonicStructure) {
-                if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
-                    selectables.Add(room);
+            if (tile.area.structureComponent.HasStructureInArea()) {
+                LocationStructure mostImportantStructure = tile.area.structureComponent.GetMostImportantStructureOnTile();
+                if (mostImportantStructure.structureType.IsPlayerStructure()) {
+                    if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                        selectables.Add(room);
+                    }
+                    selectables.Add(tile.structure is DemonicStructure
+                        ? tile.structure
+                        : mostImportantStructure);
                 }
-                selectables.Add(tile.structure is DemonicStructure
-                    ? tile.structure
-                    : tile.area.primaryStructureInArea);
             } else {
                 if (tile.structure != null) {
                     if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
@@ -374,16 +378,23 @@ namespace Inner_Maps {
                 || UIManager.Instance.poiTestingUI.poi == character)) {
                 return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
-            
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Area hexTile = tile.area;
+            //else if (UIManager.Instance.minionCommandsUI.gameObject.activeSelf && 
+            //           (UIManager.Instance.minionCommandsUI.targetPOI == tile.objHere 
+            //            || UIManager.Instance.minionCommandsUI.targetPOI == character)) {
+            //    return; //do not show tooltip if right click menu is currently targeting the hovered object
+            //}
+
+            //|| DEVELOPMENT_BUILD
+#if UNITY_EDITOR
+            Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
+            Area area = tile.area;
             string summary = tile.localPlace.ToString();
             // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             // summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
             // summary = $"{summary}\n<b>Initial Ground Type:</b>{tile.initialGroundType.ToString()}";
             // summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
             // summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
-            summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
+            summary = $"{summary}\n<b>Area:</b>{(area.name ?? "None")}";
             // summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
             // summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
             // summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";
@@ -759,20 +770,28 @@ namespace Inner_Maps {
 
         #region Monster Lair
         public void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure structure, Region region, LocationStructure wilderness) {
-            List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => !t.IsAtEdgeOfMap()).ToList();
+            List<LocationGridTile> refinedTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+            for (int i = 0; i < locationGridTiles.Count; i++) {
+                LocationGridTile gridTile = locationGridTiles[i];
+                if (!gridTile.IsAtEdgeOfMap()) {
+                    refinedTiles.Add(gridTile);
+                }
+            }
+            //locationGridTiles.Where(t => !t.IsAtEdgeOfMap()).ToList();
 		    LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
 		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, 2, 15);
             
 		    Assert.IsNotNull(cellMap, $"There was no cellmap generated for monster lair structure {structure.ToString()}");
 		    
-		    CellularAutomataGenerator.DrawMap(tileMap, cellMap, InnerMapManager.Instance.assetManager.monsterLairWallTile, 
+		    CellularAutomataGenerator.DrawMap(tileMap, cellMap, assetManager.monsterLairWallTile, 
 			    null, 
 			    (locationGridTile) => SetAsWall(locationGridTile, structure),
 			    (locationGridTile) => SetAsGround(locationGridTile, structure));
 
-		    List<LocationGridTile> tilesToRefine = new List<LocationGridTile>(refinedTiles);
-		    //refine further
-		    for (int i = 0; i < tilesToRefine.Count; i++) {
+            List<LocationGridTile> tilesToRefine = ObjectPoolManager.Instance.CreateNewGridTileList(); //new List<LocationGridTile>(refinedTiles);
+            tilesToRefine.AddRange(refinedTiles);
+            //refine further
+            for (int i = 0; i < tilesToRefine.Count; i++) {
 			    LocationGridTile tile = tilesToRefine[i];
 			    if (tile.HasNeighbourOfType(LocationGridTile.Ground_Type.Flesh) == false) {
 				    tile.SetStructureTilemapVisual(null);
@@ -783,6 +802,7 @@ namespace Inner_Maps {
                     refinedTiles.Remove(tile);
 			    }
 		    }
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesToRefine);
 		    MonsterLairPerlin(refinedTiles, structure);
 		    //create entrances
 		    //get tiles that are at the edge of the given tiles, but are not at the edge of its map.
@@ -819,6 +839,7 @@ namespace Inner_Maps {
 				    structure.AddPOI(blockWall, tile);
 			    }
 		    }
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(refinedTiles);
 	    }
 	    private void SetAsWall(LocationGridTile tile, LocationStructure structure) {
             if (GameManager.Instance.gameHasStarted) {

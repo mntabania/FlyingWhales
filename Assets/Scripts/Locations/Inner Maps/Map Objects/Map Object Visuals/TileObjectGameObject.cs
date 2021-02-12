@@ -57,10 +57,10 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        Area hex = tileObject.gridTileLocation.area;
+        Area area = tileObject.gridTileLocation.area;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state,
-            hex.biomeType,
+            area.biomeType,
             tileObject.gridTileLocation?.isCorrupted ?? false));
     }
 
@@ -77,11 +77,16 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         base.OnPointerMiddleClick(poi);
         Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
         if (activeCharacter != null) {
-            if(activeCharacter.minion == null) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                UIManager.Instance.poiTestingUI.ShowUI(poi,activeCharacter);
+            UIManager.Instance.poiTestingUI.ShowUI(poi, activeCharacter);
 #endif
-            }
+            //            if(activeCharacter.minion == null) {
+            //#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            //                UIManager.Instance.poiTestingUI.ShowUI(poi,activeCharacter);
+            //#endif
+            //            } else {
+            //                UIManager.Instance.minionCommandsUI.ShowUI(poi);
+            //            }
         }
     }
     protected override void OnPointerEnter(TileObject character) {

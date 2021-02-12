@@ -161,8 +161,8 @@ public class SkillData : IPlayerSkill {
     public bool CanTarget(LocationGridTile tile) {
         return CanPerformAbilityTowards(tile);
     }
-    public bool CanTarget(Area hex) {
-        return CanPerformAbilityTowards(hex);
+    public bool CanTarget(Area p_area) {
+        return CanPerformAbilityTowards(p_area);
     }
     public bool CanTarget(BaseSettlement p_targetSettlement) {
         return CanPerformAbilityTowards(p_targetSettlement);

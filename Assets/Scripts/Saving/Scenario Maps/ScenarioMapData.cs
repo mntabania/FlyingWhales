@@ -19,8 +19,8 @@ namespace Scenario_Maps {
                 //save hex tiles
                 Point[] tileCoordinates = new Point[settlement.areas.Count];
                 for (int j = 0; j < tileCoordinates.Length; j++) {
-                    Area hexTile = settlement.areas[j];
-                    tileCoordinates[j] = new Point(hexTile.areaData.xCoordinate, hexTile.areaData.yCoordinate);
+                    Area area = settlement.areas[j];
+                    tileCoordinates[j] = new Point(area.areaData.xCoordinate, area.areaData.yCoordinate);
                 }
                 
                 //save structure settings

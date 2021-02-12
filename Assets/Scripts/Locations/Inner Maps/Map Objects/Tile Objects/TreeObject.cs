@@ -53,10 +53,10 @@ public class TreeObject : TileObject {
         if (gridTileLocation.area.settlementOnArea != null) {
             gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
         }
-        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighboringHexTile) => {
-            if (eachNeighboringHexTile.settlementOnArea != null) {
-                eachNeighboringHexTile.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
-               parentSettlement = eachNeighboringHexTile.settlementOnArea;
+        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+            if (eachNeighbor.settlementOnArea != null) {
+                eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+               parentSettlement = eachNeighbor.settlementOnArea;
             }
         });
     }
@@ -169,8 +169,8 @@ public class TreeObject : TileObject {
             if (location.isCorrupted) {
                 entType = SUMMON_TYPE.Corrupt_Ent;
             } else {
-                Area hex = location.area;
-                BIOMES biome = hex.biomeType;
+                Area area = location.area;
+                BIOMES biome = area.biomeType;
                 switch (biome) {
                     case BIOMES.DESERT:
                         entType = SUMMON_TYPE.Desert_Ent;

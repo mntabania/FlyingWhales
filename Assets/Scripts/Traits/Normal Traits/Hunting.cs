@@ -5,7 +5,7 @@ namespace Traits {
     public class Hunting : Status {
 
         private Character _owner;
-        public Area targetTile { get; private set; }
+        public Area targetArea { get; private set; }
 
         #region getters
         public override Type serializedData => typeof(SaveDataHunting);
@@ -25,7 +25,7 @@ namespace Traits {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataHunting saveDataHunting = saveDataTrait as SaveDataHunting;
             Assert.IsNotNull(saveDataHunting);
-            targetTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataHunting.targetTileID);
+            targetArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataHunting.targetAreaID);
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
@@ -55,13 +55,13 @@ namespace Traits {
         public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
             base.OnCopyStatus(statusToCopy, from, to);
             if (statusToCopy is Hunting status) {
-                targetTile = status.targetTile;
+                targetArea = status.targetArea;
             }
         }
         #endregion
 
-        public void SetTargetTile(Area hexTile) {
-            targetTile = hexTile;
+        public void SetTargetArea(Area p_area) {
+            targetArea = p_area;
         }
         
         private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob goapPlanJob) {
@@ -75,13 +75,13 @@ namespace Traits {
 #region Save Data
 public class SaveDataHunting : SaveDataTrait {
 
-    public string targetTileID;
+    public string targetAreaID;
     
     public override void Save(Trait trait) {
         base.Save(trait);
         Hunting hunting = trait as Hunting;
         Assert.IsNotNull(hunting);
-        targetTileID = hunting.targetTile.persistentID;
+        targetAreaID = hunting.targetArea.persistentID;
     }
 }
 #endregion

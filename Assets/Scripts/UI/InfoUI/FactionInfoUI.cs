@@ -188,11 +188,18 @@ public class FactionInfoUI : InfoUIBase {
     private void OnClickSettlementItem(BaseSettlement settlement) {
         if (settlement.areas.Count > 0) {
             Area tile = settlement.areas[0];
-            //if inner map is showing, open inner map of hextile then center on it
-            if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
-                InnerMapManager.Instance.TryShowLocationMap(tile.region);    
-            }
-            InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
+            if (InnerMapManager.Instance.isAnInnerMapShowing) {
+                //if inner map is showing, open inner map of hextile then center on it
+                if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
+                    InnerMapManager.Instance.TryShowLocationMap(tile.region);    
+                }
+                InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
+            } 
+            //else {
+            //    //if world map is showing, just center on hextile
+            //    tile.CenterCameraHere();
+            //}
+            //UIManager.Instance.ShowHexTileInfo(tile);
         }
     }
     private SettlementNameplateItem GetLocationItem(BaseSettlement settlement) {

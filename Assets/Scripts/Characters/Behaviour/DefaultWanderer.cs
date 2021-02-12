@@ -23,8 +23,21 @@ public class DefaultWanderer : CharacterBehaviourComponent {
         if (character.gridTileLocation != null) {
             if ((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
                 log += "\n-No home structure and territory";
-                log += "\n-50% chance to Roam Around Tile";
+                //log += "\n-50% chance to Roam Around Tile";
+                log += "\n-Roam Around Tile";
                 return character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                //int roll = UnityEngine.Random.Range(0, 100);
+                //log += "\n-Roll: " + roll;
+                //if (roll < 50) {
+                //    character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                //} else {
+                //    log += "\n-Otherwise, Visit Different Region";
+                //    if (!character.jobComponent.TriggerVisitDifferentRegion()) {
+                //        log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
+                //        character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                //    }
+                //}
+                //return true;
             } else {
                 log += "\n-Has home structure or territory";
                 if (character.isAtHomeStructure || character.IsInTerritory()) {

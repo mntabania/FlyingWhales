@@ -161,11 +161,9 @@ public class CombatState : CharacterState {
             //TEMPORARILY REMOVED THIS UNTIL FURTHER NOTICE
             if (isBeingApprehended && stateComponent.owner.traitContainer.HasTrait("Criminal") && stateComponent.owner.limiterComponent.canPerform && stateComponent.owner.limiterComponent.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 if (!stateComponent.owner.traitContainer.HasTrait("Berserked")) {
-                    Area chosenHex = stateComponent.owner.currentRegion.GetRandomHexThatMeetCriteria(
-                        currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && 
-                                   !currHex.structureComponent.HasStructureInArea() && !currHex.IsNextToOrPartOfVillage()); //&& !currHex.isCorrupted
-                    if (chosenHex != null) {
-                        LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
+                    Area chosenArea = stateComponent.owner.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
+                    if (chosenArea != null) {
+                        LocationGridTile chosenTile = chosenArea.gridTileComponent.GetRandomPassableTile();
                         stateComponent.owner.jobComponent.CreateFleeCrimeJob(chosenTile);
                         return;
                     }

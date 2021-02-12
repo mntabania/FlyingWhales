@@ -10,7 +10,7 @@ public class DemonicStructurePlayerSkill : SkillData {
     public STRUCTURE_TYPE structureType { get; protected set; }
 
     public DemonicStructurePlayerSkill() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.HEX };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.AREA };
     }
     
     public override void ActivateAbility(Area targetArea) {
@@ -21,19 +21,20 @@ public class DemonicStructurePlayerSkill : SkillData {
         } else {
             question = "Are you sure you want to build " + name + "?";
         }
-        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetArea.structureComponent.StartBuild(type, targetArea), showCover: true, pauseAndResume: true, layer: 50);
+        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetArea.StartBuild(type), showCover: true, pauseAndResume: true, layer: 50);
         
         // base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(Area targetArea) {
         if (base.CanPerformAbilityTowards(targetArea)) {
-            return targetArea.structureComponent.CanBuildDemonicStructureHere(structureType, targetArea);
+            return targetArea.CanBuildDemonicStructureHere(structureType);
         }
         return false;
     }
-    public void BuildDemonicStructureAt(Area targetHex) {
-        targetHex.gridTileComponent.StartCorruption(targetHex);
-        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetHex.settlementOnArea, targetHex.region.innerMap, targetHex, structureType, RESOURCE.NONE);
+    public void BuildDemonicStructureAt(Area targetArea) {
+        //targetArea.StartCorruption();
+        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetArea.settlementOnArea, targetArea.region.innerMap, targetArea, structureType, RESOURCE.NONE);
+        //targetHex.landmarkOnTile?.OnFinishedBuilding();
         Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
     }
     

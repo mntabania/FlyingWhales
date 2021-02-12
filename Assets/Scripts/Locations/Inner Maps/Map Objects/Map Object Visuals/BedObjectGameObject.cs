@@ -29,12 +29,12 @@ public class BedObjectGameObject : TileObjectGameObject {
     }
 
     public override void UpdateTileObjectVisual(TileObject bed) {
-        Area hex = bed.gridTileLocation.area;
+        Area area = bed.gridTileLocation.area;
         int userCount = bed.users.Length;
         if (userCount == 0) {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 
                 bed.state,
-                hex.biomeType,
+                area.biomeType,
                 bed.gridTileLocation?.isCorrupted ?? false));
         } else if (userCount == 1) {
             SetVisual(bed1Sleeping);

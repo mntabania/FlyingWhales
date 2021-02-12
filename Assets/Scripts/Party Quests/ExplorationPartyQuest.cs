@@ -106,7 +106,23 @@ public class ExplorationPartyQuest : PartyQuest {
         regionRefForGettingNewStructure = region;
     }
     public void ProcessSettingTargetStructure() {
-        LocationStructure target = regionRefForGettingNewStructure.GetRandomSpecialStructureExcept(alreadyExplored);
+        //List<Region> adjacentRegions = new List<Region>(regionRefForGettingNewStructure.neighbours);
+        LocationStructure target = null;
+        //if (adjacentRegions != null) {
+        //    adjacentRegions.Add(regionRefForGettingNewStructure);
+        //    while (target == null && adjacentRegions.Count > 0) {
+        //        Region chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
+        //        //target = chosenRegion.GetRandomSpecialStructure();
+        //        target = chosenRegion.GetRandomSpecialStructureExcept(alreadyExplored);
+        //        if (target == null) {
+        //            adjacentRegions.Remove(chosenRegion);
+        //        }
+        //    }
+        //} else {
+        //    //target = regionRefForGettingNewStructure.GetRandomSpecialStructure();
+        //    target = regionRefForGettingNewStructure.GetRandomSpecialStructureExcept(alreadyExplored);
+        //}
+        target = regionRefForGettingNewStructure.GetRandomSpecialStructureExcept(alreadyExplored);
         SetTargetStructure(target);
     }
     private void SetTargetStructure(LocationStructure structure) {

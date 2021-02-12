@@ -11,7 +11,7 @@ public class PoisonBloomData : SkillData {
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public PoisonBloomData() : base() {
-        targetTypes = new[] { SPELL_TARGET.HEX };
+        targetTypes = new[] { SPELL_TARGET.AREA };
     }
 
     public override void ActivateAbility(Area targetArea) {

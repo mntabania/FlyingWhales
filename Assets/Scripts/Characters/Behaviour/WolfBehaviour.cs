@@ -45,19 +45,20 @@ public class WolfBehaviour : BaseMonsterBehaviour {
             } else {
                 log += $"\n-Could not find valid settlement checking unoccupied monster lairs";
                 List<LocationStructure> monsterLairs = character.currentRegion.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.MONSTER_LAIR);
-                List<LocationStructure> choices = null;
+                List<LocationStructure> choices = ObjectPoolManager.Instance.CreateNewStructuresList();
                 //if there were no settlements found, then check if there are any unoccupied monster lairs
                 for (int i = 0; i < monsterLairs.Count; i++) {
                     LocationStructure monsterLair = monsterLairs[i];
                     if (monsterLair.CanBeResidentHere(character)) {
-                        if (choices == null) {
-                            choices = new List<LocationStructure>();
-                        }
                         choices.Add(monsterLair);
                     }
                 }
-                if (choices != null) {
-                    LocationStructure randomStructure = CollectionUtilities.GetRandomElement(choices);
+                LocationStructure randomStructure = null;
+                if (choices.Count > 0) {
+                    randomStructure = CollectionUtilities.GetRandomElement(choices);
+                }
+                ObjectPoolManager.Instance.ReturnStructuresListToPool(choices);
+                if (randomStructure != null) {
                     log += $"\n-Found unoccupied monster lair {randomStructure.name}. Setting home to that.";
                     character.MigrateHomeStructureTo(randomStructure);
                     return true; //will return here, because character will gain return home urgent after this
@@ -92,7 +93,7 @@ public class WolfBehaviour : BaseMonsterBehaviour {
             if (choices.Count > 0) {
                 Area tileWithGameFeature = choices[0];
                 Hunting hunting = TraitManager.Instance.CreateNewInstancedTraitClass<Hunting>("Hunting");
-                hunting.SetTargetTile(tileWithGameFeature);
+                hunting.SetTargetArea(tileWithGameFeature);
                 character.traitContainer.AddTrait(character, hunting);
                 log += $"\n-Found valid hunting spot at {tileWithGameFeature}";
                 return true;

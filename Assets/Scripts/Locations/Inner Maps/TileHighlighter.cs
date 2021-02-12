@@ -67,14 +67,14 @@ public class TileHighlighter : MonoBehaviour {
         parentTransform.transform.position = centerTile.centeredWorldLocation;
         parentTransform.gameObject.SetActive(true);
     }
-    public void PositionHighlight(Area tile) {
-        SetupHighlight((InnerMapManager.AreaLocationGridTileSize.x / 2) - 1, tile.biomeType);
-        parentTransform.transform.position = tile.worldPosition;
+    public void PositionHighlight(Area p_area) {
+        SetupHighlight((InnerMapManager.AreaLocationGridTileSize.x / 2) - 1, p_area.biomeType);
+        parentTransform.transform.position = p_area.worldPosition;
         parentTransform.gameObject.SetActive(true);
     }
-    public void PositionHighlight(Area tile, Color color) {
-        SetupHighlight((InnerMapManager.AreaLocationGridTileSize.x / 2) - 1, tile.biomeType, color);
-        parentTransform.transform.position = tile.worldPosition;
+    public void PositionHighlight(Area p_area, Color color) {
+        SetupHighlight((InnerMapManager.AreaLocationGridTileSize.x / 2) - 1, p_area.biomeType, color);
+        parentTransform.transform.position = p_area.worldPosition;
         parentTransform.gameObject.SetActive(true);
     }
     public void HideHighlight() {

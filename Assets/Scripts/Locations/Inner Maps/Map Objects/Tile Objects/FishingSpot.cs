@@ -51,10 +51,10 @@ public class FishingSpot : TileObject {
         if (gridTileLocation.area.settlementOnArea != null) {
             gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
         }
-        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighboringHexTile) => {
-            if (eachNeighboringHexTile.settlementOnArea != null) {
-                eachNeighboringHexTile.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
-                parentSettlement = eachNeighboringHexTile.settlementOnArea;
+        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+            if (eachNeighbor.settlementOnArea != null) {
+                eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+                parentSettlement = eachNeighbor.settlementOnArea;
             }
         });
     }

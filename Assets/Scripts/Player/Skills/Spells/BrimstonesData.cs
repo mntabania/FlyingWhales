@@ -12,7 +12,7 @@ public class BrimstonesData : SkillData {
     public virtual int abilityRadius => 1;
 
     public BrimstonesData() : base() {
-        targetTypes = new[]{ SPELL_TARGET.HEX };
+        targetTypes = new[]{ SPELL_TARGET.AREA };
     }
     public override void ActivateAbility(Area targetArea) {
         targetArea.spellsComponent.SetHasBrimstones(true);

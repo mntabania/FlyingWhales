@@ -10,7 +10,7 @@ public class HeatWaveData : SkillData {
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
     public HeatWaveData() : base() {
-        targetTypes = new[] { SPELL_TARGET.HEX };
+        targetTypes = new[] { SPELL_TARGET.AREA };
     }
 
     public override void ActivateAbility(Area targetArea) {

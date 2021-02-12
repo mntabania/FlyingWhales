@@ -167,9 +167,9 @@ public class DropRestrained : GoapAction {
                 }    
             } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
                 //snatcher specific behaviour
-                Area hexTileLocation = targetCharacter.areaLocation;
-                if(hexTileLocation != null) {
-                    LocationStructure structure = hexTileLocation.primaryStructureInArea;
+                Area areaLocation = targetCharacter.areaLocation;
+                if(areaLocation != null) {
+                    LocationStructure structure = areaLocation.structureComponent.GetMostImportantStructureOnTile();
                     if (structure is DemonicStructure) {
                         if (structure is Kennel) {
                             List<LocationGridTile> choices = structure.passableTiles.Where(t => t.objHere == null || t.IsPassable()).ToList();

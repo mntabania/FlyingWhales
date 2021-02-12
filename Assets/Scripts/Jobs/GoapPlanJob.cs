@@ -99,9 +99,9 @@ public class GoapPlanJob : JobQueueItem {
                                 priorityLocations[item.Key].Add(structure);
                             }
                         } else if (ilocationSaveData.objectType == OBJECT_TYPE.Area) {
-                            Area hex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(ilocationSaveData.persistentID);
-                            if (hex != null) {
-                                priorityLocations[item.Key].Add(hex);
+                            Area hexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(ilocationSaveData.persistentID);
+                            if (hexTile != null) {
+                                priorityLocations[item.Key].Add(hexTile);
                             }
                         }
                     }

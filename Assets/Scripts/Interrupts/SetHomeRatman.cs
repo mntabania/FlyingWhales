@@ -37,14 +37,14 @@ namespace Interrupts {
             Region currentRegion = actor.currentRegion;
             if(currentRegion != null) {
                 List<BaseSettlement> settlementChoices = ObjectPoolManager.Instance.CreateNewSettlementList();
-                // List<Region> adjacentRegions = currentRegion.neighbours;
+                //List<Region> adjacentRegions = currentRegion.neighbours;
 
                 PopulateSettlementChoices(settlementChoices, currentRegion);
 
-                // for (int i = 0; i < adjacentRegions.Count; i++) {
-                //     Region region = adjacentRegions[i];
-                //     PopulateSettlementChoices(settlementChoices, region);
-                // }
+                //for (int i = 0; i < adjacentRegions.Count; i++) {
+                //    Region region = adjacentRegions[i];
+                //    PopulateSettlementChoices(settlementChoices, region);
+                //}
                 if(settlementChoices.Count > 0) {
                     BaseSettlement chosenSettlement = CollectionUtilities.GetRandomElement(settlementChoices);
                     actor.ClearTerritoryAndMigrateHomeSettlementTo(chosenSettlement);

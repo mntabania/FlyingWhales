@@ -46,8 +46,8 @@ public class LoadSecondWave : MapGenerationComponent {
         //Load Structure Wall Traits
         yield return MapGenerator.Instance.StartCoroutine(LoadStructureWallTraits(saveData));
         
-        //Load Hex tile Spells Component
-        yield return MapGenerator.Instance.StartCoroutine(LoadHexTileSpellsComponent(saveData));
+        //Load Area Spells Component
+        yield return MapGenerator.Instance.StartCoroutine(LoadAreaSpellsComponent(saveData));
 
         yield return MapGenerator.Instance.StartCoroutine(LoadActionReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadInterruptReferences(saveData));
@@ -254,12 +254,12 @@ public class LoadSecondWave : MapGenerationComponent {
     #endregion
 
     #region Hex Tile
-    private IEnumerator LoadHexTileSpellsComponent(SaveDataCurrentProgress saveData) {
+    private IEnumerator LoadAreaSpellsComponent(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Area Spells...");
         for (int i = 0; i < saveData.worldMapSave.areaSaves.Count; i++) {
-            SaveDataArea saveDataHextile = saveData.worldMapSave.areaSaves[i];
-            Area hexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataHextile.areaData.persistentID);
-            hexTile.spellsComponent.LoadReferences(saveDataHextile.spellsComponent);
+            SaveDataArea saveArea = saveData.worldMapSave.areaSaves[i];
+            Area area = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveArea.areaData.persistentID);
+            area.spellsComponent.LoadReferences(saveArea.spellsComponent);
         }
         yield return null;
     }

@@ -103,6 +103,23 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsPlayerStructure(this STRUCTURE_TYPE type) {
+        switch (type) {
+            case STRUCTURE_TYPE.THE_PORTAL:
+            case STRUCTURE_TYPE.OSTRACIZER:
+            case STRUCTURE_TYPE.CRYPT:
+            case STRUCTURE_TYPE.KENNEL:
+            case STRUCTURE_TYPE.THE_ANVIL:
+            case STRUCTURE_TYPE.MEDDLER:
+            case STRUCTURE_TYPE.EYE:
+            case STRUCTURE_TYPE.DEFILER:
+            case STRUCTURE_TYPE.THE_NEEDLES:
+            case STRUCTURE_TYPE.TORTURE_CHAMBERS:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static int StructurePriority(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
