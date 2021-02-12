@@ -1747,7 +1747,8 @@ namespace Inner_Maps {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {
                     break;
                 } else {
-                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP));
+                    int duration = TraitManager.Instance.allTraits["Freezing"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: duration);
                 }
             }
         }
@@ -1769,7 +1770,8 @@ namespace Inner_Maps {
         private void TriggerSnareTrap(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
             SetHasSnareTrap(false);
-            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP));
+            int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
+            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
         }
         #endregion
 

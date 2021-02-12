@@ -118,6 +118,7 @@ public class SkillData : IPlayerSkill {
         currentCooldownTick = cooldown;
         currentLevel = 0;
         isInUse = false;
+        currentLevel = 0;
     }
     public bool CanPerformAbilityTowards(IPointOfInterest poi) {
         if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -194,7 +195,7 @@ public class SkillData : IPlayerSkill {
         }
     }
     public void OnExecutePlayerSkill() {
-        currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type).cheatedLevel;
+        
         if (!PlayerSkillManager.Instance.unlimitedCast) {
             if (hasCharges) {
                 if(charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {

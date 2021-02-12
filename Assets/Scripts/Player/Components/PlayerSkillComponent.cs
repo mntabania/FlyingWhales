@@ -68,10 +68,13 @@ public class PlayerSkillComponent {
     public void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
 
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+        spellData.SetCurrentLevel(playerSkillData.cheatedLevel);
+        Debug.LogError(spellData.name + " -- " + spellData.currentLevel + " -- " + playerSkillData.cheatedLevel);
         spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(charges);
         spellData.SetCooldown(cooldown);
         spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
+        
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(threat);
         spellData.SetThreatPerHour(threatPerHour);

@@ -13,7 +13,7 @@ namespace Traits {
             description = "Jolted and temporarily paralyzed.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            ticksDuration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ZAP);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(25);
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
@@ -25,22 +25,22 @@ namespace Traits {
         #region Loading
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
-            if(addTo is IPointOfInterest poi) {
+            if (addTo is IPointOfInterest poi) {
                 electricEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Electric);
             }
             if (addTo.gridTileLocation != null) {
-                _audioObject = AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomZapAudio(), addTo.gridTileLocation, 1, false, true);    
+                _audioObject = AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomZapAudio(), addTo.gridTileLocation, 1, false, true);
             }
         }
         #endregion
-        
+
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
-            if(sourcePOI is IPointOfInterest poi) {
+            if (sourcePOI is IPointOfInterest poi) {
                 electricEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Electric);
             }
             if (sourcePOI.gridTileLocation != null) {
-                _audioObject = AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomZapAudio(), sourcePOI.gridTileLocation, 1, false, true);    
+                _audioObject = AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomZapAudio(), sourcePOI.gridTileLocation, 1, false, true);
             }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
@@ -69,7 +69,7 @@ namespace Traits {
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
                 //character.AdjustCanPerform(-1);
-                if(character.marker) {
+                if (character.marker) {
                     character.combatComponent.ClearHostilesInRange(false);
                     character.combatComponent.ClearAvoidInRange(false);
                 }

@@ -15,7 +15,8 @@ public class PoisonData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
-        targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned", overrideDuration: PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.POISON));
+        int duration = TraitManager.Instance.allTraits["Poisoned"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.POISON);
+        targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned", overrideDuration: duration);
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToDatabase();

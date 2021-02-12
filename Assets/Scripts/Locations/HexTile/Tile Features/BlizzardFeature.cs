@@ -151,7 +151,7 @@ namespace Locations.Tile_Features {
             base.Save(tileFeature);
             BlizzardFeature blizzardFeature = tileFeature as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {tileFeature?.ToString() ?? "Null"}");
-            expiryInTicks = GameManager.Instance.Today().GetTickDifference(blizzardFeature.expiryDate);
+            expiryInTicks = GameManager.Instance.Today().GetTickDifference(blizzardFeature.expiryDate) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
         }
         public override TileFeature Load() {
             BlizzardFeature blizzardFeature = base.Load() as BlizzardFeature;

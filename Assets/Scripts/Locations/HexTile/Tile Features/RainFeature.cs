@@ -18,7 +18,7 @@ namespace Locations.Tile_Features {
             name = "Rain";
             description = "Rain is pouring down in this location.";
             _charactersOutside = new List<Character>();
-            expiryInTicks = GameManager.Instance.GetTicksBasedOnHour(2);
+            expiryInTicks = GameManager.Instance.GetTicksBasedOnHour(2) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.RAIN);
         }
 
         #region Override

@@ -267,7 +267,8 @@ public class HexTileSpellsComponent {
                 i--;
                 continue;
             }
-            poi.AdjustHP(-50, ELEMENTAL_TYPE.Normal, showHPBar: true);
+            int processedDamage = -50 - (PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
@@ -415,7 +416,8 @@ public class HexTileSpellsComponent {
     }
     private void ElectricStormEffect(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-450, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            int processedDamage = -450 - (PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
         }
     }
     private void PerTickElectricStorm() {
@@ -468,7 +470,7 @@ public class HexTileSpellsComponent {
     private void PerTickIceteroids() {
         Profiler.BeginSample($"Per Tick Iceteroids");
         currentIceteroidsDuration++;
-        if (currentIceteroidsDuration >= GameManager.ticksPerHour) {
+        if (currentIceteroidsDuration >= GameManager.ticksPerHour + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ICETEROIDS)) {
             SetHasIceteroids(false);
         }
         Profiler.EndSample();
