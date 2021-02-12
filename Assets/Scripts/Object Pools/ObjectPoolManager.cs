@@ -34,7 +34,6 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
     private List<List<TileObject>> _tileObjectListPool;
-    private List<List<HexTile>> _hexTileListPool;
     private List<List<LocationStructure>> _structureListPool;
     private List<List<LocationGridTile>> _tileListPool;
     private List<List<Faction>> _factionListPool;
@@ -93,7 +92,6 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
         ConstructTileObjectListPool();
-        ConstructHexTileListPool();
         ConstructStructureListPool();
         ConstructGridTileListPool();
         ConstructFactionListPool();
@@ -102,6 +100,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructConversationPool();
         ConstructEmotionListPool();
         ConstructILocationListPool();
+        ConstructAreaListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -442,25 +441,7 @@ public class ObjectPoolManager : MonoBehaviour {
         _tileObjectListPool.Add(data);
     }
     #endregion
-
-    #region HexTiles
-    private void ConstructHexTileListPool() {
-        _hexTileListPool = new List<List<HexTile>>();
-    }
-    public List<HexTile> CreateNewHexTilesList() {
-        if (_hexTileListPool.Count > 0) {
-            List<HexTile> data = _hexTileListPool[0];
-            _hexTileListPool.RemoveAt(0);
-            return data;
-        }
-        return new List<HexTile>();
-    }
-    public void ReturnHexTilesListToPool(List<HexTile> data) {
-        data.Clear();
-        _hexTileListPool.Add(data);
-    }
-    #endregion
-
+    
     #region Structures
     private void ConstructStructureListPool() {
         _structureListPool = new List<List<LocationStructure>>();

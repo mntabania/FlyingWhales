@@ -36,7 +36,9 @@ public class LeaveFactionData : SchemeData {
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
-        HexTile chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+        Area chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(
+            currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && 
+                       !currHex.structureComponent.HasStructureInArea() && !currHex.IsNextToOrPartOfVillage() && !currHex.gridTileComponent.isCorrupted);
         if (chosenHex != null) {
             LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
             if (chosenTile != null) {

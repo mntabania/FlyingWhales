@@ -97,38 +97,6 @@ namespace UtilityScripts {
                     return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString());
             }
         }
-        public static HexTile GetCenterTile(List<HexTile> tiles, HexTile[,] map, int width, int height) {
-            int maxXCoordinate = tiles.Max(x => x.xCoordinate);
-            int minXCoordinate = tiles.Min(x => x.xCoordinate);
-            int maxYCoordinate = tiles.Max(x => x.yCoordinate);
-            int minYCoordinate = tiles.Min(x => x.yCoordinate);
-
-            int midPointX = (minXCoordinate + maxXCoordinate) / 2;
-            int midPointY = (minYCoordinate + maxYCoordinate) / 2;
-
-            if (width - 2 >= midPointX) {
-                midPointX -= 2;
-            }
-            if (height - 2 >= midPointY) {
-                midPointY -= 2;
-            }
-            if (midPointX >= 2) {
-                midPointX += 2;
-            }
-            if (midPointY >= 2) {
-                midPointY += 2;
-            }
-            midPointX = Mathf.Clamp(midPointX, 0, width - 1);
-            midPointY = Mathf.Clamp(midPointY, 0, height - 1);
-
-            try {
-                HexTile newCenterOfMass = map[midPointX, midPointY];
-                return newCenterOfMass;
-            } catch {
-                throw new Exception($"Cannot Recompute center. Computed new center is {midPointX}, {midPointY}");
-            }
-
-        }
         public static Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2) {
             // Move origin from bottom left to top left
             screenPosition1.y = Screen.height - screenPosition1.y;

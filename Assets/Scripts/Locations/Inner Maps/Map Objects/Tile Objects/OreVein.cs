@@ -26,9 +26,9 @@ public class OreVein : TileObject {
             gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
         }
         gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighboringHexTile) => {
-            if (eachNeighboringHexTile.settlementOnTile != null) {
-                eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
-                parentSettlement = eachNeighboringHexTile.settlementOnTile;
+            if (eachNeighboringHexTile.settlementOnArea != null) {
+                eachNeighboringHexTile.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
+                parentSettlement = eachNeighboringHexTile.settlementOnArea;
             }
         });
     }

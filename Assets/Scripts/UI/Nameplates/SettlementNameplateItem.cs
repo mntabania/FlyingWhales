@@ -30,7 +30,7 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
             // BaseLandmark firstLandmark = _settlement.areas[0].landmarkOnTile;
             // portrait.SetPortrait(firstLandmark?.specificLandmarkType ?? LANDMARK_TYPE.HOUSES);   
             portrait.SetPortrait(LANDMARK_TYPE.HOUSES);
-            throw new NotImplementedException("Need to create portraits for structures");
+            // throw new NotImplementedException("Need to create portraits for structures");
         }
         mainLbl.text = _settlement.name;
         if (_settlement is NPCSettlement npcSettlement) {

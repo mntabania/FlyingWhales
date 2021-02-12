@@ -24,7 +24,7 @@ namespace Interrupts {
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, "Loss of Control", LOG_IDENTIFIER.STRING_1);
 
-            HexTile hexTile = interruptHolder.actor.areaLocation;
+            Area hexTile = interruptHolder.actor.areaLocation;
             if (interruptHolder.actor.characterClass.className.Equals("Druid")) {
                 //Electric storm
                 if (hexTile.spellsComponent.hasElectricStorm) {

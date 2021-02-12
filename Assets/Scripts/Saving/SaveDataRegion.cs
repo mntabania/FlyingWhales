@@ -15,8 +15,6 @@ public class SaveDataRegion : SaveData<Region> {
     public string[] residentIDs;
     public string[] charactersAtLocationIDs;
     public SaveDataInnerMap innerMapSave;
-    public Dictionary<GridNeighbourDirection, string> neighboursWithDirection;
-    public List<string> neighbours;
     public string[] factionsHereIDs;
 
     //Components
@@ -42,17 +40,7 @@ public class SaveDataRegion : SaveData<Region> {
             Character character = region.charactersAtLocation[i];
             charactersAtLocationIDs[i] = character.persistentID;
         }
-
-        neighboursWithDirection = new Dictionary<GridNeighbourDirection, string>();
-        foreach (KeyValuePair<GridNeighbourDirection, Region> item in region.neighboursWithDirection) {
-            neighboursWithDirection.Add(item.Key, item.Value.persistentID);
-        }
-
-        neighbours = new List<string>();
-        for (int i = 0; i < region.neighbours.Count; i++) {
-            neighbours.Add(region.neighbours[i].persistentID);
-        }
-
+        
         innerMapSave = new SaveDataInnerMap();
         innerMapSave.Save(region.innerMap);
         

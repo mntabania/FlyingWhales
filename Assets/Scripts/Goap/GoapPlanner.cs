@@ -458,7 +458,7 @@ public class GoapPlanner {
                         }
                     }
                     for (int j = 0; j < settlement.areas.Count; j++) {
-                        HexTile hex = settlement.areas[j];
+                        Area hex = settlement.areas[j];
                         if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
                             hasSet = true;
                         }
@@ -467,8 +467,8 @@ public class GoapPlanner {
                     if (SetLowestCostActionGivenLocationAwareness(structure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
                         hasSet = true;
                     }
-                } else if (location is HexTile hex) {
-                    if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                } else if (location is Area area) {
+                    if (SetLowestCostActionGivenLocationAwareness(area.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
                         hasSet = true;
                     }
                 }
@@ -496,7 +496,7 @@ public class GoapPlanner {
                 }
             }
 
-            HexTile currentHex = currentGridTile.area;
+            Area currentHex = currentGridTile.area;
 
             if (currentHex != null) {
                 //Second step: Process current hex, if there is an action, skip next processing
@@ -506,9 +506,9 @@ public class GoapPlanner {
                 }
 
                 //Second step: Process adjacent hexes, if there is an action, skip next processing
-                List<HexTile> adjacentHexes = currentHex.neighbourComponent.neighbours;
+                List<Area> adjacentHexes = currentHex.neighbourComponent.neighbours;
                 for (int i = 0; i < adjacentHexes.Count; i++) {
-                    HexTile hex = adjacentHexes[i];
+                    Area hex = adjacentHexes[i];
                     SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
                 }
             }

@@ -64,18 +64,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
                     if (summon.homeStructure == null && !summon.HasTerritory()) {
                         p_log += "\n-Still no home structure and territory";
                         p_log += "\n-50% chance to Roam Around Tile";
-                        int roll = UnityEngine.Random.Range(0, 100);
-                        p_log += "\n-Roll: " + roll;
-                        if (roll < 50) {
-                            summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
-                        } else {
-                            p_log += "\n-Otherwise, Visit Different Region";
-                            if (!summon.jobComponent.TriggerVisitDifferentRegion()) {
-                                p_log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
-                                summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
-                            }
-                        }
-                        return true;
+                        return summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
                     }
                     return true;
                 } else {

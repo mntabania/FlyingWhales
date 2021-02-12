@@ -300,7 +300,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //OnRemoveTileObject(removedBy, previousTile);
         //SetPOIState(POI_STATE.INACTIVE);
         OnDestroyPOI();
-        if (previousTile != null && previousTile.area) {
+        if (previousTile != null) {
             previousTile.area.OnRemovePOIInHex(this);
         }
     }

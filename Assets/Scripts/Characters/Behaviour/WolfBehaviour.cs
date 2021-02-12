@@ -86,11 +86,11 @@ public class WolfBehaviour : BaseMonsterBehaviour {
         if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().day) &&
             GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && Random.Range(0, 2) == 1) {
             log += $"\n-Chance to hunt met. Will try to find target tile to hunt at.";
-            List<HexTile> choices = character.currentRegion.GetTilesWithFeature(AreaFeatureDB.Game_Feature).OrderBy(x =>
-                    Vector2.Distance(x.GetCenterLocationGridTile().centeredWorldLocation, character.worldPosition))
+            List<Area> choices = character.currentRegion.GetTilesWithFeature(AreaFeatureDB.Game_Feature).OrderBy(x =>
+                    Vector2.Distance(x.gridTileComponent.centerGridTile.centeredWorldLocation, character.worldPosition))
                 .ToList();
             if (choices.Count > 0) {
-                HexTile tileWithGameFeature = choices[0];
+                Area tileWithGameFeature = choices[0];
                 Hunting hunting = TraitManager.Instance.CreateNewInstancedTraitClass<Hunting>("Hunting");
                 hunting.SetTargetTile(tileWithGameFeature);
                 character.traitContainer.AddTrait(character, hunting);

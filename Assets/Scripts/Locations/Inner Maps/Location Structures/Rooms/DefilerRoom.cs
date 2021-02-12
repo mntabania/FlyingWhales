@@ -200,7 +200,7 @@ namespace Inner_Maps.Location_Structures {
                     skeleton.ClearPlayerActions();
                     skeleton.movementComponent.SetEnableDigging(true);
 
-                    List<LocationGridTile> dropChoices = parentStructure.occupiedArea.locationGridTiles.Where(t => 
+                    List<LocationGridTile> dropChoices = parentStructure.occupiedArea.gridTileComponent.gridTiles.Where(t => 
                         t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
 
                     CharacterManager.Instance.PlaceSummonInitially(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));

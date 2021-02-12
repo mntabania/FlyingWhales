@@ -22,7 +22,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
         bool isCorrupted = tileObject.gridTileLocation.isCorrupted;
-        HexTile hex = tileObject.gridTileLocation.area;
+        Area hex = tileObject.gridTileLocation.area;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state, 
             hex.biomeType,
@@ -65,7 +65,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        HexTile hex = tileObject.gridTileLocation.area;
+        Area hex = tileObject.gridTileLocation.area;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
             tileObject.state,
             hex.biomeType,
@@ -99,8 +99,6 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 UIManager.Instance.poiTestingUI.ShowUI(poi, activeCharacter);
 #endif
-            } else {
-                UIManager.Instance.minionCommandsUI.ShowUI(poi);
             }
         }
     }

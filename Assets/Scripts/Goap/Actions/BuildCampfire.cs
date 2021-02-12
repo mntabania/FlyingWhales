@@ -27,15 +27,15 @@ public class BuildCampfire : GoapAction {
         return 10;
     }
     public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
-        HexTile hex = goapNode.actor.gridTileLocation.area;
+        Area hex = goapNode.actor.gridTileLocation.area;
         
         List<LocationGridTile> tiles = null;
         if (hex != null) {
-            tiles = hex.GetUnoccupiedTiles();
+            tiles = hex.gridTileComponent.GetUnoccupiedTiles();
             if(tiles != null && tiles.Count > 0) {
                 return tiles;
             } else {
-                return hex.locationGridTiles.ToList();
+                return hex.gridTileComponent.gridTiles.ToList();
             }
         } else {
             tiles = goapNode.actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);

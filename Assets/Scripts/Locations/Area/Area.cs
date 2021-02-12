@@ -39,7 +39,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public string locationName => $"Area {areaData.xCoordinate.ToString()}, {areaData.yCoordinate.ToString()}";
     public string persistentID => areaData.persistentID;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Area;
-    public Type serializedData => typeof(SaveDataHextile);
+    public Type serializedData => typeof(SaveDataArea);
     public int id => areaData.id;
     public float elevationNoise => areaData.elevationNoise;
     public float moistureNoise => areaData.moistureNoise;
@@ -60,10 +60,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     #endregion
 
     public Area (int id, int x, int y) {
-        areaData.persistentID = System.Guid.NewGuid().ToString();
-        areaData.id = id;
-        areaData.xCoordinate = x;
-        areaData.yCoordinate = y;
+        areaData = new AreaData {persistentID = System.Guid.NewGuid().ToString(), id = id, xCoordinate = x, yCoordinate = y};
 
         //Components
         locationCharacterTracker = new LocationCharacterTracker();
@@ -92,6 +89,9 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         locationCharacterTracker = new LocationCharacterTracker();
         locationAwareness = new LocationAwareness();
         featureComponent = new AreaFeatureComponent();
+    }
+    public override string ToString() {
+        return $"{locationName} - {biomeType.ToString()} - {elevationType.ToString()} - {region?.name ?? "No Region"}";
     }
 
     #region Elevation

@@ -30,7 +30,9 @@ public class LeaveVillageData : SchemeData {
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Village, character);
-        HexTile chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+        Area chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(
+            currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && 
+                       !currHex.structureComponent.HasStructureInArea() && !currHex.IsNextToOrPartOfVillage() && !currHex.gridTileComponent.isCorrupted);
         if (chosenHex != null) {
             LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
             if (chosenTile != null) {

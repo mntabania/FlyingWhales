@@ -41,7 +41,7 @@ public class Golem : Summon {
             return;
         }
         base.SubscribeToSignals();
-        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedHexTile);
+        Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedHexTile);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     public override void UnsubscribeSignals() {
@@ -49,7 +49,7 @@ public class Golem : Summon {
             return;
         }
         base.UnsubscribeSignals();
-        Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedHexTile);
+        Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_EXITED_AREA, OnCharacterExitedHexTile);
         Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     //public override void OnPlaceSummon(LocationGridTile tile) {
@@ -85,7 +85,7 @@ public class Golem : Summon {
         }
     }
 
-    private void OnCharacterExitedHexTile(Character character, HexTile tile) {
+    private void OnCharacterExitedHexTile(Character character, Area tile) {
         if (character != this && combatComponent.isInCombat) {
             if (HasTerritory()) {
                 if (IsTerritory(tile)) {

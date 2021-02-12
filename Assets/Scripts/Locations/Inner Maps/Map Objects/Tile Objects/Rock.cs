@@ -55,9 +55,9 @@ public class Rock : TileObject{
                 gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
             }
             gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighboringHexTile) => {
-                if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
-                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
+                if (eachNeighboringHexTile.settlementOnArea != null) {
+                    eachNeighboringHexTile.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                    parentSettlement = eachNeighboringHexTile.settlementOnArea;
                 }
             });
         }

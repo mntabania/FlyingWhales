@@ -1309,7 +1309,6 @@
             <e p="ArtifactUnlockableDrawer.cs" t="Include" />
             <e p="Builder.cs" t="Include" />
             <e p="CharacterManagerEditor.cs" t="Include" />
-            <e p="HexTileEditor.cs" t="Include" />
             <e p="InteractionLocalizedTextCreatorEditor.cs" t="Include" />
             <e p="LocalizedTextEditor.cs" t="Include" />
             <e p="RuinarchGridGraphEditor.cs" t="Include" />
@@ -1873,7 +1872,6 @@
               <e p="Components" t="Include">
                 <e p="AreaBiomeComponent.cs" t="Include" />
                 <e p="AreaBiomeEffectTrigger.cs" t="Include" />
-                <e p="AreaCharacterComponent.cs" t="Include" />
                 <e p="AreaComponent.cs" t="Include" />
                 <e p="AreaFeatureComponent.cs" t="Include" />
                 <e p="AreaGridTileComponent.cs" t="Include" />
@@ -1881,7 +1879,6 @@
                 <e p="AreaSpellsComponent.cs" t="Include" />
                 <e p="AreaStructureComponent.cs" t="Include" />
                 <e p="AreaTileObjectComponent.cs" t="Include" />
-                <e p="TileFeatureComponent.cs" t="Include" />
               </e>
               <e p="HexTile.cs" t="Include" />
               <e p="LocationAwareness.cs" t="Include" />
@@ -2304,7 +2301,6 @@
           <e p="Managers" t="Include">
             <e p="AchievementManager.cs" t="Include" />
             <e p="AudioManager.cs" t="Include" />
-            <e p="BezierCurveManager.cs" t="Include" />
             <e p="CharacterClassManager.cs" t="Include" />
             <e p="CharacterManager.cs" t="Include" />
             <e p="CleanUpMemoryManager.cs" t="Include" />
@@ -2364,7 +2360,6 @@
             <e p="BlockerTraversalProvider.cs" t="Include" />
             <e p="CharacterAIPath.cs" t="Include" />
             <e p="CharacterDestinationSetter.cs" t="Include" />
-            <e p="CharacterPathfinder.cs" t="Include" />
             <e p="CustomABPath.cs" t="Include" />
             <e p="IHasNeighbours.cs" t="Include" />
             <e p="Path.cs" t="Include" />
@@ -2723,9 +2718,7 @@
               <e p="CharacterAssumedStep.cs" t="Include" />
               <e p="CharactersRemovedBehaviourStep.cs" t="Include" />
               <e p="ChooseSpellStep.cs" t="Include" />
-              <e p="ClickOnAreaStep.cs" t="Include" />
               <e p="ClickOnCharacterStep.cs" t="Include" />
-              <e p="ClickOnEmptyAreaStep.cs" t="Include" />
               <e p="ClickOnObjectStep.cs" t="Include" />
               <e p="ClickOnRoomStep.cs" t="Include" />
               <e p="ClickOnStructureStep.cs" t="Include" />
@@ -2746,7 +2739,6 @@
                 <e p="KillVillagersByPsychopathStep.cs" t="Include" />
                 <e p="TurnAvillagerToPsychopathStep.cs" t="Include" />
               </e>
-              <e p="LeftClickHexTileStep.cs" t="Include" />
               <e p="LogHistoryItemClicked.cs" t="Include" />
               <e p="LookAroundStep.cs" t="Include" />
               <e p="MinionSummonedStep.cs" t="Include" />
@@ -2800,7 +2792,6 @@
                   <e p="ZombieVirus.cs" t="Include" />
                 </e>
                 <e p="ShareAnIntel.cs" t="Include" />
-                <e p="WorldMap.cs" t="Include" />
               </e>
               <e p="Important Tutorials" t="Include">
                 <e p="Afflictions.cs" t="Include" />
@@ -2814,7 +2805,6 @@
                 <e p="ImportantTutorial.cs" t="Include" />
                 <e p="MeddlerTutorial.cs" t="Include" />
                 <e p="Prison.cs" t="Include" />
-                <e p="RegionalMap.cs" t="Include" />
                 <e p="SpawnAnInvader.cs" t="Include" />
                 <e p="WinCondition.cs" t="Include" />
               </e>
@@ -2924,6 +2914,9 @@
             <e p="PlayerSkillTree.cs" t="Include" />
             <e p="RaceData.cs" t="Include" />
             <e p="ScenarioData.cs" t="Include" />
+            <e p="Structure Data" t="Include">
+              <e p="StructureData.cs" t="Include" />
+            </e>
           </e>
           <e p="Serializable Dictionaries" t="Include">
             <e p="SerializableDictionaries.cs" t="Include" />
@@ -3393,8 +3386,6 @@
           <e p="UtilityScripts" t="Include">
             <e p="ActionOptionHoverHandler.cs" t="Include" />
             <e p="BaseMonoBehaviour.cs" t="Include" />
-            <e p="BezierCurve.cs" t="Include" />
-            <e p="BezierCurveParent.cs" t="Include" />
             <e p="BoundDrawer.cs" t="Include" />
             <e p="ChangeOpacityOnHoverImage.cs" t="Include" />
             <e p="CollectionUtilities.cs" t="Include" />
@@ -3409,7 +3400,6 @@
             <e p="FollowerComponent.cs" t="Include" />
             <e p="FPSDisplay.cs" t="Include" />
             <e p="GameUtilities.cs" t="Include" />
-            <e p="HexTileComparer.cs" t="Include" />
             <e p="HoverHandler.cs" t="Include" />
             <e p="IMG2Sprite.cs" t="Include" />
             <e p="IntRange.cs" t="Include" />
@@ -3461,8 +3451,6 @@
             <e p="TestingUtilities.cs" t="Include" />
             <e p="TextTyper.cs" t="Include" />
             <e p="ToggleTextColorizer.cs" t="Include" />
-            <e p="TravelLine.cs" t="Include" />
-            <e p="TravelLineParent.cs" t="Include" />
             <e p="UIHoverPosition.cs" t="Include" />
             <e p="UnderlineHyperlink.cs" t="Include" />
             <e p="Utilities.cs" t="Include" />

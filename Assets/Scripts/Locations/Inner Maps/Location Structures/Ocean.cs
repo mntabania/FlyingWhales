@@ -11,13 +11,14 @@
                 InnerMapManager.Instance.ShowInnerMap(region);
             }
             if (occupiedArea != null) {
-                InnerMapCameraMove.Instance.CenterCameraOn(occupiedArea.GetCenterLocationGridTile().centeredWorldLocation);
+                InnerMapCameraMove.Instance.CenterCameraOn(occupiedArea.gridTileComponent.centerGridTile.centeredWorldLocation);
             }
         }
-        public override void ShowSelectorOnStructure() {
-            if (occupiedArea != null) {
-                Selector.Instance.Select(occupiedArea);
-            }
-        }
+        public override void ShowSelectorOnStructure() { }
+        // public override void ShowSelectorOnStructure() {
+        //     if (occupiedArea != null) {
+        //         Selector.Instance.Select(occupiedArea);
+        //     }
+        // }
     }
 }

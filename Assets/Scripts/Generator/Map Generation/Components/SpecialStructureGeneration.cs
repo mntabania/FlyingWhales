@@ -7,6 +7,7 @@ using Inner_Maps.Location_Structures;
 using Locations.Region_Features;
 using Scenario_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Generator.Map_Generation.Components {
     public class SpecialStructureGeneration : MapGenerationComponent {
@@ -81,9 +82,8 @@ namespace Generator.Map_Generation.Components {
         #region Structure Creation
 		private IEnumerator CreateSpecialStructure(STRUCTURE_TYPE p_structureType, Region p_region, Area p_area) {
 			NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(p_region, LOCATION_TYPE.DUNGEON, p_area);
-			LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(p_region, p_structureType);
 			if (p_structureType == STRUCTURE_TYPE.MONSTER_LAIR) {
-				settlement.GenerateStructures(structure);
+				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(p_region, p_structureType, settlement);
 				yield return MapGenerator.Instance.StartCoroutine(GenerateMonsterLair(p_area, structure));
 			} else {
 				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltLandmark(settlement, p_region.innerMap, RESOURCE.NONE, p_structureType));
@@ -93,8 +93,7 @@ namespace Generator.Map_Generation.Components {
 			List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(hexTile.gridTileComponent.gridTiles);
 			LocationStructure wilderness = hexTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region, wilderness);
-			throw new NotImplementedException("Monster Lair occupied hextile not being set.");
-			// structure.SetOccupiedHexTile(hexTile);
+			structure.SetOccupiedArea(hexTile);
 			yield return null;
 		}
 		#endregion

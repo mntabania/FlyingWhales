@@ -49,8 +49,8 @@ public class PlayerAction : SkillData, IContextMenuItem {
     public void Activate(IPlayerActionTarget target) {
         if(target is IPointOfInterest targetPOI) {
             ActivateAbility(targetPOI);
-        } else if (target is HexTile targetHex) {
-            ActivateAbility(targetHex);
+        } else if (target is Area area) {
+            ActivateAbility(area);
         } else if (target is LocationStructure targetStructure) {
             ActivateAbility(targetStructure);
         } else if (target is StructureRoom room) {
@@ -63,8 +63,8 @@ public class PlayerAction : SkillData, IContextMenuItem {
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {
         if (target is IPointOfInterest targetPOI) {
             return CanPerformAbilityTowards(targetPOI);
-        } else if (target is HexTile targetHex) {
-            return CanPerformAbilityTowards(targetHex);
+        } else if (target is Area area) {
+            return CanPerformAbilityTowards(area);
         } else if (target is LocationStructure targetStructure) {
             return CanPerformAbilityTowards(targetStructure);
         } else if (target is StructureRoom room) {

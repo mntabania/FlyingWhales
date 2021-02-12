@@ -14,14 +14,14 @@ public class BrimstonesData : SkillData {
     public BrimstonesData() : base() {
         targetTypes = new[]{ SPELL_TARGET.HEX };
     }
-    public override void ActivateAbility(HexTile targetHex) {
-        targetHex.spellsComponent.SetHasBrimstones(true);
-        base.ActivateAbility(targetHex);
+    public override void ActivateAbility(Area targetArea) {
+        targetArea.spellsComponent.SetHasBrimstones(true);
+        base.ActivateAbility(targetArea);
     }
-    public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+    public override bool CanPerformAbilityTowards(Area targetArea) {
+        bool canPerform = base.CanPerformAbilityTowards(targetArea);
         if (canPerform) {
-            return targetHex != null && !targetHex.spellsComponent.hasBrimstones;
+            return targetArea != null && !targetArea.spellsComponent.hasBrimstones;
         }
         return canPerform;
     }

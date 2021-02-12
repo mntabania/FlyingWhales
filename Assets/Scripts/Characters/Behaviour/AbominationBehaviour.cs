@@ -33,16 +33,12 @@ public class AbominationBehaviour : BaseMonsterBehaviour {
         Area areaLocation = actor.areaLocation;
         if (areaLocation != null) {
             for (int i = 0; i < actor.areaLocation.neighbourComponent.neighbours.Count; i++) {
-                HexTile neighbour = actor.areaLocation.neighbourComponent.neighbours[i];
+                Area neighbour = actor.areaLocation.neighbourComponent.neighbours[i];
                 if (neighbour.elevationType != ELEVATION.WATER && neighbour.region == actor.currentRegion && actor.movementComponent.HasPathTo(neighbour)) {
-                    if (choices == null) {
-                        choices = new List<HexTile>();
-                    }
-                    choices.Add(neighbour);
+                    areas.Add(neighbour);
                 }
             }
         }
-        return choices;
     }
    
 }

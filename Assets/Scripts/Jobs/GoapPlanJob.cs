@@ -99,7 +99,7 @@ public class GoapPlanJob : JobQueueItem {
                                 priorityLocations[item.Key].Add(structure);
                             }
                         } else if (ilocationSaveData.objectType == OBJECT_TYPE.Area) {
-                            HexTile hex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(ilocationSaveData.persistentID);
+                            Area hex = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(ilocationSaveData.persistentID);
                             if (hex != null) {
                                 priorityLocations[item.Key].Add(hex);
                             }
@@ -256,8 +256,8 @@ public class GoapPlanJob : JobQueueItem {
                 convertedData = new LocationGridTileOtherData(locationGridTile);
             } else if (obj is LocationStructure locationStructure) {
                 convertedData = new LocationStructureOtherData(locationStructure);
-            } else if (obj is HexTile hexTile) {
-                convertedData = new AreaOtherData(hexTile);
+            } else if (obj is Area area) {
+                convertedData = new AreaOtherData(area);
             } else if (obj is int integer) {
                 convertedData = new IntOtherData(integer);
             } else if (obj is TileObject tileObject) {

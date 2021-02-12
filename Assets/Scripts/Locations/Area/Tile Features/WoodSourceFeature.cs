@@ -96,7 +96,7 @@ namespace Locations.Area_Features {
             }
         }
         private bool CreateNewBigTree() {
-            List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
+            List<LocationGridTile> choices = owner.gridTileComponent.gridTiles.Where(x => x.isOccupied == false 
                                                                                 && x.structure.structureType.IsOpenSpace() && BigTreeObject.CanBePlacedOnTile(x)).ToList();
             if (choices.Count > 0) {
                 LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
@@ -130,7 +130,7 @@ namespace Locations.Area_Features {
             }
         }
         private bool CreateNewSmallTree() {
-            List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
+            List<LocationGridTile> choices = owner.gridTileComponent.gridTiles.Where(x => x.isOccupied == false 
                                                                                 && x.structure.structureType.IsOpenSpace()
                                                                                 && x.groundType != LocationGridTile.Ground_Type.Bone).ToList();
             if (choices.Count > 0) {

@@ -18,18 +18,7 @@ public class BabyInfestorBehaviour : CharacterBehaviourComponent {
                     if (summon.homeStructure == null && !summon.HasTerritory()) {
                         log += "\n-Still no home structure and territory";
                         log += "\n-50% chance to Roam Around Tile";
-                        int roll = UnityEngine.Random.Range(0, 100);
-                        log += "\n-Roll: " + roll;
-                        if (roll < 50) {
-                            summon.jobComponent.TriggerRoamAroundTile(out producedJob);
-                        } else {
-                            log += "\n-Otherwise, Visit Different Region";
-                            if (!summon.jobComponent.TriggerVisitDifferentRegion()) {
-                                log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
-                                summon.jobComponent.TriggerRoamAroundTile(out producedJob);
-                            }
-                        }
-                        return true;
+                        return summon.jobComponent.TriggerRoamAroundTile(out producedJob);
                     }
                     return true;
                 } else {

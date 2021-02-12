@@ -117,8 +117,6 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private TextMeshProUGUI plaguePointLbl;
     [SerializeField] private RectTransform plaguePointsContainer;
     
-    public HexTile harassDefendInvadeTargetHex { get; private set; }
-
     void Awake() {
         Instance = this;
     }

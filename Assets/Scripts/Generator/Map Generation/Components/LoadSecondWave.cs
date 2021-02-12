@@ -257,9 +257,9 @@ public class LoadSecondWave : MapGenerationComponent {
     private IEnumerator LoadHexTileSpellsComponent(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Area Spells...");
         for (int i = 0; i < saveData.worldMapSave.areaSaves.Count; i++) {
-            SaveDataHextile saveDataHextile = saveData.worldMapSave.areaSaves[i];
-            HexTile hexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataHextile.persistentID);
-            hexTile.spellsComponent.Load(saveDataHextile.saveDataHexTileSpellsComponent);
+            SaveDataArea saveDataHextile = saveData.worldMapSave.areaSaves[i];
+            Area hexTile = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataHextile.areaData.persistentID);
+            hexTile.spellsComponent.LoadReferences(saveDataHextile.spellsComponent);
         }
         yield return null;
     }
@@ -433,7 +433,7 @@ public class LoadSecondWave : MapGenerationComponent {
     private IEnumerator LoadPlayerReferences(MapGenerationData data, SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
         saveData.LoadPlayerReferences();
-        data.portal = PlayerManager.Instance.player.portalTile;
+        data.portal = PlayerManager.Instance.player.portalArea;
         yield return null;
     }
     #endregion

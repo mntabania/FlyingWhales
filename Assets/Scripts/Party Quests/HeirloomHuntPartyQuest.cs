@@ -7,7 +7,7 @@ using Inner_Maps.Location_Structures;
 public class HeirloomHuntPartyQuest : PartyQuest {
 
     public Heirloom targetHeirloom { get; private set; }
-    public HexTile targetHex { get; private set; }
+    public Area targetHex { get; private set; }
     public bool foundHeirloom { get; private set; }
     public Region regionToSearch { get; private set; }
 
@@ -102,7 +102,7 @@ public class HeirloomHuntPartyQuest : PartyQuest {
         }
     }
     private void ProcessSettingTargetHex() {
-        HexTile chosenHex = regionToSearch.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER && h != targetHex);
+        Area chosenHex = regionToSearch.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER && h != targetHex);
         //if (chosenHex == null) {
         //    DisbandParty();
         //} else {

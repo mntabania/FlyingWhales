@@ -296,8 +296,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 UIManager.Instance.poiTestingUI.ShowUI(character, activeCharacter);
 #endif
-            } else {
-                UIManager.Instance.minionCommandsUI.ShowUI(character);
             }
         }
     }

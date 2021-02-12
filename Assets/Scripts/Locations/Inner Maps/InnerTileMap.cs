@@ -132,7 +132,6 @@ namespace Inner_Maps {
                     Area area = DetermineAreaGivenCoordinates(x, y);
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this, area);
                     area.gridTileComponent.AddGridTile(tile);
-                    Debug.Log($"Added tile {tile} to {area}");
                     tile.CreateGenericTileObject();
                     tile.SetStructure(wilderness);
                     allTiles.Add(tile);

@@ -84,11 +84,6 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private GameObject cover;
 
     [Space(10)]
-    [Header("World UI")]
-    [SerializeField] private RectTransform worldUIParent;
-    [SerializeField] private GraphicRaycaster worldUIRaycaster;
-
-    [Space(10)]
     [Header("Object Picker")]
     [SerializeField] private ObjectPicker objectPicker;
     
@@ -150,9 +145,6 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener(UISignals.UPDATE_UI, UpdateUI);
     }
     private void Update() {
-        if (isHoveringTile) {
-            currentTileHovered.region?.OnHoverOverAction();
-        }
         if (Input.GetMouseButtonDown(0) && GameManager.Instance.gameHasStarted && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI()
             HidePlayerActionContextMenu();
         }
@@ -177,9 +169,6 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
-        Messenger.AddListener<HexTile>(AreaSignals.AREA_HOVERED_OVER, OnHoverOverTile);
-        Messenger.AddListener<HexTile>(AreaSignals.AREA_HOVERED_OUT, OnHoverOutTile);
-        
         Messenger.AddListener(UISignals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(UISignals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
 
@@ -1113,28 +1102,6 @@ public class UIManager : BaseMonoBehaviour {
         //}
         //SaveGame.Save<Save>("SavedFile1", savefile);
         //LevelLoaderManager.Instance.LoadLevel("MainMenu");
-    }
-    #endregion
-
-    #region Tile Hover
-    //private HexTile previousTileHovered;
-    private HexTile currentTileHovered;
-    private float timeHovered;
-    private const float hoverThreshold = 1.5f;
-    private bool isHoveringTile = false;
-    private void OnHoverOverTile(HexTile tile) {
-        //previousTileHovered = currentTileHovered;
-        currentTileHovered = tile;
-        isHoveringTile = true;
-    }
-    public void OnHoverOutTile(HexTile tile) {
-        currentTileHovered = null;
-        isHoveringTile = false;
-        tile.region?.OnHoverOutAction();
-        if (tile.region != null) {
-            HideSmallInfo();
-            isShowingAreaTooltip = false;
-        }
     }
     #endregion
 

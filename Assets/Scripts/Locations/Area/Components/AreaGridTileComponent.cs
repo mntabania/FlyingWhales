@@ -11,6 +11,7 @@ public class AreaGridTileComponent : AreaComponent {
     public LocationGridTile centerGridTile { get; private set; }
     public List<LocationGridTile> gridTiles { get; private set; }
     public List<LocationGridTile> borderTiles { get; private set; }
+    public bool isCorrupted => gridTiles.Any(t => t.isCorrupted);
 
     public AreaGridTileComponent() {
         gridTiles = new List<LocationGridTile>();
@@ -238,6 +239,13 @@ public class AreaGridTileComponent : AreaComponent {
         InstantlyCorruptAllOwnedInnerMapTiles();
         OnCorruptSuccess(p_area);
     }
+    public void RemoveCorruption(Area p_area) {
+        PlayerManager.Instance.player.playerSettlement.RemoveAreaFromSettlement(p_area);
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile tile = gridTiles[i];
+            tile.UnCorruptTile();
+        }
+    }
     private void InstantlyCorruptAllOwnedInnerMapTiles() {
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
@@ -248,6 +256,17 @@ public class AreaGridTileComponent : AreaComponent {
         PlayerManager.Instance.player.playerSettlement.AddAreaToSettlement(p_area);
         //remove features
         p_area.featureComponent.RemoveAllFeatures(p_area);
+    }
+    public List<LocationGridTile> GetUnoccupiedTiles() {
+        List<LocationGridTile> tiles = null;
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile tile = gridTiles[i];
+            if (tile.objHere == null) {
+                if (tiles == null) { tiles = new List<LocationGridTile>(); }
+                tiles.Add(tile);
+            }
+        }
+        return tiles;
     }
     #endregion
 }

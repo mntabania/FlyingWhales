@@ -17,11 +17,9 @@ using Random = UnityEngine.Random;
 public partial class LandmarkManager : BaseMonoBehaviour {
 
     public static LandmarkManager Instance = null;
-    public const int SUMMON_MINION_DURATION = 96;
     public const int REGION_VILLAGE_CAPACITY = 3;
     
     [SerializeField] private List<LandmarkData> landmarkData;
-    [SerializeField] private GameObject landmarkGO;
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
     
     public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
@@ -65,9 +63,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             LandmarkData data = landmarkData[i];
             landmarkDataDict.Add(data.landmarkType, data);
         }
-    }
-    public GameObject GetLandmarkGO() {
-        return this.landmarkGO;
     }
     #endregion
 
@@ -119,26 +114,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             }
         }
         return specialStructures;
-    }
-    public List<LandmarkStructureSprite> GetLandmarkTileSprites(HexTile tile, LANDMARK_TYPE landmarkType, RACE race = RACE.NONE) {
-        LandmarkData data = GetLandmarkData(landmarkType);
-        if (data.biomeTileSprites.Count > 0) { //if the landmark type has a biome type tile sprite set, use that instead
-            if (data.biomeTileSprites.ContainsKey(tile.biomeType)) {
-                return data.biomeTileSprites[tile.biomeType]; //prioritize biome type sprites
-            }
-        }
-        if (race == RACE.HUMANS) {
-            return data.humansLandmarkTileSprites;
-        } else if (race == RACE.ELVES) {
-            return data.elvenLandmarkTileSprites;
-        } else {
-            if (data.neutralTileSprites.Count > 0) {
-                return data.neutralTileSprites;
-            } else {
-                return null;
-            }
-        }
-        
     }
     #endregion
 
@@ -237,11 +212,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public void UnownSettlement(BaseSettlement settlement) {
         settlement.owner?.RemoveFromOwnedSettlements(settlement);
         settlement.SetOwner(null);
-    }
-    public Vector2 GetNameplatePosition(HexTile tile) {
-        Vector2 defaultPos = tile.transform.position;
-        defaultPos.y -= 1.25f;
-        return defaultPos;
     }
     public SETTLEMENT_TYPE GetSettlementTypeForCharacter(Character character) {
         // if (character.characterClass.className == "Cult Leader") {
@@ -421,7 +391,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
 
     #region Area Features
     public T CreateAreaFeature<T>([NotNull] string featureName) where T : AreaFeature {
-        string typeName = $"Locations.Tile_Features.{featureName}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        string typeName = $"Locations.Area_Features.{featureName}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         Assert.IsNotNull(type, $"type for {featureName} is null!");
         return System.Activator.CreateInstance(type) as T;

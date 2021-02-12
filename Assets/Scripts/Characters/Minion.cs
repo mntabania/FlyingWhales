@@ -267,10 +267,6 @@ public class Minion {
         character.homeRegion?.RemoveResident(character);
         //character.SetRegionLocation(deathLocation);
         //character.SetCurrentStructureLocation(deathStructure, false);
-
-        character.behaviourComponent.SetIsHarassing(false, null);
-        character.behaviourComponent.SetIsDefending(false, null);
-        character.behaviourComponent.SetIsInvading(false, null);
         character.jobQueue.CancelAllJobs();
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();
         character.combatComponent.ClearAvoidInRange(false);

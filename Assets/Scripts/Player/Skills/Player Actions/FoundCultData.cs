@@ -24,12 +24,14 @@ public class FoundCultData : PlayerAction {
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
             if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages) {
                 if (!character.currentRegion.IsRegionVillageCapacityReached()) {
-                    HexTile targetTile = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+                    Area targetTile = character.currentRegion.GetRandomHexThatMeetCriteria(
+                        currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && 
+                                   !currHex.structureComponent.HasStructureInArea() && !currHex.IsNextToOrPartOfVillage() && !currHex.gridTileComponent.isCorrupted);
                     if (targetTile != null) {
                         StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, character.faction.factionType.usesCorruptedStructures);
                         List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                        character.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
+                        character.jobComponent.TriggerFindNewVillage(targetTile.gridTileComponent.centerGridTile, chosenStructurePrefab.name);
                     }    
                 } else {
                     PlayerUI.Instance.ShowGeneralConfirmation("Village Capacity Reached", 

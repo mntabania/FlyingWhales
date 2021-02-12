@@ -71,7 +71,6 @@ namespace Inner_Maps {
             mapGenerationComponent.AddLog($"{base.region.name} CreateTileCollectionGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         private LocationGridTile GetCenterLocationGridTile(Area p_area) {
-            LocationGridTile lowerLeftCornerTile = p_area.gridTileComponent.gridTiles[0];
             int xMin = p_area.gridTileComponent.gridTiles.Min(t => t.localPlace.x);
             int yMin = p_area.gridTileComponent.gridTiles.Min(t => t.localPlace.y);
             int xMax = xMin + (InnerMapManager.AreaLocationGridTileSize.x / 2);

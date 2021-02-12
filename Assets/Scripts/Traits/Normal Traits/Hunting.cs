@@ -5,7 +5,7 @@ namespace Traits {
     public class Hunting : Status {
 
         private Character _owner;
-        public HexTile targetTile { get; private set; }
+        public Area targetTile { get; private set; }
 
         #region getters
         public override Type serializedData => typeof(SaveDataHunting);
@@ -60,7 +60,7 @@ namespace Traits {
         }
         #endregion
 
-        public void SetTargetTile(HexTile hexTile) {
+        public void SetTargetTile(Area hexTile) {
             targetTile = hexTile;
         }
         

@@ -32,8 +32,8 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
         
         tileCoordinates = new List<Point>();
         for (int i = 0; i < baseSettlement.areas.Count; i++) {
-            HexTile tile = baseSettlement.areas[i];
-            tileCoordinates.Add(new Point(tile.xCoordinate, tile.yCoordinate));
+            Area tile = baseSettlement.areas[i];
+            tileCoordinates.Add(new Point(tile.areaData.xCoordinate, tile.areaData.yCoordinate));
         }
 
         parties = new List<string>();

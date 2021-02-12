@@ -962,6 +962,7 @@ namespace Inner_Maps.Location_Structures {
         #region Structure Objects
         public void SetOccupiedArea(Area p_area) {
             occupiedArea = p_area;
+            Debug.Log($"Set Occupied area of {name} to {occupiedArea}");
         }
         private void OnClickStructure() {
             Selector.Instance.Select(this);

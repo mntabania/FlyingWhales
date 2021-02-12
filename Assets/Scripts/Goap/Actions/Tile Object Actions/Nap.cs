@@ -53,8 +53,8 @@ public class Nap : GoapAction {
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && actor.gridTileLocation != null) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.GetCenterLocationGridTile();
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.gridTileComponent.centerGridTile;
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
                     int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
@@ -136,7 +136,7 @@ public class Nap : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.area)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             return poiTarget.IsAvailable() && CanSleepInBed(actor, poiTarget as TileObject) && poiTarget.gridTileLocation != null;

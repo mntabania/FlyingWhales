@@ -11,13 +11,8 @@ public class BuildDemonicStructureData : PlayerAction {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.HEX };
     }
     #region Overrides
-    public override void ActivateAbility(HexTile targetHex) {
-        // targetHex.OnClickBuild();
-    }
+    public override void ActivateAbility(Area targetArea) { }
     public override bool IsValid(IPlayerActionTarget target) {
-        if (target is HexTile targetHex) {
-            // return targetHex.CanBuildDemonicStructureHere();
-        }
         return false;
     }
     #endregion

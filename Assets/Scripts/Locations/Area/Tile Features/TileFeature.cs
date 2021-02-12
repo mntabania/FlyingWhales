@@ -18,19 +18,6 @@
 		#endregion
 
 	}
-	
-	public class SaveDataTileFeature {
-
-		public string tileFeatureName;
-
-		public virtual void Save(TileFeature tileFeature) {
-			tileFeatureName = tileFeature.GetType().Name;
-		}
-
-		public virtual TileFeature Load() {
-			return LandmarkManager.Instance.CreateTileFeature<TileFeature>(tileFeatureName);
-		}
-	}
 }
 
 

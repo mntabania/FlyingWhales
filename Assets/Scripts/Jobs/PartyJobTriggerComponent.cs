@@ -28,7 +28,7 @@ public class PartyJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public void CreateHaulForCampJob(ResourcePile target, HexTile hex) {
+    public void CreateHaulForCampJob(ResourcePile target, Area hex) {
         if (_owner.jobBoard.HasJob(JOB_TYPE.HAUL, target) == false) {
             if (target.gridTileLocation.area == hex) {
                 //Only create haul job for camp if resource pile is not in camp
