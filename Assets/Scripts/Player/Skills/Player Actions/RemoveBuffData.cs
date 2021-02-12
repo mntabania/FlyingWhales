@@ -43,8 +43,12 @@ public class RemoveBuffData : PlayerAction {
     
     #region Remove Trait
     public void ActivateRemoveBuff(string traitName, Character p_character) {
-        p_character.traitContainer.RemoveTrait(p_character, traitName);
-        Activate(p_character);
+        if (RollSuccessChance(p_character)) {
+            p_character.traitContainer.RemoveTrait(p_character, traitName);
+            Activate(p_character);
+        } else {
+            PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", p_character.name + " resisted the power of the Ruinarch!");
+        }
     }
     #endregion
 

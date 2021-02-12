@@ -2,6 +2,8 @@
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
+
 namespace Locations.Tile_Features {
     public class BlizzardFeature : TileFeature {
 
@@ -30,7 +32,7 @@ namespace Locations.Tile_Features {
                 (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
             Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE,
                 (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
-            RescheduleFreezingCheck(tile); //this will start the freezing check loop
+            RescheduleBlizzardDamageAndFreezingProcess(tile); //this will start the freezing check loop
         
             //schedule removal of this feature after x amount of ticks.
             expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
@@ -111,28 +113,31 @@ namespace Locations.Tile_Features {
         #endregion
 
         #region Effects
-        private void CheckForFreezing(HexTile hex) {
+        private void BlizzardDamageAndFreezingProcess(HexTile hex) {
             string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
-            int chance = 35;
+            int baseChance = 35;
+            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
+            int blizzardDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
-                int roll = UnityEngine.Random.Range(0, 100);
-                summary =
-                    $"{summary}\nRolling freezing check for {character.name}. Roll is {roll.ToString()}. Chance is {chance.ToString()}";
-                if (roll < chance) {
+                //int roll = UnityEngine.Random.Range(0, 100);
+                //summary =
+                //    $"{summary}\nRolling freezing check for {character.name}. Roll is {roll.ToString()}. Chance is {chance.ToString()}";
+                if (GameUtilities.RollChance(baseChance)) {
                     summary =
                         $"{summary}\n\tChance met for {character.name}. Adding Freezing trait...";
                     character.traitContainer.AddTrait(character, "Freezing", bypassElementalChance: true);
                 }
+                character.AdjustHP(blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing);
             }
             //reschedule 15 minutes after.
-            RescheduleFreezingCheck(hex);
+            RescheduleBlizzardDamageAndFreezingProcess(hex);
             Debug.Log(summary);
         }
-        private void RescheduleFreezingCheck(HexTile hex) {
+        private void RescheduleBlizzardDamageAndFreezingProcess(HexTile hex) {
             if (hex.featureComponent.HasFeature(name) == false) { return; }
             GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(10));
-            _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForFreezing(hex), this);
+            _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => BlizzardDamageAndFreezingProcess(hex), this);
         }
         #endregion
 

@@ -2,6 +2,8 @@
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
+
 namespace Locations.Tile_Features {
     public class HeatWaveFeature : TileFeature {
 
@@ -132,9 +134,14 @@ namespace Locations.Tile_Features {
             ObjectPoolManager.Instance.ReturnCharactersListToPool(allCharactersInHex);
         }
         private void CheckForOverheating(HexTile hex) {
+            RESISTANCE resistanceType = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.HEAT_WAVE).resistanceType;
+            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.HEAT_WAVE);
+            int baseChance = 15;
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
-                if(UnityEngine.Random.Range(0, 100) < 15) {
+                float resistanceValue = character.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
+                CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+                if(GameUtilities.RollChance(baseChance)) {
                     character.traitContainer.AddTrait(character, "Overheating");
                 }
             }

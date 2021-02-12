@@ -36,18 +36,7 @@ public class PiercingAndResistancesComponent : CharacterComponent {
     }
     public void ModifyValueByResistance(ref int p_value, ELEMENTAL_TYPE p_element, float piercingPower) {
         float resistanceValue = GetResistanceValue(p_element);
-
-        float finalResistanceValue = resistanceValue - piercingPower;
-        if(finalResistanceValue < 0f) {
-            finalResistanceValue = 0f;
-        } else if (finalResistanceValue > 100f) {
-            finalResistanceValue = 100f;
-        }
-        finalResistanceValue = finalResistanceValue / 100f;
-
-        int value = p_value;
-        int finalValue = value - Mathf.RoundToInt(value * finalResistanceValue);
-        p_value = finalValue;
+        CombatManager.ModifyValueByPiercingAndResistance(ref p_value, piercingPower, resistanceValue);
     }
     #endregion
 }
