@@ -12,7 +12,9 @@ public class SkillUpgradeDataEditor : Editor {
     bool foldUpgradeBonus = true;
 
     void OnEnable() {
+        
         data = (PlayerSkillData)target;
+        EditorUtility.SetDirty(data);
     }
 
     public override void OnInspectorGUI() {

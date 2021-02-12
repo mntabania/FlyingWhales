@@ -11,37 +11,37 @@ public class SkillUpgradeData
     [HideInInspector]
     public List<UPGRADE_BONUS> bonuses = new List<UPGRADE_BONUS>();
     [HideInInspector]
-    public List<int> additionalDamagePerLevel;
+    public List<int> additionalDamagePerLevel = new List<int>();
     [HideInInspector]
-    public List<float> additionalPiercePerLevel;
+    public List<float> additionalPiercePerLevel = new List<float>();
     [HideInInspector]
-    public List<float> additionalHpPercentagePerLevel;
+    public List<float> additionalHpPercentagePerLevel = new List<float>();
     [HideInInspector]
-    public List<float> additionalAttackPercentagePerLevel;
+    public List<float> additionalAttackPercentagePerLevel = new List<float>();
     [HideInInspector]
-    public List<int> additionalHpValuePerLevel;
+    public List<int> additionalHpValuePerLevel = new List<int>();
     [HideInInspector]
-    public List<int> additionalAttackValuePerLevel;
+    public List<int> additionalAttackValuePerLevel = new List<int>();
     [HideInInspector]
-    public List<float> additionalmanaReceivedPercentagePerLevel;
+    public List<float> additionalmanaReceivedPercentagePerLevel = new List<float>();
     [HideInInspector]
-    public List<float> statsIncreasedPercentagePerLevel;
+    public List<float> statsIncreasedPercentagePerLevel = new List<float>();
     [HideInInspector]
-    public List<int> durationBonusPerLevel;
+    public List<int> durationBonusPerLevel = new List<int>();
     [HideInInspector]
-    public List<float> additionalMaxHPPercentagePerLevel;
+    public List<float> additionalMaxHPPercentagePerLevel = new List<float>();
     [HideInInspector]
-    public List<int> additionalMaxHPActualPerLevel;
+    public List<int> additionalMaxHPActualPerLevel = new List<int>();
     [HideInInspector]
-    public List<float> additionalChanceBonusPercentagePerLevel;
+    public List<float> additionalChanceBonusPercentagePerLevel = new List<float>();
     [HideInInspector]
-    public List<int> additionalTileRangeBonusPerLevel;
+    public List<int> additionalTileRangeBonusPerLevel = new List<int>();
     [HideInInspector]
-    public List<int> decreaseMovementSpeedPerLevel;
+    public List<int> decreaseMovementSpeedPerLevel = new List<int>();
     [HideInInspector]
-    public List<int> cooldownPerLevel;
+    public List<int> cooldownPerLevel = new List<int>();
     [HideInInspector]
-    public List<int> skillMovementSpeed;
+    public List<int> skillMovementSpeed = new List<int>();
     [HideInInspector]
 
     public int GetUpgradeCostBaseOnLevel(int p_currentLevel) {
