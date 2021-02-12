@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Heal
   m_EditorClassIdentifier: 
   skill: 92
-  manaCost: 10
+  manaCost: 30
   charges: 1
   cooldown: 144
   threat: 0
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
   pierce: 0
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
@@ -41,23 +42,33 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
+    isOR: 0
   skillUpgradeData:
     upgradeCosts: c80000002c01000090010000
-    manacostPerLevel: 
-    chargesPerLevel: 020000000300000004000000
+    manacostPerLevel: 1e000000
+    chargesPerLevel: 01000000020000000300000004000000
     bonuses: 0100000002000000
-    additionalDamagePerLevel: []
+    additionalDamagePerLevel: 
     additionalPiercePerLevel:
+    - 0
     - 50
     - 100
     - 150
     additionalHpPercentagePerLevel:
+    - 50
     - 65
     - 80
     - 100
     additionalAttackPercentagePerLevel: []
-    additionalHpValuePerLevel: []
-    additionalAttackValuePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
-    durationBonusPerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 
+    skillMovementSpeed: 
