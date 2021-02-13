@@ -11,7 +11,7 @@ public class RequirementData {
     [HideInInspector]
     public PLAYER_ARCHETYPE requiredArchetype;
     [HideInInspector]
-    public List<PLAYER_SKILL_TYPE> requiredSkills;
+    public List<PLAYER_SKILL_TYPE> requiredSkills = new List<PLAYER_SKILL_TYPE>();
     [HideInInspector]
     public int actionCount;
     [HideInInspector]

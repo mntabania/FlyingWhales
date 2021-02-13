@@ -134,7 +134,7 @@ namespace Locations.Tile_Features {
         private void CheckForOverheating(HexTile hex) {
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
-                if(UnityEngine.Random.Range(0, 100) < 15) {
+                if(UnityEngine.Random.Range(0, 100) < 15 + PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.HEAT_WAVE)) {
                     character.traitContainer.AddTrait(character, "Overheating");
                 }
             }
