@@ -325,13 +325,14 @@ public class HexTileSpellsComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
-            chosenTile.PerformActionOnTraitables(ApplyBrimstoneDamage);
+            //Note: Damage is moved in BrimstonesParticleEffect
+            //chosenTile.PerformActionOnTraitables(ApplyBrimstoneDamage);
         }
     }
-    private void ApplyBrimstoneDamage(ITraitable traitable) {
-        traitable.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES), ELEMENTAL_TYPE.Fire, true, showHPBar: true,
-                    piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));
-    }
+    //private void ApplyBrimstoneDamage(ITraitable traitable) {
+    //    traitable.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES), ELEMENTAL_TYPE.Fire, true, showHPBar: true,
+    //                piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));
+    //}
     //private void BrimstoneEffect(ITraitable traitable) {
     //    if (traitable is IPointOfInterest poi) {
     //        poi.AdjustHP(-400, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
@@ -465,7 +466,8 @@ public class HexTileSpellsComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Iceteroids);
-            chosenTile.PerformActionOnTraitables(ApplyIceteroidDamage);
+            //Note: Damage is moved in IceteroidParticleEffect
+            //chosenTile.PerformActionOnTraitables(ApplyIceteroidDamage);
 
             //List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
             //for (int i = 0; i < pois.Count; i++) {
@@ -474,10 +476,10 @@ public class HexTileSpellsComponent {
             //}
         }
     }
-    private void ApplyIceteroidDamage(ITraitable traitable) {
-        traitable.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS), ELEMENTAL_TYPE.Ice, true, showHPBar: true,
-                    piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
-    }
+    //private void ApplyIceteroidDamage(ITraitable traitable) {
+    //    traitable.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS), ELEMENTAL_TYPE.Ice, true, showHPBar: true,
+    //                piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
+    //}
     private void PerTickIceteroids() {
         Profiler.BeginSample($"Per Tick Iceteroids");
         currentIceteroidsDuration++;
