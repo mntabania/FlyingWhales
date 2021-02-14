@@ -6,9 +6,11 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UtilityScripts;
+using System;
 
 public class TileObjectGameObject : MapObjectVisual<TileObject> {
-    
+
+    public Action<TileObjectGameObject> onObjectClicked;
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();

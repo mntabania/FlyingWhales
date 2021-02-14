@@ -13,7 +13,7 @@ public class FakePlayer : MonoBehaviour
 
 	private void Start() {
 		PlayerSkillManager.Instance.Initialize();
-		availableSkills.ForEach((eachAvailableSkill) => skillComponent.SetPlayerSkillData(eachAvailableSkill));
-		progressionManager.CheckAndUnlock(currenciesComponent, PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.LIGHTNING));
+		availableSkills.ForEach((eachAvailableSkill) => skillComponent.SetPlayerSkillData(eachAvailableSkill, true));
+		progressionManager.CheckAndUnlock(skillComponent, currenciesComponent, PLAYER_SKILL_TYPE.LIGHTNING);
 	}
 }

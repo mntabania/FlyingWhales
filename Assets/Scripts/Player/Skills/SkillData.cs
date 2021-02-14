@@ -34,6 +34,8 @@ public class SkillData : IPlayerSkill {
     public int baseThreat { get; private set; }
     public int currentLevel { get; set; }
 
+    public int unlockCost { get; set; }
+
     public void LevelUp() {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
         currentLevel = Mathf.Clamp(++currentLevel, 0, playerSkillData.skillUpgradeData.upgradeCosts.Count);
@@ -287,6 +289,10 @@ public class SkillData : IPlayerSkill {
 
     public void SetPierce(float amount) {
         basePierce = amount;
+    }
+
+    public void SetUnlockCost(int amount) {
+        unlockCost = amount;
     }
 
     public void SetManaCost(int amount) {

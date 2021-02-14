@@ -74,7 +74,7 @@ public class PlayerSkillComponent {
         spellData.SetCharges(charges);
         spellData.SetCooldown(cooldown);
         spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
-        
+        spellData.SetUnlockCost(playerSkillData.unlockCost);
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(threat);
         spellData.SetThreatPerHour(threatPerHour);
@@ -257,14 +257,14 @@ public class PlayerSkillComponent {
             }
         }
     }
-    public void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType) {
+    public void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType, bool testScene = false) {
         PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         if (spellData == null) {
             Debug.LogError(skillType.ToString() + " data is null!");
         }
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
+        if (!testScene && WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
             skillType == PLAYER_SKILL_TYPE.EYE) {
             //if map is tutorial and spell is THE_EYE, Set max charges to only 1
             spellData.SetMaxCharges(1);  
@@ -276,6 +276,7 @@ public class PlayerSkillComponent {
         spellData.SetCooldown(skillData.cooldown);
         
         spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(skillType));
+        spellData.SetUnlockCost(playerSkillData.unlockCost);
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
@@ -291,7 +292,7 @@ public class PlayerSkillComponent {
         spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(spellData.maxCharges);
         spellData.SetCooldown(skillData.cooldown);
-       
+        spellData.SetUnlockCost(playerSkillData.unlockCost);
         spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);

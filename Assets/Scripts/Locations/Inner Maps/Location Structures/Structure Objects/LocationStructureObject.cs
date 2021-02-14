@@ -1,7 +1,7 @@
 ﻿using EZObjectPools;
 using Pathfinding;
 using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
@@ -15,6 +15,7 @@ using UnityEngine.Tilemaps;
 
 public class LocationStructureObject : PooledObject {
 
+    public Action<LocationStructureObject> onStructureClicked;
     public enum Structure_Visual_Mode { Blueprint, Built }
 
     public STRUCTURE_TYPE structureType;
@@ -660,6 +661,7 @@ public class LocationStructureObject : PooledObject {
 
     #region Interaction
     public void OnPointerClick(BaseEventData data) {
+        onStructureClicked?.Invoke(this);
         Debug.Log($"Player clicked {name}");
     }
     #endregion

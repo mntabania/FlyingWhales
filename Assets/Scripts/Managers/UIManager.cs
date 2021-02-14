@@ -22,8 +22,11 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
+using System;
 
 public class UIManager : BaseMonoBehaviour {
+
+    public Action onPortalClicked;
 
     public static UIManager Instance = null;
 
@@ -1078,6 +1081,9 @@ public class UIManager : BaseMonoBehaviour {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
+        }
+        if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
+            onPortalClicked?.Invoke();
         }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();

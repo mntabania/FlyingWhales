@@ -39,6 +39,7 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<List<LocationGridTile>> _tileListPool;
     private List<List<Faction>> _factionListPool;
     private List<List<BaseSettlement>> _settlementListPool;
+    private List<List<SkillData>> _skillDataPool;
     private List<GoapPlanJob> _goapJobPool;
     private List<CharacterStateJob> _stateJobPool;
     private List<ConversationData> _conversationDataPool;
@@ -101,6 +102,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructConversationPool();
         ConstructEmotionListPool();
         ConstructILocationListPool();
+        ConstructSkillDataListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -511,6 +513,24 @@ public class ObjectPoolManager : MonoBehaviour {
     public void ReturnFactionListToPool(List<Faction> data) {
         data.Clear();
         _factionListPool.Add(data);
+    }
+    #endregion
+
+    #region skillData
+    private void ConstructSkillDataListPool() {
+        _skillDataPool = new List<List<SkillData>>();
+    }
+    public List<SkillData> CreateNewSkillDataList() {
+        if (_skillDataPool.Count > 0) {
+            List<SkillData> data = _skillDataPool[0];
+            _skillDataPool.RemoveAt(0);
+            return data;
+        }
+        return new List<SkillData>();
+    }
+    public void ReturnSkillDataListToPool(List<SkillData> data) {
+        data.Clear();
+        _skillDataPool.Add(data);
     }
     #endregion
 

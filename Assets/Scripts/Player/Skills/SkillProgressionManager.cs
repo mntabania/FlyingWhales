@@ -1,32 +1,34 @@
 ﻿
 public class SkillProgressionManager {
 
-	public bool CheckAndUnlock(CurrenciesComponent p_currencies, SkillData p_targetSkillData) {
+	public bool CheckAndUpgrade(CurrenciesComponent p_currencies, PLAYER_SKILL_TYPE p_type) {
 		bool success = false;
-		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_targetSkillData.type);
+		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 		UnityEngine.Debug.Log(data);
 		if (data.unlockCost <= p_currencies.Mana) {
 			success = true;
 		}
-		UnityEngine.Debug.Log("Unlocking " + p_targetSkillData.name + ": " + success);
+		UnityEngine.Debug.Log("Unlocking " + data + ": " + success);
 		return success;
 	}
 
-	public bool CheckAndUpgrade(PlayerSkillComponent p_skills, CurrenciesComponent p_currencies, SkillData p_targetSkillData) {
-		bool success = false;
-		if (CheckRequirement(p_skills, p_currencies, p_targetSkillData)) {
-			success = true;
-		}
-		UnityEngine.Debug.Log("Upgrading " + p_targetSkillData.name + ": " + success);
-		return success;
+	public int CheckAndUnlock(PlayerSkillComponent p_skills, CurrenciesComponent p_currencies, PLAYER_SKILL_TYPE p_type) {
+		int manaCost = CheckRequirement(p_skills, p_currencies.Mana, p_type);
+		return manaCost;
 	}
 
-	private bool CheckRequirement(PlayerSkillComponent p_availablePlayerSkills, CurrenciesComponent p_currencies, SkillData p_targetSkillData) {
-		PlayerSkillData playerSkilldata = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_targetSkillData.type);
+	public int CheckAndUnlock(PlayerSkillComponent p_skills, int p_mana, PLAYER_SKILL_TYPE p_type) {
+		int manaCost = CheckRequirement(p_skills, p_mana, p_type);
+		return manaCost;
+	}
+
+	private int CheckRequirement(PlayerSkillComponent p_availablePlayerSkills, int p_mana, PLAYER_SKILL_TYPE p_type) {
+		PlayerSkillData playerSkilldata = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 
 		for (int x = 0; x < playerSkilldata.requirementData.requiredSkills.Count; ++x) {
 			if (!p_availablePlayerSkills.CheckIfSkillIsAvailable(playerSkilldata.requirementData.requiredSkills[x])) {
-				return false;
+				UnityEngine.Debug.LogError(p_type + " Unlock FAILED");
+				return -1;
 			}
 		}
 		if (playerSkilldata.requirementData.actionCount <= p_availablePlayerSkills.playerActions.Count &&
@@ -35,10 +37,11 @@ public class SkillProgressionManager {
 			playerSkilldata.requirementData.tier1Count <= p_availablePlayerSkills.tier1Count &&
 			playerSkilldata.requirementData.tier2Count <= p_availablePlayerSkills.tier2Count &&
 			playerSkilldata.requirementData.tier3Count <= p_availablePlayerSkills.tier3Count &&
-			playerSkilldata.skillUpgradeData.upgradeCosts[p_availablePlayerSkills.GetLevelOfSkill(p_targetSkillData)] <= p_currencies.ChaoticEnergy) {
-
-			return true;
+			playerSkilldata.unlockCost <= p_mana) {
+			UnityEngine.Debug.LogError(p_type + " Unlock SUCCESS");
+			return playerSkilldata.unlockCost;
 		}
-		return false;
+		UnityEngine.Debug.LogError(p_type + " Unlock FAILED");
+		return -1;
 	}
 }

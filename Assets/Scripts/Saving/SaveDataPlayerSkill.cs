@@ -29,6 +29,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
         currentCooldownTick = data.currentCooldownTick;
         currentLevel = data.currentLevel;
         basePierce = data.basePierce;
+        unlockCost = data.unlockCost;
 
     }
     public override SkillData Load() {
@@ -39,7 +40,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
         data.SetPierce(basePierce);
         data.SetThreat(threat);
         data.SetThreatPerHour(threatPerHour);
-
+        data.SetUnlockCost(unlockCost);
         data.SetCurrentCooldownTick(currentCooldownTick);
         data.SetMaxCharges(maxCharges);
         data.SetCurrentLevel(currentLevel);
