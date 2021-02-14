@@ -38168,7 +38168,10 @@ MonoBehaviour:
     m_values: 0100000001000000010000000100000001000000010000000100000002000000020000000200000002000000020000000200000002000000030000000300000003000000030000000300000003000000030000000300000003000000030000000100000001000000
   chaosOrbPrefab: {fileID: 1969525015451714, guid: 9d5aaca52e9a40742a8a193fd001aa13,
     type: 3}
+  spiritnEnergyPrefab: {fileID: 3249137980092143874, guid: 0899348a1126a1a41b0d3d1a54aaa68e,
+    type: 3}
   availableChaosOrbs: []
+  availableSpiritEnergy: []
 --- !u!1 &719186660
 GameObject:
   m_ObjectHideFlags: 0
@@ -69289,6 +69292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _canvas: {fileID: 694160819}
   isTestScene: 0
+  skillCountPerDraw: 3
   m_purchaseSkillUIModel: {fileID: 1286504509807257227, guid: 39583120551adb142b3601b16eb7144f,
     type: 3}
   m_purchaseSkillItemUI: {fileID: 7694491665042677196, guid: ddc512c73b71bca4f8b3bd630d534db8,
