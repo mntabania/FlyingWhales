@@ -29,6 +29,9 @@ public class PlayerManager : BaseMonoBehaviour {
     [Header("Mana Orbs")] 
     [SerializeField] private GameObject chaosOrbPrefab;
 
+    [Header("Spirit Energy")]
+    [SerializeField] private GameObject spiritnEnergyPrefab;
+
     private bool _hasWinCheckTimer;
 
     private void Awake() {
@@ -46,6 +49,7 @@ public class PlayerManager : BaseMonoBehaviour {
         // Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         // Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         Messenger.AddListener<Vector3, int, InnerTileMap>(PlayerSignals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
+        Messenger.AddListener< Vector3, int, InnerTileMap>(PlayerSignals.CREATE_SPIRIT_ENERGY, CreateSpiritEnergyAt);
         Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
         // Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
         Messenger.AddListener<string>(PlayerSignals.WIN_GAME, WinGame);
@@ -311,6 +315,41 @@ public class PlayerManager : BaseMonoBehaviour {
     public void RemoveChaosOrbFromAvailability(ChaosOrb chaosOrb) {
         availableChaosOrbs.Remove(chaosOrb);
         Messenger.Broadcast(PlayerSignals.CHAOS_ORB_DESPAWNED);
+    }
+    #endregion
+
+    #region Spirit Energy
+    public List<SpiritEnergy> availableSpiritEnergy;
+    public void CreateSpiritEnergy(Vector3 worldPos, Region region) {
+        GameObject spiritEnergyGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(spiritnEnergyPrefab.name, Vector3.zero, Quaternion.identity, region.innerMap.objectsParent);
+        spiritEnergyGO.transform.position = worldPos;
+        SpiritEnergy spiritEnergy = spiritEnergyGO.GetComponent<SpiritEnergy>();
+        spiritEnergy.Initialize(worldPos, region);
+        availableSpiritEnergy.Add(spiritEnergy);
+    }
+    private void CreateSpiritEnergyAt(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+        StartCoroutine(SpiritEnergyCreationCoroutine(worldPos, amount, mapLocation));
+    }
+    private IEnumerator SpiritEnergyCreationCoroutine(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+        for (int i = 0; i < amount; i++) {
+            GameObject spiritEnergyGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(spiritnEnergyPrefab.name, Vector3.zero,
+                Quaternion.identity, mapLocation.objectsParent);
+            spiritEnergyGO.transform.position = worldPos;
+            SpiritEnergy spiritEnergy = spiritEnergyGO.GetComponent<SpiritEnergy>();
+            spiritEnergy.Initialize(mapLocation.region);
+            AddAvailableSpritiEnergy(spiritEnergy);
+            yield return null;
+        }
+        Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.region.name}. Position {worldPos.ToString()}");
+    }
+    
+    private void AddAvailableSpritiEnergy(SpiritEnergy p_spiritEnergy) {
+        availableSpiritEnergy.Add(p_spiritEnergy);
+        Messenger.Broadcast(PlayerSignals.SPIRIT_ENERGY_SPAWNED);
+    }
+    public void RemoveSpiritEnergyFromAvailability(SpiritEnergy p_spiritEnergy) {
+        availableSpiritEnergy.Remove(p_spiritEnergy);
+        Messenger.Broadcast(PlayerSignals.SPIRIT_ENERGY_DESPAWNED);
     }
     #endregion
 

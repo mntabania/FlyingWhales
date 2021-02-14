@@ -23872,19 +23872,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114524107657929448, guid: c51738521ec0ac14abf6fc9fd57b44d9,
-        type: 3}
-      propertyPath: UIObjectPoolParent
-      value: 
-      objectReference: {fileID: 1956153252}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c51738521ec0ac14abf6fc9fd57b44d9, type: 3}
---- !u!4 &1331117892 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1331117891}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1331834661
 GameObject:
   m_ObjectHideFlags: 0
@@ -26393,7 +26382,7 @@ MonoBehaviour:
   worldWideItemGenerationSetting: {fileID: 11400000, guid: acfbe38be903c424aa99c568054c1231,
     type: 2}
   initialArtifactChoices: 0f000000120000001000000098000000
-  _disableLogs: 1
+  _disableLogs: 0
   useRandomGenerationForScenarioMaps: 0
 --- !u!1 &1654958421
 GameObject:
@@ -34286,63 +34275,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1953607321}
   m_CullTransparentMesh: 0
---- !u!1 &1956153252
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1956153253}
-  - component: {fileID: 1956153256}
-  m_Layer: 5
-  m_Name: Canvas
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1956153253
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1956153252}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1331117892}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -4989, y: -427}
-  m_SizeDelta: {x: 1920, y: 1080}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!223 &1956153256
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1956153252}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 1007957311
-  m_SortingOrder: -1
-  m_TargetDisplay: 0
 --- !u!1 &1961614542
 GameObject:
   m_ObjectHideFlags: 0

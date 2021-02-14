@@ -22,6 +22,8 @@ public class Player : ILeader, IObjectManipulator {
     public Faction playerFaction { get; private set; }
     public PlayerSettlement playerSettlement { get; private set; }
     public int mana { get; private set; }
+
+    public int spiritEnergy { get; private set; }
     public int experience { get; private set; }
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
@@ -666,6 +668,15 @@ public class Player : ILeader, IObjectManipulator {
     #region The Eye
     private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) { }
     private void OnMinionUnassignedFromPlayerLandmark(Minion minion, BaseLandmark landmark) { }
+    #endregion
+
+    #region spirit energy
+    public void AdjustSpiritEnergy(int amount) {
+        spiritEnergy += amount;
+        spiritEnergy = Mathf.Clamp(spiritEnergy, 0, 100000);
+        Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, amount, spiritEnergy);
+        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+    }
     #endregion
 
     #region Mana
