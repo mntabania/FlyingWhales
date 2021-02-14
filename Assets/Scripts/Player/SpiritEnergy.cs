@@ -21,7 +21,10 @@ public class SpiritEnergy : PooledObject {
 
 	public Region location { get; private set; }
 
-	public void Initialize(Region location) {
+	private int m_amount;
+
+	public void Initialize(Region location, int p_amount) {
+		m_amount = p_amount;
 		this.location = location;
 		GameDate expiry = GameManager.Instance.Today();
 		expiry = expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(ExpiryInHours));
@@ -74,7 +77,7 @@ public class SpiritEnergy : PooledObject {
 		}
 		_collider.enabled = false;
 		_trail.enabled = true;
-		Vector3 manaContainerPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(PlayerUI.Instance.manaLbl.transform.position);
+		Vector3 manaContainerPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(PlayerUI.Instance.spiritEnergyLabel.transform.position);
 
 		Vector3 controlPointA = transform.position;
 		controlPointA.x += 5f;
@@ -92,8 +95,7 @@ public class SpiritEnergy : PooledObject {
 		Messenger.Broadcast(PlayerSignals.CHAOS_ORB_COLLECTED);
 	}
 	private void GainSpiritEnergy() {
-		int randomSpiritEnergy = Random.Range(5, 11);
-		PlayerManager.Instance.player.AdjustSpiritEnergy(randomSpiritEnergy);
+		PlayerManager.Instance.player.AdjustSpiritEnergy(m_amount);
 		Destroy();
 	}
 	public override void Reset() {

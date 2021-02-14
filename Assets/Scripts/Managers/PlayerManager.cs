@@ -336,7 +336,7 @@ public class PlayerManager : BaseMonoBehaviour {
                 Quaternion.identity, mapLocation.objectsParent);
             spiritEnergyGO.transform.position = worldPos;
             SpiritEnergy spiritEnergy = spiritEnergyGO.GetComponent<SpiritEnergy>();
-            spiritEnergy.Initialize(mapLocation.region);
+            spiritEnergy.Initialize(mapLocation.region, amount);
             AddAvailableSpritiEnergy(spiritEnergy);
             yield return null;
         }
