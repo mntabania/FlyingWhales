@@ -58,7 +58,7 @@ public class SpiritEnergy : PooledObject {
 	}
 
 	private void Expire() {
-		Messenger.Broadcast(PlayerSignals.CHAOS_ORB_EXPIRED, this);
+		Messenger.Broadcast(PlayerSignals.SPIRIT_ENERGY_EXPIRED, this);
 		Destroy();
 	}
 	private void Destroy() {

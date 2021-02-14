@@ -72,7 +72,9 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 
 	private void OnDestroy() {
-		UIManager.Instance.onPortalClicked -= OnPortalClicked;
+		if (UIManager.Instance != null) {
+			UIManager.Instance.onPortalClicked -= OnPortalClicked;
+		}
 		m_skillItems.ForEach((eachItem) => eachItem.onButtonClick -= OnSkillClick);
 	}
 
