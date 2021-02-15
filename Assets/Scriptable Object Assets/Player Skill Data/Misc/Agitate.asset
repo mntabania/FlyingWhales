@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Agitate
   m_EditorClassIdentifier: 
   skill: 89
-  manaCost: 15
+  manaCost: 20
   charges: 1
-  cooldown: 96
+  cooldown: 160
   threat: 0
   threatPerHour: 0
   expCost: 0
@@ -45,8 +45,8 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 6400000096000000c8000000
-    manacostPerLevel: 190000001e00000023000000
-    chargesPerLevel: 010000000200000003000000
+    manacostPerLevel: 190000001e0000002300000023000000
+    chargesPerLevel: 01000000020000000300000003000000
     bonuses: 000000000100000004000000
     additionalDamagePerLevel: 190000001900000019000000
     additionalPiercePerLevel:
