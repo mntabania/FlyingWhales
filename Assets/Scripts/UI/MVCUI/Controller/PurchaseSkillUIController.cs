@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Ruinarch.MVCFramework;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
@@ -24,45 +24,12 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 
 	public FakePlayer fakePlayer;
 
-	private int m_currentDay = -1;
-	private int m_dayPurchased = -1;
-	private int m_dayRerolled = -1;
-
-	private bool m_doRandomize;
-
-	private void OnEnable() {
-		Messenger.AddListener(Signals.DAY_STARTED, OnChangeDay);
-	}
-	public void Init(int numberOfSkills) {
-		m_numberOfSkills = numberOfSkills;
-		InstantiateUI();
-	}
-
-	private void OnChangeDay() {
-		if (GameManager.Instance.continuousDays > m_currentDay) {
-			m_currentDay = GameManager.Instance.continuousDays;
-			m_doRandomize = true;
-		}
-	}
-	#region Listeners
-	public void OnRerollClicked() {
-		if (m_dayRerolled != GameManager.Instance.continuousDays) {
-			m_dayRerolled = GameManager.Instance.continuousDays;
-			MakeListForAvailableSkills();
-			SpawnItems();
-		}
-	}
-	public void OnCloseClicked() {
-		HideUI();
-	}
-	#endregion
-
-	public override void ShowUI() {
-		base.ShowUI();
-	}
-	public override void HideUI() {
-		base.HideUI();
-	}
+	private GameDate m_nextPurchased;
+	
+	private bool m_firstRun = true;
+	private bool m_isAvailable;
+	
+	#region mono
 	private void Start() {
 		if (isTestScene) {
 			Init(skillCountPerDraw);
@@ -72,14 +39,34 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 
 	private void OnDestroy() {
+		StopCoroutine("ProcessAvailability");
 		if (UIManager.Instance != null) {
 			UIManager.Instance.onPortalClicked -= OnPortalClicked;
 		}
 		m_skillItems.ForEach((eachItem) => eachItem.onButtonClick -= OnSkillClick);
 	}
+	#endregion
+
+	IEnumerator ProcessAvailability() {
+		while (m_purchaseSkillUIView.UIModel.parentDisplay.gameObject.activeSelf) {
+			m_isAvailable = GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased) <= 0;
+			if (!m_isAvailable) {
+				m_purchaseSkillUIView.SetMessage("New Abilities will be available after " + (GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased)) + " ticks");
+			} else {
+				DisplayMenu();
+			}
+			yield return 0;
+		}
+	}
+	public void Init(int numberOfSkills) {
+		m_numberOfSkills = numberOfSkills;
+		InstantiateUI();
+	}
 
 	private void OnPortalClicked() {
-		Init(skillCountPerDraw);
+		if (GameManager.Instance.gameHasStarted) {
+			Init(skillCountPerDraw);
+		}
 	}
 
 	public void SpawnItems() {
@@ -113,30 +100,25 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			}
 			m_weightedList.Clear();
 		}
-
-	}
-
-	public void AddTestSkill(PLAYER_SKILL_TYPE p_type) {
-		PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI);
-		go.InitItem(p_type);
-		go.onButtonClick += OnSkillClick;
-		go.transform.SetParent(m_purchaseSkillUIView.GetSkillsParent());
-		m_skillItems.Add(go);
 	}
 
 	public void MakeListForAvailableSkills() {
-		PlayerSkillManager.Instance.Initialize();
-		m_weightedList = new WeightedDictionary<SkillData>();
+		if (m_weightedList == null) {
+			m_weightedList = new WeightedDictionary<SkillData>();
+		}
+		m_weightedList.Clear();
 		foreach (KeyValuePair<PLAYER_SKILL_TYPE, SkillData> entry in PlayerSkillManager.Instance.allPlayerSkillsData) {
 			if (!entry.Value.isInUse) {
 				PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(entry.Value.type);
 				if (playerSkillData != null) {
-					int processedWeight = playerSkillData.baseLoadoutWeight;
-					if (PlayerSkillManager.Instance.selectedArchetype == playerSkillData.archetypeWeightedBonus) {
-						processedWeight += 100;
-					}
-					if (processedWeight >= 0) {
-						m_weightedList.AddElement(entry.Value, processedWeight);
+					if (m_skillProgressionManager.CheckAndUnlock(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.mana, entry.Value.type) != -1) {
+						int processedWeight = playerSkillData.baseLoadoutWeight;
+						if (PlayerSkillManager.Instance.selectedArchetype == playerSkillData.archetypeWeightedBonus) {
+							processedWeight += 100;
+						}
+						if (processedWeight >= 0) {
+							m_weightedList.AddElement(entry.Value, processedWeight);
+						}
 					}
 				}
 			}
@@ -146,18 +128,19 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	//Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
 	[ContextMenu("Instantiate UI")]
 	public override void InstantiateUI() {
-		if (m_dayPurchased != GameManager.Instance.continuousDays) {
-			if (m_purchaseSkillUIView == null) {
+		if (m_isAvailable || m_firstRun) {
+			if (m_purchaseSkillUIView == null) { //first run
+				PlayerSkillManager.Instance.Initialize();
+				MakeListForAvailableSkills();
 				DisplayMenuFirstTime();
 			} else {
-				if (m_doRandomize) {
-					DiplayMenu();
-				}
+				DisplayMenu();
 				ShowUI();
 			}
 		} else {
+			ShowUI();
+			DisplayMenu();
 			m_purchaseSkillUIView.HideSkills();
-			m_purchaseSkillUIView.SetMessage("Please come back next day");
 		}
 	}
 
@@ -168,16 +151,35 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			InitUI(p_ui.UIModel, p_ui);
 			ShowUI();
 			m_purchaseSkillUIView.ShowSkills();
-			MakeListForAvailableSkills();
 			SpawnItems();
 		});
 	}
 
-	private void DiplayMenu() {
+	private void DisplayMenu() {
 		m_purchaseSkillUIView.ShowSkills();
-		MakeListForAvailableSkills();
 		SpawnItems();
-		m_doRandomize = false;
+		if (m_isAvailable) {
+			StopCoroutine("ProcessAvailability");
+			m_purchaseSkillUIView.EnableRerollButton();
+		} else {
+			StartCoroutine("ProcessAvailability");
+		}
+	}
+
+	#region Listeners
+	public void OnRerollClicked() {
+		m_firstRun = false;
+		m_nextPurchased = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+		MakeListForAvailableSkills();
+		m_purchaseSkillUIView.DisableRerollButton();
+		SpawnItems();
+		m_isAvailable = false;
+		m_purchaseSkillUIView.HideSkills();
+		StartCoroutine("ProcessAvailability");
+	}
+	public void OnCloseClicked() {
+		StopCoroutine("ProcessAvailability");
+		HideUI();
 	}
 
 	public void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
@@ -188,11 +190,16 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			result = m_skillProgressionManager.CheckAndUnlock(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.mana, p_type);
 		}
 		if (result != -1) {
-			m_dayPurchased = GameManager.Instance.continuousDays;
+			MakeListForAvailableSkills();
+			m_firstRun = false;
+			m_nextPurchased = GameManager.Instance.Today().AddDays(1);
 			PlayerManager.Instance.player.AdjustMana(-result);
 			PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(p_type);
 			m_purchaseSkillUIView.HideSkills();
-			m_purchaseSkillUIView.SetMessage("Please come back next day");
+			m_purchaseSkillUIView.DisableRerollButton();
+			m_isAvailable = false;
+			StartCoroutine("ProcessAvailability");
 		}
 	}
+	#endregion
 }

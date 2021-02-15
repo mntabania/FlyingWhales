@@ -143,8 +143,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
         minionList.Initialize();
         summonList.Initialize();
-        plaguePointsContainer.gameObject.SetActive(false);
-
+        
         Messenger.AddListener(PlayerSignals.UPDATED_CURRENCIES, UpdateUI);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
@@ -205,7 +204,6 @@ public class PlayerUI : BaseMonoBehaviour {
         summonList.UpdateList();
 
         OnThreatUpdated();
-        UpdatePlaguePointsContainer();
         UpdatePlaguePointsAmount(PlayerManager.Instance.player.plagueComponent.plaguePoints);
     }
 
@@ -1057,9 +1055,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void UpdatePlaguePointsAmount(int p_amount) {
         plaguePointLbl.text = p_amount.ToString();
-    }
-    private void UpdatePlaguePointsContainer() {
-        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse);
     }
     public void OnHoverEnterPlaguePoints() {
         string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";
