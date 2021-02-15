@@ -57,7 +57,7 @@ public class MakeLove : GoapAction {
         }
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
         costLog += $" +{cost}(Initial)";
-        TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+        TIME_IN_WORDS timeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick();
         if (actor.race.IsSapient() && timeOfDay != TIME_IN_WORDS.EARLY_NIGHT && timeOfDay != TIME_IN_WORDS.LATE_NIGHT && timeOfDay != TIME_IN_WORDS.AFTER_MIDNIGHT) {
             cost += 2000;
             costLog += " +2000(Actor is sapient and Time is not Early Night/Late Night/After Midnight)";
@@ -376,7 +376,7 @@ public class MakeLove : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             Character target = poiTarget as Character;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Logs;
 using Object_Pools;
 using UnityEngine;
@@ -24,37 +24,36 @@ namespace Interrupts {
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, "Loss of Control", LOG_IDENTIFIER.STRING_1);
 
-            if (interruptHolder.actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                HexTile hexTile = interruptHolder.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                if (interruptHolder.actor.characterClass.className.Equals("Druid")) {
-                    //Electric storm
-                    if (hexTile.spellsComponent.hasElectricStorm) {
-                        //reset electric storm
-                        hexTile.spellsComponent.ResetElectricStormDuration();
-                    } else {
-                        hexTile.spellsComponent.SetHasElectricStorm(true);
-                    }
-                } else if (interruptHolder.actor.characterClass.className.Equals("Shaman")) {
-                    //Poison Bloom
-                    PoisonBloomFeature poisonBloomFeature = hexTile.featureComponent.GetFeature<PoisonBloomFeature>();
-                    if (poisonBloomFeature != null) {
-                        poisonBloomFeature.ResetDuration();
-                    } else {
-                        hexTile.featureComponent.AddFeature(TileFeatureDB.Poison_Bloom_Feature, hexTile);
-                    }
-                } else if (interruptHolder.actor.characterClass.className.Equals("Mage")) { 
-                    //Brimstones
-                    if (hexTile.spellsComponent.hasBrimstones) {
-                        //reset electric storm
-                        hexTile.spellsComponent.ResetBrimstoneDuration();
-                    } else {
-                        hexTile.spellsComponent.SetHasBrimstones(true);
-                    }
+            Area area = interruptHolder.actor.areaLocation;
+            if (interruptHolder.actor.characterClass.className.Equals("Druid")) {
+                //Electric storm
+                if (area.spellsComponent.hasElectricStorm) {
+                    //reset electric storm
+                    area.spellsComponent.ResetElectricStormDuration();
+                } else {
+                    area.spellsComponent.SetHasElectricStorm(true);
                 }
-                else {
-                    throw new Exception($"No spell type for Loss of Control interrupt for character {interruptHolder.actor.name} with class {interruptHolder.actor.characterClass.className}");
+            } else if (interruptHolder.actor.characterClass.className.Equals("Shaman")) {
+                //Poison Bloom
+                PoisonBloomFeature poisonBloomFeature = area.featureComponent.GetFeature<PoisonBloomFeature>();
+                if (poisonBloomFeature != null) {
+                    poisonBloomFeature.ResetDuration();
+                } else {
+                    area.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, area);
+                }
+            } else if (interruptHolder.actor.characterClass.className.Equals("Mage")) { 
+                //Brimstones
+                if (area.spellsComponent.hasBrimstones) {
+                    //reset electric storm
+                    area.spellsComponent.ResetBrimstoneDuration();
+                } else {
+                    area.spellsComponent.SetHasBrimstones(true);
                 }
             }
+            else {
+                throw new Exception($"No spell type for Loss of Control interrupt for character {interruptHolder.actor.name} with class {interruptHolder.actor.characterClass.className}");
+            }
+            
             
             return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
         }

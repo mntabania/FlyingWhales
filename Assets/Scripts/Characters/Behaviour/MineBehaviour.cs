@@ -119,27 +119,27 @@ public class MineBehaviour : CharacterBehaviourComponent {
     //     character.behaviourComponent.SetCurrentMiningPath(null); //so behaviour can be run again after job has been added
     // }
 
-    private HexTile GetNearestCaveTile(Character character) {
-        if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            HexTile originTile = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-            HexTile nearestTile = null;
-            float nearestDist = 9999f;
-            for (int i = 0; i < character.currentRegion.tiles.Count; i++) {
-                HexTile tile = character.currentRegion.tiles[i];
-                if (tile.elevationType == ELEVATION.MOUNTAIN) {
-                    LocationStructure structure = tile.GetMostImportantStructureOnTile();
-                    Assert.IsTrue(structure is Cave, $"Most important Structure at {tile} is not a cave");
+    private Area GetNearestCaveArea(Character character) {
+        if (character.gridTileLocation != null) {
+            Area originArea = character.areaLocation;
+            Area nearestArea = null;
+            float nearestDist = 0f;
+            for (int i = 0; i < character.currentRegion.areas.Count; i++) {
+                Area area = character.currentRegion.areas[i];
+                if (area.elevationType == ELEVATION.MOUNTAIN) {
+                    LocationStructure structure = area.structureComponent.GetMostImportantStructureOnTile();
+                    Assert.IsTrue(structure is Cave, $"Most important Structure at {area} is not a cave");
                     if (character.movementComponent.structuresToAvoid.Contains(structure)) {
                         continue; //skip
                     }
-                    float distance = Vector2.Distance(originTile.transform.position, tile.transform.position);
-                    if (nearestTile == null || distance < nearestDist) {
+                    float distance = Vector2.Distance(originArea.gridTileComponent.centerGridTile.centeredWorldLocation, area.gridTileComponent.centerGridTile.centeredWorldLocation);
+                    if (nearestArea == null || distance < nearestDist) {
                         nearestDist = distance;
-                        nearestTile = tile;
+                        nearestArea = area;
                     }    
                 }
             }
-            return nearestTile;
+            return nearestArea;
         }
         return null;
     }

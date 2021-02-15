@@ -54,7 +54,6 @@ public class InnerMapCameraMove : BaseCameraMove {
 
     public override void Initialize() {
         base.Initialize();
-        gameObject.SetActive(false);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
@@ -101,11 +100,11 @@ public class InnerMapCameraMove : BaseCameraMove {
             target = GO.transform;
         }
     }
-    public void CenterCameraOnTile(HexTile tile, bool instantCenter = true) {
+    public void CenterCameraOnTile(Area area, bool instantCenter = true) {
         if (instantCenter) {
-            MoveCamera(tile.worldPosition);
+            MoveCamera(area.worldPosition);
         } else {
-            target = tile.innerMapHexTile.gridTileCollections.FirstOrDefault()?.locationGridTileCollectionItem.transform;    
+            target = area.areaItem.transform;    
         }
     }
     private void Zooming() {

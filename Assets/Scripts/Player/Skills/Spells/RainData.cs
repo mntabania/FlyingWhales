@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 
 public class RainData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RAIN;
@@ -12,23 +12,23 @@ public class RainData : SkillData {
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public RainData() : base() {
-        targetTypes = new[] { SPELL_TARGET.HEX };
+        targetTypes = new[] { SPELL_TARGET.AREA };
     }
 
-    public override void ActivateAbility(HexTile targetHex) {
-        targetHex.featureComponent.AddFeature(TileFeatureDB.Rain_Feature, targetHex);
-        base.ActivateAbility(targetHex);
+    public override void ActivateAbility(Area targetArea) {
+        targetArea.featureComponent.AddFeature(AreaFeatureDB.Rain_Feature, targetArea);
+        base.ActivateAbility(targetArea);
     }
-    public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+    public override bool CanPerformAbilityTowards(Area targetArea) {
+        bool canPerform = base.CanPerformAbilityTowards(targetArea);
         if (canPerform) {
-            return targetHex != null
+            return targetArea != null
                    // && targetHex.biomeType != BIOMES.DESERT
-                   && targetHex.featureComponent.HasFeature(TileFeatureDB.Rain_Feature) == false;
+                   && targetArea.featureComponent.HasFeature(AreaFeatureDB.Rain_Feature) == false;
         }
         return false;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);
+        TileHighlighter.Instance.PositionHighlight(tile.area);
     }
 }

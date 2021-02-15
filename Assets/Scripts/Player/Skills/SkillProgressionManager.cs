@@ -27,7 +27,6 @@ public class SkillProgressionManager {
 
 		for (int x = 0; x < playerSkilldata.requirementData.requiredSkills.Count; ++x) {
 			if (!p_availablePlayerSkills.CheckIfSkillIsAvailable(playerSkilldata.requirementData.requiredSkills[x])) {
-				UnityEngine.Debug.LogError(p_type + " Unlock FAILED");
 				return -1;
 			}
 		}
@@ -38,10 +37,8 @@ public class SkillProgressionManager {
 			playerSkilldata.requirementData.tier2Count <= p_availablePlayerSkills.tier2Count &&
 			playerSkilldata.requirementData.tier3Count <= p_availablePlayerSkills.tier3Count &&
 			playerSkilldata.unlockCost <= p_mana) {
-			UnityEngine.Debug.LogError(p_type + " Unlock SUCCESS");
 			return playerSkilldata.unlockCost;
 		}
-		UnityEngine.Debug.LogError(p_type + " Unlock FAILED");
 		return -1;
 	}
 }

@@ -141,4 +141,5 @@
     /// </summary>
     public static string DROPDOWN_ITEM_HOVERED_OUT = "OnDropdownItemHoveredOut";
     public static string SAVE_LOADOUTS = "SaveLoadouts";
+    public static string UPDATE_PIERCING_AND_RESISTANCE_INFO = "UpdatePiercingAndResistanceInfo";
 }

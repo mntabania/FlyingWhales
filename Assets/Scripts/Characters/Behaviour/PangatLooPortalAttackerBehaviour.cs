@@ -34,8 +34,8 @@ public class PangatLooPortalAttackerBehaviour : CharacterBehaviourComponent {
         } else {
             log += $"\n-character is not yet at portal, will go there now...";
             //character is not yet at target village
-            HexTile targetHextile = PlayerManager.Instance.player.portalTile;
-            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
+            Area targetArea = PlayerManager.Instance.player.portalArea;
+            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.gridTiles);
             return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
         }
         

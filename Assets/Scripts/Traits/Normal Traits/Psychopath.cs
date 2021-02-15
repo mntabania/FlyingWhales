@@ -226,20 +226,20 @@ namespace Traits {
                 LocationGridTile outsideSettlementTile = null;
                 BaseSettlement settlement = null;
                 if(character.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                    outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
+                    outsideSettlementTile = settlement.GetAPlainAdjacentArea()?.gridTileComponent.GetRandomTile();
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
-                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.area });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
-                    if(hex != null) {
-                        LocationGridTile chosenTile = hex.GetRandomTile();
+                    Area area = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnArea == null);
+                    if(area != null) {
+                        LocationGridTile chosenTile = area.gridTileComponent.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });
@@ -270,20 +270,20 @@ namespace Traits {
                 LocationGridTile outsideSettlementTile = null;
                 BaseSettlement settlement = null;
                 if (targetVictim.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                    outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
+                    outsideSettlementTile = settlement.GetAPlainAdjacentArea()?.gridTileComponent.GetRandomTile();
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
-                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.area });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    HexTile hex = targetVictim.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
-                    if (hex != null) {
-                        LocationGridTile chosenTile = hex.GetRandomTile();
+                    Area area = targetVictim.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnArea == null);
+                    if (area != null) {
+                        LocationGridTile chosenTile = area.gridTileComponent.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });

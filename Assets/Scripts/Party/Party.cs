@@ -25,7 +25,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public Faction partyFaction { get; private set; }
     public LocationStructure meetingPlace { get; private set; }
     public LocationStructure targetRestingTavern { get; private set; }
-    public HexTile targetCamp { get; private set; }
+    public Area targetCamp { get; private set; }
     public IPartyTargetDestination targetDestination { get; private set; }
     public PartyQuest currentQuest { get; private set; }
 
@@ -213,7 +213,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             return;
         }
         if (!isActive) {
-            TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             if (canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)) {
                 PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
                 if (quest != null) {
@@ -470,7 +470,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         Character firstActiveMember = null;
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             Character member = membersThatJoinedQuest[i];
-            if (member.gridTileLocation != null && member.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (member.gridTileLocation != null) {
                 if (IsMemberActive(member)) {
                     firstActiveMember = member;
                     break;
@@ -478,17 +478,18 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             }
         }
         if (firstActiveMember != null) {
-            HexTile activeMemberCurrentHex = firstActiveMember.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-            if(activeMemberCurrentHex != null && activeMemberCurrentHex.settlementOnTile != null && activeMemberCurrentHex.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE) {
-                //Hex tile within a village cannot be a camp
-                activeMemberCurrentHex = null;
+            Area activeMemberCurrentArea = firstActiveMember.gridTileLocation.area;
+            if(activeMemberCurrentArea != null && activeMemberCurrentArea.settlementOnArea != null && activeMemberCurrentArea.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE) {
+                //Area within a village cannot be a camp
+                activeMemberCurrentArea = null;
             }
-            List<HexTile> nearbyHexes = firstActiveMember.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetTilesInRange(3);
-            if (nearbyHexes != null && nearbyHexes.Count > 0) {
-                for (int i = 0; i < nearbyHexes.Count; i++) {
-                    HexTile hex = nearbyHexes[i];
+            List<Area> nearbyAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+            firstActiveMember.gridTileLocation.area.PopulateAreasInRange(nearbyAreas, 3);
+            if (nearbyAreas != null && nearbyAreas.Count > 0) {
+                for (int i = 0; i < nearbyAreas.Count; i++) {
+                    Area area = nearbyAreas[i];
                     BaseSettlement settlement;
-                    if (hex.IsPartOfVillage(out settlement)) {
+                    if (area.IsPartOfVillage(out settlement)) {
                         if (settlement == partySettlement && targetDestination == partySettlement) {
                             //If the nearby tavern is in the home settlement of the party and the home settlement is the target destination (meaning the quest is done and the party is going home), return immeditately
                             //This would mean the no resting tavern or camp will be set
@@ -503,15 +504,15 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                             }
                         }
                     } else {
-                        if(activeMemberCurrentHex == null && hex.elevationType != ELEVATION.WATER && (hex.settlementOnTile == null || hex.settlementOnTile.locationType != LOCATION_TYPE.VILLAGE)) {
-                            activeMemberCurrentHex = hex;
+                        if(activeMemberCurrentArea == null && area.elevationType != ELEVATION.WATER && (area.settlementOnArea == null || area.settlementOnArea.locationType != LOCATION_TYPE.VILLAGE)) {
+                            activeMemberCurrentArea = area;
                         }
                     }
                 }
             }
 
             if (targetRestingTavern == null) {
-                targetCamp = activeMemberCurrentHex;
+                targetCamp = activeMemberCurrentArea;
             }
         }
     }
@@ -778,11 +779,10 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                         }
                     }
                 } else if (targetCamp != null) {
-                    if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                        && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == targetCamp) {
+                    if (character.gridTileLocation != null && character.gridTileLocation.area == targetCamp) {
                         isActive = true;
                     } else {
-                        LocationGridTile tile = targetCamp.GetCenterLocationGridTile();
+                        LocationGridTile tile = targetCamp.gridTileComponent.centerGridTile;
                         if (character.movementComponent.HasPathToEvenIfDiffRegion(tile)) {
                             isActive = true;
                         }
@@ -833,7 +833,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             Character member = membersThatJoinedQuest[i];
             member.jobQueue.CancelAllJobs(JOB_TYPE.PARTY_GO_TO, JOB_TYPE.GO_TO_WAITING);
             member.trapStructure.ResetAllTrapStructures();
-            member.trapStructure.ResetAllTrapHexes();
+            member.trapStructure.ResetTrapArea();
         }
     }
     private bool HasActiveMemberThatMustDoNeedsRecovery() {
@@ -996,11 +996,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             targetRestingTavern = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetRestingTavern);
         }
         if (!string.IsNullOrEmpty(data.targetCamp)) {
-            targetCamp = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.targetCamp);
+            targetCamp = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.targetCamp);
         }
         if (!string.IsNullOrEmpty(data.targetDestination)) {
-            if(data.targetDestinationType == PARTY_TARGET_DESTINATION_TYPE.Hextile) {
-                targetDestination = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.targetDestination);
+            if(data.targetDestinationType == PARTY_TARGET_DESTINATION_TYPE.Area) {
+                targetDestination = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.targetDestination);
             } else if (data.targetDestinationType == PARTY_TARGET_DESTINATION_TYPE.Structure) {
                 targetDestination = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetDestination);
             } else if (data.targetDestinationType == PARTY_TARGET_DESTINATION_TYPE.Settlement) {

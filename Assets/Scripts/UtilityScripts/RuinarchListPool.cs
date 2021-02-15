@@ -2,7 +2,7 @@
 using Pathfinding.Util;
 namespace UtilityScripts {
     public static class RuinarchListPool<T> {
-        private static readonly List<List<T> > pool = new List<List<T>>();
+        private static readonly List<List<T>> pool = new List<List<T>>();
         
         public static List<T> Claim () {
             lock (pool) {

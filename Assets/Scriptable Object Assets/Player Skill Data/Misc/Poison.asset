@@ -15,7 +15,7 @@ MonoBehaviour:
   skill: 33
   manaCost: 20
   charges: 1
-  cooldown: 160
+  cooldown: 96
   threat: 3
   threatPerHour: 0
   expCost: 300
@@ -45,12 +45,11 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 6400000096000000c8000000
-    manacostPerLevel: 14000000140000001400000014000000
-    chargesPerLevel: 01000000010000000200000003000000
-    bonuses: 010000000e0000000a000000
+    manacostPerLevel: 190000001e00000023000000
+    chargesPerLevel: 020000000300000004000000
+    bonuses: 0100000008000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
-    - 0
     - 50
     - 100
     - 150
@@ -58,21 +57,16 @@ MonoBehaviour:
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
-    additionalmanaReceivedPercentagePerLevel:
-    - 0
-    - 0
-    - 0
-    - 0
+    additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel:
-    - 0
-    - 20
-    - 40
-    - 60
+    - 108
+    - 120
+    - 132
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 00000000140000001400000014000000
+    cooldownPerLevel: 
     skillMovementSpeed: 

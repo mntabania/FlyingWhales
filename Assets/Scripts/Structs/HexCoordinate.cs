@@ -2,11 +2,11 @@
 using System.Collections;
 
 public struct HexCoordinate {
-    public int col;
-    public int row;
+    public int x;
+    public int y;
 
-    public HexCoordinate(int col, int row) {
-        this.col = col;
-        this.row = row;
+    public HexCoordinate(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }

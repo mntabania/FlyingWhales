@@ -36,6 +36,13 @@ public class PurchaseSkillUIView : MVCUIView {
 	#endregion
 
 	#region user defined functions
+	public void DisableRerollButton() {
+		UIModel.btnReroll.interactable = false;
+	}
+	public void EnableRerollButton() {
+		UIModel.btnReroll.interactable = true;
+	}
+
 	public void ShowSkills() {
 		UIModel.skillsParent.gameObject.SetActive(true);
 		UIModel.txtMessageDisplay.gameObject.SetActive(false);

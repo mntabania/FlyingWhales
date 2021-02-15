@@ -13,7 +13,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
         producedJob = null;
         log += $"\n-{character.name} is wanderer";
         if (!character.HasTerritory() && character.currentRegion != null) {
-            HexTile initialTerritory = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
+            Area initialTerritory = character.currentRegion.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.gridTileComponent.HasCorruption());
             if (initialTerritory != null) {
                 character.SetTerritory(initialTerritory);
             } else {
@@ -23,37 +23,21 @@ public class DefaultWanderer : CharacterBehaviourComponent {
         if (character.gridTileLocation != null) {
             if ((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
                 log += "\n-No home structure and territory";
-                log += "\n-50% chance to Roam Around Tile";
-                int roll = UnityEngine.Random.Range(0, 100);
-                log += "\n-Roll: " + roll;
-                if (roll < 50) {
-                    character.jobComponent.TriggerRoamAroundTile(out producedJob);
-                } else {
-                    log += "\n-Otherwise, Visit Different Region";
-                    if (!character.jobComponent.TriggerVisitDifferentRegion()) {
-                        log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
-                        character.jobComponent.TriggerRoamAroundTile(out producedJob);
-                    }
-                }
-                //log += "\n-Trigger Set Home interrupt";
-                //character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-                //if (character.homeStructure == null && !character.HasTerritory()) {
-                //    log += "\n-Still no home structure and territory";
-                //    log += "\n-50% chance to Roam Around Tile";
-                //    int roll = UnityEngine.Random.Range(0, 100);
-                //    log += "\n-Roll: " + roll;
-                //    if (roll < 50) {
+                //log += "\n-50% chance to Roam Around Tile";
+                log += "\n-Roam Around Tile";
+                return character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                //int roll = UnityEngine.Random.Range(0, 100);
+                //log += "\n-Roll: " + roll;
+                //if (roll < 50) {
+                //    character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                //} else {
+                //    log += "\n-Otherwise, Visit Different Region";
+                //    if (!character.jobComponent.TriggerVisitDifferentRegion()) {
+                //        log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
                 //        character.jobComponent.TriggerRoamAroundTile(out producedJob);
-                //    } else {
-                //        log += "\n-Otherwise, Visit Different Region";
-                //        if (!character.jobComponent.TriggerVisitDifferentRegion()) {
-                //            log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
-                //            character.jobComponent.TriggerRoamAroundTile(out producedJob);
-                //        }
                 //    }
-                //    return true;
                 //}
-                return true;
+                //return true;
             } else {
                 log += "\n-Has home structure or territory";
                 if (character.isAtHomeStructure || character.IsInTerritory()) {
@@ -72,7 +56,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         }
                         return true;
                     } else {
-                        TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
+                        TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
 
                         log += $"\n-Previous job is not returned home";
                         log += "\n-If it is Lunch Time or Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
@@ -117,7 +101,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         log += "\n-Otherwise, if it is Morning or Lunch Time or Afternoon or Early Night, 25% chance to Stroll";
                         if ((currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME ||
                              currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT)
-                            && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInHex() == false) {
+                            && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
                             log += $"\n  -Time of Day: {currentTimeOfDay}";
                             int chance = Random.Range(0, 100);
                             log += $"\n  -RNG roll: {chance.ToString()}";
@@ -137,7 +121,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                             log += $"\n  -Time of Day: {currentTimeOfDay}";
                             int chance = Random.Range(0, 100);
                             log += $"\n  -RNG roll: {chance.ToString()}";
-                            if (chance < 25 && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInHex() == false) {
+                            if (chance < 25 && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
                                 WeightedDictionary<Character> visitWeights = GetCharacterToVisitWeights(character);
                                 if (visitWeights.GetTotalOfWeights() > 0) {
                                     Character targetCharacter = visitWeights.PickRandomElementGivenWeights();

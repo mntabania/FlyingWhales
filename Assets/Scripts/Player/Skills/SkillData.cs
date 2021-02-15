@@ -58,7 +58,7 @@ public class SkillData : IPlayerSkill {
     public virtual void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
         OnExecutePlayerSkill();
     }
-    public virtual void ActivateAbility(HexTile targetHex) {
+    public virtual void ActivateAbility(Area targetArea) {
         //if(targetHex.settlementOnTile != null) {
         //    if(targetHex.settlementOnTile.HasResidentInsideSettlement()){
         //        PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
@@ -88,7 +88,7 @@ public class SkillData : IPlayerSkill {
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return CanPerformAbility(); }
-    public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(Area targetArea) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(StructureRoom room) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(BaseSettlement targetSettlement) { return CanPerformAbility(); }
@@ -175,8 +175,8 @@ public class SkillData : IPlayerSkill {
     public bool CanTarget(LocationGridTile tile) {
         return CanPerformAbilityTowards(tile);
     }
-    public bool CanTarget(HexTile hex) {
-        return CanPerformAbilityTowards(hex);
+    public bool CanTarget(Area p_area) {
+        return CanPerformAbilityTowards(p_area);
     }
     public bool CanTarget(BaseSettlement p_targetSettlement) {
         return CanPerformAbilityTowards(p_targetSettlement);

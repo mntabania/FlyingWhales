@@ -87,7 +87,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (isHoverObjectStateLocked) {
             return; //ignore change because hover state is locked
         }
-        if (PlayerManager.Instance.player.IsPerformingPlayerAction()) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.IsPerformingPlayerAction()) {
             return; //player is currently performing an action, do not highlight.
         }
         if (hoverObject.gameObject.activeSelf == state) {

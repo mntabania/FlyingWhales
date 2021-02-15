@@ -121,7 +121,6 @@ public class RaidPartyQuest : PartyQuest {
             if (!resident.isDead
                 && !resident.isBeingSeized
                 && resident.gridTileLocation != null
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(settlement)
                 && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
                 return true;

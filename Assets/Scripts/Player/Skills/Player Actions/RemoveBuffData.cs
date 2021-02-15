@@ -47,6 +47,8 @@ public class RemoveBuffData : PlayerAction {
             p_character.traitContainer.RemoveTrait(p_character, traitName);
             Activate(p_character);
         } else {
+            //Go into cooldown but do not activate ability
+            OnExecutePlayerSkill();
             PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", p_character.name + " resisted the power of the Ruinarch!");
         }
     }

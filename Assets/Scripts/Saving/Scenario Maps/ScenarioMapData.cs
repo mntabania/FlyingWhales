@@ -17,10 +17,10 @@ namespace Scenario_Maps {
                 NPCSettlement settlement = villageSettlements[i];
                 
                 //save hex tiles
-                Point[] tileCoordinates = new Point[settlement.tiles.Count];
+                Point[] tileCoordinates = new Point[settlement.areas.Count];
                 for (int j = 0; j < tileCoordinates.Length; j++) {
-                    HexTile hexTile = settlement.tiles[j];
-                    tileCoordinates[j] = new Point(hexTile.xCoordinate, hexTile.yCoordinate);
+                    Area area = settlement.areas[j];
+                    tileCoordinates[j] = new Point(area.areaData.xCoordinate, area.areaData.yCoordinate);
                 }
                 
                 //save structure settings
@@ -41,24 +41,24 @@ namespace Scenario_Maps {
 
     [System.Serializable]
     public struct SettlementTemplate {
-        public Point[] hexTiles;
+        public Point[] areas;
         public StructureSetting[] structureSettings;
         public int minimumVillagerCount;
         public RACE factionRace;
         public SETTLEMENT_TYPE settlementType;
         
-        public SettlementTemplate(Point[] hexTiles, StructureSetting[] structureSettings, int minimumVillagerCount, RACE factionRace, SETTLEMENT_TYPE settlementType) {
-            this.hexTiles = hexTiles;
+        public SettlementTemplate(Point[] areas, StructureSetting[] structureSettings, int minimumVillagerCount, RACE factionRace, SETTLEMENT_TYPE settlementType) {
+            this.areas = areas;
             this.structureSettings = structureSettings;
             this.minimumVillagerCount = minimumVillagerCount;
             this.factionRace = factionRace;
             this.settlementType = settlementType;
         }
         
-        public HexTile[] GetTilesInTemplate(HexTile[,] map) {
-            HexTile[] tiles = new HexTile[hexTiles.Length];
+        public Area[] GetTilesInTemplate(Area[,] map) {
+            Area[] tiles = new Area[areas.Length];
             for (int i = 0; i < tiles.Length; i++) {
-                Point point = hexTiles[i];
+                Point point = areas[i];
                 tiles[i] = map[point.X, point.Y];
             }
             return tiles;

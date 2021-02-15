@@ -2497,7 +2497,7 @@
         "moistureNoise": 0.4953231,
         "temperature": 0.2635979,
         "biomeType": "FOREST",
-        "elevationType": "MOUNTAIN",
+        "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
         "landmarkType": "TEMPLE",
         "saveDataHexTileSpellsComponent": {
@@ -4604,7 +4604,7 @@
   },
   "villageSettlementTemplates": [
     {
-      "hexTiles": [
+      "areas": [
         {
           "X": 4,
           "Y": 5
@@ -4725,7 +4725,7 @@
       "settlementType": "Capital"
     },
     {
-      "hexTiles": [
+      "areas": [
         {
           "X": 10,
           "Y": 6

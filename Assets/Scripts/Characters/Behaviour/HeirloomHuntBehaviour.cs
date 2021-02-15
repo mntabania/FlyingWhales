@@ -75,14 +75,14 @@ public class HeirloomHuntBehaviour : CharacterBehaviourComponent {
         //            }
         //        }
         //        //if (targetHeirloom.gridTileLocation != null && targetHeirloom.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-        //        //    targetHex = targetHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        //        //    targetHex = targetHeirloom.gridTileLocation.hexTileOwner;
         //        //}
         //    }
         //    if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
-        //           character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == targetHex) {
+        //           character.gridTileLocation.hexTileOwner == targetHex) {
         //        Character memberInCombat = heirloomHuntParty.GetMemberInCombatExcept(character);
         //        if (memberInCombat != null && memberInCombat.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
-        //            memberInCombat.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == targetHex) {
+        //            memberInCombat.gridTileLocation.hexTileOwner == targetHex) {
         //            log += $"\n-{memberInCombat.name} is in combat, will try to combat also";
         //            bool hasFought = false;
         //            CombatState combatState = memberInCombat.stateComponent.currentState as CombatState;
@@ -115,9 +115,9 @@ public class HeirloomHuntBehaviour : CharacterBehaviourComponent {
 
     private bool RoamAroundStructureOrHex(Character actor, IPartyQuestTarget target, out JobQueueItem producedJob) {
         if(target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-            if(target is Character targetCharacter && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                HexTile targetHex = targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetHex.GetRandomTile());
+            if(target is Character targetCharacter) {
+                Area targetArea = targetCharacter.areaLocation;
+                return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetArea.gridTileComponent.GetRandomTile());
             }
         }
         return actor.jobComponent.TriggerRoamAroundStructure(out producedJob);

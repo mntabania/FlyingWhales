@@ -17,19 +17,22 @@ public class GolemBehaviour : BaseMonsterBehaviour {
                     summon.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
                     if (summon.homeStructure == null && !summon.HasTerritory()) {
                         log += "\n-Still no home structure and territory";
-                        log += "\n-50% chance to Roam Around Tile";
-                        int roll = UnityEngine.Random.Range(0, 100);
-                        log += "\n-Roll: " + roll;
-                        if (roll < 50) {
-                            summon.jobComponent.TriggerRoamAroundTile(out producedJob);
-                        } else {
-                            log += "\n-Otherwise, Visit Different Region";
-                            if (!summon.jobComponent.TriggerVisitDifferentRegion()) {
-                                log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
-                                summon.jobComponent.TriggerRoamAroundTile(out producedJob);
-                            }
-                        }
-                        return true;
+                        //log += "\n-50% chance to Roam Around Tile";
+                        log += "\n-Roam Around Tile";
+                        return summon.jobComponent.TriggerRoamAroundTile(out producedJob);
+
+                        //int roll = UnityEngine.Random.Range(0, 100);
+                        //log += "\n-Roll: " + roll;
+                        //if (roll < 50) {
+                        //    summon.jobComponent.TriggerRoamAroundTile(out producedJob);
+                        //} else {
+                        //    log += "\n-Otherwise, Visit Different Region";
+                        //    if (!summon.jobComponent.TriggerVisitDifferentRegion()) {
+                        //        log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
+                        //        summon.jobComponent.TriggerRoamAroundTile(out producedJob);
+                        //    }
+                        //}
+                        //return true;
                     }
                     return true;
                 } else {
@@ -47,7 +50,7 @@ public class GolemBehaviour : BaseMonsterBehaviour {
                             if (roll < 35) {
                                 hasAddedJob = summon.jobComponent.TriggerRoamAroundTerritory(out producedJob);
                             } else {
-                                TIME_IN_WORDS currTime = GameManager.GetCurrentTimeInWordsOfTick();
+                                TIME_IN_WORDS currTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
                                 if (currTime == TIME_IN_WORDS.LATE_NIGHT || currTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                                     log += "\n-Late Night or After Midnight, 40% chance to Sleep";
                                     int sleepRoll = UnityEngine.Random.Range(0, 100);

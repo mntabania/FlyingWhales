@@ -26,9 +26,9 @@ public class Sheep : Animal {
     // private void OnCharacterFinishedAction(ActualGoapNode goapNode) {
     //     if (goapNode.actor == this && goapNode.action.goapType == INTERACTION_TYPE.STAND &&
     //         gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
-    //         (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.GRASSLAND 
-    //          || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.FOREST 
-    //          || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT) && 
+    //         (gridTileLocation.hexTileOwner.biomeType == BIOMES.GRASSLAND 
+    //          || gridTileLocation.hexTileOwner.biomeType == BIOMES.FOREST 
+    //          || gridTileLocation.hexTileOwner.biomeType == BIOMES.DESERT) && 
     //         UnityEngine.Random.Range(0, 100) < 5 && gridTileLocation.structure.isInterior == false 
     //         && gridTileLocation.HasUnoccupiedNeighbour(out var tiles, true)) {
     //         LocationGridTile randomTile = CollectionUtilities.GetRandomElement(tiles);

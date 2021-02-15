@@ -72,8 +72,8 @@ public class DepositResourcePile : GoapAction {
                     //return the main storage so that the main storage will become the target structure
                     return node.actor.homeSettlement.mainStorage;
                 }
-            } else if (otherData[0].obj is HexTile hex) {
-                LocationGridTile centerTile = hex.GetCenterLocationGridTile();
+            } else if (otherData[0].obj is Area area) {
+                LocationGridTile centerTile = area.gridTileComponent.centerGridTile;
                 return centerTile.structure;
             }
             if(node.actor.homeSettlement != null) {
@@ -102,10 +102,10 @@ public class DepositResourcePile : GoapAction {
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0].obj is HexTile hex) {
-            LocationGridTile tile = hex.GetRandomPassableTile();
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is Area area) {
+            LocationGridTile tile = area.GetRandomPassableTile();
             if(tile == null) {
-                tile = hex.GetRandomTile();
+                tile = area.gridTileComponent.GetRandomTile();
             }
             return tile;
         } else {

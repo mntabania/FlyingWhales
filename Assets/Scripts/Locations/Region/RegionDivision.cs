@@ -7,7 +7,7 @@ using UtilityScripts;
 
 public class RegionDivision {
     public BIOMES biome { get; private set; }
-    public List<HexTile> tiles { get; }
+    public List<Area> tiles { get; }
     public MonsterMigrationBiomeAtomizedData[] faunaList { get; private set; }
     public int monsterMigrationChance { get; private set; }
 
@@ -15,13 +15,7 @@ public class RegionDivision {
 
     public RegionDivision(BIOMES p_biome) {
         biome = p_biome;
-        tiles = new List<HexTile>();
-        _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
-        Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
-    }
-    public RegionDivision(BIOMES p_biome, List<HexTile> p_tiles) {
-        biome = p_biome;
-        tiles = p_tiles;
+        tiles = new List<Area>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
     }
@@ -29,13 +23,13 @@ public class RegionDivision {
         biome = p_data.biome;
         faunaList = p_data.faunaList;
         monsterMigrationChance = p_data.monsterMigrationChance;
-        tiles = new List<HexTile>();
+        tiles = new List<Area>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
     }
-    public void AddTile(HexTile p_tile) {
-        tiles.Add(p_tile);
-        p_tile.SetRegionDivision(this);
+    public void AddTile(Area p_area) {
+        tiles.Add(p_area);
+        p_area.SetRegionDivision(this);
     }
 
     #region Listeners
@@ -82,7 +76,7 @@ public class RegionDivision {
             for (int i = 0; i < region.allStructures.Count; i++) {
                 LocationStructure structure = region.allStructures[i];
                 if (structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR || structure.structureType == STRUCTURE_TYPE.CAVE) {
-                    if (structure.occupiedHexTile.hexTileOwner.regionDivision == this) {
+                    if (structure.occupiedArea.regionDivision == this) {
                         if (!structure.IsOccupied()) {
                             homeStructureOfNewMonsters = structure;
                             break;

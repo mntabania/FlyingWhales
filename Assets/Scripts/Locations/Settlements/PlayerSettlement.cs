@@ -49,17 +49,17 @@ namespace Locations.Settlements {
         }
         #endregion
 
-        #region Loading
-        public override void LoadReferences(SaveDataBaseSettlement data) {
-            base.LoadReferences(data);
-            //Update tile nameplates
-            //Fix for: https://trello.com/c/gAqpeACf/3194-loading-the-game-erases-the-faction-symbol-on-the-world-map
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile tile = tiles[i];
-                tile.landmarkOnTile?.nameplate.UpdateVisuals();
-            }    
-        }
-        #endregion
+        //#region Loading
+        //public override void LoadReferences(SaveDataBaseSettlement data) {
+        //    base.LoadReferences(data);
+        //    //Update tile nameplates
+        //    //Fix for: https://trello.com/c/gAqpeACf/3194-loading-the-game-erases-the-faction-symbol-on-the-world-map
+        //    for (int i = 0; i < areas.Count; i++) {
+        //        Area area = areas[i];
+        //        area.landmarkOnTile?.nameplate.UpdateVisuals();
+        //    }    
+        //}
+        //#endregion
 
         public LocationStructure GetRandomStructureInRegion(Region region) {
             List<LocationStructure> structuresInRegion = null;

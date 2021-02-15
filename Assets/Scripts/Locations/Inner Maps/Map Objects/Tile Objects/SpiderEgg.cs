@@ -29,9 +29,9 @@ public class SpiderEgg : MonsterEgg {
             //    monster.ClearTerritory();
             //    monster.MigrateHomeTo(settlement);
             //} else 
-            if (!monster.HasHome() && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (!monster.HasHome()) {
                 monster.ClearTerritory();
-                monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+                monster.SetTerritory(gridTileLocation.area);
             }
         }
 

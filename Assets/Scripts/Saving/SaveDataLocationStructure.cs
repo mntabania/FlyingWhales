@@ -20,7 +20,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public int currentHP;
     public List<string> residentIDs;
     public List<string> charactersHereIDs;
-    public string occupiedHexTileID;
+    public string occupiedAreaID;
     public string settlementLocationID;
     public bool isInterior;
     public SaveDataStructureRoom[] structureRoomSaveData;
@@ -63,11 +63,11 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         charactersHereIDs = SaveUtilities.ConvertSavableListToIDs(structure.charactersHere);
         
         //occupied hex tile
-        if (structure.occupiedHexTile != null) {
-            occupiedHexTileID = structure.occupiedHexTile.hexTileOwner.persistentID;    
+        if (structure.occupiedArea != null) {
+            occupiedAreaID = structure.occupiedArea.persistentID;    
         } else {
-            occupiedHexTileID = string.Empty;
-            Debug.Log($"{structure.name} has no occupied hextile!");
+            occupiedAreaID = string.Empty;
+            Debug.Log($"{structure.name} has no occupied area!");
         }
         
         isInterior = structure.isInterior;

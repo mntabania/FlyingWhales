@@ -36,42 +36,42 @@ public class MapGenerationData {
 	public int height => chosenWorldMapTemplate.worldMapHeight;
 	public int regionCount => chosenWorldMapTemplate.regionCount;
 	public int[,] habitabilityValues;
-	public List<HexTile> villageSpots;
-	public Dictionary<FactionTemplate, List<HexTile>> determinedVillages;
-	public HexTile portal;
+	public List<Area> villageSpots;
+	public Dictionary<FactionTemplate, List<Area>> determinedVillages;
+	public Area portal;
 
 	public MapGenerationData() {
-		villageSpots = new List<HexTile>();
-		determinedVillages = new Dictionary<FactionTemplate, List<HexTile>>();
+		villageSpots = new List<Area>();
+		determinedVillages = new Dictionary<FactionTemplate, List<Area>>();
 	}
 	
 	#region Habitability
-	public int GetHabitabilityValue(HexTile hexTile) {
-		return habitabilityValues[hexTile.xCoordinate, hexTile.yCoordinate];
+	public int GetHabitabilityValue(Area p_area) {
+		return habitabilityValues[p_area.areaData.xCoordinate, p_area.areaData.yCoordinate];
 	}
 	#endregion
 
 	#region Village Spots
-	public void AddVillageSpot(HexTile p_villageSpot) {
+	public void AddVillageSpot(Area p_villageSpot) {
 		if (!villageSpots.Contains(p_villageSpot)) {
 			villageSpots.Add(p_villageSpot);
 		}
 	}
-	public void RemoveVillageSpots(HexTile p_villageSpot) {
+	private void RemoveVillageSpots(Area p_villageSpot) {
 		villageSpots.Remove(p_villageSpot);
 	}
-	public void RemoveVillageSpots(List<HexTile> p_villageSpot) {
+	public void RemoveVillageSpots(List<Area> p_villageSpot) {
 		for (int i = 0; i < p_villageSpot.Count; i++) {
-			HexTile tile = p_villageSpot[i];
+			Area tile = p_villageSpot[i];
 			RemoveVillageSpots(tile);
 		}
 	}
-	public void AddDeterminedVillage(FactionTemplate p_faction, HexTile p_tile) {
+	public void AddDeterminedVillage(FactionTemplate p_faction, Area p_area) {
 		if (!determinedVillages.ContainsKey(p_faction)) {
-			determinedVillages.Add(p_faction, new List<HexTile>());
+			determinedVillages.Add(p_faction, new List<Area>());
 		}
-		determinedVillages[p_faction].Add(p_tile);
-		Debug.Log($"Determined Village for {p_faction.name}: {p_tile.ToString()}");
+		determinedVillages[p_faction].Add(p_area);
+		Debug.Log($"Determined Village for {p_faction.name}: {p_area.ToString()}");
 	}
 	#endregion
 }

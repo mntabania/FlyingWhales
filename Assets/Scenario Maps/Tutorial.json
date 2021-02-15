@@ -2,7 +2,7 @@
   "villageSettlementTemplates": [
     {
       "factionRace": "HUMANS",
-      "hexTiles": [
+      "areas": [
         {
           "X": 4,
           "Y": 5

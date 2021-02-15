@@ -97,38 +97,6 @@ namespace UtilityScripts {
                     return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString());
             }
         }
-        public static HexTile GetCenterTile(List<HexTile> tiles, HexTile[,] map, int width, int height) {
-            int maxXCoordinate = tiles.Max(x => x.xCoordinate);
-            int minXCoordinate = tiles.Min(x => x.xCoordinate);
-            int maxYCoordinate = tiles.Max(x => x.yCoordinate);
-            int minYCoordinate = tiles.Min(x => x.yCoordinate);
-
-            int midPointX = (minXCoordinate + maxXCoordinate) / 2;
-            int midPointY = (minYCoordinate + maxYCoordinate) / 2;
-
-            if (width - 2 >= midPointX) {
-                midPointX -= 2;
-            }
-            if (height - 2 >= midPointY) {
-                midPointY -= 2;
-            }
-            if (midPointX >= 2) {
-                midPointX += 2;
-            }
-            if (midPointY >= 2) {
-                midPointY += 2;
-            }
-            midPointX = Mathf.Clamp(midPointX, 0, width - 1);
-            midPointY = Mathf.Clamp(midPointY, 0, height - 1);
-
-            try {
-                HexTile newCenterOfMass = map[midPointX, midPointY];
-                return newCenterOfMass;
-            } catch {
-                throw new Exception($"Cannot Recompute center. Computed new center is {midPointX}, {midPointY}");
-            }
-
-        }
         public static Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2) {
             // Move origin from bottom left to top left
             screenPosition1.y = Screen.height - screenPosition1.y;
@@ -253,15 +221,6 @@ namespace UtilityScripts {
             }
             return -1;
         }
-        public static List<HexTile> GetTilesFromIDs(List<int> ids) {
-            List<HexTile> tiles = new List<HexTile>();
-            for (int i = 0; i < ids.Count; i++) {
-                int currID = ids[i];
-                HexTile tile = GridMap.Instance.GetHexTile(currID);
-                tiles.Add(tile);
-            }
-            return tiles;
-        }
         public static GameObject FindParentWithTag(GameObject childObject, string tag) {
             Transform t = childObject.transform;
             while (t.parent != null) {
@@ -367,11 +326,11 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(p_min, p_max + 1);
             return roll;
         }
-        public static List<HexTile> GetHexTilesGivenCoordinates(List<Point> coordinates, HexTile[,] map) {
-            List<HexTile> tiles = new List<HexTile>();
+        public static List<Area> GetHexTilesGivenCoordinates(List<Point> coordinates, Area[,] map) {
+            List<Area> tiles = new List<Area>();
             for (int i = 0; i < coordinates.Count; i++) {
                 Point point = coordinates[i];
-                HexTile tile = map[point.X, point.Y];
+                Area tile = map[point.X, point.Y];
                 tiles.Add(tile);
             }
             return tiles;
@@ -481,6 +440,16 @@ namespace UtilityScripts {
             }
 
             return cornersOutside.Count == 0;
+        }
+        public static Color GetValidTileHighlightColor() {
+            Color color = Color.green;
+            color.a = 0.3f;
+            return color;
+        }
+        public static Color GetInvalidTileHighlightColor() {
+            Color color = Color.red;
+            color.a = 0.3f;
+            return color;
         }
     }    
 }

@@ -56,8 +56,8 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         floorSample = gridTile.floorSample;
     }
 
-    public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap, SaveDataCurrentProgress saveData) {
-        LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
+    public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap, SaveDataCurrentProgress saveData, Area p_area) {
+        LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap, p_area);
         tile.SetFloorSample(floorSample);
         SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, genericTileObjectID);
         TileObject loadedObject = saveDataTileObject.Load();

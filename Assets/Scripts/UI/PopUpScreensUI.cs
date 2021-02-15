@@ -37,7 +37,6 @@ public class PopUpScreensUI : MonoBehaviour {
     public void ShowStartScreen(string message) {
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
-        WorldMapCameraMove.Instance.DisableMovement();
         InnerMapCameraMove.Instance.DisableMovement();
         InputManager.Instance.AllowHotkeys(false);
         startScreen.gameObject.SetActive(true);
@@ -69,7 +68,6 @@ public class PopUpScreensUI : MonoBehaviour {
     private void HideStartDemoScreen() {
         startScreen.gameObject.SetActive(false);
         UIManager.Instance.SetSpeedTogglesState(true);
-        WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
         InputManager.Instance.AllowHotkeys(true);
 

@@ -184,7 +184,7 @@ public class GoapAction {
     /// </summary>
     /// <param name="goapNode"></param>
     /// <returns>List of tile choices</returns>
-    public virtual List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) { return null; }
+    public virtual void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) { }
     public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
@@ -342,7 +342,7 @@ public class GoapAction {
             requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         }
         //if action has valid times of day then check if current time is valid.
-        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
+        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.Instance.GetCurrentTimeInWordsOfTick()));
     }
     public bool DoesCharacterMatchRace(Character character) {
         //If no race is specified, assume all races are allowed
@@ -383,7 +383,7 @@ public class GoapAction {
         return 1;
     }
     private int TimeOfDaysCostMultiplier(Character actor) {
-        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick(actor))) {
+        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.Instance.GetCurrentTimeInWordsOfTick(actor))) {
             return 1;
         }
         return 3;

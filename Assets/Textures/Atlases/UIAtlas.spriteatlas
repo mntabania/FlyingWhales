@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8857511
+    totalSpriteSurfaceArea: 8952283
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -123,6 +123,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 64d14823f14f7204e9d9a661643e34b5, type: 3}
   - {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
   - {fileID: 21300000, guid: 36b78933e4c50a541acc2d388dcfc210, type: 3}
+  - {fileID: 21300000, guid: 1a05ba33c23c6a44d9e0e274a248d99d, type: 3}
   - {fileID: 21300000, guid: ca97dc43b656dca4d8fbbc544c69deab, type: 3}
   - {fileID: 21300000, guid: 1656e563f404a42498f35060120e3c40, type: 3}
   - {fileID: 21300000, guid: c2cb7763df251d542b390ac879cde97e, type: 3}
@@ -310,6 +311,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d44a882ba42624248afd7f55e1b60eba, type: 3}
   - {fileID: 21300000, guid: 46f7253b16a7de844808929be8f002c1, type: 3}
   - {fileID: 21300000, guid: 8b31434b899514c459e283818eded2d4, type: 3}
+  - {fileID: 21300000, guid: 542b3b5b4f65466448e32d4678bc7340, type: 3}
   - {fileID: 21300000, guid: 97c0736b2cc64b449a9fb9f745d2bd5c, type: 3}
   - {fileID: 21300000, guid: 548a4d6b7d0479f4cb62d549ef4f0710, type: 3}
   - {fileID: 21300000, guid: 052b807b725be584b854b49e2fbbc9f1, type: 3}
@@ -490,6 +492,7 @@ SpriteAtlas:
   - Icon-Ravager-2
   - 1-Deathly
   - agent_action_button_hover
+  - spirit_container
   - Icon-Lich-3
   - button_psychopathcategory_default
   - share_intel_chat_box
@@ -677,6 +680,7 @@ SpriteAtlas:
   - tab_traits_hover
   - tab_status_inactive
   - button_invade_default
+  - BackButton-Reverse
   - trait_lycanthrope
   - demonic_structure_popup_header
   - trait_forlorn

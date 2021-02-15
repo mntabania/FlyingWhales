@@ -7,9 +7,9 @@ using Inner_Maps.Location_Structures;
 public class MonsterInvadeGathering : Gathering {
 
     public LocationStructure targetStructure { get; private set; }
-    public HexTile targetHex { get; private set; }
+    public Area targetArea { get; private set; }
 
-    public HexTile hexForJoining { get; private set; }
+    public Area areaForJoining { get; private set; }
 
     public bool isInvading { get; private set; }
 
@@ -30,12 +30,11 @@ public class MonsterInvadeGathering : Gathering {
 
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
-        return character.race == host.race && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && hexForJoining != null
-            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hexForJoining;
+        return character.race == host.race && areaForJoining != null && character.areaLocation == areaForJoining;
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
-        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
     }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);
@@ -47,16 +46,14 @@ public class MonsterInvadeGathering : Gathering {
     //}
     protected override void OnDisbandGathering() {
         base.OnDisbandGathering();
-        if (Messenger.eventTable.ContainsKey(CharacterSignals.CHARACTER_ENTERED_HEXTILE)) {
-            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        if (Messenger.eventTable.ContainsKey(CharacterSignals.CHARACTER_ENTERED_AREA)) {
+            Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
         }
     }
     protected override void OnSetHost() {
         base.OnSetHost();
         if (host != null) {
-            if (host.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                hexForJoining = host.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-            }
+            areaForJoining = host.areaLocation;
         }
     }
     #endregion
@@ -70,17 +67,17 @@ public class MonsterInvadeGathering : Gathering {
             targetStructure = structure;
         }
     }
-    public void SetTargetHex(HexTile hex) {
-        if (targetHex != hex) {
-            targetHex = hex;
+    public void SetTargetArea(Area p_area) {
+        if (targetArea != p_area) {
+            targetArea = p_area;
         }
     }
-    private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
+    private void OnCharacterEnteredArea(Character character, Area p_area) {
         bool isInTargetLocation = false;
         if (targetStructure != null) {
-            isInTargetLocation = tile.settlementOnTile != null && targetStructure.settlementLocation == tile.settlementOnTile;
-        } else if (targetHex != null) {
-            isInTargetLocation = tile == targetHex;
+            isInTargetLocation = p_area.settlementOnArea != null && targetStructure.settlementLocation == p_area.settlementOnArea;
+        } else if (targetArea != null) {
+            isInTargetLocation = p_area == targetArea;
         }
         if (isInTargetLocation) {
             if (IsAttendee(character)) {
@@ -115,13 +112,13 @@ public class MonsterInvadeGathering : Gathering {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
             if (!string.IsNullOrEmpty(subData.targetHex)) {
-                targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);
+                targetArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(subData.targetHex);
             }
             if (!string.IsNullOrEmpty(subData.hexForJoining)) {
-                hexForJoining = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.hexForJoining);
+                areaForJoining = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(subData.hexForJoining);
             }
             if (isWaitTimeOver && !isDisbanded) {
-                Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+                Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
             }
         }
     }
@@ -144,11 +141,11 @@ public class SaveDataMonsterInvadeGathering : SaveDataGathering {
             if (subData.targetStructure != null) {
                 targetStructure = subData.targetStructure.persistentID;
             }
-            if (subData.targetHex != null) {
-                targetHex = subData.targetHex.persistentID;
+            if (subData.targetArea != null) {
+                targetHex = subData.targetArea.persistentID;
             }
-            if (subData.hexForJoining != null) {
-                hexForJoining = subData.hexForJoining.persistentID;
+            if (subData.areaForJoining != null) {
+                hexForJoining = subData.areaForJoining.persistentID;
             }
         }
     }

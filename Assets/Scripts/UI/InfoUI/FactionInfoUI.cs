@@ -186,19 +186,20 @@ public class FactionInfoUI : InfoUIBase {
         locationItems.Add(item);
     }
     private void OnClickSettlementItem(BaseSettlement settlement) {
-        if (settlement.tiles.Count > 0) {
-            HexTile tile = settlement.tiles[0];
+        if (settlement.areas.Count > 0) {
+            Area tile = settlement.areas[0];
             if (InnerMapManager.Instance.isAnInnerMapShowing) {
                 //if inner map is showing, open inner map of hextile then center on it
                 if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
                     InnerMapManager.Instance.TryShowLocationMap(tile.region);    
                 }
                 InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
-            } else {
-                //if world map is showing, just center on hextile
-                tile.CenterCameraHere();
-            }
-            UIManager.Instance.ShowHexTileInfo(tile);
+            } 
+            //else {
+            //    //if world map is showing, just center on hextile
+            //    tile.CenterCameraHere();
+            //}
+            //UIManager.Instance.ShowHexTileInfo(tile);
         }
     }
     private SettlementNameplateItem GetLocationItem(BaseSettlement settlement) {

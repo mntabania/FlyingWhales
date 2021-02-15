@@ -87,7 +87,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 }
             }
 
-            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             if(currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 log += $"\n-It is Early Night, Late Night, or After Midnight";
                 int skeletonFollowers = character.necromancerTrait.GetNumOfSkeletonFollowersThatAreNotAttackingAndIsAlive();
@@ -230,12 +230,12 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             } else {
                 if(character.necromancerTrait.lairStructure == null) {
                     log += $"\n-Lair is not set, will spawn lair";
-                    HexTile chosenHex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.WATER && h.elevationType != ELEVATION.MOUNTAIN
-                    && h.landmarkOnTile == null && !h.IsNextToOrPartOfVillage() && character.movementComponent.HasPathTo(h));
-                    if (chosenHex == null) {
-                        chosenHex = GetNoStructurePlainHexInAllRegions();
+                    Area chosenArea = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN
+                    && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && character.movementComponent.HasPathTo(a));
+                    if (chosenArea == null) {
+                        chosenArea = GetNoStructurePlainAreaInAllRegions();
                     }
-                    LocationGridTile centerTileOfHex = chosenHex.GetCenterLocationGridTile();
+                    LocationGridTile centerTileOfHex = chosenArea.gridTileComponent.centerGridTile;
                     character.jobComponent.TriggerSpawnLair(centerTileOfHex, out producedJob);
                 } else {
                     if(character.homeStructure != character.necromancerTrait.lairStructure) {
@@ -250,18 +250,18 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
         return true;
 	}
 
-    private HexTile GetNoStructurePlainHexInAllRegions() {
-        HexTile chosenHex = null;
+    private Area GetNoStructurePlainAreaInAllRegions() {
+        Area chosenArea = null;
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            chosenHex = GetNoStructurePlainHexInRegion(region);
-            if (chosenHex != null) {
-                return chosenHex;
+            chosenArea = GetNoStructurePlainAreaInRegion(region);
+            if (chosenArea != null) {
+                return chosenArea;
             }
         }
-        return chosenHex;
+        return chosenArea;
     }
-    private HexTile GetNoStructurePlainHexInRegion(Region region) {
-        return region.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+    private Area GetNoStructurePlainAreaInRegion(Region region) {
+        return region.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
     }
 }

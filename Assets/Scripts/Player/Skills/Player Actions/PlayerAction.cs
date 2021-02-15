@@ -51,8 +51,8 @@ public class PlayerAction : SkillData, IContextMenuItem {
         if (RollSuccessChance(target)) {
             if (target is IPointOfInterest targetPOI) {
                 ActivateAbility(targetPOI);
-            } else if (target is HexTile targetHex) {
-                ActivateAbility(targetHex);
+        } else if (target is Area targetArea) {
+            ActivateAbility(targetArea);
             } else if (target is LocationStructure targetStructure) {
                 ActivateAbility(targetStructure);
             } else if (target is StructureRoom room) {
@@ -62,14 +62,16 @@ public class PlayerAction : SkillData, IContextMenuItem {
             }
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this);
         } else {
+            //Go into cooldown but do not activate ability
+            OnExecutePlayerSkill();
             PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", target.name + " resisted the power of the Ruinarch!");
         }
 	}
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {
         if (target is IPointOfInterest targetPOI) {
             return CanPerformAbilityTowards(targetPOI);
-        } else if (target is HexTile targetHex) {
-            return CanPerformAbilityTowards(targetHex);
+        } else if (target is Area targetArea) {
+            return CanPerformAbilityTowards(targetArea);
         } else if (target is LocationStructure targetStructure) {
             return CanPerformAbilityTowards(targetStructure);
         } else if (target is StructureRoom room) {

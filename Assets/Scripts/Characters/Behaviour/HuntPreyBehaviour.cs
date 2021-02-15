@@ -13,7 +13,7 @@ public class HuntPreyBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         Hunting hunting = character.traitContainer.GetTraitOrStatus<Hunting>("Hunting");
         if (hunting != null) {
-            List<Animal> animals = hunting.targetTile.GetAllDeadAndAliveCharactersInsideHex<Animal>();
+            List<Animal> animals = hunting.targetArea.locationCharacterTracker.GetAllCharactersInsideHex<Animal>();
             if (animals != null) {
                 animals = animals.Where(x => x.race != character.race).ToList();
                 if (animals.Count > 0) {

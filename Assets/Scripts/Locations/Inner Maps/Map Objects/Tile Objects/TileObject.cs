@@ -285,9 +285,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 OccupyTiles(objData.occupiedSize, gridTileLocation);
             }
         }
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.OnPlacePOIInHex(this);
-        }
+        gridTileLocation.area.OnPlacePOIInHex(this);
         SubscribeListeners();
         if (gridTileLocation.genericTileObject.traitContainer.HasTrait("Poisoned")) {
             //add poisoned to floor
@@ -302,9 +300,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //OnRemoveTileObject(removedBy, previousTile);
         //SetPOIState(POI_STATE.INACTIVE);
         OnDestroyPOI();
-        if (previousTile != null && previousTile.collectionOwner.isPartOfParentRegionMap 
-                                 && previousTile.collectionOwner.partOfHextile.hexTileOwner) {
-            previousTile.collectionOwner.partOfHextile.hexTileOwner.OnRemovePOIInHex(this);
+        if (previousTile != null) { // && previousTile.area != null
+            previousTile.area.OnRemovePOIInHex(this);
         }
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
@@ -362,7 +359,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
             //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
-            && actor.trapStructure.SatisfiesForcedHex(this)
+            && actor.trapStructure.SatisfiesForcedArea(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
             LocationGridTile tileLocation = gridTileLocation;
             if (isBeingCarriedBy != null) {
