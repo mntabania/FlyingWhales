@@ -13,7 +13,7 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
         producedJob = null;
         if (!character.isAtHomeRegion) {
             log += $"\n-{character.name} is not in home region";
-            TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(null);
+            TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(null);
             log += $"\n  -Time of Day: {currentTimeOfDay}";
             if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
                 log += $"\n  -Morning/Lunch/Afternoon/Early Night: 35% to stroll";

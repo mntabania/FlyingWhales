@@ -30935,7 +30935,7 @@ MonoBehaviour:
   startMonth: 1
   startDay: 1
   startYear: 80
-  startTick: 96
+  startTick: 160
   continuousDays: 1
   currProgressionSpeed: 0
   progressionSpeed: 1
@@ -72573,9 +72573,9 @@ MonoBehaviour:
   _criticalMoodHighThreshold: 10
   _majorMentalBreakHourThreshold: 2
   _minorMentalBreakDayThreshold: 1
-  _baseFullnessDecreaseRate: 0.34
-  _baseTirednessDecreaseRate: 0.18
-  _baseHappinessDecreaseRate: 0.26
+  _baseFullnessDecreaseRate: 0.204
+  _baseTirednessDecreaseRate: 0.108
+  _baseHappinessDecreaseRate: 0.156
   _startingMana: 200
   _maximumMana: 500
   _summonMinionManaCost: 80

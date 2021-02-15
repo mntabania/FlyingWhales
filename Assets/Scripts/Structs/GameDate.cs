@@ -287,12 +287,12 @@ public struct GameDate {
             return "???";
         }
         if (nextLineTime) {
-            return $"Day {ConvertToContinuousDays()}\n{GameManager.ConvertTickToTime(this.tick)}";
+            return $"Day {ConvertToContinuousDays()}\n{ConvertToTime()}";
         }
-        return $"Day {ConvertToContinuousDays()} {GameManager.ConvertTickToTime(this.tick)}";
+        return $"Day {ConvertToContinuousDays()} {ConvertToTime()}";
     }
     public string ConvertToTime() {
-        return $"{GameManager.ConvertTickToTime(tick)}";
+        return $"{GameManager.Instance.ConvertTickToTime(tick)}";
     }
 
     //public override bool Equals(object obj) {

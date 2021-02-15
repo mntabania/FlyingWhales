@@ -23,7 +23,7 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             }    
         }
         
-        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+        TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
         int chance = 0;
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
             chance = 6;

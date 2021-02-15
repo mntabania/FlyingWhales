@@ -373,7 +373,7 @@ public class HexTileSpellsComponent {
     private void PerTickBrimstones() {
         Profiler.BeginSample($"Per Tick Brimstones");
         currentBrimstonesDuration++;
-        if (currentBrimstonesDuration >= 12) {
+        if (currentBrimstonesDuration >= GameManager.ticksPerHour) {
             SetHasBrimstones(false);
         }
         Profiler.EndSample();
@@ -428,7 +428,7 @@ public class HexTileSpellsComponent {
     private void PerTickElectricStorm() {
         Profiler.BeginSample($"Per Tick Electric Storm");
         currentElectricStormDuration++;
-        if (currentElectricStormDuration >= 12) {
+        if (currentElectricStormDuration >= GameManager.ticksPerHour) {
             SetHasElectricStorm(false);
         }
         Profiler.EndSample();

@@ -4195,7 +4195,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             if(currentTopPrioJob.targetPOI.gridTileLocation == null) {
                                 shouldCancelJob = true;
                             } else {
-                                TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick(null);
+                                TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick(null);
                                 if (timeInWords != TIME_IN_WORDS.EARLY_NIGHT && timeInWords != TIME_IN_WORDS.LATE_NIGHT && timeInWords != TIME_IN_WORDS.AFTER_MIDNIGHT && !currentTopPrioJob.targetPOI.gridTileLocation.structure.isInterior) {
                                     shouldCancelJob = true;
                                 }

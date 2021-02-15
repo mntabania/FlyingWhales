@@ -12,7 +12,7 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
 
 	#region Overrides
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-		TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+		TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
 		//if nest is blocked, destroy anything that is occupying it.
 		if (character.behaviourComponent.IsNestBlocked(out var blocker)) {
 			return character.jobComponent.TriggerDestroy(blocker, out producedJob);

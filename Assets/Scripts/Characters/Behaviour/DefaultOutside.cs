@@ -11,7 +11,7 @@ public class DefaultOutside : CharacterBehaviourComponent {
         if (!character.currentStructure.isInterior) {
             log += $"\n-{character.name} is in an exterior structure";
             log += "\n-If it is Morning, Lunch Time or Afternoon, 25% chance to enter Stroll Outside Mode";
-            TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
+            TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
             if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                 log += $"\n  -Time of Day: {currentTimeOfDay}";
                 int chance = UnityEngine.Random.Range(0, 100);

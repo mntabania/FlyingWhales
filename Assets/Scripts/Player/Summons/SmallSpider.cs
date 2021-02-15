@@ -81,7 +81,7 @@ public class SmallSpider : Summon {
         }
         if (IsPOICurrentlyTargetedByAPerformingAction()) {
             //If target is currently targeted by an action, do not grow up, instead, comeback after 1 hour
-            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(12), GrowUp, this);
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour), GrowUp, this);
             return;
         }
         SetDestroyMarkerOnDeath(true);

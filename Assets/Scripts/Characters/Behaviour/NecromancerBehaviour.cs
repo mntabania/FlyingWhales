@@ -87,7 +87,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 }
             }
 
-            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             if(currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 log += $"\n-It is Early Night, Late Night, or After Midnight";
                 int skeletonFollowers = character.necromancerTrait.GetNumOfSkeletonFollowersThatAreNotAttackingAndIsAlive();

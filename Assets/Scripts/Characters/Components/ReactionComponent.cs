@@ -1003,7 +1003,7 @@ public class ReactionComponent : CharacterComponent {
                     //nocturnal
                     if (targetCharacter.limiterComponent.canPerform && !targetCharacter.partyComponent.isMemberThatJoinedQuest && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
                         debugLog = $"{debugLog}\n-Target can perform and not an active member of a party that has a quest and has not yet witnessed a vampire crime of actor";
-                        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+                        TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
                         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                             debugLog = $"{debugLog}\n-Current time is After midnight";
                             if (disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {

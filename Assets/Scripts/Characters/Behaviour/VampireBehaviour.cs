@@ -19,7 +19,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
 
         if (character.needsComponent.isHungry || character.needsComponent.isStarving) {
-            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             if (currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 character.needsComponent.PlanFullnessRecoveryActionsVampire();
             }

@@ -32,7 +32,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home_Ratman, null);
             }
         }
-        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+        TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
             int chance = 10;
