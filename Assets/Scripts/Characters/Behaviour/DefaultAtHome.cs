@@ -56,7 +56,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 return true;
             } else {
                 log = $"{log}\n-{character.name} is in home structure and previous action is not returned home";
-                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
+                TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
                 string strCurrentTimeOfDay = currentTimeOfDay.ToString();
                 log = $"{log}\n-If it is Morning";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {

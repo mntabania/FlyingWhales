@@ -34,7 +34,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                 return true;
             } else {
                 log += $"\n-{character.name} is in home structure and previous action is not returned home";
-                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
+                TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
 
                 log += "\n-Otherwise, if it is Lunch Time or Afternoon, 15% chance to nap if there is still an unoccupied Bed in the house";
                 if (currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {

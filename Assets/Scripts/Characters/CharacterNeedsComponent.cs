@@ -480,22 +480,22 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void SetTirednessForcedTick() {
         if (!hasForcedTiredness) {
-            if (forcedTirednessRecoveryTimeInWords == GameManager.GetCurrentTimeInWordsOfTick()) {
+            if (forcedTirednessRecoveryTimeInWords == GameManager.Instance.GetCurrentTimeInWordsOfTick()) {
                 //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
                 //the tick that will be assigned will be ensured that the character will not miss it
                 //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
                 //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
                 //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
-                TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
+                int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
+                TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
                 if(timeInWords != forcedTirednessRecoveryTimeInWords) {
-                    newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
+                    newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
                 }
                 tirednessForcedTick = newTick;
                 return;
             }
         }
-        tirednessForcedTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
+        tirednessForcedTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
     }
     public void SetTirednessForcedTick(int tick) {
         tirednessForcedTick = tick;
@@ -891,10 +891,10 @@ public class CharacterNeedsComponent : CharacterComponent {
         //     SetForcedHappinessSecondRecoveryTimeInWords(GameUtilities.RollChance(50) ? TIME_IN_WORDS.AFTERNOON : TIME_IN_WORDS.EARLY_NIGHT);
         // }
        
-        int newTick = GameManager.GetRandomTickFromTimeInWords(chosenTime, GameManager.Instance.Today().tick + 1);
-        TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
+        int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(chosenTime, GameManager.Instance.Today().tick + 1);
+        TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
         if(timeInWords != chosenTime) {
-            newTick = GameManager.GetRandomTickFromTimeInWords(chosenTime);
+            newTick = GameManager.Instance.GetRandomTickFromTimeInWords(chosenTime);
         }
         happinessSecondForcedTick = newTick;
     }
@@ -1059,22 +1059,22 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void SetFullnessForcedTick() {
         if (!hasForcedFullness) {
-            if (forcedFullnessRecoveryTimeInWords == GameManager.GetCurrentTimeInWordsOfTick()) {
+            if (forcedFullnessRecoveryTimeInWords == GameManager.Instance.GetCurrentTimeInWordsOfTick()) {
                 //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
                 //the tick that will be assigned will be ensured that the character will not miss it
                 //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
                 //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
                 //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
-                TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
+                int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
+                TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
                 if (timeInWords != forcedFullnessRecoveryTimeInWords) {
-                    newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
+                    newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
                 }
                 fullnessForcedTick = newTick;
                 return;
             }
         }
-        fullnessForcedTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
+        fullnessForcedTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
     }
     public void SetFullnessForcedTick(int tick) {
         fullnessForcedTick = tick;

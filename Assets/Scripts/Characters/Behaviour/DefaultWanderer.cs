@@ -56,7 +56,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         }
                         return true;
                     } else {
-                        TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
+                        TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
 
                         log += $"\n-Previous job is not returned home";
                         log += "\n-If it is Lunch Time or Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";

@@ -67,7 +67,7 @@ public class Drink : GoapAction {
             costLog += " -35(Alcoholic)";
         } else {
             int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
-            TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS timeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             if (timeOfDay == TIME_IN_WORDS.MORNING ||  timeOfDay == TIME_IN_WORDS.AFTERNOON) {
                 cost += 2000;
                 costLog += " +2000(not Alcoholic, Morning/Lunch/Afternoon)";

@@ -85,7 +85,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         if (TryTakeSettlementJob(p_character, ref p_log, out p_producedJob)) {
             return true;
         } else {
-            TIME_IN_WORDS currentTimeInWordsOfTick = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS currentTimeInWordsOfTick = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             p_log = $"{p_log}\n-Will check if can abduct, current time is {currentTimeInWordsOfTick.ToString()}";
             if ((currentTimeInWordsOfTick == TIME_IN_WORDS.LATE_NIGHT || currentTimeInWordsOfTick == TIME_IN_WORDS.AFTER_MIDNIGHT) && GameUtilities.RollChance(5, ref p_log)) {
                 List<Character> abductChoices = ObjectPoolManager.Instance.CreateNewCharactersList();

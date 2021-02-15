@@ -366,7 +366,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     LocationStructure cultTemple = GetFirstStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE);
                     if (cultTemple != null) {
                         if (!hasTriedToStealCorpse) {
-                            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                            TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
                             if (currentTime == TIME_IN_WORDS.MORNING) {
                                 hasTriedToStealCorpse = true;
                                 if (GameUtilities.RollChance(45)) {

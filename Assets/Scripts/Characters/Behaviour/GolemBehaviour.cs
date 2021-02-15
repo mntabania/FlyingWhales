@@ -50,7 +50,7 @@ public class GolemBehaviour : BaseMonsterBehaviour {
                             if (roll < 35) {
                                 hasAddedJob = summon.jobComponent.TriggerRoamAroundTerritory(out producedJob);
                             } else {
-                                TIME_IN_WORDS currTime = GameManager.GetCurrentTimeInWordsOfTick();
+                                TIME_IN_WORDS currTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
                                 if (currTime == TIME_IN_WORDS.LATE_NIGHT || currTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                                     log += "\n-Late Night or After Midnight, 40% chance to Sleep";
                                     int sleepRoll = UnityEngine.Random.Range(0, 100);

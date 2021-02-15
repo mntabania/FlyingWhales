@@ -682,7 +682,7 @@ public class BehaviourComponent : CharacterComponent {
     }
     private void CheckIfMonsterAte(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.MONSTER_EAT) {
-            TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             switch (currentTimeInWords) {
                 case TIME_IN_WORDS.MORNING:
                 case TIME_IN_WORDS.AFTERNOON:

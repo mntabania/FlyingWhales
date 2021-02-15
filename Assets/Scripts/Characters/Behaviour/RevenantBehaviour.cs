@@ -14,7 +14,7 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
         producedJob = null;
         log += $"\n-{character.name} is a revenant";
         if (character.gridTileLocation != null && (character.isAtHomeStructure || character.IsInHomeSettlement() || character.IsInTerritory())) {
-            TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
+            TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
             if(currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT || currentTimeOfDay == TIME_IN_WORDS.LATE_NIGHT || currentTimeOfDay == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 log += $"\n-Early/Late Night or After Midnight, 10% chance to spawn a ghost";
                 int roll = UnityEngine.Random.Range(0, 100);

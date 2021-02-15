@@ -342,7 +342,7 @@ public class GoapAction {
             requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         }
         //if action has valid times of day then check if current time is valid.
-        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
+        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.Instance.GetCurrentTimeInWordsOfTick()));
     }
     public bool DoesCharacterMatchRace(Character character) {
         //If no race is specified, assume all races are allowed
@@ -383,7 +383,7 @@ public class GoapAction {
         return 1;
     }
     private int TimeOfDaysCostMultiplier(Character actor) {
-        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick(actor))) {
+        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.Instance.GetCurrentTimeInWordsOfTick(actor))) {
             return 1;
         }
         return 3;

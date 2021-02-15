@@ -26,7 +26,7 @@ public class GhostBehaviour : BaseMonsterBehaviour {
                     character.SetTerritory(area);
                 }
             }
-            TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
+            TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
             if(currentTimeOfDay == TIME_IN_WORDS.LATE_NIGHT || currentTimeOfDay == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 if (TryDoRevenge(character, ref log, out producedJob)) return true;
             }
@@ -45,7 +45,7 @@ public class GhostBehaviour : BaseMonsterBehaviour {
         if (TryTakeSettlementJob(p_character, ref p_log, out p_producedJob)) {
             return true;
         } else {
-            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             p_log = $"{p_log}\n-Will check if can do Revenge, current time is {currentTime.ToString()}";
             if ((currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) && GameUtilities.RollChance(5, ref p_log)) {
                 if (TryDoRevenge(p_character, ref p_log, out p_producedJob)) {

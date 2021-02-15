@@ -241,7 +241,7 @@ public class UIManager : BaseMonoBehaviour {
         UpdateUI();
     }
     private void UpdateUI() {
-        dateLbl.SetText($"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.Today().tick)}");
+        dateLbl.SetText($"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.Instance.ConvertTickToTime(GameManager.Instance.Today().tick)}");
         UpdateInteractableInfoUI();
         PlayerUI.Instance.UpdateUI();
     }

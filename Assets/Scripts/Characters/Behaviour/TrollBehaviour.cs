@@ -60,7 +60,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
             }
         }
 
-        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick(null);
+        TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick(null);
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT /*|| timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT*/) {
             log += $"\n-Night time, will try to visit adjacent hextiles";
             if (character.isAtHomeStructure || character.IsInHomeSettlement()) {
