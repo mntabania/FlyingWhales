@@ -62,6 +62,8 @@ public class PlayerAction : SkillData, IContextMenuItem {
             }
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this);
         } else {
+            //Go into cooldown but do not activate ability
+            OnExecutePlayerSkill();
             PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", target.name + " resisted the power of the Ruinarch!");
         }
 	}
