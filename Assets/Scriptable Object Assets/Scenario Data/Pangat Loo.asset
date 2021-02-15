@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
   m_Name: Pangat Loo
   m_EditorClassIdentifier: 
-  scenarioSettings: {fileID: 4900000, guid: 64539250b7564464fb59704002b88271, type: 3}
+  scenarioSettings: {fileID: 4900000, guid: e275f37d56fd27c4a9f6f0b1a0a99e19, type: 3}
   faunaList:
   - monsterType: 31
     minRange: 3

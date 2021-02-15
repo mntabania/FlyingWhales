@@ -71,14 +71,15 @@ namespace Inner_Maps.Location_Structures {
             if (region.innerMap.isShowing == false) {
                 InnerMapManager.Instance.ShowInnerMap(region);
             }
-            if (occupiedHexTile != null) {
-                InnerMapCameraMove.Instance.CenterCameraOn(occupiedHexTile.hexTileOwner.GetCenterLocationGridTile().centeredWorldLocation);
+            if (occupiedArea != null) {
+                InnerMapCameraMove.Instance.CenterCameraOn(occupiedArea.gridTileComponent.centerGridTile.centeredWorldLocation);
             }
         }
-        public override void ShowSelectorOnStructure() {
-            if (occupiedHexTile != null) {
-                Selector.Instance.Select(occupiedHexTile.hexTileOwner);
-            }
-        }
+        public override void ShowSelectorOnStructure() { }
+        // public override void ShowSelectorOnStructure() {
+        //     if (occupiedArea != null) {
+        //         Selector.Instance.Select(occupiedArea);
+        //     }
+        // }
     }
 }

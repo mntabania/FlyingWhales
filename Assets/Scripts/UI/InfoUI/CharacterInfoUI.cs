@@ -118,7 +118,6 @@ public class CharacterInfoUI : InfoUIBase {
         relationshipNamesEventLbl.SetOnRightClickAction(OnRightClickRelationship);
         
         factionEventLbl.SetOnLeftClickAction(OnClickFaction);
-        currentLocationEventLbl.SetOnLeftClickAction(OnClickCurrentLocation);
         homeRegionEventLbl.SetOnLeftClickAction(OnLeftClickHomeVillage);
         homeRegionEventLbl.SetOnRightClickAction(OnRightClickHomeVillage);
         houseEventLbl.SetOnLeftClickAction(OnLeftClickHomeStructure);
@@ -299,9 +298,6 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void OnClickFaction(object obj) {
         UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
-    }
-    private void OnClickCurrentLocation(object obj) {
-        UIManager.Instance.ShowRegionInfo(activeCharacter.currentRegion);
     }
     private void OnLeftClickHomeVillage(object obj) {
         if (_activeCharacter.homeSettlement != null) {

@@ -1754,7 +1754,7 @@
   },
   "villageSettlementTemplates": [
     {
-      "hexTiles": [
+      "areas": [
         {
           "X": 9,
           "Y": 2

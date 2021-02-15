@@ -64,15 +64,15 @@ public class TrollBehaviour : BaseMonsterBehaviour {
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT /*|| timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT*/) {
             log += $"\n-Night time, will try to visit adjacent hextiles";
             if (character.isAtHomeStructure || character.IsInHomeSettlement()) {
-                HexTile adjacentHextile = null;
+                Area adjacentArea = null;
                 if(character.homeSettlement != null) {
-                    adjacentHextile = character.homeSettlement.GetAPlainAdjacentHextile();
+                    adjacentArea = character.homeSettlement.GetAPlainAdjacentArea();
                 } else {
-                    adjacentHextile = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetRandomAdjacentNoSettlementHextileWithinRegion();
+                    adjacentArea = character.areaLocation.neighbourComponent.GetRandomAdjacentNoSettlementHextileWithinRegion();
                 }
-                if(adjacentHextile != null) {
-                    log += $"\n-Target hex: " + adjacentHextile.name;
-                    return character.jobComponent.CreateGoToJob(adjacentHextile.GetRandomTile(), out producedJob);
+                if(adjacentArea != null) {
+                    log += $"\n-Target hex: " + adjacentArea.name;
+                    return character.jobComponent.CreateGoToJob(adjacentArea.gridTileComponent.GetRandomTile(), out producedJob);
 
                 }
             } else {
@@ -82,15 +82,15 @@ public class TrollBehaviour : BaseMonsterBehaviour {
                 if(roll < 30) {
                     return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 } else {
-                    HexTile adjacentHextile = null;
+                    Area adjacentArea = null;
                     if (character.homeSettlement != null) {
-                        adjacentHextile = character.homeSettlement.GetAPlainAdjacentHextile();
+                        adjacentArea = character.homeSettlement.GetAPlainAdjacentArea();
                     } else {
-                        adjacentHextile = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetRandomAdjacentNoSettlementHextileWithinRegion();
+                        adjacentArea = character.areaLocation.neighbourComponent.GetRandomAdjacentNoSettlementHextileWithinRegion();
                     }
-                    if (adjacentHextile != null) {
-                        log += $"\n-Target hex: " + adjacentHextile.name;
-                        return character.jobComponent.CreateGoToJob(adjacentHextile.GetRandomTile(), out producedJob);
+                    if (adjacentArea != null) {
+                        log += $"\n-Target hex: " + adjacentArea.name;
+                        return character.jobComponent.CreateGoToJob(adjacentArea.gridTileComponent.GetRandomTile(), out producedJob);
                     } else {
                         return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                     }

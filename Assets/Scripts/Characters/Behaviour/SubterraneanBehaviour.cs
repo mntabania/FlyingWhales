@@ -55,8 +55,8 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
         LocationGridTile point2 = null;
         Region chosenRegion = GridMap.Instance.GetRandomRegion();
         for (int i = 0; i < 3; i++) {
-            HexTile chosenHex = chosenRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER);
-            LocationGridTile chosenTile = chosenHex.GetRandomTileThatMeetCriteria(t => t.objHere == null && t.groundType != LocationGridTile.Ground_Type.Water && t.IsPassable());
+            Area chosenArea = chosenRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER);
+            LocationGridTile chosenTile = chosenArea.gridTileComponent.GetRandomPassableUnoccupiedNonWaterTile();
             point2 = chosenTile;
             if(point2 != null) {
                 break;

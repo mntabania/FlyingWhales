@@ -25,12 +25,11 @@ public class Fish : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         if (job.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
-            if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+            if (target.gridTileLocation != null && actor.gridTileLocation != null) {
+                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.gridTileComponent.centerGridTile;
                 float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+                int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
                 if (distance > distanceToCheck) {
                     //target is at structure that character is avoiding

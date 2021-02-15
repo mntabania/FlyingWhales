@@ -155,7 +155,7 @@ namespace Databases.SQLDatabase {
             thread.Initialize(log);
             DatabaseThreadPool.Instance.AddToThreadPool(thread);
         }
-        public void InsertLog(Log log) {
+        public void InsertLog(Log log, out Log deletedLog) {
              log.FinalizeText();
             SQLiteCommand command = _dbConnection.CreateCommand();
             //Need to replace single quotes in log message to two single quotes to prevent SQL command errors
@@ -212,35 +212,12 @@ namespace Databases.SQLDatabase {
                 rowCount = dataReader.GetInt32(0);
             }
             dataReader.Close();
-            
+            deletedLog = null;
             if (rowCount > LogRowLimit) {
                 //row limit has been reached, will delete oldest entry
-                DeleteOldestLog();
+                deletedLog = DeleteOldestLog();
             }
             command.Dispose();
-        }
-        public void ExecuteInsertCommand(string commandStr) {
-            if (_dbConnection != null) {
-                SQLiteCommand command = _dbConnection.CreateCommand();
-                command.CommandType = CommandType.Text;
-                command.CommandText = commandStr;
-                command.ExecuteNonQuery();
-            
-                //check if row limit has been reached, if so then delete oldest log that is not an intel.
-                command.CommandText = $"SELECT COUNT(*) FROM 'Logs'";
-                IDataReader dataReader = command.ExecuteReader();
-                int rowCount = 0;
-                while (dataReader.Read()) {
-                    rowCount = dataReader.GetInt32(0);
-                }
-                dataReader.Close();
-            
-                if (rowCount > LogRowLimit) {
-                    //row limit has been reached, will delete oldest entry
-                    DeleteOldestLog();
-                }
-                command.Dispose();
-            }
         }
         public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags, int limit = -1) {
 #if UNITY_EDITOR
@@ -395,7 +372,7 @@ namespace Databases.SQLDatabase {
             Messenger.Broadcast(UISignals.LOG_IN_DATABASE_UPDATED, log);
             // Debug.Log($"Set involved objects of log {log.persistentID} to {log.allInvolvedObjectIDs}");
         }
-        private void DeleteOldestLog() {
+        private Log DeleteOldestLog() {
             SQLiteCommand command = _dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
             command.CommandText = "SELECT persistentID FROM Logs ORDER BY rowid LIMIT 1"; //WHERE isIntel = 0
@@ -407,10 +384,11 @@ namespace Databases.SQLDatabase {
             dataReader.Close();
             command.Dispose();
             if (!string.IsNullOrEmpty(logIDToDelete)) {
-                DeleteLog(logIDToDelete);
+                return DeleteLog(logIDToDelete);
             }
+            return null;
         }
-        private void DeleteLog(string persistentID) {
+        private Log DeleteLog(string persistentID) {
             Log deletedLog = GetLogWithPersistentID(persistentID);
             // Debug.Log($"Will delete log with ID: {persistentID}");
             SQLiteCommand command = _dbConnection.CreateCommand();
@@ -418,9 +396,8 @@ namespace Databases.SQLDatabase {
             command.CommandText = $"DELETE FROM Logs WHERE persistentID = '{persistentID}'";
             command.ExecuteNonQuery();
             command.Dispose();
-            //Fire signal that log was deleted.
-            Messenger.Broadcast(UISignals.LOG_REMOVED_FROM_DATABASE, deletedLog);
-            LogPool.Release(deletedLog);
+            // LogPool.Release(deletedLog);
+            return deletedLog;
         }
         public List<Log> GetFullLogsMentioning(string persistentID) {
             SQLiteCommand command = _dbConnection.CreateCommand();

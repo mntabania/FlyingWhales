@@ -48,17 +48,15 @@ public class FishingSpot : TileObject {
         _fishingSpotGameObject = null;
     }
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
-            }
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
-                if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
-                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
-                }
-            });
+        if (gridTileLocation.area.settlementOnArea != null) {
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
         }
+        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+            if (eachNeighbor.settlementOnArea != null) {
+                eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+                parentSettlement = eachNeighbor.settlementOnArea;
+            }
+        });
     }
     public override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null && parentSettlement.SettlementResources != null) {

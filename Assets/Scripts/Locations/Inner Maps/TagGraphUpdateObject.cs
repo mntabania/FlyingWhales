@@ -21,11 +21,11 @@ namespace Inner_Maps {
                     Vector3 pos = (Vector3)node.position;
                     LocationGridTile tile = map.GetTileFromWorldPos(pos); 
                     if (tile != null) {
-                        if (tile.collectionOwner.isPartOfParentRegionMap && tile.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null && 
-                            tile.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.locationType != LOCATION_TYPE.DUNGEON && 
-                            tile.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.owner != null) {
+                        if (tile.area.settlementOnArea != null && 
+                            tile.area.settlementOnArea.locationType != LOCATION_TYPE.DUNGEON && 
+                            tile.area.settlementOnArea.owner != null) {
                             isPartOfSettlement = true;
-                            settlementTagToUse = tile.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.owner.pathfindingTag;
+                            settlementTagToUse = tile.area.settlementOnArea.owner.pathfindingTag;
                         }
                         break;
                     }

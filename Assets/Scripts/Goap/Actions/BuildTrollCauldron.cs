@@ -26,15 +26,8 @@ public class BuildTrollCauldron : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
-        List<LocationGridTile> tiles = goapNode.actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
-        for (int i = 0; i < tiles.Count; i++) {
-            if(tiles[i].objHere != null) {
-                tiles.RemoveAt(i);
-                i--;
-            }
-        }
-        return tiles;
+    public override void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) {
+        goapNode.actor.gridTileLocation.PopulateTilesInRadius(gridTiles, 3, includeImpassable: false, includeTilesWithObject: false);
     }
     #endregion
 

@@ -264,8 +264,8 @@ public class GenericTileObject : TileObject {
     }
     public LocationStructure BuildBlueprint(NPCSettlement npcSettlement, LocationGridTile p_usedConnector) {
         Profiler.BeginSample($"Build Blueprint - Add Tile To Settlement");
-        HexTile hexTile = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-        npcSettlement.AddTileToSettlement(hexTile);
+        Area hexTile = gridTileLocation.area;
+        npcSettlement.AddAreaToSettlement(hexTile);
         Profiler.EndSample();
         
         Profiler.BeginSample($"Build Blueprint - Set Visual Mode");
@@ -297,7 +297,7 @@ public class GenericTileObject : TileObject {
         }
         Profiler.EndSample();
         
-        structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
+        structure.SetOccupiedArea(hexTile);
         
         Profiler.BeginSample($"Build Blueprint - OnBuiltStructureObjectPlaced");
         blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);

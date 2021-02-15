@@ -63,19 +63,21 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
                     summon.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
                     if (summon.homeStructure == null && !summon.HasTerritory()) {
                         p_log += "\n-Still no home structure and territory";
-                        p_log += "\n-50% chance to Roam Around Tile";
-                        int roll = UnityEngine.Random.Range(0, 100);
-                        p_log += "\n-Roll: " + roll;
-                        if (roll < 50) {
-                            summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
-                        } else {
-                            p_log += "\n-Otherwise, Visit Different Region";
-                            if (!summon.jobComponent.TriggerVisitDifferentRegion()) {
-                                p_log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
-                                summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
-                            }
-                        }
-                        return true;
+                        //p_log += "\n-50% chance to Roam Around Tile";
+                        p_log += "\n-Roam Around Tile";
+                        return summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
+                        //int roll = UnityEngine.Random.Range(0, 100);
+                        //p_log += "\n-Roll: " + roll;
+                        //if (roll < 50) {
+                        //    summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
+                        //} else {
+                        //    p_log += "\n-Otherwise, Visit Different Region";
+                        //    if (!summon.jobComponent.TriggerVisitDifferentRegion()) {
+                        //        p_log += "\n-Cannot perform Visit Different Region, Roam Around Tile";
+                        //        summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
+                        //    }
+                        //}
+                        //return true;
                     }
                     return true;
                 } else {
@@ -165,7 +167,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
             eggCount = character.homeStructure.GetNumberOfTileObjectsThatMeetCriteria(eggType, null);
         } else if (character.HasTerritory()) {
             residentCount = character.homeRegion.GetCountOfAliveCharacterWithSameTerritory(character);
-            eggCount = character.territory.GetNumberOfTileObjectsInHexTile(eggType);
+            eggCount = character.territory.tileObjectComponent.GetNumberOfTileObjectsInHexTile(eggType);
         }
         if (residentCount < maxResidentCount && eggCount < 2) {
             return character.jobComponent.TriggerLayEgg(out producedJob);

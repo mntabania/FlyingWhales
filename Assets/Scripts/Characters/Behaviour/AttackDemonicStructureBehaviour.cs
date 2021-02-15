@@ -219,7 +219,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                         return true;
                     }
                 } else {
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)));
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.occupiedArea.gridTileComponent.gridTiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)));
                     return character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
                 }
 

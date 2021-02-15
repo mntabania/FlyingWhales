@@ -69,10 +69,10 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                 if (!character.currentStructure.isInterior) {
                     log += $"\n  -Character is in an exterior structure";
                     List<LocationStructure> structures = null;
-                    HexTile currentHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                    for (int i = 0; i < currentHex.AllNeighbours.Count; i++) {
-                        HexTile hex = currentHex.AllNeighbours[i];
-                        LocationGridTile centerTile = hex.GetCenterLocationGridTile();
+                    Area currentArea = character.gridTileLocation.area;
+                    for (int i = 0; i < currentArea.neighbourComponent.neighbours.Count; i++) {
+                        Area area = currentArea.neighbourComponent.neighbours[i];
+                        LocationGridTile centerTile = area.gridTileComponent.centerGridTile;
                         //TODO: Enable digging
                         if (centerTile.structure.structureType.IsSpecialStructure() && centerTile.structure.isInterior && character.movementComponent.HasPathTo(centerTile)) {
                             if(structures == null) { structures = new List<LocationStructure>(); }
@@ -89,9 +89,9 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                         log += $"\n  -No adjacent special structure that has a path to";
                         if (character.currentSettlement != null) {
                             log += $"\n  -Character is inside settlement, go to adjacent plain hextile outside settlement";
-                            HexTile chosenHex = character.currentSettlement.GetAPlainAdjacentHextile();
-                            if(chosenHex != null) {
-                                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+                            Area chosenArea = character.currentSettlement.GetAPlainAdjacentArea();
+                            if(chosenArea != null) {
+                                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(chosenArea.gridTileComponent.gridTiles);
                                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                             } else {
                                 log += $"\n  -No adjacent plain hextile outside settlement, stroll";
@@ -100,7 +100,7 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                         } else {
                             log += $"\n  -Outside settlement";
                             Campfire chosenCampfire = null;
-                            List<Campfire> campfires = currentHex.GetTileObjectsInHexTile<Campfire>();
+                            List<Campfire> campfires = currentArea.tileObjectComponent.GetTileObjectsInHexTile<Campfire>();
                             if(campfires != null && campfires.Count > 0) {
                                 for (int i = 0; i < campfires.Count; i++) {
                                     Campfire campfire = campfires[i];

@@ -59,10 +59,10 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        HexTile hex = tileObject.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
+        Area area = tileObject.gridTileLocation.area;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state,
-            hex.biomeType,
+            area.biomeType,
             tileObject.gridTileLocation?.isCorrupted ?? false));
     }
 
@@ -79,13 +79,16 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         base.OnPointerMiddleClick(poi);
         Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
         if (activeCharacter != null) {
-            if(activeCharacter.minion == null) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                UIManager.Instance.poiTestingUI.ShowUI(poi,activeCharacter);
+            UIManager.Instance.poiTestingUI.ShowUI(poi, activeCharacter);
 #endif
-            } else {
-                UIManager.Instance.minionCommandsUI.ShowUI(poi);
-            }
+            //            if(activeCharacter.minion == null) {
+            //#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            //                UIManager.Instance.poiTestingUI.ShowUI(poi,activeCharacter);
+            //#endif
+            //            } else {
+            //                UIManager.Instance.minionCommandsUI.ShowUI(poi);
+            //            }
         }
     }
     protected override void OnPointerEnter(TileObject character) {

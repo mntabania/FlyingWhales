@@ -22,7 +22,7 @@ public class Gathering : ISavable {
 
     #region getters
     public virtual IGatheringTarget target => null;
-    public virtual HexTile waitingHexArea => null;
+    public virtual Area waitingHexArea => null;
     public virtual System.Type serializedData => typeof(SaveDataGathering);
     public OBJECT_TYPE objectType => OBJECT_TYPE.Gathering;
     #endregion

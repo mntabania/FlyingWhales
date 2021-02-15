@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UtilityScripts;
 
 public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
     public DesiresIsolationBehaviour() {
@@ -36,10 +38,19 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
             if(!(character.jobTriggerComponent as CharacterJobTriggerComponent).CreateHideAtHomeJob()) {
                 log += $"{character.name} cannot hide at home because he does not have a home";
                 log += $"{character.name} will roam to a tile outside settlement";
-                LocationGridTile tileToGoTo = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
+                LocationGridTile tileToGoTo = GetRandomTileOutsideSettlement(character.currentRegion, character) ?? character.gridTileLocation; //failsafe if character cannot find a tile to go to, stay in place.
                 character.jobComponent.TriggerRoamAroundTile(out producedJob, tileToGoTo);
             }
         }
         return true;
+    }
+
+    private LocationGridTile GetRandomTileOutsideSettlement(Region p_region, Character p_character) {
+        List<Area> areaChoices = p_region.areas.Where(x => x.elevationType == ELEVATION.PLAIN && x.settlementOnArea == null).ToList();
+        if (areaChoices.Count > 0) {
+            Area chosenArea = CollectionUtilities.GetRandomElement(areaChoices);
+            return chosenArea.gridTileComponent.GetRandomTileThatCharacterCanReach(p_character);
+        }
+        return null;
     }
 }

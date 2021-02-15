@@ -184,7 +184,7 @@ public class GoapAction {
     /// </summary>
     /// <param name="goapNode"></param>
     /// <returns>List of tile choices</returns>
-    public virtual List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) { return null; }
+    public virtual void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) { }
     public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);

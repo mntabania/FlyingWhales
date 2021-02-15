@@ -80,7 +80,7 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
     private LocationGridTile GetTileToSpawnGhostRelativeTo(Character character) {
         LocationGridTile tile = null;
         if (character.homeSettlement != null) {
-            tile = character.homeSettlement.GetRandomHexTile().GetRandomPassableTile();
+            tile = character.homeSettlement.GetRandomArea().GetRandomPassableTile();
         } else if (character.homeStructure != null) {
             tile = character.homeStructure.GetRandomPassableTile();
         } else if (character.HasTerritory()) {

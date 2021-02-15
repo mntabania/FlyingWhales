@@ -35,8 +35,8 @@ public class SaveDataPlayerGame : SaveData<Player> {
         factionID = player.playerFaction.persistentID;
         settlementID = player.playerSettlement.persistentID;
         mana = player.mana;
-        portalTileXCoordinate = player.portalTile.data.xCoordinate;
-        portalTileYCoordinate = player.portalTile.data.yCoordinate;
+        portalTileXCoordinate = player.portalArea.areaData.xCoordinate;
+        portalTileYCoordinate = player.portalArea.areaData.yCoordinate;
 
         archetype = PlayerSkillManager.Instance.selectedArchetype;
 

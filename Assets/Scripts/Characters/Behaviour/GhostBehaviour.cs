@@ -14,16 +14,16 @@ public class GhostBehaviour : BaseMonsterBehaviour {
         if (character.gridTileLocation != null) {
             if (character.HasTerritory()) {
                 //Only get the first territory because right now even though the territory is a list, only one territory is being assigned at a time
-                HexTile territory = character.territory;
+                Area territory = character.territory;
                 if (territory.HasAliveVillagerResident()) {
                     character.ClearTerritory();
                 }
             }
             if (!character.HasTerritory()) {
                 log += "\n-No territory, will set nearest hex tile as territory";
-                HexTile hex = character.gridTileLocation.collectionOwner.GetNearestPlainHexTileWithNoResident();
-                if(hex != null) {
-                    character.SetTerritory(hex);
+                Area area = character.areaLocation?.neighbourComponent.GetNearestPlainAreaWithNoResident();
+                if(area != null) {
+                    character.SetTerritory(area);
                 }
             }
             TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);

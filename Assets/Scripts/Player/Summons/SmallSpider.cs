@@ -91,7 +91,7 @@ public class SmallSpider : Summon {
         LocationStructure home = homeStructure;
         NPCSettlement settlement = homeSettlement;
         Region region = homeRegion;
-        HexTile ogTerritory = territory;
+        Area ogTerritory = territory;
         
         SetShowNotificationOnDeath(false);
         

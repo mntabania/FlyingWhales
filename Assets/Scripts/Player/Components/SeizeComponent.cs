@@ -13,8 +13,6 @@ public class SeizeComponent {
     private int _seizedPOIVisionTriggerVotes;
     private int _seizedCharacterVisionVotes;
     private bool _seizedPOIVisionTriggerState;
-    private Color _seizedPOIColor;
-
     private Vector3 followOffset;
     private Tween tween;
 
@@ -27,11 +25,6 @@ public class SeizeComponent {
     }
 
     public void SeizePOI(IPointOfInterest poi) {
-        // int manaCost = GetManaCost(poi);
-        // if (PlayerManager.Instance.player.mana < manaCost) {
-        //     PlayerUI.Instance.ShowGeneralConfirmation("ERROR", "Not enough mana! You need " + manaCost + " mana to seize this object.");
-        //     return;
-        // }
         if (seizedPOI == null) {
             if (poi.isBeingCarriedBy != null) {
                 if (poi.isBeingCarriedBy.carryComponent.isCarryingAnyPOI && poi.isBeingCarriedBy.carryComponent.carriedPOI == poi) {
@@ -79,10 +72,12 @@ public class SeizeComponent {
     // }
     private void PrepareToUnseize() {
         isPreparingToBeUnseized = true;
+        PlayerManager.Instance.AddPlayerInputModule(PlayerManager.seizeInputModule);
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnReceiveKeyCodeSignal);
     }
     private void DoneUnseize() {
         isPreparingToBeUnseized = false;
+        PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.seizeInputModule);
         Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnReceiveKeyCodeSignal);
     }
     private void OnReceiveKeyCodeSignal(KeyCode keyCode) {
@@ -123,7 +118,6 @@ public class SeizeComponent {
         _seizedPOIVisionTriggerVotes = 0;
         _seizedCharacterVisionVotes = 0;
         _seizedPOIVisionTriggerState = false;
-        _seizedPOIColor = Color.white;
         Messenger.Broadcast(CharacterSignals.ON_UNSEIZE_POI, seizedPOI);
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();

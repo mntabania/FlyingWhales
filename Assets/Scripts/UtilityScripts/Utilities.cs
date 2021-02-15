@@ -25,7 +25,6 @@ namespace UtilityScripts {
         public static readonly System.Random Rng = new System.Random();
         private static int _lastFactionColorIndex;
         private static int _lastLogID;
-        private static int _lastLandmarkID;
         private static int _lastFactionID;
         private static int _lastCharacterID;
         private static int _lastAreaID;
@@ -35,7 +34,6 @@ namespace UtilityScripts {
         private static int _lastRegionID;
         private static int _lastJobID;
         private static int _lastBurningSourceID;
-        private static int _lastTileCollectionID;
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
         public static string gameSavePath => $"{Application.persistentDataPath}/Ruinarch Game Saves/";
@@ -55,10 +53,6 @@ namespace UtilityScripts {
             if (obj is Log) {
                 _lastLogID += 1;
                 return _lastLogID;
-            }
-            if (obj is BaseLandmark) {
-                _lastLandmarkID += 1;
-                return _lastLandmarkID;
             }
             if (obj is Faction) {
                 _lastFactionID += 1;
@@ -96,10 +90,6 @@ namespace UtilityScripts {
                 _lastBurningSourceID += 1;
                 return _lastBurningSourceID;
             }
-            if (obj is LocationGridTileCollection) {
-                _lastTileCollectionID += 1;
-                return _lastTileCollectionID;
-            }
             return 0;
         }
 
@@ -108,8 +98,6 @@ namespace UtilityScripts {
         public static int SetID<T>(T obj, int idToUse) {
             if (obj is Log) {
                 if (_lastLogID <= idToUse) { _lastLogID = idToUse; }
-            } else if (obj is BaseLandmark) {
-                if (_lastLandmarkID <= idToUse) { _lastLandmarkID = idToUse; }
             } else if (obj is Faction) {
                 if (_lastFactionID <= idToUse) { _lastFactionID = idToUse; }
             } else if (obj is Character) {
@@ -130,8 +118,6 @@ namespace UtilityScripts {
                 if (_lastJobID <= idToUse) { _lastJobID = idToUse; }
             } else if (obj is BurningSource) {
                 if (_lastBurningSourceID <= idToUse) { _lastBurningSourceID = idToUse; }
-            } else if (obj is LocationGridTileCollection) {
-                if (_lastTileCollectionID <= idToUse) { _lastTileCollectionID = idToUse; }
             }
             return idToUse;
         }
@@ -1579,8 +1565,6 @@ namespace UtilityScripts {
                 int value = kvp.Value;
                 if (key is Character) {
                     actionWeightsSummary += $"\n{(key as Character).name} - {kvp.Value}";
-                } else if (key is BaseLandmark) {
-                    actionWeightsSummary += $"\n{(key as BaseLandmark).landmarkName} - {kvp.Value}";
                 } else {
                     actionWeightsSummary += $"\n{kvp.Key} - {kvp.Value}";
                 }
@@ -1595,8 +1579,6 @@ namespace UtilityScripts {
                 float value = kvp.Value;
                 if (key is Character) {
                     actionWeightsSummary += $"\n{(key as Character).name} - {kvp.Value}";
-                } else if (key is BaseLandmark) {
-                    actionWeightsSummary += $"\n{(key as BaseLandmark).landmarkName} - {kvp.Value}";
                 } else {
                     actionWeightsSummary += $"\n{kvp.Key} - {kvp.Value}";
                 }
