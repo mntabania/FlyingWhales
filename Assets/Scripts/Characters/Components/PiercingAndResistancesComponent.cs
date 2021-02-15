@@ -14,12 +14,31 @@ public class PiercingAndResistancesComponent : CharacterComponent {
         resistances = data.resistances;
     }
 
+    #region Piercing
+    public void AdjustPiercing(float p_amount) {
+        piercingPower += p_amount;
+        Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
+    }
+    public void SetPiercing(float p_amount) {
+        piercingPower = p_amount;
+        Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
+    }
+    #endregion
+
     #region Resistances
     public void AdjustResistance(RESISTANCE p_resistance, float p_value) {
         if (!resistances.ContainsKey(p_resistance)) {
             resistances.Add(p_resistance, 0f);
         }
         resistances[p_resistance] += p_value;
+        Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
+    }
+    public void SetResistance(RESISTANCE p_resistance, float p_value) {
+        if (!resistances.ContainsKey(p_resistance)) {
+            resistances.Add(p_resistance, 0f);
+        }
+        resistances[p_resistance] = p_value;
+        Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
     }
     public float GetResistanceValue(RESISTANCE p_resistance) {
         if (resistances.ContainsKey(p_resistance)) {

@@ -74,6 +74,10 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private MarkedMeter hopeMeter;
     [SerializeField] private MarkedMeter staminaMeter;
 
+    [Space(10)]
+    [Header("Piercing And Resistances")]
+    [SerializeField] private PiercingAndResistancesInfo piercingAndResistancesInfo;
+
     private Character _activeCharacter;
     private Character _previousCharacter;
 
@@ -164,6 +168,8 @@ public class CharacterInfoUI : InfoUIBase {
         
         afflictions = new List<SkillData>();
         _dictMoodSummary = new Dictionary<string, MoodSummaryEntry>();
+
+        piercingAndResistancesInfo.Initialize();
     }
 
     #region Overrides
@@ -178,6 +184,7 @@ public class CharacterInfoUI : InfoUIBase {
             }
             character.marker.UpdateNameplateElementsState();
         }
+        piercingAndResistancesInfo.HidePiercingAndResistancesInfo();
     }
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
@@ -998,7 +1005,17 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.HideSmallInfo();
     }
     #endregion
-    
+
+    #region Piercing and Resistances
+    public void TogglePiercingAndResistances() {
+        if (piercingAndResistancesInfo.isShowing) {
+            piercingAndResistancesInfo.HidePiercingAndResistancesInfo();
+        } else {
+            piercingAndResistancesInfo.ShowPiercingAndResistancesInfo(activeCharacter);
+        }
+    }
+    #endregion
+
     private struct MoodSummaryEntry {
         public int amount;
         public GameDate expiryDate;
