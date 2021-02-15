@@ -21,7 +21,7 @@ namespace Ruinarch.MVCFramework
 		public void InitUI(MVCUIModel p_newModel, MVCUIView p_newView) {
 			m_mvcUIView = p_newView;
 			m_mvcUIModel = p_newModel;
-			m_mvcUIView.transform.SetParent(GameObject.FindGameObjectWithTag("MainCamera").transform);
+			m_mvcUIView.transform.SetParent(GameObject.FindObjectOfType<Camera>().transform);
 			onUIINstantiated?.Invoke();
 		}
 

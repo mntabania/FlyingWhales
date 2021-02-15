@@ -2,6 +2,7 @@
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine;
+using UtilityScripts;
 
 public class PlayerAction : SkillData, IContextMenuItem {
 
@@ -47,18 +48,24 @@ public class PlayerAction : SkillData, IContextMenuItem {
     #endregion  
 
     public void Activate(IPlayerActionTarget target) {
-        if(target is IPointOfInterest targetPOI) {
-            ActivateAbility(targetPOI);
+        if (RollSuccessChance(target)) {
+            if (target is IPointOfInterest targetPOI) {
+                ActivateAbility(targetPOI);
         } else if (target is Area targetArea) {
             ActivateAbility(targetArea);
-        } else if (target is LocationStructure targetStructure) {
-            ActivateAbility(targetStructure);
-        } else if (target is StructureRoom room) {
-            ActivateAbility(room);
-        } else if (target is BaseSettlement settlement) {
-            ActivateAbility(settlement);
+            } else if (target is LocationStructure targetStructure) {
+                ActivateAbility(targetStructure);
+            } else if (target is StructureRoom room) {
+                ActivateAbility(room);
+            } else if (target is BaseSettlement settlement) {
+                ActivateAbility(settlement);
+            }
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this);
+        } else {
+            //Go into cooldown but do not activate ability
+            OnExecutePlayerSkill();
+            PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", target.name + " resisted the power of the Ruinarch!");
         }
-        Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this);
 	}
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {
         if (target is IPointOfInterest targetPOI) {
@@ -86,6 +93,20 @@ public class PlayerAction : SkillData, IContextMenuItem {
             reasons += $"Cannot target Blessed characters,";
         }
         return reasons;
+    }
+
+    //Calculate chance based on piercing and resistance if the player action would be a success if activated
+    protected bool RollSuccessChance(IPlayerActionTarget p_target) {
+        int baseChance = 100;
+        if(p_target is Character targetCharacter) {
+            PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
+            if(data.resistanceType != RESISTANCE.None) {
+                float resistanceValue = targetCharacter.piercingAndResistancesComponent.GetResistanceValue(data.resistanceType);
+                float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type);
+                CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+            }
+        }
+        return GameUtilities.RollChance(baseChance);
     }
 
     #region IContextMenuItem Implementation

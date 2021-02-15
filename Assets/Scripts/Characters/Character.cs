@@ -5475,7 +5475,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
-
+            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, marker.transform.position, 1, currentRegion.innerMap);
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 

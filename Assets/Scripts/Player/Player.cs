@@ -22,6 +22,8 @@ public class Player : ILeader, IObjectManipulator {
     public Faction playerFaction { get; private set; }
     public PlayerSettlement playerSettlement { get; private set; }
     public int mana { get; private set; }
+
+    public int spiritEnergy { get; private set; }
     public int experience { get; private set; }
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
@@ -33,7 +35,7 @@ public class Player : ILeader, IObjectManipulator {
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
     public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }
-    
+
     //Components
     public SeizeComponent seizeComponent { get; }
     public ThreatComponent threatComponent { get; }
@@ -59,7 +61,7 @@ public class Player : ILeader, IObjectManipulator {
         mana = EditableValuesManager.Instance.startingMana;
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
-        playerSkillComponent = new PlayerSkillComponent(this);
+        playerSkillComponent = new PlayerSkillComponent();
         plagueComponent = new PlagueComponent();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         AddListeners();
@@ -656,6 +658,15 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
+    #region spirit energy
+    public void AdjustSpiritEnergy(int amount) {
+        spiritEnergy += amount;
+        spiritEnergy = Mathf.Clamp(spiritEnergy, 0, 100000);
+        Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, amount, spiritEnergy);
+        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+    }
+    #endregion
+    
     #region Mana
     public void AdjustMana(int amount) {
         mana += amount;

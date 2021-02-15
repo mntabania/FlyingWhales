@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 public class PlayerSkillComponent {
-    public Player player { get; private set; }
     //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
     public List<PLAYER_SKILL_TYPE> spells { get; protected set; }
     public List<PLAYER_SKILL_TYPE> afflictions { get; protected set; }
@@ -18,8 +17,11 @@ public class PlayerSkillComponent {
     //public bool canTriggerFlaw { get; protected set; }
     //public bool canRemoveTraits { get; protected set; }
 
-    public PlayerSkillComponent(Player player) {
-        this.player = player;
+    public int tier1Count { get; protected set; }
+    public int tier2Count { get; protected set; }
+    public int tier3Count { get; protected set; }
+
+    public PlayerSkillComponent() {
         //nodesData = new List<PlayerSkillTreeNodeData>();
         spells = new List<PLAYER_SKILL_TYPE>();
         afflictions = new List<PLAYER_SKILL_TYPE>();
@@ -33,18 +35,22 @@ public class PlayerSkillComponent {
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
     }
-    public PlayerSkillComponent() {
-        spells = new List<PLAYER_SKILL_TYPE>();
-        afflictions = new List<PLAYER_SKILL_TYPE>();
-        schemes = new List<PLAYER_SKILL_TYPE>();
-        playerActions = new List<PLAYER_SKILL_TYPE>();
-        demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>();
-        minionsSkills = new List<PLAYER_SKILL_TYPE>();
-        summonsSkills = new List<PLAYER_SKILL_TYPE>();
-        passiveSkills = new List<PASSIVE_SKILL>();
-    }
+
     public void SetPlayer(Player player) {
-        this.player = player;
+        
+    }
+
+    public bool CheckIfSkillIsAvailable(PLAYER_SKILL_TYPE p_targetSkill) {
+        if (spells.Contains(p_targetSkill)) {
+            return true;
+        }
+        if (playerActions.Contains(p_targetSkill)) {
+            return true;
+        }
+        if (afflictions.Contains(p_targetSkill)) {
+            return true;
+        }
+        return false;
     }
 
     #region Loading
@@ -59,11 +65,17 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Skill Tree
-    public void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour) {
-        spellData.SetMaxCharges(charges);
+    private void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
+
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+        spellData.SetCurrentLevel(playerSkillData.cheatedLevel);
+        Debug.LogError(spellData.name + " -- " + spellData.currentLevel + " -- " + playerSkillData.cheatedLevel);
+        spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(charges);
         spellData.SetCooldown(cooldown);
-        spellData.SetManaCost(manaCost);
+        spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
+        spellData.SetUnlockCost(playerSkillData.unlockCost);
+        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(threat);
         spellData.SetThreatPerHour(threatPerHour);
         CategorizePlayerSkill(spellData);
@@ -73,7 +85,8 @@ public class PlayerSkillComponent {
         if (spellData.isInUse) {
             spellData.AdjustCharges(amount);
         } else {
-            AddPlayerSkill(spellData, amount, -1, -1, 0, 0);
+            AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
+            UpdateTierCount(PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type));
         }
     }
     public void LoadPlayerSkillTreeOrLoadout(SaveDataPlayer save) {
@@ -114,6 +127,46 @@ public class PlayerSkillComponent {
     //    }
     //}
     #endregion
+
+    private void UpdateTierCount(PlayerSkillData playerSkillData) {
+        switch (playerSkillData.tier) {
+            case 1: tier1Count++;
+            break;
+            case 2: tier2Count++;
+            break;
+            case 3: tier3Count++;
+            break;
+        }
+    }
+
+    public int GetLevelOfSkill(SkillData p_targetSkill) {
+        int currentLevel = 0;
+        switch (p_targetSkill.category) {
+            case PLAYER_SKILL_CATEGORY.PLAYER_ACTION:
+            playerActions.ForEach((eachSkill) => {
+                if (eachSkill == p_targetSkill.type) {
+                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
+                }
+            });
+            break;
+            case PLAYER_SKILL_CATEGORY.SPELL:
+            spells.ForEach((eachSkill) => {
+                if (eachSkill == p_targetSkill.type) {
+                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
+                }
+            });
+            break;
+            case PLAYER_SKILL_CATEGORY.AFFLICTION:
+            afflictions.ForEach((eachSkill) => {
+                if (eachSkill == p_targetSkill.type) {
+                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
+                }
+            });
+            break;
+        }
+        
+        return currentLevel;
+    }
 
     #region Utilities
     public bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {
@@ -204,36 +257,44 @@ public class PlayerSkillComponent {
             }
         }
     }
-    private void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType) {
+    public void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType, bool testScene = false) {
         PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         if (spellData == null) {
             Debug.LogError(skillType.ToString() + " data is null!");
         }
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
+        if (!testScene && WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
             skillType == PLAYER_SKILL_TYPE.EYE) {
             //if map is tutorial and spell is THE_EYE, Set max charges to only 1
             spellData.SetMaxCharges(1);  
             spellData.SetCharges(1);
         } else {
-            spellData.SetMaxCharges(skillData.charges);    
+            spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
             spellData.SetCharges(spellData.maxCharges);
         }
         spellData.SetCooldown(skillData.cooldown);
-        spellData.SetManaCost(skillData.manaCost);
+        
+        spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(skillType));
+        spellData.SetUnlockCost(playerSkillData.unlockCost);
+        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);
     }
     private void SetPlayerSkillData(PlayerSkillData skillData) {
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
-        if(spellData == null) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+        spellData.currentLevel = playerSkillData.cheatedLevel;
+        if (spellData == null) {
             Debug.LogError(skillData.skill.ToString() + " data is null!");
         }
-        spellData.SetMaxCharges(skillData.charges);
+        spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(spellData.maxCharges);
         spellData.SetCooldown(skillData.cooldown);
-        spellData.SetManaCost(skillData.manaCost);
+        spellData.SetUnlockCost(playerSkillData.unlockCost);
+        spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
+        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);

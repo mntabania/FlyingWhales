@@ -23,7 +23,11 @@ public class PlayerUI : BaseMonoBehaviour {
     public GameObject regionNameTopMenuGO;
     public TextMeshProUGUI regionNameTopMenuText;
     public HoverHandler regionNameHoverHandler;
-    
+
+    [Header("Spirit Energy")]
+    public TextMeshProUGUI spiritEnergyLabel;
+    [SerializeField] private RectTransform spiritEnergyContainer;
+
     [Header("Mana")]
     public TextMeshProUGUI manaLbl;
     [SerializeField] private RectTransform manaContainer;
@@ -176,6 +180,8 @@ public class PlayerUI : BaseMonoBehaviour {
 
         //currencies
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
+        
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
 #if UNITY_EDITOR
@@ -335,6 +341,32 @@ public class PlayerUI : BaseMonoBehaviour {
             regionNameTopMenuGO.SetActive(false);
         }
     }
+
+    #region SpiritEnergy
+    private void OnSpiritEnergyAdjusted(int adjustedAmount, int spiritEnergy) {
+        if (adjustedAmount != 0) {
+            UpdateSpiritEnergy();
+            ShowSpiritEnergyAdjustEffect(adjustedAmount);
+            DoSpiritEnergyPunchEffect();
+            AudioManager.Instance.PlayParticleMagnet();
+        }
+    }
+    private void UpdateSpiritEnergy() {
+        spiritEnergyLabel.text = PlayerManager.Instance.player.spiritEnergy.ToString();
+    }
+    private Tweener _currentSpiritEnergyPunchTween;
+    private void DoSpiritEnergyPunchEffect() {
+        if (_currentSpiritEnergyPunchTween == null) {
+            _currentSpiritEnergyPunchTween = spiritEnergyContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentSpiritEnergyPunchTween = null);
+        }
+    }
+    private void ShowSpiritEnergyAdjustEffect(int adjustmentAmount) {
+        var text = adjustmentAmount > 0 ? $"<color=\"green\">+{adjustmentAmount.ToString()}</color>" : $"<color=\"red\">{adjustmentAmount.ToString()}</color>";
+        GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", spiritEnergyLabel.transform.position,
+            Quaternion.identity, transform, true);
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
+    }
+    #endregion
 
     #region Mana
     private void OnManaAdjusted(int adjustedAmount, int mana) {

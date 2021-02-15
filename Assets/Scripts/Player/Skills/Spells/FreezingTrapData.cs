@@ -5,6 +5,7 @@ using Inner_Maps;
 using Scriptable_Object_Scripts;
 
 public class FreezingTrapData : SkillData {
+
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FREEZING_TRAP;
     public override string name => "Freezing Trap";
     public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it and become Frozen.";

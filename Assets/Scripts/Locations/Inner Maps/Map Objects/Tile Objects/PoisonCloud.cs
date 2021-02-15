@@ -20,7 +20,7 @@ public sealed class PoisonCloud : MovingTileObject {
         Initialize(TILE_OBJECT_TYPE.POISON_CLOUD, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)));
+        SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.POISON_CLOUD)));
         SetDoExpireEffect(true);
     }
     public PoisonCloud(SaveDataPoisonCloud data) {

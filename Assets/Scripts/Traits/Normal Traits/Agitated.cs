@@ -5,6 +5,9 @@ using Random = UnityEngine.Random;
 
 namespace Traits {
     public class Agitated : Status {
+
+        private float m_addedAtk = 0f;
+        private float m_addedMaxHP = 0f;
         public override bool isSingleton => true;
         
         public Agitated() {
@@ -24,6 +27,11 @@ namespace Traits {
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
+                m_addedAtk = PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
+                character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk);
+
+                float m_addedMaxHP = character.maxHP * PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
+                character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
             }
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
@@ -42,6 +50,9 @@ namespace Traits {
                         character.marker.UnberserkedMarker();
                     }
                 }
+                character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP * -1);
+                character.combatComponent.SubtractAttackBaseOnPercentage(m_addedAtk);
+                m_addedAtk = 0f;
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
@@ -63,4 +74,3 @@ namespace Traits {
         #endregion
     }
 }
-

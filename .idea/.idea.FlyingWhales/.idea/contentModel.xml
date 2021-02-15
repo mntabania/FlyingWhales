@@ -1313,6 +1313,7 @@
             <e p="LocalizedTextEditor.cs" t="Include" />
             <e p="RuinarchGridGraphEditor.cs" t="Include" />
             <e p="SerializableDictionariesEditor.cs" t="Include" />
+            <e p="SkillUpgradeDataEditor.cs" t="Include" />
             <e p="UIManagerEditor.cs" t="Include" />
           </e>
           <e p="Effects" t="Include">
@@ -2338,6 +2339,7 @@
             <e p="WorldEventManager.cs" t="Include" />
           </e>
           <e p="Object Pools" t="Include">
+            <e p="ListPoolManager.cs" t="Include" />
             <e p="LogPool.cs" t="Include" />
             <e p="ObjectPoolManager.cs" t="Include" />
           </e>
@@ -2393,6 +2395,7 @@
               <e p="Taunt.cs" t="Include" />
             </e>
             <e p="Components" t="Include">
+              <e p="CurrenciesComponent.cs" t="Include" />
               <e p="PlagueComponent.cs" t="Include" />
               <e p="PlayerSkillComponent.cs" t="Include" />
               <e p="SeizeComponent.cs" t="Include" />
@@ -2479,6 +2482,7 @@
                 <e p="OstracizerData.cs" t="Include" />
                 <e p="TortureChambersData.cs" t="Include" />
               </e>
+              <e p="FakePlayer.cs" t="Include" />
               <e p="Minion Player Skills" t="Include">
                 <e p="DemonEnvyData.cs" t="Include" />
                 <e p="DemonGluttonyData.cs" t="Include" />
@@ -2548,6 +2552,7 @@
                 <e p="StifleMigrationData.cs" t="Include" />
               </e>
               <e p="SkillData.cs" t="Include" />
+              <e p="SkillProgressionManager.cs" t="Include" />
               <e p="Spells" t="Include">
                 <e p="BallLightningData.cs" t="Include" />
                 <e p="BlizzardData.cs" t="Include" />
@@ -2588,6 +2593,7 @@
                 <e p="SummonPlayerSkillSpecificData.cs" t="Include" />
               </e>
             </e>
+            <e p="SpiritEnergy.cs" t="Include" />
             <e p="Summons" t="Include">
               <e p="Abomination.cs" t="Include" />
               <e p="Angels" t="Include">
@@ -2918,6 +2924,8 @@
             </e>
             <e p="Player Skill Data" t="Include">
               <e p="PlayerSkillData.cs" t="Include" />
+              <e p="RequirementData.cs" t="Include" />
+              <e p="SkillUpgradeData.cs" t="Include" />
             </e>
             <e p="PlayerSkillLoadout.cs" t="Include" />
             <e p="PlayerSkillTree.cs" t="Include" />
@@ -3257,11 +3265,15 @@
                 <e p="FatalityUIController.cs" t="Include" />
                 <e p="LifeSpanUIController.cs" t="Include" />
                 <e p="OnDeathUIController.cs" t="Include" />
+                <e p="PurchaseSkillUIController.cs" t="Include" />
                 <e p="SchemeUIController.cs" t="Include" />
                 <e p="SymptomsUIController.cs" t="Include" />
                 <e p="TemptUIController.cs" t="Include" />
                 <e p="TransmissionUIController.cs" t="Include" />
                 <e p="WorldGenOptionsUIController.cs" t="Include" />
+              </e>
+              <e p="Items" t="Include">
+                <e p="PurchaseSkillItemUI.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
@@ -3271,6 +3283,7 @@
                 <e p="FatalityUIModel.cs" t="Include" />
                 <e p="LifeSpanUIModel.cs" t="Include" />
                 <e p="OnDeathUIModel.cs" t="Include" />
+                <e p="PurchaseSkillUIModel.cs" t="Include" />
                 <e p="SchemeUIModel.cs" t="Include" />
                 <e p="SymptomsUIModel.cs" t="Include" />
                 <e p="TemptUIModel.cs" t="Include" />
@@ -3285,6 +3298,7 @@
                 <e p="FatalityUIView.cs" t="Include" />
                 <e p="LifeSpanUIView.cs" t="Include" />
                 <e p="OnDeathUIView.cs" t="Include" />
+                <e p="PurchaseSkillUIView.cs" t="Include" />
                 <e p="SchemeUIView.cs" t="Include" />
                 <e p="SymptomsUIView.cs" t="Include" />
                 <e p="TemptUIView.cs" t="Include" />

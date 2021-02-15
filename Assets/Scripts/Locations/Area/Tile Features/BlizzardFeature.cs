@@ -2,6 +2,8 @@
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
+
 namespace Locations.Area_Features {
     public class BlizzardFeature : AreaFeature {
 
@@ -30,7 +32,7 @@ namespace Locations.Area_Features {
                 (character, area) => OnCharacterLeftArea(character, area, p_area));
             Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA,
                 (character, area) => OnCharacterEnteredArea(character, area, p_area));
-            RescheduleFreezingCheck(p_area); //this will start the freezing check loop
+            RescheduleBlizzardDamageAndFreezingProcess(p_area); //this will start the freezing check loop
         
             //schedule removal of this feature after x amount of ticks.
             expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
@@ -109,28 +111,33 @@ namespace Locations.Area_Features {
         #endregion
 
         #region Effects
-        private void CheckForFreezing(Area p_area) {
+        private void BlizzardDamageAndFreezingProcess(Area hex) {
             string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
-            int chance = 35;
+            int baseChance = 35;
+            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
+            int blizzardDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
-                int roll = UnityEngine.Random.Range(0, 100);
-                summary =
-                    $"{summary}\nRolling freezing check for {character.name}. Roll is {roll.ToString()}. Chance is {chance.ToString()}";
-                if (roll < chance) {
+                //int roll = UnityEngine.Random.Range(0, 100);
+                //summary =
+                //    $"{summary}\nRolling freezing check for {character.name}. Roll is {roll.ToString()}. Chance is {chance.ToString()}";
+                if (GameUtilities.RollChance(baseChance)) {
                     summary =
                         $"{summary}\n\tChance met for {character.name}. Adding Freezing trait...";
                     character.traitContainer.AddTrait(character, "Freezing", bypassElementalChance: true);
+                    character.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD) * -1, ELEMENTAL_TYPE.Ice,
+                        piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), showHPBar: true);
                 }
+                character.AdjustHP(blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing);
             }
             //reschedule 15 minutes after.
-            RescheduleFreezingCheck(p_area);
+            RescheduleBlizzardDamageAndFreezingProcess(hex);
             Debug.Log(summary);
         }
-        private void RescheduleFreezingCheck(Area p_area) {
+        private void RescheduleBlizzardDamageAndFreezingProcess(Area p_area) {
             if (p_area.featureComponent.HasFeature(name) == false) { return; }
             GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(10));
-            _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForFreezing(p_area), this);
+            _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => BlizzardDamageAndFreezingProcess(p_area), this);
         }
         #endregion
 
@@ -149,7 +156,7 @@ namespace Locations.Area_Features {
             base.Save(tileFeature);
             BlizzardFeature blizzardFeature = tileFeature as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {tileFeature?.ToString() ?? "Null"}");
-            expiryInTicks = GameManager.Instance.Today().GetTickDifference(blizzardFeature.expiryDate);
+            expiryInTicks = GameManager.Instance.Today().GetTickDifference(blizzardFeature.expiryDate) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
         }
         public override AreaFeature Load() {
             BlizzardFeature blizzardFeature = base.Load() as BlizzardFeature;

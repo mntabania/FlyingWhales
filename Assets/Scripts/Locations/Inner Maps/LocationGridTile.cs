@@ -1711,6 +1711,7 @@ namespace Inner_Maps {
         private IEnumerator TriggerLandmine(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Landmine_Explosion);
             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+            int baseDamage = -500;
             yield return new WaitForSeconds(0.5f);
             SetHasLandmine(false);
             List<LocationGridTile> tiles = GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
@@ -1723,16 +1724,17 @@ namespace Inner_Maps {
                     if (poi.gridTileLocation == null) {
                         continue; //skip
                     }
+                    int processedDamage = baseDamage + PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE);
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                         } else {
                             CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj);
                         }
                     } else if (poi is Character character) {
-                        character.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     } else {
-                        poi.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     }
                 }
             }
@@ -1759,12 +1761,15 @@ namespace Inner_Maps {
         private void TriggerFreezingTrap(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
             AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, this, 1, false);
+            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FREEZING_TRAP);
             SetHasFreezingTrap(false);
             for (int i = 0; i < 3; i++) {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {
                     break;
                 } else {
-                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true);
+                    int duration = TraitManager.Instance.allTraits["Freezing"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: duration);
                 }
             }
         }
@@ -1786,7 +1791,8 @@ namespace Inner_Maps {
         private void TriggerSnareTrap(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
             SetHasSnareTrap(false);
-            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared");
+            int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
+            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
         }
         #endregion
 

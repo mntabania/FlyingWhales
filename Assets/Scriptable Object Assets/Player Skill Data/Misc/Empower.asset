@@ -13,15 +13,51 @@ MonoBehaviour:
   m_Name: Empower
   m_EditorClassIdentifier: 
   skill: 88
-  manaCost: 25
+  manaCost: 40
   charges: 1
-  cooldown: 24
+  cooldown: 192
   threat: 0
   threatPerHour: 0
   expCost: 300
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 3
+  baseLoadoutWeight: 400
+  resistanceType: 0
+  archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 21300000, guid: 0e0660d7121fbec41ab7b927d1bea4c9, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 175be3da23178ae4096b6cc3d20b459f, type: 3}
+  requirementData:
+    requirements: 020000000300000004000000
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 3
+    afflictionCount: 3
+    spellsCount: 3
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+  skillUpgradeData:
+    upgradeCosts: 5e010000f40100008a020000
+    manacostPerLevel: 
+    chargesPerLevel: 020000000300000004000000
+    bonuses: 0100000007000000
+    additionalDamagePerLevel: []
+    additionalPiercePerLevel:
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: []
+    additionalAttackValuePerLevel: []
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 50
+    - 75
+    - 100
+    durationBonusPerLevel: []

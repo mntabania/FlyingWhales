@@ -270,7 +270,8 @@ public class AreaSpellsComponent : AreaComponent {
                 i--;
                 continue;
             }
-            poi.AdjustHP(-50, ELEMENTAL_TYPE.Normal, showHPBar: true);
+            int processedDamage = -50 - (PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
@@ -327,14 +328,19 @@ public class AreaSpellsComponent : AreaComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, owner.gridTileComponent.gridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
-            // chosenTile.PerformActionOnTraitables(BrimstoneEffect);
+            //Note: Damage is moved in BrimstonesParticleEffect
+            //chosenTile.PerformActionOnTraitables(ApplyBrimstoneDamage);
         }
     }
-    private void BrimstoneEffect(ITraitable traitable) {
-        if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-400, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
-        }
-    }
+    //private void ApplyBrimstoneDamage(ITraitable traitable) {
+    //    traitable.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES), ELEMENTAL_TYPE.Fire, true, showHPBar: true,
+    //                piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));
+    //}
+    //private void BrimstoneEffect(ITraitable traitable) {
+    //    if (traitable is IPointOfInterest poi) {
+    //        poi.AdjustHP(-400, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
+    //    }
+    //}
     //private IEnumerator CommenceBrimstoneEffect(LocationGridTile targetTile) {
     //    yield return new WaitForSeconds(0.6f);
     //    List<ITraitable> traitables = targetTile.GetTraitablesOnTile();
@@ -418,7 +424,8 @@ public class AreaSpellsComponent : AreaComponent {
     }
     private void ElectricStormEffect(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-450, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            int processedDamage = -450 - (PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
         }
     }
     private void PerTickElectricStorm() {
@@ -462,16 +469,24 @@ public class AreaSpellsComponent : AreaComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, owner.gridTileComponent.gridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Iceteroids);
-            // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
-            // for (int i = 0; i < pois.Count; i++) {
-            //     pois[i].AdjustHP(-120, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
-            // }
+            //Note: Damage is moved in IceteroidParticleEffect
+            //chosenTile.PerformActionOnTraitables(ApplyIceteroidDamage);
+
+            //List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
+            //for (int i = 0; i < pois.Count; i++) {
+            //    pois[i].AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS), ELEMENTAL_TYPE.Ice, true, showHPBar: true,
+            //        piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
+            //}
         }
     }
+    //private void ApplyIceteroidDamage(ITraitable traitable) {
+    //    traitable.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS), ELEMENTAL_TYPE.Ice, true, showHPBar: true,
+    //                piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
+    //}
     private void PerTickIceteroids() {
         Profiler.BeginSample($"Per Tick Iceteroids");
         currentIceteroidsDuration++;
-        if (currentIceteroidsDuration >= GameManager.ticksPerHour) {
+        if (currentIceteroidsDuration >= GameManager.ticksPerHour + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ICETEROIDS)) {
             SetHasIceteroids(false);
         }
         Profiler.EndSample();

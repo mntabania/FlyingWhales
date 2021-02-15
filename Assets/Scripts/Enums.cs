@@ -1180,5 +1180,13 @@ public enum VICTORY_CONDITION {
     Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Sandbox
 }
 public enum RESISTANCE {
-    Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
+    None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
+}
+
+public enum UPGRADE_BONUS {
+    Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed,
+}
+
+public enum UNLOCKING_SKILL_REQUIREMENT {
+    Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count,
 }

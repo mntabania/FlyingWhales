@@ -5,6 +5,7 @@ using Inner_Maps;
 using Logs;
 
 public class DestroyData : PlayerAction {
+   
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DESTROY;
     public override string name => "Destroy";
     public override string description => "This Action destroys an object.";
@@ -16,6 +17,7 @@ public class DestroyData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         LocationGridTile targetTile = targetPOI.gridTileLocation;
+        
         if (targetTile != null) {
             GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Destroy_Explosion);    
         }
@@ -29,6 +31,18 @@ public class DestroyData : PlayerAction {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == targetPOI) {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
+
+        targetTile.GetTilesInRadius(PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.DESTROY)).ForEach((eachTile) => {
+            if (eachTile != null) {
+                GameManager.Instance.CreateParticleEffectAt(eachTile, PARTICLE_EFFECT.Destroy_Explosion);
+                eachTile.charactersHere.ForEach((eachCharacters) => {
+                    eachCharacters.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY) * -1,
+                        ELEMENTAL_TYPE.Normal, showHPBar: true,
+                        piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY));
+                });
+            }
+        });
+
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {

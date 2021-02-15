@@ -37,10 +37,13 @@
     /// parameters (int adjustedAmount, int newMana)
     /// </summary>
     public static string PLAYER_ADJUSTED_MANA = "OnPlayerAdjustedMana";
+    public static string PLAYER_ADJUSTED_SPIRIT_ENERGY = "OnPlayerAdjustedEnergy";
     /// <summary>
     /// parameters (Vector3 worldPos, int orbCount, InnerTileMap mapLocation)
     /// </summary>
     public static string CREATE_CHAOS_ORBS = "CreateChaosOrbs";
+    public static string CREATE_SPIRIT_ENERGY = "CreateSpiritEnergy";
+    
     public static string PLAYER_NO_ACTIVE_ITEM = "OnPlayerNoActiveItem";
     public static string PLAYER_NO_ACTIVE_ARTIFACT = "OnPlayerNoActiveArtifact";
     /// <summary>
@@ -54,10 +57,14 @@
     public static string CHAOS_ORB_SPAWNED = "OnChaosOrbSpawned";
     public static string CHAOS_ORB_DESPAWNED = "OnChaosOrbDespawned";
     public static string CHAOS_ORB_COLLECTED = "OnChaosOrbCollected";
+    public static string SPIRIT_ENERGY_SPAWNED = "OnChaosOrbSpawned";
+    public static string SPIRIT_ENERGY_DESPAWNED = "OnChaosOrbDespawned";
+    public static string SPIRIT_ENERGY_COLLECTED = "OnChaosOrbCollected";
     /// <summary>
     /// Parameters: Chaos Orb
     /// </summary>
     public static string CHAOS_ORB_EXPIRED = "OnChaosOrbExpired";
+    public static string SPIRIT_ENERGY_EXPIRED = "OnSpiritEnergyExpired";
     public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
     public static string CHECK_IF_PLAYER_WINS = "CheckIfPlayerWins";
     /// <summary>

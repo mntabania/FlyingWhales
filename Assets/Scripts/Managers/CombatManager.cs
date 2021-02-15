@@ -527,5 +527,18 @@ public class CombatManager : BaseMonoBehaviour {
         return projectileGO.GetComponent<Projectile>();
     }
     #endregion
+
+    #region Piercing
+    public static void ModifyValueByPiercingAndResistance(ref int p_value, float p_piercingPower, float p_resistance) {
+        float percentMultiplier = (100f - (p_resistance - p_piercingPower)) / 100f;
+        if(percentMultiplier > 1f) {
+            percentMultiplier = 1f;
+        } else if (percentMultiplier < 0f) {
+            percentMultiplier = 0f;
+        }
+        float rawComputedValue = p_value * percentMultiplier;
+        p_value = Mathf.RoundToInt(rawComputedValue);
+    }
+    #endregion
 }
 
