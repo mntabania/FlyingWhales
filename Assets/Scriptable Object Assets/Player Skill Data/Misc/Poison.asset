@@ -15,10 +15,11 @@ MonoBehaviour:
   skill: 33
   manaCost: 20
   charges: 1
-  cooldown: 96
+  cooldown: 160
   threat: 3
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
   pierce: 0
   buttonSprite: {fileID: 21300000, guid: 992919969a7c793459af04ed04633657, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: f69a4274a12a0e8449dc859b7676242c, type: 3}
@@ -41,23 +42,37 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
+    isOR: 0
   skillUpgradeData:
     upgradeCosts: 6400000096000000c8000000
-    manacostPerLevel: 190000001e00000023000000
-    chargesPerLevel: 020000000300000004000000
-    bonuses: 0100000008000000
-    additionalDamagePerLevel: []
+    manacostPerLevel: 14000000140000001400000014000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 010000000e0000000a000000
+    additionalDamagePerLevel: 
     additionalPiercePerLevel:
+    - 0
     - 50
     - 100
     - 150
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel: []
-    additionalHpValuePerLevel: []
-    additionalAttackValuePerLevel: []
-    additionalmanaReceivedPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel:
+    - 0
+    - 0
+    - 0
+    - 0
     statsIncreasedPercentagePerLevel:
-    - 108
-    - 120
-    - 132
-    durationBonusPerLevel: []
+    - 0
+    - 20
+    - 40
+    - 60
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 00000000140000001400000014000000
+    skillMovementSpeed: 
