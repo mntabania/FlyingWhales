@@ -47,20 +47,28 @@ MonoBehaviour:
     upgradeCosts: 6400000096000000c8000000
     manacostPerLevel: 14000000140000001400000014000000
     chargesPerLevel: 01000000010000000200000002000000
-    bonuses: 
+    bonuses: 0e0000000100000009000000
     additionalDamagePerLevel: 
-    additionalPiercePerLevel: []
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
-    statsIncreasedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 50
+    - 75
+    - 100
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 
+    cooldownPerLevel: 0000000014000000140000001e000000
     skillMovementSpeed: 
