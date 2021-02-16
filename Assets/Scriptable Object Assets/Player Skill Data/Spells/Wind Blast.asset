@@ -14,15 +14,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill: 44
   manaCost: 20
-  charges: 3
-  cooldown: 144
+  charges: 1
+  cooldown: 160
   threat: 8
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: 9cd696d31c2c8534b8a5ec2a949c43fa, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: b123165bb9b9c484fb83dd83c3153ee3, type: 3}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 1
+  baseLoadoutWeight: 200
+  resistanceType: 8
+  archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  requirementData:
+    requirements: 
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 6400000096000000c8000000
+    manacostPerLevel: 14000000190000001e00000023000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 0e00000001000000060000000c000000
+    additionalDamagePerLevel: 00000000000000000000000000000000
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel:
+    - 0
+    - 25
+    - 50
+    - 75
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 00000000000000000100000001000000
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 00000000140000001400000014000000
+    skillMovementSpeed: 
   blastSound: {fileID: 8300000, guid: 9fc4b4de02e399c4fa4471f2ee024e6b, type: 3}

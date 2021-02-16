@@ -281,8 +281,12 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
-            if (damageable is Character) {
+            if (damageable is Character character) {
                 damageable.AdjustHP(-120, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
+                if (damageable.currentHP <= 0) {
+                    (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+                }
             } else {
                 damageable.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);    
             }

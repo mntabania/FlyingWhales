@@ -45,6 +45,10 @@ public class LightningData : SkillData {
         if (traitable is IPointOfInterest poi) {
             int processedDamage = m_lightningBaseDamage - PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LIGHTNING);
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
+            if (traitable is Character character && traitable.currentHP <= 0) {
+                (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.LIGHTNING;
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+            }
         }
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {

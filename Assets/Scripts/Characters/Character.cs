@@ -122,6 +122,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
 
     public INTERACTION_TYPE causeOfDeath { set; get; }
+    public PLAYER_SKILL_TYPE skillCauseOfDeath { set; get; }
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -241,6 +242,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
+        skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : UtilityScripts.Utilities.SetID(this, id);
         _gender = gender;
@@ -254,6 +256,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
     }
     public Character(string className, RACE race, GENDER gender) : this() {
+        skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         _id = UtilityScripts.Utilities.SetID(this);
         _gender = gender;
@@ -273,7 +276,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         //Traits
         CreateTraitContainer();
-
+        skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
         ownedItems = new List<TileObject>();
@@ -317,6 +320,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.ResetSleepTicks();
     }
     public Character(SaveDataCharacter data) {
+        skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
         shouldDoActionOnFirstTickUponLoadGame = true;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
@@ -5475,7 +5479,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
-            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, marker.transform.position, 1, currentRegion.innerMap);
+  
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 
@@ -5643,6 +5647,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     trait.AfterDeath(this);
                 }
             }
+
+            if(responsibleCharacter != null) {
+                if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, marker.transform.position, 1, currentRegion.innerMap);
+                }
+			}
 
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
