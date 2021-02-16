@@ -47,7 +47,7 @@ MonoBehaviour:
     upgradeCosts: 6400000096000000c8000000
     manacostPerLevel: 
     chargesPerLevel: 
-    bonuses: 0e000000010000000a00000000000000
+    bonuses: 0e000000010000000a00000006000000
     additionalDamagePerLevel: 1900000019000000320000004b000000
     additionalPiercePerLevel:
     - 0
@@ -55,7 +55,11 @@ MonoBehaviour:
     - 100
     - 150
     additionalHpPercentagePerLevel: []
-    additionalAttackPercentagePerLevel: []
+    additionalAttackPercentagePerLevel:
+    - 0
+    - 25
+    - 50
+    - 75
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
