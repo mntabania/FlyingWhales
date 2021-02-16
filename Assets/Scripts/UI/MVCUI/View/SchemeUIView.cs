@@ -13,8 +13,10 @@ public class SchemeUIView : MVCUIView {
         void OnClickTemptation();
         void OnHoverOverBlackmailBtn(UIHoverPosition p_hoverPos);
         void OnHoverOverTemptBtn(UIHoverPosition p_hoverPos);
+        void OnHoverOverSuccessRate();
         void OnHoverOutBlackmailBtn();
         void OnHoverOutTemptBtn();
+        void OnHoverOutSuccessRate();
     }
     #endregion
 
@@ -47,6 +49,8 @@ public class SchemeUIView : MVCUIView {
         UIModel.onHoverOutBlackmailBtn += p_listener.OnHoverOutBlackmailBtn;
         UIModel.onHoverOverTemptBtn += p_listener.OnHoverOverTemptBtn;
         UIModel.onHoverOutTemptBtn += p_listener.OnHoverOutTemptBtn;
+        UIModel.onHoverOverSuccessRate += p_listener.OnHoverOverSuccessRate;
+        UIModel.onHoverOutSuccessRate += p_listener.OnHoverOutSuccessRate;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onCloseClicked -= p_listener.OnClickClose;
@@ -57,6 +61,8 @@ public class SchemeUIView : MVCUIView {
         UIModel.onHoverOutBlackmailBtn -= p_listener.OnHoverOutBlackmailBtn;
         UIModel.onHoverOverTemptBtn -= p_listener.OnHoverOverTemptBtn;
         UIModel.onHoverOutTemptBtn -= p_listener.OnHoverOutTemptBtn;
+        UIModel.onHoverOverSuccessRate -= p_listener.OnHoverOverSuccessRate;
+        UIModel.onHoverOutSuccessRate -= p_listener.OnHoverOutSuccessRate;
     }
     #endregion
 

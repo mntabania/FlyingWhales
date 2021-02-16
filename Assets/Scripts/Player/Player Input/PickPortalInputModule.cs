@@ -18,13 +18,13 @@ namespace Player_Input {
         public override void OnUpdate() {
             LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
             if (hoveredTile != null && !UIManager.Instance.IsMouseOnUI()) {
-                Area hexTile = hoveredTile.area;
-                bool canBuildDemonicStructureHere = hexTile.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL);
+                Area area = hoveredTile.area;
+                bool canBuildDemonicStructureHere = area.structureComponent.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL);
                 var color = canBuildDemonicStructureHere ? GameUtilities.GetValidTileHighlightColor() : GameUtilities.GetInvalidTileHighlightColor();
                 InputManager.Instance.SetCursorTo(canBuildDemonicStructureHere ? InputManager.Cursor_Type.Check : InputManager.Cursor_Type.Cross);
-                TileHighlighter.Instance.PositionHighlight(hexTile, color);
+                TileHighlighter.Instance.PositionHighlight(area, color);
                 if (canBuildDemonicStructureHere && Input.GetMouseButtonDown(0)) {
-                    AskForPlacePortalConfirmation(hexTile);
+                    AskForPlacePortalConfirmation(area);
                 }
             } else {
                 InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);

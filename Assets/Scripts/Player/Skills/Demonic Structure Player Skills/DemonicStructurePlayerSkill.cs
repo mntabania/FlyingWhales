@@ -22,17 +22,19 @@ public class DemonicStructurePlayerSkill : SkillData {
         } else {
             question = "Are you sure you want to build " + name + "?";
         }
-        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetArea.StartBuild(type), showCover: true, pauseAndResume: true, layer: 50);
+        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetArea.structureComponent.StartBuild(type), showCover: true, pauseAndResume: true, layer: 50);
         
         // base.ActivateAbility(targetHex);
     }
     public override bool CanPerformAbilityTowards(Area targetArea) {
         if (base.CanPerformAbilityTowards(targetArea)) {
-            return targetArea.CanBuildDemonicStructureHere(structureType);
+            return targetArea.structureComponent.CanBuildDemonicStructureHere(structureType);
         }
         return false;
     }
     public void BuildDemonicStructureAt(Area targetArea) {
+        PlayerManager.Instance.player.playerSettlement.AddAreaToSettlement(targetArea);
+        targetArea.featureComponent.RemoveAllFeatures(targetArea);
         //targetArea.StartCorruption();
         LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetArea.settlementOnArea, targetArea.region.innerMap, targetArea, structureType, RESOURCE.NONE);
         //targetHex.landmarkOnTile?.OnFinishedBuilding();

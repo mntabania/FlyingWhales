@@ -539,6 +539,16 @@ public class CombatManager : BaseMonoBehaviour {
         float rawComputedValue = p_value * percentMultiplier;
         p_value = Mathf.RoundToInt(rawComputedValue);
     }
+    public static void ModifyValueByPiercingAndResistance(ref float p_value, float p_piercingPower, float p_resistance) {
+        float percentMultiplier = (100f - (p_resistance - p_piercingPower)) / 100f;
+        if (percentMultiplier > 1f) {
+            percentMultiplier = 1f;
+        } else if (percentMultiplier < 0f) {
+            percentMultiplier = 0f;
+        }
+        float rawComputedValue = p_value * percentMultiplier;
+        p_value = rawComputedValue;
+    }
     #endregion
 }
 

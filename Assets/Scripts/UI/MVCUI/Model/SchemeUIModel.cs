@@ -12,6 +12,8 @@ public class SchemeUIModel : MVCUIModel {
     public Action onClickTemptation;
     public Action<UIHoverPosition> onHoverOverBlackmailBtn;
     public Action<UIHoverPosition> onHoverOverTemptBtn;
+    public Action onHoverOverSuccessRate;
+    public Action onHoverOutSuccessRate;
     public Action onHoverOutBlackmailBtn;
     public Action onHoverOutTemptBtn;
 
@@ -25,6 +27,7 @@ public class SchemeUIModel : MVCUIModel {
     public ScrollRect scrollViewSchemes;
     public HoverHandler hoverHandlerBtnBlackmail;
     public HoverHandler hoverHandlerBtnTempt;
+    public HoverHandler hoverHandlerSuccessRateText;
 
     public UIHoverPosition hoverPositionBlackmail;
     public UIHoverPosition hoverPositionTempt;
@@ -38,6 +41,8 @@ public class SchemeUIModel : MVCUIModel {
         hoverHandlerBtnBlackmail.AddOnHoverOutAction(OnHoverOutBlackmailBtn);
         hoverHandlerBtnTempt.AddOnHoverOverAction(OnHoverOverTemptBtn);
         hoverHandlerBtnTempt.AddOnHoverOutAction(OnHoverOutTemptBtn);
+        hoverHandlerSuccessRateText.AddOnHoverOverAction(OnHoverOverSuccessRate);
+        hoverHandlerSuccessRateText.AddOnHoverOutAction(OnHoverOutSuccessRate);
     }
     private void OnDisable() {
         btnClose.onClick.RemoveListener(OnClickClose);
@@ -48,6 +53,8 @@ public class SchemeUIModel : MVCUIModel {
         hoverHandlerBtnBlackmail.RemoveOnHoverOutAction(OnHoverOutBlackmailBtn);
         hoverHandlerBtnTempt.RemoveOnHoverOverAction(OnHoverOverTemptBtn);
         hoverHandlerBtnTempt.RemoveOnHoverOutAction(OnHoverOutTemptBtn);
+        hoverHandlerSuccessRateText.RemoveOnHoverOverAction(OnHoverOverSuccessRate);
+        hoverHandlerSuccessRateText.RemoveOnHoverOutAction(OnHoverOutSuccessRate);
     }
 
     #region On Clicks
@@ -74,6 +81,12 @@ public class SchemeUIModel : MVCUIModel {
     }
     private void OnHoverOutTemptBtn() {
         onHoverOutTemptBtn?.Invoke();
+    }
+    private void OnHoverOverSuccessRate() {
+        onHoverOverSuccessRate?.Invoke();
+    }
+    private void OnHoverOutSuccessRate() {
+        onHoverOutSuccessRate?.Invoke();
     }
     #endregion
 }
