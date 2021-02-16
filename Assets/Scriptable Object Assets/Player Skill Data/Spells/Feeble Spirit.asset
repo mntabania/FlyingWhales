@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Feeble Spirit
   m_EditorClassIdentifier: 
   skill: 20
-  manaCost: 5
-  charges: 3
-  cooldown: 144
+  manaCost: 20
+  charges: 1
+  cooldown: 160
   threat: 3
   threatPerHour: 0
   expCost: 300
@@ -25,10 +25,10 @@ MonoBehaviour:
   tooltipVideoClip: {fileID: 32900000, guid: eee5f9c843bb74a4db21ee6e2cf27f2f, type: 3}
   tooltipImage: {fileID: 0}
   unlockCost: 0
-  tier: 0
-  baseLoadoutWeight: 0
-  resistanceType: 0
-  archetypeWeightedBonus: 0
+  tier: 1
+  baseLoadoutWeight: 200
+  resistanceType: 10
+  archetypeWeightedBonus: 2
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
@@ -44,23 +44,31 @@ MonoBehaviour:
     tier3Count: 0
     isOR: 0
   skillUpgradeData:
-    upgradeCosts: 
-    manacostPerLevel: 
-    chargesPerLevel: 
-    bonuses: 
+    upgradeCosts: 6400000096000000c8000000
+    manacostPerLevel: 14000000190000001e00000023000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 0e0000000100000009000000
     additionalDamagePerLevel: 
-    additionalPiercePerLevel: []
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
-    statsIncreasedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 50
+    - 75
+    - 100
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 
+    cooldownPerLevel: 00000000140000001400000014000000
     skillMovementSpeed: 
