@@ -231,7 +231,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		for (int i = 0; i < allSpecialStructures.Count; i++) {
 			LocationStructure structure = allSpecialStructures[i];
 			if (structure.structureType != STRUCTURE_TYPE.CAVE) {
-				LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(structure.structureType.GetLandmarkType());
+				StructureData landmarkData = LandmarkManager.Instance.GetStructureData(structure.structureType);
 				if (landmarkData.itemGenerationSetting != null) {
 					List<ItemSetting> itemChoices = landmarkData.itemGenerationSetting.GetItemChoicesForBiome(structure.occupiedArea.biomeType);
 					if (itemChoices != null) {
@@ -252,7 +252,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		RuinarchListPool<LocationStructure>.Release(allSpecialStructures);
 	}
 	private IEnumerator CaveItemGeneration() {
-		LandmarkData caveData = LandmarkManager.Instance.GetLandmarkData(LANDMARK_TYPE.CAVE);
+		StructureData caveData = LandmarkManager.Instance.GetStructureData(STRUCTURE_TYPE.CAVE);
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {

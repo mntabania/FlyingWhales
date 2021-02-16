@@ -100,7 +100,7 @@ public class AreaStructureComponent : AreaComponent {
         yield return new WaitForSeconds(3f);
         _buildParticles.StopEmission();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        demonicStructureSkill.BuildDemonicStructureAt(p_area);
+        // demonicStructureSkill.BuildDemonicStructureAt(p_area);
         _buildParticles = null;
         PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(false);
     }

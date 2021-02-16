@@ -1693,6 +1693,11 @@ namespace Inner_Maps {
                 }
             }
         }
+        public void InstantPlaceDemonicStructure(StructureSetting p_structureSetting) {
+            List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(p_structureSetting.structureType, p_structureSetting.resource);
+            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+            genericTileObject.InstantPlaceStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement);
+        }
         #endregion
 
         #region Landmine

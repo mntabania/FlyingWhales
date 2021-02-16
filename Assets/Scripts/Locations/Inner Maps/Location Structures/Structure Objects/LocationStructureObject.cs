@@ -16,7 +16,9 @@ using UnityEngine.Tilemaps;
 public class LocationStructureObject : PooledObject {
 
     public Action<LocationStructureObject> onStructureClicked;
-    public enum Structure_Visual_Mode { Blueprint, Built }
+    public enum Structure_Visual_Mode { Blueprint, Built,
+        Demonic_Structure_Blueprint
+    }
 
     public STRUCTURE_TYPE structureType;
     
@@ -100,6 +102,16 @@ public class LocationStructureObject : PooledObject {
         for (int i = 0; i < wallVisuals.Length; i++) {
             WallVisual wallVisual = wallVisuals[i];
             wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
+        }
+    }
+    public void OverrideDefaultSortingOrder(int p_sortingOrder) {
+        _groundTileMapRenderer.sortingOrder = p_sortingOrder;
+        _blockWallsTilemap.GetComponent<TilemapRenderer>().sortingOrder = p_sortingOrder + 1;
+        _detailTileMapRenderer.sortingOrder = p_sortingOrder + 2;
+        StructureTemplateObjectData[] templateObjectData = GetPreplacedObjects();
+        for (int i = 0; i < templateObjectData.Length; i++) {
+            StructureTemplateObjectData templateData = templateObjectData[i];
+            templateData.SetSortingOrder(p_sortingOrder + 2);
         }
     }
     private void SetStructureColor(Color color) {
@@ -245,6 +257,14 @@ public class LocationStructureObject : PooledObject {
         if (preplacedObjs != null) {
             for (int i = 0; i < preplacedObjs.Length; i++) {
                preplacedObjs[i].gameObject.SetActive(state);
+            }
+        }
+    }
+    private void SetPreplacedObjectsColor(Color p_color) {
+        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
+        if (preplacedObjs != null) {
+            for (int i = 0; i < preplacedObjs.Length; i++) {
+                preplacedObjs[i].SetVisualColor(p_color);
             }
         }
     }
@@ -456,6 +476,13 @@ public class LocationStructureObject : PooledObject {
                 color.a = 128f / 255f;
                 SetStructureColor(color);
                 SetPreplacedObjectsState(false);
+                SetWallCollidersState(false);
+                break;
+            case Structure_Visual_Mode.Demonic_Structure_Blueprint:
+                color = Color.white;
+                SetStructureColor(color);
+                SetPreplacedObjectsState(true);
+                SetPreplacedObjectsColor(color);
                 SetWallCollidersState(false);
                 break;
             default:

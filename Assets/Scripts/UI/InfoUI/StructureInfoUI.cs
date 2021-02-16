@@ -97,7 +97,7 @@ public class StructureInfoUI : InfoUIBase {
         if (activeStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
             locationPortrait.SetLocation(activeStructure.settlementLocation);
         }
-        locationPortrait.SetPortrait(activeStructure.structureType.GetLandmarkType());
+        locationPortrait.SetPortrait(activeStructure.structureType);
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeStructure.currentHP}/{activeStructure.maxHP}";

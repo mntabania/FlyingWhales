@@ -624,24 +624,22 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type, RESOURCE resource) {
-            StructureSetting structureSetting = new StructureSetting(type, resource);
-            if (structurePrefabs.ContainsKey(structureSetting)) {
-                return structurePrefabs[structureSetting];    
-            }
-            throw new Exception($"No structure prefabs for {structureSetting}");
+        public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE p_structureType, RESOURCE resource) {
+            StructureSetting structureSetting = new StructureSetting(p_structureType, resource);
+            return GetIndividualStructurePrefabsForStructure(structureSetting);
         }
         public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
-            if (structureSetting.isCorrupted) {
-                if (corruptedStructurePrefabs.ContainsKey(structureSetting)) {
-                    return corruptedStructurePrefabs[structureSetting];    
-                }
-            } else {
-                if (individualStructurePrefabs.ContainsKey(structureSetting)) {
-                    return individualStructurePrefabs[structureSetting];    
-                }
-            }
-            throw new Exception($"No structure prefabs for {structureSetting.ToString()}");
+            return LandmarkManager.Instance.GetStructureData(structureSetting.structureType).GetStructurePrefabs(structureSetting);
+            // if (structureSetting.isCorrupted) {
+            //     if (corruptedStructurePrefabs.ContainsKey(structureSetting)) {
+            //         return corruptedStructurePrefabs[structureSetting];    
+            //     }
+            // } else {
+            //     if (individualStructurePrefabs.ContainsKey(structureSetting)) {
+            //         return individualStructurePrefabs[structureSetting];    
+            //     }
+            // }
+            // throw new Exception($"No structure prefabs for {structureSetting.ToString()}");
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);

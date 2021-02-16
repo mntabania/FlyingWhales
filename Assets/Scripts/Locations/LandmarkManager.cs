@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
@@ -12,15 +11,19 @@ using Locations.Settlements.Settlement_Types;
 using Locations.Area_Features;
 using UnityEngine.Assertions;
 using UtilityScripts;
-using Random = UnityEngine.Random;
+using System.IO;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 public partial class LandmarkManager : BaseMonoBehaviour {
 
     public static LandmarkManager Instance = null;
     public const int REGION_VILLAGE_CAPACITY = 3;
     
-    [SerializeField] private List<LandmarkData> landmarkData;
-    private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
+    [SerializeField] private StructureDataDictionary structureData;
+    
     
     public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
     public STRUCTURE_TYPE[] humanUtilityStructures { get; private set; }
@@ -35,8 +38,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     #endregion
     
     public void Initialize() {
-        ConstructLandmarkData();
-        LoadLandmarkTypeDictionary();
         ConstructRaceStructureRequirements();
     }
 
@@ -47,40 +48,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     protected override void OnDestroy() {
         base.OnDestroy();
         Instance = null;
-    }
-    #endregion
-
-    #region Landmarks
-    private void ConstructLandmarkData() {
-        for (int i = 0; i < landmarkData.Count; i++) {
-            LandmarkData data = landmarkData[i];
-            data.ConstructData();
-        }
-    }
-    private void LoadLandmarkTypeDictionary() {
-        landmarkDataDict = new Dictionary<LANDMARK_TYPE, LandmarkData>();
-        for (int i = 0; i < landmarkData.Count; i++) {
-            LandmarkData data = landmarkData[i];
-            landmarkDataDict.Add(data.landmarkType, data);
-        }
-    }
-    #endregion
-
-    #region Landmark Generation
-    public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
-        if (landmarkDataDict.ContainsKey(landmarkType)) {
-            return landmarkDataDict[landmarkType];
-        }
-        throw new System.Exception($"There is no landmark data for {landmarkType}");
-    }
-    public LandmarkData GetLandmarkData(string landmarkName) {
-        for (int i = 0; i < landmarkData.Count; i++) {
-            LandmarkData currData = landmarkData[i];
-            if (currData.landmarkTypeString == landmarkName) {
-                return currData;
-            }
-        }
-        throw new System.Exception($"There is no landmark data for {landmarkName}");
     }
     #endregion
 
@@ -430,5 +397,31 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             throw new Exception($"{typeName} has no data!");
         }
     }
+    #endregion
+
+    #region Structure Data
+    public StructureData GetStructureData(STRUCTURE_TYPE p_structureType) {
+        if (structureData.ContainsKey(p_structureType)) {
+            return structureData[p_structureType];
+        }
+        throw new Exception($"No structure data for {p_structureType.ToString()}");
+    }
+#if UNITY_EDITOR
+    public void LoadStructureData() {
+        structureData = new StructureDataDictionary();
+        string assetPath = "Assets/Scriptable Object Assets/Structure Data/";
+        string[] scriptableObjects = Directory.GetFiles(assetPath,"*.asset");
+        for (int i = 0; i < scriptableObjects.Length; i++) {
+            string asset = scriptableObjects[i];
+            StructureData loadedSprite = (StructureData)UnityEditor.AssetDatabase.LoadAssetAtPath(asset, typeof(StructureData));
+            string strStructureName = loadedSprite.name;
+            strStructureName = strStructureName.Replace("Data", "").TrimEnd().ToUpper();
+            strStructureName = UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(strStructureName);
+            STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)System.Enum.Parse(typeof(STRUCTURE_TYPE), strStructureName);
+            structureData.Add(structureType, loadedSprite);
+        }
+        EditorUtility.SetDirty(this);
+    }
+#endif
     #endregion
 }

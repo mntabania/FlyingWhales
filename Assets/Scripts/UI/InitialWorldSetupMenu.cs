@@ -17,15 +17,10 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
     [SerializeField] public GameObject regenerateWorldBtnGO;
     [SerializeField] public GameObject placePortalBtnGO;
     [SerializeField] public RectTransform pickPortalMessage;
-
-    public bool isPickingPortal;
-    
     public void Initialize() {
         loadOutMenu.Initialize();
-        isPickingPortal = false;
     }
     public void Show() {
-        isPickingPortal = true;
         UIManager.Instance.SetSpeedTogglesState(false);
         regenerateWorldBtnGO.SetActive(WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom);
         placePortalBtnGO.SetActive(true);
@@ -45,15 +40,15 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         pickPortalMessage.DOAnchorPosY(110f, 0.5f).SetEase(Ease.OutBack);
         PlayerManager.Instance.AddPlayerInputModule(PlayerManager.pickPortalInputModule);
         PlayerManager.pickPortalInputModule.AddOnPortalPlacedAction(OnPortalPlaced);
+        PlayerManager.Instance.ShowStructurePlacementVisual(STRUCTURE_TYPE.THE_PORTAL);
     }
     
     private void OnPortalPlaced() {
+        PlayerManager.Instance.HideStructurePlacementVisual();
         PlayerManager.pickPortalInputModule.RemoveOnPortalPlacedAction(OnPortalPlaced);
         PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.pickPortalInputModule);
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
 
-        isPickingPortal = false;
-        
         pickPortalMessage.DOAnchorPosY(-110f, 0.5f).SetEase(Ease.InBack);
 
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial || WorldSettings.Instance.worldSettingsData.playerSkillSettings.omnipotentMode == OMNIPOTENT_MODE.Enabled) {

@@ -1310,6 +1310,7 @@
             <e p="Builder.cs" t="Include" />
             <e p="CharacterManagerEditor.cs" t="Include" />
             <e p="InteractionLocalizedTextCreatorEditor.cs" t="Include" />
+            <e p="LandmarkManagerEditor.cs" t="Include" />
             <e p="LocalizedTextEditor.cs" t="Include" />
             <e p="RuinarchGridGraphEditor.cs" t="Include" />
             <e p="SerializableDictionariesEditor.cs" t="Include" />
@@ -2385,6 +2386,9 @@
             <e p="Artifacts" t="Include">
               <e p="Artifact.cs" t="Include" />
             </e>
+            <e p="Base Building" t="Include">
+              <e p="PlayerStructurePlacementVisual.cs" t="Include" />
+            </e>
             <e p="ChaosOrb.cs" t="Include" />
             <e p="Combat Abilities" t="Include">
               <e p="CombatAbility.cs" t="Include" />
@@ -3213,6 +3217,7 @@
               <e p="InfoUIBase.cs" t="Include" />
               <e p="MonsterInfoUI.cs" t="Include" />
               <e p="PartyInfoUI.cs" t="Include" />
+              <e p="PiercingAndResistancesInfo.cs" t="Include" />
               <e p="SettlementInfoUI.cs" t="Include" />
               <e p="StructureInfoUI.cs" t="Include" />
               <e p="StructureRoomInfoUI.cs" t="Include" />

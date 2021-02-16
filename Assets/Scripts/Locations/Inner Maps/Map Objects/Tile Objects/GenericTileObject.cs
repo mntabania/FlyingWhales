@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using Pathfinding.Util;
 using UnityEngine;
 using Traits;
@@ -214,7 +215,7 @@ public class GenericTileObject : TileObject {
     }
 
     #region Structure Blueprints
-    public bool PlaceBlueprintOnTile(string prefabName) {
+    public bool PlaceExpiringBlueprintOnTile(string prefabName) {
         GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
         LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
         if (structureObject.HasEnoughSpaceIfPlacedOn(gridTileLocation)) {
@@ -260,75 +261,60 @@ public class GenericTileObject : TileObject {
             blueprintOnTile = null;
             _expiryKey = string.Empty;    
         }
-        
     }
-    public LocationStructure BuildBlueprint(NPCSettlement npcSettlement, LocationGridTile p_usedConnector) {
-        Profiler.BeginSample($"Build Blueprint - Add Tile To Settlement");
-        Area hexTile = gridTileLocation.area;
-        npcSettlement.AddAreaToSettlement(hexTile);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Set Visual Mode");
-        blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentMap);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Create Structure Instance");
-        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, blueprintOnTile.structureType, npcSettlement);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Clear Out Objects");
-        blueprintOnTile.ClearOutUnimportantObjectsBeforePlacement();
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Transfer Tiles to new Structure");
-        for (int j = 0; j < blueprintOnTile.tiles.Length; j++) {
-            LocationGridTile tile = blueprintOnTile.tiles[j];
-            tile.SetStructure(structure);
-            tile.SetHasBlueprint(false);
-        }
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Set Structure Object");
-        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
-        if (structure is DemonicStructure demonicStructure) {
-            demonicStructure.SetStructureObject(blueprintOnTile);    
-        } else if (structure is ManMadeStructure manMadeStructure) {
-            manMadeStructure.SetStructureObject(blueprintOnTile);    
-        }
-        Profiler.EndSample();
-        
-        structure.SetOccupiedArea(hexTile);
-        
-        Profiler.BeginSample($"Build Blueprint - OnBuiltStructureObjectPlaced");
-        blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Create Rooms");
-        structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - On Built New Structure {structure.name}");
-        structure.OnBuiltNewStructure();
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - OnBuiltNewStructureFromBlueprint");
-        structure.OnBuiltNewStructureFromBlueprint();
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - OnUseStructureConnector");
-        if (structure is ManMadeStructure mmStructure) {
-            mmStructure.OnUseStructureConnector(p_usedConnector);    
-        }
-        Profiler.EndSample();
-
-        Profiler.BeginSample($"Build Blueprint - Cancel Expiry");
+    public void BuildBlueprintOnTile(BaseSettlement p_settlement, LocationGridTile p_usedConnector) {
+        BuildBlueprint(blueprintOnTile, p_settlement, p_usedConnector);
         CancelBlueprintExpiry();
-        Profiler.EndSample();
         
         blueprintOnTile = null;
         isCurrentlyBuilding = false;
-        return structure;
+    }
+    public void InstantPlaceStructure(string p_structurePrefabName, BaseSettlement p_settlement) {
+        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_structurePrefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
+        LocationStructureObject blueprint = structurePrefab.GetComponent<LocationStructureObject>();
+        if (blueprint.HasEnoughSpaceIfPlacedOn(gridTileLocation)) {
+            structurePrefab.transform.position = gridTileLocation.centeredWorldLocation;
+            blueprint.RefreshAllTilemaps();
+            List<LocationGridTile> occupiedTiles = blueprint.GetTilesOccupiedByStructure(gridTileLocation.parentMap);
+            blueprint.SetTilesInStructure(occupiedTiles.ToArray());
+            gridTileLocation.SetIsDefault(false);
+            BuildBlueprint(blueprint, p_settlement, null);
+        } else {
+            throw new Exception($"Could not place {p_structurePrefabName} at {gridTileLocation}");
+        }
+    }
+    private void BuildBlueprint(LocationStructureObject p_blueprint, BaseSettlement npcSettlement, LocationGridTile p_usedConnector) {
+        Area hexTile = gridTileLocation.area;
+        npcSettlement.AddAreaToSettlement(hexTile);
+        p_blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentMap);
+        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, p_blueprint.structureType, npcSettlement);
+        p_blueprint.ClearOutUnimportantObjectsBeforePlacement();
         
+        for (int j = 0; j < p_blueprint.tiles.Length; j++) {
+            LocationGridTile tile = p_blueprint.tiles[j];
+            tile.SetStructure(structure);
+            tile.SetHasBlueprint(false);
+        }
+        
+        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
+        if (structure is DemonicStructure demonicStructure) {
+            demonicStructure.SetStructureObject(p_blueprint);    
+        } else if (structure is ManMadeStructure manMadeStructure) {
+            manMadeStructure.SetStructureObject(p_blueprint);    
+        }
+        
+        structure.SetOccupiedArea(hexTile);
+        
+        p_blueprint.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);
+        structure.CreateRoomsBasedOnStructureObject(p_blueprint);
+        structure.OnBuiltNewStructure();
+        structure.OnBuiltNewStructureFromBlueprint();
+
+        if (p_usedConnector != null) {
+            if (structure is ManMadeStructure mmStructure) {
+                mmStructure.OnUseStructureConnector(p_usedConnector);    
+            }    
+        }
     }
     #endregion
 

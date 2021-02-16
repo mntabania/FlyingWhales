@@ -50,7 +50,7 @@ public class PlaceBlueprint : GoapAction {
         LocationGridTile connectorTile = (LocationGridTile)goapNode.otherData[1].obj;
         StructureSetting structureSetting = (StructureSetting)goapNode.otherData[2].obj;
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
-            if (genericTileObject.PlaceBlueprintOnTile(prefabName)) {
+            if (genericTileObject.PlaceExpiringBlueprintOnTile(prefabName)) {
                 //create new build job at npcSettlement
                 NPCSettlement settlement = goapNode.actor.homeSettlement;
                 if(settlement != null) {

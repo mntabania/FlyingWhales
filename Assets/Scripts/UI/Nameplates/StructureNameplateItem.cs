@@ -19,6 +19,6 @@ public class StructureNameplateItem : NameplateItem<LocationStructure> {
     private void UpdateVisuals() {
         mainLbl.text = _structure.name;
         subLbl.text = string.Empty;
-        portrait.SetPortrait(_structure.structureType.GetLandmarkType());
+        portrait.SetPortrait(_structure.structureType);
     }
 }
