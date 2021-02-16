@@ -43,6 +43,10 @@ public class IceteroidParticleEffect : BaseParticleEffect {
             if (Random.Range(0, 100) < 25) {
                 character.traitContainer.AddTrait(character, "Injured");
             }
+            if (character.currentHP <= 0) {
+                character.skillCauseOfDeath = PLAYER_SKILL_TYPE.ICETEROIDS;
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+            }
         }
     }
 }

@@ -1733,6 +1733,10 @@ namespace Inner_Maps {
                         }
                     } else if (poi is Character character) {
                         character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        if (character.currentHP <= 0) {
+                            character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
+                            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+                        }
                     } else {
                         poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     }

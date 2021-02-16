@@ -39,6 +39,10 @@ public class DestroyData : PlayerAction {
                     eachCharacters.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY) * -1,
                         ELEMENTAL_TYPE.Normal, showHPBar: true,
                         piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY));
+                    if (eachCharacters.currentHP <= 0) {
+                        eachCharacters.skillCauseOfDeath = PLAYER_SKILL_TYPE.DESTROY;
+                        Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, eachCharacters.marker.transform.position, 1, eachCharacters.currentRegion.innerMap);
+                    }
                 });
             }
         });
