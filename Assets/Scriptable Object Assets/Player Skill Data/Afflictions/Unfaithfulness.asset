@@ -26,7 +26,7 @@ MonoBehaviour:
   tooltipImage: {fileID: 2800000, guid: 9a9ad4ca071597c4587b94bc22e82ee4, type: 3}
   unlockCost: 0
   tier: 0
-  baseLoadoutWeight: 0
+  baseLoadoutWeight: 200
   resistanceType: 9
   archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 21300000, guid: d0d8d1c62b765bf40b4964c0ae58febe, type: 3}
