@@ -50,10 +50,10 @@ MonoBehaviour:
     bonuses: 0e000000010000000600000004000000
     additionalDamagePerLevel: 190000001900000019000000
     additionalPiercePerLevel:
+    - 0
     - 50
     - 100
     - 150
-    - 0
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel:
     - 0
