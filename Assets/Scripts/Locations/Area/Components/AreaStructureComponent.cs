@@ -89,11 +89,11 @@ public class AreaStructureComponent : AreaComponent {
     #endregion
 
     #region Building
-    public void StartBuild(PLAYER_SKILL_TYPE structureType, Area p_area) {
-        _buildParticles = GameManager.Instance.CreateParticleEffectAt(p_area.gridTileComponent.centerGridTile, PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
+    public void StartBuild(PLAYER_SKILL_TYPE structureType) {
+        _buildParticles = GameManager.Instance.CreateParticleEffectAt(owner.gridTileComponent.centerGridTile, PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.OnExecutePlayerSkill();
-        LandmarkManager.Instance.StartCoroutine(BuildCoroutine(structureType, p_area));
+        LandmarkManager.Instance.StartCoroutine(BuildCoroutine(structureType, owner));
         PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(true);
     }
     private IEnumerator BuildCoroutine(PLAYER_SKILL_TYPE structureType, Area p_area) {
@@ -104,36 +104,36 @@ public class AreaStructureComponent : AreaComponent {
         _buildParticles = null;
         PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(false);
     }
-    public bool CanBuildDemonicStructureHere(STRUCTURE_TYPE structureType, Area p_area) {
+    public bool CanBuildDemonicStructureHere(STRUCTURE_TYPE structureType) {
         if (InnerMapManager.Instance.currentlyShowingLocation == null && structureType != STRUCTURE_TYPE.THE_PORTAL) {
             //allow portal to be built while no inner map is shown, because portal is build on the overworld
             return false;
         }
         if (structureType == STRUCTURE_TYPE.EYE) {
-            return CanBuildDemonicStructureHere(p_area) && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE); //only 1 eye per region.
+            return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE); //only 1 eye per region.
         }
         if (structureType == STRUCTURE_TYPE.MEDDLER) {
-            return CanBuildDemonicStructureHere(p_area) && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER); //Only 1 meddler should exist in the world
+            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER); //Only 1 meddler should exist in the world
         }
         if (structureType == STRUCTURE_TYPE.BIOLAB) {
-            return CanBuildDemonicStructureHere(p_area) && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB); //Only 1 biolab should exist in the world
+            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB); //Only 1 biolab should exist in the world
         }
-        return CanBuildDemonicStructureHere(p_area);
+        return CanBuildDemonicStructureHere();
     }
-    private bool CanBuildDemonicStructureHere(Area p_area) {
-        if (p_area.HasBlueprintOnTile()) {
+    private bool CanBuildDemonicStructureHere() {
+        if (owner.HasBlueprintOnTile()) {
             return false;
         }
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.isCurrentlyBuildingDemonicStructure) {
             return false;
         }
-        if (p_area.settlementOnArea != null || HasStructureInArea()) {
+        if (owner.settlementOnArea != null || HasStructureInArea()) {
             return false;
         }
         if (_buildParticles != null) {
             return false;
         }
-        if(p_area.elevationType == ELEVATION.WATER || p_area.elevationType == ELEVATION.MOUNTAIN) {
+        if(owner.elevationType == ELEVATION.WATER || owner.elevationType == ELEVATION.MOUNTAIN) {
             return false;
         }
         return true;

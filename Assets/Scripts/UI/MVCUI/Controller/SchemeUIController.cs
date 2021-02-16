@@ -262,6 +262,28 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     public void OnHoverOutTemptBtn() {
         UIManager.Instance.HideSmallInfo();
     }
+    public void OnHoverOverSuccessRate() {
+        if (_schemeUIItems.Count > 0) {
+            PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(_schemeUsed.type);
+            float resistanceValue = _targetCharacter.piercingAndResistancesComponent.GetResistanceValue(skillData.resistanceType);
+
+            if (resistanceValue > 0f) {
+                string text = string.Empty;
+                float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(_schemeUsed.type);
+                float baseSuccessRate = 0f;
+                for (int i = 0; i < _schemeUIItems.Count; i++) {
+                    baseSuccessRate += _schemeUIItems[i].successRate;
+                }
+                text += $"Base Success Rate: {baseSuccessRate.ToString("N1")}%";
+                text += $"\nPiercing: {piercing.ToString("N2")}%";
+                text += $"\nResistance: {resistanceValue.ToString("N2")}%";
+                UIManager.Instance.ShowSmallInfo(text);
+            }
+        }
+    }
+    public void OnHoverOutSuccessRate() {
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 
     #region SchemeUIItem
@@ -310,6 +332,10 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         for (int i = 0; i < _schemeUIItems.Count; i++) {
             successRate += _schemeUIItems[i].successRate;
         }
+        PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(_schemeUsed.type);
+        float resistanceValue = _targetCharacter.piercingAndResistancesComponent.GetResistanceValue(skillData.resistanceType);
+        CombatManager.ModifyValueByPiercingAndResistance(ref successRate, PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(_schemeUsed.type), resistanceValue);
+
         _successRate = successRate;
 
         float successRateForText = successRate;

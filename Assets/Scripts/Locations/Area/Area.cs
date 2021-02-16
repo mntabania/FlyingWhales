@@ -263,63 +263,6 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         return _blueprintsOnTile > 0;
     }
     #endregion
-
-    #region Demonic Structures
-    public bool CanBuildDemonicStructureHere(STRUCTURE_TYPE structureType) {
-        // if (InnerMapManager.Instance.currentlyShowingLocation == null && structureType != STRUCTURE_TYPE.THE_PORTAL) {
-        //     //allow portal to be built while no inner map is shown, because portal is build on the overworld
-        //     return false;
-        // }
-        if (structureType == STRUCTURE_TYPE.EYE) {
-            return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE); //only 1 eye per region.
-        }
-        if (structureType == STRUCTURE_TYPE.MEDDLER) {
-            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER); //Only 1 meddler should exist in the world
-        }
-        if (structureType == STRUCTURE_TYPE.BIOLAB) {
-            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB); //Only 1 biolab should exist in the world
-        }
-        return CanBuildDemonicStructureHere();
-    }
-    private bool CanBuildDemonicStructureHere() {
-        if (HasBlueprintOnTile()) {
-            return false;
-        }
-        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.isCurrentlyBuildingDemonicStructure) {
-            return false;
-        }
-        if (settlementOnArea != null || structureComponent.HasStructureInArea()) { //landmarkOnTile != null
-            return false;
-        }
-        //if (_buildParticles != null) {
-        //    return false;
-        //}
-        if (elevationType == ELEVATION.WATER || elevationType == ELEVATION.MOUNTAIN) {
-            return false;
-        }
-        return true;
-        // //Cannot build on settlements and hex tiles with blueprints right now
-        // if(settlementOnTile == null && landmarkOnTile == null && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN && _buildParticles == null) {
-        //     return true;
-        // }
-        // return false;
-    }
-    public void StartBuild(PLAYER_SKILL_TYPE structureType) {
-        _buildParticles = GameManager.Instance.CreateParticleEffectAt(gridTileComponent.centerGridTile, PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
-        DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        demonicStructureSkill.OnExecutePlayerSkill();
-        GameManager.Instance.StartCoroutine(BuildCoroutine(structureType));
-        PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(true);
-    }
-    private IEnumerator BuildCoroutine(PLAYER_SKILL_TYPE structureType) {
-        yield return new WaitForSeconds(3f);
-        _buildParticles.StopEmission();
-        DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        // demonicStructureSkill.BuildDemonicStructureAt(this);
-        _buildParticles = null;
-        PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(false);
-    }
-    #endregion
 }
 
 [System.Serializable]
