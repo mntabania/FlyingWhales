@@ -50,14 +50,14 @@ public class Rock : TileObject{
     }
 
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+        if (gridTileLocation != null) {
+            if (gridTileLocation.area.settlementOnArea != null) {
+                gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
             }
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
-                if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
-                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
+            gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+                if (eachNeighbor.settlementOnArea != null) {
+                    eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                    parentSettlement = eachNeighbor.settlementOnArea;
                 }
             });
         }

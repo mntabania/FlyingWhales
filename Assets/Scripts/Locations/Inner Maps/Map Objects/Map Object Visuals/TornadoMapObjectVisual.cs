@@ -120,7 +120,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _journeyLength = Vector3.Distance(position, destinationTile.centeredWorldLocation);
     }
     private void UpdateSpeed() {
-        _speed = baseSpeed;
+        _speed = (baseSpeed + (baseSpeed * PlayerSkillManager.Instance.GetSkillMovementSpeedDownPerLevel(PLAYER_SKILL_TYPE.TORNADO)));
         if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
             _speed *= 1.5f;
         } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
@@ -253,10 +253,11 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Tornado Per Tick");
+        int processedDamage = -50 - (PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
         List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.genericTileObject.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, this);
+            tile.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
         }
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
@@ -267,7 +268,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 //    }
                 //} else {
                     Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
-                    if (distance.magnitude < 3f) {
+                    if (distance.magnitude < 2f) { //3
                         DealDamage(damageable);
                     } else {
                         //check for suck in

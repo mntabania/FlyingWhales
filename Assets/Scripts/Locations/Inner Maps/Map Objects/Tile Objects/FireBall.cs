@@ -16,7 +16,7 @@ public class FireBall : MovingTileObject {
         Initialize(TILE_OBJECT_TYPE.FIRE_BALL, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2) + (int)PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
     }
     public FireBall(SaveDataFireBall data) {
         //SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;
@@ -44,12 +44,12 @@ public class FireBall : MovingTileObject {
         return "Fire Ball";
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
         LocationGridTile tileLocation = gridTileLocation;
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0) { 
@@ -57,6 +57,7 @@ public class FireBall : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
+            amount += PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL);
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Water) {

@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 public class DatabaseManager : MonoBehaviour {
     public static DatabaseManager Instance;
 
-    public HexTileDatabase hexTileDatabase { get; private set; }
+    public AreaDatabase areaDatabase { get; private set; }
     public RegionDatabase regionDatabase { get; private set; }
     public CharacterDatabase characterDatabase { get; private set; }
     public FactionDatabase factionDatabase { get; private set; }
@@ -49,7 +49,7 @@ public class DatabaseManager : MonoBehaviour {
     //Use this for initialization
     public void Initialize() {
         //Called in InitializeDataBeforeWorldCreation
-        hexTileDatabase = new HexTileDatabase();
+        areaDatabase = new AreaDatabase();
         regionDatabase = new RegionDatabase();
         characterDatabase = new CharacterDatabase();
         factionDatabase = new FactionDatabase();
@@ -87,6 +87,8 @@ public class DatabaseManager : MonoBehaviour {
             return factionDatabase.GetFactionBasedOnPersistentID(persistentID);
         } else if (type == typeof(Party)) {
             return partyDatabase.GetPartyByPersistentIDSafe(persistentID);
+        } else if (type == typeof(Area)) {
+            return areaDatabase.GetAreaByPersistentID(persistentID);
         }
         return null;
     }

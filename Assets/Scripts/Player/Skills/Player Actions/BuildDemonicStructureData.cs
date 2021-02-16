@@ -8,14 +8,14 @@ public class BuildDemonicStructureData : PlayerAction {
     public override string name => "Build Structure";
     public override string description => "Build a Demonic Structure";
     public BuildDemonicStructureData() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.HEX };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.AREA };
     }
     #region Overrides
-    public override void ActivateAbility(HexTile targetHex) {
+    public override void ActivateAbility(Area targetArea) {
         // targetHex.OnClickBuild();
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if (target is HexTile targetHex) {
+        if (target is Area targetArea) {
             // return targetHex.CanBuildDemonicStructureHere();
         }
         return false;

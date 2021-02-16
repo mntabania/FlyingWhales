@@ -33,10 +33,7 @@ namespace Tutorial {
             QuestStep structureClick = new ClickOnStructureStep("Click on a House", validityChecker: IsSelectedStructureAHouse)
                 .SetHoverOverAction(OnHoverClickHouse)
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
-            QuestStep hexTileClick = new ClickOnAreaStep().SetHoverOverAction(OnHoverClickArea)
-                .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
-            // hexTileClick.SetCompleteAction(OnCompleteClickArea);
-            
+
 
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(hoveredStep, look, zoom, unpause),

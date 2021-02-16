@@ -14,6 +14,7 @@ public class ZapData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
+        //int duration = TraitManager.Instance.trait
         targetPOI.traitContainer.AddTrait(targetPOI, "Zapped", bypassElementalChance: true);
         if (UIManager.Instance.characterInfoUI.isShowing) {
             UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
@@ -22,7 +23,7 @@ public class ZapData : PlayerAction {
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "zapped", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {

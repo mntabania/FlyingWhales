@@ -49,7 +49,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     }
     private IEnumerator SaveCoroutine(string fileName, Action saveCallback = null) {
         isSaving = true;
-        WorldMapCameraMove.Instance.DisableMovement();
         InnerMapCameraMove.Instance.DisableMovement();
         UIManager.Instance.optionsMenu.ShowSaveLoading();
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving current progress");
@@ -70,7 +69,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
 
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
-        yield return StartCoroutine(worldMapSave.SaveWorldCoroutine(WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, DatabaseManager.Instance.hexTileDatabase,
+        yield return StartCoroutine(worldMapSave.SaveWorldCoroutine(WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, DatabaseManager.Instance.areaDatabase,
             DatabaseManager.Instance.regionDatabase, DatabaseManager.Instance.settlementDatabase, DatabaseManager.Instance.structureDatabase, WorldEventManager.Instance.activeEvents));
         currentSaveDataProgress.worldMapSave = worldMapSave;
         yield return StartCoroutine(currentSaveDataProgress.SaveTileObjectsCoroutine());
@@ -82,7 +81,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         if (string.IsNullOrEmpty(fileName)) {
             //if no file name was provided
             string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmmss")}";
-            fileName = $"{worldMapSave.worldType.ToString()}_{currentSaveDataProgress.continuousDays.ToString()}_{GameManager.ConvertTickToTime(currentSaveDataProgress.tick, "-")}({timeStampStr})";
+            fileName = $"{worldMapSave.worldType.ToString()}_{currentSaveDataProgress.continuousDays.ToString()}_{GameManager.Instance.ConvertTickToTime(currentSaveDataProgress.tick, "-")}({timeStampStr})";
         }
 
         //write to file
@@ -114,7 +113,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         
         UIManager.Instance.optionsMenu.HideSaveLoading();
         isSaving = false;
-        WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
         saveCallback?.Invoke();
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using UtilityScripts;
 using Inner_Maps;
+using Object_Pools;
 
 public class DrinkBlood : GoapAction {
 
@@ -88,12 +89,11 @@ public class DrinkBlood : GoapAction {
                         return 2000;
                     }
                 }
-                if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                    && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                if (target.gridTileLocation != null && actor.gridTileLocation != null) {
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.gridTileComponent.centerGridTile;
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                    int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+                    int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
@@ -379,6 +379,7 @@ public class DrinkBlood : GoapAction {
                 } else {
                     actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
                 }
+                LogPool.Release(log);
             } else {
                 if (actor.currentSettlement is NPCSettlement currentSettlement && currentSettlement.eventManager.CanHaveEvents()) {
                     if (currentSettlement.owner != null && GameUtilities.RollChance(15)) { //15
@@ -399,13 +400,10 @@ public class DrinkBlood : GoapAction {
                     //Vampire vampire = TraitManager.Instance.CreateNewInstancedTraitClass<Vampire>("Vampire");
                     if(targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", actor)) {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
-                        // if(goapNode != null) {
-                        //     log.SetLogType(LOG_TYPE.Action);
-                        // }
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddLogToDatabase();
-                        PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+                        PlayerManager.Instance.player.ShowNotificationFrom(actor, log, true);
                     }
 
                     if (targetCharacter.isNormalCharacter) {

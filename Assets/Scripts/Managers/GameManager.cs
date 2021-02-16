@@ -2,11 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Object_Pools;
 using Ruinarch;
 using Traits;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class GameManager : BaseMonoBehaviour {
@@ -21,8 +23,9 @@ public class GameManager : BaseMonoBehaviour {
     [FormerlySerializedAs("tick")] public int startTick;
     public int continuousDays;
     public const int daysPerMonth = 30;
-    public const int ticksPerDay = 288;
-    public const int ticksPerHour = 12;
+    public const int ticksPerDay = 480;
+    public const int ticksPerHour = 20;
+    private const int minutesPerTick = 3;
     
     public PROGRESSION_SPEED currProgressionSpeed;
 
@@ -293,10 +296,10 @@ public class GameManager : BaseMonoBehaviour {
             Messenger.Broadcast(UISignals.UPDATE_UI);
         }
     }
-    public static string ConvertTickToTime(int tick, string timeSeparator = ":") {
+    public string ConvertTickToTime(int tick, string timeSeparator = ":") {
         float floatConversion = tick / (float) ticksPerHour;
         int hour = (int) floatConversion;
-        int minutes = Mathf.RoundToInt(((floatConversion - hour) * 12) * 5);
+        int minutes = Mathf.RoundToInt((floatConversion - hour) * ticksPerHour * minutesPerTick);
         string timeOfDay = "AM";
         if(hour >= 12) {
             if(hour < 24) {
@@ -309,23 +312,27 @@ public class GameManager : BaseMonoBehaviour {
         }
         return $"{hour}{timeSeparator}{minutes:D2} {timeOfDay}";
     }
-    public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
-        if ((tick >= 265 && tick <= 288) || (tick >= 1 && tick <= 60)) {
+    public TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
+        //We use float instead of integer so that the decimal places will not be truncated
+        //Example: AFTER MIDNIGHT is only up to 5:00 AM Sharp. If we use integer, tick 61 or 5:03 AM will still be AFTER MIDNIGHT instead of MORNING because the decimal places are truncated
+        float currentHourInFloat = GetHoursBasedOnTicksInFloat(tick); 
+        //MILITARY TIME
+        if ((currentHourInFloat > 10 && currentHourInFloat <= 24) || (currentHourInFloat >= 0 && currentHourInFloat <= 5)) {
             return TIME_IN_WORDS.AFTER_MIDNIGHT;
         }
-        if (tick >= 61 && tick <= 132) {
+        if (currentHourInFloat > 5 && currentHourInFloat <= 11) {
             return TIME_IN_WORDS.MORNING;
         }
-        if (tick >= 133 && tick <= 156) {
+        if (currentHourInFloat > 11 && currentHourInFloat <= 13) {
             return TIME_IN_WORDS.LUNCH_TIME;
         }
-        if (tick >= 157 && tick <= 204) {
+        if (currentHourInFloat > 13 && currentHourInFloat <= 17) {
             return TIME_IN_WORDS.AFTERNOON;
         }
-        if (tick >= 205 && tick <= 240) {
+        if (currentHourInFloat > 17 && currentHourInFloat <= 20) {
             return TIME_IN_WORDS.EARLY_NIGHT;
         }
-        if (tick >= 241 && tick <= 264) {
+        if (currentHourInFloat > 20 && currentHourInFloat <= 10) {
             return TIME_IN_WORDS.LATE_NIGHT;
         }
         return TIME_IN_WORDS.NONE;
@@ -333,22 +340,9 @@ public class GameManager : BaseMonoBehaviour {
 
     //Note: If there is a character parameter, it means that the current time in words might not be the actual one because we will get the time in words relative to the character
     //Example: If the character is Nocturnal, MORNING will become LATE_NIGHT
-    public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
-        TIME_IN_WORDS time = TIME_IN_WORDS.NONE;
+    public TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
         int currentTick = today.tick;
-        if ((currentTick >= 265 && currentTick <= 288) || (currentTick >= 1 && currentTick <= 60)) {
-            time = TIME_IN_WORDS.AFTER_MIDNIGHT;
-        } else if (currentTick >= 61 && currentTick <= 132) {
-            time = TIME_IN_WORDS.MORNING;
-        } else if (currentTick >= 133 && currentTick <= 156) {
-            time = TIME_IN_WORDS.LUNCH_TIME;
-        } else if (currentTick >= 157 && currentTick <= 204) {
-            time = TIME_IN_WORDS.AFTERNOON;
-        } else if (currentTick >= 205 && currentTick <= 240) {
-            time = TIME_IN_WORDS.EARLY_NIGHT;
-        } else if (currentTick >= 241 && currentTick <= 264) {
-            time = TIME_IN_WORDS.LATE_NIGHT;
-        }
+        TIME_IN_WORDS time = GetTimeInWordsOfTick(currentTick);
         if(relativeTo != null && relativeTo.traitContainer.HasTrait("Nocturnal")) {
             time = ConvertTimeInWordsWhenNocturnal(time);
         }
@@ -363,67 +357,72 @@ public class GameManager : BaseMonoBehaviour {
         //}
         //return timeInWords[intTime];
     }
-    public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords) {
+    public int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords) {
+        //NOTE: The passed parameter value in GetTicksBasedOnHour must be military time, i.e., 6PM = 18
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
             //After Midnight has special processing because it goes beyond the max tick, its 10:00PM to 5:00AM 
-            int maxRange = ticksPerDay + 60;
-            int chosenTick = Random.Range(265, maxRange + 1);
+            int maxRange = ticksPerDay + GetTicksBasedOnHour(5); //60;
+            //Min value is GetTicksBasedOnHour(22) + 1 because it should start on 10:03PM, 10:00PM is still part of LATE NIGHT 
+            int chosenTick = GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(22) + 1, maxRange);
             if(chosenTick > ticksPerDay) {
                 chosenTick -= ticksPerDay;
             }
             return chosenTick;
         }
         if (timeInWords == TIME_IN_WORDS.MORNING) {
-            return Random.Range(61, 133);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(5) + 1, GetTicksBasedOnHour(11));
         }
         if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
-            return Random.Range(133, 157);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(11) + 1, GetTicksBasedOnHour(13));
         }
         if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
-            return Random.Range(157, 205);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(13) + 1, GetTicksBasedOnHour(17));
         }
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            return Random.Range(205, 241);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(17) + 1, GetTicksBasedOnHour(20));
         }
         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-            return Random.Range(241, 265);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(20) + 1, GetTicksBasedOnHour(22));
         }
         throw new Exception($"{timeInWords} time in words has no tick!");
     }
-    public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
+    public int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
+        //NOTE: The passed parameter value in GetTicksBasedOnHour must be military time, i.e., 6PM = 18
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            int maxRange = ticksPerDay + 60;
-            int chosenTick = Random.Range(minimumThreshold, maxRange + 1);
+            //After Midnight has special processing because it goes beyond the max tick, its 10:00PM to 5:00AM 
+            int maxRange = ticksPerDay + GetTicksBasedOnHour(5); //60;
+            //Min value is GetTicksBasedOnHour(22) + 1 because it should start on 10:03PM, 10:00PM is still part of LATE NIGHT 
+            int chosenTick = GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, maxRange);
             if (chosenTick > ticksPerDay) {
                 chosenTick -= ticksPerDay;
             }
             return chosenTick;
         }
         if (timeInWords == TIME_IN_WORDS.MORNING) {
-            return Random.Range(minimumThreshold, 133);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(11));
         }
         if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
-            return Random.Range(minimumThreshold, 157);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(13));
         }
         if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
-            return Random.Range(minimumThreshold, 205);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(17));
         }
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            return Random.Range(minimumThreshold, 241);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(20));
         }
         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-            return Random.Range(minimumThreshold, 265);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(22));
         }
         throw new Exception($"{timeInWords} time in words has no tick!");
     }
-    public static TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
+    public TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
         TIME_IN_WORDS[] convertedTimeInWords = new TIME_IN_WORDS[currentTimeInWords.Length];
         for (int i = 0; i < currentTimeInWords.Length; i++) {
             convertedTimeInWords[i] = ConvertTimeInWordsWhenNocturnal(currentTimeInWords[i]);
         }
         return convertedTimeInWords;
     }
-    public static TIME_IN_WORDS ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS currentTimeInWords) {
+    public TIME_IN_WORDS ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS currentTimeInWords) {
         if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
             return TIME_IN_WORDS.LATE_NIGHT;
         }
@@ -454,8 +453,11 @@ public class GameManager : BaseMonoBehaviour {
     public int GetHoursBasedOnTicks(int ticks) {
         return ticks / ticksPerHour;
     }
+    private float GetHoursBasedOnTicksInFloat(int ticks) {
+        return ticks / (float) ticksPerHour;
+    }
     public int GetMinutesBasedOnTicks(int ticks) {
-        return ticks * 5; //since per tick is 5 minutes
+        return ticks * minutesPerTick;
     }
     public int GetCeilingHoursBasedOnTicks(int ticks) {
         return Mathf.CeilToInt(ticks / (float) ticksPerHour);
@@ -464,7 +466,7 @@ public class GameManager : BaseMonoBehaviour {
         return Mathf.CeilToInt(ticks / (float) ticksPerDay);
     }
     public int GetCeilingMinsBasedOnTicks(int ticks) {
-        return ticks * 5;
+        return ticks * minutesPerTick;
     }
     public static int GetTimeAsWholeDuration(int ticks) {
         //Returns duration not as ticks but as time
@@ -477,7 +479,7 @@ public class GameManager : BaseMonoBehaviour {
         } else if(ticks >= ticksPerHour) {
             return Mathf.CeilToInt(ticks / (float) ticksPerHour);
         } else {
-            return ticks * 5;
+            return ticks * minutesPerTick;
         }
     }
     public static string GetTimeIdentifierAsWholeDuration(int ticks) {
@@ -664,15 +666,46 @@ public class GameManager : BaseMonoBehaviour {
     #endregion
 
     public static Log CreateNewLog() {
-        return new Log();
+        return LogPool.Claim();
     }
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, params LOG_TAG[] providedTags) {
-        return new Log(date, category, file, key, node, providedTags);
+        Log log = CreateNewLog();
+        log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());
+        log.SetDate(date);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetConnectedAction(node);
+        log.AddTag(providedTags);
+        log.DetermineInitialLogText();
+        return log;
     }
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTags = LOG_TAG.Work) {
-        return new Log(date, category, file, key, node, providedTags);
+        Log log = CreateNewLog();
+        log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());
+        log.SetDate(date);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetConnectedAction(node);
+        log.AddTag(providedTags);
+        log.DetermineInitialLogText();
+        return log;
     }
     public static Log CreateNewLog(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
-        return new Log(id, date, logText, category, key, file, involvedObjects, providedTags, rawText, fillers);
+        Log log = CreateNewLog();
+        log.SetPersistentID(id);
+        log.SetDate(date);
+        log.SetLogText(logText);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetInvolvedObjects(involvedObjects);
+        log.AddTag(providedTags);
+        log.SetRawText(rawText);
+        if (fillers != null) {
+            log.SetFillers(fillers);    
+        }
+        return log;
     }
 }

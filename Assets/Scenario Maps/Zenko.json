@@ -5860,7 +5860,7 @@
   },
   "villageSettlementTemplates": [
     {
-      "hexTiles": [
+      "areas": [
         {
           "X": 1,
           "Y": 2
@@ -5929,7 +5929,7 @@
       "settlementType": "Elven_Hamlet"
     },
     {
-      "hexTiles": [
+      "areas": [
         {
           "X": 11,
           "Y": 2
@@ -5986,7 +5986,7 @@
       "settlementType": "Human_Village"
     },
     {
-      "hexTiles": [
+      "areas": [
         {
           "X": 5,
           "Y": 10
@@ -6043,7 +6043,7 @@
       "settlementType": "Elven_Hamlet"
     },
     {
-      "hexTiles": [
+      "areas": [
         {
           "X": 11,
           "Y": 10

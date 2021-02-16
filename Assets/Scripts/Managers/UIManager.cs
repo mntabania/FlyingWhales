@@ -22,8 +22,11 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
+using System;
 
 public class UIManager : BaseMonoBehaviour {
+
+    public Action onPortalClicked;
 
     public static UIManager Instance = null;
 
@@ -84,18 +87,12 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private GameObject cover;
 
     [Space(10)]
-    [Header("World UI")]
-    [SerializeField] private RectTransform worldUIParent;
-    [SerializeField] private GraphicRaycaster worldUIRaycaster;
-
-    [Space(10)]
     [Header("Object Picker")]
     [SerializeField] private ObjectPicker objectPicker;
     
     [Space(10)]
     [Header("Right Click Commands")]
     public POITestingUI poiTestingUI;
-    public MinionCommandsUI minionCommandsUI;
 
     [Space(10)]
     [Header("Combat")]
@@ -128,19 +125,9 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
-
-    [Header("Transition Region UI")]
-    public GameObject transitionRegionUIGO;
-    public RuinarchButton rightTransitionBtn;
-    public RuinarchButton leftTransitionBtn;
-    public RuinarchButton upTransitionBtn;
-    public RuinarchButton downTransitionBtn;
-
-    public bool isShowingAreaTooltip { get; private set; } //is the tooltip for npcSettlement double clicks showing?
-    public PopupMenuBase latestOpenedPopup { get; private set; }
+    
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
-    //public List<PopupMenuBase> openedPopups { get; private set; }
     private PointerEventData _pointer;
     private List<RaycastResult> _raycastResults;
     
@@ -158,11 +145,7 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener(UISignals.UPDATE_UI, UpdateUI);
     }
     private void Update() {
-        if (isHoveringTile) {
-            currentTileHovered.region?.OnHoverOverAction();
-        }
-        UpdateTransitionRegionUI();
-        if (Input.GetMouseButtonDown(0) && GameManager.Instance.gameHasStarted && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI()
+        if (Input.GetMouseButtonDown(0) && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI() && GameManager.Instance.gameHasStarted
             HidePlayerActionContextMenu();
         }
     }
@@ -186,14 +169,8 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
-        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OVER, OnHoverOverTile);
-        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OUT, OnHoverOutTile);
-        
         Messenger.AddListener(UISignals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(UISignals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
- 
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
 
         Messenger.AddListener<IIntel>(UISignals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
         Messenger.AddListener<Log>(UISignals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
@@ -262,10 +239,9 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void OnGameLoaded() {
         UpdateUI();
-        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
     }
     private void UpdateUI() {
-        dateLbl.SetText($"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.Today().tick)}");
+        dateLbl.SetText($"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.Instance.ConvertTickToTime(GameManager.Instance.Today().tick)}");
         UpdateInteractableInfoUI();
         PlayerUI.Instance.UpdateUI();
     }
@@ -273,8 +249,6 @@ public class UIManager : BaseMonoBehaviour {
         UpdateCharacterInfo();
         UpdateMonsterInfo();
         UpdateTileObjectInfo();
-        UpdateRegionInfo();
-        UpdateHextileInfo();
         UpdateStructureInfo();
         UpdateSettlementInfo();
         UpdatePartyInfo();
@@ -715,8 +689,6 @@ public class UIManager : BaseMonoBehaviour {
             ShowPartyInfo(party);
         } else if (obj is TileObject tileObject) {
             ShowTileObjectInfo(tileObject);
-        } else if (obj is Region region) {
-            ShowRegionInfo(region);
         } else if (obj is LocationStructure structure) {
             ShowStructureInfo(structure);
             // structure.CenterOnStructure();
@@ -808,8 +780,6 @@ public class UIManager : BaseMonoBehaviour {
                 return structureRoomInfoUI.activeRoom;
             } else if (partyInfoUI.isShowing) {
                 return partyInfoUI.activeParty;
-            } else if (hexTileInfoUI.isShowing) {
-                return hexTileInfoUI.activeHex;
             }
         }
         return null;
@@ -827,15 +797,15 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Nameplate
-    public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
-        GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
-        nameplateGO.transform.localScale = Vector3.one;
-        LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
-        nameplate.SetLandmark(landmark);
-        return nameplate;
-    }
-    #endregion
+    //#region Nameplate
+    //public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
+    //    GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
+    //    nameplateGO.transform.localScale = Vector3.one;
+    //    LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
+    //    nameplate.SetLandmark(landmark);
+    //    return nameplate;
+    //}
+    //#endregion
 
     #region Object Picker
     public void ShowClickableObjectPicker<T>(List<T> choices, Action<object> onClickAction, IComparer<T> comparer = null
@@ -916,9 +886,9 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
-        if (GameManager.Instance.gameHasStarted == false) {
-            return;
-        }
+        // if (GameManager.Instance.gameHasStarted == false) {
+        //     return;
+        // }
         Character characterToShow = character;
         if(character.isLycanthrope) {
             characterToShow = character.lycanData.activeForm;
@@ -994,25 +964,6 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Region Info
-    [Space(10)]
-    [Header("Region Info")] public RegionInfoUI regionInfoUI;
-    public void ShowRegionInfo(Region region, bool centerOnRegion = true) {
-        regionInfoUI.SetData(region);
-        regionInfoUI.OpenMenu();
-
-        if (centerOnRegion) {
-            region.CenterCameraOnRegion();
-            region.ShowBorders(Color.yellow, true);
-        }
-    }
-    public void UpdateRegionInfo() {
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.UpdateInfo();
-        }
-    }
-    #endregion
-
     #region Tile Object Info
     [Space(10)]
     [Header("Tile Object Info")]
@@ -1051,25 +1002,6 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Tile Info
-    [Space(10)]
-    [Header("Tile Info")]
-    [SerializeField] public HextileInfoUI hexTileInfoUI;
-    public void ShowHexTileInfo(HexTile item) {
-        if (tempDisableShowInfoUI) {
-            SetTempDisableShowInfoUI(false);
-            return;
-        }
-        hexTileInfoUI.SetData(item);
-        hexTileInfoUI.OpenMenu();
-    }
-    public void UpdateHextileInfo() {
-        if (hexTileInfoUI.isShowing) {
-            hexTileInfoUI.UpdateHexTileInfo();
-        }
-    }
-    #endregion
-    
     #region Structure Info
     [Space(10)]
     [Header("Structure Info")]
@@ -1078,6 +1010,9 @@ public class UIManager : BaseMonoBehaviour {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
+        }
+        if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
+            onPortalClicked?.Invoke();
         }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();
@@ -1183,67 +1118,6 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Tile Hover
-    //private HexTile previousTileHovered;
-    private HexTile currentTileHovered;
-    private float timeHovered;
-    private const float hoverThreshold = 1.5f;
-    private bool isHoveringTile = false;
-    private void OnHoverOverTile(HexTile tile) {
-        //previousTileHovered = currentTileHovered;
-        currentTileHovered = tile;
-        isHoveringTile = true;
-    }
-    public void OnHoverOutTile(HexTile tile) {
-        currentTileHovered = null;
-        isHoveringTile = false;
-        tile.region?.OnHoverOutAction();
-        if (tile.region != null) {
-            HideSmallInfo();
-            isShowingAreaTooltip = false;
-        }
-    }
-    #endregion
-
-    #region Inner Map
-    [Header("Inner Maps")]
-    [SerializeField] private Button returnToWorldBtn;
-    [SerializeField] private UIHoverPosition returnToWorldBtnTooltipPos;
-    private void OnInnerMapOpened(Region location) {
-        worldUIRaycaster.enabled = false;
-        bottomNotification.HideMessage();
-    }
-    private void OnInnerMapClosed(Region location) {
-        worldUIRaycaster.enabled = true;
-        bottomNotification.ShowMessage("Click on any tile to go there.");
-    }
-
-    public void ToggleBetweenMaps() {
-        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            InnerMapManager.Instance.HideAreaMap();
-            OnCameraOutOfFocus();
-        } else {
-            if(regionInfoUI.activeRegion != null) {
-                InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
-            } else if(hexTileInfoUI.activeHex != null) {
-                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.activeHex.region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.activeHex);
-            }
-        }
-    }
-    public void ToggleMapsHover() {
-        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            ShowSmallInfo($"Click to exit {InnerMapManager.Instance.currentlyShowingLocation.name}.", returnToWorldBtnTooltipPos);
-        } else {
-            if (regionInfoUI.activeRegion != null) {
-                ShowSmallInfo($"Click to enter {regionInfoUI.activeRegion.name}.", returnToWorldBtnTooltipPos);
-            } else if(hexTileInfoUI.activeHex != null) {
-                ShowSmallInfo($"Click to enter {hexTileInfoUI.activeHex.region.name}.", returnToWorldBtnTooltipPos);
-            }
-        }
-    }
-    #endregion
-
     #region Conversation Menu
     [Header("Conversation Menu")]
     [SerializeField] private ConversationMenu conversationMenu;
@@ -1257,12 +1131,10 @@ public class UIManager : BaseMonoBehaviour {
         conversationMenu.Close();
     }
     private void OnOpenConversationMenu() {
-        returnToWorldBtn.interactable = false;
         SetCoverState(true);
         //playerNotificationParent.SetSiblingIndex(1);
     }
     private void OnCloseShareIntelMenu() {
-        returnToWorldBtn.interactable = true;
         SetCoverState(false);
         //Unpause();
         //SetSpeedTogglesState(true);
@@ -1319,7 +1191,7 @@ public class UIManager : BaseMonoBehaviour {
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem, log);
     }
-    private void PlaceNewNotification(PlayerNotificationItem newNotif, in Log shownLog) {
+    private void PlaceNewNotification(PlayerNotificationItem newNotif, Log shownLog) {
         //NOTE: Removed this since this was only needed when we would also show notifications of an action that the character is currently doing
         //but since we now only show logs after the fact, then this would be irrelevant and could cause notifications to get overwritten
         //example is Vampiric embrace that has a success log ([Actor Name] gave [Target Name] a Vampiric Embrace!) which is also an intel,
@@ -1496,8 +1368,7 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private Button triggerFlawYesBtn;
     [SerializeField] private Button triggerFlawNoBtn;
     [SerializeField] private Button triggerFlawCloseBtn;
-    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, System.Action onClickYesAction = null,
-    bool showCover = false, int layer = 21, bool pauseAndResume = false) {
+    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, System.Action onClickYesAction = null, bool showCover = false, int layer = 21, bool pauseAndResume = false) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowTriggerFlawConfirmation(question, effect, manaCost, onClickYesAction, showCover, layer, pauseAndResume));
             return;
@@ -1693,74 +1564,6 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Transition Region UI
-    private void UpdateTransitionRegionUI() {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            transitionRegionUIGO.SetActive(true);
-            if (InnerMapCameraMove.Instance.HasReachedMapMinXBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMinXBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.West)) {
-                    leftTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    leftTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                leftTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMaxXBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMaxXBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.East)) {
-                    rightTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    rightTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                rightTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMinYBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMinYBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.South)) {
-                    downTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    downTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                downTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMaxYBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMaxYBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.North)) {
-                    upTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    upTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                upTransitionBtn.gameObject.SetActive(false);
-            }
-        } else {
-            transitionRegionUIGO.SetActive(false);
-        }
-    }
-    public void OnClickRegionTransition(string direction) {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            GridNeighbourDirection dir = (GridNeighbourDirection) System.Enum.Parse(typeof(GridNeighbourDirection), direction);
-            Region region = InnerMapManager.Instance.currentlyShowingLocation.GetNeighbourInDirection(dir);
-            if(region != null) {
-                InnerMapManager.Instance.TryShowLocationMap(region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(region.coreTile);
-            }
-        }
-    }
-    public void OnHoverRegionTransitionBtn(string direction) {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            GridNeighbourDirection dir = (GridNeighbourDirection) System.Enum.Parse(typeof(GridNeighbourDirection), direction);
-            Region region = InnerMapManager.Instance.currentlyShowingLocation.GetNeighbourInDirection(dir);
-            if (region != null) {
-                ShowSmallInfo("Go To " + region.name);
-            }
-        }
-    }
-    public void OnHoverOutRegionTransitionBtn() {
-        HideSmallInfo();
-    }
-    #endregion
-
     #region Overlap UI
     public void InitializeOverlapUI() {
         for (int i = 0; i < unallowOverlaps.Count; i++) {
@@ -1823,38 +1626,27 @@ public class UIManager : BaseMonoBehaviour {
     #region Context Menu
     [Header("Context Menu")]
     public ContextMenuUIController contextMenuUIController;
-    [SerializeField] private UIHoverPosition _contextMenuTooltipHoverPosition;
-    public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Transform p_followTarget) {
-        PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
-        contextMenuUIController.SetFollowPosition(p_followTarget);
-        contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
-        Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
-    }
+    private bool _allowContextMenuInteractions = true;
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
+        if (!_allowContextMenuInteractions) { return; }
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
         List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
         contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
         contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
     public void RefreshPlayerActionContextMenuWithNewTarget(IPlayerActionTarget p_target) {
+        if (!_allowContextMenuInteractions) { return; }
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
         List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
         contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+    }
+    public void DisableContextMenuInteractions() {
+        _allowContextMenuInteractions = false;
+    }
+    public void EnableContextMenuInteractions() {
+        _allowContextMenuInteractions = true;
     }
     public void HidePlayerActionContextMenu() {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(null);

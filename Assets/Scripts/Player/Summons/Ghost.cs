@@ -92,7 +92,7 @@ public class Ghost : Summon {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Summon", "Ghost", "feared", null, LOG_TAG.Combat);
                     log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
         }

@@ -37,7 +37,7 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
                             Log historyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Subterranean", "burrow", providedTags: LOG_TAG.Combat);
                             historyLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             historyLog.AddToFillers(chosenCave, chosenCave.GetNameRelativeTo(character), LOG_IDENTIFIER.LANDMARK_1);
-                            historyLog.AddLogToDatabase();
+                            historyLog.AddLogToDatabase(true);
                             return true;
                         } else {
                             log += $"\n-No passable tile in cave, will stay";
@@ -55,8 +55,8 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
         LocationGridTile point2 = null;
         Region chosenRegion = GridMap.Instance.GetRandomRegion();
         for (int i = 0; i < 3; i++) {
-            HexTile chosenHex = chosenRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER);
-            LocationGridTile chosenTile = chosenHex.GetRandomTileThatMeetCriteria(t => t.objHere == null && t.groundType != LocationGridTile.Ground_Type.Water && t.IsPassable());
+            Area chosenArea = chosenRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER);
+            LocationGridTile chosenTile = chosenArea.gridTileComponent.GetRandomPassableUnoccupiedNonWaterTile();
             point2 = chosenTile;
             if(point2 != null) {
                 break;

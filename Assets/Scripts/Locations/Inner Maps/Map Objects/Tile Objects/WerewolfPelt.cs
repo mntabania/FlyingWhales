@@ -20,10 +20,10 @@
                 if (p_newOwner.HasItem(TILE_OBJECT_TYPE.PHYLACTERY)) {
                     p_newOwner.UnobtainItem(TILE_OBJECT_TYPE.PHYLACTERY);
                     p_newOwner.UnobtainItem(TILE_OBJECT_TYPE.WEREWOLF_PELT);
-                    Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Werewolf Pelt", "activated phylactery");
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Werewolf Pelt", "activated phylactery");
                     log.AddToFillers(p_newOwner, p_newOwner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 } else {
                     p_newOwner.UnobtainItem(TILE_OBJECT_TYPE.WEREWOLF_PELT);
                     p_newOwner.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Lycanthrope, this);

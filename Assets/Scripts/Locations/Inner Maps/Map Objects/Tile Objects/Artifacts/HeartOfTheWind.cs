@@ -36,7 +36,7 @@ public class HeartOfTheWind : Artifact {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Berserk Orb", "inspect", providedTags: LOG_TAG.Life_Changes);
         log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddLogToDatabase();
+        log.AddLogToDatabase(true);
 
         if (GameUtilities.RollChance(30)) {
             gridTileLocation.structure.RemovePOI(this, inspector);

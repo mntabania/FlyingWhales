@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 
 namespace Interrupts {
@@ -15,9 +16,9 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog,
             ActualGoapNode node = null) {
-            bool executed = base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, node);
+            bool executed = base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, node);
             Character targetCharacter = interruptHolder.target as Character;
             if (node != null) {
                 node.action.OnStoppedInterrupt(node);
@@ -29,6 +30,7 @@ namespace Interrupts {
             targetCharacter.currentJob?.CancelJob(false);
             targetCharacter.currentJob?.StopJobNotDrop();
             if(interruptHolder.actor != targetCharacter && node != null) {
+                if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
                 overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "effect_with_action", null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

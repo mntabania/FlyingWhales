@@ -14,6 +14,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using Interrupts;
 using Logs;
+using Object_Pools;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
@@ -21,17 +22,20 @@ public class Player : ILeader, IObjectManipulator {
     public Faction playerFaction { get; private set; }
     public PlayerSettlement playerSettlement { get; private set; }
     public int mana { get; private set; }
+
+    public int spiritEnergy { get; private set; }
     public int experience { get; private set; }
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<Summon> summons { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
-    public HexTile portalTile { get; private set; }
+    //public HexTile portalTile { get; private set; }
+    public Area portalArea { get; private set; }
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
     public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }
-    
+
     //Components
     public SeizeComponent seizeComponent { get; }
     public ThreatComponent threatComponent { get; }
@@ -57,7 +61,7 @@ public class Player : ILeader, IObjectManipulator {
         mana = EditableValuesManager.Instance.startingMana;
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
-        playerSkillComponent = new PlayerSkillComponent(this);
+        playerSkillComponent = new PlayerSkillComponent();
         plagueComponent = new PlagueComponent();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         AddListeners();
@@ -86,21 +90,14 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
 
-    public void SetPortalTile(HexTile tile) {
-        portalTile = tile;
+    public void SetPortalTile(Area tile) {
+        portalArea = tile;
     }
 
     #region Listeners
     private void AddListeners() {
-        //goap
-        // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
-        // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
-
-        //minions
-        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
-        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
         Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
         Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
 
@@ -115,13 +112,13 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Settlement
-    public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
-        PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
-        npcSettlement.SetName("Demonic Intrusion");
-        SetPlayerArea(npcSettlement);
-        // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
-        return npcSettlement;
-    }
+    //public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
+    //    PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
+    //    npcSettlement.SetName("Demonic Intrusion");
+    //    SetPlayerArea(npcSettlement);
+    //    // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
+    //    return npcSettlement;
+    //}
     public void LoadPlayerArea(SaveDataPlayerGame saveDataPlayerGame) {
         BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataPlayerGame.settlementID);
         PlayerSettlement pSettlement = settlement as PlayerSettlement;
@@ -246,6 +243,7 @@ public class Player : ILeader, IObjectManipulator {
             SkillData previousActiveAction = currentActivePlayerSpell;
             currentActivePlayerSpell = action;
             if (currentActivePlayerSpell == null) {
+                PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.spellInputModule);
                 UIManager.Instance.SetTempDisableShowInfoUI(false); //allow UI clicks again after active spell has been set to null
                 Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
@@ -253,6 +251,7 @@ public class Player : ILeader, IObjectManipulator {
                 UIManager.Instance.HideSmallInfo(); //This is to hide the invalid messages.
                 Messenger.Broadcast(SpellSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
+                PlayerManager.Instance.AddPlayerInputModule(PlayerManager.spellInputModule);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
                 Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
                 Messenger.Broadcast(SpellSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
@@ -304,11 +303,11 @@ public class Player : ILeader, IObjectManipulator {
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }
                     break;
-                case SPELL_TARGET.HEX:
+                case SPELL_TARGET.AREA:
                     hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                    if (hoveredTile != null && hoveredTile.collectionOwner.isPartOfParentRegionMap && hoveredTile.collectionOwner.partOfHextile.hexTileOwner) {
-                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.collectionOwner.partOfHextile.hexTileOwner)) {
-                            currentActivePlayerSpell.ActivateAbility(hoveredTile.collectionOwner.partOfHextile.hexTileOwner);
+                    if (hoveredTile != null) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.area)) {
+                            currentActivePlayerSpell.ActivateAbility(hoveredTile.area);
                             activatedAction = true;
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
@@ -359,11 +358,6 @@ public class Player : ILeader, IObjectManipulator {
             intel.OnIntelRemoved();
         }
     }
-    public void LoadIntels(SaveDataPlayer data) {
-        //for (int i = 0; i < data.allIntel.Count; i++) {
-        //    AddIntel(data.allIntel[i].Load());
-        //}
-    }
     public void SetCurrentActiveIntel(IIntel intel) {
         if (currentActiveIntel == intel) {
             //Do not process when setting the same intel
@@ -378,12 +372,14 @@ public class Player : ILeader, IObjectManipulator {
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         }
         if (currentActiveIntel != null) {
+            PlayerManager.Instance.AddPlayerInputModule(PlayerManager.intelInputModule);
             Messenger.Broadcast(PlayerSignals.ACTIVE_INTEL_SET, currentActiveIntel);
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(currentActiveIntel);
             intelItem?.SetClickedState(true);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
             Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnIntelCast);
         } else {
+            PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.intelInputModule);
             Messenger.Broadcast(PlayerSignals.ACTIVE_INTEL_REMOVED);
         }
     }
@@ -504,25 +500,16 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(Character[] characters, in Log log) {
-        for (int i = 0; i < characters.Length; i++) {
-            if (ShouldShowNotificationFrom(characters[i], log)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public bool ShowNotificationFrom(Region location, Log log) {
+    public bool ShowNotificationFrom(Region location, Log log, bool releaseLogAfter = false) {
         if (ShouldShowNotificationFrom(location, log)) {
-            ShowNotification(log);
+            ShowNotification(log, releaseLogAfter);
             return true;
         }
         return false;
     }
-    public bool ShowNotificationFrom(Character character, Log log) {
+    public bool ShowNotificationFrom(Character character, Log log, bool releaseLogAfter = false) {
         if (ShouldShowNotificationFrom(character, log)) {
-            ShowNotification(log);
+            ShowNotification(log, releaseLogAfter);
             return true;
         }
         return false;
@@ -534,20 +521,18 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
-    public void ShowNotificationFrom(Log log, params Character[] characters) {
-        if (ShouldShowNotificationFrom(characters, log)) {
-            ShowNotification(log);
-        }
-    }
-    public void ShowNotificationFromPlayer(Log log) {
+    public void ShowNotificationFromPlayer(Log log, bool releaseLogAfter = false) {
         //Removed adding to database here because this function should only be for showing notification, if we want to add it to database, it should be called outside this function
         //This is also redundant because all the outside calls of ShowNotificationFromPlayer already calls AddLogToDatabase
         //log.AddLogToDatabase();
-        ShowNotification(log);
+        ShowNotification(log, releaseLogAfter);
     }
     
-    private void ShowNotification(Log log) {
+    private void ShowNotification(Log log, bool releaseLogAfter = false) {
         Messenger.Broadcast(UISignals.SHOW_PLAYER_NOTIFICATION, log);
+        if (releaseLogAfter) {
+            LogPool.Release(log);
+        }
     }
     private void ShowNotification(IIntel intel) {
         Messenger.Broadcast(UISignals.SHOW_INTEL_NOTIFICATION, intel);
@@ -673,11 +658,15 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region The Eye
-    private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) { }
-    private void OnMinionUnassignedFromPlayerLandmark(Minion minion, BaseLandmark landmark) { }
+    #region spirit energy
+    public void AdjustSpiritEnergy(int amount) {
+        spiritEnergy += amount;
+        spiritEnergy = Mathf.Clamp(spiritEnergy, 0, 100000);
+        Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, amount, spiritEnergy);
+        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+    }
     #endregion
-
+    
     #region Mana
     public void AdjustMana(int amount) {
         mana += amount;
@@ -690,28 +679,6 @@ public class Player : ILeader, IObjectManipulator {
         return PlayerManager.Instance.GetManaCostForSpell(tier);
     }
     #endregion
-
-    //#region Archetype
-    //public void SetArchetype(PLAYER_ARCHETYPE type) {
-    //    if(archetype == null || archetype.type != type) {
-    //        archetype = PlayerManager.CreateNewArchetype(type);
-    //        for (int i = 0; i < archetype.spells.Count; i++) {
-    //            unlearnedSpells.Remove(archetype.spells[i]);
-    //        }
-    //        for (int i = 0; i < archetype.afflictions.Count; i++) {
-    //            unlearnedAfflictions.Remove(archetype.afflictions[i]);
-    //        }
-    //    }
-    //}
-    //public void LearnSpell(SPELL_TYPE type) {
-    //    archetype.AddSpell(type);
-    //    unlearnedSpells.Remove(type);
-    //}
-    //public void LearnAffliction(SPELL_TYPE affliction) {
-    //    archetype.AddAffliction(affliction);
-    //    unlearnedAfflictions.Remove(affliction);
-    //}
-    //#endregion
 
     #region Utilities
     /// <summary>
@@ -883,18 +850,4 @@ public class Player : ILeader, IObjectManipulator {
         isCurrentlyBuildingDemonicStructure = state;
     }
     #endregion
-}
-
-[System.Serializable]
-public struct DemonicLandmarkBuildingData {
-    public LANDMARK_TYPE landmarkType;
-    public string landmarkName;
-    public int buildDuration;
-    public int currentDuration;
-}
-
-[System.Serializable]
-public struct DemonicLandmarkInvasionData {
-    public bool beingInvaded;
-    public int currentDuration;
 }

@@ -24,7 +24,7 @@ public class SnowMound : TileObject{
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType != BIOMES.SNOW) {
+        if(gridTileLocation.area.biomeType != BIOMES.SNOW) {
             traitContainer.AddTrait(this, "Melting");
         } else {
             traitContainer.RemoveTrait(this, "Melting");

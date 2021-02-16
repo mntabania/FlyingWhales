@@ -262,6 +262,42 @@ public struct GameDate {
         }
         return totalTickDifference;
     }
+
+    public int GetTickDifferenceNonAbsoluteOrZeroIfReached(GameDate otherDate) {
+        int yearDifference = (otherDate.year - year);
+        int monthDifference = (otherDate.month - month);
+        int dayDifference = (otherDate.day - day);
+        int tickDifference = Mathf.Abs(otherDate.tick - tick);
+
+        //difference in years multiplied by (number of ticks per day * number of days in a year)
+        int yearDifferenceInTicks = yearDifference * (GameManager.ticksPerDay * 360);
+        //difference in months multiplied by (number of ticks per day * number of days per month)
+        int monthDifferenceInTicks = monthDifference * (GameManager.ticksPerDay * 30);
+        //difference in days multiplied by number of ticks per day
+        int dayDifferenceInTicks = dayDifference * GameManager.ticksPerDay;
+
+        if (dayDifference <= -1) {
+            return 0;
+        }
+        if (dayDifference <= 0) {
+            if (tick >= otherDate.tick) {
+                return 0;
+            }
+        }
+        
+        int totalTickDifference = yearDifferenceInTicks + monthDifferenceInTicks;
+        if (dayDifference > 0) {
+            if (tick < otherDate.tick) {
+                totalTickDifference += dayDifferenceInTicks + tickDifference;
+            } else {
+                totalTickDifference += dayDifferenceInTicks - tickDifference;
+            }
+        } else {
+            totalTickDifference += tickDifference;
+        }
+        return totalTickDifference;
+    }
+
     public string GetTimeDifferenceString(GameDate otherDate) {
         int tickDiff = GetTickDifference(otherDate);
         if (tickDiff >= GameManager.ticksPerHour) {
@@ -287,12 +323,12 @@ public struct GameDate {
             return "???";
         }
         if (nextLineTime) {
-            return $"Day {ConvertToContinuousDays()}\n{GameManager.ConvertTickToTime(this.tick)}";
+            return $"Day {ConvertToContinuousDays()}\n{ConvertToTime()}";
         }
-        return $"Day {ConvertToContinuousDays()} {GameManager.ConvertTickToTime(this.tick)}";
+        return $"Day {ConvertToContinuousDays()} {ConvertToTime()}";
     }
     public string ConvertToTime() {
-        return $"{GameManager.ConvertTickToTime(tick)}";
+        return $"{GameManager.Instance.ConvertTickToTime(tick)}";
     }
 
     //public override bool Equals(object obj) {

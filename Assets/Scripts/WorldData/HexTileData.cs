@@ -19,3 +19,22 @@ public class HexTileData {
     public BIOMES biomeType;
     public ELEVATION elevationType;
 }
+
+[System.Serializable]
+public class AreaData {
+    public int id;
+    public string persistentID;
+    public int xCoordinate;
+    public int yCoordinate;
+    public string areaName;
+    
+    public float elevationNoise;
+    public float moistureNoise;
+    public float temperature;
+    public BIOMES biomeType;
+    public ELEVATION elevationType;
+
+    #region getters
+    public Vector2 position => new Vector2(xCoordinate, yCoordinate);
+    #endregion
+}

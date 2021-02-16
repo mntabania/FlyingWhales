@@ -32,7 +32,7 @@ public class SplashPoisonData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitblePoisoned(ITraitable traitable) {
-        traitable.traitContainer.AddTrait(traitable, "Poisoned", bypassElementalChance: true);
+        traitable.traitContainer.AddTrait(traitable, "Poisoned", bypassElementalChance: true, overrideDuration: GetDurationBaseOnTileType(traitable));
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
@@ -43,6 +43,21 @@ public class SplashPoisonData : SkillData {
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);
+    }
+
+    public int GetDurationBaseOnTileType(ITraitable p_targetTile) {
+        int baseTick = GameManager.Instance.GetTicksBasedOnHour(24);
+        if (p_targetTile is GenericTileObject genericTileObject) {
+            genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.CLEANSE_TILE);
+            if (genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Grass ||
+                genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone ||
+                genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
+                //Reduce duration of poison when put on desert tiles
+                baseTick = GameManager.Instance.GetTicksBasedOnHour(2);
+            }
+        }
+        baseTick += PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SPLASH_POISON);
+        return baseTick;
     }
 }
 

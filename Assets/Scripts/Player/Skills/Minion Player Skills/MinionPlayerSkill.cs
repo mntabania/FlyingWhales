@@ -22,9 +22,7 @@ public class MinionPlayerSkill : SkillData {
         if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE && targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN) {
             minion.character.MigrateHomeStructureTo(targetTile.structure);
         } else {
-            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                minion.character.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
-            }
+            minion.character.SetTerritory(targetTile.area, false);
         }
         minion.character.jobQueue.CancelAllJobs();
         base.ActivateAbility(targetTile);
@@ -44,7 +42,7 @@ public class MinionPlayerSkill : SkillData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
         if (canPerform) {
-            if (!targetTile.collectionOwner.isPartOfParentRegionMap || !targetTile.IsPassable()) {
+            if (!targetTile.IsPassable()) {
                 //only allow summoning on linked tiles
                 return false;
             }

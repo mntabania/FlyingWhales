@@ -82,13 +82,13 @@
     /// </summary>
     public static string OPINION_LABEL_DECREASED = "OnOpinionLabelDecreased";
     /// <summary>
-    /// Parameters (Character character, Hextile enteredTile)
+    /// Parameters (Character character, Area enteredArea)
     /// </summary>
-    public static string CHARACTER_ENTERED_HEXTILE = "OnCharacterEnteredHexTile";
+    public static string CHARACTER_ENTERED_AREA = "OnCharacterEnteredArea";
     /// <summary>
-    /// Parameters (Character character, HexTile exitedTile)
+    /// Parameters (Character character, Area exitedArea)
     /// </summary>
-    public static string CHARACTER_EXITED_HEXTILE = "OnCharacterExitedHexTile";
+    public static string CHARACTER_EXITED_AREA = "OnCharacterExitedArea";
     public static string CHARACTER_CAN_NO_LONGER_MOVE = "OnCharacterCannotMove";
     public static string CHARACTER_CAN_MOVE_AGAIN = "OnCharacterCannotMove";
     /// <summary>

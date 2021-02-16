@@ -12,6 +12,7 @@ public class ForlornSpirit : TileObject {
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
+    private int _baseHappinessDrain = -35;
     
     #region getters
     public int currentDuration => _currentDuration;
@@ -129,7 +130,8 @@ public class ForlornSpirit : TileObject {
     }
 
     private void ForlornEffect() {
-        possessionTarget.needsComponent.AdjustHappiness(-35);
+        float processedHappinessDrain = _baseHappinessDrain - (_baseHappinessDrain * (int)PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.FORLORN_SPIRIT));
+        possessionTarget.needsComponent.AdjustHappiness(processedHappinessDrain);
     }
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);

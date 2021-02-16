@@ -22,7 +22,7 @@ public class Gathering : ISavable {
 
     #region getters
     public virtual IGatheringTarget target => null;
-    public virtual HexTile waitingHexArea => null;
+    public virtual Area waitingHexArea => null;
     public virtual System.Type serializedData => typeof(SaveDataGathering);
     public OBJECT_TYPE objectType => OBJECT_TYPE.Gathering;
     #endregion
@@ -78,9 +78,9 @@ public class Gathering : ISavable {
 
     }
     protected virtual void OnDisbandGathering() {
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", null, LOG_TAG.Party);
-        log.AddToFillers(host, host.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, gatheringName, LOG_IDENTIFIER.STRING_1);
+        // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", null, LOG_TAG.Party);
+        // log.AddToFillers(host, host.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        // log.AddToFillers(null, gatheringName, LOG_IDENTIFIER.STRING_1);
         //log.AddLogToDatabase();
 
         host.logComponent.PrintLogIfActive("Disbanded " + gatheringName + " Gathering of " + host.name);

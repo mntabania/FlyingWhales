@@ -15,11 +15,12 @@ public class PoisonData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
-        targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned");
+        int duration = TraitManager.Instance.allTraits["Poisoned"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.POISON);
+        targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned", overrideDuration: duration);
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {

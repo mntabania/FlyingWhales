@@ -237,7 +237,7 @@ public class MovementComponent : CharacterComponent {
         Log leftLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "left_location", providedTags: LOG_TAG.Life_Changes);
         leftLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         leftLog.AddToFillers(owner.currentRegion, owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-        leftLog.AddLogToDatabase();
+        leftLog.AddLogToDatabase(true);
         owner.DisableMarker();
 
         owner.combatComponent.ClearHostilesInRange();
@@ -278,7 +278,7 @@ public class MovementComponent : CharacterComponent {
         Log arriveLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", providedTags: LOG_TAG.Life_Changes);
         arriveLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         arriveLog.AddToFillers(targetRegionToTravelInWorld, targetRegionToTravelInWorld.name, LOG_IDENTIFIER.LANDMARK_1);
-        arriveLog.AddLogToDatabase();
+        arriveLog.AddLogToDatabase(true);
 
         if (owner.isNormalCharacter) {
             PlayerManager.Instance.player.ShowNotificationFrom(targetRegionToTravelInWorld, arriveLog);
@@ -289,9 +289,7 @@ public class MovementComponent : CharacterComponent {
 
         Messenger.Broadcast(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, owner);
 
-        if (doneAction != null) {
-            doneAction();
-        }
+        doneAction?.Invoke();
     }
     public void SetTargetRegionToTravelInWorld(Region region) {
         targetRegionToTravelInWorld = region;
@@ -330,8 +328,8 @@ public class MovementComponent : CharacterComponent {
             return true;
         }
     }
-    public bool HasPathTo(HexTile toTile) {
-        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(toTile.locationGridTiles);
+    public bool HasPathTo(Area toArea) {
+        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(toArea.gridTileComponent.gridTiles);
         return HasPathTo(targetTile);
     }
     /// <summary>

@@ -50,17 +50,15 @@ public class TreeObject : TileObject {
     }
 
     public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
-            }
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
-                if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
-                   parentSettlement = eachNeighboringHexTile.settlementOnTile;
-                }
-            });
+        if (gridTileLocation.area.settlementOnArea != null) {
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
         }
+        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+            if (eachNeighbor.settlementOnArea != null) {
+                eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+               parentSettlement = eachNeighbor.settlementOnArea;
+            }
+        });
     }
 
     public override void RemoveFromSettlementResourcesParent() {
@@ -107,9 +105,9 @@ public class TreeObject : TileObject {
         return data;
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null,
-        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
         LocationGridTile location = gridTileLocation;
-        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar);
+        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar, piercingPower);
         if (CanBeDamaged() && amount < 0) {
             //check if can awaken an ent
             switch (occupiedState) {
@@ -171,8 +169,8 @@ public class TreeObject : TileObject {
             if (location.isCorrupted) {
                 entType = SUMMON_TYPE.Corrupt_Ent;
             } else {
-                HexTile hex = location.collectionOwner.GetConnectedHextileOrNearestHextile();
-                BIOMES biome = hex.biomeType;
+                Area area = location.area;
+                BIOMES biome = area.biomeType;
                 switch (biome) {
                     case BIOMES.DESERT:
                         entType = SUMMON_TYPE.Desert_Ent;

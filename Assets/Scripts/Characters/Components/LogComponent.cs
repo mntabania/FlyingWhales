@@ -70,12 +70,11 @@ public class LogComponent {
     // #endregion
 
     #region Notifications
-    public void RegisterLog(Log addLog, GoapAction goapAction = null, bool onlyClickedCharacter = true) {
+    public void RegisterLog(Log addLog, bool releaseAfter = false) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
         }
-        addLog.AddLogToDatabase();
-        // PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, onlyClickedCharacter);
+        addLog.AddLogToDatabase(releaseAfter);
     }
     #endregion
 

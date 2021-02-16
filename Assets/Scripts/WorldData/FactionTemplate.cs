@@ -40,7 +40,7 @@ public class FactionTemplate {
         Debug.Log($"Changed name of {name} to {p_newName}");
         name = p_newName;
     }
-    public bool IsTilePreferredByFaction(HexTile p_tile) {
+    public bool IsTilePreferredByFaction(Area p_tile) {
         switch (factionType) {
             case FACTION_TYPE.Human_Empire:
                 return p_tile.biomeType == BIOMES.GRASSLAND || p_tile.biomeType == BIOMES.DESERT;

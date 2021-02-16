@@ -104,6 +104,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataCrimeComponent crimeComponent;
     public SaveDataReligionComponent religionComponent;
     public SaveDataLimiterComponent limiterComponent;
+    public SaveDataPiercingAndResistancesComponent piercingAndResistancesComponent;
     public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
 
     #region getters
@@ -180,6 +181,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
         religionComponent = new SaveDataReligionComponent(); religionComponent.Save(data.religionComponent);
         limiterComponent = new SaveDataLimiterComponent(); limiterComponent.Save(data.limiterComponent);
+        piercingAndResistancesComponent = new SaveDataPiercingAndResistancesComponent(); piercingAndResistancesComponent.Save(data.piercingAndResistancesComponent);
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
 
         if (data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
@@ -215,7 +217,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.connectedFoodPile != null) {
             connectedFoodPile = data.connectedFoodPile.persistentID;
         }
-        if (data.deathLog.hasValue) {
+        if (data.deathLog != null) {
             deathLog = data.deathLog;
             // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.deathLog);
         }

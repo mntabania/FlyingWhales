@@ -638,7 +638,7 @@ public enum SPELL_TARGET {
     CHARACTER,
     TILE_OBJECT,
     TILE,
-    HEX,
+    AREA,
     STRUCTURE,
     ROOM,
     SETTLEMENT,
@@ -1100,7 +1100,7 @@ public enum RUMOR_TYPE { Action, Interrupt }
 public enum ASSUMPTION_TYPE { Action, Interrupt }
 public enum CRIMABLE_TYPE { Action, Interrupt }
 public enum OBJECT_TYPE { 
-    Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Hextile = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
+    Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Area = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
     Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21, Party_Quest = 22, Gathering = 23,
     Reaction_Quest = 24, Plague_Disease = 25
 }
@@ -1110,7 +1110,7 @@ public enum PASSIVE_SKILL {
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
 }
-public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
+public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Area, }
 public enum SETTLEMENT_TYPE { Human_Village, Elven_Hamlet, Capital, Cult_Town }
 
 public enum RELATIONS_FILTER {
@@ -1176,7 +1176,17 @@ public enum THREAT_AMOUNT {
 public enum OMNIPOTENT_MODE {
     Disabled, Enabled 
 }
-
 public enum VICTORY_CONDITION {
     Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Sandbox
+}
+public enum RESISTANCE {
+    None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
+}
+
+public enum UPGRADE_BONUS {
+    Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed,
+}
+
+public enum UNLOCKING_SKILL_REQUIREMENT {
+    Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count,
 }

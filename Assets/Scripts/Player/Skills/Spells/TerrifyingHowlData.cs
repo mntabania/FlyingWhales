@@ -16,6 +16,7 @@ public class TerrifyingHowlData : SkillData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: false);
         //create generic tile object and destroy after 3 ticks.
+        
         BaseMapObjectVisual visual = targetTile.genericTileObject.GetOrCreateMapVisual();
         visual.visionTrigger.VoteToMakeVisibleToCharacters();
         SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(3),
@@ -31,7 +32,6 @@ public class TerrifyingHowlData : SkillData {
     }
     private void SpookCharacter(ITraitable traitable, LocationGridTile targetTile) {
         if (traitable is Character character) {
-            character.traitContainer.AddTrait(character, "Spooked");
             character.marker.AddPOIAsInVisionRange(targetTile.genericTileObject);
             character.combatComponent.Flight(targetTile.genericTileObject, "heard a terrifying howl");
         }

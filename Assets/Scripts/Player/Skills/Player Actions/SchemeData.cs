@@ -126,8 +126,7 @@ public class SchemeData : PlayerAction {
         PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME).OnExecutePlayerSkill();
         return isSuccessful;
     }
-
-    protected void ShowSchemeConversation(List<ConversationData> conversationList, string titleText) {
+    private void ShowSchemeConversation(List<ConversationData> conversationList, string titleText) {
         UIManager.Instance.OpenConversationMenu(conversationList, titleText);
 
         for (int i = 0; i < conversationList.Count; i++) {
@@ -135,8 +134,7 @@ public class SchemeData : PlayerAction {
         }
         ObjectPoolManager.Instance.ReturnConversationDataListToPool(conversationList);
     }
-
-    protected void LogSchemeCharacter(Character p_targetCharacter, bool isSuccessful) {
+    private void LogSchemeCharacter(Character p_targetCharacter, bool isSuccessful) {
         string key = "success_scheme_character";
         if (!isSuccessful) {
             key = "fail_scheme_character";
@@ -146,7 +144,7 @@ public class SchemeData : PlayerAction {
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(name), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_2);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
     protected void LogSchemeVillage(BaseSettlement p_targetSettlement) {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_scheme_village", null, LOG_TAG.Player);
@@ -154,6 +152,6 @@ public class SchemeData : PlayerAction {
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(name), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_2);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
 }

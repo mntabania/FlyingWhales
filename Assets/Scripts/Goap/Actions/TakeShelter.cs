@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Logs;
 using UnityEngine;
 using Traits;
@@ -29,8 +29,8 @@ public class TakeShelter : GoapAction {
         }
         return null;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         OtherData[] otherData = node.otherData;
         if (otherData != null && otherData.Length == 2) {
             if (otherData[0].obj is LocationStructure structure) {
@@ -64,9 +64,9 @@ public class TakeShelter : GoapAction {
 
     #region State Effects
     public void AfterTakeShelterSuccess(ActualGoapNode goapNode) {
-        bool shouldSetShelter = goapNode.actor.gridTileLocation != null && goapNode.actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
-            (goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) 
-            || goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature));
+        bool shouldSetShelter = goapNode.actor.gridTileLocation != null && 
+            (goapNode.actor.areaLocation.featureComponent.HasFeature(AreaFeatureDB.Blizzard_Feature) 
+            || goapNode.actor.areaLocation.featureComponent.HasFeature(AreaFeatureDB.Heat_Wave_Feature));
         if (shouldSetShelter) {
             if (goapNode.actor.traitContainer.HasTrait("Freezing")) {
                 Freezing freezing = goapNode.actor.traitContainer.GetTraitOrStatus<Freezing>("Freezing");

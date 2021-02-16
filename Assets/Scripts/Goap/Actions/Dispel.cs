@@ -24,8 +24,8 @@ public class Dispel : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Positive;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         string traitToRemove = (string)node.otherData[0].obj;
         string logString = GetTraitLogString(traitToRemove);
         log.AddToFillers(null, logString, LOG_IDENTIFIER.STRING_1);

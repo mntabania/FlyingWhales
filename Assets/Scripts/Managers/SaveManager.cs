@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using BayatGames.SaveGameFree;
 using Inner_Maps;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Scenario_Maps;
 using Traits;
 using UtilityScripts;
@@ -98,7 +98,7 @@ public class SaveManager : MonoBehaviour {
         ScenarioWorldMapSave worldMapSave = new ScenarioWorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles
+            GridMap.Instance.allAreas
         );
         scenarioSave.worldMapSave = worldMapSave;
 
@@ -107,7 +107,7 @@ public class SaveManager : MonoBehaviour {
         if (string.IsNullOrEmpty(fileName)) {
             fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
         }
-        string path = $"{Application.streamingAssetsPath}/Scenario Maps/{fileName}.sce";
+        string path = $"{Application.streamingAssetsPath}/Scenario Maps/{fileName}.json";
         SaveGame.Save(path, scenarioSave);
         
         Debug.Log($"Saved new scenario at {path}");
@@ -127,13 +127,13 @@ public class SaveManager : MonoBehaviour {
     #endregion
 
     #region Tile Features
-    public static SaveDataTileFeature ConvertTileFeatureToSaveData(TileFeature tileFeature) {
-        SaveDataTileFeature saveDataTrait = null;
-        System.Type type = System.Type.GetType($"Locations.Tile_Features.SaveData{tileFeature.GetType().Name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+    public static SaveDataAreaFeature ConvertAreaFeatureToSaveData(AreaFeature p_areaFeature) {
+        SaveDataAreaFeature saveDataTrait = null;
+        System.Type type = System.Type.GetType($"Locations.Tile_Features.SaveData{p_areaFeature.GetType().Name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
         if (type != null) {
-            saveDataTrait = System.Activator.CreateInstance(type) as SaveDataTileFeature;
+            saveDataTrait = System.Activator.CreateInstance(type) as SaveDataAreaFeature;
         } else {
-            saveDataTrait = new SaveDataTileFeature();
+            saveDataTrait = new SaveDataAreaFeature();
         }
         return saveDataTrait;
     }

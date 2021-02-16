@@ -8,6 +8,7 @@ using Interrupts;
 using Crime_System;
 using UtilityScripts;
 using Locations.Settlements;
+using Object_Pools;
 
 public class CrimeManager : BaseMonoBehaviour {
     public static CrimeManager Instance;
@@ -84,13 +85,13 @@ public class CrimeManager : BaseMonoBehaviour {
             if(crime is ActualGoapNode action && action.isAssumption) {
                 //Do not log accuse text
             } else {
-                Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LogUtilities.Criminal_Tags);
                 addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
                 addLog.AddToFillers(witness, witness.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
                 addLog.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
+                LogPool.Release(addLog);
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
         }
@@ -155,12 +156,13 @@ public class CrimeManager : BaseMonoBehaviour {
         }
 
         if (key != string.Empty) {
-            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LOG_TAG.Life_Changes, LOG_TAG.Crimes, LOG_TAG.Major);
+            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LogUtilities.Declare_Wanted_Tags);
             addLog.AddToFillers(authority, authority.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
+            LogPool.Release(addLog);
         }
         return key == "wanted";
     }
@@ -278,7 +280,7 @@ public class CrimeManager : BaseMonoBehaviour {
                             witness.logComponent.PrintLogErrorIfActive(error);
                         } else {
                             //add log of emotions felt
-                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "emotions_crime_" + reactionStatus.ToString().ToLower(), null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "emotions_crime_" + reactionStatus.ToString().ToLower(), null, LogUtilities.Life_Changes_Crimes_Tags);
                             if (reactionStatus == REACTION_STATUS.INFORMED) {
                                 log.AddTag(LOG_TAG.Informed);
                             } else if (reactionStatus == REACTION_STATUS.WITNESSED) {
@@ -287,7 +289,7 @@ public class CrimeManager : BaseMonoBehaviour {
                             log.AddToFillers(witness, witness.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                             log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotions, 2), LOG_IDENTIFIER.STRING_1);
-                            log.AddLogToDatabase();
+                            log.AddLogToDatabase(true);
                         }
                     }
 
@@ -524,10 +526,10 @@ public class CrimeData : ISavable {
                 if (AreAllWitnessesDead()) {
                     criminal.crimeComponent.RemoveCrime(this);
 
-                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LogUtilities.Life_Changes_Crimes_Tags);
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
-                    addLog.AddLogToDatabase();
+                    addLog.AddLogToDatabase(true);
                 }
             }
         }
@@ -629,17 +631,17 @@ public class CrimeData : ISavable {
             if (criminal.isSettlementRuler) {
                 if(criminal.homeSettlement.owner == faction) {
                     criminal.homeSettlement.SetRuler(null);
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler", null, LogUtilities.Life_Changes_Crimes_Tags);
                     log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                    criminal.logComponent.RegisterLog(log, true);
                 }
             }
 
             if (faction.leader == criminal) {
                 faction.SetLeader(null);
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader", null, LogUtilities.Life_Changes_Crimes_Tags);
                 log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                criminal.logComponent.RegisterLog(log, true);
             }
             if (target is Character targetCharacter && crime is ActualGoapNode crimeAction) {
                 CRIME_SEVERITY severityOfCrime = faction.GetCrimeSeverity(criminal, target, crimeType);

@@ -14,6 +14,8 @@ public class LightningData : SkillData {
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 
+    private int m_lightningBaseDamage = -600;
+
     public LightningData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
@@ -41,7 +43,8 @@ public class LightningData : SkillData {
     }
     private void LightningDamage(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-600, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
+            int processedDamage = m_lightningBaseDamage - PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LIGHTNING);
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
         }
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {

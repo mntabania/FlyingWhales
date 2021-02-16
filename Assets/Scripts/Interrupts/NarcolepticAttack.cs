@@ -15,7 +15,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            Log overrideEffectLog, ActualGoapNode goapNode = null) {
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Resting");
             return true;
         }

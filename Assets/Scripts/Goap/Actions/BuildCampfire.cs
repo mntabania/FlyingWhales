@@ -26,29 +26,16 @@ public class BuildCampfire : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
-        HexTile hex = null;
-        if (goapNode.actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            hex = goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-        }
-        List<LocationGridTile> tiles = null;
-        if (hex != null) {
-            tiles = hex.GetUnoccupiedTiles();
-            if(tiles != null && tiles.Count > 0) {
-                return tiles;
-            } else {
-                return hex.locationGridTiles;
+    public override void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) {
+        Area area = goapNode.actor.gridTileLocation.area;
+        if (area != null) {
+            area.gridTileComponent.PopulateUnoccupiedTiles(gridTiles);
+            if(gridTiles.Count <= 0) {
+                gridTiles = area.gridTileComponent.gridTiles;
             }
         } else {
-            tiles = goapNode.actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
-            for (int i = 0; i < tiles.Count; i++) {
-                if (tiles[i].objHere != null) {
-                    tiles.RemoveAt(i);
-                    i--;
-                }
-            }
+            goapNode.actor.gridTileLocation.PopulateTilesInRadius(gridTiles, 3, includeImpassable: false, includeTilesWithObject: false);
         }
-        return tiles;
     }
     #endregion
 
@@ -68,9 +55,7 @@ public class BuildCampfire : GoapAction {
         LocationGridTile targetTile = actor.gridTileLocation;
 
         if (targetTile != null && targetTile.objHere != null) {
-            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.collectionOwner.isPartOfParentRegionMap && x.collectionOwner.partOfHextile.hexTileOwner == targetTile.collectionOwner.partOfHextile.hexTileOwner);
-            }
+            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.area == targetTile.area);
         }
         if (targetTile != null && targetTile.objHere != null) {
             targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());
@@ -83,10 +68,7 @@ public class BuildCampfire : GoapAction {
         goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
 
         if (targetTile != null) {
-            LocationGridTile foodPileTile = null;
-            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.collectionOwner.isPartOfParentRegionMap && x.collectionOwner.partOfHextile.hexTileOwner == targetTile.collectionOwner.partOfHextile.hexTileOwner);
-            }
+            LocationGridTile foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.area == targetTile.area);
 
             if(foodPileTile == null) {
                 foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());

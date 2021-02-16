@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Object_Pools;
 using UnityEngine.Assertions;
 
 public class AnkhOfAnubis : Artifact {
@@ -63,6 +64,7 @@ public class AnkhOfAnubis : Artifact {
                 if(gridTileLocation != null) {
                     PlayerManager.Instance.player.ShowNotificationFrom(gridTileLocation.structure.region, log);
                 }
+                LogPool.Release(log);
             }
         }
     }

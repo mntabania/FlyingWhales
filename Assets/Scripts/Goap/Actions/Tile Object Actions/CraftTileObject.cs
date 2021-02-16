@@ -79,8 +79,8 @@ public class CraftTileObject : GoapAction {
         //craft cannot be invalid because all cases are handled by the requirements of the action
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         TileObject obj = node.poiTarget as TileObject;
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
@@ -169,7 +169,7 @@ public class CraftTileObject : GoapAction {
         obj.SetMapObjectState(MAP_OBJECT_STATE.BUILDING);
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
-        if (goapNode.thoughtBubbleLog.hasValue) {
+        if (goapNode.thoughtBubbleLog != null) {
             goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
             goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
         }

@@ -5,6 +5,7 @@ using Traits;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
 using Locations.Settlements;
+using UtilityScripts;
 
 public class Eat : GoapAction {
 
@@ -29,8 +30,8 @@ public class Eat : GoapAction {
         }
         return base.ShouldActionBeAnIntel(node);
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         if (node.target is Table) {
             log.AddToFillers(node.target, "at a Table", LOG_IDENTIFIER.TARGET_CHARACTER);
         } else {
@@ -67,8 +68,8 @@ public class Eat : GoapAction {
         //    if (actor.partyComponent.isActiveMember) {
         //        if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
         //        && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-        //            LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-        //            LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+        //            LocationGridTile centerGridTileOfTarget = target.gridTileLocation.hexTileOwner.GetCenterLocationGridTile();
+        //            LocationGridTile centerGridTileOfActor = actor.gridTileLocation.hexTileOwner.GetCenterLocationGridTile();
         //            float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
         //            int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
 
@@ -122,8 +123,7 @@ public class Eat : GoapAction {
             }
         } else {
             if (target is Table table) {
-                bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure)
-                    || (table.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrapHex(table.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner));
+                bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure) || actor.trapStructure.IsTrapArea(table.gridTileLocation.area);
                 BaseSettlement settlementLocation = null;
                 if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(out settlementLocation) && actor.faction != null && settlementLocation.owner != null && settlementLocation.owner.IsHostileWith(actor.faction)) {
                     cost += 2000;
@@ -326,10 +326,10 @@ public class Eat : GoapAction {
         if (goapNode.actor.traitContainer.HasTrait("Cannibal") == false && 
             (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat) && goapNode.actor.isNotSummonAndDemon) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Cannibal");
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode, LOG_TAG.Life_Changes, LOG_TAG.Needs, LOG_TAG.Crimes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode, LogUtilities.Become_Cannibal_Tags);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
         if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is RatMeat) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
@@ -354,7 +354,7 @@ public class Eat : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             if (actor.traitContainer.HasTrait("Vampire")) {

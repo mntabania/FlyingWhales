@@ -1,7 +1,7 @@
 ﻿using EZObjectPools;
 using Pathfinding;
 using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
@@ -15,6 +15,7 @@ using UnityEngine.Tilemaps;
 
 public class LocationStructureObject : PooledObject {
 
+    public Action<LocationStructureObject> onStructureClicked;
     public enum Structure_Visual_Mode { Blueprint, Built }
 
     public STRUCTURE_TYPE structureType;
@@ -660,6 +661,7 @@ public class LocationStructureObject : PooledObject {
 
     #region Interaction
     public void OnPointerClick(BaseEventData data) {
+        onStructureClicked?.Invoke(this);
         Debug.Log($"Player clicked {name}");
     }
     #endregion
@@ -748,24 +750,20 @@ public class LocationStructureObject : PooledObject {
         if (tile.IsAtEdgeOfMap()) {
             return false;
         }
-        if (GameManager.Instance.gameHasStarted) {
-            if (!tile.collectionOwner.isPartOfParentRegionMap) {
-                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement
-            }    
-        } else {
+        if (!GameManager.Instance.gameHasStarted) {
             //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
             //since we expect that they will be generated later
-            if (tile.collectionOwner.isPartOfParentRegionMap) {
-                HexTile hexTileOwner = tile.collectionOwner.partOfHextile.hexTileOwner;
-                if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
-                    return false;
-                }
-                if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
-                    return false;
-                }
-            } else {
-                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement 
-            }    
+            Area areaOwner = tile.area;
+            if (areaOwner.elevationType == ELEVATION.WATER || areaOwner.elevationType == ELEVATION.MOUNTAIN) {
+                return false;
+            }
+            LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
+            if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
+                return false;
+            }
+            //if (areaOwner.landmarkOnTile != null && areaOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
+            //    return false;
+            //}
         }
         
         
@@ -914,6 +912,8 @@ public class LocationStructureObject : PooledObject {
                 }
             }
         }
+        wallTileMap.enabled = false;
+        wallTileMap.GetComponent<TilemapRenderer>().enabled = false;
     }
 
     [ContextMenu("Set Pivot Point")]

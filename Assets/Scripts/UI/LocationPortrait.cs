@@ -18,15 +18,7 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
 
     public void OnPointerClick(PointerEventData eventData) {
         if (!disableInteraction) {
-            if (eventData.button == PointerEventData.InputButton.Left) {
-                if (region != null) {
-                    if (!UIManager.Instance.regionInfoUI.isShowing) {
-                        UIManager.Instance.ShowRegionInfo(region);
-                    } else {
-                        region.CenterCameraOnRegion();
-                    }
-                }    
-            } else if (eventData.button == PointerEventData.InputButton.Right) {
+            if (eventData.button == PointerEventData.InputButton.Right) {
                 if (_settlement != null) {
                     UIManager.Instance.ShowPlayerActionContextMenu(_settlement, Input.mousePosition, true);
                 }
@@ -36,7 +28,6 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
 
     public void SetLocation(Region region) {
         this.region = region;
-        SetPortrait(region.mainLandmark.specificLandmarkType);
     }
     public void SetLocation(BaseSettlement p_settlement) {
         region = null;

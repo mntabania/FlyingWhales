@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HealData : PlayerAction {
+
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.HEAL;
     public override string name => "Heal";
     public override string description => "This Action fully replenishes a character's HP.";
@@ -13,7 +14,9 @@ public class HealData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
-            targetCharacter.ResetToFullHP();
+            int processedHeal = (int)(targetCharacter.maxHP * PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.HEAL));
+            targetCharacter.AdjustHP(processedHeal, ELEMENTAL_TYPE.Normal, showHPBar: true,
+                piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.HEAL));
         }
         base.ActivateAbility(targetPOI);
     }

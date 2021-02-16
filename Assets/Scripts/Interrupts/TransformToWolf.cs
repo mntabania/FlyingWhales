@@ -17,9 +17,9 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Transforming");
-            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             Character actor = interruptHolder.actor;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Object_Pools;
 using UnityEngine;
 using UtilityScripts;
 namespace Events.World_Events {
@@ -78,6 +79,7 @@ namespace Events.World_Events {
                             log.AddToFillers(newCharacter.homeRegion, newCharacter.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
                             log.AddLogToDatabase();
                             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                            LogPool.Release(log);
                         }
                     }
                 }

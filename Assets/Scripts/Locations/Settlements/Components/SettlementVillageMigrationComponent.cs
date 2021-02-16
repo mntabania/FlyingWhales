@@ -182,8 +182,8 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                 List<LocationGridTile> edgeTileChoices = null;
                 for (int i = 0; i < owner.region.innerMap.allEdgeTiles.Count; i++) {
                     LocationGridTile tile = owner.region.innerMap.allEdgeTiles[i];
-                    HexTile connectedHextileOrNearestHextile = tile.collectionOwner.GetConnectedHextileOrNearestHextile();
-                    if (!tile.isCorrupted && !connectedHextileOrNearestHextile.isCorrupted) {
+                    //Area connectedAreaOrNearestArea = tile.area;
+                    if (!tile.isCorrupted) { //&& !connectedAreaOrNearestArea.isCorrupted
                         if (edgeTileChoices == null) { edgeTileChoices = new List<LocationGridTile>(); }
                         edgeTileChoices.Add(tile);
                     }
@@ -231,7 +231,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                     log.AddToFillers(newCharacter, newCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newCharacter.homeRegion, newCharacter.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
                     log.AddLogToDatabase();
-                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             } else {
                 debugLog += $"\nNo unspawned character to spawn for {owner.owner.race.ToString()}/{owner.owner.name}";

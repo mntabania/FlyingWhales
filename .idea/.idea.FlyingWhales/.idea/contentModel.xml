@@ -1202,6 +1202,7 @@
               <e p="MovementComponent.cs" t="Include" />
               <e p="NonActionEventsComponent.cs" t="Include" />
               <e p="PartyComponent.cs" t="Include" />
+              <e p="PiercingAndResistancesComponent.cs" t="Include" />
               <e p="PreviousCharacterDataComponent.cs" t="Include" />
               <e p="ReactionComponent.cs" t="Include" />
               <e p="ReligionComponent.cs" t="Include" />
@@ -1285,11 +1286,11 @@
           </e>
           <e p="Databases" t="Include">
             <e p="ActionDatabase.cs" t="Include" />
+            <e p="AreaDatabase.cs" t="Include" />
             <e p="CharacterDatabase.cs" t="Include" />
             <e p="CrimeDatabase.cs" t="Include" />
             <e p="FactionDatabase.cs" t="Include" />
             <e p="GatheringDatabase.cs" t="Include" />
-            <e p="HexTileDatabase.cs" t="Include" />
             <e p="InterruptDatabase.cs" t="Include" />
             <e p="JobDatabase.cs" t="Include" />
             <e p="LocationGridTileDatabase.cs" t="Include" />
@@ -1307,13 +1308,12 @@
           <e p="Editor" t="Include">
             <e p="ArtifactUnlockableDrawer.cs" t="Include" />
             <e p="Builder.cs" t="Include" />
-            <e p="BuildingSpotMonobehaviourEditor.cs" t="Include" />
             <e p="CharacterManagerEditor.cs" t="Include" />
-            <e p="HexTileEditor.cs" t="Include" />
             <e p="InteractionLocalizedTextCreatorEditor.cs" t="Include" />
             <e p="LocalizedTextEditor.cs" t="Include" />
             <e p="RuinarchGridGraphEditor.cs" t="Include" />
             <e p="SerializableDictionariesEditor.cs" t="Include" />
+            <e p="SkillUpgradeDataEditor.cs" t="Include" />
             <e p="UIManagerEditor.cs" t="Include" />
           </e>
           <e p="Effects" t="Include">
@@ -1349,7 +1349,15 @@
               <e p="WorldEvent.cs" t="Include" />
             </e>
           </e>
-          <e p="Extensions.cs" t="Include" />
+          <e p="Extensions" t="Include">
+            <e p="AreaExtensions.cs" t="Include" />
+            <e p="Extensions.cs" t="Include" />
+            <e p="JobsListExtension.cs" t="Include" />
+            <e p="ListExtension.cs" t="Include" />
+            <e p="LocationGridTileListExtension.cs" t="Include" />
+            <e p="SettlementListExtension.cs" t="Include" />
+            <e p="UIExtensions.cs" t="Include" />
+          </e>
           <e p="Factions" t="Include">
             <e p="Faction Components" t="Include">
               <e p="FactionComponent.cs" t="Include" />
@@ -1402,10 +1410,11 @@
             <e p="SocialGathering.cs" t="Include" />
           </e>
           <e p="Generator" t="Include">
-            <e p="EquatorGenerator.cs" t="Include" />
             <e p="Map Generation" t="Include">
               <e p="Components" t="Include">
+                <e p="AreaGeneration.cs" t="Include" />
                 <e p="CharacterFinalization.cs" t="Include" />
+                <e p="ElevationGeneration.cs" t="Include" />
                 <e p="ElevationStructureGeneration.cs" t="Include" />
                 <e p="FactionFinalization.cs" t="Include" />
                 <e p="FamilyTreeGeneration.cs" t="Include" />
@@ -1419,23 +1428,20 @@
                 <e p="MapGenerationFinalization.cs" t="Include" />
                 <e p="MonsterGeneration.cs" t="Include" />
                 <e p="PlayerDataGeneration.cs" t="Include" />
-                <e p="PlayerSettlementGeneration.cs" t="Include" />
                 <e p="RegionFeatureGeneration.cs" t="Include" />
                 <e p="RegionInnerMapGeneration.cs" t="Include" />
                 <e p="SettlementFinalization.cs" t="Include" />
-                <e p="SettlementGeneration.cs" t="Include" />
                 <e p="SettlementLoading.cs" t="Include" />
                 <e p="SingletonDataGeneration.cs" t="Include" />
+                <e p="SpecialStructureGeneration.cs" t="Include" />
                 <e p="SupportingFactionGeneration.cs" t="Include" />
                 <e p="TileFeatureGeneration.cs" t="Include" />
+                <e p="VillageGeneration.cs" t="Include" />
                 <e p="WorldMapBiomeGeneration.cs" t="Include" />
-                <e p="WorldMapElevationGeneration.cs" t="Include" />
-                <e p="WorldMapGridGeneration.cs" t="Include" />
                 <e p="WorldMapLandmarkGeneration.cs" t="Include" />
                 <e p="WorldMapOuterGridGeneration.cs" t="Include" />
                 <e p="WorldMapRegionGeneration.cs" t="Include" />
               </e>
-              <e p="HexTileIsland.cs" t="Include" />
               <e p="MapGenerationComponent.cs" t="Include" />
               <e p="MapGenerationData.cs" t="Include" />
             </e>
@@ -1855,27 +1861,31 @@
             </e>
             <e p="SettlementJobTriggerComponent.cs" t="Include" />
           </e>
-          <e p="JobsListExtension.cs" t="Include" />
-          <e p="ListExtension.cs" t="Include" />
           <e p="Localization" t="Include">
             <e p="LocalizationData.cs" t="Include" />
             <e p="LocalizationManager.cs" t="Include" />
             <e p="LogFiller.cs" t="Include" />
             <e p="LogFillers.cs" t="Include" />
           </e>
-          <e p="LocationGridTileListExtension.cs" t="Include" />
           <e p="Locations" t="Include">
-            <e p="Biomes.cs" t="Include" />
-            <e p="GridMap.cs" t="Include" />
-            <e p="HexTile" t="Include">
+            <e p="Area" t="Include">
+              <e p="Area.cs" t="Include" />
               <e p="Components" t="Include">
-                <e p="HexTileBiomeEffectTrigger.cs" t="Include" />
-                <e p="HexTileSpellsComponent.cs" t="Include" />
-                <e p="TileFeatureComponent.cs" t="Include" />
+                <e p="AreaBiomeComponent.cs" t="Include" />
+                <e p="AreaBiomeEffectTrigger.cs" t="Include" />
+                <e p="AreaComponent.cs" t="Include" />
+                <e p="AreaFeatureComponent.cs" t="Include" />
+                <e p="AreaGridTileComponent.cs" t="Include" />
+                <e p="AreaNeighbourComponent.cs" t="Include" />
+                <e p="AreaSpellsComponent.cs" t="Include" />
+                <e p="AreaStructureComponent.cs" t="Include" />
+                <e p="AreaTileObjectComponent.cs" t="Include" />
               </e>
               <e p="HexTile.cs" t="Include" />
               <e p="LocationAwareness.cs" t="Include" />
               <e p="Tile Features" t="Include">
+                <e p="AreaFeature.cs" t="Include" />
+                <e p="AreaFeatureDB.cs" t="Include" />
                 <e p="BlizzardFeature.cs" t="Include" />
                 <e p="FertileFeature.cs" t="Include" />
                 <e p="GameFeature.cs" t="Include" />
@@ -1887,10 +1897,11 @@
                 <e p="RainFeature.cs" t="Include" />
                 <e p="StoneSourceFeature.cs" t="Include" />
                 <e p="TileFeature.cs" t="Include" />
-                <e p="TileFeatureDB.cs" t="Include" />
                 <e p="WoodSourceFeature.cs" t="Include" />
               </e>
             </e>
+            <e p="Biomes.cs" t="Include" />
+            <e p="GridMap.cs" t="Include" />
             <e p="Inner Maps" t="Include">
               <e p="Area Maps" t="Include">
                 <e p="Structure Template Creator" t="Include">
@@ -1899,7 +1910,7 @@
               </e>
               <e p="BiomeTileObjectTileSetting.cs" t="Include" />
               <e p="Building Spots" t="Include">
-                <e p="LocationGridTileCollectionItem.cs" t="Include" />
+                <e p="AreaItem.cs" t="Include" />
               </e>
               <e p="BurningSource.cs" t="Include" />
               <e p="Collision Triggers" t="Include">
@@ -1918,7 +1929,6 @@
               </e>
               <e p="InnerMapAssetManager.cs" t="Include" />
               <e p="InnerMapCenter.cs" t="Include" />
-              <e p="InnerMapHexTile.cs" t="Include" />
               <e p="InnerMapManager.cs" t="Include" />
               <e p="InnerTileMap.cs" t="Include" />
               <e p="Lights" t="Include">
@@ -1996,7 +2006,7 @@
                 <e p="Wilderness.cs" t="Include" />
               </e>
               <e p="LocationGridTile.cs" t="Include" />
-              <e p="LocationGridTileCollection.cs" t="Include" />
+              <e p="LocationGridTileArray.cs" t="Include" />
               <e p="LocationGridTileGUS.cs" t="Include" />
               <e p="Map Objects" t="Include">
                 <e p="Map Object Visuals" t="Include">
@@ -2242,7 +2252,6 @@
             <e p="Region" t="Include">
               <e p="Landmarks" t="Include">
                 <e p="BaseLandmark.cs" t="Include" />
-                <e p="LandmarkVisual.cs" t="Include" />
               </e>
               <e p="Region Features" t="Include">
                 <e p="CrystalsFeature.cs" t="Include" />
@@ -2296,7 +2305,6 @@
           <e p="Managers" t="Include">
             <e p="AchievementManager.cs" t="Include" />
             <e p="AudioManager.cs" t="Include" />
-            <e p="BezierCurveManager.cs" t="Include" />
             <e p="CharacterClassManager.cs" t="Include" />
             <e p="CharacterManager.cs" t="Include" />
             <e p="CleanUpMemoryManager.cs" t="Include" />
@@ -2309,7 +2317,6 @@
             <e p="JobManager.cs" t="Include" />
             <e p="LevelLoaderManager.cs" t="Include" />
             <e p="MainMenuManager.cs" t="Include" />
-            <e p="ObjectPoolManager.cs" t="Include" />
             <e p="PartyManager.cs" t="Include" />
             <e p="PathfindingManager.cs" t="Include" />
             <e p="PlayerManager.cs" t="Include" />
@@ -2330,6 +2337,11 @@
             <e p="UIManager.cs" t="Include" />
             <e p="WorldConfigManager.cs" t="Include" />
             <e p="WorldEventManager.cs" t="Include" />
+          </e>
+          <e p="Object Pools" t="Include">
+            <e p="ListPoolManager.cs" t="Include" />
+            <e p="LogPool.cs" t="Include" />
+            <e p="ObjectPoolManager.cs" t="Include" />
           </e>
           <e p="Party" t="Include">
             <e p="Party.cs" t="Include" />
@@ -2353,7 +2365,6 @@
             <e p="BlockerTraversalProvider.cs" t="Include" />
             <e p="CharacterAIPath.cs" t="Include" />
             <e p="CharacterDestinationSetter.cs" t="Include" />
-            <e p="CharacterPathfinder.cs" t="Include" />
             <e p="CustomABPath.cs" t="Include" />
             <e p="IHasNeighbours.cs" t="Include" />
             <e p="Path.cs" t="Include" />
@@ -2384,6 +2395,7 @@
               <e p="Taunt.cs" t="Include" />
             </e>
             <e p="Components" t="Include">
+              <e p="CurrenciesComponent.cs" t="Include" />
               <e p="PlagueComponent.cs" t="Include" />
               <e p="PlayerSkillComponent.cs" t="Include" />
               <e p="SeizeComponent.cs" t="Include" />
@@ -2428,6 +2440,13 @@
                 <e p="Transmission.cs" t="Include" />
               </e>
             </e>
+            <e p="Player Input" t="Include">
+              <e p="IntelInputModule.cs" t="Include" />
+              <e p="PickPortalInputModule.cs" t="Include" />
+              <e p="PlayerInputModule.cs" t="Include" />
+              <e p="SeizeInputModule.cs" t="Include" />
+              <e p="SpellInputModule.cs" t="Include" />
+            </e>
             <e p="Player.cs" t="Include" />
             <e p="PlayerDB.cs" t="Include" />
             <e p="PlayerSkillTreeNode.cs" t="Include" />
@@ -2463,6 +2482,7 @@
                 <e p="OstracizerData.cs" t="Include" />
                 <e p="TortureChambersData.cs" t="Include" />
               </e>
+              <e p="FakePlayer.cs" t="Include" />
               <e p="Minion Player Skills" t="Include">
                 <e p="DemonEnvyData.cs" t="Include" />
                 <e p="DemonGluttonyData.cs" t="Include" />
@@ -2532,6 +2552,7 @@
                 <e p="StifleMigrationData.cs" t="Include" />
               </e>
               <e p="SkillData.cs" t="Include" />
+              <e p="SkillProgressionManager.cs" t="Include" />
               <e p="Spells" t="Include">
                 <e p="BallLightningData.cs" t="Include" />
                 <e p="BlizzardData.cs" t="Include" />
@@ -2572,6 +2593,7 @@
                 <e p="SummonPlayerSkillSpecificData.cs" t="Include" />
               </e>
             </e>
+            <e p="SpiritEnergy.cs" t="Include" />
             <e p="Summons" t="Include">
               <e p="Abomination.cs" t="Include" />
               <e p="Angels" t="Include">
@@ -2712,9 +2734,7 @@
               <e p="CharacterAssumedStep.cs" t="Include" />
               <e p="CharactersRemovedBehaviourStep.cs" t="Include" />
               <e p="ChooseSpellStep.cs" t="Include" />
-              <e p="ClickOnAreaStep.cs" t="Include" />
               <e p="ClickOnCharacterStep.cs" t="Include" />
-              <e p="ClickOnEmptyAreaStep.cs" t="Include" />
               <e p="ClickOnObjectStep.cs" t="Include" />
               <e p="ClickOnRoomStep.cs" t="Include" />
               <e p="ClickOnStructureStep.cs" t="Include" />
@@ -2735,7 +2755,6 @@
                 <e p="KillVillagersByPsychopathStep.cs" t="Include" />
                 <e p="TurnAvillagerToPsychopathStep.cs" t="Include" />
               </e>
-              <e p="LeftClickHexTileStep.cs" t="Include" />
               <e p="LogHistoryItemClicked.cs" t="Include" />
               <e p="LookAroundStep.cs" t="Include" />
               <e p="MinionSummonedStep.cs" t="Include" />
@@ -2789,7 +2808,6 @@
                   <e p="ZombieVirus.cs" t="Include" />
                 </e>
                 <e p="ShareAnIntel.cs" t="Include" />
-                <e p="WorldMap.cs" t="Include" />
               </e>
               <e p="Important Tutorials" t="Include">
                 <e p="Afflictions.cs" t="Include" />
@@ -2803,7 +2821,6 @@
                 <e p="ImportantTutorial.cs" t="Include" />
                 <e p="MeddlerTutorial.cs" t="Include" />
                 <e p="Prison.cs" t="Include" />
-                <e p="RegionalMap.cs" t="Include" />
                 <e p="SpawnAnInvader.cs" t="Include" />
                 <e p="WinCondition.cs" t="Include" />
               </e>
@@ -2841,7 +2858,6 @@
             <e p="SaveData.cs" t="Include" />
             <e p="SaveDataAlterEgo.cs" t="Include" />
             <e p="SaveDataCharacter.cs" t="Include" />
-            <e p="SaveDataCombatAbility.cs" t="Include" />
             <e p="SaveDataCurrentProgress.cs" t="Include" />
             <e p="SaveDataFaction.cs" t="Include" />
             <e p="SaveDataFactionRelationship.cs" t="Include" />
@@ -2850,7 +2866,6 @@
             <e p="SaveDataHextile.cs" t="Include" />
             <e p="SaveDataInnerMap.cs" t="Include" />
             <e p="SaveDataJobQueueItem.cs" t="Include" />
-            <e p="SaveDataLandmark.cs" t="Include" />
             <e p="SaveDataLocationGridTile.cs" t="Include" />
             <e p="SaveDataLocationStructure.cs" t="Include" />
             <e p="SaveDataMinion.cs" t="Include" />
@@ -2864,6 +2879,7 @@
             <e p="Scenario Maps" t="Include">
               <e p="ScenarioMapData.cs" t="Include" />
               <e p="ScenarioWorldMapSave.cs" t="Include" />
+              <e p="SpecialStructureSetting.cs" t="Include" />
             </e>
             <e p="TileLocationSave.cs" t="Include" />
             <e p="World Map" t="Include">
@@ -2908,11 +2924,16 @@
             </e>
             <e p="Player Skill Data" t="Include">
               <e p="PlayerSkillData.cs" t="Include" />
+              <e p="RequirementData.cs" t="Include" />
+              <e p="SkillUpgradeData.cs" t="Include" />
             </e>
             <e p="PlayerSkillLoadout.cs" t="Include" />
             <e p="PlayerSkillTree.cs" t="Include" />
             <e p="RaceData.cs" t="Include" />
             <e p="ScenarioData.cs" t="Include" />
+            <e p="Structure Data" t="Include">
+              <e p="StructureData.cs" t="Include" />
+            </e>
           </e>
           <e p="Serializable Dictionaries" t="Include">
             <e p="SerializableDictionaries.cs" t="Include" />
@@ -2920,7 +2941,6 @@
           <e p="Settings" t="Include">
             <e p="Settings.cs" t="Include" />
           </e>
-          <e p="SettlementListExtension.cs" t="Include" />
           <e p="Steamworks.NET" t="Include">
             <e p="SteamManager.cs" t="Include" />
           </e>
@@ -2948,11 +2968,11 @@
             <e p="DatabaseThreadPool.cs" t="Include" />
             <e p="GoapThread.cs" t="Include" />
             <e p="InnerPathfindingThread.cs" t="Include" />
-            <e p="LogDatabaseThread.cs" t="Include" />
             <e p="Multithread.cs" t="Include" />
             <e p="MultiThreadPool.cs" t="Include" />
-            <e p="PathFindingThread.cs" t="Include" />
-            <e p="PathfindingThreadPool.cs" t="Include" />
+            <e p="SQLLogInsertThread.cs" t="Include" />
+            <e p="SQLWorkerItem.cs" t="Include" />
+            <e p="UpdateCharacterNameThread.cs" t="Include" />
           </e>
           <e p="Tile Maps" t="Include">
             <e p="StructureFloorTile.cs" t="Include" />
@@ -3183,7 +3203,6 @@
             <e p="FactionTraitFilterItem.cs" t="Include" />
             <e p="GameUIToggle.cs" t="Include" />
             <e p="HiddenDesireItem.cs" t="Include" />
-            <e p="IdeologyPickerUI.cs" t="Include" />
             <e p="ImportantNotificationItem.cs" t="Include" />
             <e p="InfoUI" t="Include">
               <e p="CharacterInfoUI.cs" t="Include" />
@@ -3191,11 +3210,9 @@
               <e p="FactionInfoHubUI.cs" t="Include" />
               <e p="FactionInfoUI.cs" t="Include" />
               <e p="FactionInfoUIV2.cs" t="Include" />
-              <e p="HextileInfoUI.cs" t="Include" />
               <e p="InfoUIBase.cs" t="Include" />
               <e p="MonsterInfoUI.cs" t="Include" />
               <e p="PartyInfoUI.cs" t="Include" />
-              <e p="RegionInfoUI.cs" t="Include" />
               <e p="SettlementInfoUI.cs" t="Include" />
               <e p="StructureInfoUI.cs" t="Include" />
               <e p="StructureRoomInfoUI.cs" t="Include" />
@@ -3208,7 +3225,6 @@
             <e p="ISelectable.cs" t="Include" />
             <e p="ItemItem.cs" t="Include" />
             <e p="LandmarkCharacterItem.cs" t="Include" />
-            <e p="LandmarkNameplate.cs" t="Include" />
             <e p="LevelCollapseUI.cs" t="Include" />
             <e p="LoadWindow.cs" t="Include" />
             <e p="LocationPortrait.cs" t="Include" />
@@ -3228,7 +3244,6 @@
             <e p="MemoryItem.cs" t="Include" />
             <e p="MeterMark.cs" t="Include" />
             <e p="MinionCard.cs" t="Include" />
-            <e p="MinionCommandsUI.cs" t="Include" />
             <e p="MinionLeaderPicker.cs" t="Include" />
             <e p="MinionPicker.cs" t="Include" />
             <e p="Models" t="Include">
@@ -3250,11 +3265,15 @@
                 <e p="FatalityUIController.cs" t="Include" />
                 <e p="LifeSpanUIController.cs" t="Include" />
                 <e p="OnDeathUIController.cs" t="Include" />
+                <e p="PurchaseSkillUIController.cs" t="Include" />
                 <e p="SchemeUIController.cs" t="Include" />
                 <e p="SymptomsUIController.cs" t="Include" />
                 <e p="TemptUIController.cs" t="Include" />
                 <e p="TransmissionUIController.cs" t="Include" />
                 <e p="WorldGenOptionsUIController.cs" t="Include" />
+              </e>
+              <e p="Items" t="Include">
+                <e p="PurchaseSkillItemUI.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
@@ -3264,6 +3283,7 @@
                 <e p="FatalityUIModel.cs" t="Include" />
                 <e p="LifeSpanUIModel.cs" t="Include" />
                 <e p="OnDeathUIModel.cs" t="Include" />
+                <e p="PurchaseSkillUIModel.cs" t="Include" />
                 <e p="SchemeUIModel.cs" t="Include" />
                 <e p="SymptomsUIModel.cs" t="Include" />
                 <e p="TemptUIModel.cs" t="Include" />
@@ -3278,6 +3298,7 @@
                 <e p="FatalityUIView.cs" t="Include" />
                 <e p="LifeSpanUIView.cs" t="Include" />
                 <e p="OnDeathUIView.cs" t="Include" />
+                <e p="PurchaseSkillUIView.cs" t="Include" />
                 <e p="SchemeUIView.cs" t="Include" />
                 <e p="SymptomsUIView.cs" t="Include" />
                 <e p="TemptUIView.cs" t="Include" />
@@ -3308,19 +3329,15 @@
             <e p="PanelDragBehaviour.cs" t="Include" />
             <e p="ParentPlayerSkillTreeUI.cs" t="Include" />
             <e p="PingPongCanvasGroupAlpha.cs" t="Include" />
-            <e p="PlayerBuildLandmarkUI.cs" t="Include" />
             <e p="PlayerCharacterItem.cs" t="Include" />
             <e p="PlayerNotificationItem.cs" t="Include" />
-            <e p="PlayerResearchUI.cs" t="Include" />
             <e p="PlayerSkillDetails.cs" t="Include" />
             <e p="PlayerSkillDetailsTooltip.cs" t="Include" />
             <e p="PlayerSkillLoadoutObjectPicker.cs" t="Include" />
             <e p="PlayerSkillLoadoutUI.cs" t="Include" />
             <e p="PlayerSkillTreeItem.cs" t="Include" />
             <e p="PlayerSkillTreeUI.cs" t="Include" />
-            <e p="PlayerSummonMinionUI.cs" t="Include" />
             <e p="PlayerUI.cs" t="Include" />
-            <e p="PlayerUpgradeUI.cs" t="Include" />
             <e p="POITestingUI.cs" t="Include" />
             <e p="PopupMessageBox.cs" t="Include" />
             <e p="Popups" t="Include">
@@ -3367,10 +3384,6 @@
             <e p="SlotItemDraggable.cs" t="Include" />
             <e p="SpellItem.cs" t="Include" />
             <e p="StringPickerItem.cs" t="Include" />
-            <e p="TheEyeUI.cs" t="Include" />
-            <e p="TheFingersUI.cs" t="Include" />
-            <e p="TheNeedlesUI.cs" t="Include" />
-            <e p="TheProfaneUI.cs" t="Include" />
             <e p="TileObjectPortrait.cs" t="Include" />
             <e p="TimerHubItem.cs" t="Include" />
             <e p="ToolTips" t="Include">
@@ -3393,12 +3406,9 @@
             <e p="WorldPickerItem.cs" t="Include" />
             <e p="WorldSettings.cs" t="Include" />
           </e>
-          <e p="UIExtensions.cs" t="Include" />
           <e p="UtilityScripts" t="Include">
             <e p="ActionOptionHoverHandler.cs" t="Include" />
             <e p="BaseMonoBehaviour.cs" t="Include" />
-            <e p="BezierCurve.cs" t="Include" />
-            <e p="BezierCurveParent.cs" t="Include" />
             <e p="BoundDrawer.cs" t="Include" />
             <e p="ChangeOpacityOnHoverImage.cs" t="Include" />
             <e p="CollectionUtilities.cs" t="Include" />
@@ -3413,13 +3423,13 @@
             <e p="FollowerComponent.cs" t="Include" />
             <e p="FPSDisplay.cs" t="Include" />
             <e p="GameUtilities.cs" t="Include" />
-            <e p="HexTileComparer.cs" t="Include" />
             <e p="HoverHandler.cs" t="Include" />
             <e p="IMG2Sprite.cs" t="Include" />
             <e p="IntRange.cs" t="Include" />
             <e p="JobUtilities.cs" t="Include" />
             <e p="LocationAwarenessUtility.cs" t="Include" />
             <e p="LockRotation.cs" t="Include" />
+            <e p="LogUtilities.cs" t="Include" />
             <e p="MinionDraggable.cs" t="Include" />
             <e p="NewMinionDraggable.cs" t="Include" />
             <e p="ObjectCopier.cs" t="Include" />
@@ -3430,6 +3440,7 @@
             <e p="RectDrawer.cs" t="Include" />
             <e p="ReflectiveEnumerator.cs" t="Include" />
             <e p="RendererExtensions.cs" t="Include" />
+            <e p="RuinarchListPool.cs" t="Include" />
             <e p="SerializableDictionary.cs" t="Include" />
             <e p="Signals" t="Include">
               <e p="CharacterSignals.cs" t="Include" />
@@ -3463,8 +3474,6 @@
             <e p="TestingUtilities.cs" t="Include" />
             <e p="TextTyper.cs" t="Include" />
             <e p="ToggleTextColorizer.cs" t="Include" />
-            <e p="TravelLine.cs" t="Include" />
-            <e p="TravelLineParent.cs" t="Include" />
             <e p="UIHoverPosition.cs" t="Include" />
             <e p="UnderlineHyperlink.cs" t="Include" />
             <e p="Utilities.cs" t="Include" />

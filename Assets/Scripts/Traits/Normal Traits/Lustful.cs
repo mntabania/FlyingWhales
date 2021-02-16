@@ -19,7 +19,7 @@ namespace Traits {
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
             base.ExecuteCostModification(action, actor, poiTarget, otherData, ref cost);
             if (action == INTERACTION_TYPE.MAKE_LOVE) {
-                TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick(actor);
+                TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick(actor);
                 if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
                     if (poiTarget is Character) {
                         Character targetCharacter = poiTarget as Character;

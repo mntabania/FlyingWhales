@@ -34,7 +34,7 @@ public class RumorComponent : CharacterComponent {
         List<ActualGoapNode> filteredInfo = new List<ActualGoapNode>();
         for (int i = 0; i < _negativeInfoPool.Count; i++) {
             ActualGoapNode node = _negativeInfoPool[i];
-            if(node.descriptionLog.hasValue) {
+            if(node.descriptionLog != null) {
                 if(node.actor == negativeCharacter && node.poiTarget != spreadTargetCharacter) {
                     filteredInfo.Add(node);
                 }

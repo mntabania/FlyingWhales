@@ -29,8 +29,8 @@ public class ShareInformation : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
 
@@ -247,11 +247,6 @@ public class ShareInformation : GoapAction {
             weightLog += "\nResult: " + result;
             sharer.logComponent.PrintLogIfActive(weightLog);
 
-            //recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
-
-            //CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
-            //recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
-
             if (result == "Belief") {
                 //Recipient believes
                 recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
@@ -266,15 +261,8 @@ public class ShareInformation : GoapAction {
             believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             believeLog.AddToFillers(null, reactable.classificationName.ToLower(), LOG_IDENTIFIER.STRING_1);
-            believeLog.AddLogToDatabase();
+            believeLog.AddLogToDatabase(true);
         }
-        //if (reactable is ActualGoapNode || reactable is InterruptHolder) {
-        //    if (reactable.actor != recipient) {
-        //        recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
-        //    }
-        //} else if (reactable is Rumor) {
-
-        //}
     }
     #endregion
 

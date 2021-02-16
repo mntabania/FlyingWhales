@@ -708,7 +708,7 @@ public class CharacterManager : BaseMonoBehaviour {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
                         log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        log.AddLogToDatabase();
+                        log.AddLogToDatabase(true);
                     }
                 }
 
@@ -1496,7 +1496,7 @@ public class CharacterManager : BaseMonoBehaviour {
     }
     public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
         Player player = PlayerManager.Instance.player;
-        Minion minion = new Minion(CreateNewCharacter(className, race, GENDER.MALE, player.playerFaction, player.playerSettlement, player.portalTile.region), false);
+        Minion minion = new Minion(CreateNewCharacter(className, race, GENDER.MALE, player.playerFaction, player.playerSettlement, player.portalArea.region), false);
         if (initialize) {
             InitializeMinion(minion);
         }
