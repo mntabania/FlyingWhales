@@ -12,10 +12,8 @@ public class SkillUpgradeDataEditor : Editor {
     bool foldUpgradeBonus = true;
 
     void OnEnable() {
-        
         data = (PlayerSkillData)target;
         AssetDatabase.Refresh();
-        EditorUtility.SetDirty(data);
     }
 
     public override void OnInspectorGUI() {
@@ -29,6 +27,9 @@ public class SkillUpgradeDataEditor : Editor {
         EditorGUILayout.TextArea("UPGRADE BONUS STATS");
         DisplayUpgradeBonus();
         serializedObject.ApplyModifiedProperties();
+        if (GUI.changed) {
+            EditorUtility.SetDirty(target);
+        }
     }
 
 	private void OnDisable() {
