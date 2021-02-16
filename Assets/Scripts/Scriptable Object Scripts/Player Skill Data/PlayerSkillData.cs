@@ -40,6 +40,10 @@ public class PlayerSkillData : ScriptableObject {
         return skillUpgradeData.GetManaCostPerLevel(level);
     }
 
+    public int GetCoolDownBaseOnLevel(int level) {
+        return skillUpgradeData.GetCoolDownPerLevel(level);
+    }
+
     public int GetMaxChargesBaseOnLevel(int level) {
         return skillUpgradeData.GetChargesBaseOnLevel(level);
     }

@@ -72,7 +72,7 @@ public class PlayerSkillComponent {
         Debug.LogError(spellData.name + " -- " + spellData.currentLevel + " -- " + playerSkillData.cheatedLevel);
         spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(charges);
-        spellData.SetCooldown(cooldown);
+        spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
         spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
         spellData.SetUnlockCost(playerSkillData.unlockCost);
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
@@ -273,7 +273,7 @@ public class PlayerSkillComponent {
             spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
             spellData.SetCharges(spellData.maxCharges);
         }
-        spellData.SetCooldown(skillData.cooldown);
+        spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
         
         spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(skillType));
         spellData.SetUnlockCost(playerSkillData.unlockCost);
@@ -291,7 +291,7 @@ public class PlayerSkillComponent {
         }
         spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         spellData.SetCharges(spellData.maxCharges);
-        spellData.SetCooldown(skillData.cooldown);
+        spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
         spellData.SetUnlockCost(playerSkillData.unlockCost);
         spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
