@@ -37,6 +37,12 @@ public class WindBlastData : SkillData {
     private void ApplyWindDamage(ITraitable traitable) {
         int processedDamage = m_baseWindDamage - (m_baseWindDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.WIND_BLAST));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, showHPBar: true);
+        if (traitable is Character character) { 
+            if(character.currentHP <= 0){
+                character.skillCauseOfDeath = PLAYER_SKILL_TYPE.WIND_BLAST;
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+            }
+        }
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);

@@ -56,6 +56,10 @@ public class BallLightning : MovingTileObject {
                 responsibleCharacter = character;
             }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            if (responsibleCharacter.currentHP <= 0) {
+                responsibleCharacter.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, responsibleCharacter.marker.transform.position, 1, responsibleCharacter.currentRegion.innerMap);
+            }
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Ice) {
             //Electric Storm

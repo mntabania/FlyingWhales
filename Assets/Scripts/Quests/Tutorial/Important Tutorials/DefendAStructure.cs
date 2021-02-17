@@ -43,7 +43,7 @@ namespace Tutorial {
         }
         private bool IsSummonedMinionValid(Minion minion) {
             return minion.character.traitContainer.HasTrait("Defender") &&
-                   (minion.character.currentStructure is DemonicStructure || minion.character.gridTileLocation.isCorrupted);
+                   (minion.character.currentStructure is DemonicStructure || minion.character.gridTileLocation.corruptionComponent.isCorrupted);
         }
         #endregion
         

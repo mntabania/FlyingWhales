@@ -11,7 +11,7 @@ public class AreaGridTileComponent : AreaComponent {
     public LocationGridTile centerGridTile { get; private set; }
     public List<LocationGridTile> gridTiles { get; private set; }
     public List<LocationGridTile> borderTiles { get; private set; }
-    public bool isCorrupted => gridTiles.Any(t => t.isCorrupted);
+    public bool isCorrupted => gridTiles.Any(t => t.corruptionComponent.isCorrupted);
 
     public AreaGridTileComponent() {
         gridTiles = new List<LocationGridTile>();
@@ -191,7 +191,7 @@ public class AreaGridTileComponent : AreaComponent {
             LocationGridTile currTile = gridTiles[i];
             Vector3Int position = currTile.localPlace;
             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, owner.areaData.biomeType);
-            if (currTile.structure.isInterior || currTile.isCorrupted) {
+            if (currTile.structure.isInterior || currTile.corruptionComponent.isCorrupted) {
                 //set the previous tile to the new biome, so that when the structure is destroyed
                 //it will revert to the right asset
             } else {
@@ -211,7 +211,7 @@ public class AreaGridTileComponent : AreaComponent {
             LocationGridTile currTile = gridTiles[i];
             Vector3Int position = currTile.localPlace;
             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, owner.areaData.biomeType);
-            if (currTile.structure.isInterior || currTile.isCorrupted) {
+            if (currTile.structure.isInterior || currTile.corruptionComponent.isCorrupted) {
                 //do not change tiles of interior or corrupted structures.
                 continue;
             }
@@ -229,7 +229,7 @@ public class AreaGridTileComponent : AreaComponent {
     public bool HasCorruption() {
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile currTile = gridTiles[i];
-            if (currTile.isCorrupted) {
+            if (currTile.corruptionComponent.isCorrupted) {
                 return true;
             }
         }
@@ -243,13 +243,13 @@ public class AreaGridTileComponent : AreaComponent {
         PlayerManager.Instance.player.playerSettlement.RemoveAreaFromSettlement(p_area);
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            tile.UnCorruptTile();
+            tile.corruptionComponent.UnCorruptTile();
         }
     }
     private void InstantlyCorruptAllOwnedInnerMapTiles() {
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            tile.CorruptTile();
+            tile.corruptionComponent.CorruptTile();
         }
     }
     private void OnCorruptSuccess(Area p_area) {

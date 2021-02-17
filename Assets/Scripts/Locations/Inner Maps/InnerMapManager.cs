@@ -51,6 +51,9 @@ namespace Inner_Maps {
         public GameObject characterCollisionTriggerPrefab;
         public GameObject dragonCollisionTriggerPrefab;
 
+        [Header("Location Grid Tile")]
+        public GameObject gridTileMouseEventsPrefab;
+
         [Header("Pathfinding")]
         [SerializeField] private AstarPath pathfinder;
 

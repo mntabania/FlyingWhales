@@ -35,7 +35,7 @@ public class BedObjectGameObject : TileObjectGameObject {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 
                 bed.state,
                 area.biomeType,
-                bed.gridTileLocation?.isCorrupted ?? false));
+                bed.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
         } else if (userCount == 1) {
             SetVisual(bed1Sleeping);
         } else if (userCount == 2) {

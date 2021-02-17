@@ -30,6 +30,10 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public string wallTileMapAssetName;
     public float floorSample;
 
+    //Components
+    public SaveDataGridTileCorruptionComponent corruptionComponent;
+    public SaveDataGridTileMouseEventsComponent mouseEventsComponent;
+
     public override void Save(LocationGridTile gridTile) {
         persistentID = gridTile.persistentID;
         isDefault = gridTile.isDefault;
@@ -54,6 +58,9 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         wallTileMapAssetName = gridTile.parentMap.structureTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
 
         floorSample = gridTile.floorSample;
+
+        corruptionComponent = new SaveDataGridTileCorruptionComponent(); corruptionComponent.Save(gridTile.corruptionComponent);
+        mouseEventsComponent = new SaveDataGridTileMouseEventsComponent(); mouseEventsComponent.Save(gridTile.mouseEventsComponent);
     }
 
     public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap, SaveDataCurrentProgress saveData, Area p_area) {
