@@ -38,7 +38,7 @@ public class SkillData : IPlayerSkill {
 
     public void LevelUp() {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
-        currentLevel = Mathf.Clamp(++currentLevel, 0, playerSkillData.skillUpgradeData.upgradeCosts.Count);
+        currentLevel = Mathf.Clamp(++currentLevel, 0, 3);
         SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
         SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
         SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
