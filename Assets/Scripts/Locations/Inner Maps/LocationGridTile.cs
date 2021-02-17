@@ -82,11 +82,14 @@ namespace Inner_Maps {
         private Dictionary<GridNeighbourDirection, LocationGridTile> _neighbours;
         private Dictionary<GridNeighbourDirection, LocationGridTile> _fourNeighbours;
 
+        //Components
+        public GridTileCorruptionComponent corruptionComponent { get; private set; }
+        public GridTileMouseEventsComponent mouseEventsComponent { get; private set; }
+
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
         public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
-        public bool isCorrupted => groundType == Ground_Type.Corrupted;
         public BIOMES biomeType => area.biomeType;
         #endregion
         
@@ -123,6 +126,9 @@ namespace Inner_Maps {
             neighbourList = new List<LocationGridTile>();
             isDefault = true;
             connectorsOnTile = 0;
+            //Components
+            corruptionComponent = new GridTileCorruptionComponent(); corruptionComponent.SetOwner(this);
+            mouseEventsComponent = new GridTileMouseEventsComponent(); mouseEventsComponent.SetOwner(this);
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
         public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap p_parentMap, Area p_area) {
@@ -144,6 +150,8 @@ namespace Inner_Maps {
             neighbourList = new List<LocationGridTile>();
             isDefault = data.isDefault;
             connectorsOnTile = data.connectorsCount;
+            corruptionComponent = data.corruptionComponent.Load(); corruptionComponent.SetOwner(this);
+            mouseEventsComponent = data.mouseEventsComponent.Load(); mouseEventsComponent.SetOwner(this);
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
 
@@ -161,6 +169,8 @@ namespace Inner_Maps {
             for (int i = 0; i < saveDataLocationGridTile.meteorCount; i++) {
                 AddMeteor();
             }
+            corruptionComponent.LoadSecondWave();
+            mouseEventsComponent.LoadSecondWave();
         }
         #endregion
 
@@ -638,7 +648,7 @@ namespace Inner_Maps {
                 }
             }
 
-            if (isCorrupted) {
+            if (corruptionComponent.isCorrupted) {
                 if(!character.isDead && character.limiterComponent.canMove && character.limiterComponent.canPerform) {
                     if (!character.movementComponent.hasMovedOnCorruption) {
                         //Corrupted hexes should also be avoided
@@ -1653,45 +1663,6 @@ namespace Inner_Maps {
         }
         public void ClearWallObjects() {
             walls.Clear();
-        }
-        #endregion
-
-        #region Corruption
-        public void CorruptTile() {
-            SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
-            CreateSeamlessEdgesForSelfAndNeighbours();
-            if (objHere != null) {
-                if (objHere is TreeObject tree) {
-                    (tree.mapObjectVisual as TileObjectGameObject).UpdateTileObjectVisual(tree);
-                } else if (objHere is BlockWall blockWall) {
-                    blockWall.SetWallType(WALL_TYPE.Demon_Stone);
-                    blockWall.UpdateVisual(this);
-                } else {
-                    if (objHere is TileObject tileObject) {
-                        if (objHere is Tombstone tombstone) {
-                            tombstone.SetRespawnCorpseOnDestroy(false);
-                        }
-                        if (!tileObject.tileObjectType.IsTileObjectImportant() && !tileObject.traitContainer.HasTrait("Indestructible")) {
-                            structure.RemovePOI(objHere);    
-                        }    
-                    }
-                    
-                    // structure.RemovePOI(objHere);
-                }
-            }
-        }
-        public void UnCorruptTile() {
-            RevertTileToOriginalPerlin();
-            CreateSeamlessEdgesForSelfAndNeighbours();
-            if (objHere != null) {
-                if (objHere is TileObject tileObject) {
-                    if (!tileObject.traitContainer.HasTrait("Indestructible")) {
-                        structure.RemovePOI(objHere);    
-                    }
-                } else {
-                    structure.RemovePOI(objHere);
-                }
-            }
         }
         #endregion
 

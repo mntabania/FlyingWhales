@@ -1414,7 +1414,7 @@ public class ReactionComponent : CharacterComponent {
         //}
         if (targetTileObject.traitContainer.HasTrait("Danger Remnant", "Lightning Remnant")) {
             if (!actor.traitContainer.HasTrait("Berserked")) {
-                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
+                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.corruptionComponent.isCorrupted) {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                 } else {
                     if (actor.traitContainer.HasTrait("Coward")) {
@@ -1436,7 +1436,7 @@ public class ReactionComponent : CharacterComponent {
         }
         if (targetTileObject.traitContainer.HasTrait("Surprised Remnant")) {
             if (!actor.traitContainer.HasTrait("Berserked")) {
-                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
+                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.corruptionComponent.isCorrupted) {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                 } else {
                     if (actor.traitContainer.HasTrait("Coward")) {

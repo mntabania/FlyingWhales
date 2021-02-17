@@ -80,7 +80,7 @@ public class SchedulingManager : BaseMonoBehaviour {
                 ScheduledAction action = acts[i];
                 if (action.scheduleID == id) {
                     schedules[date].RemoveAt(i);
-                    Debug.Log($"Removed scheduled item {action.ToString()} for {action.scheduler.ToString()}. ID is {id}");
+                    Debug.Log($"Removed scheduled item {action.ToString()} for {action.scheduler?.ToString()}. ID is {id}");
                     return true;
                 }
             }
