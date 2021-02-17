@@ -32,8 +32,8 @@ public class ProtectionData : SkillData {
         //GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);
         base.ActivateAbility(targetTile);
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             return targetTile.structure != null;
         }

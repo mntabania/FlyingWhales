@@ -61,15 +61,13 @@ namespace Inner_Maps {
         [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
         public GameObject tileObjectSlotsParentPrefab;
         public GameObject tileObjectSlotPrefab;
-        
-        [Header("Structures")]
-        [SerializeField] private LocationStructurePrefabDictionary structurePrefabs;
-        [SerializeField] private LocationStructurePrefabDictionary individualStructurePrefabs;
-        [SerializeField] private LocationStructurePrefabDictionary corruptedStructurePrefabs;
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
+
+        [Header("Effects")] 
+        [SerializeField] private GameObject pfAreaMapTextPopup;
 
         //NPCSettlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
@@ -925,6 +923,14 @@ namespace Inner_Maps {
         }
         #endregion
 
+        #region Effects
+        public void ShowAreaMapTextPopup(string p_text, Vector3 p_worldPos, Color p_color) {
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(pfAreaMapTextPopup.name, p_worldPos, Quaternion.identity, transform, true);
+            AreaMapTextPopup textPopup = go.GetComponent<AreaMapTextPopup>();
+            textPopup.Show(p_text, p_worldPos, p_color);
+        }
+        #endregion
+
         protected override void OnDestroy() {
             if (Application.isPlaying) {
                 Debug.Log("Cleaning up inner maps...");
@@ -937,7 +943,6 @@ namespace Inner_Maps {
                     innerMaps?.Clear();    
                 }
                 Destroy(pathfinder);
-                structurePrefabs?.Clear();
                 tileObjectSlotSettings?.Clear();
                 wallResourceAssets?.Clear();
                 base.OnDestroy();

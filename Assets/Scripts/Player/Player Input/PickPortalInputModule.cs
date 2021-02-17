@@ -13,6 +13,7 @@ namespace Player_Input {
         private LocationStructureObject _portalPrefab;
         private LocationGridTile _lastHoveredTile;
         private bool _canPlacePortalOnCurrentTile;
+        private string cannotPerformReason;
 
         public PickPortalInputModule() {
             _portalPrefab = InnerMapManager.Instance.GetStructurePrefabsForStructure(STRUCTURE_TYPE.THE_PORTAL, RESOURCE.NONE).First().GetComponent<LocationStructureObject>();
@@ -32,15 +33,32 @@ namespace Player_Input {
                 if (_lastHoveredTile != hoveredTile) {
                     _lastHoveredTile = hoveredTile;
                     Area area = hoveredTile.area;
-                    bool hasEnoughSpace = _portalPrefab.HasEnoughSpaceIfPlacedOn(hoveredTile);
-                    bool canBuildDemonicStructureOnArea = area.structureComponent.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL);
+                    bool hasEnoughSpace = _portalPrefab.HasEnoughSpaceIfPlacedOn(hoveredTile, out var noSpaceReason);
+                    bool canBuildDemonicStructureOnArea = area.structureComponent.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL, out var notValidAreaReason);
                     _canPlacePortalOnCurrentTile = hasEnoughSpace && canBuildDemonicStructureOnArea;
+                    if (!_canPlacePortalOnCurrentTile) {
+                        if (!string.IsNullOrEmpty(noSpaceReason)) {
+                            cannotPerformReason = noSpaceReason;    
+                        } else if (!string.IsNullOrEmpty(notValidAreaReason)) {
+                            cannotPerformReason = notValidAreaReason;    
+                        } else {
+                            cannotPerformReason = string.Empty;    
+                        }
+                    } else {
+                        cannotPerformReason = string.Empty;
+                    }
                     var color = _canPlacePortalOnCurrentTile ? GameUtilities.GetValidTileHighlightColor() : GameUtilities.GetInvalidTileHighlightColor();
                     InputManager.Instance.SetCursorTo(_canPlacePortalOnCurrentTile ? InputManager.Cursor_Type.Check : InputManager.Cursor_Type.Cross);
                     PlayerManager.Instance.SetStructurePlacementVisualHighlightColor(color);
                 }
-                if (_canPlacePortalOnCurrentTile && Input.GetMouseButtonDown(0)) {
-                    AskForPlacePortalConfirmation(hoveredTile);
+                if (Input.GetMouseButtonDown(0)) {
+                    if (_canPlacePortalOnCurrentTile ) {
+                        AskForPlacePortalConfirmation(hoveredTile);    
+                    } else {
+                        if (!string.IsNullOrEmpty(cannotPerformReason)) {
+                            InnerMapManager.Instance.ShowAreaMapTextPopup(cannotPerformReason, hoveredTile.centeredWorldLocation, Color.white);
+                        }    
+                    }
                 }
             } else {
                 _lastHoveredTile = null;

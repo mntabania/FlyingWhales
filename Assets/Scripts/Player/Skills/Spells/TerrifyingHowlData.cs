@@ -36,8 +36,8 @@ public class TerrifyingHowlData : SkillData {
             character.combatComponent.Flight(targetTile.genericTileObject, "heard a terrifying howl");
         }
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             return targetTile.structure != null;
         }

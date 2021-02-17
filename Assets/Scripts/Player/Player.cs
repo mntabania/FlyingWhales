@@ -298,9 +298,13 @@ public class Player : ILeader, IObjectManipulator {
                 case SPELL_TARGET.TILE:
                     hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
-                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile)) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile, out var cannotPerformReason)) {
                             currentActivePlayerSpell.ActivateAbility(hoveredTile);
                             activatedAction = true;
+                        } else {
+                            if (!string.IsNullOrEmpty(cannotPerformReason)) {
+                                InnerMapManager.Instance.ShowAreaMapTextPopup(cannotPerformReason, hoveredTile.centeredWorldLocation, Color.white);
+                            }
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }

@@ -740,7 +740,7 @@ public class LocationStructureObject : PooledObject {
         return null;
     }
     public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile) {
-        if (!CanPlaceStructureOnTile(centerTile)) {
+        if (!CanPlaceStructureOnTile(centerTile, out _)) {
             return false;
         }
         InnerTileMap map = centerTile.parentMap;
@@ -758,7 +758,7 @@ public class LocationStructureObject : PooledObject {
             if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
                 && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
                 LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
-                if (!CanPlaceStructureOnTile(tile)) {
+                if (!CanPlaceStructureOnTile(tile, out _)) {
                     return false;
                 }
             } else {
@@ -767,18 +767,49 @@ public class LocationStructureObject : PooledObject {
         }
         return true;
     }
-    private bool CanPlaceStructureOnTile(LocationGridTile tile) {
+    public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile, out string o_cannotPlaceReason) {
+        if (!CanPlaceStructureOnTile(centerTile, out o_cannotPlaceReason)) {
+            return false;
+        }
+        InnerTileMap map = centerTile.parentMap;
+        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = localOccupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = centerTile.localPlace;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                if (!CanPlaceStructureOnTile(tile, out o_cannotPlaceReason)) {
+                    return false;
+                }
+            } else {
+                return false; //returned coordinates are out of the map
+            }
+        }
+        return true;
+    }
+    private bool CanPlaceStructureOnTile(LocationGridTile tile, out string o_cannotPlaceReason) {
         if (tile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
             Debug.Log($"Could not place {structureType} because {tile} is not part of wilderness!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_wilderness");
             return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
         }
 
         if (tile.hasBlueprint) {
             Debug.Log($"Could not place {structureType} because {tile} has blueprint!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
             return false; //This is to prevent overlapping blueprints. If any tile that will be occupied by this has a blueprint, then do not allow
         }
         if (tile.IsAtEdgeOfMap()) {
             Debug.Log($"Could not place {structureType} because {tile} is at edge of map!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_edge");
             return false;
         }
         if (!GameManager.Instance.gameHasStarted && !structureType.IsPlayerStructure()) {
@@ -786,16 +817,19 @@ public class LocationStructureObject : PooledObject {
             //since we expect that they will be generated later
             Area areaOwner = tile.area;
             if (areaOwner.elevationType == ELEVATION.WATER || areaOwner.elevationType == ELEVATION.MOUNTAIN) {
+                o_cannotPlaceReason = string.Empty;
                 return false;
             }
             LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
             if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
+                o_cannotPlaceReason = string.Empty;
                 return false;
             }
         }
         if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
             //Note: Demonic structures must be placed on corruption! Except for the portal, since it is the structure that will start the corruption
             Debug.Log($"Could not place {structureType} because {tile} is not corrupted!!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
             return false;
         }
         
@@ -805,36 +839,43 @@ public class LocationStructureObject : PooledObject {
             LocationGridTile neighbour = tile.neighbourList[j];
             if (neighbour.hasBlueprint) {
                 Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
+                o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
             if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
                     Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Cave!");
+                    o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
             } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                     Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Ocean!");
+                    o_cannotPlaceReason = string.Empty;
                     return false;
                 }
             } else if (structureType.IsPlayerStructure()) {
                 if (neighbour.structure.structureType.IsPlayerStructure()) {
                     //Do not allow Demonic structures to be placed next to each other.
                     Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is a Player Structure!");
+                    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_demonic_adjacent");
                     return false;
                 }
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
                     Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness!");
+                    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_neighbour_not_wilderness");
                     return false;
                 }
             } else {
                 //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
                     Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness and City CEnter!");
+                    o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
             }
         }
+        o_cannotPlaceReason = string.Empty;
         return true;
     }
     private List<LocationGridTile> GetTilesThatWillBeOccupiedGivenCenter(InnerTileMap map, LocationGridTile centerTile) {

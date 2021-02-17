@@ -42195,6 +42195,8 @@ MonoBehaviour:
           undamaged: {fileID: 21300000, guid: dc30e0e162d93854db99983f2914be7b, type: 3}
         - damaged: {fileID: 21300000, guid: 2d4a8e3bf9824d7459df6adbdc9e7446, type: 3}
           undamaged: {fileID: 21300000, guid: a9160550daf18ea40a1a164c35502248, type: 3}
+  pfAreaMapTextPopup: {fileID: 6051656629578552208, guid: 7b1f717739ee56e4586e29905e628579,
+    type: 3}
 --- !u!114 &1536722385
 MonoBehaviour:
   m_ObjectHideFlags: 0

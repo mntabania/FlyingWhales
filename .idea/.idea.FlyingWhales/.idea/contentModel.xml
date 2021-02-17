@@ -3279,6 +3279,7 @@
                 <e p="OnDeathUIController.cs" t="Include" />
                 <e p="PurchaseSkillUIController.cs" t="Include" />
                 <e p="SchemeUIController.cs" t="Include" />
+                <e p="SkillUpgradeUIController.cs" t="Include" />
                 <e p="SymptomsUIController.cs" t="Include" />
                 <e p="TemptUIController.cs" t="Include" />
                 <e p="TransmissionUIController.cs" t="Include" />
@@ -3286,6 +3287,7 @@
               </e>
               <e p="Items" t="Include">
                 <e p="PurchaseSkillItemUI.cs" t="Include" />
+                <e p="SkillUpgradeItemUI.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
@@ -3297,6 +3299,7 @@
                 <e p="OnDeathUIModel.cs" t="Include" />
                 <e p="PurchaseSkillUIModel.cs" t="Include" />
                 <e p="SchemeUIModel.cs" t="Include" />
+                <e p="SkillUpgradeUIModel.cs" t="Include" />
                 <e p="SymptomsUIModel.cs" t="Include" />
                 <e p="TemptUIModel.cs" t="Include" />
                 <e p="TransmissionUIModel.cs" t="Include" />
@@ -3312,6 +3315,7 @@
                 <e p="OnDeathUIView.cs" t="Include" />
                 <e p="PurchaseSkillUIView.cs" t="Include" />
                 <e p="SchemeUIView.cs" t="Include" />
+                <e p="SkillUpgradeUIView.cs" t="Include" />
                 <e p="SymptomsUIView.cs" t="Include" />
                 <e p="TemptUIView.cs" t="Include" />
                 <e p="TransmissionUIView.cs" t="Include" />
@@ -3353,6 +3357,7 @@
             <e p="POITestingUI.cs" t="Include" />
             <e p="PopupMessageBox.cs" t="Include" />
             <e p="Popups" t="Include">
+              <e p="AreaMapTextPopup.cs" t="Include" />
               <e p="ArtifactListUI.cs" t="Include" />
               <e p="BuildListUI.cs" t="Include" />
               <e p="CharacterThoughtTooltip.cs" t="Include" />

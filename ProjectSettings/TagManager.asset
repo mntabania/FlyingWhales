@@ -123,6 +123,6 @@ TagManager:
   - name: Area Maps
     uniqueID: 1024382313
     locked: 0
-  - name: Cursor Effects
+  - name: Area Map Effects
     uniqueID: 3537618809
     locked: 0

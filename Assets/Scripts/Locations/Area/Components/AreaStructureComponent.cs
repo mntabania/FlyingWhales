@@ -104,38 +104,67 @@ public class AreaStructureComponent : AreaComponent {
         _buildParticles = null;
         PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(false);
     }
-    public bool CanBuildDemonicStructureHere(STRUCTURE_TYPE structureType) {
+    public bool CanBuildDemonicStructureHere(STRUCTURE_TYPE structureType, out string o_cannotBuildReason) {
         if (InnerMapManager.Instance.currentlyShowingLocation == null && structureType != STRUCTURE_TYPE.THE_PORTAL) {
             //allow portal to be built while no inner map is shown, because portal is build on the overworld
+            o_cannotBuildReason = string.Empty;
             return false;
         }
         if (structureType == STRUCTURE_TYPE.EYE) {
-            return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE); //only 1 eye per region.
+            if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
+                if (InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE)) {
+                    o_cannotBuildReason = o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_eye");
+                    return false;        
+                } else {
+                    return true; //only 1 eye per region.    
+                }
+            }
+            return false;
         }
         if (structureType == STRUCTURE_TYPE.MEDDLER) {
-            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER); //Only 1 meddler should exist in the world
+            if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
+                if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {
+                    o_cannotBuildReason = o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_meddler");
+                    return false;   
+                } else {
+                    return true; //Only 1 meddler should exist in the world    
+                }
+            }
+            return false;
         }
         if (structureType == STRUCTURE_TYPE.BIOLAB) {
-            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB); //Only 1 biolab should exist in the world
+            if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
+                if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
+                    o_cannotBuildReason = o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_biolab");
+                    return false;
+                } else {
+                    return true; //Only 1 biolab should exist in the world    
+                }
+            }
+            return false;
         }
-        return CanBuildDemonicStructureHere();
+        return CanBuildDemonicStructureHere(out o_cannotBuildReason);
     }
-    private bool CanBuildDemonicStructureHere() {
+    private bool CanBuildDemonicStructureHere(out string o_cannotBuildReason) {
         if (owner.HasBlueprintOnTile()) {
+            o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_has_blueprint");
             return false;
         }
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.isCurrentlyBuildingDemonicStructure) {
+            o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_currently_building");
             return false;
         }
         // if (owner.settlementOnArea != null) { //|| HasStructureInArea()
         //     return false;
         // }
         if (_buildParticles != null) {
+            o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_currently_building");
             return false;
         }
         // if(owner.elevationType == ELEVATION.WATER || owner.elevationType == ELEVATION.MOUNTAIN) {
         //     return false;
         // }
+        o_cannotBuildReason = string.Empty;
         return true;
         // //Cannot build on settlements and hex tiles with blueprints right now
         // if(settlementOnTile == null && landmarkOnTile == null && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN && _buildParticles == null) {

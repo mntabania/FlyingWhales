@@ -44,8 +44,8 @@ public class SummonPlayerSkill : SkillData {
     public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             if (targetTile.structure is Kennel) {
                 return false;

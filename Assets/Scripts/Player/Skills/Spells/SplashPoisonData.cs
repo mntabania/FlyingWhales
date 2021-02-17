@@ -34,8 +34,8 @@ public class SplashPoisonData : SkillData {
     private void MakeTraitblePoisoned(ITraitable traitable) {
         traitable.traitContainer.AddTrait(traitable, "Poisoned", bypassElementalChance: true, overrideDuration: GetDurationBaseOnTileType(traitable));
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             return targetTile.structure != null;
         }

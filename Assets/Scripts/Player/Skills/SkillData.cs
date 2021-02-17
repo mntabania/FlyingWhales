@@ -89,7 +89,10 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbility();
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return CanPerformAbility(); }
-    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        o_cannotPerformReason = string.Empty;
+        return CanPerformAbility();
+    }
     public virtual bool CanPerformAbilityTowards(Area targetArea) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(StructureRoom room) { return CanPerformAbility(); }
@@ -175,7 +178,7 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbilityTowards(poi);
     }
     public bool CanTarget(LocationGridTile tile) {
-        return CanPerformAbilityTowards(tile);
+        return CanPerformAbilityTowards(tile, out _);
     }
     public bool CanTarget(Area p_area) {
         return CanPerformAbilityTowards(p_area);
