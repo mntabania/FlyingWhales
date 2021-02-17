@@ -5,7 +5,6 @@ using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Kennel : DemonicStructure {
-        public override Vector2 selectableSize { get; }
         public override string nameplateName => $"{name}";
         private const int BreedingDuration = GameManager.ticksPerHour;
         
@@ -19,11 +18,9 @@ namespace Inner_Maps.Location_Structures {
         private MarkerDummy _markerDummy;
 
         public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){
-            selectableSize = new Vector2(10f, 10f);
             _ownedSummons = new HashSet<Summon>();
         }
         public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
             _ownedSummons = new HashSet<Summon>();
         }
 

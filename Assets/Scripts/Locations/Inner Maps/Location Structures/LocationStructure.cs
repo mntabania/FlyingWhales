@@ -1088,6 +1088,10 @@ namespace Inner_Maps.Location_Structures {
         protected void OnObjectDamaged(TileObject tileObject, int amount) {
             if (objectsThatContributeToDamage.Contains(tileObject)) {
                 AdjustHP(amount);
+                if (!objectsThatContributeToDamage.Any(o => o.currentHP > 0)) {
+                    //if this structure no longer has any objects that have hp, then destroy this structure
+                    AdjustHP(-currentHP);
+                }
             }
         }
         protected void OnObjectRepaired(TileObject tileObject, int amount) {

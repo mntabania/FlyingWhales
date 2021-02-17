@@ -32,6 +32,7 @@ public class GenericTileObject : TileObject {
     /// this is the date that it will be finished
     /// </summary>
     public GameDate selfBuildingStructureDueDate { get; private set; }
+    public BaseSettlement selfBuildingStructureSettlement { get; private set; }
     private LocationGridTile _owner;
     private string _expiryKey;
 
@@ -232,13 +233,13 @@ public class GenericTileObject : TileObject {
 
     #region Structure Blueprints
     public bool PlaceExpiringBlueprintOnTile(string prefabName) {
-        if (PlaceBlueprintOnTile(prefabName)) {
+        if (PlaceBlueprintOnTile(prefabName, out var blueprint)) {
             ScheduleBlueprintExpiry();
             return true;
         }
         return false;
     }
-    private bool PlaceBlueprintOnTile(string p_prefabName) {
+    private bool PlaceBlueprintOnTile(string p_prefabName, out LocationStructureObject o_placedBlueprint) {
         GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
         LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
         if (structureObject.HasEnoughSpaceIfPlacedOn(gridTileLocation)) {
@@ -258,8 +259,10 @@ public class GenericTileObject : TileObject {
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             blueprintOnTile = structureObject;
             gridTileLocation.SetIsDefault(false);
+            o_placedBlueprint = structureObject;
             return true;
         }
+        o_placedBlueprint = null;
         ObjectPoolManager.Instance.DestroyObject(structurePrefab); //destroy structure since it wasn't placed
         return false;
     }
@@ -292,7 +295,6 @@ public class GenericTileObject : TileObject {
         BuildBlueprint(blueprintOnTile, p_settlement, p_usedConnector);
         CancelBlueprintExpiry();
         
-        blueprintOnTile = null;
         isCurrentlyBuilding = false;
     }
     public void InstantPlaceStructure(string p_structurePrefabName, BaseSettlement p_settlement) {
@@ -320,6 +322,9 @@ public class GenericTileObject : TileObject {
             LocationGridTile tile = p_blueprint.tiles[j];
             tile.SetStructure(structure);
             tile.SetHasBlueprint(false);
+            if (structure is DemonicStructure) {
+                tile.corruptionComponent.CorruptTile();
+            }
         }
         
         Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
@@ -341,19 +346,37 @@ public class GenericTileObject : TileObject {
                 mmStructure.OnUseStructureConnector(p_usedConnector);    
             }    
         }
+        blueprintOnTile = null;
     }
+    private BuildStructureParticleEffect _buildStructureParticles;
     public void PlaceSelfBuildingStructure(string p_structurePrefabName, BaseSettlement p_settlement, int p_buildingTimeInTicks) {
         Assert.IsTrue(p_buildingTimeInTicks > 0);
-        if (PlaceBlueprintOnTile(p_structurePrefabName)) {
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(p_buildingTimeInTicks);
-            SchedulingManager.Instance.AddEntry(dueDate, () => DoneSelfBuildingStructure(p_settlement), this);
+        if (PlaceBlueprintOnTile(p_structurePrefabName, out var blueprint)) {
+            AudioManager.Instance.CreatePlaceDemonicStructureSound(gridTileLocation);
+            BaseParticleEffect placeEffect = GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Place_Demonic_Structure).GetComponent<BaseParticleEffect>();
+            placeEffect.SetSize(blueprint.size);
+
+
+            selfBuildingStructureSettlement = p_settlement;
+            GameDate completionDate = GameManager.Instance.Today();
+            completionDate.AddTicks(p_buildingTimeInTicks);
+            CreateBuildParticlesAndScheduleBuildingCompletion(blueprint, p_settlement, completionDate);
         } else {
             throw new Exception($"Could not place self building structure {p_structurePrefabName} on {gridTileLocation}!");
         }
     }
+    private void CreateBuildParticlesAndScheduleBuildingCompletion(LocationStructureObject p_blueprint, BaseSettlement p_settlement, GameDate p_completionDate) {
+        _buildStructureParticles = GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<BuildStructureParticleEffect>();
+        _buildStructureParticles.SetSize(p_blueprint.size);
+        selfBuildingStructureDueDate = p_completionDate;
+        SchedulingManager.Instance.AddEntry(p_completionDate, () => DoneSelfBuildingStructure(p_settlement), this);
+    }
     private void DoneSelfBuildingStructure(BaseSettlement p_settlement) {
+        if (_buildStructureParticles != null) {
+            ObjectPoolManager.Instance.DestroyObject(_buildStructureParticles);
+        }
         BuildBlueprint(blueprintOnTile, p_settlement, null);
+        selfBuildingStructureSettlement = null;
     }
     #endregion
 
@@ -365,9 +388,17 @@ public class GenericTileObject : TileObject {
         if (!string.IsNullOrEmpty(saveDataGenericTileObject.blueprintOnTileName)) {
             LoadBlueprintOnTile(saveDataGenericTileObject.blueprintOnTileName);
             //schedule expiry
-            blueprintExpiryDate = saveDataGenericTileObject.blueprintExpiryDate;
-            _expiryKey = SchedulingManager.Instance.AddEntry(blueprintExpiryDate, ExpireBlueprint, this);
-            isCurrentlyBuilding = saveDataGenericTileObject.isCurrentlyBuilding;
+            if (saveDataGenericTileObject.blueprintExpiryDate.hasValue) {
+                blueprintExpiryDate = saveDataGenericTileObject.blueprintExpiryDate;
+                _expiryKey = SchedulingManager.Instance.AddEntry(blueprintExpiryDate, ExpireBlueprint, this);
+                isCurrentlyBuilding = saveDataGenericTileObject.isCurrentlyBuilding;    
+            } else if (saveDataGenericTileObject.blueprintAutoBuildDate.hasValue) {
+                if (!string.IsNullOrEmpty(saveDataGenericTileObject.selfBuildingStructureSettlement)) {
+                    selfBuildingStructureSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataGenericTileObject.selfBuildingStructureSettlement);
+                    CreateBuildParticlesAndScheduleBuildingCompletion(blueprintOnTile, selfBuildingStructureSettlement, saveDataGenericTileObject.blueprintAutoBuildDate);
+                }
+            }
+            
         }
     }
     private void LoadBlueprintOnTile(string prefabName) {
@@ -381,7 +412,11 @@ public class GenericTileObject : TileObject {
             LocationGridTile tile = occupiedTiles[j];
             tile.SetHasBlueprint(true);
         }
-        structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentMap);
+        var structureVisualMode = LocationStructureObject.Structure_Visual_Mode.Blueprint;
+        if (structureObject.structureType.IsPlayerStructure()) {
+            structureVisualMode = LocationStructureObject.Structure_Visual_Mode.Demonic_Structure_Blueprint;
+        }
+        structureObject.SetVisualMode(structureVisualMode, gridTileLocation.parentMap);
         structureObject.SetTilesInStructure(occupiedTiles.ToArray());
         blueprintOnTile = structureObject;
     }
@@ -393,8 +428,9 @@ public class SaveDataGenericTileObject : SaveDataTileObject {
 
     public string blueprintOnTileName;
     public GameDate blueprintExpiryDate;
+    public GameDate blueprintAutoBuildDate;
     public bool isCurrentlyBuilding;
-    
+    public string selfBuildingStructureSettlement;
     public override void Save(TileObject data) {
         base.Save(data);
         GenericTileObject genericTileObject = data as GenericTileObject;
@@ -403,6 +439,10 @@ public class SaveDataGenericTileObject : SaveDataTileObject {
             blueprintOnTileName = genericTileObject.blueprintOnTile.name.Replace("(Clone)", "");
             blueprintExpiryDate = genericTileObject.blueprintExpiryDate;
             isCurrentlyBuilding = genericTileObject.isCurrentlyBuilding;
+            blueprintAutoBuildDate = genericTileObject.selfBuildingStructureDueDate;
+            if (genericTileObject.selfBuildingStructureSettlement != null) {
+                selfBuildingStructureSettlement = genericTileObject.selfBuildingStructureSettlement.persistentID;
+            }
         }
     }
     public override TileObject Load() {

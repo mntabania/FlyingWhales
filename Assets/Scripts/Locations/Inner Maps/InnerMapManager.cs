@@ -194,7 +194,9 @@ namespace Inner_Maps {
                     return room;
                 }
                 if (tile.structure.structureType.IsPlayerStructure()) {
-                    return tile.structure;
+                    if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
+                        return tile.structure;    
+                    }
                 } else {
                     if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) ||
                                (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && 
@@ -237,7 +239,9 @@ namespace Inner_Maps {
                     selectables.Add(room);
                 }
                 if (tile.structure.structureType.IsPlayerStructure()) {
-                    selectables.Add(tile.structure);
+                    if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
+                        selectables.Add(tile.structure);    
+                    }
                 } else {
                     if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) || //if man made structure check if structure object has not yet been destroyed 
                         (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed

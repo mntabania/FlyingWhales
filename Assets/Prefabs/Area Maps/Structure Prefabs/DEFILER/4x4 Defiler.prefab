@@ -557,7 +557,7 @@ GameObject:
   - component: {fileID: 7574327923106947058}
   - component: {fileID: 8964402363234127252}
   m_Layer: 14
-  m_Name: 4x4
+  m_Name: 4x4 Defiler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -612,6 +612,8 @@ MonoBehaviour:
     - {x: 1, y: 2, z: 0}
     - {x: 2, y: 1, z: 0}
     - {x: 2, y: 2, z: 0}
+    - {x: 1, y: 3, z: 0}
+    - {x: 2, y: 3, z: 0}
   wallsContributeToDamage: 1
   wallTileMap: {fileID: 7766376355357131671}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
@@ -1117,17 +1119,17 @@ PrefabInstance:
     - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_PointLightOuterRadius
-      value: 7.65
+      value: 3.29
       objectReference: {fileID: 0}
     - target: {fileID: 2106505769903706223, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.75
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2106505769903706223, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.88
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2106505769903706223, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}

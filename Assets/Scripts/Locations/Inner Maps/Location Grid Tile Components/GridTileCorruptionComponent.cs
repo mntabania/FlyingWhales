@@ -185,6 +185,10 @@ namespace Inner_Maps {
                 }
                 SchedulingManager.Instance.AddEntry(wallBuildOrDestroyDate, DestroyDemonicWall, null); //_wallScheduleID = 
             }
+            if (isCorrupted) {
+                owner.mouseEventsComponent.EnableMouseEventsForAllNeighbours();
+                owner.mouseEventsComponent.OnHoverExit();
+            }
         }
         #endregion
     }

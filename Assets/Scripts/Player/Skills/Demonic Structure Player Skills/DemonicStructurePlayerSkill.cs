@@ -28,14 +28,15 @@ public class DemonicStructurePlayerSkill : SkillData {
     #region Overrides
     public override void ActivateAbility(LocationGridTile targetTile) {
         PlayerManager.Instance.SetStructurePlacementVisualFollowMouseState(false);
-        string question;
-        if (targetTile.area.IsNextToOrPartOfVillage()) {
-            question = $"<color=\"red\">Warning: You are building too close to a village!</color>";
-            question += "\nAre you sure you want to build " + name + "?";
-        } else {
-            question = "Are you sure you want to build " + name + "?";
-        }
-        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => BuildDemonicStructure(targetTile), OnClickNoOnBuildStructureConfirmation, showCover: true, pauseAndResume: true, layer: 50);
+        // string question;
+        // if (targetTile.area.IsNextToOrPartOfVillage()) {
+        //     question = $"<color=\"red\">Warning: You are building too close to a village!</color>";
+        //     question += "\nAre you sure you want to build " + name + "?";
+        // } else {
+        //     question = "Are you sure you want to build " + name + "?";
+        // }
+        // UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => BuildDemonicStructure(targetTile), OnClickNoOnBuildStructureConfirmation, showCover: true, pauseAndResume: true, layer: 50);
+        BuildDemonicStructure(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         if (base.CanPerformAbilityTowards(targetTile)) {

@@ -1,4 +1,5 @@
 ﻿using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -69,6 +70,16 @@ public class BlockWall : TileObject {
         RemovePlayerAction(PLAYER_SKILL_TYPE.SEIZE_OBJECT);
         RemovePlayerAction(PLAYER_SKILL_TYPE.POISON);
         RemovePlayerAction(PLAYER_SKILL_TYPE.IGNITE);
+    }
+    public override bool CanBeSelected() {
+        if (wallType == WALL_TYPE.Demon_Stone && gridTileLocation?.structure is DemonicStructure) {
+            if (!expiryDate.hasValue) {
+                //do not allow walls that are part of demonic structure to be selected. This is so that when a tile on the demonic structure is clicked, it will select the structure instead of this.
+                //Important Note: Added checking for expiry date so that walls from wall spell can still be selected, regardless of their location. 
+                return false;  
+            }
+        }
+        return true;
     }
     #endregion
 

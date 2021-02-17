@@ -1675,7 +1675,7 @@ namespace Inner_Maps {
             if (p_buildingTimeInTicks > 0) {
                 List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(p_structureSetting.structureType, p_structureSetting.resource);
                 GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                genericTileObject.PlaceSelfBuildingStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement, p_buildingTimeInTicks);    
+                genericTileObject.PlaceSelfBuildingStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement, p_buildingTimeInTicks);
             } else {
                 InstantPlaceDemonicStructure(p_structureSetting);
             }

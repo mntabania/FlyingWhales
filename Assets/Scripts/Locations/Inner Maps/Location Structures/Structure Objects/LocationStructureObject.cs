@@ -479,7 +479,7 @@ public class LocationStructureObject : PooledObject {
                 SetWallCollidersState(false);
                 break;
             case Structure_Visual_Mode.Demonic_Structure_Blueprint:
-                color.a = 174f / 255f;
+                color.a = 128f / 255f;
                 SetStructureColor(color);
                 SetPreplacedObjectsState(true);
                 SetPreplacedObjectsColor(color);
@@ -792,6 +792,11 @@ public class LocationStructureObject : PooledObject {
             if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
                 return false;
             }
+        }
+        if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
+            //Note: Demonic structures must be placed on corruption! Except for the portal, since it is the structure that will start the corruption
+            Debug.Log($"Could not place {structureType} because {tile} is not corrupted!!");
+            return false;
         }
         
         

@@ -35,9 +35,6 @@ public class GameManager : BaseMonoBehaviour {
     public bool showFullDebug;
     public static bool showAllTilesTooltip = false;
     
-    public GameObject travelLineParentPrefab;
-    public GameObject travelLinePrefab;
-
     [Header("Particle Effects")]
     [SerializeField] private GameObject aoeParticlesPrefab;
     [SerializeField] private GameObject aoeParticlesAutoDestroyPrefab;

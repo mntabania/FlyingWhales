@@ -24,6 +24,7 @@ public class PlayerStructurePlacementVisual : MonoBehaviour {
             STRUCTURE_TYPE.THE_PORTAL, STRUCTURE_TYPE.EYE, STRUCTURE_TYPE.BIOLAB, STRUCTURE_TYPE.DEFILER, STRUCTURE_TYPE.TORTURE_CHAMBERS, STRUCTURE_TYPE.KENNEL, STRUCTURE_TYPE.MEDDLER
         }; //CollectionUtilities.GetEnumValues<STRUCTURE_TYPE>().Where(s => s.IsPlayerStructure()).ToList();
         _structureVisuals = new Dictionary<STRUCTURE_TYPE, LocationStructureObject>();
+        transformColorTint.gameObject.SetActive(false);
         for (int i = 0; i < playerStructureTypes.Count; i++) {
             STRUCTURE_TYPE structureType = playerStructureTypes[i];
             GameObject chosenStructurePrefab = InnerMapManager.Instance.GetFirstStructurePrefabForStructure(new StructureSetting(structureType, RESOURCE.NONE));

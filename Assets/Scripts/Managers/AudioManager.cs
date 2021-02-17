@@ -57,6 +57,7 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioClip[] poisonExplosionAudio;
     [SerializeField] private AudioClip[] zapAudio;
     [SerializeField] private AudioClip[] frozenExplosionAudio;
+    [SerializeField] private AudioClip[] placeStructureAudio;
     
     [Header("Combat Audio")]
     [SerializeField] private AudioClip[] bowAndArrowAudio;
@@ -299,6 +300,12 @@ public class AudioManager : MonoBehaviour {
     }
     public AudioClip GetRandomBluntWeaponAudio() {
         return CollectionUtilities.GetRandomElement(bluntWeaponAudio);
+    }
+    #endregion
+
+    #region Base Building
+    public void CreatePlaceDemonicStructureSound(LocationGridTile tile) {
+        TryCreateAudioObject(CollectionUtilities.GetRandomElement(placeStructureAudio), tile, 3, false, true);
     }
     #endregion
 

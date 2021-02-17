@@ -13,7 +13,11 @@ namespace Inner_Maps.Location_Structures {
         public Summon skeleton { get; private set; }
         private AutoDestroyParticle _particleEffect;
 
-        public PrisonCell(List<LocationGridTile> tilesInRoom) : base("Prison Cell", tilesInRoom) { }
+        public PrisonCell(List<LocationGridTile> tilesInRoom) : base("Prison Cell", tilesInRoom) {
+            var worldLocation = GetCenterTile().centeredWorldLocation;
+            worldLocation.x += 0.5f;
+            worldPosition = worldLocation;
+        }
         
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

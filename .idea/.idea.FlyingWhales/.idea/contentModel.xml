@@ -1326,6 +1326,7 @@
               <e p="BaseParticleEffect.cs" t="Include" />
               <e p="BlizzardParticleEffect.cs" t="Include" />
               <e p="BrimstonesParticleEffect.cs" t="Include" />
+              <e p="BuildStructureParticleEffect.cs" t="Include" />
               <e p="HeatWaveParticleEffect.cs" t="Include" />
               <e p="IceteroidParticleEffect.cs" t="Include" />
               <e p="LightningParticleEffect.cs" t="Include" />
@@ -1934,6 +1935,11 @@
               <e p="InnerTileMap.cs" t="Include" />
               <e p="Lights" t="Include">
                 <e p="InnerMapLight.cs" t="Include" />
+              </e>
+              <e p="Location Grid Tile Components" t="Include">
+                <e p="GridTileCorruptionComponent.cs" t="Include" />
+                <e p="GridTileMouseEventsComponent.cs" t="Include" />
+                <e p="LocationGridTileComponent.cs" t="Include" />
               </e>
               <e p="Location Structures" t="Include">
                 <e p="AbandonedMine.cs" t="Include" />
@@ -3232,6 +3238,7 @@
             <e p="LandmarkCharacterItem.cs" t="Include" />
             <e p="LevelCollapseUI.cs" t="Include" />
             <e p="LoadWindow.cs" t="Include" />
+            <e p="LocationGridTileMouseEvents.cs" t="Include" />
             <e p="LocationPortrait.cs" t="Include" />
             <e p="LocationSmallInfo.cs" t="Include" />
             <e p="LogFilterItem.cs" t="Include" />

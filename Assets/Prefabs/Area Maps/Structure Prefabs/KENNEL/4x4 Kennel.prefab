@@ -99,7 +99,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 3
-      m_TileSpriteIndex: 0
+      m_TileSpriteIndex: 11
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -198,8 +198,8 @@ Tilemap:
   - m_RefCount: 0
     m_Data: {fileID: 0}
   m_TileSpriteArray:
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 6ae7e980bc6b05f44bda20009a865e7e, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 5
     m_Data: {fileID: 21300000, guid: da55aa2d1dc28de44963a631d3a53efd, type: 3}
   - m_RefCount: 3
@@ -220,8 +220,8 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: 5919023a18ebb4e4db7162001670497b, type: 3}
   - m_RefCount: 3
     m_Data: {fileID: 21300000, guid: b396e927c2de9ae4a94a4efc3e8dc4ff, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 6ae7e980bc6b05f44bda20009a865e7e, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 16
     m_Data:
@@ -561,7 +561,7 @@ GameObject:
   - component: {fileID: 114520684233025900}
   - component: {fileID: 4037226489697887671}
   m_Layer: 14
-  m_Name: 4x4
+  m_Name: 4x4 Kennel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -608,97 +608,7 @@ MonoBehaviour:
   objectsParent: {fileID: 4947364616982008}
   _blockWallType: 2
   _thinWallResource: 0
-  _predeterminedOccupiedCoordinates:
-  - {x: 1, y: 7, z: 0}
-  - {x: 1, y: 8, z: 0}
-  - {x: 1, y: 9, z: 0}
-  - {x: 1, y: 10, z: 0}
-  - {x: 1, y: 11, z: 0}
-  - {x: 2, y: 7, z: 0}
-  - {x: 2, y: 8, z: 0}
-  - {x: 2, y: 9, z: 0}
-  - {x: 2, y: 10, z: 0}
-  - {x: 2, y: 11, z: 0}
-  - {x: 2, y: 12, z: 0}
-  - {x: 3, y: 1, z: 0}
-  - {x: 3, y: 2, z: 0}
-  - {x: 3, y: 3, z: 0}
-  - {x: 3, y: 4, z: 0}
-  - {x: 3, y: 7, z: 0}
-  - {x: 3, y: 8, z: 0}
-  - {x: 3, y: 9, z: 0}
-  - {x: 3, y: 10, z: 0}
-  - {x: 3, y: 11, z: 0}
-  - {x: 3, y: 12, z: 0}
-  - {x: 4, y: 1, z: 0}
-  - {x: 4, y: 2, z: 0}
-  - {x: 4, y: 3, z: 0}
-  - {x: 4, y: 4, z: 0}
-  - {x: 4, y: 7, z: 0}
-  - {x: 4, y: 8, z: 0}
-  - {x: 4, y: 9, z: 0}
-  - {x: 4, y: 10, z: 0}
-  - {x: 4, y: 11, z: 0}
-  - {x: 4, y: 12, z: 0}
-  - {x: 5, y: 1, z: 0}
-  - {x: 5, y: 2, z: 0}
-  - {x: 5, y: 3, z: 0}
-  - {x: 5, y: 4, z: 0}
-  - {x: 5, y: 7, z: 0}
-  - {x: 5, y: 8, z: 0}
-  - {x: 5, y: 9, z: 0}
-  - {x: 5, y: 10, z: 0}
-  - {x: 5, y: 11, z: 0}
-  - {x: 5, y: 12, z: 0}
-  - {x: 6, y: 1, z: 0}
-  - {x: 6, y: 2, z: 0}
-  - {x: 6, y: 3, z: 0}
-  - {x: 6, y: 4, z: 0}
-  - {x: 6, y: 7, z: 0}
-  - {x: 6, y: 8, z: 0}
-  - {x: 6, y: 9, z: 0}
-  - {x: 6, y: 10, z: 0}
-  - {x: 6, y: 11, z: 0}
-  - {x: 6, y: 12, z: 0}
-  - {x: 7, y: 1, z: 0}
-  - {x: 7, y: 2, z: 0}
-  - {x: 7, y: 3, z: 0}
-  - {x: 8, y: 1, z: 0}
-  - {x: 8, y: 2, z: 0}
-  - {x: 8, y: 3, z: 0}
-  - {x: 8, y: 6, z: 0}
-  - {x: 8, y: 7, z: 0}
-  - {x: 8, y: 8, z: 0}
-  - {x: 8, y: 9, z: 0}
-  - {x: 8, y: 10, z: 0}
-  - {x: 9, y: 1, z: 0}
-  - {x: 9, y: 2, z: 0}
-  - {x: 9, y: 3, z: 0}
-  - {x: 9, y: 5, z: 0}
-  - {x: 9, y: 6, z: 0}
-  - {x: 9, y: 7, z: 0}
-  - {x: 9, y: 8, z: 0}
-  - {x: 9, y: 9, z: 0}
-  - {x: 9, y: 10, z: 0}
-  - {x: 10, y: 2, z: 0}
-  - {x: 10, y: 3, z: 0}
-  - {x: 10, y: 5, z: 0}
-  - {x: 10, y: 6, z: 0}
-  - {x: 10, y: 7, z: 0}
-  - {x: 10, y: 8, z: 0}
-  - {x: 10, y: 9, z: 0}
-  - {x: 10, y: 10, z: 0}
-  - {x: 11, y: 5, z: 0}
-  - {x: 11, y: 6, z: 0}
-  - {x: 11, y: 7, z: 0}
-  - {x: 11, y: 8, z: 0}
-  - {x: 11, y: 9, z: 0}
-  - {x: 11, y: 10, z: 0}
-  - {x: 12, y: 5, z: 0}
-  - {x: 12, y: 6, z: 0}
-  - {x: 12, y: 7, z: 0}
-  - {x: 12, y: 8, z: 0}
-  - {x: 12, y: 9, z: 0}
+  _predeterminedOccupiedCoordinates: []
   _connectors: []
   roomTemplates: []
   wallsContributeToDamage: 1
@@ -1160,7 +1070,7 @@ PrefabInstance:
     - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_PointLightOuterRadius
-      value: 7.12
+      value: 3.67
       objectReference: {fileID: 0}
     - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
@@ -1180,12 +1090,12 @@ PrefabInstance:
     - target: {fileID: 2106505769903706223, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2106505769903706223, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2106505769903706223, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}

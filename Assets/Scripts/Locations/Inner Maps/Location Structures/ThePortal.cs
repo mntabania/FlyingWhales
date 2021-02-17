@@ -3,18 +3,12 @@ using System.Linq;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class ThePortal : DemonicStructure {
-        public override Vector2 selectableSize { get; }
-
-        //private List<Character> validMinions;
-
+        
         public ThePortal(Region location) : base(STRUCTURE_TYPE.THE_PORTAL, location){
-            selectableSize = new Vector2(10f, 10f);
             name = "Portal";
             SetMaxHPAndReset(5000);
         }
-        public ThePortal(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
-        }
+        public ThePortal(Region location, SaveDataDemonicStructure data) : base(location, data) { }
         //public override void ConstructDefaultActions() {
         //    base.ConstructDefaultActions();
         //    //validMinions = new List<Character>();
