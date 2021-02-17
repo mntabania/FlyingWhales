@@ -707,7 +707,6 @@ public class UIManager : BaseMonoBehaviour {
                     //Debug.Log(go.gameObject.name, go.gameObject);
                     return true;
                 }
-
             }
         }
         return false;
@@ -728,6 +727,25 @@ public class UIManager : BaseMonoBehaviour {
             }
         }
         return false;
+    }
+    public int GetMouseOnUIOrMapObjectValue() {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0) {
+            foreach (var go in raycastResults) {
+                if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI")) {
+                    return 0;
+                } else if (go.gameObject.CompareTag("Character Marker")) {
+                    return 1;
+                } else if (go.gameObject.CompareTag("Map Object")) {
+                    return 2;
+                }
+            }
+        }
+        return -1;
     }
     public void SetCoverState(bool state, bool blockClicks = true) {
         cover.SetActive(state);

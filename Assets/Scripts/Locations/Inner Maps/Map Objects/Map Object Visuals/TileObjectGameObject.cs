@@ -63,7 +63,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state,
             area.biomeType,
-            tileObject.gridTileLocation?.isCorrupted ?? false));
+            tileObject.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
     }
 
     #region Pointer Events
@@ -73,6 +73,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     }
     protected override void OnPointerRightClick(TileObject poi) {
         base.OnPointerRightClick(poi);
+        LocationGridTile gridTile = poi.gridTileLocation;
         UIManager.Instance.ShowPlayerActionContextMenu(poi, poi.worldPosition, false);
     }
     protected override void OnPointerMiddleClick(TileObject poi) {

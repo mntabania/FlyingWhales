@@ -21,7 +21,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
-        bool isCorrupted = tileObject.gridTileLocation.isCorrupted;
+        bool isCorrupted = tileObject.gridTileLocation.corruptionComponent.isCorrupted;
         Area area = tileObject.gridTileLocation.area;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state,
@@ -69,7 +69,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
             tileObject.state,
             area.biomeType,
-            tileObject.gridTileLocation?.isCorrupted ?? false));
+            tileObject.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
     }
 
     #region Inquiry

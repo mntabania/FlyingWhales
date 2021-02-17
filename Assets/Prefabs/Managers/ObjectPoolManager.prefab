@@ -160,6 +160,7 @@ MonoBehaviour:
   - {fileID: 5551096840155853057, guid: 59bc4ba773cf20946a1ee054da052960, type: 3}
   - {fileID: 965361472881168402, guid: a7a0a84ebf7e9fa4c975eac4dfe215ac, type: 3}
   - {fileID: 8475404948011812848, guid: e1b1a3c8322e2e64180d87397da676c6, type: 3}
+  - {fileID: 1903342892020732, guid: c2e69db236671944e921aa339d8b199f, type: 3}
   otherPrefabs:
   - {fileID: 1997544771906246, guid: f8f78640bd2a9f34c8838653cdcb9f8b, type: 3}
   - {fileID: 1333321624052784, guid: 091a81aab6347964bb917f7cc6ea13c2, type: 3}
@@ -392,4 +393,5 @@ MonoBehaviour:
   - {fileID: 7966529858762546027, guid: 98ed939f9b2541f41b7e790e975b8df9, type: 3}
   - {fileID: 1613479851778875492, guid: 02c20dbd58f325341afeef5a59826681, type: 3}
   - {fileID: 3249137980092143874, guid: 0899348a1126a1a41b0d3d1a54aaa68e, type: 3}
+  - {fileID: 2259743240837992021, guid: f93728edb0b4cac47a38146597c9f2db, type: 3}
   UIObjectPoolParent: {fileID: 1956153252}

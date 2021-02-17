@@ -166,7 +166,7 @@ public class TreeObject : TileObject {
         if (GameUtilities.RollChance(3)) {//3
             //tree has occupant. Spawn Ent
             SUMMON_TYPE entType;
-            if (location.isCorrupted) {
+            if (location.corruptionComponent.isCorrupted) {
                 entType = SUMMON_TYPE.Corrupt_Ent;
             } else {
                 Area area = location.area;
