@@ -39,13 +39,17 @@ public class SkillUpgradeUIView : MVCUIView {
 	#endregion
 
 	#region user defined functions
+
+	public Transform GetSkillParent() {
+		return UIModel.skillParent;
+	}
 	public Transform GetTabParentTransform() {
 		return UIModel.tabPrent;
 	}
-	public void SetActiveCases(string p_activeCasesCount) {
+	public void SetUnlockSkillCount(string p_activeCasesCount) {
 		UIModel.txtTotalUnlocked.text = p_activeCasesCount;
 	}
-	public void SetDeathCases(string p_deathCount) {
+	public void SetChaticEnergyCount(string p_deathCount) {
 		UIModel.txtChaoticEnergyAmount.text = p_deathCount;
 	}
 	

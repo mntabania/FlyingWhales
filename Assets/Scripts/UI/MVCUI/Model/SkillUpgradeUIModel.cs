@@ -20,6 +20,7 @@ public class SkillUpgradeUIModel : MVCUIModel {
 	public RuinarchText txtChaoticEnergyAmount;
 
 	public Transform tabPrent;
+	public Transform skillParent;
 
 	private void OnEnable() {
 		btnAfflictionTab.onValueChanged.AddListener(ClickAfflictionTab);
