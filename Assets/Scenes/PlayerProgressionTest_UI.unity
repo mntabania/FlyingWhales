@@ -628,6 +628,7 @@ MonoBehaviour:
   m_purchaseSkillItemUI: {fileID: 7736772295938071549, guid: f8d33198767f970418c2c82d505a287c,
     type: 3}
   fakePlayer: {fileID: 1944478787}
+  isTestScene: 1
 --- !u!1 &1188877032
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,7 +724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 694d00de0bf39c44eac195785133ec02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  availableSkills: 110000001c00000012000000
+  availableSkills: 110000001c000000120000001d000000150000002f0000001600000029000000020000001f000000
 --- !u!4 &1944478788
 Transform:
   m_ObjectHideFlags: 0

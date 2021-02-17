@@ -3,14 +3,16 @@ using System;
 using UnityEngine;
 using Ruinarch.Custom_UI;
 using UnityEngine.UI;
+using TMPro;
 
-public class UpgradeSkillItemUI : MonoBehaviour {
+public class SkillUpgradeItemUI : MonoBehaviour {
 	public Action<PLAYER_SKILL_TYPE> onButtonClick;
 	public RuinarchButton btnSkill;
 	public RuinarchText txtSkillName;
 	public RuinarchText txtUpgrade;
 	public RuinarchText txtCost;
 	public Image spiritIcon;
+	public RuinarchText txtPlus;
 
 	private PLAYER_SKILL_TYPE m_skillType;
 
@@ -33,16 +35,19 @@ public class UpgradeSkillItemUI : MonoBehaviour {
 			btnSkill.gameObject.SetActive(true);
 			spiritIcon.gameObject.SetActive(true);
 			txtCost.text = data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel).ToString();
+
+			if (p_spiritCount < data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel)) {
+				btnSkill.interactable = false;
+				txtPlus.color = new Color32(128, 128, 128, 128);
+			} else {
+				btnSkill.interactable = true;
+				txtPlus.color = new Color32(255, 255, 0,  255);
+			}
 		}
 		if (data.skillUpgradeData.bonuses.Count > 0) {
 			txtUpgrade.text = data.skillUpgradeData.bonuses[0].ToString();
 		} else {
 			txtUpgrade.text = "n/a";
-		}
-		if (p_spiritCount < data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel)) {
-			btnSkill.interactable = false;
-		} else {
-			btnSkill.interactable = true;
 		}
 		
 		txtSkillName.text = data.name;

@@ -27,6 +27,7 @@ using System;
 public class UIManager : BaseMonoBehaviour {
 
     public Action onPortalClicked;
+    public Action onSpireClicked;
 
     public static UIManager Instance = null;
 
@@ -1032,6 +1033,9 @@ public class UIManager : BaseMonoBehaviour {
         if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
             onPortalClicked?.Invoke();
         }
+        if (structure.structureType == STRUCTURE_TYPE.EYE) {
+            onSpireClicked?.Invoke();
+        }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();
     }
@@ -1709,11 +1713,12 @@ public class UIManager : BaseMonoBehaviour {
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private void OnHoverPlayerAction(SkillData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         string title = $"{spellData.name}";
         string fullDescription = spellData.description;
         int charges = spellData.charges;
-        int manaCost = spellData.manaCost;
-        int cooldown = spellData.cooldown;
+        int manaCost = playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel);
+        int cooldown = playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel);
 
         string currencyStr = string.Empty; 
         
@@ -1721,7 +1726,7 @@ public class UIManager : BaseMonoBehaviour {
             currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
         }
         if (charges != -1) {
-            currencyStr = $"{currencyStr}{charges.ToString()}/{spellData.maxCharges.ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
+            currencyStr = $"{currencyStr}{charges.ToString()}/{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel).ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
         }
         if (cooldown != -1) {
             currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}{UtilityScripts.Utilities.CooldownIcon()}  ";

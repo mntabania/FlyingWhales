@@ -13,30 +13,56 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	private SkillUpgradeUIView m_skillUpgradeUIView;
 
 	[SerializeField]
-	private UpgradeSkillItemUI m_purchaseSkillItemUI; //item to instantiate
-	private List<UpgradeSkillItemUI> m_skillItems = new List<UpgradeSkillItemUI>();
+	private SkillUpgradeItemUI m_purchaseSkillItemUI; //item to instantiate
+	private List<SkillUpgradeItemUI> m_skillItems = new List<SkillUpgradeItemUI>();
 
 	private SKILL_VIEW m_currentView = SKILL_VIEW.AFFLICTIONS;
 
 	public FakePlayer fakePlayer;
 
 	public bool isTestScene;
+	private bool m_isInitialized = false;
 
 	private PlayerSkillComponent m_skillComponent;
 
-	void Start() {
-		Init();
+	private void Start() {
+		if (!isTestScene) {
+			if (UIManager.Instance != null) {
+				UIManager.Instance.onSpireClicked += OnSpireClicked;
+			}
+		} else {
+			Init();
+		}
+	}
+
+	private void OnDestroy() {
+		if (UIManager.Instance != null) {
+			UIManager.Instance.onSpireClicked -= OnSpireClicked;
+		}
+	}
+
+	private void OnSpireClicked() {
+		if (GameManager.Instance.gameHasStarted) {
+			if (!m_isInitialized) {
+				Init();
+				m_isInitialized = true;
+			} else {
+				InstantiateUI();
+			}
+		}
 	}
 
 	public void Init() {
+		ListPoolManager.Initialize();
 		if (isTestScene) {
 			fakePlayer.Initialize();
 			m_skillComponent = fakePlayer.skillComponent;
+			InstantiateUI();
 		} else {
-			PlayerManager.Instance.Initialize();
+			PlayerSkillManager.Instance.Initialize();
 			m_skillComponent = PlayerManager.Instance.player.playerSkillComponent;
+			InstantiateUI();
 		}
-		InstantiateUI();
 	}
 
 	public void Open() {
@@ -63,13 +89,45 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	//Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
 	[ContextMenu("Instantiate UI")]
 	public override void InstantiateUI() {
-		SkillUpgradeUIView.Create(_canvas, m_skillUpgradeUIModel, (p_ui) => {
-			m_skillUpgradeUIView = p_ui;
-			m_skillUpgradeUIView.Subscribe(this);
-			InitUI(p_ui.UIModel, p_ui);
+		if (m_skillUpgradeUIView == null) {
+			SkillUpgradeUIView.Create(_canvas, m_skillUpgradeUIModel, (p_ui) => {
+				m_skillUpgradeUIView = p_ui;
+				m_skillUpgradeUIView.Subscribe(this);
+				InitUI(p_ui.UIModel, p_ui);
+				ShowUI();
+				DisplaySkills(m_skillComponent.afflictions);
+			});
+		} else {
 			ShowUI();
-			SpawnSkillItems(m_skillComponent.afflictions);
+			DisplaySkills(m_skillComponent.afflictions);
+		}
+	}
+
+	void DisplaySkills(List<PLAYER_SKILL_TYPE> p_skillSets) {
+		int plaguePoints;
+		if (isTestScene) {
+			plaguePoints = fakePlayer.currenciesComponent.Spirits;
+		} else {
+			plaguePoints = PlayerManager.Instance.player.plagueComponent.plaguePoints;
+		}
+		ClearListFirst();
+		List<PLAYER_SKILL_TYPE> skillToBeDisplayed = ListPoolManager.CreateNewPlayerSkillTypeList();
+		p_skillSets.ForEach((eachSkill) => {
+			if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
+			GetUpgradeCostBaseOnLevel(PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel) <= plaguePoints) {
+				skillToBeDisplayed.Add(eachSkill);
+			}
 		});
+		p_skillSets.ForEach((eachSkill) => {
+			if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
+			GetUpgradeCostBaseOnLevel(PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel) > plaguePoints) {
+				skillToBeDisplayed.Add(eachSkill);
+			}
+		});
+		SpawnSkillItems(skillToBeDisplayed);
+		ListPoolManager.ReturnPlayerSkillTypeListToPool(skillToBeDisplayed);
+		skillToBeDisplayed.Clear();
+		UpdateTopMenuSummary();
 	}
 
 	private void UpdateTopMenuSummary() {
@@ -89,19 +147,20 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		if (isTestScene) {
 			m_skillUpgradeUIView.SetChaticEnergyCount(fakePlayer.currenciesComponent.Spirits.ToString());
 		} else {
-			m_skillUpgradeUIView.SetChaticEnergyCount(PlayerManager.Instance.player.spiritEnergy.ToString());
+			m_skillUpgradeUIView.SetChaticEnergyCount(PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString());
 		}
-		
 	}
 
-	private void SpawnSkillItems(List<PLAYER_SKILL_TYPE> listOfSkills) {
+	void ClearListFirst() {
 		if (m_skillItems != null && m_skillItems.Count > 0) {
 			m_skillItems.ForEach((eachItem) => {
 				eachItem.onButtonClick -= OnSkillClick;
 				eachItem.gameObject.SetActive(false);
 			});
 		}
+	}
 
+	private void SpawnSkillItems(List<PLAYER_SKILL_TYPE> listOfSkills) {
 		for (int x = 0; x < listOfSkills.Count; ++x) {
 			if (x < m_skillItems.Count) {
 				SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(listOfSkills[x]);
@@ -109,16 +168,16 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 				if (isTestScene) {
 					m_skillItems[x].InitItem(data.type, fakePlayer.currenciesComponent.Spirits);
 				} else {
-					m_skillItems[x].InitItem(data.type, PlayerManager.Instance.player.spiritEnergy);
+					m_skillItems[x].InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 				}
 				m_skillItems[x].onButtonClick += OnSkillClick;
 			} else {
-				UpgradeSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI);
+				SkillUpgradeItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI);
 				SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(listOfSkills[x]);
 				if (isTestScene) {
 					go.InitItem(data.type, fakePlayer.currenciesComponent.Spirits);
 				} else {
-					go.InitItem(data.type, PlayerManager.Instance.player.spiritEnergy);
+					go.InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 				}
 				
 				go.onButtonClick += OnSkillClick;
@@ -129,47 +188,49 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	}
 
 	void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
+		Debug.Log("CLICKED");
 		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
 		skillData.LevelUp();
 		switch (m_currentView) {
-			case SKILL_VIEW.AFFLICTIONS: 
-			SpawnSkillItems(m_skillComponent.afflictions);
+			case SKILL_VIEW.AFFLICTIONS:
+			DisplaySkills(m_skillComponent.afflictions);
 			break;
 			case SKILL_VIEW.SPELLS:
-			SpawnSkillItems(m_skillComponent.spells);
+			DisplaySkills(m_skillComponent.spells);
 			break;
 			case SKILL_VIEW.PLAYER_ACTION:
-			SpawnSkillItems(m_skillComponent.playerActions);
+			DisplaySkills(m_skillComponent.playerActions);
 			break;
 		}
 		if (isTestScene) {
 			fakePlayer.currenciesComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
 		} else { 
-			PlayerManager.Instance.player.AdjustSpiritEnergy(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
 		}
 		UpdateTopMenuSummary();
+		Messenger.Broadcast(SpellSignals.SPELL_UPGRADED, skillData);
 	}
 
 	#region BiolabUIView.IListener implementation
 	public void OnAfflictionTabClicked(bool isOn) {
 		if (isOn) {
 			m_currentView = SKILL_VIEW.AFFLICTIONS;
-			SpawnSkillItems(m_skillComponent.afflictions);
+			DisplaySkills(m_skillComponent.afflictions);
 			UpdateTopMenuSummary();
 		}
 	}
 	public void OnSpellTabClicked(bool isOn) {
 		if (isOn) {
 			m_currentView = SKILL_VIEW.SPELLS;
-			SpawnSkillItems(m_skillComponent.spells);
+			DisplaySkills(m_skillComponent.spells);
 			UpdateTopMenuSummary();
 		}
 	}
 	public void OnPlayerActionTabClicked(bool isOn) {
 		if (isOn) {
 			m_currentView = SKILL_VIEW.PLAYER_ACTION;
-			SpawnSkillItems(m_skillComponent.playerActions);
+			DisplaySkills(m_skillComponent.playerActions);
 			UpdateTopMenuSummary();
 		}
 	}

@@ -365,6 +365,7 @@ MonoBehaviour:
   txtUpgrade: {fileID: 985034480224768388}
   txtCost: {fileID: 6580747679019247353}
   spiritIcon: {fileID: 1749322783834375265}
+  txtPlus: {fileID: 7143232592354043986}
 --- !u!1 &5985260276962194763
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,7 +690,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 7143232591440409273}
   m_OnClick:
     m_PersistentCalls:
