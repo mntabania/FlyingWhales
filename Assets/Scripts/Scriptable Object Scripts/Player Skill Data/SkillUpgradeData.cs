@@ -55,7 +55,7 @@ public class SkillUpgradeData
     }
     public int GetChargesBaseOnLevel(int p_currentLevel) {
         if (chargesPerLevel == null || chargesPerLevel.Count <= 0) {
-            return 0;
+            return 1;
         }
         if (p_currentLevel >= chargesPerLevel.Count) {
             return chargesPerLevel[upgradeCosts.Count - 1];
