@@ -61,7 +61,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         if (targetArea != null) {
                             log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetArea}";
                             //Build vampire castle
-                            List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                            List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
                             return character.jobComponent.TriggerBuildVampireCastle(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);    
                         } else {

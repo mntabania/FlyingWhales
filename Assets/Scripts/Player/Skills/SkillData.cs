@@ -49,6 +49,8 @@ public class SkillData : IPlayerSkill {
     }
 
     #region Virtuals
+    public virtual void OnSetAsCurrentActiveSpell(){}
+    public virtual void OnNoLongerCurrentActiveSpell(){}
     public virtual void ActivateAbility(IPointOfInterest targetPOI) {
         OnExecutePlayerSkill();
     }
@@ -96,7 +98,7 @@ public class SkillData : IPlayerSkill {
     /// Highlight the affected area of this spell given a tile.
     /// </summary>
     /// <param name="tile">The tile to take into consideration.</param>
-    public virtual void HighlightAffectedTiles(LocationGridTile tile) { }
+    public virtual void ShowValidHighlight(LocationGridTile tile) { }
     public virtual void UnhighlightAffectedTiles() {
         TileHighlighter.Instance.HideHighlight();
     }
@@ -106,7 +108,7 @@ public class SkillData : IPlayerSkill {
     /// <param name="tile"></param>
     /// <param name="invalidText"></param>
     /// <returns>True or false (Whether or not this spell showed an invalid highlight)</returns>
-    public virtual bool InvalidHighlight(LocationGridTile tile, ref string invalidText) { return false; }
+    public virtual bool ShowInvalidHighlight(LocationGridTile tile, ref string invalidText) { return false; }
     #endregion
 
     #region General

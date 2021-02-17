@@ -36,7 +36,7 @@ public class MinionPlayerSkill : SkillData {
         spawnedCharacter = minion.character;
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {

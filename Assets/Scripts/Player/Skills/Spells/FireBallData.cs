@@ -25,7 +25,7 @@ public class FireBallData : SkillData {
         }
         return canPerform;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }

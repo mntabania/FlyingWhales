@@ -479,11 +479,12 @@ public class LocationStructureObject : PooledObject {
                 SetWallCollidersState(false);
                 break;
             case Structure_Visual_Mode.Demonic_Structure_Blueprint:
-                color = Color.white;
+                color.a = 174f / 255f;
                 SetStructureColor(color);
                 SetPreplacedObjectsState(true);
                 SetPreplacedObjectsColor(color);
                 SetWallCollidersState(false);
+                OverrideDefaultSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 50);
                 break;
             default:
                 color = Color.white;
@@ -768,16 +769,19 @@ public class LocationStructureObject : PooledObject {
     }
     private bool CanPlaceStructureOnTile(LocationGridTile tile) {
         if (tile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+            Debug.Log($"Could not place {structureType} because {tile} is not part of wilderness!");
             return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
         }
 
         if (tile.hasBlueprint) {
+            Debug.Log($"Could not place {structureType} because {tile} has blueprint!");
             return false; //This is to prevent overlapping blueprints. If any tile that will be occupied by this has a blueprint, then do not allow
         }
         if (tile.IsAtEdgeOfMap()) {
+            Debug.Log($"Could not place {structureType} because {tile} is at edge of map!");
             return false;
         }
-        if (!GameManager.Instance.gameHasStarted) {
+        if (!GameManager.Instance.gameHasStarted && !structureType.IsPlayerStructure()) {
             //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
             //since we expect that they will be generated later
             Area areaOwner = tile.area;
@@ -788,9 +792,6 @@ public class LocationStructureObject : PooledObject {
             if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
                 return false;
             }
-            //if (areaOwner.landmarkOnTile != null && areaOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
-            //    return false;
-            //}
         }
         
         
@@ -798,19 +799,33 @@ public class LocationStructureObject : PooledObject {
         for (int j = 0; j < tile.neighbourList.Count; j++) {
             LocationGridTile neighbour = tile.neighbourList[j];
             if (neighbour.hasBlueprint) {
+                Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
             if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Cave!");
                     return false;
                 }    
             } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Ocean!");
                     return false;
                 }
+            } else if (structureType.IsPlayerStructure()) {
+                if (neighbour.structure.structureType.IsPlayerStructure()) {
+                    //Do not allow Demonic structures to be placed next to each other.
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is a Player Structure!");
+                    return false;
+                }
+                // if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && 
+                //     neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
+                //     return false;
+                // }
             } else {
                 //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness and City CEnter!");
                     return false;
                 }    
             }

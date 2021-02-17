@@ -1698,6 +1698,15 @@ namespace Inner_Maps {
             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
             genericTileObject.InstantPlaceStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement);
         }
+        public void PlaceSelfBuildingDemonicStructure(StructureSetting p_structureSetting, int p_buildingTimeInTicks) {
+            if (p_buildingTimeInTicks > 0) {
+                List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(p_structureSetting.structureType, p_structureSetting.resource);
+                GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                genericTileObject.PlaceSelfBuildingStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement, p_buildingTimeInTicks);    
+            } else {
+                InstantPlaceDemonicStructure(p_structureSetting);
+            }
+        }
         #endregion
 
         #region Landmine

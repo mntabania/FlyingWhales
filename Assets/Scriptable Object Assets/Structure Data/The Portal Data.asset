@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
   m_Name: The Portal Data
   m_EditorClassIdentifier: 
-  structureSprite: {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
-  itemGenerationSetting: {fileID: 0}
+  _structureSprite: {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
+  _itemGenerationSetting: {fileID: 0}
   structurePrefabs:
     m_keys:
     - resource: 4
@@ -22,4 +22,4 @@ MonoBehaviour:
       isCorrupted: 0
     m_values:
     - data:
-      - {fileID: 1926241482549420, guid: 619492791824c8641ab5ab95845d20d7, type: 3}
+      - {fileID: 1926241482549420, guid: 71f44742eb695424fbc5f6744b734c21, type: 3}

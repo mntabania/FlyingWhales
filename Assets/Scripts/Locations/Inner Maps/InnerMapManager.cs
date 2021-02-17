@@ -626,9 +626,9 @@ namespace Inner_Maps {
         #region Structures
         public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE p_structureType, RESOURCE resource) {
             StructureSetting structureSetting = new StructureSetting(p_structureType, resource);
-            return GetIndividualStructurePrefabsForStructure(structureSetting);
+            return GetStructurePrefabsForStructure(structureSetting);
         }
-        public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
+        public List<GameObject> GetStructurePrefabsForStructure(StructureSetting structureSetting) {
             return LandmarkManager.Instance.GetStructureData(structureSetting.structureType).GetStructurePrefabs(structureSetting);
             // if (structureSetting.isCorrupted) {
             //     if (corruptedStructurePrefabs.ContainsKey(structureSetting)) {
@@ -640,6 +640,10 @@ namespace Inner_Maps {
             //     }
             // }
             // throw new Exception($"No structure prefabs for {structureSetting.ToString()}");
+        }
+        public GameObject GetFirstStructurePrefabForStructure(StructureSetting structureSetting) {
+            List<GameObject> choices = LandmarkManager.Instance.GetStructureData(structureSetting.structureType).GetStructurePrefabs(structureSetting);
+            return choices.First();
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);

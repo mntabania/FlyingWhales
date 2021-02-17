@@ -34,7 +34,7 @@ public class ManifestFoodData : SkillData {
         }
         return canPerform;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }

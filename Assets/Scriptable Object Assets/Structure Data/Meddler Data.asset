@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
   m_Name: Meddler Data
   m_EditorClassIdentifier: 
-  structureSprite: {fileID: 21300000, guid: a198e138445896d4eaf0cfbb73874723, type: 3}
-  itemGenerationSetting: {fileID: 0}
+  _structureSprite: {fileID: 21300000, guid: a198e138445896d4eaf0cfbb73874723, type: 3}
+  _itemGenerationSetting: {fileID: 0}
   structurePrefabs:
     m_keys:
     - resource: 4
@@ -22,4 +22,4 @@ MonoBehaviour:
       isCorrupted: 0
     m_values:
     - data:
-      - {fileID: 1052932554014340, guid: 2aa6e5b9629ba644fa12bcd8dda836f0, type: 3}
+      - {fileID: 1052932554014340, guid: 425bfa7ba8939e9498c0be96d5e43e03, type: 3}

@@ -31,9 +31,9 @@ namespace Player_Input {
             if (hoveredTile != null && !UIManager.Instance.IsMouseOnUI()) {
                 if (_lastHoveredTile != hoveredTile) {
                     _lastHoveredTile = hoveredTile;
-                    Area hexTile = hoveredTile.area;
+                    Area area = hoveredTile.area;
                     bool hasEnoughSpace = _portalPrefab.HasEnoughSpaceIfPlacedOn(hoveredTile);
-                    bool canBuildDemonicStructureOnArea = hexTile.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL);
+                    bool canBuildDemonicStructureOnArea = area.structureComponent.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL);
                     _canPlacePortalOnCurrentTile = hasEnoughSpace && canBuildDemonicStructureOnArea;
                     var color = _canPlacePortalOnCurrentTile ? GameUtilities.GetValidTileHighlightColor() : GameUtilities.GetInvalidTileHighlightColor();
                     InputManager.Instance.SetCursorTo(_canPlacePortalOnCurrentTile ? InputManager.Cursor_Type.Check : InputManager.Cursor_Type.Cross);

@@ -41,7 +41,7 @@ public class SummonPlayerSkill : SkillData {
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {

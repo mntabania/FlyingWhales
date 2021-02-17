@@ -13,9 +13,25 @@ using Debug = System.Diagnostics.Debug;
 
 public class GenericTileObject : TileObject {
     private bool hasBeenInitialized { get; set; }
+    /// <summary>
+    /// The blueprint placed on this tile.
+    /// NOTE: Only the center tile of the structure will have value.
+    /// </summary>
     public LocationStructureObject blueprintOnTile { get; private set; }
+    /// <summary>
+    /// If blueprint that was placed here can expire,
+    /// this is the date that it will expire.
+    /// </summary>
     public GameDate blueprintExpiryDate { get; private set; }
+    /// <summary>
+    /// Is a villager currently building the blueprint on this tile.
+    /// </summary>
     public bool isCurrentlyBuilding { get; private set; }
+    /// <summary>
+    /// If blueprint that was placed here is self building,
+    /// this is the date that it will be finished
+    /// </summary>
+    public GameDate selfBuildingStructureDueDate { get; private set; }
     private LocationGridTile _owner;
     private string _expiryKey;
 
@@ -216,7 +232,14 @@ public class GenericTileObject : TileObject {
 
     #region Structure Blueprints
     public bool PlaceExpiringBlueprintOnTile(string prefabName) {
-        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
+        if (PlaceBlueprintOnTile(prefabName)) {
+            ScheduleBlueprintExpiry();
+            return true;
+        }
+        return false;
+    }
+    private bool PlaceBlueprintOnTile(string p_prefabName) {
+        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
         LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
         if (structureObject.HasEnoughSpaceIfPlacedOn(gridTileLocation)) {
             structurePrefab.transform.position = gridTileLocation.centeredWorldLocation;
@@ -227,11 +250,14 @@ public class GenericTileObject : TileObject {
                 LocationGridTile tile = occupiedTiles[j];
                 tile.SetHasBlueprint(true);
             }
-            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentMap);
+            var structureVisualMode = LocationStructureObject.Structure_Visual_Mode.Blueprint;
+            if (structureObject.structureType.IsPlayerStructure()) {
+                structureVisualMode = LocationStructureObject.Structure_Visual_Mode.Demonic_Structure_Blueprint;
+            }
+            structureObject.SetVisualMode(structureVisualMode, gridTileLocation.parentMap);
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             blueprintOnTile = structureObject;
             gridTileLocation.SetIsDefault(false);
-            ScheduleBlueprintExpiry();
             return true;
         }
         ObjectPoolManager.Instance.DestroyObject(structurePrefab); //destroy structure since it wasn't placed
@@ -315,6 +341,19 @@ public class GenericTileObject : TileObject {
                 mmStructure.OnUseStructureConnector(p_usedConnector);    
             }    
         }
+    }
+    public void PlaceSelfBuildingStructure(string p_structurePrefabName, BaseSettlement p_settlement, int p_buildingTimeInTicks) {
+        Assert.IsTrue(p_buildingTimeInTicks > 0);
+        if (PlaceBlueprintOnTile(p_structurePrefabName)) {
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(p_buildingTimeInTicks);
+            SchedulingManager.Instance.AddEntry(dueDate, () => DoneSelfBuildingStructure(p_settlement), this);
+        } else {
+            throw new Exception($"Could not place self building structure {p_structurePrefabName} on {gridTileLocation}!");
+        }
+    }
+    private void DoneSelfBuildingStructure(BaseSettlement p_settlement) {
+        BuildBlueprint(blueprintOnTile, p_settlement, null);
     }
     #endregion
 

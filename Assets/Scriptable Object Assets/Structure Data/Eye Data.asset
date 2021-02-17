@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
   m_Name: Eye Data
   m_EditorClassIdentifier: 
-  structureSprite: {fileID: 21300000, guid: fa84bfdc8ef46db48925a710fb46e9f1, type: 3}
-  itemGenerationSetting: {fileID: 0}
+  _structureSprite: {fileID: 21300000, guid: fa84bfdc8ef46db48925a710fb46e9f1, type: 3}
+  _itemGenerationSetting: {fileID: 0}
   structurePrefabs:
     m_keys:
     - resource: 4
@@ -22,4 +22,4 @@ MonoBehaviour:
       isCorrupted: 0
     m_values:
     - data:
-      - {fileID: 1052932554014340, guid: 7b8124ccf8520cd4482d330b8eb45bd0, type: 3}
+      - {fileID: 1052932554014340, guid: ec1344a647044f743aee490ada758923, type: 3}

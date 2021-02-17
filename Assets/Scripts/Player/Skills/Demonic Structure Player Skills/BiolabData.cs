@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 public class BiolabData : DemonicStructurePlayerSkill {

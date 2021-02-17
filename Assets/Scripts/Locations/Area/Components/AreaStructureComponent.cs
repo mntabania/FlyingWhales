@@ -127,15 +127,15 @@ public class AreaStructureComponent : AreaComponent {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.isCurrentlyBuildingDemonicStructure) {
             return false;
         }
-        if (owner.settlementOnArea != null || HasStructureInArea()) {
-            return false;
-        }
+        // if (owner.settlementOnArea != null) { //|| HasStructureInArea()
+        //     return false;
+        // }
         if (_buildParticles != null) {
             return false;
         }
-        if(owner.elevationType == ELEVATION.WATER || owner.elevationType == ELEVATION.MOUNTAIN) {
-            return false;
-        }
+        // if(owner.elevationType == ELEVATION.WATER || owner.elevationType == ELEVATION.MOUNTAIN) {
+        //     return false;
+        // }
         return true;
         // //Cannot build on settlements and hex tiles with blueprints right now
         // if(settlementOnTile == null && landmarkOnTile == null && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN && _buildParticles == null) {

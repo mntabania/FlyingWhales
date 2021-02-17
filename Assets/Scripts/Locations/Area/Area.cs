@@ -257,7 +257,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         _blueprintsOnTile++;
     }
     public void RemoveBlueprint() {
-        _blueprintsOnTile++;
+        _blueprintsOnTile--;
     }
     public bool HasBlueprintOnTile() {
         return _blueprintsOnTile > 0;

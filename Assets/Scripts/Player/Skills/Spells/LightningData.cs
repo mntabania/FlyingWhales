@@ -47,7 +47,7 @@ public class LightningData : SkillData {
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
         }
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }

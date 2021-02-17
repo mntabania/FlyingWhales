@@ -315,7 +315,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         yield return null;
     }
     private List<LocationStructure> PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, Area tileLocation, StructureSetting structureSetting) {
-        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+        List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
@@ -330,7 +330,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         out int connectorToUse, out LocationGridTile connectorTile) {
         List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureToPlace.structureType);
         availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
-        List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureToPlace);
+        List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureToPlace);
         prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
         for (int j = 0; j < prefabChoices.Count; j++) {
             GameObject prefabGO = prefabChoices[j];
