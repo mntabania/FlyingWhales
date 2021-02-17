@@ -823,10 +823,10 @@ public class LocationStructureObject : PooledObject {
                     Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is a Player Structure!");
                     return false;
                 }
-                // if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && 
-                //     neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
-                //     return false;
-                // }
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness!");
+                    return false;
+                }
             } else {
                 //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
