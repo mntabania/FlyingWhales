@@ -523,7 +523,7 @@ namespace Inner_Maps {
                 case Ground_Type.Demon_Stone:
                 case Ground_Type.Flesh:
                 case Ground_Type.Cave:
-                case Ground_Type.Corrupted:
+                // case Ground_Type.Corrupted:
                 case Ground_Type.Bone:
                     //if from structure, revert to original ground asset
                     nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);
@@ -1372,10 +1372,10 @@ namespace Inner_Maps {
             return null;
         }
         public bool IsAtEdgeOfWalkableMap() {
-            if ((localPlace.y == InnerTileMap.SouthEdge && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)
-                || (localPlace.y == parentMap.height - InnerTileMap.NorthEdge - 1 && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)
-                || (localPlace.x == InnerTileMap.WestEdge && localPlace.y >= InnerTileMap.SouthEdge && localPlace.y <= parentMap.height - InnerTileMap.NorthEdge - 1) 
-                || (localPlace.x == parentMap.width - InnerTileMap.EastEdge - 1 && localPlace.y >= InnerTileMap.SouthEdge && localPlace.y <= parentMap.height - InnerTileMap.NorthEdge - 1)) {
+            if ((localPlace.y == 0 && localPlace.x >= 0 && localPlace.x <= parentMap.width - 1)
+                || (localPlace.y == parentMap.height - 1 && localPlace.x >= 0 && localPlace.x <= parentMap.width - 1)
+                || (localPlace.x == 0 && localPlace.y >= 0 && localPlace.y <= parentMap.height - 1) 
+                || (localPlace.x == parentMap.width - 1 && localPlace.y >= 0 && localPlace.y <= parentMap.height - 1)) {
                 return true;
             }
             return false;

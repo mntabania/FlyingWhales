@@ -253,6 +253,7 @@ public class UIManager : BaseMonoBehaviour {
         UpdateStructureInfo();
         UpdateSettlementInfo();
         UpdatePartyInfo();
+        UpdateUnbuiltStructureInfo();
     }
 
     #region World Controls
@@ -1025,7 +1026,7 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Structure Info")]
     [SerializeField] public StructureInfoUI structureInfoUI;
-    public void ShowStructureInfo(LocationStructure structure) {
+    public void ShowStructureInfo(LocationStructure structure, bool centerOnStructure = true) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
@@ -1038,8 +1039,11 @@ public class UIManager : BaseMonoBehaviour {
         }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();
+        if (centerOnStructure) {
+            structure.CenterOnStructure();
+        }
     }
-    public void UpdateStructureInfo() {
+    private void UpdateStructureInfo() {
         if (structureInfoUI.isShowing) {
             structureInfoUI.UpdateStructureInfoUI();
         }
@@ -1050,6 +1054,25 @@ public class UIManager : BaseMonoBehaviour {
     private void CheckStructureInfoForClosure(LocationStructure structure) {
         if(structureInfoUI.isShowing && structureInfoUI.activeStructure == structure) {
             structureInfoUI.CloseMenu();
+        }
+    }
+    #endregion
+    
+    #region Unbuilt Structure Info
+    [Space(10)]
+    [Header("Unbuilt Structure Info")]
+    [SerializeField] public UnbuiltStructureInfoUI unbuiltStructureInfoUI;
+    public void ShowUnbuiltStructureInfo(LocationStructureObject p_structureObject) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        unbuiltStructureInfoUI.SetData(p_structureObject);
+        unbuiltStructureInfoUI.OpenMenu();
+    }
+    private void UpdateUnbuiltStructureInfo() {
+        if (unbuiltStructureInfoUI.isShowing) {
+            unbuiltStructureInfoUI.UpdateUnbuiltStructureInfoUI();
         }
     }
     #endregion

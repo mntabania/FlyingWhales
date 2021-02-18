@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: Fishing Shack Data
+  m_EditorClassIdentifier: 
+  _structureSprite: {fileID: 21300000, guid: 10016f4795fb3014ab06f390beeb256d, type: 3}
+  _itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 2
+      structureType: 52
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 1
+      structureType: 52
+      hasValue: 1
+      isCorrupted: 0
+    m_values:
+    - data:
+      - {fileID: 3719249432437008507, guid: 3fe942fbffd53f74981680fcca9cf322, type: 3}
+      - {fileID: 5611010000193779117, guid: f90c38c558870654e8854a3f1f33df7f, type: 3}
+    - data:
+      - {fileID: 6490933079867262278, guid: c627097e9c0055741946e0c56b88cda7, type: 3}
+      - {fileID: 6490933079867262278, guid: c627097e9c0055741946e0c56b88cda7, type: 3}

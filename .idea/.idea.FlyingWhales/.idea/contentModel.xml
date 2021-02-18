@@ -1993,6 +1993,7 @@
                   <e p="AncientGraveyardStructureObject.cs" t="Include" />
                   <e p="FarmStructureObject.cs" t="Include" />
                   <e p="LocationStructureObject.cs" t="Include" />
+                  <e p="LocationStructureObjectClickCollider.cs" t="Include" />
                   <e p="PortalStructureObject.cs" t="Include" />
                   <e p="RuinedZooStructureObject.cs" t="Include" />
                   <e p="StructureConnector.cs" t="Include" />
@@ -3228,6 +3229,7 @@
               <e p="StructureInfoUI.cs" t="Include" />
               <e p="StructureRoomInfoUI.cs" t="Include" />
               <e p="TileObjectInfoUI.cs" t="Include" />
+              <e p="UnbuiltStructureInfoUI.cs" t="Include" />
             </e>
             <e p="InitialWorldSetupMenu.cs" t="Include" />
             <e p="IntelItem.cs" t="Include" />

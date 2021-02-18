@@ -62,7 +62,6 @@ public class StructureInfoUI : InfoUIBase {
     }
     public override void OpenMenu() {
         activeStructure = _data as LocationStructure;
-        activeStructure.CenterOnStructure();
         base.OpenMenu();
         activeStructure.ShowSelectorOnStructure();
         UpdateStructureInfoUI();

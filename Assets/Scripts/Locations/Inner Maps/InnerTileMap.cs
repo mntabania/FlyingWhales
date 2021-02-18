@@ -16,12 +16,7 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public abstract class InnerTileMap : BaseMonoBehaviour {
-        
-        public static int WestEdge = 0;
-        public static int NorthEdge = 0;
-        public static int SouthEdge = 0;
-        public static int EastEdge = 0;
-        
+
         [Header("Tile Maps")]
         [SerializeField] private Tilemap[] _allTilemaps;
         public Tilemap groundTilemap;

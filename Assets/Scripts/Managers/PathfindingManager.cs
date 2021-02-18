@@ -9,7 +9,7 @@ using UnityEngine.Profiling;
 public class PathfindingManager : BaseMonoBehaviour {
 
     public static PathfindingManager Instance = null;
-    private const float nodeSize = 0.3f; //0.4
+    private const float nodeSize = 0.5f; //0.4
 
     [SerializeField] private AstarPath aStarPath;
 
@@ -111,10 +111,10 @@ public class PathfindingManager : BaseMonoBehaviour {
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
 
-        int reducedWidth = newMap.width - (InnerTileMap.WestEdge + InnerTileMap.EastEdge);
-        int reducedHeight = newMap.height - (InnerTileMap.NorthEdge + InnerTileMap.SouthEdge);
+        int mapWidth = newMap.width;
+        int mapHeight = newMap.height;
 
-        gg.SetDimensions(Mathf.FloorToInt(reducedWidth / gg.nodeSize), Mathf.FloorToInt(reducedHeight / gg.nodeSize), nodeSize);
+        gg.SetDimensions(Mathf.FloorToInt(mapWidth / gg.nodeSize), Mathf.FloorToInt(mapHeight / gg.nodeSize), nodeSize);
         Vector3 pos = InnerMapManager.Instance.transform.position;
         pos.x += (newMap.width / 2f);
         pos.y += (newMap.height / 2f) + newMap.transform.localPosition.y;

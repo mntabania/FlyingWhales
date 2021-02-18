@@ -12,6 +12,7 @@ using Locations.Area_Features;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using System.IO;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -411,6 +412,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         structureData = new StructureDataDictionary();
         string assetPath = "Assets/Scriptable Object Assets/Structure Data/";
         string[] scriptableObjects = Directory.GetFiles(assetPath,"*.asset");
+        List<STRUCTURE_TYPE> structureTypes = CollectionUtilities.GetEnumValues<STRUCTURE_TYPE>().ToList();
         for (int i = 0; i < scriptableObjects.Length; i++) {
             string asset = scriptableObjects[i];
             StructureData loadedSprite = (StructureData)UnityEditor.AssetDatabase.LoadAssetAtPath(asset, typeof(StructureData));
@@ -418,9 +420,13 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             strStructureName = strStructureName.Replace("Data", "").TrimEnd().ToUpper();
             strStructureName = UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(strStructureName);
             STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)System.Enum.Parse(typeof(STRUCTURE_TYPE), strStructureName);
+            structureTypes.Remove(structureType);
             structureData.Add(structureType, loadedSprite);
         }
         EditorUtility.SetDirty(this);
+        if (structureTypes.Count > 0) {
+            Debug.LogWarning($"No Structure Data for: {structureTypes.ComafyList()}");
+        }
     }
 #endif
     #endregion
