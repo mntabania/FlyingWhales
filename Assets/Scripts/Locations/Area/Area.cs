@@ -22,7 +22,6 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     /// </summary>
     private int _blueprintsOnTile;
     public int freezingTraps { get; private set; }
-    private AutoDestroyParticle _buildParticles;
 
     //Components
     public AreaFeatureComponent featureComponent { get; private set; }
@@ -257,7 +256,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         _blueprintsOnTile++;
     }
     public void RemoveBlueprint() {
-        _blueprintsOnTile++;
+        _blueprintsOnTile--;
     }
     public bool HasBlueprintOnTile() {
         return _blueprintsOnTile > 0;

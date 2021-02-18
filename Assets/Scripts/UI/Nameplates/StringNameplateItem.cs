@@ -35,7 +35,7 @@ public class StringNameplateItem : NameplateItem<string> {
             _locationPortrait.gameObject.SetActive(true);
             string landmarkName = str.Replace(' ', '_');
             LANDMARK_TYPE landmark = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), landmarkName.ToUpper());
-            _locationPortrait.SetPortrait(landmark);
+            _locationPortrait.SetPortrait(landmark.GetStructureType());
             _locationPortrait.disableInteraction = true;
         } else if (identifier == "Intervention Ability") {
             img.gameObject.SetActive(true);

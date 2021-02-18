@@ -243,6 +243,7 @@ public class Player : ILeader, IObjectManipulator {
             SkillData previousActiveAction = currentActivePlayerSpell;
             currentActivePlayerSpell = action;
             if (currentActivePlayerSpell == null) {
+                previousActiveAction.OnNoLongerCurrentActiveSpell();
                 PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.spellInputModule);
                 UIManager.Instance.SetTempDisableShowInfoUI(false); //allow UI clicks again after active spell has been set to null
                 Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
@@ -251,6 +252,7 @@ public class Player : ILeader, IObjectManipulator {
                 UIManager.Instance.HideSmallInfo(); //This is to hide the invalid messages.
                 Messenger.Broadcast(SpellSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
+                action.OnSetAsCurrentActiveSpell();
                 PlayerManager.Instance.AddPlayerInputModule(PlayerManager.spellInputModule);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
                 Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
@@ -296,9 +298,13 @@ public class Player : ILeader, IObjectManipulator {
                 case SPELL_TARGET.TILE:
                     hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
-                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile)) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile, out var cannotPerformReason)) {
                             currentActivePlayerSpell.ActivateAbility(hoveredTile);
                             activatedAction = true;
+                        } else {
+                            if (!string.IsNullOrEmpty(cannotPerformReason)) {
+                                InnerMapManager.Instance.ShowAreaMapTextPopup(cannotPerformReason, hoveredTile.centeredWorldLocation, Color.white);
+                            }
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }

@@ -13,10 +13,11 @@ using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
-public class LocationStructureObject : PooledObject {
+public class LocationStructureObject : PooledObject, ISelectable {
 
-    public Action<LocationStructureObject> onStructureClicked;
-    public enum Structure_Visual_Mode { Blueprint, Built }
+    public enum Structure_Visual_Mode { Blueprint, Built,
+        Demonic_Structure_Blueprint
+    }
 
     public STRUCTURE_TYPE structureType;
     
@@ -51,6 +52,9 @@ public class LocationStructureObject : PooledObject {
     [FormerlySerializedAs("rooms")] [Header("Rooms")] 
     public RoomTemplate[] roomTemplates; //if this is null then it means that this structure object has no rooms.
 
+    [Header("Interaction")]
+    [SerializeField] private LocationStructureObjectClickCollider _clickCollider;
+
     public bool wallsContributeToDamage = true;
     private StructureTemplate _parentTemplate;
     private StructureTemplateObjectData[] _preplacedObjs;
@@ -60,6 +64,7 @@ public class LocationStructureObject : PooledObject {
     private Tilemap[] allTilemaps;
     private ThinWallGameObject[] wallVisuals;
     public LocationGridTile[] tiles { get; private set; }
+    private TilemapCollider2D _blockWallsTilemapCollider;
     #endregion
 
     #region Getters
@@ -84,6 +89,9 @@ public class LocationStructureObject : PooledObject {
         allTilemaps = transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = transform.GetComponentsInChildren<ThinWallGameObject>();
         _parentTemplate = GetComponentInParent<StructureTemplate>();
+        if (_blockWallsTilemap != null) {
+            _blockWallsTilemapCollider = _blockWallsTilemap.GetComponent<TilemapCollider2D>();    
+        }
         DetermineOccupiedTileCoordinates();
     }
     #endregion
@@ -100,6 +108,16 @@ public class LocationStructureObject : PooledObject {
         for (int i = 0; i < wallVisuals.Length; i++) {
             ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
+        }
+    }
+    public void OverrideDefaultSortingOrder(int p_sortingOrder) {
+        _groundTileMapRenderer.sortingOrder = p_sortingOrder;
+        _blockWallsTilemap.GetComponent<TilemapRenderer>().sortingOrder = p_sortingOrder + 1;
+        _detailTileMapRenderer.sortingOrder = p_sortingOrder + 2;
+        StructureTemplateObjectData[] templateObjectData = GetPreplacedObjects();
+        for (int i = 0; i < templateObjectData.Length; i++) {
+            StructureTemplateObjectData templateData = templateObjectData[i];
+            templateData.SetSortingOrder(p_sortingOrder + 2);
         }
     }
     private void SetStructureColor(Color color) {
@@ -245,6 +263,14 @@ public class LocationStructureObject : PooledObject {
         if (preplacedObjs != null) {
             for (int i = 0; i < preplacedObjs.Length; i++) {
                preplacedObjs[i].gameObject.SetActive(state);
+            }
+        }
+    }
+    private void SetPreplacedObjectsColor(Color p_color) {
+        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
+        if (preplacedObjs != null) {
+            for (int i = 0; i < preplacedObjs.Length; i++) {
+                preplacedObjs[i].SetVisualColor(p_color);
             }
         }
     }
@@ -457,12 +483,23 @@ public class LocationStructureObject : PooledObject {
                 SetStructureColor(color);
                 SetPreplacedObjectsState(false);
                 SetWallCollidersState(false);
+                SetClickColliderState(true);
+                break;
+            case Structure_Visual_Mode.Demonic_Structure_Blueprint:
+                color.a = 128f / 255f;
+                SetStructureColor(color);
+                SetPreplacedObjectsState(true);
+                SetPreplacedObjectsColor(color);
+                SetWallCollidersState(false);
+                OverrideDefaultSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 50);
+                SetClickColliderState(true);
                 break;
             default:
                 color = Color.white;
                 SetStructureColor(color);
                 SetWallCollidersState(true);
                 RescanPathfindingGridOfStructure(innerTileMap);
+                SetClickColliderState(false);
                 break;
         }
     }
@@ -649,6 +686,9 @@ public class LocationStructureObject : PooledObject {
         
     }
     private void SetWallCollidersState(bool state) {
+        if (_blockWallsTilemapCollider != null) {
+            _blockWallsTilemapCollider.enabled = state;    
+        }
         for (int i = 0; i < wallVisuals.Length; i++) {
             ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.SetUnpassableColliderState(state);
@@ -664,13 +704,6 @@ public class LocationStructureObject : PooledObject {
 
         guo = new TagGraphUpdateObject(_groundTileMapRenderer.bounds) {nnConstraint = innerTileMap.onlyPathfindingGraph, updatePhysics = true, modifyWalkability = false};
         PathfindingManager.Instance.UpdatePathfindingGraphPartialCoroutine(guo);
-    }
-    #endregion
-
-    #region Interaction
-    public void OnPointerClick(BaseEventData data) {
-        onStructureClicked?.Invoke(this);
-        Debug.Log($"Player clicked {name}");
     }
     #endregion
 
@@ -720,7 +753,7 @@ public class LocationStructureObject : PooledObject {
         return null;
     }
     public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile) {
-        if (!CanPlaceStructureOnTile(centerTile)) {
+        if (!CanPlaceStructureOnTile(centerTile, out _)) {
             return false;
         }
         InnerTileMap map = centerTile.parentMap;
@@ -738,7 +771,7 @@ public class LocationStructureObject : PooledObject {
             if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
                 && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
                 LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
-                if (!CanPlaceStructureOnTile(tile)) {
+                if (!CanPlaceStructureOnTile(tile, out _)) {
                     return false;
                 }
             } else {
@@ -747,31 +780,70 @@ public class LocationStructureObject : PooledObject {
         }
         return true;
     }
-    private bool CanPlaceStructureOnTile(LocationGridTile tile) {
+    public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile, out string o_cannotPlaceReason) {
+        if (!CanPlaceStructureOnTile(centerTile, out o_cannotPlaceReason)) {
+            return false;
+        }
+        InnerTileMap map = centerTile.parentMap;
+        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = localOccupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = centerTile.localPlace;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                if (!CanPlaceStructureOnTile(tile, out o_cannotPlaceReason)) {
+                    return false;
+                }
+            } else {
+                return false; //returned coordinates are out of the map
+            }
+        }
+        return true;
+    }
+    private bool CanPlaceStructureOnTile(LocationGridTile tile, out string o_cannotPlaceReason) {
         if (tile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+            Debug.Log($"Could not place {structureType} because {tile} is not part of wilderness!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_wilderness");
             return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
         }
 
         if (tile.hasBlueprint) {
+            Debug.Log($"Could not place {structureType} because {tile} has blueprint!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
             return false; //This is to prevent overlapping blueprints. If any tile that will be occupied by this has a blueprint, then do not allow
         }
         if (tile.IsAtEdgeOfMap()) {
+            Debug.Log($"Could not place {structureType} because {tile} is at edge of map!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_edge");
             return false;
         }
-        if (!GameManager.Instance.gameHasStarted) {
+        if (!GameManager.Instance.gameHasStarted && !structureType.IsPlayerStructure()) {
             //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
             //since we expect that they will be generated later
             Area areaOwner = tile.area;
             if (areaOwner.elevationType == ELEVATION.WATER || areaOwner.elevationType == ELEVATION.MOUNTAIN) {
+                o_cannotPlaceReason = string.Empty;
                 return false;
             }
             LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
             if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
+                o_cannotPlaceReason = string.Empty;
                 return false;
             }
-            //if (areaOwner.landmarkOnTile != null && areaOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
-            //    return false;
-            //}
+        }
+        if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
+            //Note: Demonic structures must be placed on corruption! Except for the portal, since it is the structure that will start the corruption
+            Debug.Log($"Could not place {structureType} because {tile} is not corrupted!!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
+            return false;
         }
         
         
@@ -779,23 +851,44 @@ public class LocationStructureObject : PooledObject {
         for (int j = 0; j < tile.neighbourList.Count; j++) {
             LocationGridTile neighbour = tile.neighbourList[j];
             if (neighbour.hasBlueprint) {
+                Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
+                o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
             if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Cave!");
+                    o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
             } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Ocean!");
+                    o_cannotPlaceReason = string.Empty;
+                    return false;
+                }
+            } else if (structureType.IsPlayerStructure()) {
+                if (neighbour.structure.structureType.IsPlayerStructure()) {
+                    //Do not allow Demonic structures to be placed next to each other.
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is a Player Structure!");
+                    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_demonic_adjacent");
+                    return false;
+                }
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness!");
+                    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_neighbour_not_wilderness");
                     return false;
                 }
             } else {
                 //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
+                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness and City CEnter!");
+                    o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
             }
         }
+        o_cannotPlaceReason = string.Empty;
         return true;
     }
     private List<LocationGridTile> GetTilesThatWillBeOccupiedGivenCenter(InnerTileMap map, LocationGridTile centerTile) {
@@ -865,6 +958,7 @@ public class LocationStructureObject : PooledObject {
     [SerializeField] private GameObject cornerPrefab;
     [ContextMenu("Convert Walls")]
     public void ConvertWalls() {
+        UtilityScripts.Utilities.DestroyChildren(wallTileMap.transform);
         wallTileMap.CompressBounds();
         BoundsInt bounds = wallTileMap.cellBounds;
         for (int x = bounds.xMin; x < bounds.xMax; x++) {
@@ -1018,6 +1112,43 @@ public class LocationStructureObject : PooledObject {
     }
     #endregion
 
+    #region Interaction
+    private void SetClickColliderState(bool p_state) {
+        if (_clickCollider != null) {
+            if (p_state) {
+                _clickCollider.Enable();    
+            } else {
+                _clickCollider.Disable();
+            }    
+        }
+    }
+    #endregion
+
+    public Vector3 worldPosition {
+        get {
+            Vector3 position = transform.position;
+            position.x -= 0.5f;
+            position.y -= 0.5f;
+            return position;
+        }
+    }
+    public Vector2 selectableSize => size;
+    public bool IsCurrentlySelected() {
+        return UIManager.Instance.unbuiltStructureInfoUI.isShowing 
+               && UIManager.Instance.unbuiltStructureInfoUI.activeStructureObject == this;
+    }
+    public void LeftSelectAction() {
+        UIManager.Instance.ShowUnbuiltStructureInfo(this);
+    }
+    public void RightSelectAction() {
+        UIManager.Instance.ShowUnbuiltStructureInfo(this);
+    }
+    public void MiddleSelectAction() {
+        UIManager.Instance.ShowUnbuiltStructureInfo(this);
+    }
+    public bool CanBeSelected() {
+        return true;
+    }
 }
 
 [System.Serializable]

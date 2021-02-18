@@ -1310,6 +1310,7 @@
             <e p="Builder.cs" t="Include" />
             <e p="CharacterManagerEditor.cs" t="Include" />
             <e p="InteractionLocalizedTextCreatorEditor.cs" t="Include" />
+            <e p="LandmarkManagerEditor.cs" t="Include" />
             <e p="LocalizedTextEditor.cs" t="Include" />
             <e p="RuinarchGridGraphEditor.cs" t="Include" />
             <e p="SerializableDictionariesEditor.cs" t="Include" />
@@ -1325,6 +1326,7 @@
               <e p="BaseParticleEffect.cs" t="Include" />
               <e p="BlizzardParticleEffect.cs" t="Include" />
               <e p="BrimstonesParticleEffect.cs" t="Include" />
+              <e p="BuildStructureParticleEffect.cs" t="Include" />
               <e p="HeatWaveParticleEffect.cs" t="Include" />
               <e p="IceteroidParticleEffect.cs" t="Include" />
               <e p="LightningParticleEffect.cs" t="Include" />
@@ -1934,6 +1936,11 @@
               <e p="Lights" t="Include">
                 <e p="InnerMapLight.cs" t="Include" />
               </e>
+              <e p="Location Grid Tile Components" t="Include">
+                <e p="GridTileCorruptionComponent.cs" t="Include" />
+                <e p="GridTileMouseEventsComponent.cs" t="Include" />
+                <e p="LocationGridTileComponent.cs" t="Include" />
+              </e>
               <e p="Location Structures" t="Include">
                 <e p="AbandonedMine.cs" t="Include" />
                 <e p="AncientGraveyard.cs" t="Include" />
@@ -1986,6 +1993,7 @@
                   <e p="AncientGraveyardStructureObject.cs" t="Include" />
                   <e p="FarmStructureObject.cs" t="Include" />
                   <e p="LocationStructureObject.cs" t="Include" />
+                  <e p="LocationStructureObjectClickCollider.cs" t="Include" />
                   <e p="PortalStructureObject.cs" t="Include" />
                   <e p="RuinedZooStructureObject.cs" t="Include" />
                   <e p="StructureConnector.cs" t="Include" />
@@ -2384,6 +2392,9 @@
             </e>
             <e p="Artifacts" t="Include">
               <e p="Artifact.cs" t="Include" />
+            </e>
+            <e p="Base Building" t="Include">
+              <e p="PlayerStructurePlacementVisual.cs" t="Include" />
             </e>
             <e p="ChaosOrb.cs" t="Include" />
             <e p="Combat Abilities" t="Include">
@@ -3213,10 +3224,12 @@
               <e p="InfoUIBase.cs" t="Include" />
               <e p="MonsterInfoUI.cs" t="Include" />
               <e p="PartyInfoUI.cs" t="Include" />
+              <e p="PiercingAndResistancesInfo.cs" t="Include" />
               <e p="SettlementInfoUI.cs" t="Include" />
               <e p="StructureInfoUI.cs" t="Include" />
               <e p="StructureRoomInfoUI.cs" t="Include" />
               <e p="TileObjectInfoUI.cs" t="Include" />
+              <e p="UnbuiltStructureInfoUI.cs" t="Include" />
             </e>
             <e p="InitialWorldSetupMenu.cs" t="Include" />
             <e p="IntelItem.cs" t="Include" />
@@ -3227,6 +3240,7 @@
             <e p="LandmarkCharacterItem.cs" t="Include" />
             <e p="LevelCollapseUI.cs" t="Include" />
             <e p="LoadWindow.cs" t="Include" />
+            <e p="LocationGridTileMouseEvents.cs" t="Include" />
             <e p="LocationPortrait.cs" t="Include" />
             <e p="LocationSmallInfo.cs" t="Include" />
             <e p="LogFilterItem.cs" t="Include" />
@@ -3267,6 +3281,7 @@
                 <e p="OnDeathUIController.cs" t="Include" />
                 <e p="PurchaseSkillUIController.cs" t="Include" />
                 <e p="SchemeUIController.cs" t="Include" />
+                <e p="SkillUpgradeUIController.cs" t="Include" />
                 <e p="SymptomsUIController.cs" t="Include" />
                 <e p="TemptUIController.cs" t="Include" />
                 <e p="TransmissionUIController.cs" t="Include" />
@@ -3274,6 +3289,7 @@
               </e>
               <e p="Items" t="Include">
                 <e p="PurchaseSkillItemUI.cs" t="Include" />
+                <e p="SkillUpgradeItemUI.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
@@ -3285,6 +3301,7 @@
                 <e p="OnDeathUIModel.cs" t="Include" />
                 <e p="PurchaseSkillUIModel.cs" t="Include" />
                 <e p="SchemeUIModel.cs" t="Include" />
+                <e p="SkillUpgradeUIModel.cs" t="Include" />
                 <e p="SymptomsUIModel.cs" t="Include" />
                 <e p="TemptUIModel.cs" t="Include" />
                 <e p="TransmissionUIModel.cs" t="Include" />
@@ -3300,6 +3317,7 @@
                 <e p="OnDeathUIView.cs" t="Include" />
                 <e p="PurchaseSkillUIView.cs" t="Include" />
                 <e p="SchemeUIView.cs" t="Include" />
+                <e p="SkillUpgradeUIView.cs" t="Include" />
                 <e p="SymptomsUIView.cs" t="Include" />
                 <e p="TemptUIView.cs" t="Include" />
                 <e p="TransmissionUIView.cs" t="Include" />
@@ -3341,6 +3359,7 @@
             <e p="POITestingUI.cs" t="Include" />
             <e p="PopupMessageBox.cs" t="Include" />
             <e p="Popups" t="Include">
+              <e p="AreaMapTextPopup.cs" t="Include" />
               <e p="ArtifactListUI.cs" t="Include" />
               <e p="BuildListUI.cs" t="Include" />
               <e p="CharacterThoughtTooltip.cs" t="Include" />

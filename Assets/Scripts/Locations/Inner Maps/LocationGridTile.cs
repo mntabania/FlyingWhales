@@ -527,7 +527,7 @@ namespace Inner_Maps {
                 case Ground_Type.Demon_Stone:
                 case Ground_Type.Flesh:
                 case Ground_Type.Cave:
-                case Ground_Type.Corrupted:
+                // case Ground_Type.Corrupted:
                 case Ground_Type.Bone:
                     //if from structure, revert to original ground asset
                     nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);
@@ -1376,10 +1376,10 @@ namespace Inner_Maps {
             return null;
         }
         public bool IsAtEdgeOfWalkableMap() {
-            if ((localPlace.y == InnerTileMap.SouthEdge && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)
-                || (localPlace.y == parentMap.height - InnerTileMap.NorthEdge - 1 && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)
-                || (localPlace.x == InnerTileMap.WestEdge && localPlace.y >= InnerTileMap.SouthEdge && localPlace.y <= parentMap.height - InnerTileMap.NorthEdge - 1) 
-                || (localPlace.x == parentMap.width - InnerTileMap.EastEdge - 1 && localPlace.y >= InnerTileMap.SouthEdge && localPlace.y <= parentMap.height - InnerTileMap.NorthEdge - 1)) {
+            if ((localPlace.y == 0 && localPlace.x >= 0 && localPlace.x <= parentMap.width - 1)
+                || (localPlace.y == parentMap.height - 1 && localPlace.x >= 0 && localPlace.x <= parentMap.width - 1)
+                || (localPlace.x == 0 && localPlace.y >= 0 && localPlace.y <= parentMap.height - 1) 
+                || (localPlace.x == parentMap.width - 1 && localPlace.y >= 0 && localPlace.y <= parentMap.height - 1)) {
                 return true;
             }
             return false;
@@ -1674,6 +1674,20 @@ namespace Inner_Maps {
         }
         #endregion
 
+        public void InstantPlaceDemonicStructure(StructureSetting p_structureSetting) {
+            List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(p_structureSetting.structureType, p_structureSetting.resource);
+            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+            genericTileObject.InstantPlaceStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement);
+        }
+        public void PlaceSelfBuildingDemonicStructure(StructureSetting p_structureSetting, int p_buildingTimeInTicks) {
+            if (p_buildingTimeInTicks > 0) {
+                List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(p_structureSetting.structureType, p_structureSetting.resource);
+                GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                genericTileObject.PlaceSelfBuildingStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement, p_buildingTimeInTicks);
+            } else {
+                InstantPlaceDemonicStructure(p_structureSetting);
+            }
+        }
         #region Landmine
         public void SetHasLandmine(bool state) {
             if(hasLandmine != state) {

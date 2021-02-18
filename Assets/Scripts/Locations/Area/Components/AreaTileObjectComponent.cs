@@ -28,7 +28,13 @@ public class AreaTileObjectComponent : AreaComponent {
         }
     }
     public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
-        return itemsInArea.Count;
+        int count = 0;
+        for (int i = 0; i < itemsInArea.Count; i++) {
+            if (itemsInArea[i].tileObjectType == type) {
+                count++;
+            }
+        }
+        return count;
     }
     public List<T> GetTileObjectsInHexTile<T>() where T : TileObject {
         List<T> tileObjects = null;

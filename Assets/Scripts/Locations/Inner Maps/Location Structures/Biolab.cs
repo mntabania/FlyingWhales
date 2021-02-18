@@ -6,18 +6,14 @@ using Inner_Maps.Location_Structures;
 
 namespace Inner_Maps.Location_Structures {
     public class Biolab : DemonicStructure {
-        public override Vector2 selectableSize { get; }
         public GameDate replenishDate { get; private set; }
 
         #region getters
         public override System.Type serializedData => typeof(SaveDataBiolab);
         #endregion
 
-        public Biolab(Region location) : base(STRUCTURE_TYPE.BIOLAB, location) {
-            selectableSize = new Vector2(10f, 10f);
-        }
+        public Biolab(Region location) : base(STRUCTURE_TYPE.BIOLAB, location) { }
         public Biolab(Region location, SaveDataBiolab data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
             replenishDate = data.replenishDate;
             SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
         }

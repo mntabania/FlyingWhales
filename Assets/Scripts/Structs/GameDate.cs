@@ -234,6 +234,7 @@ public struct GameDate {
     /// Get the number of ticks between this date and another date.
     /// NOTE: This does not return a negative value, so this doesn't
     /// take into account which date is earlier and which is later.
+    /// otherDate should be the earlier date.
     /// </summary>
     /// <param name="otherDate">The date to compare to.</param>
     /// <returns>The number of ticks between the 2 dates.</returns>

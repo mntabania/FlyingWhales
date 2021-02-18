@@ -1024,6 +1024,10 @@ namespace Inner_Maps.Location_Structures {
                 if (tile.groundType.IsStructureType()) {
                     tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
                 }
+                if (structureType.IsPlayerStructure()) {
+                    //once demonic structure is destroyed, revert all tiles to corrupted.
+                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
+                }
             }
             if (rooms != null) {
                 for (int i = 0; i < rooms.Length; i++) {
@@ -1092,6 +1096,10 @@ namespace Inner_Maps.Location_Structures {
         protected void OnObjectDamaged(TileObject tileObject, int amount) {
             if (objectsThatContributeToDamage.Contains(tileObject)) {
                 AdjustHP(amount);
+                if (!objectsThatContributeToDamage.Any(o => o.currentHP > 0)) {
+                    //if this structure no longer has any objects that have hp, then destroy this structure
+                    AdjustHP(-currentHP);
+                }
             }
         }
         protected void OnObjectRepaired(TileObject tileObject, int amount) {

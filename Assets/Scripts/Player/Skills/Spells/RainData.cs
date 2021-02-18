@@ -28,7 +28,7 @@ public class RainData : SkillData {
         }
         return false;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(tile.area);
     }
 }

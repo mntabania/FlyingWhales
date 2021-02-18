@@ -23,6 +23,26 @@ public class ThinWallGameObject : TileObjectGameObject {
         visionTrigger = transform.GetComponentInChildren<WallObjectVisionTrigger>();
         _unpassableCollider = objectVisual.transform.GetComponentInChildren<BoxCollider2D>();
         visionTrigger.gameObject.SetActive(false);
+        // if (IsOffsetDefault(_unpassableCollider.offset)) {
+        //     Vector2 offset = _unpassableCollider.offset;
+        //     // if (name.Contains("Left")) {
+        //     //     offset.x += 0.12f;
+        //     // }
+        //     // else if (name.Contains("Right")) {
+        //     //     offset.x -= 0.12f;
+        //     // } else 
+        //     // if (name.Contains("Bottom")) {
+        //     //     offset.y += 0.12f;
+        //     // }
+        //     // else 
+        //     if (name.Contains("Top")) {
+        //         offset.y -= 0.12f;
+        //     }
+        //     _unpassableCollider.offset = offset;    
+        // }
+    }
+    private bool IsOffsetDefault(Vector2 p_offset) {
+        return p_offset == Vector2.zero;
     }
 
     //public override void Initialize(TileObject tileObject) {

@@ -143,7 +143,7 @@ public class VillageGeneration : MapGenerationComponent {
 	public static IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
 		List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureSetting.structureType);
 		availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
-		List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+		List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
 		prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
 		for (int j = 0; j < prefabChoices.Count; j++) {
 			GameObject prefabGO = prefabChoices[j];

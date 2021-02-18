@@ -9,7 +9,7 @@ namespace Inner_Maps.Location_Structures {
         public string name { get; }
         public List<LocationGridTile> tilesInRoom { get; }
         public List<PLAYER_SKILL_TYPE> actions { get; }
-        public Vector3 worldPosition { get; }
+        public Vector3 worldPosition { get; protected set; }
         public Vector2 selectableSize { get; protected set; }
         public List<Character> charactersInRoom => GetCharactersInRoom();
         public LocationStructure parentStructure => tilesInRoom?[0].structure;

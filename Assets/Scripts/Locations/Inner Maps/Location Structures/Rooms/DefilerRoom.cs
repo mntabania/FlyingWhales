@@ -13,7 +13,11 @@ namespace Inner_Maps.Location_Structures {
         
         public Summon skeleton { get; private set; }
 
-        public DefilerRoom(List<LocationGridTile> tilesInRoom) : base("Defiler Room", tilesInRoom) { }
+        public DefilerRoom(List<LocationGridTile> tilesInRoom) : base("Defiler Room", tilesInRoom) {
+            var worldLocation = GetCenterTile().centeredWorldLocation;
+            worldLocation.x += 0.5f;
+            worldPosition = worldLocation;
+        }
 
         #region Loading
         public override void LoadReferences(SaveDataStructureRoom saveDataStructureRoom) {

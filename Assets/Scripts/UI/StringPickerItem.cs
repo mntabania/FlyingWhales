@@ -42,9 +42,7 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
                     iconImg.gameObject.SetActive(false);
                 }
             } else if(identifier == "landmark") {
-                LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(str);
-                iconImg.sprite = landmarkData.defaultLandmarkPortrait;
-                iconImg.gameObject.SetActive(true);
+                iconImg.gameObject.SetActive(false);
             } else if (identifier == "intervention ability") {
                 iconImg.sprite = PlayerManager.Instance.GetJobActionSprite(str);
                 iconImg.gameObject.SetActive(true);

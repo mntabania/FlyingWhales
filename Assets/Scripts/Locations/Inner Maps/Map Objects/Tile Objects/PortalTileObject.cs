@@ -18,7 +18,9 @@ public class PortalTileObject : TileObject {
     public PortalTileObject(SaveDataTileObject data) {
         
     }
-    
+    public override bool CanBeSelected() {
+        return false;
+    }
     public override void ConstructDefaultActions() {
         actions = new List<PLAYER_SKILL_TYPE>();
         //portal has no actions by default

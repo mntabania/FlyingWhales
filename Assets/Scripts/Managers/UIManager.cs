@@ -27,6 +27,7 @@ using System;
 public class UIManager : BaseMonoBehaviour {
 
     public Action onPortalClicked;
+    public Action onSpireClicked;
 
     public static UIManager Instance = null;
 
@@ -252,6 +253,7 @@ public class UIManager : BaseMonoBehaviour {
         UpdateStructureInfo();
         UpdateSettlementInfo();
         UpdatePartyInfo();
+        UpdateUnbuiltStructureInfo();
     }
 
     #region World Controls
@@ -399,7 +401,7 @@ public class UIManager : BaseMonoBehaviour {
             smallInfoLbl.text = message;
         }
         if (!IsSmallInfoShowing()) {
-            smallInfoGO.transform.SetParent(this.transform);
+            smallInfoGO.transform.SetParent(transform);
             smallInfoGO.SetActive(true);
             if (gameObject.activeInHierarchy) {
                 StartCoroutine(ReLayout(smallInfoBGParentLG));
@@ -470,7 +472,7 @@ public class UIManager : BaseMonoBehaviour {
         characterPortraitHoverInfo.GeneratePortrait(character);
         characterPortraitHoverInfoGO.SetActive(true);
 
-        characterPortraitHoverInfoRT.SetParent(this.transform);
+        characterPortraitHoverInfoRT.SetParent(transform);
         PositionTooltip(characterPortraitHoverInfoRT.gameObject, characterPortraitHoverInfoRT, characterPortraitHoverInfoRT);
     }
     public void HideCharacterPortraitHoverInfo() {
@@ -851,7 +853,7 @@ public class UIManager : BaseMonoBehaviour {
 
     #region For Testing
     public void SetUIState(bool state) {
-        this.gameObject.SetActive(state);
+        gameObject.SetActive(state);
         Messenger.Broadcast(UISignals.UI_STATE_SET);
     }
     public void DateHover() {
@@ -860,7 +862,7 @@ public class UIManager : BaseMonoBehaviour {
     [ExecuteInEditMode]
     [ContextMenu("Set All Scroll Rect Scroll Speed")]
     public void SetAllScrollSpeed() {
-        ScrollRect[] allScroll = this.gameObject.GetComponentsInChildren<ScrollRect>(true);
+        ScrollRect[] allScroll = gameObject.GetComponentsInChildren<ScrollRect>(true);
         for (int i = 0; i < allScroll.Length; i++) {
             ScrollRect rect = allScroll[i];
             rect.scrollSensitivity = 25f;
@@ -1024,7 +1026,7 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Structure Info")]
     [SerializeField] public StructureInfoUI structureInfoUI;
-    public void ShowStructureInfo(LocationStructure structure) {
+    public void ShowStructureInfo(LocationStructure structure, bool centerOnStructure = true) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
@@ -1032,10 +1034,16 @@ public class UIManager : BaseMonoBehaviour {
         if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
             onPortalClicked?.Invoke();
         }
+        if (structure.structureType == STRUCTURE_TYPE.EYE) {
+            onSpireClicked?.Invoke();
+        }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();
+        if (centerOnStructure) {
+            structure.CenterOnStructure();
+        }
     }
-    public void UpdateStructureInfo() {
+    private void UpdateStructureInfo() {
         if (structureInfoUI.isShowing) {
             structureInfoUI.UpdateStructureInfoUI();
         }
@@ -1046,6 +1054,25 @@ public class UIManager : BaseMonoBehaviour {
     private void CheckStructureInfoForClosure(LocationStructure structure) {
         if(structureInfoUI.isShowing && structureInfoUI.activeStructure == structure) {
             structureInfoUI.CloseMenu();
+        }
+    }
+    #endregion
+    
+    #region Unbuilt Structure Info
+    [Space(10)]
+    [Header("Unbuilt Structure Info")]
+    [SerializeField] public UnbuiltStructureInfoUI unbuiltStructureInfoUI;
+    public void ShowUnbuiltStructureInfo(LocationStructureObject p_structureObject) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        unbuiltStructureInfoUI.SetData(p_structureObject);
+        unbuiltStructureInfoUI.OpenMenu();
+    }
+    private void UpdateUnbuiltStructureInfo() {
+        if (unbuiltStructureInfoUI.isShowing) {
+            unbuiltStructureInfoUI.UpdateUnbuiltStructureInfoUI();
         }
     }
     #endregion
@@ -1319,6 +1346,7 @@ public class UIManager : BaseMonoBehaviour {
     #region Yes/No
     [Header("Yes or No Confirmation")]
     public YesNoConfirmation yesNoConfirmation;
+    private bool _yesNoPauseAndResume;
     /// <summary>
     /// Show a yes/no pop up window
     /// </summary>
@@ -1337,27 +1365,27 @@ public class UIManager : BaseMonoBehaviour {
     /// <param name="noBtnActive">Should the no button be visible?</param>
     /// <param name="yesBtnInactiveHoverAction">Action to execute when user hover over an un-clickable yes button</param>
     /// <param name="yesBtnInactiveHoverExitAction">Action to execute when user hover over an un-clickable no button</param>
-    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
+    public void ShowYesNoConfirmation(string header, string question, Action onClickYesAction = null, Action onClickNoAction = null,
         bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
-        bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {
+        bool yesBtnActive = true, bool noBtnActive = true, Action yesBtnInactiveHoverAction = null, Action yesBtnInactiveHoverExitAction = null) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, 
                 showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable, pauseAndResume,
                 yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction));
             return;
         }
-        
-        if (pauseAndResume && !IsObjectPickerOpen()) {
+        _yesNoPauseAndResume = pauseAndResume;
+        if (_yesNoPauseAndResume && !IsObjectPickerOpen()) {
             //if object picker is already being shown, do not pause, so that this does not mess with the previously set speed. 
             Pause();
             SetSpeedTogglesState(false);    
         }
-        yesNoConfirmation.ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable,  pauseAndResume, 
+        yesNoConfirmation.ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable, 
             yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction);
     }
     public void HideYesNoConfirmation() {
         yesNoConfirmation.HideYesNoConfirmation();
-        if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen() && !optionsMenu.isShowing) {
+        if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen() && !optionsMenu.isShowing && _yesNoPauseAndResume) {
             ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }
@@ -1386,7 +1414,7 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private Button triggerFlawYesBtn;
     [SerializeField] private Button triggerFlawNoBtn;
     [SerializeField] private Button triggerFlawCloseBtn;
-    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, System.Action onClickYesAction = null, bool showCover = false, int layer = 21, bool pauseAndResume = false) {
+    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, Action onClickYesAction = null, bool showCover = false, int layer = 21, bool pauseAndResume = false) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowTriggerFlawConfirmation(question, effect, manaCost, onClickYesAction, showCover, layer, pauseAndResume));
             return;
@@ -1437,7 +1465,7 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Important Notification")]
     [SerializeField] private ScrollRect importantNotifScrollView;
     [SerializeField] private GameObject importantNotifPrefab;
-    public void ShowImportantNotification(GameDate date, string message, System.Action onClickAction) {
+    public void ShowImportantNotification(GameDate date, string message, Action onClickAction) {
         if (GameManager.Instance.gameHasStarted == false) {
             return;
         }
@@ -1482,7 +1510,7 @@ public class UIManager : BaseMonoBehaviour {
         minionCardTooltip.gameObject.SetActive(false);
     }
     private void PositionMinionCardTooltip(Vector3 screenPos) {
-        minionCardTooltip.transform.SetParent(this.transform);
+        minionCardTooltip.transform.SetParent(transform);
         var v3 = screenPos;
 
         minionCardRT.pivot = new Vector2(1f, 1f);
@@ -1578,7 +1606,7 @@ public class UIManager : BaseMonoBehaviour {
         if (logTagSpriteDictionary.ContainsKey(tag)) {
             return logTagSpriteDictionary[tag];
         }
-        throw new System.Exception($"No Log tag sprite for tag {tag.ToString()}");
+        throw new Exception($"No Log tag sprite for tag {tag.ToString()}");
     }
     #endregion
 
@@ -1709,11 +1737,12 @@ public class UIManager : BaseMonoBehaviour {
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private void OnHoverPlayerAction(SkillData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         string title = $"{spellData.name}";
         string fullDescription = spellData.description;
         int charges = spellData.charges;
-        int manaCost = spellData.manaCost;
-        int cooldown = spellData.cooldown;
+        int manaCost = playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel);
+        int cooldown = playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel);
 
         string currencyStr = string.Empty; 
         
@@ -1721,7 +1750,7 @@ public class UIManager : BaseMonoBehaviour {
             currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
         }
         if (charges != -1) {
-            currencyStr = $"{currencyStr}{charges.ToString()}/{spellData.maxCharges.ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
+            currencyStr = $"{currencyStr}{charges.ToString()}/{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel).ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
         }
         if (cooldown != -1) {
             currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}{UtilityScripts.Utilities.CooldownIcon()}  ";

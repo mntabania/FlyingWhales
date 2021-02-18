@@ -631,17 +631,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (interruptComponent.isInterrupted) {
             //had to force update because for some reason involved objects are empty during this point
             //TODO: Find out why!
-            interruptComponent.thoughtBubbleLog.TryUpdateLogAfterRename(p_character, true);
+            interruptComponent.thoughtBubbleLog?.TryUpdateLogAfterRename(p_character, true);
         }
         if (currentActionNode != null) {
-            currentActionNode.thoughtBubbleLog.TryUpdateLogAfterRename(p_character);
-            currentActionNode.thoughtBubbleMovingLog.TryUpdateLogAfterRename(p_character);
-            currentActionNode.descriptionLog.TryUpdateLogAfterRename(p_character);
+            currentActionNode.thoughtBubbleLog?.TryUpdateLogAfterRename(p_character);
+            currentActionNode.thoughtBubbleMovingLog?.TryUpdateLogAfterRename(p_character);
+            currentActionNode.descriptionLog?.TryUpdateLogAfterRename(p_character);
         }
         if (deathLog != null) {
             deathLog.TryUpdateLogAfterRename(p_character);
         }
-        stateComponent.currentState?.thoughtBubbleLog.TryUpdateLogAfterRename(p_character, true);
+        stateComponent.currentState?.thoughtBubbleLog?.TryUpdateLogAfterRename(p_character, true);
     }
     #endregion
 

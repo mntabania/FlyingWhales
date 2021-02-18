@@ -115,6 +115,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
+            case STRUCTURE_TYPE.BIOLAB:
                 return true;
             default:
                 return false;

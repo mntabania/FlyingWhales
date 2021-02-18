@@ -30,6 +30,9 @@ public class PlayerManager : BaseMonoBehaviour {
     [Header("Spirit Energy")]
     [SerializeField] private GameObject spiritnEnergyPrefab;
 
+    [Header("Base Building")] 
+    [SerializeField] private PlayerStructurePlacementVisual _structurePlacementVisual;
+    
     private List<PlayerInputModule> _playerInputModules;
     public static SeizeInputModule seizeInputModule;
     public static SpellInputModule spellInputModule;
@@ -38,11 +41,6 @@ public class PlayerManager : BaseMonoBehaviour {
     
     private void Awake() {
         Instance = this;
-        seizeInputModule = new SeizeInputModule();
-        spellInputModule = new SpellInputModule();
-        intelInputModule = new IntelInputModule();
-        pickPortalInputModule = new PickPortalInputModule();
-        InputManager.AddOnUpdateEvent(ProcessPlayerInputModules);
     }
     protected override void OnDestroy() {
         base.OnDestroy();
@@ -60,6 +58,12 @@ public class PlayerManager : BaseMonoBehaviour {
         Messenger.AddListener< Vector3, int, InnerTileMap>(PlayerSignals.CREATE_SPIRIT_ENERGY, CreateSpiritEnergyAt);
         Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
         Messenger.AddListener<string>(PlayerSignals.WIN_GAME, WinGame);
+        seizeInputModule = new SeizeInputModule();
+        spellInputModule = new SpellInputModule();
+        intelInputModule = new IntelInputModule();
+        pickPortalInputModule = new PickPortalInputModule();
+        InputManager.AddOnUpdateEvent(ProcessPlayerInputModules);
+        _structurePlacementVisual.Initialize(InnerMapCameraMove.Instance.camera);
         player = new Player();
     }
     public void InitializePlayer(Area portal) {
@@ -263,6 +267,21 @@ public class PlayerManager : BaseMonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
         yield return GameUtilities.waitFor3Seconds;
         PlayerUI.Instance.WinGameOver(winMessage);
+    }
+    #endregion
+
+    #region Structure Placement
+    public void ShowStructurePlacementVisual(STRUCTURE_TYPE p_structureType) {
+        _structurePlacementVisual.Show(p_structureType);
+    }
+    public void HideStructurePlacementVisual() {
+        _structurePlacementVisual.Hide();
+    }
+    public void SetStructurePlacementVisualFollowMouseState(bool p_state) {
+        _structurePlacementVisual.SetFollowMouseState(p_state);
+    }
+    public void SetStructurePlacementVisualHighlightColor(Color p_color) {
+        _structurePlacementVisual.SetHighlightColor(p_color);
     }
     #endregion
 }

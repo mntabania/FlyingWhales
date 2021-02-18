@@ -66,18 +66,29 @@ public class PlayerSkillComponent {
 
     #region Skill Tree
     private void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
-
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
-        spellData.SetCurrentLevel(playerSkillData.cheatedLevel);
-        Debug.LogError(spellData.name + " -- " + spellData.currentLevel + " -- " + playerSkillData.cheatedLevel);
-        spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
-        spellData.SetCharges(charges);
-        spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
-        spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
-        spellData.SetUnlockCost(playerSkillData.unlockCost);
-        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
-        spellData.SetThreat(threat);
-        spellData.SetThreatPerHour(threatPerHour);
+        if (playerSkillData != null) {
+            spellData.SetCurrentLevel(playerSkillData.cheatedLevel);    
+            spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
+            spellData.SetCharges(charges);
+            spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
+            spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
+            spellData.SetUnlockCost(playerSkillData.unlockCost);
+            spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
+            spellData.SetThreat(threat);
+            spellData.SetThreatPerHour(threatPerHour);
+        } else {
+            spellData.SetCurrentLevel(1);
+            spellData.SetMaxCharges(charges);
+            spellData.SetCharges(charges);
+            spellData.SetCooldown(cooldown);
+            spellData.SetPierce(pierce);
+            spellData.SetUnlockCost(0);
+            spellData.SetManaCost(manaCost);
+            spellData.SetThreat(threat);
+            spellData.SetThreatPerHour(threatPerHour);
+        }
+        // Debug.LogError(spellData.name + " -- " + spellData.currentLevel + " -- " + playerSkillData.cheatedLevel);
         CategorizePlayerSkill(spellData);
     }
     public void AddCharges(PLAYER_SKILL_TYPE spellType, int amount) {
@@ -86,7 +97,10 @@ public class PlayerSkillComponent {
             spellData.AdjustCharges(amount);
         } else {
             AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
-            UpdateTierCount(PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type));
+            var playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+            if (playerSkillData != null) {
+                UpdateTierCount(playerSkillData);    
+            }
         }
     }
     public void LoadPlayerSkillTreeOrLoadout(SaveDataPlayer save) {

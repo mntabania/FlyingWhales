@@ -23,14 +23,14 @@ public class ForlornSpiritData : SkillData {
         base.ActivateAbility(targetTile);
         // targetTile.structure.AddPOI(spirit, targetTile);
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             return targetTile.structure != null && targetTile.objHere == null;
         }
         return canPerform;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }

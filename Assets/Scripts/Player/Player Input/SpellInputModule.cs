@@ -3,6 +3,10 @@ using Locations.Settlements;
 using Ruinarch;
 namespace Player_Input {
     public class SpellInputModule : PlayerInputModule {
+
+        private LocationGridTile _lastHoveredTile;
+        private bool _canTargetLastHoveredTile;
+        
         public override void OnUpdate() {
             if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
                 InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default); 
@@ -26,13 +30,21 @@ namespace Player_Input {
                             } 
                             break; 
                         case SPELL_TARGET.AREA: 
-                            if (hoveredTile != null) { 
-                                canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.area); 
+                            if (hoveredTile != null) {
+                                //Note: This checking is for performance improvements, so that if the player does not exit the last hovered tile,
+                                //Can Target does not need to be called again, if by chance that the target is no longer valid while the player is
+                                //hovering it, then the spell cast will still fail, since Can Target is also checked before spell casting.
+                                if (_lastHoveredTile != hoveredTile) {
+                                    _lastHoveredTile = hoveredTile;
+                                    canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.area);
+                                    _canTargetLastHoveredTile = canTarget;
+                                } else {
+                                    canTarget = _canTargetLastHoveredTile;
+                                }
                             } 
                             break;
                         case SPELL_TARGET.SETTLEMENT:
-                            BaseSettlement settlement = null;
-                            if (hoveredTile != null && hoveredTile.IsPartOfSettlement(out settlement)) {
+                            if (hoveredTile != null && hoveredTile.IsPartOfSettlement(out var settlement)) {
                                 canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(settlement);
                             }
                             break;
@@ -40,9 +52,9 @@ namespace Player_Input {
                     InputManager.Instance.SetCursorTo(canTarget ? InputManager.Cursor_Type.Check : InputManager.Cursor_Type.Cross);
                 }
                 if (canTarget) {
-                    PlayerManager.Instance.player.currentActivePlayerSpell.HighlightAffectedTiles(hoveredTile);
+                    PlayerManager.Instance.player.currentActivePlayerSpell.ShowValidHighlight(hoveredTile);
                 } else {
-                    if (hoveredTile == null || PlayerManager.Instance.player.currentActivePlayerSpell.InvalidHighlight(hoveredTile, ref hoverText) == false) {
+                    if (hoveredTile == null || PlayerManager.Instance.player.currentActivePlayerSpell.ShowInvalidHighlight(hoveredTile, ref hoverText) == false) {
                         PlayerManager.Instance.player.currentActivePlayerSpell.UnhighlightAffectedTiles();    
                     }
                 }

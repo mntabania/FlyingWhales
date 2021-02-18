@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Inner_Maps;
-using UnityEngine;
+﻿using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UtilityScripts;
 
 public class DemonicStructurePlayerSkill : SkillData {
@@ -9,45 +7,68 @@ public class DemonicStructurePlayerSkill : SkillData {
     public override string description => name;
 
     public STRUCTURE_TYPE structureType { get; protected set; }
+    private StructureSetting structureSetting => new StructureSetting(structureType, RESOURCE.NONE);
+    private LocationStructureObject m_structureTemplate;
 
-    public DemonicStructurePlayerSkill() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.AREA };
-    }
-    
-    public override void ActivateAbility(Area targetArea) {
-        string question;
-        if (targetArea.IsNextToOrPartOfVillage()) {
-            question = $"<color=\"red\">Warning: You are building too close to a village!</color>";
-            question += "\nAre you sure you want to build " + name + "?";
-        } else {
-            question = "Are you sure you want to build " + name + "?";
+    #region getter
+    public LocationStructureObject structureTemplate {
+        get {
+            if (m_structureTemplate == null) {
+                m_structureTemplate = InnerMapManager.Instance.GetFirstStructurePrefabForStructure(structureSetting).GetComponent<LocationStructureObject>();
+            }
+            return m_structureTemplate;
         }
-        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetArea.structureComponent.StartBuild(type), showCover: true, pauseAndResume: true, layer: 50);
-        
-        // base.ActivateAbility(targetHex);
     }
-    public override bool CanPerformAbilityTowards(Area targetArea) {
-        if (base.CanPerformAbilityTowards(targetArea)) {
-            return targetArea.structureComponent.CanBuildDemonicStructureHere(structureType);
+    #endregion
+    
+    public DemonicStructurePlayerSkill() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+    }
+
+    #region Overrides
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        PlayerManager.Instance.SetStructurePlacementVisualFollowMouseState(false);
+        // string question;
+        // if (targetTile.area.IsNextToOrPartOfVillage()) {
+        //     question = $"<color=\"red\">Warning: You are building too close to a village!</color>";
+        //     question += "\nAre you sure you want to build " + name + "?";
+        // } else {
+        //     question = "Are you sure you want to build " + name + "?";
+        // }
+        // UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => BuildDemonicStructure(targetTile), OnClickNoOnBuildStructureConfirmation, showCover: true, pauseAndResume: true, layer: 50);
+        BuildDemonicStructure(targetTile);
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        if (base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason)) {
+            return targetTile.area.structureComponent.CanBuildDemonicStructureHere(structureType, out o_cannotPerformReason) && structureTemplate.HasEnoughSpaceIfPlacedOn(targetTile, out o_cannotPerformReason); 
         }
         return false;
     }
-    public void BuildDemonicStructureAt(Area targetArea) {
-        PlayerManager.Instance.player.playerSettlement.AddAreaToSettlement(targetArea);
-        targetArea.featureComponent.RemoveAllFeatures(targetArea);
-        //targetArea.StartCorruption();
-        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetArea.settlementOnArea, targetArea.region.innerMap, targetArea, structureType, RESOURCE.NONE);
-        //targetHex.landmarkOnTile?.OnFinishedBuilding();
-        Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
+    public override void OnSetAsCurrentActiveSpell() {
+        PlayerManager.Instance.ShowStructurePlacementVisual(structureType);
     }
-    
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.area, GameUtilities.GetValidTileHighlightColor());
+    public override void OnNoLongerCurrentActiveSpell() {
+        PlayerManager.Instance.HideStructurePlacementVisual();
     }
-    public override bool InvalidHighlight(LocationGridTile tile, ref string invalidText) {
-        TileHighlighter.Instance.PositionHighlight(tile.area, GameUtilities.GetInvalidTileHighlightColor());
+    public override void ShowValidHighlight(LocationGridTile tile) {
+        PlayerManager.Instance.SetStructurePlacementVisualHighlightColor(GameUtilities.GetValidTileHighlightColor());
+    }
+    public override bool ShowInvalidHighlight(LocationGridTile tile, ref string invalidText) {
+        PlayerManager.Instance.SetStructurePlacementVisualHighlightColor(GameUtilities.GetInvalidTileHighlightColor());
         invalidText = InvalidMessage(tile);
         return true;
     }
+    #endregion
+
+    #region Virtuals
     protected virtual string InvalidMessage(LocationGridTile tile) { return string.Empty; }
+    #endregion
+    
+    private void OnClickNoOnBuildStructureConfirmation() {
+        PlayerManager.Instance.SetStructurePlacementVisualFollowMouseState(true);
+    }
+    private void BuildDemonicStructure(LocationGridTile p_tile) {
+        p_tile.PlaceSelfBuildingDemonicStructure(structureSetting, 20);
+        Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
+    }
 }

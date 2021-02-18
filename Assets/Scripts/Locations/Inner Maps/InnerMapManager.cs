@@ -61,15 +61,13 @@ namespace Inner_Maps {
         [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
         public GameObject tileObjectSlotsParentPrefab;
         public GameObject tileObjectSlotPrefab;
-        
-        [Header("Structures")]
-        [SerializeField] private LocationStructurePrefabDictionary structurePrefabs;
-        [SerializeField] private LocationStructurePrefabDictionary individualStructurePrefabs;
-        [SerializeField] private LocationStructurePrefabDictionary corruptedStructurePrefabs;
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
+
+        [Header("Effects")] 
+        [SerializeField] private GameObject pfAreaMapTextPopup;
 
         //NPCSettlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
@@ -194,7 +192,9 @@ namespace Inner_Maps {
                     return room;
                 }
                 if (tile.structure.structureType.IsPlayerStructure()) {
-                    return tile.structure;
+                    if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
+                        return tile.structure;    
+                    }
                 } else {
                     if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) ||
                                (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && 
@@ -227,6 +227,11 @@ namespace Inner_Maps {
                         if (visual.selectable != null && visual.selectable.CanBeSelected()) {
                             selectables.Add(visual.selectable);    
                         }
+                    } else if (go.gameObject.CompareTag("Location Structure Object")) {
+                        LocationStructureObjectClickCollider structureObjectClickCollider = go.gameObject.GetComponent<LocationStructureObjectClickCollider>();
+                        if (structureObjectClickCollider.structureObject != null && structureObjectClickCollider.structureObject.CanBeSelected()) {
+                            selectables.Add(structureObjectClickCollider.structureObject);    
+                        }
                     } else if (go.gameObject.CompareTag("Map_Click_Blocker")) {
                         return false; //click was blocked
                     }
@@ -237,7 +242,9 @@ namespace Inner_Maps {
                     selectables.Add(room);
                 }
                 if (tile.structure.structureType.IsPlayerStructure()) {
-                    selectables.Add(tile.structure);
+                    if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
+                        selectables.Add(tile.structure);    
+                    }
                 } else {
                     if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) || //if man made structure check if structure object has not yet been destroyed 
                         (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed
@@ -627,24 +634,26 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type, RESOURCE resource) {
-            StructureSetting structureSetting = new StructureSetting(type, resource);
-            if (structurePrefabs.ContainsKey(structureSetting)) {
-                return structurePrefabs[structureSetting];    
-            }
-            throw new Exception($"No structure prefabs for {structureSetting}");
+        public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE p_structureType, RESOURCE resource) {
+            StructureSetting structureSetting = new StructureSetting(p_structureType, resource);
+            return GetStructurePrefabsForStructure(structureSetting);
         }
-        public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
-            if (structureSetting.isCorrupted) {
-                if (corruptedStructurePrefabs.ContainsKey(structureSetting)) {
-                    return corruptedStructurePrefabs[structureSetting];    
-                }
-            } else {
-                if (individualStructurePrefabs.ContainsKey(structureSetting)) {
-                    return individualStructurePrefabs[structureSetting];    
-                }
-            }
-            throw new Exception($"No structure prefabs for {structureSetting.ToString()}");
+        public List<GameObject> GetStructurePrefabsForStructure(StructureSetting structureSetting) {
+            return LandmarkManager.Instance.GetStructureData(structureSetting.structureType).GetStructurePrefabs(structureSetting);
+            // if (structureSetting.isCorrupted) {
+            //     if (corruptedStructurePrefabs.ContainsKey(structureSetting)) {
+            //         return corruptedStructurePrefabs[structureSetting];    
+            //     }
+            // } else {
+            //     if (individualStructurePrefabs.ContainsKey(structureSetting)) {
+            //         return individualStructurePrefabs[structureSetting];    
+            //     }
+            // }
+            // throw new Exception($"No structure prefabs for {structureSetting.ToString()}");
+        }
+        public GameObject GetFirstStructurePrefabForStructure(StructureSetting structureSetting) {
+            List<GameObject> choices = LandmarkManager.Instance.GetStructureData(structureSetting.structureType).GetStructurePrefabs(structureSetting);
+            return choices.First();
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);
@@ -919,6 +928,14 @@ namespace Inner_Maps {
         }
         #endregion
 
+        #region Effects
+        public void ShowAreaMapTextPopup(string p_text, Vector3 p_worldPos, Color p_color) {
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(pfAreaMapTextPopup.name, p_worldPos, Quaternion.identity, transform, true);
+            AreaMapTextPopup textPopup = go.GetComponent<AreaMapTextPopup>();
+            textPopup.Show(p_text, p_worldPos, p_color);
+        }
+        #endregion
+
         protected override void OnDestroy() {
             if (Application.isPlaying) {
                 Debug.Log("Cleaning up inner maps...");
@@ -931,7 +948,6 @@ namespace Inner_Maps {
                     innerMaps?.Clear();    
                 }
                 Destroy(pathfinder);
-                structurePrefabs?.Clear();
                 tileObjectSlotSettings?.Clear();
                 wallResourceAssets?.Clear();
                 base.OnDestroy();

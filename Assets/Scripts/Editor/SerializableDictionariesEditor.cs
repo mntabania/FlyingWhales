@@ -85,6 +85,8 @@ public class RaceDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDr
 public class MonsterMigrationBiomeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ScenarioSettingsDataDictionary))]
 public class ScenarioSettingsDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(StructureDataDictionary))]
+public class StructureDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
