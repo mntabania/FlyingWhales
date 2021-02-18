@@ -17,7 +17,7 @@ namespace Archetype {
                 new RaceClass(RACE.SPIDER, "Giant Spider")
             };
             minionPlayerSkills = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.DEMON_WRATH, PLAYER_SKILL_TYPE.DEMON_PRIDE, PLAYER_SKILL_TYPE.DEMON_LUST, PLAYER_SKILL_TYPE.DEMON_GLUTTONY, PLAYER_SKILL_TYPE.DEMON_SLOTH, PLAYER_SKILL_TYPE.DEMON_ENVY, PLAYER_SKILL_TYPE.DEMON_GREED, };
-            summonPlayerSkills = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.SKELETON_MARAUDER, };
+            summonPlayerSkills = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.SKELETON, };
 
             //playerActions = new List<string>();
             SetCanTriggerFlaw(true);

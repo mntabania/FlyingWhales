@@ -52,7 +52,7 @@ public class FactionInfoHubUI : MonoBehaviour {
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
     }
-    public void InitializeAfterGameLoaded() {
+	public void InitializeAfterGameLoaded() {
         factionInfoUI.Initialize();
         PopulateInitialFactions();
         InitializeUI();

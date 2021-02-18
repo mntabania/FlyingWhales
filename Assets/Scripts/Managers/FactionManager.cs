@@ -150,10 +150,11 @@ public class FactionManager : BaseMonoBehaviour {
           newFaction.SetEmblem(factionEmblem);  
         }
         DetermineFactionPathfindingTags(newFaction);
-        CreateRelationshipsForFaction(newFaction);
         if (!string.IsNullOrEmpty(factionName)) {
             newFaction.SetName(factionName);
         }
+        CreateRelationshipsForFaction(newFaction);
+        
         if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
         }

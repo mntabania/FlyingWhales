@@ -45,7 +45,6 @@ public class SpellItem : NameplateItem<SkillData> {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         SkillData updatedSkillData = PlayerSkillManager.Instance.GetPlayerSkillData(this.spellData.type);
         this.spellData = updatedSkillData;
-        Debug.LogError(spellData.currentLevel + " -- " + playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
         if (playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel) > 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel).ToString()} ";
         }
