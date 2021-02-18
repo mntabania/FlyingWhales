@@ -13,9 +13,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
-public class LocationStructureObject : PooledObject {
+public class LocationStructureObject : PooledObject, ISelectable {
 
-    public Action<LocationStructureObject> onStructureClicked;
     public enum Structure_Visual_Mode { Blueprint, Built,
         Demonic_Structure_Blueprint
     }
@@ -52,6 +51,9 @@ public class LocationStructureObject : PooledObject {
     
     [FormerlySerializedAs("rooms")] [Header("Rooms")] 
     public RoomTemplate[] roomTemplates; //if this is null then it means that this structure object has no rooms.
+
+    [Header("Interaction")]
+    [SerializeField] private LocationStructureObjectClickCollider _clickCollider;
 
     public bool wallsContributeToDamage = true;
     private StructureTemplate _parentTemplate;
@@ -481,6 +483,7 @@ public class LocationStructureObject : PooledObject {
                 SetStructureColor(color);
                 SetPreplacedObjectsState(false);
                 SetWallCollidersState(false);
+                SetClickColliderState(true);
                 break;
             case Structure_Visual_Mode.Demonic_Structure_Blueprint:
                 color.a = 128f / 255f;
@@ -489,12 +492,14 @@ public class LocationStructureObject : PooledObject {
                 SetPreplacedObjectsColor(color);
                 SetWallCollidersState(false);
                 OverrideDefaultSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 50);
+                SetClickColliderState(true);
                 break;
             default:
                 color = Color.white;
                 SetStructureColor(color);
                 SetWallCollidersState(true);
                 RescanPathfindingGridOfStructure(innerTileMap);
+                SetClickColliderState(false);
                 break;
         }
     }
@@ -691,13 +696,6 @@ public class LocationStructureObject : PooledObject {
 
         guo = new TagGraphUpdateObject(_groundTileMapRenderer.bounds) {nnConstraint = innerTileMap.onlyPathfindingGraph, updatePhysics = true, modifyWalkability = false};
         PathfindingManager.Instance.UpdatePathfindingGraphPartialCoroutine(guo);
-    }
-    #endregion
-
-    #region Interaction
-    public void OnPointerClick(BaseEventData data) {
-        onStructureClicked?.Invoke(this);
-        Debug.Log($"Player clicked {name}");
     }
     #endregion
 
@@ -1106,6 +1104,43 @@ public class LocationStructureObject : PooledObject {
     }
     #endregion
 
+    #region Interaction
+    private void SetClickColliderState(bool p_state) {
+        if (_clickCollider != null) {
+            if (p_state) {
+                _clickCollider.Enable();    
+            } else {
+                _clickCollider.Disable();
+            }    
+        }
+    }
+    #endregion
+
+    public Vector3 worldPosition {
+        get {
+            Vector3 position = transform.position;
+            position.x -= 0.5f;
+            position.y -= 0.5f;
+            return position;
+        }
+    }
+    public Vector2 selectableSize => size;
+    public bool IsCurrentlySelected() {
+        return UIManager.Instance.unbuiltStructureInfoUI.isShowing 
+               && UIManager.Instance.unbuiltStructureInfoUI.activeStructureObject == this;
+    }
+    public void LeftSelectAction() {
+        UIManager.Instance.ShowUnbuiltStructureInfo(this);
+    }
+    public void RightSelectAction() {
+        UIManager.Instance.ShowUnbuiltStructureInfo(this);
+    }
+    public void MiddleSelectAction() {
+        UIManager.Instance.ShowUnbuiltStructureInfo(this);
+    }
+    public bool CanBeSelected() {
+        return true;
+    }
 }
 
 [System.Serializable]

@@ -523,7 +523,7 @@ namespace Inner_Maps {
                 case Ground_Type.Demon_Stone:
                 case Ground_Type.Flesh:
                 case Ground_Type.Cave:
-                case Ground_Type.Corrupted:
+                // case Ground_Type.Corrupted:
                 case Ground_Type.Bone:
                     //if from structure, revert to original ground asset
                     nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);

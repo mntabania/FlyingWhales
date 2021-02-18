@@ -141,8 +141,14 @@ public class GenericTileObject : TileObject {
         
         if (currentHP <= 0) {
             Profiler.BeginSample($"GTO - Adjust HP - DetermineNextGroundTypeAfterDestruction");
-            //floor has been destroyed
-            gridTileLocation.DetermineNextGroundTypeAfterDestruction();
+            if (gridTileLocation.structure.structureType.IsPlayerStructure()) {
+                //once tile in demonic structure is destroyed, revert tile to corrupted.
+                gridTileLocation.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
+            } else {
+                //floor has been destroyed
+                gridTileLocation.DetermineNextGroundTypeAfterDestruction();    
+            }
+                
             Profiler.EndSample();
         } 
         if (amount < 0) {

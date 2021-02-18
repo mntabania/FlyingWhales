@@ -227,6 +227,11 @@ namespace Inner_Maps {
                         if (visual.selectable != null && visual.selectable.CanBeSelected()) {
                             selectables.Add(visual.selectable);    
                         }
+                    } else if (go.gameObject.CompareTag("Location Structure Object")) {
+                        LocationStructureObjectClickCollider structureObjectClickCollider = go.gameObject.GetComponent<LocationStructureObjectClickCollider>();
+                        if (structureObjectClickCollider.structureObject != null && structureObjectClickCollider.structureObject.CanBeSelected()) {
+                            selectables.Add(structureObjectClickCollider.structureObject);    
+                        }
                     } else if (go.gameObject.CompareTag("Map_Click_Blocker")) {
                         return false; //click was blocked
                     }
