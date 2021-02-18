@@ -1924,10 +1924,9 @@
               </e>
               <e p="Damageables" t="Include">
                 <e p="IDamageable.cs" t="Include" />
-                <e p="StructureWallObject.cs" t="Include" />
+                <e p="ThinWallGameObject.cs" t="Include" />
                 <e p="WallAsset.cs" t="Include" />
                 <e p="WallResouceAssets.cs" t="Include" />
-                <e p="WallVisual.cs" t="Include" />
               </e>
               <e p="InnerMapAssetManager.cs" t="Include" />
               <e p="InnerMapCenter.cs" t="Include" />
@@ -1939,6 +1938,7 @@
               <e p="Location Grid Tile Components" t="Include">
                 <e p="GridTileCorruptionComponent.cs" t="Include" />
                 <e p="GridTileMouseEventsComponent.cs" t="Include" />
+                <e p="GridTileTileObjectComponent.cs" t="Include" />
                 <e p="LocationGridTileComponent.cs" t="Include" />
               </e>
               <e p="Location Structures" t="Include">
@@ -2199,6 +2199,7 @@
                   <e p="TableScrolls.cs" t="Include" />
                   <e p="TableWeapons.cs" t="Include" />
                   <e p="TempleAltar.cs" t="Include" />
+                  <e p="ThinWall.cs" t="Include" />
                   <e p="TileObject.cs" t="Include" />
                   <e p="TileObjectDB.cs" t="Include" />
                   <e p="TileObjectSlotItem.cs" t="Include" />

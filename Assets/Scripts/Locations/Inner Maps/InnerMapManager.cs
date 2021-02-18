@@ -408,6 +408,17 @@ namespace Inner_Maps {
             //     summary = $"{summary}None";
             // }
 
+            summary = $"{summary}\nWalls: ";
+            if (tile.walls != null && tile.walls.Count > 0) {
+                for (int i = 0; i < tile.walls.Count; i++) {
+                    ThinWall thinWall = tile.walls[i];
+                    summary = $"{summary}\nWall {i.ToString()} - {thinWall.traitContainer.allTraitsAndStatuses.Keys.ToList().ComafyList()}";
+                }
+            } else {
+                summary = $"{summary}None";
+            }
+            
+            
             IPointOfInterest poi = tile.objHere; //?? tile.genericTileObject
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {

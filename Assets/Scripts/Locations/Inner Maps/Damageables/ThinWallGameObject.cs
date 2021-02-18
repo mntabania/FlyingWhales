@@ -22,6 +22,7 @@ public class ThinWallGameObject : TileObjectGameObject {
         _spriteRenderers = transform.GetComponentsInChildren<SpriteRenderer>();
         visionTrigger = transform.GetComponentInChildren<WallObjectVisionTrigger>();
         _unpassableCollider = objectVisual.transform.GetComponentInChildren<BoxCollider2D>();
+        particleEffectParent = objectVisual.transform;
         visionTrigger.gameObject.SetActive(false);
         // if (IsOffsetDefault(_unpassableCollider.offset)) {
         //     Vector2 offset = _unpassableCollider.offset;
