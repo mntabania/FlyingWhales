@@ -105,7 +105,7 @@ public class SaveDataNaturalStructure : SaveDataLocationStructure {
 public class SaveDataManMadeStructure : SaveDataLocationStructure {
 
     public string structureTemplateName;
-    public SaveDataStructureWallObject[] structureWallObjects;
+    public SaveDataTileObject[] structureWallObjects;
     public RESOURCE wallsMadeOf;
     public Vector3Save structureObjectWorldPosition;
     public SaveDataStructureConnector[] structureConnectors;
@@ -135,10 +135,10 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
         
         //walls
         if (manMadeStructure.structureWalls != null) {
-            structureWallObjects = new SaveDataStructureWallObject[manMadeStructure.structureWalls.Count];
+            structureWallObjects = new SaveDataTileObject[manMadeStructure.structureWalls.Count];
             for (int i = 0; i < manMadeStructure.structureWalls.Count; i++) {
-                StructureWallObject structureWallObject = manMadeStructure.structureWalls[i];
-                SaveDataStructureWallObject saveDataStructureWallObject = new SaveDataStructureWallObject();
+                ThinWall structureWallObject = manMadeStructure.structureWalls[i];
+                SaveDataTileObject saveDataStructureWallObject = new SaveDataTileObject();
                 saveDataStructureWallObject.Save(structureWallObject);
                 structureWallObjects[i] = saveDataStructureWallObject;
             }

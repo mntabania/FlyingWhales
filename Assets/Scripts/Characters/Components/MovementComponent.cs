@@ -41,6 +41,7 @@ public class MovementComponent : CharacterComponent {
         tagPenalties = new int[32];
         traversableTags = InnerMapManager.All_Tags; //enable all tags for now
         SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag); //by default all units cannot traverse obstacle tag
+        SetEnableDigging(true);
     }
     public MovementComponent(SaveDataMovementComponent data) {
         structuresToAvoid = new List<LocationStructure>();
@@ -444,7 +445,7 @@ public class MovementComponent : CharacterComponent {
         }
 
         LocationGridTile tile = lastGridTileInPath;// owner.currentRegion.innerMap.GetTile(lastPositionInPath);
-        if (tile.objHere is BlockWall || actualDestinationTile.centeredWorldLocation == tile.centeredWorldLocation) {
+        if (tile.tileObjectComponent.HasWalls() || actualDestinationTile.centeredWorldLocation == tile.centeredWorldLocation) {
             targetTile = tile;
         } else {
             Vector2 direction = actualDestinationTile.centeredWorldLocation - tile.centeredWorldLocation; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
@@ -463,11 +464,11 @@ public class MovementComponent : CharacterComponent {
             }
         }
         //We must not check the neighbours of neighbours
-        if (targetTile != null && (targetTile.objHere == null || !(targetTile.objHere is BlockWall))) {
+        if (targetTile != null && !targetTile.tileObjectComponent.HasWalls()) {
             LocationGridTile newTargetTile = null;
             for (int i = 0; i < tile.neighbourList.Count; i++) {
                 LocationGridTile neighbour = tile.neighbourList[i];
-                if (neighbour.objHere is BlockWall) {
+                if (neighbour.tileObjectComponent.HasWalls()) {
                     newTargetTile = neighbour;
                     break;
                 }
@@ -487,9 +488,9 @@ public class MovementComponent : CharacterComponent {
         //Debug.Log($"No Path found for {owner.name} towards {owner.behaviourComponent.currentAbductTarget?.name ?? "null"}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
         //Assert.IsNotNull(targetTile.objHere, $"Object at {targetTile} is null, but {owner.name} wants to dig it.");
 
-        if (targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
+        if (targetTile != null && targetTile.tileObjectComponent.HasWalls()) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.DIG_THROUGH)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.objHere, owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.tileObjectComponent.GetFirstWall(), owner);
                 job.SetCannotBePushedBack(true);
                 owner.jobQueue.AddJobInQueue(job);
                 return true;
@@ -501,11 +502,12 @@ public class MovementComponent : CharacterComponent {
     public bool AttackBlockersOnReachEndPath(Path path, LocationGridTile lastGridTileInPath, LocationGridTile actualDestinationTile) {
         LocationGridTile targetTile = GetBlockerTargetTileOnReachEndPath(path, lastGridTileInPath, actualDestinationTile);
 
-        if (targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
-            if (owner.combatComponent.hostilesInRange.Contains(targetTile.objHere)) {
+        if (targetTile != null && targetTile.tileObjectComponent.HasWalls()) {
+            TileObject wall = targetTile.tileObjectComponent.GetFirstWall();
+            if (owner.combatComponent.hostilesInRange.Contains(wall)) {
                 owner.combatComponent.SetWillProcessCombat(true);
             } else {
-                owner.combatComponent.Fight(targetTile.objHere, CombatManager.Dig);
+                owner.combatComponent.Fight(wall, CombatManager.Dig);
             }
             return true;
         }

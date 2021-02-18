@@ -544,7 +544,7 @@ public class GameManager : BaseMonoBehaviour {
         }
         return go;
     }
-    public GameObject CreateParticleEffectAt(StructureWallObject wallObject, PARTICLE_EFFECT particle) {
+    public GameObject CreateParticleEffectAt(ThinWall wallObject, PARTICLE_EFFECT particle) {
         GameObject prefab = null;
         GameObject go = null;
         if (particleEffectsDictionary.ContainsKey(particle)) {

@@ -667,14 +667,18 @@ namespace Inner_Maps.Location_Structures {
         public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
             if (!pointsOfInterest.Contains(poi)) {
                 pointsOfInterest.Add(poi);
-                if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) {
+                //if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                //    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) {
+                //        pointsOfInterest.Remove(poi);
+                //        return false;
+                //    }
+                //}
+                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    TileObject tileObject = poi as TileObject;
+                    if (!PlaceAreaObjectAtAppropriateTile(tileObject, tileLocation)) {
                         pointsOfInterest.Remove(poi);
                         return false;
                     }
-                }
-                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                    TileObject tileObject = poi as TileObject;
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
                         groupedTileObjects[tileObject.tileObjectType].Add(tileObject);
                     } else {
@@ -714,7 +718,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public virtual bool LoadPOI(IPointOfInterest poi, LocationGridTile tileLocation) {
+        public virtual bool LoadPOI(TileObject poi, LocationGridTile tileLocation) {
             if (!pointsOfInterest.Contains(poi)) {
                 pointsOfInterest.Add(poi);
                 if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -801,7 +805,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return pois;
         }
-        private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
+        private bool PlaceAreaObjectAtAppropriateTile(TileObject poi, LocationGridTile tile) {
             if (tile != null) {
                 region.innerMap.PlaceObject(poi, tile);
                 return true;

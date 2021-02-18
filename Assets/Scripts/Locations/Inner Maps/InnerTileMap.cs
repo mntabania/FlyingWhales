@@ -337,25 +337,27 @@ namespace Inner_Maps {
         #endregion
         
         #region Points of Interest
-        public void PlaceObject(IPointOfInterest obj, LocationGridTile tile, bool placeAsset = true) {
-            switch (obj.poiType) {
-                case POINT_OF_INTEREST_TYPE.CHARACTER:
-                    OnPlaceCharacterOnTile(obj as Character, tile);
-                    break;
-                default:
-                    tile.SetObjectHere(obj);
-                    break;
-            }
+        public void PlaceObject(TileObject obj, LocationGridTile tile, bool placeAsset = true) {
+            tile.SetObjectHere(obj);
+            //switch (obj.poiType) {
+            //    case POINT_OF_INTEREST_TYPE.CHARACTER:
+            //        OnPlaceCharacterOnTile(obj as Character, tile);
+            //        break;
+            //    default:
+            //        tile.SetObjectHere(obj);
+            //        break;
+            //}
         }
-        public void LoadObject(IPointOfInterest obj, LocationGridTile tile) {
-            switch (obj.poiType) {
-                case POINT_OF_INTEREST_TYPE.CHARACTER:
-                    OnPlaceCharacterOnTile(obj as Character, tile);
-                    break;
-                default:
-                    tile.LoadObjectHere(obj);
-                    break;
-            }
+        public void LoadObject(TileObject obj, LocationGridTile tile) {
+            tile.LoadObjectHere(obj);
+            //switch (obj.poiType) {
+            //    case POINT_OF_INTEREST_TYPE.CHARACTER:
+            //        OnPlaceCharacterOnTile(obj as Character, tile);
+            //        break;
+            //    default:
+            //        tile.LoadObjectHere(obj);
+            //        break;
+            //}
         }
         public void RemoveObject(LocationGridTile tile, Character removedBy = null) {
             tile.RemoveObjectHere(removedBy);

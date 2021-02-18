@@ -132,8 +132,8 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 //load wall data
                 Assert.IsTrue(manMadeStructure.structureWalls.Count == saveDataManMadeStructure.structureWallObjects.Length, $"Structure walls of {structure} is inconsistent with save data!");
                 for (int j = 0; j < manMadeStructure.structureWalls.Count; j++) {
-                    StructureWallObject structureWallObject = manMadeStructure.structureWalls[j];
-                    SaveDataStructureWallObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
+                    ThinWall structureWallObject = manMadeStructure.structureWalls[j];
+                    SaveDataTileObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
                     structureWallObject.LoadDataFromSave(saveDataStructureWallObject);
                 }    
             }

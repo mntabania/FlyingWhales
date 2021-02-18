@@ -58,7 +58,7 @@ public class LocationStructureObject : PooledObject {
 
     #region Properties
     private Tilemap[] allTilemaps;
-    private WallVisual[] wallVisuals;
+    private ThinWallGameObject[] wallVisuals;
     public LocationGridTile[] tiles { get; private set; }
     #endregion
 
@@ -82,7 +82,7 @@ public class LocationStructureObject : PooledObject {
     #region Monobehaviours
     void Awake() {
         allTilemaps = transform.GetComponentsInChildren<Tilemap>();
-        wallVisuals = transform.GetComponentsInChildren<WallVisual>();
+        wallVisuals = transform.GetComponentsInChildren<ThinWallGameObject>();
         _parentTemplate = GetComponentInParent<StructureTemplate>();
         DetermineOccupiedTileCoordinates();
     }
@@ -98,7 +98,7 @@ public class LocationStructureObject : PooledObject {
         _groundTileMapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 5;
         _detailTileMapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
         for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
+            ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
         }
     }
@@ -107,7 +107,7 @@ public class LocationStructureObject : PooledObject {
             allTilemaps[i].color = color;
         }
         for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
+            ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.SetWallColor(color);
         }
     }
@@ -494,7 +494,7 @@ public class LocationStructureObject : PooledObject {
             connectors[i].Reset();
         }
         for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
+            ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.ResetWallAssets(_thinWallResource);
             wallVisual.Reset();
         }    
@@ -547,21 +547,25 @@ public class LocationStructureObject : PooledObject {
             _blockWallsTilemap.gameObject.SetActive(false);
         } else if (wallVisuals != null && wallVisuals.Length > 0 && structure is ManMadeStructure manMadeStructure) {
             //structure walls
-            List<StructureWallObject> wallObjects = new List<StructureWallObject>();
+            List<ThinWall> wallObjects = new List<ThinWall>();
             for (int i = 0; i < wallVisuals.Length; i++) {
-                WallVisual wallVisual = wallVisuals[i];
-                StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _thinWallResource);
+                ThinWallGameObject wallVisual = wallVisuals[i];
+                //ThinWall structureWallObject = new ThinWall(structure, wallVisual, _thinWallResource);
+                ThinWall thinWall = InnerMapManager.Instance.CreateNewTileObject<ThinWall>(TILE_OBJECT_TYPE.THIN_WALL);
+                thinWall.SetVisualGO(wallVisual);
+                thinWall.SetResourceMadeOf(_thinWallResource);
+                thinWall.InitializeThinWall();
                 Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
                 LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
                 tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-                structureWallObject.SetGridTileLocation(tile);
-                tile.AddWallObject(structureWallObject);
+                thinWall.SetGridTileLocation(tile);
+                tile.AddWallObject(thinWall);
                 createdWalls++;
                 totalWalls++;
                 if (wallsContributeToDamage) {
-                    structure.AddObjectAsDamageContributor(structureWallObject);    
+                    structure.AddObjectAsDamageContributor(thinWall);    
                 }
-                wallObjects.Add(structureWallObject);
+                wallObjects.Add(thinWall);
             }    
             manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
         }
@@ -619,21 +623,25 @@ public class LocationStructureObject : PooledObject {
                     tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
                 }
                 //structure walls
-                List<StructureWallObject> wallObjects = new List<StructureWallObject>();
+                List<ThinWall> wallObjects = new List<ThinWall>();
                 for (int i = 0; i < wallVisuals.Length; i++) {
-                    WallVisual wallVisual = wallVisuals[i];
-                    StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _thinWallResource);
+                    ThinWallGameObject wallVisual = wallVisuals[i];
+                    //ThinWall structureWallObject = new ThinWall(structure, wallVisual, _thinWallResource);
+                    ThinWall thinWall = InnerMapManager.Instance.CreateNewTileObject<ThinWall>(TILE_OBJECT_TYPE.THIN_WALL);
+                    thinWall.SetVisualGO(wallVisual);
+                    thinWall.SetResourceMadeOf(_thinWallResource);
+                    thinWall.InitializeThinWall();
                     Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
                     LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
                     tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-                    structureWallObject.SetGridTileLocation(tile);
-                    tile.AddWallObject(structureWallObject);
+                    thinWall.SetGridTileLocation(tile);
+                    tile.AddWallObject(thinWall);
                     createdWalls++;
                     totalWalls++;
                     if (wallsContributeToDamage) {
-                        structure.AddObjectAsDamageContributor(structureWallObject);
+                        structure.AddObjectAsDamageContributor(thinWall);
                     }
-                    wallObjects.Add(structureWallObject);
+                    wallObjects.Add(thinWall);
                 }
                 manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
             }
@@ -642,7 +650,7 @@ public class LocationStructureObject : PooledObject {
     }
     private void SetWallCollidersState(bool state) {
         for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
+            ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.SetUnpassableColliderState(state);
         }
     }
@@ -871,7 +879,7 @@ public class LocationStructureObject : PooledObject {
                     if (tile.name.Contains("Door")) {
                         continue; //skip
                     }
-                    WallVisual wallVisual = null;
+                    ThinWallGameObject wallVisual = null;
                     if (tile.name.Contains("Left")) {
                         wallVisual = InstantiateWall(leftWall, centeredPos, wallTileMap.transform, _thinWallResource != RESOURCE.WOOD);
                     } 
@@ -921,10 +929,10 @@ public class LocationStructureObject : PooledObject {
         transform.Find("Content").transform.position = new Vector3((center.x + .5f) * -1f, (center.y + .5f) * -1f, 0f);
     }
     
-    private WallVisual InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
+    private ThinWallGameObject InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
         GameObject wallGO = Instantiate(wallPrefab, parent);
         wallGO.transform.position = centeredPos;
-        WallVisual wallVisual = wallGO.GetComponent<WallVisual>();
+        ThinWallGameObject wallVisual = wallGO.GetComponent<ThinWallGameObject>();
         if (updateWallAsset) {
             wallVisual.UpdateWallAssets(_thinWallResource);    
         }

@@ -370,8 +370,8 @@ public class LoadSecondWave : MapGenerationComponent {
                 Assert.IsNotNull(manMadeStructure);
                 if (manMadeStructure.structureWalls != null) {
                     for (int j = 0; j < manMadeStructure.structureWalls.Count; j++) {
-                        StructureWallObject structureWallObject = manMadeStructure.structureWalls[j];
-                        SaveDataStructureWallObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
+                        ThinWall structureWallObject = manMadeStructure.structureWalls[j];
+                        SaveDataTileObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
                         structureWallObject.traitContainer.Load(structureWallObject, saveDataStructureWallObject.saveDataTraitContainer);
                     }    
                 }

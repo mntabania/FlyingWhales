@@ -135,7 +135,7 @@ public class CombatManager : BaseMonoBehaviour {
                 targetCharacter.piercingAndResistancesComponent.ModifyValueByResistance(ref damage, elementalType, piercingPower);
             } else {
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
-                    if ((target is TileObject || target is StructureWallObject) && !(target is GenericTileObject)) {
+                    if (target is TileObject && !(target is GenericTileObject)) {
                         damage = Mathf.RoundToInt(damage * 0.25f);
                         if (damage >= 0) {
                             damage = -1;

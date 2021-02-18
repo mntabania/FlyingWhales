@@ -33,6 +33,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     //Components
     public SaveDataGridTileCorruptionComponent corruptionComponent;
     public SaveDataGridTileMouseEventsComponent mouseEventsComponent;
+    public SaveDataGridTileTileObjectComponent tileObjectComponent;
 
     public override void Save(LocationGridTile gridTile) {
         persistentID = gridTile.persistentID;
@@ -61,6 +62,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
 
         corruptionComponent = new SaveDataGridTileCorruptionComponent(); corruptionComponent.Save(gridTile.corruptionComponent);
         mouseEventsComponent = new SaveDataGridTileMouseEventsComponent(); mouseEventsComponent.Save(gridTile.mouseEventsComponent);
+        tileObjectComponent = new SaveDataGridTileTileObjectComponent(); tileObjectComponent.Save(gridTile.tileObjectComponent);
     }
 
     public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap, SaveDataCurrentProgress saveData, Area p_area) {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering.Universal;
 
-public class WallVisual : MapObjectVisual<StructureWallObject> {
+public class ThinWallGameObject : TileObjectGameObject {
 
     private SpriteRenderer[] _spriteRenderers;
     private BoxCollider2D _unpassableCollider;
@@ -18,7 +18,6 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
             return _spriteRenderers;
         }
     }
-    
     private void Awake() {
         _spriteRenderers = transform.GetComponentsInChildren<SpriteRenderer>();
         visionTrigger = transform.GetComponentInChildren<WallObjectVisionTrigger>();
@@ -26,17 +25,23 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
         visionTrigger.gameObject.SetActive(false);
     }
 
-    public override void Initialize(StructureWallObject obj) {
-        visionTrigger.Initialize(obj);
-        visionTrigger.gameObject.SetActive(true);
-        UpdateWallAssets(obj);
-    }
+    //public override void Initialize(TileObject tileObject) {
+    //    visionTrigger.Initialize(tileObject);
+    //    visionTrigger.gameObject.SetActive(true);
+    //    UpdateWallAssets(tileObject as ThinWall);
+    //}
+    //public override void Initialize(ThinWall obj) {
+    //    visionTrigger.Initialize(obj);
+    //    visionTrigger.gameObject.SetActive(true);
+    //    UpdateWallAssets(obj);
+    //}
+
     /// <summary>
     /// Update wall assets based on the structure wall object.
     /// This considers the objects resource as well as if it is damaged or not.
     /// </summary>
     /// <param name="structureWallObject">The structure wall object.</param>
-    public void UpdateWallAssets(StructureWallObject structureWallObject) {
+    public void UpdateWallAssets(ThinWall structureWallObject) {
         for (int i = 0; i < spriteRenderers.Length; i++) {
             SpriteRenderer spriteRenderer = spriteRenderers[i];
             //update the sprite given the wall objects material, and if it is damaged or not.
@@ -92,10 +97,10 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
             } else {
                 spriteRenderer.sortingOrder = sortingOrder;
             }
-            
+
         }
     }
-    public void UpdateWallState(StructureWallObject structureWallObject) {
+    public void UpdateWallState(ThinWall structureWallObject) {
         if (structureWallObject.currentHP == 0) {
             //wall is destroyed disable gameobject
             this.gameObject.SetActive(false);
@@ -113,7 +118,7 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
     public void SetUnpassableColliderState(bool state) {
         _unpassableCollider.enabled = state;
     }
-    
+
     public override void Reset() {
         base.Reset();
         _unpassableCollider.enabled = true;
@@ -121,5 +126,5 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
         gameObject.SetActive(true);
     }
 
-    public override void UpdateTileObjectVisual(StructureWallObject obj) { }
+    public override void UpdateTileObjectVisual(TileObject obj) { }
 }

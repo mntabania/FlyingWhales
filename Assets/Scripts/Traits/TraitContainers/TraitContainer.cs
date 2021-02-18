@@ -181,7 +181,7 @@ namespace Traits {
             } else if (traitName == "Zapped") {
                 if (HasTrait("Electric")) {
                     shouldAddTrait = false;
-                } else if(addTo is GenericTileObject || addTo is StructureWallObject) {
+                } else if(addTo is GenericTileObject || addTo is ThinWall) {
                     if (!HasTrait("Wet")) {
                         //Ground floor tiles and walls do not get Zapped by electric damage unless they are Wet.
                         shouldAddTrait = false;

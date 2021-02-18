@@ -16,7 +16,7 @@ public abstract class MapObject<T> : BaseMapObject where T: IDamageable {
 
     #region Initialization
     protected abstract void CreateMapObjectVisual();
-    public void InitializeMapObject(T obj) {
+    public virtual void InitializeMapObject(T obj) {
         CreateMapObjectVisual();
         mapVisual.Initialize(obj);
         InitializeVisionTrigger(obj);

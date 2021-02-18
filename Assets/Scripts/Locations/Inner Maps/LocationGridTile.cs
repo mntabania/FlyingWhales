@@ -42,10 +42,10 @@ namespace Inner_Maps {
         public Ground_Type groundType { get; private set; }
         public LocationStructure structure { get; private set; }
         public List<LocationGridTile> neighbourList { get; private set; }
-        public IPointOfInterest objHere { get; private set; }
+        public TileObject objHere { get; private set; }
         public List<Character> charactersHere { get; private set; }
         public GenericTileObject genericTileObject { get; private set; }
-        public List<StructureWallObject> walls { get; private set; }
+        public List<ThinWall> walls { get; private set; }
         // public LocationGridTileCollection collectionOwner { get; private set; }
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
@@ -85,6 +85,7 @@ namespace Inner_Maps {
         //Components
         public GridTileCorruptionComponent corruptionComponent { get; private set; }
         public GridTileMouseEventsComponent mouseEventsComponent { get; private set; }
+        public GridTileTileObjectComponent tileObjectComponent { get; private set; }
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
@@ -120,7 +121,7 @@ namespace Inner_Maps {
             tileType = Tile_Type.Empty;
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
-            walls = new List<StructureWallObject>();
+            walls = new List<ThinWall>();
             _fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             _neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             neighbourList = new List<LocationGridTile>();
@@ -129,6 +130,7 @@ namespace Inner_Maps {
             //Components
             corruptionComponent = new GridTileCorruptionComponent(); corruptionComponent.SetOwner(this);
             mouseEventsComponent = new GridTileMouseEventsComponent(); mouseEventsComponent.SetOwner(this);
+            tileObjectComponent = new GridTileTileObjectComponent(); tileObjectComponent.SetOwner(this);
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
         public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap p_parentMap, Area p_area) {
@@ -144,7 +146,7 @@ namespace Inner_Maps {
             tileType = data.tileType;
             tileState = data.tileState;
             charactersHere = new List<Character>();
-            walls = new List<StructureWallObject>();
+            walls = new List<ThinWall>();
             _fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             _neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             neighbourList = new List<LocationGridTile>();
@@ -152,6 +154,7 @@ namespace Inner_Maps {
             connectorsOnTile = data.connectorsCount;
             corruptionComponent = data.corruptionComponent.Load(); corruptionComponent.SetOwner(this);
             mouseEventsComponent = data.mouseEventsComponent.Load(); mouseEventsComponent.SetOwner(this);
+            tileObjectComponent = data.tileObjectComponent.Load(); tileObjectComponent.SetOwner(this);
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
 
@@ -171,6 +174,7 @@ namespace Inner_Maps {
             }
             corruptionComponent.LoadSecondWave();
             mouseEventsComponent.LoadSecondWave();
+            tileObjectComponent.LoadSecondWave();
         }
         #endregion
 
@@ -745,7 +749,7 @@ namespace Inner_Maps {
         #endregion
 
         #region Points of Interest
-        public void SetObjectHere(IPointOfInterest poi) {
+        public void SetObjectHere(TileObject poi) {
             bool isPassablePreviously = IsPassable();
             if (poi is TileObject tileObject) {
                 if (tileObject.OccupiesTile()) {
@@ -765,7 +769,7 @@ namespace Inner_Maps {
             }
             Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, this, poi);
         }
-        public void LoadObjectHere(IPointOfInterest poi) {
+        public void LoadObjectHere(TileObject poi) {
             bool isPassablePreviously = IsPassable();
             if (poi is TileObject tileObject) {
                 if (tileObject.OccupiesTile()) {
@@ -1393,7 +1397,7 @@ namespace Inner_Maps {
             List<ITraitable> traitables = new List<ITraitable>();
             traitables.Add(genericTileObject);
             for (int i = 0; i < walls.Count; i++) {
-                StructureWallObject structureWallObject = walls[i];
+                ThinWall structureWallObject = walls[i];
                 traitables.Add(structureWallObject);
             }
             if (objHere != null) {
@@ -1410,7 +1414,7 @@ namespace Inner_Maps {
         public void PerformActionOnTraitables(TraitableCallback callback) {
             callback.Invoke(genericTileObject);
             for (int i = 0; i < walls.Count; i++) {
-                StructureWallObject structureWallObject = walls[i];
+                ThinWall structureWallObject = walls[i];
                 callback.Invoke(structureWallObject);
             }
             for (int i = 0; i < charactersHere.Count; i++) {
@@ -1624,7 +1628,7 @@ namespace Inner_Maps {
             }
         }
         public bool IsPassable() {
-            return (objHere == null || !objHere.IsUnpassable()) && groundType != Ground_Type.Water;
+            return (objHere == null || !objHere.IsUnpassable()) && !tileObjectComponent.HasWalls() && groundType != Ground_Type.Water;
         }
         private LocationGridTile GetTargetTileToGoToRegion(Region region) {
             //if (currentRegion != null) {
@@ -1658,8 +1662,12 @@ namespace Inner_Maps {
         #endregion
 
         #region Walls
-        public void AddWallObject(StructureWallObject structureWallObject) {
+        public void AddWallObject(ThinWall structureWallObject) {
             walls.Add(structureWallObject);
+            //if(objHere is BlockWall) {
+            //    //Thin walls cannot co-exist with block walls, so if a thin wall is placed, all block walls must be destroyed
+            //    objHere.AdjustHP(-objHere.maxHP, ELEMENTAL_TYPE.Normal, true);
+            //}
         }
         public void ClearWallObjects() {
             walls.Clear();

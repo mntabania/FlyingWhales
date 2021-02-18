@@ -600,7 +600,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         previousTile = gridTileLocation;
         gridTileLocation = tile;
         LocationAwarenessUtility.RemoveFromAwarenessList(this);
-        if (gridTileLocation != null) {
+        if (gridTileLocation != null && !(this is GenericTileObject)) {
             LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
         }
     }
