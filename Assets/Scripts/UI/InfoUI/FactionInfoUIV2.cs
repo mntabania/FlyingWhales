@@ -270,7 +270,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #endregion
 
     #region Relationships
-    private void UpdateAllRelationships() {
+    public void UpdateAllRelationships() {
         UtilityScripts.Utilities.DestroyChildren(relationshipsScrollRect.content);
 
         foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in activeFaction.relationships) {

@@ -73,7 +73,7 @@ public class RaiseCorpse : GoapAction {
             target = (targetPOI as Tombstone).character;
         }
         if (target != null && target.hasMarker) {
-            CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, goapNode.actor.faction, target.characterClass.className);    
+            CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, goapNode.actor.faction);    
         } else {
             Debug.LogWarning($"Could not raise {target?.name} because it's marker is null!");
         }
