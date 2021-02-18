@@ -1790,7 +1790,7 @@ namespace UtilityScripts {
             for (int i = 0; i < children.Length; i++) {
                 Transform currTransform = children[i];
                 PooledObject pooledObject = currTransform.gameObject.GetComponent<EZObjectPools.PooledObject>(); 
-                if (ReferenceEquals(pooledObject, null)) {
+                if (ObjectPoolManager.Instance == null || ReferenceEquals(pooledObject, null)) {
                     if (Application.isEditor) {
                         GameObject.DestroyImmediate(currTransform.gameObject);
                     } else {

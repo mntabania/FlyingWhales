@@ -62,6 +62,7 @@ public class LocationStructureObject : PooledObject {
     private Tilemap[] allTilemaps;
     private WallVisual[] wallVisuals;
     public LocationGridTile[] tiles { get; private set; }
+    private TilemapCollider2D _blockWallsTilemapCollider;
     #endregion
 
     #region Getters
@@ -86,6 +87,9 @@ public class LocationStructureObject : PooledObject {
         allTilemaps = transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = transform.GetComponentsInChildren<WallVisual>();
         _parentTemplate = GetComponentInParent<StructureTemplate>();
+        if (_blockWallsTilemap != null) {
+            _blockWallsTilemapCollider = _blockWallsTilemap.GetComponent<TilemapCollider2D>();    
+        }
         DetermineOccupiedTileCoordinates();
     }
     #endregion
@@ -669,6 +673,9 @@ public class LocationStructureObject : PooledObject {
         
     }
     private void SetWallCollidersState(bool state) {
+        if (_blockWallsTilemapCollider != null) {
+            _blockWallsTilemapCollider.enabled = state;    
+        }
         for (int i = 0; i < wallVisuals.Length; i++) {
             WallVisual wallVisual = wallVisuals[i];
             wallVisual.SetUnpassableColliderState(state);
@@ -945,6 +952,7 @@ public class LocationStructureObject : PooledObject {
     [SerializeField] private GameObject cornerPrefab;
     [ContextMenu("Convert Walls")]
     public void ConvertWalls() {
+        UtilityScripts.Utilities.DestroyChildren(wallTileMap.transform);
         wallTileMap.CompressBounds();
         BoundsInt bounds = wallTileMap.cellBounds;
         for (int x = bounds.xMin; x < bounds.xMax; x++) {
