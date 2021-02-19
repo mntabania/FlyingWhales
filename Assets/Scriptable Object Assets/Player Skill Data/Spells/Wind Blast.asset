@@ -68,7 +68,7 @@ MonoBehaviour:
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
-    additionalTileRangeBonusPerLevel: 00000000000000000100000001000000
+    additionalTileRangeBonusPerLevel: 00000000010000000200000003000000
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: 00000000140000001400000014000000
     skillMovementSpeed: 
