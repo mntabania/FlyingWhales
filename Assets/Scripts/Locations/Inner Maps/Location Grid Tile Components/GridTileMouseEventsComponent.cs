@@ -70,16 +70,18 @@ namespace Inner_Maps {
                 return;
             }
             //int mouseOnUIOrMapObjectValue = UIManager.Instance.GetMouseOnUIOrMapObjectValue();
-            if (!UIManager.Instance.IsMouseOnUIOrMapObject()) { //mouseOnUIOrMapObjectValue == -1
-                isHovering = true;
-                if (owner.corruptionComponent.CanCorruptTile()) {
-                    OnHoverEnterTileAdjacentToCorruption();
-                } else if (owner.corruptionComponent.CanDisruptCorruptionOfTile()) {
-                    OnHoverEnterBeingCorrupted();
-                } else if (owner.corruptionComponent.CanBuildDemonicWall()) {
-                    OnHoverEnterCorrupted();
+            if (!isHovering) {
+                if (!UIManager.Instance.IsMouseOnUIOrMapObject()) { //mouseOnUIOrMapObjectValue == -1
+                    isHovering = true;
+                    if (owner.corruptionComponent.CanCorruptTile()) {
+                        OnHoverEnterTileAdjacentToCorruption();
+                    } else if (owner.corruptionComponent.CanDisruptCorruptionOfTile()) {
+                        OnHoverEnterBeingCorrupted();
+                    } else if (owner.corruptionComponent.CanBuildDemonicWall()) {
+                        OnHoverEnterCorrupted();
+                    }
                 }
-            } 
+            }
             //else if (mouseOnUIOrMapObjectValue == 2) {
             //    isHovering = true;
             //    if (owner.corruptionComponent.CanDestroyDemonicWall()) {
@@ -88,8 +90,10 @@ namespace Inner_Maps {
             //}
         }
         public void OnHoverExit() {
-            isHovering = false;
-            UIManager.Instance.HideSmallInfo();
+            if (isHovering) {
+                isHovering = false;
+                UIManager.Instance.HideSmallInfo();
+            }
             //if (owner.corruptionComponent.IsTileAdjacentToACorruption() && !owner.corruptionComponent.isCorrupted && !owner.corruptionComponent.isCurrentlyBeingCorrupted) {
             //    OnHoverExitTileAdjacentToCorruption();
             //} else if (owner.corruptionComponent.isCurrentlyBeingCorrupted) {

@@ -113,7 +113,7 @@ public class AreaStructureComponent : AreaComponent {
         if (structureType == STRUCTURE_TYPE.THE_PORTAL) {
             if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
                 if (owner.settlementOnArea != null) {
-                    o_cannotBuildReason = o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_portal_village");
+                    o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_portal_village");
                     return false;        
                 } else {
                     return true;
@@ -123,8 +123,8 @@ public class AreaStructureComponent : AreaComponent {
         }
         if (structureType == STRUCTURE_TYPE.EYE) {
             if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
-                if (InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE)) {
-                    o_cannotBuildReason = o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_eye");
+                if (InnerMapManager.Instance.currentlyShowingLocation != null && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE)) {
+                    o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_eye");
                     return false;        
                 } else {
                     return true; //only 1 eye per region.    
@@ -135,7 +135,7 @@ public class AreaStructureComponent : AreaComponent {
         if (structureType == STRUCTURE_TYPE.MEDDLER) {
             if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
                 if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {
-                    o_cannotBuildReason = o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_meddler");
+                    o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_meddler");
                     return false;   
                 } else {
                     return true; //Only 1 meddler should exist in the world    

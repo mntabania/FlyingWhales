@@ -160,7 +160,7 @@ namespace Inner_Maps {
             }
         }
         public bool CanBuildDemonicWall() {
-            return isCorrupted && !wallIsBeingBuilt && !wallIsBeingDestroyed && owner.objHere == null;
+            return isCorrupted && !wallIsBeingBuilt && !wallIsBeingDestroyed && owner.objHere == null && owner.tileState != LocationGridTile.Tile_State.Occupied;
         }
         public bool CanDestroyDemonicWall() {
             return isCorrupted && !wallIsBeingDestroyed && !wallIsBeingBuilt && owner.objHere is BlockWall wall && wall.wallType == WALL_TYPE.Demon_Stone;

@@ -130,7 +130,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	public override void InstantiateUI() {
 		if (m_isAvailable || m_firstRun) {
 			if (m_purchaseSkillUIView == null) { //first run
-				PlayerSkillManager.Instance.Initialize();
+				//PlayerSkillManager.Instance.Initialize();
 				MakeListForAvailableSkills();
 				DisplayMenuFirstTime();
 			} else {
