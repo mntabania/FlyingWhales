@@ -6,7 +6,7 @@ using UtilityScripts;
 namespace Interrupts {
     public class TotalOrganFailure : Interrupt {
         public TotalOrganFailure() : base(INTERRUPT.Total_Organ_Failure) {
-            duration = 4;
+            duration = 5;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Death_Icon;

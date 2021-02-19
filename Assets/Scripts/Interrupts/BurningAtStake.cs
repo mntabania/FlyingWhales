@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class BurningAtStake : Interrupt {
         public BurningAtStake() : base(INTERRUPT.Burning_At_Stake) {
-            duration = 36;
+            duration = 20;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             shouldEndOnSeize = true;

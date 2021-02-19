@@ -7,7 +7,7 @@ namespace Interrupts {
     public class PulledDown : Interrupt {
 
         public PulledDown() : base(INTERRUPT.Pulled_Down) {
-            duration = 12;
+            duration = 15;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             shouldEndOnSeize = true;

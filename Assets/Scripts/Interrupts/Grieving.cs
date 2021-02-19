@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class Grieving : Interrupt {
         public Grieving() : base(INTERRUPT.Grieving) {
-            duration = 4;
+            duration = 5;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Sad_Icon;

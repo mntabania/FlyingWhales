@@ -15,7 +15,7 @@ namespace Interrupts {
         };
         
         public BeingTortured() : base(INTERRUPT.Being_Tortured) {
-            duration = 24;
+            duration = 20;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Injured_Icon;

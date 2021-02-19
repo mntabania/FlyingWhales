@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Interrupts {
     public class LossOfControl : Interrupt {
         public LossOfControl() : base(INTERRUPT.Loss_Of_Control) {
-            duration = 12;
+            duration = 20;
             doesDropCurrentJob = true;
             doesStopCurrentAction = true;
             isSimulateneous = false;
