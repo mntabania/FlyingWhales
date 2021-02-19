@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -18731,7 +18731,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca1456d7a017f54684b26699c9326e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDraggingItem: 0
   cursors:
     m_keys: 0100000002000000030000000400000005000000060000000000000007000000
     m_values:
@@ -18745,6 +18744,7 @@ MonoBehaviour:
     - {fileID: 2800000, guid: b33ec1abe5ab0074cabacda5d3da1c27, type: 3}
   currentCursorType: 0
   previousCursorType: 0
+  isDraggingItem: 0
 --- !u!4 &910776552
 Transform:
   m_ObjectHideFlags: 0
@@ -36927,14 +36927,25 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
-      propertyPath: _unlockAllSkills
-      value: 1
+      propertyPath: _playerSkillDataDictionary.m_keys.Array.size
+      value: 102
       objectReference: {fileID: 0}
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
-      propertyPath: _unlimitedCast
-      value: 1
+      propertyPath: _playerSkillDataDictionary.m_values.Array.size
+      value: 102
       objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: _playerSkillDataDictionary.m_keys.Array.data[101]
+      value: 181
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: _playerSkillDataDictionary.m_values.Array.data[101]
+      value: 
+      objectReference: {fileID: 11400000, guid: a77daeaca728222418e2773129684420,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}
 --- !u!1001 &9016050650342384831

@@ -8,7 +8,7 @@ namespace Archetype {
         public Normal() : base(PLAYER_ARCHETYPE.Normal) {
             minionClasses = CharacterManager.sevenDeadlySinsClassNames.ToList();
             // SPELL_TYPE.THE_SPIRE,
-            demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.EYE, PLAYER_SKILL_TYPE.KENNEL, PLAYER_SKILL_TYPE.CRYPT, PLAYER_SKILL_TYPE.MEDDLER, PLAYER_SKILL_TYPE.TORTURE_CHAMBERS, PLAYER_SKILL_TYPE.DEMONIC_PRISON };
+            demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.EYE, PLAYER_SKILL_TYPE.KENNEL, PLAYER_SKILL_TYPE.CRYPT, PLAYER_SKILL_TYPE.MEDDLER, PLAYER_SKILL_TYPE.TORTURE_CHAMBERS, PLAYER_SKILL_TYPE.DEMONIC_PRISON, PLAYER_SKILL_TYPE.SPIRE, };
             monsters = new List<RaceClass>() {
                 new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem"),
                 new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder"),

@@ -42,6 +42,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.THE_PORTAL:
             case STRUCTURE_TYPE.EYE:
+            case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
                 return true;
@@ -112,6 +113,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.THE_ANVIL:
             case STRUCTURE_TYPE.MEDDLER:
             case STRUCTURE_TYPE.EYE:
+            case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
@@ -178,6 +180,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.TEMPLE:
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.MONSTER_LAIR:
+            case STRUCTURE_TYPE.SPIRE:
                 return true;
             default:
                 return false;
@@ -1013,7 +1016,8 @@ public static class Extensions {
             case LANDMARK_TYPE.DEFILER:
             case LANDMARK_TYPE.THE_NEEDLES:
             case LANDMARK_TYPE.TORTURE_CHAMBERS:
-                return true;
+            case LANDMARK_TYPE.SPIRE:
+            return true;
             default:
                 return false;
         }

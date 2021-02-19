@@ -1034,7 +1034,7 @@ public class UIManager : BaseMonoBehaviour {
         if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
             onPortalClicked?.Invoke();
         }
-        if (structure.structureType == STRUCTURE_TYPE.EYE) {
+        if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
             onSpireClicked?.Invoke();
         }
         structureInfoUI.SetData(structure);

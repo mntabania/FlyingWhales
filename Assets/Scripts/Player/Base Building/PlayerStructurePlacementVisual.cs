@@ -21,7 +21,7 @@ public class PlayerStructurePlacementVisual : MonoBehaviour {
     
     public void Initialize(Camera p_camera) {
         List<STRUCTURE_TYPE> playerStructureTypes = new List<STRUCTURE_TYPE>() {
-            STRUCTURE_TYPE.THE_PORTAL, STRUCTURE_TYPE.EYE, STRUCTURE_TYPE.BIOLAB, STRUCTURE_TYPE.DEFILER, STRUCTURE_TYPE.TORTURE_CHAMBERS, STRUCTURE_TYPE.KENNEL, STRUCTURE_TYPE.MEDDLER
+            STRUCTURE_TYPE.THE_PORTAL, STRUCTURE_TYPE.EYE, STRUCTURE_TYPE.BIOLAB, STRUCTURE_TYPE.DEFILER, STRUCTURE_TYPE.TORTURE_CHAMBERS, STRUCTURE_TYPE.KENNEL, STRUCTURE_TYPE.MEDDLER, STRUCTURE_TYPE.SPIRE
         }; //CollectionUtilities.GetEnumValues<STRUCTURE_TYPE>().Where(s => s.IsPlayerStructure()).ToList();
         _structureVisuals = new Dictionary<STRUCTURE_TYPE, LocationStructureObject>();
         transformColorTint.gameObject.SetActive(false);

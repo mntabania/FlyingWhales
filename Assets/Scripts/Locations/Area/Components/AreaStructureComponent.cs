@@ -132,6 +132,17 @@ public class AreaStructureComponent : AreaComponent {
             }
             return false;
         }
+        if (structureType == STRUCTURE_TYPE.SPIRE) {
+            if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
+                if (InnerMapManager.Instance.currentlyShowingLocation != null && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.SPIRE)) {
+                    o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_SPIRE");
+                    return false;
+                } else {
+                    return true; //only 1 eye per region.    
+                }
+            }
+            return false;
+        }
         if (structureType == STRUCTURE_TYPE.MEDDLER) {
             if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
                 if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {

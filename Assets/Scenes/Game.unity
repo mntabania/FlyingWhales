@@ -39831,9 +39831,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
         type: 3}
+      propertyPath: structureData.m_keys.Array.size
+      value: 43
+      objectReference: {fileID: 0}
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 3}
+      propertyPath: structureData.m_values.Array.size
+      value: 43
+      objectReference: {fileID: 0}
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 3}
       propertyPath: innerMapsParent
       value: 
       objectReference: {fileID: 1536722383}
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 3}
+      propertyPath: structureData.m_keys.Array.data[42]
+      value: 53
+      objectReference: {fileID: 0}
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 3}
+      propertyPath: structureData.m_values.Array.data[42]
+      value: 
+      objectReference: {fileID: 11400000, guid: 16594a63389c49e42a2fcf338476b95b,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
 --- !u!1 &1494702483
