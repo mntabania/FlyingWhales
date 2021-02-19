@@ -63,7 +63,7 @@ MonoBehaviour:
     - 0
     - 50
     - 75
-    - 150
+    - 100
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
