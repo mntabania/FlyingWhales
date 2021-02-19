@@ -162,8 +162,10 @@ public class ReactionComponent : CharacterComponent {
         //if (string.IsNullOrEmpty(reactable.currentStateName)) {
         //    return;
         //}
-        if (reactable.informationLog == null) {
-            throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
+        if (reactable.informationLog == null || !reactable.informationLog.hasValue) {
+            //throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
+            Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
+            return;
         }
         //if(reactable.target is TileObject item && reactable is ActualGoapNode node) {
         //    if (node.action.goapType == INTERACTION_TYPE.STEAL) {
@@ -271,8 +273,10 @@ public class ReactionComponent : CharacterComponent {
         //}
     }
     private string ReactToInformedReactable(IReactable reactable, bool addLog) {
-        if (reactable.informationLog == null) {
-            throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} informed event {reactable.name} by {reactable.actor.name} does not have a log!");
+        if (reactable.informationLog == null || !reactable.informationLog.hasValue) {
+            //throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} informed event {reactable.name} by {reactable.actor.name} does not have a log!");
+            Debug.LogWarning ($"{GameManager.Instance.TodayLogString()}{owner.name} informed event {reactable.name} by {reactable.actor.name} does not have a log!");
+            return string.Empty;
         }
 
         Character actor = reactable.actor;

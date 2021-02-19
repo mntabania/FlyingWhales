@@ -47,7 +47,7 @@ namespace Interrupts {
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             Log log = default;
-            if (actor.homeStructure != null) {
+            if (actor.homeStructure != null && actor.homeStructure != actor.previousCharacterDataComponent.previousHomeStructure) {
                 log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "set_new_home_structure", null, logTags);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, actor.homeStructure.name, LOG_IDENTIFIER.STRING_1);    
