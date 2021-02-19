@@ -197,4 +197,79 @@ public class SkillUpgradeData
         }
         return skillMovementSpeed[p_currentLevel];
     }
+
+    public string GetDescriptionBaseOnFirstBonus(int p_currentLevel) {
+        if (bonuses == null || bonuses.Count <= 0) {
+            return "n/a";
+        }   
+        return GetDescription(bonuses[0], p_currentLevel);
+    }
+
+    private string GetDescription(UPGRADE_BONUS p_upgradeBonus, int p_currentLevel) {
+		switch (p_upgradeBonus) {
+            case UPGRADE_BONUS.Pierce:
+            if (additionalPiercePerLevel.Count < 0) {
+                return "Pierce: No Data";
+            }
+            if (p_currentLevel >= additionalPiercePerLevel.Count) {
+                p_currentLevel = additionalPiercePerLevel.Count - 1;
+            }
+            return "Pierce +" + additionalPiercePerLevel[p_currentLevel] + "%";
+
+            case UPGRADE_BONUS.Damage:
+            if (additionalDamagePerLevel.Count < 0) {
+                return "Damage: No Data";
+            }
+            if (p_currentLevel >= additionalDamagePerLevel.Count) {
+                p_currentLevel = additionalDamagePerLevel.Count - 1;
+            }
+            return "Damage +" + additionalDamagePerLevel[p_currentLevel];
+
+            case UPGRADE_BONUS.Duration:
+            if (durationBonusPerLevel.Count < 0) {
+                return "Duration: No Data";
+            }
+            if (p_currentLevel >= durationBonusPerLevel.Count) {
+                p_currentLevel = durationBonusPerLevel.Count - 1;
+            }
+            return "Duration +" + durationBonusPerLevel[p_currentLevel];
+
+            case UPGRADE_BONUS.Max_HP_Percentage:
+            if (additionalMaxHPPercentagePerLevel.Count < 0) {
+                return "Max HP: No Data";
+            }
+            if (p_currentLevel >= additionalMaxHPPercentagePerLevel.Count) {
+                p_currentLevel = additionalMaxHPPercentagePerLevel.Count - 1;
+            }
+            return "Max HP +" + additionalMaxHPPercentagePerLevel[p_currentLevel] + "%";
+
+            case UPGRADE_BONUS.Atk_Percentage:
+            if (additionalAttackPercentagePerLevel.Count < 0) {
+                return "Atk: No Data";
+            }
+            if (p_currentLevel >= additionalAttackPercentagePerLevel.Count) {
+                p_currentLevel = additionalAttackPercentagePerLevel.Count - 1;
+            }
+            return "Attack +" + additionalAttackPercentagePerLevel[p_currentLevel] + "%";
+
+            case UPGRADE_BONUS.Amplify_Effect_By_Percentage:
+            if (statsIncreasedPercentagePerLevel.Count < 0) {
+                return "Effect: No Data";
+            }
+            if (p_currentLevel >= statsIncreasedPercentagePerLevel.Count) {
+                p_currentLevel = statsIncreasedPercentagePerLevel.Count - 1;
+            }
+            return "Effect Amplify +" + statsIncreasedPercentagePerLevel[p_currentLevel] + "%";
+
+            case UPGRADE_BONUS.Tile_Range:
+            if (additionalTileRangeBonusPerLevel.Count < 0) {
+                return "Tiles: No Data";
+            }
+            if (p_currentLevel >= additionalTileRangeBonusPerLevel.Count) {
+                p_currentLevel = additionalTileRangeBonusPerLevel.Count - 1;
+            }
+            return "Effect Amplify +" + additionalTileRangeBonusPerLevel[p_currentLevel] + "%";
+        }
+        return "n/a";
+	}
 }

@@ -99,6 +99,10 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 				}
 			}
 			m_weightedList.Clear();
+		} else {
+			m_purchaseSkillUIView.HideSkills();
+			m_purchaseSkillUIView.DisableRerollButton();
+			m_purchaseSkillUIView.SetMessage("All Skills Unlocked");
 		}
 	}
 

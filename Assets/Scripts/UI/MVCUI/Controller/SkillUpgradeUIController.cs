@@ -59,7 +59,6 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 			m_skillComponent = fakePlayer.skillComponent;
 			InstantiateUI();
 		} else {
-			PlayerSkillManager.Instance.Initialize();
 			m_skillComponent = PlayerManager.Instance.player.playerSkillComponent;
 			InstantiateUI();
 		}
