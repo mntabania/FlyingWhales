@@ -25,7 +25,7 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 	}
 
 	public void InitItem(PLAYER_SKILL_TYPE p_type, int p_spiritCount) {
-		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
+		PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
 		if (skillData.currentLevel >= 3) {
 			txtCost.text = "MAX";
@@ -34,9 +34,9 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 		} else {
 			btnSkill.gameObject.SetActive(true);
 			spiritIcon.gameObject.SetActive(true);
-			txtCost.text = data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel).ToString();
+			txtCost.text = playerSkillData.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel).ToString();
 
-			if (p_spiritCount < data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel)) {
+			if (p_spiritCount < playerSkillData.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel + 1)) {
 				btnSkill.interactable = false;
 				txtPlus.color = new Color32(128, 128, 128, 128);
 			} else {
@@ -44,13 +44,13 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 				txtPlus.color = new Color32(255, 255, 0,  255);
 			}
 		}
-		if (data.skillUpgradeData.bonuses.Count > 0) {
-			txtUpgrade.text = data.skillUpgradeData.bonuses[0].ToString();
+		if (playerSkillData.skillUpgradeData.bonuses.Count > 0) {
+			txtUpgrade.text = playerSkillData.skillUpgradeData.GetDescriptionBaseOnFirstBonus(skillData.currentLevel + 1);
 		} else {
 			txtUpgrade.text = "n/a";
 		}
 		
-		txtSkillName.text = data.name;
+		txtSkillName.text = playerSkillData.name;
 		m_skillType = p_type;
 	}
 
