@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Release
   m_EditorClassIdentifier: 
   skill: 170
-  manaCost: 40
+  manaCost: 25
   charges: 1
   cooldown: 240
   threat: 10
