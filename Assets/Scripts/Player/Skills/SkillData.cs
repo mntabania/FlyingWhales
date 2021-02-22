@@ -42,6 +42,8 @@ public class SkillData : IPlayerSkill {
         SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
         SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
         SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
+        SetCooldown(playerSkillData.skillUpgradeData.GetCoolDownPerLevel(currentLevel));
+        FinishCooldown();
     }
     
     protected SkillData() {
@@ -233,7 +235,9 @@ public class SkillData : IPlayerSkill {
         }
     }
     private void StartCooldown() {
+        Debug.LogError(hasCooldown + " -- " + (currentCooldownTick == cooldown));
         if (hasCooldown && currentCooldownTick == cooldown) {
+            Debug.LogError("TEST");
             SetCurrentCooldownTick(0);
             Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
             if(cooldown > 0) {
@@ -271,6 +275,13 @@ public class SkillData : IPlayerSkill {
             }
         }
         Profiler.EndSample();
+    }
+    public void FinishCooldown() {
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
+        Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, this);
+        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public string GetManaCostChargesCooldownStr() {
         string str = "Mana Cost: " + manaCost;
