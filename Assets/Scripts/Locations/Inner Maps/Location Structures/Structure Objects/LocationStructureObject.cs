@@ -868,12 +868,13 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 return false;
             }
         }
-        if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
-            //Note: Demonic structures must be placed on corruption! Except for the portal, since it is the structure that will start the corruption
-            Debug.Log($"Could not place {structureType} because {tile} is not corrupted!!");
-            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
-            return false;
-        }
+        //Note: Demonic structure can now be built if there is one tile that is on or beside a corrupted tile, so the checker for it is now moved to DemonicStructurePlayerSkill - CanBuildDemonicStructureOn
+        //if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
+        //    //Note: Demonic structures must be placed on or beside corruption! Except for the portal, since it is the structure that will start the corruption
+        //    Debug.Log($"Could not place {structureType} because {tile} is not corrupted!!");
+        //    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
+        //    return false;
+        //}
         
         
         //limit so that structures will not be directly adjacent with each other
