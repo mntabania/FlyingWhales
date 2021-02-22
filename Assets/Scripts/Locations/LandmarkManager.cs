@@ -355,6 +355,11 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         LocationStructureObject locationStructureObject = ogObject.GetComponent<LocationStructureObject>();
         return locationStructureObject.HasEnoughSpaceIfPlacedOn(tileLocation);
     }
+    public bool HasAffectedCorruptedTilesForStructure(string structurePrefabName, LocationGridTile tileLocation) {
+        GameObject ogObject = ObjectPoolManager.Instance.GetOriginalObjectFromPool(structurePrefabName);
+        LocationStructureObject locationStructureObject = ogObject.GetComponent<LocationStructureObject>();
+        return locationStructureObject.HasAffectedCorruptedTilesIfPlacedOn(tileLocation);
+    }
     #endregion
 
     #region Area Features

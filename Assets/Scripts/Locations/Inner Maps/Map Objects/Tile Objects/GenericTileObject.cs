@@ -330,6 +330,8 @@ public class GenericTileObject : TileObject {
             tile.SetHasBlueprint(false);
             if (structure is DemonicStructure) {
                 tile.corruptionComponent.CorruptTile();
+            } else {
+                tile.corruptionComponent.UncorruptTile();
             }
         }
         

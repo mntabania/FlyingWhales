@@ -243,7 +243,7 @@ public class AreaGridTileComponent : AreaComponent {
         PlayerManager.Instance.player.playerSettlement.RemoveAreaFromSettlement(p_area);
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            tile.corruptionComponent.UnCorruptTile();
+            tile.corruptionComponent.UncorruptTile();
         }
     }
     private void InstantlyCorruptAllOwnedInnerMapTiles() {

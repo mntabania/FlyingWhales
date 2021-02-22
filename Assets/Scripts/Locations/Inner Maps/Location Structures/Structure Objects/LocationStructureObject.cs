@@ -752,6 +752,35 @@ public class LocationStructureObject : PooledObject, ISelectable {
         connectorTile = null;
         return null;
     }
+    public bool HasAffectedCorruptedTilesIfPlacedOn(LocationGridTile centerTile) {
+        if (centerTile.corruptionComponent.isCorrupted || centerTile.corruptionComponent.isCurrentlyBeingCorrupted) {
+            return true;
+        }
+        InnerTileMap map = centerTile.parentMap;
+        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = localOccupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = centerTile.localPlace;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width)
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                if (tile.corruptionComponent.isCorrupted || tile.corruptionComponent.isCurrentlyBeingCorrupted) {
+                    return true;
+                }
+            } 
+            //else {
+            //    return false; //returned coordinates are out of the map
+            //}
+        }
+        return false;
+    }
     public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile) {
         if (!CanPlaceStructureOnTile(centerTile, out _)) {
             return false;
@@ -839,12 +868,13 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 return false;
             }
         }
-        if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
-            //Note: Demonic structures must be placed on corruption! Except for the portal, since it is the structure that will start the corruption
-            Debug.Log($"Could not place {structureType} because {tile} is not corrupted!!");
-            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
-            return false;
-        }
+        //Note: Demonic structure can now be built if there is one tile that is on or beside a corrupted tile, so the checker for it is now moved to DemonicStructurePlayerSkill - CanBuildDemonicStructureOn
+        //if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
+        //    //Note: Demonic structures must be placed on or beside corruption! Except for the portal, since it is the structure that will start the corruption
+        //    Debug.Log($"Could not place {structureType} because {tile} is not corrupted!!");
+        //    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
+        //    return false;
+        //}
         
         
         //limit so that structures will not be directly adjacent with each other

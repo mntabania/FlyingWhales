@@ -202,7 +202,6 @@ public class SkillData : IPlayerSkill {
         }
     }
     public void OnExecutePlayerSkill() {
-        
         if (!PlayerSkillManager.Instance.unlimitedCast) {
             if (hasCharges) {
                 if(charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {

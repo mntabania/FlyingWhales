@@ -77,21 +77,36 @@ namespace Inner_Maps {
                         //structure.RemovePOI(objHere);
                     }
                 }
-                owner.mouseEventsComponent.EnableMouseEventsForAllNeighbours();
+                owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
                 owner.mouseEventsComponent.OnHoverExit();
             }
         }
-        public void UnCorruptTile() {
-            owner.RevertTileToOriginalPerlin();
-            owner.CreateSeamlessEdgesForSelfAndNeighbours();
-            if (owner.objHere != null) {
-                if (owner.objHere is TileObject tileObject) {
-                    if (!tileObject.traitContainer.HasTrait("Indestructible")) {
-                        owner.structure.RemovePOI(owner.objHere);
-                    }
-                } else {
-                    owner.structure.RemovePOI(owner.objHere);
+        public void UncorruptTile() {
+            if (isCorrupted) {
+                owner.RevertTileToOriginalPerlin();
+                owner.CreateSeamlessEdgesForSelfAndNeighbours();
+                //if (owner.objHere != null) {
+                //    if (owner.objHere is TileObject tileObject) {
+                //        if (!tileObject.traitContainer.HasTrait("Indestructible")) {
+                //            owner.structure.RemovePOI(owner.objHere);
+                //        }
+                //    } else {
+                //        owner.structure.RemovePOI(owner.objHere);
+                //    }
+                //}
+                if (!IsTileAdjacentToACorruption()) {
+                    owner.mouseEventsComponent.SetHasMouseEvents(false);
                 }
+                for (int i = 0; i < owner.neighbourList.Count; i++) {
+                    LocationGridTile neighbour = owner.neighbourList[i];
+                    if (!neighbour.corruptionComponent.isCorrupted) {
+                        if (!neighbour.corruptionComponent.IsTileAdjacentToACorruption()) {
+                            neighbour.mouseEventsComponent.SetHasMouseEvents(false);
+                        }
+                    }
+                }
+            } else {
+                DisruptCorruption();
             }
         }
         public bool IsTileAdjacentToACorruption() {
@@ -104,7 +119,8 @@ namespace Inner_Maps {
             return false;
         }
         public bool CanCorruptTile() {
-            return IsTileAdjacentToACorruption() && !isCorrupted && !isCurrentlyBeingCorrupted;
+            //Can only corrupt wilderness grid tiles
+            return IsTileAdjacentToACorruption() && !owner.hasBlueprint && owner.structure.structureType == STRUCTURE_TYPE.WILDERNESS && !isCorrupted && !isCurrentlyBeingCorrupted;
         }
         public bool CanDisruptCorruptionOfTile() {
             return !isCorrupted && isCurrentlyBeingCorrupted;
@@ -186,7 +202,7 @@ namespace Inner_Maps {
                 SchedulingManager.Instance.AddEntry(wallBuildOrDestroyDate, DestroyDemonicWall, null); //_wallScheduleID = 
             }
             if (isCorrupted) {
-                owner.mouseEventsComponent.EnableMouseEventsForAllNeighbours();
+                owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
                 owner.mouseEventsComponent.OnHoverExit();
             }
         }

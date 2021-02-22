@@ -288,7 +288,6 @@ public class PlayerSkillComponent {
             spellData.SetCharges(spellData.maxCharges);
         }
         spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
-        
         spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(skillType));
         spellData.SetUnlockCost(playerSkillData.unlockCost);
         spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));

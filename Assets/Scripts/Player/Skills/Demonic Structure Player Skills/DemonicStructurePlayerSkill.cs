@@ -1,6 +1,7 @@
 ﻿using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
+using UnityEngine;
 
 public class DemonicStructurePlayerSkill : SkillData {
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE;
@@ -40,7 +41,9 @@ public class DemonicStructurePlayerSkill : SkillData {
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         if (base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason)) {
-            return targetTile.area.structureComponent.CanBuildDemonicStructureHere(structureType, out o_cannotPerformReason) && structureTemplate.HasEnoughSpaceIfPlacedOn(targetTile, out o_cannotPerformReason); 
+            return targetTile.area.structureComponent.CanBuildDemonicStructureHere(structureType, out o_cannotPerformReason) 
+                && structureTemplate.HasEnoughSpaceIfPlacedOn(targetTile, out o_cannotPerformReason)
+                && CanBuildDemonicStructureOn(structureTemplate, targetTile, out o_cannotPerformReason); 
         }
         return false;
     }
@@ -70,5 +73,37 @@ public class DemonicStructurePlayerSkill : SkillData {
     private void BuildDemonicStructure(LocationGridTile p_tile) {
         p_tile.PlaceSelfBuildingDemonicStructure(structureSetting, 20);
         Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
+    }
+    private bool CanBuildDemonicStructureOn(LocationStructureObject structureObj, LocationGridTile centerTile, out string o_cannotPlaceReason) {
+        if (centerTile.corruptionComponent.isCorrupted || centerTile.corruptionComponent.IsTileAdjacentToACorruption()) {
+            o_cannotPlaceReason = string.Empty;
+            return true;
+        }
+        InnerTileMap map = centerTile.parentMap;
+        for (int i = 0; i < structureObj.localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = structureObj.localOccupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = centerTile.localPlace;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - structureObj.center.x;
+            int yDiffFromCenter = currCoordinate.y - structureObj.center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width)
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                if (tile.corruptionComponent.isCorrupted || tile.corruptionComponent.IsTileAdjacentToACorruption()) {
+                    o_cannotPlaceReason = string.Empty;
+                    return true;
+                }
+            } 
+            //else {
+            //    return false; //returned coordinates are out of the map
+            //}
+        }
+        o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
+        return false;
     }
 }
