@@ -90,7 +90,7 @@ public class SpellItem : NameplateItem<SkillData> {
     }
 
     private void OnSpellUpgraded(SkillData p_upgradedSkill) {
-        Debug.LogError(spellData.type + " == " + p_upgradedSkill.type);
+        //Debug.LogError(spellData.type + " == " + p_upgradedSkill.type);
         if (this.spellData.type == p_upgradedSkill.type) {
             Debug.LogError("CALLED " + " LEVEL: " + p_upgradedSkill.currentLevel); 
             UpdateData();
