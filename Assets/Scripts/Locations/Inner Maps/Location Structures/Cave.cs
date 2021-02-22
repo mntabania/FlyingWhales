@@ -13,38 +13,36 @@ namespace Inner_Maps.Location_Structures {
         public const string Yield_Stone = "Stone";
 
         public WeightedDictionary<string> resourceYield { get; }
-        /// <summary>
-        /// Separate field for the occupied hex tiles of this cave.
-        /// Since caves can occupy multiple hex tiles.
-        /// </summary>
-        public List<InnerMapHexTile> caveHexTiles { get; }
-        public override InnerMapHexTile occupiedHexTile => caveHexTiles.Count > 0 ? caveHexTiles[0] : null;
 
-        #region getters
-        public override System.Type serializedData => typeof(SaveDataCave);
-        #endregion
+        //#region getters
+        //public override System.Type serializedData => typeof(SaveDataCave);
+        //#endregion
+
+        ///// <summary>
+        ///// Separate field for the occupied hex tiles of this cave.
+        ///// Since caves can occupy multiple hex tiles.
+        ///// </summary>
+        //public override Area occupiedArea => occupiedAreas.Count > 0 ? occupiedAreas[0] : null;
 
         public Cave(Region location) : base(STRUCTURE_TYPE.CAVE, location) {
             resourceYield = GetRandomResourceYield();
-            caveHexTiles = new List<InnerMapHexTile>();
         }
 
-        public Cave(Region location, SaveDataCave data) : base(location, data) {
+        public Cave(Region location, SaveDataNaturalStructure data) : base(location, data) {
             resourceYield = GetRandomResourceYield();
-            caveHexTiles = new List<InnerMapHexTile>();
         }
 
-        #region Loading
-        public void LoadOccupiedHexTiles(SaveDataCave saveDataCave) {
-            for (int i = 0; i < saveDataCave.occupiedHextiles.Count; i++) {
-                string hexTileID = saveDataCave.occupiedHextiles[i];
-                if (!string.IsNullOrEmpty(hexTileID)) {
-                    HexTile hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(hexTileID);
-                    caveHexTiles.Add(hexTile.innerMapHexTile);
-                }
-            }
-        }
-        #endregion
+        //#region Loading
+        //public void LoadOccupiedHexTiles(SaveDataCave saveDataCave) {
+        //    for (int i = 0; i < saveDataCave.occupiedAreas.Count; i++) {
+        //        string areaID = saveDataCave.occupiedAreas[i];
+        //        if (!string.IsNullOrEmpty(areaID)) {
+        //            Area area = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(areaID);
+        //            caveAreas.Add(area);
+        //        }
+        //    }
+        //}
+        //#endregion
 
         private WeightedDictionary<string> GetRandomResourceYield() {
             WeightedDictionary<string> randomYield = new WeightedDictionary<string>();
@@ -92,10 +90,9 @@ namespace Inner_Maps.Location_Structures {
         protected override void OnTileAddedToStructure(LocationGridTile tile) {
             base.OnTileAddedToStructure(tile);
             tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.MINE);
-            if (tile.collectionOwner.isPartOfParentRegionMap && 
-                caveHexTiles.Contains(tile.collectionOwner.partOfHextile) == false) {
-                caveHexTiles.Add(tile.collectionOwner.partOfHextile);
-            }
+            //if (!caveAreas.Contains(tile.area)) {
+            //    caveAreas.Add(tile.area);
+            //}
         }
         protected override void OnTileRemovedFromStructure(LocationGridTile tile) {
             base.OnTileRemovedFromStructure(tile);
@@ -108,37 +105,34 @@ namespace Inner_Maps.Location_Structures {
             if (region.innerMap.isShowing == false) {
                 InnerMapManager.Instance.ShowInnerMap(region);
             }
-            if (occupiedHexTile != null) {
+            if (occupiedArea != null) {
                 float centerX = 0f;
                 float centerY = 0f;
-                for (int i = 0; i < occupiedHexTiles.Count; i++) {
-                    HexTile hexTile = occupiedHexTiles[i];
-                    Vector2 worldLocation = hexTile.GetCenterLocationGridTile().centeredWorldLocation;
+                for (int i = 0; i < occupiedAreas.Count; i++) {
+                    Area area = occupiedAreas[i];
+                    Vector2 worldLocation = area.gridTileComponent.centerGridTile.centeredWorldLocation;
                     centerX += worldLocation.x;
                     centerY += worldLocation.y;
                 }
-                Vector2 finalPos = new Vector2(centerX / occupiedHexTiles.Count, centerY / occupiedHexTiles.Count);
+                Vector2 finalPos = new Vector2(centerX / occupiedAreas.Count, centerY / occupiedAreas.Count);
                 InnerMapCameraMove.Instance.CenterCameraOn(finalPos);
             }
         }
         public override void ShowSelectorOnStructure() { }
-        public override bool HasTileOnHexTile(HexTile hexTile) {
-            return occupiedHexTile != null && caveHexTiles.Contains(hexTile.innerMapHexTile);
-        }
     }
 }
 
-#region Save Data
-public class SaveDataCave : SaveDataNaturalStructure {
-    public List<string> occupiedHextiles;
-    public override void Save(LocationStructure structure) {
-        base.Save(structure);
-        Cave cave = structure as Cave;
-        occupiedHextiles = new List<string>();
-        for (int i = 0; i < cave.caveHexTiles.Count; i++) {
-            InnerMapHexTile innerMapHexTile = cave.caveHexTiles[i];
-            occupiedHextiles.Add(innerMapHexTile.hexTileOwner.persistentID);
-        }
-    }
-}
-#endregion
+//#region Save Data
+//public class SaveDataCave : SaveDataNaturalStructure {
+//    public List<string> occupiedAreas;
+//    public override void Save(LocationStructure structure) {
+//        base.Save(structure);
+//        Cave cave = structure as Cave;
+//        occupiedAreas = new List<string>();
+//        for (int i = 0; i < cave.caveAreas.Count; i++) {
+//            HexTile hexTile = cave.caveAreas[i];
+//            occupiedAreas.Add(hexTile.persistentID);
+//        }
+//    }
+//}
+//#endregion

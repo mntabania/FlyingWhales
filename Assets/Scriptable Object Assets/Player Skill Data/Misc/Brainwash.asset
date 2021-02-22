@@ -22,6 +22,23 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 0
+  baseLoadoutWeight: 0
+  resistanceType: 9
+  archetypeWeightedBonus: 0
+  requirementData:
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+  upgradeCosts: 
+  chargesCostPerLevel: 
+  additionalDamagePerLevel: []
+  additionalPiercePerLevel: []
   contextMenuIcon: {fileID: 21300000, guid: 052b807b725be584b854b49e2fbbc9f1, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
   m_Name: Zenko
   m_EditorClassIdentifier: 
-  scenarioSettings: {fileID: 4900000, guid: 794a807af2522c4488137e5a424d03f8, type: 3}
+  scenarioSettings: {fileID: 4900000, guid: 13287173f90e0ec419005ac51bcd9bce, type: 3}
   faunaList:
   - monsterType: 8
     minRange: 1

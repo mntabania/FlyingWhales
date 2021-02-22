@@ -23,7 +23,11 @@ public class PlayerUI : BaseMonoBehaviour {
     public GameObject regionNameTopMenuGO;
     public TextMeshProUGUI regionNameTopMenuText;
     public HoverHandler regionNameHoverHandler;
-    
+
+    [Header("Spirit Energy")]
+    public TextMeshProUGUI spiritEnergyLabel;
+    [SerializeField] private RectTransform spiritEnergyContainer;
+
     [Header("Mana")]
     public TextMeshProUGUI manaLbl;
     [SerializeField] private RectTransform manaContainer;
@@ -117,8 +121,6 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private TextMeshProUGUI plaguePointLbl;
     [SerializeField] private RectTransform plaguePointsContainer;
     
-    public HexTile harassDefendInvadeTargetHex { get; private set; }
-
     void Awake() {
         Instance = this;
     }
@@ -141,10 +143,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
         minionList.Initialize();
         summonList.Initialize();
-        plaguePointsContainer.gameObject.SetActive(false);
-
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
+        
         Messenger.AddListener(PlayerSignals.UPDATED_CURRENCIES, UpdateUI);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
@@ -180,6 +179,8 @@ public class PlayerUI : BaseMonoBehaviour {
 
         //currencies
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
+        
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
 #if UNITY_EDITOR
@@ -203,7 +204,6 @@ public class PlayerUI : BaseMonoBehaviour {
         summonList.UpdateList();
 
         OnThreatUpdated();
-        UpdatePlaguePointsContainer();
         UpdatePlaguePointsAmount(PlayerManager.Instance.player.plagueComponent.plaguePoints);
     }
 
@@ -299,18 +299,6 @@ public class PlayerUI : BaseMonoBehaviour {
     private void OnNecromancerSpawned(Character character) {
         OnCharacterBecomesNecromancer(character);
     }
-    private void OnMenuOpened(InfoUIBase @base) {
-        if (@base is CharacterInfoUI || @base is TileObjectInfoUI) {
-            // HideKillSummary();
-        }else if (@base is HextileInfoUI || @base is RegionInfoUI) {
-            UpdateRegionNameState();
-        }
-    }
-    private void OnMenuClosed(InfoUIBase @base) {
-        if (@base is HextileInfoUI || @base is RegionInfoUI) {
-            UpdateRegionNameState();
-        }
-    }
     private void OnThreatUpdated() {
         threatLbl.text = PlayerManager.Instance.player.threatComponent.threat.ToString();
         //threatLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f);
@@ -338,16 +326,8 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
 
     private void UpdateRegionNameState() {
-        if (UIManager.Instance.regionInfoUI.isShowing || UIManager.Instance.hexTileInfoUI.isShowing 
-            || InnerMapManager.Instance.isAnInnerMapShowing) {
-            Region location;
-            if (UIManager.Instance.regionInfoUI.isShowing) {
-                location = UIManager.Instance.regionInfoUI.activeRegion;
-            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
-                location = UIManager.Instance.hexTileInfoUI.activeHex.region;
-            } else {
-                location = InnerMapManager.Instance.currentlyShowingMap.region as Region;
-            }
+        if (InnerMapManager.Instance.isAnInnerMapShowing) {
+            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
             Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
             regionNameTopMenuText.text = location.name;
             regionNameTopMenuGO.SetActive(true);
@@ -359,6 +339,32 @@ public class PlayerUI : BaseMonoBehaviour {
             regionNameTopMenuGO.SetActive(false);
         }
     }
+
+    #region SpiritEnergy
+    private void OnSpiritEnergyAdjusted(int adjustedAmount, int spiritEnergy) {
+        if (adjustedAmount != 0) {
+            UpdateSpiritEnergy();
+            ShowSpiritEnergyAdjustEffect(adjustedAmount);
+            DoSpiritEnergyPunchEffect();
+            AudioManager.Instance.PlayParticleMagnet();
+        }
+    }
+    private void UpdateSpiritEnergy() {
+        spiritEnergyLabel.text = PlayerManager.Instance.player.spiritEnergy.ToString();
+    }
+    private Tweener _currentSpiritEnergyPunchTween;
+    private void DoSpiritEnergyPunchEffect() {
+        if (_currentSpiritEnergyPunchTween == null) {
+            _currentSpiritEnergyPunchTween = spiritEnergyContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentSpiritEnergyPunchTween = null);
+        }
+    }
+    private void ShowSpiritEnergyAdjustEffect(int adjustmentAmount) {
+        var text = adjustmentAmount > 0 ? $"<color=\"green\">+{adjustmentAmount.ToString()}</color>" : $"<color=\"red\">{adjustmentAmount.ToString()}</color>";
+        GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", spiritEnergyLabel.transform.position,
+            Quaternion.identity, transform, true);
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
+    }
+    #endregion
 
     #region Mana
     private void OnManaAdjusted(int adjustedAmount, int mana) {
@@ -794,19 +800,6 @@ public class PlayerUI : BaseMonoBehaviour {
     private void OnUnseizePOI(IPointOfInterest poi) {
         EnableTopMenuButtons();
     }
-    public void ShowSeizedObjectUI() {
-        // unseizeButton.gameObject.SetActive(true);
-    }
-    public void HideSeizedObjectUI() {
-        // unseizeButton.gameObject.SetActive(false);
-    }
-    //Not used right now, might be used in the future
-    public void UpdateSeizedObjectUI() {
-        unseizeButton.gameObject.SetActive(PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-    }
-    public void OnClickSeizedObject() {
-        // PlayerManager.Instance.player.seizeComponent.PrepareToUnseize();
-    }
     #endregion
 
     #region Spells
@@ -1023,12 +1016,12 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
 
     #region Top Menu
-    private void EnableTopMenuButtons() {
+    public void EnableTopMenuButtons() {
         for (int i = 0; i < topMenuButtons.Length; i++) {
             topMenuButtons[i].interactable = true;
         }
     }
-    private void DisableTopMenuButtons() {
+    public void DisableTopMenuButtons() {
         for (int i = 0; i < topMenuButtons.Length; i++) {
             topMenuButtons[i].interactable = false;
         }
@@ -1062,9 +1055,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void UpdatePlaguePointsAmount(int p_amount) {
         plaguePointLbl.text = p_amount.ToString();
-    }
-    private void UpdatePlaguePointsContainer() {
-        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse);
     }
     public void OnHoverEnterPlaguePoints() {
         string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";

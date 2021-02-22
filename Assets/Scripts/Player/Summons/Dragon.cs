@@ -177,7 +177,7 @@ public class Dragon : Summon {
     //    if (character != this && combatComponent.isInCombat) {
     //        if (HasTerritory()) {
     //            if (IsTerritory(tile)) {
-    //                bool isCharacterInStillInTerritory = character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && IsTerritory(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+    //                bool isCharacterInStillInTerritory = character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && IsTerritory(character.gridTileLocation.hexTileOwner);
     //                if (!isCharacterInStillInTerritory) {
     //                    combatComponent.RemoveHostileInRange(character);
     //                }

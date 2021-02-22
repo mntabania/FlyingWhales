@@ -1,4 +1,5 @@
-﻿namespace Events.World_Events {
+﻿using Object_Pools;
+namespace Events.World_Events {
     public class UndeadAttackEvent : WorldEvent {
 
         public UndeadAttackEvent() { }
@@ -24,6 +25,7 @@
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "DesertRose", "activated_village", providedTags: LOG_TAG.Player);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            LogPool.Release(log);
         }
 
         #region Listeners

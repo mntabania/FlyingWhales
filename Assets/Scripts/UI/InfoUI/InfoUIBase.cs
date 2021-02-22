@@ -60,7 +60,6 @@ public abstract class InfoUIBase : MonoBehaviour {
         Messenger.Broadcast(UISignals.MENU_OPENED, this);
         
         UIManager.Instance.poiTestingUI.HideUI();
-        UIManager.Instance.minionCommandsUI.HideUI();
         UIManager.Instance.customDropdownList.Close();
         if(_data is Minion minion) {
             _playerActionTarget = minion.character;

@@ -13,6 +13,7 @@ using Tutorial;
 using UnityEngine.Events;
 using UtilityScripts;
 using Locations.Settlements;
+using Object_Pools;
 
 public class ConsoleBase : InfoUIBase {
 
@@ -46,7 +47,6 @@ public class ConsoleBase : InfoUIBase {
             {"/kill",  KillCharacter},
             //{"/lfli", LogFactionLandmarkInfo},
             {"/center_character", CenterOnCharacter},
-            {"/center_landmark", CenterOnLandmark },
             {"/log_location_history", LogLocationHistory  },
             {"/log_area_characters_history", LogAreaCharactersHistory  },
             {"/get_characters_with_item", GetCharactersWithItem },
@@ -123,6 +123,12 @@ public class ConsoleBase : InfoUIBase {
         if (AstarPath.active.graphs.Length > 0) {
             worldSettingsText = $"{worldSettingsText}\nTotal Nodes: {AstarPath.active.graphs[0].CountNodes().ToString()}";    
         }
+        
+        worldSettingsText = $"{worldSettingsText}\nObject Pooling:";
+        worldSettingsText = $"{worldSettingsText}\nLogs in Pool:";
+        worldSettingsText = $"{worldSettingsText} {LogPool.GetCurrentLogsInPool().ToString()}";
+        
+        
         
         
         // if (GameManager.Instance.showFullDebug) {
@@ -363,34 +369,6 @@ public class ConsoleBase : InfoUIBase {
         rel.SetRelationshipStatus(newRelStatus);
 
         AddSuccessMessage($"Changed relationship status of {faction1.name} and {faction2.name} to {rel.relationshipStatus}");
-    }
-    #endregion
-
-    #region Landmarks
-    private void CenterOnLandmark(string[] parameters) {
-        if (parameters.Length != 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of Center on Landmark");
-            return;
-        }
-        string landmarkParameterString = parameters[0];
-        int landmarkID;
-
-        bool isLandmarkParameterNumeric = int.TryParse(landmarkParameterString, out landmarkID);
-        BaseLandmark landmark = null;
-        if (isLandmarkParameterNumeric) {
-            landmark = LandmarkManager.Instance.GetLandmarkByID(landmarkID);
-        } else {
-            landmark = LandmarkManager.Instance.GetLandmarkByName(landmarkParameterString);
-        }
-
-        if (landmark == null) {
-            AddErrorMessage($"There was an error in the command format of {parameters[0]}");
-            return;
-        }
-        landmark.CenterOnLandmark();
-        //UIManager.Instance.ShowLandmarkInfo(landmark);
-        //character.CenterOnCharacter();
     }
     #endregion
 

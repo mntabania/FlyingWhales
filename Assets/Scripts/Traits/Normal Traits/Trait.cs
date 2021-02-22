@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Interrupts;
+using Object_Pools;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Traits {
@@ -146,8 +147,8 @@ namespace Traits {
                 //clear all trap structures when triggering flaw
                 character.trapStructure.ResetAllTrapStructures();
             }
-            if (character.trapStructure.IsTrappedInHex()) {
-                character.trapStructure.ResetAllTrapHexes();
+            if (character.trapStructure.IsTrappedInArea()) {
+                character.trapStructure.ResetTrapArea();
             }
             return "flaw_effect";
         }
@@ -202,7 +203,9 @@ namespace Traits {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, key, null, LOG_TAG.Player);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.FinalizeText();
-                return log.logText;
+                string logText = log.logText;
+                LogPool.Release(log);
+                return logText;
             }
             return string.Empty;
         }
@@ -343,7 +346,7 @@ namespace Traits {
         #region IMoodModifier Implementation
         public Log GetMoodEffectFlavorText(Character p_characterResponsible) {
             if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, "mood_effect")) {
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "mood_effect");
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "mood_effect");
                 if (p_characterResponsible != null) {
                     log.AddToFillers(p_characterResponsible, p_characterResponsible.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);    
                 } else {

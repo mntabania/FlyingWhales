@@ -213,7 +213,7 @@ namespace Traits {
                 _owner.traitContainer.AddTrait(_owner, "Abstain Fullness");
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Vampire", "resist_hunger", null, LOG_TAG.Needs);
                 log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             }
             return false;
         }

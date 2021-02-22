@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: The Portal Data
+  m_EditorClassIdentifier: 
+  _structureSprite: {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
+  _itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 4
+      structureType: 26
+      hasValue: 1
+      isCorrupted: 0
+    m_values:
+    - data:
+      - {fileID: 1926241482549420, guid: 71f44742eb695424fbc5f6744b734c21, type: 3}

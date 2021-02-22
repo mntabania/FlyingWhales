@@ -62,7 +62,6 @@ public class StructureInfoUI : InfoUIBase {
     }
     public override void OpenMenu() {
         activeStructure = _data as LocationStructure;
-        activeStructure.CenterOnStructure();
         base.OpenMenu();
         activeStructure.ShowSelectorOnStructure();
         UpdateStructureInfoUI();
@@ -97,7 +96,7 @@ public class StructureInfoUI : InfoUIBase {
         if (activeStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
             locationPortrait.SetLocation(activeStructure.settlementLocation);
         }
-        locationPortrait.SetPortrait(activeStructure.structureType.GetLandmarkType());
+        locationPortrait.SetPortrait(activeStructure.structureType);
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeStructure.currentHP}/{activeStructure.maxHP}";

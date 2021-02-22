@@ -11,6 +11,8 @@ using UtilityScripts;
 public class MeteorParticleEffect : BaseParticleEffect {
     public ParticleSystem meteorParticle;
     private bool hasMeteorFell;
+
+    private int m_baseDamage = -500;
     //public ParticleSystem[] meteorExplosionParticles;
 
     //private LocationGridTile targetTile;
@@ -69,7 +71,8 @@ public class MeteorParticleEffect : BaseParticleEffect {
     private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }
         BurningSource burningSource = bs;
-        traitable.AdjustHP(-500, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        int processedDamage = m_baseDamage - PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.METEOR);
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.METEOR));
         //if (traitable is TileObject obj) {
         //    if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
         //        obj.AdjustHP(-500, ELEMENTAL_TYPE.Fire, 
@@ -85,6 +88,10 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //    traitable.AdjustHP(-500, ELEMENTAL_TYPE.Fire, 
         //        elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
         //}
+        if (traitable is Character character && traitable.currentHP <= 0) {
+            (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.METEOR;
+            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+        }
         bs = burningSource;
     }
     private void OnTweenComplete() {

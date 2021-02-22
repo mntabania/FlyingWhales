@@ -81,7 +81,7 @@ public class SmallSpider : Summon {
         }
         if (IsPOICurrentlyTargetedByAPerformingAction()) {
             //If target is currently targeted by an action, do not grow up, instead, comeback after 1 hour
-            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(12), GrowUp, this);
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour), GrowUp, this);
             return;
         }
         SetDestroyMarkerOnDeath(true);
@@ -91,7 +91,7 @@ public class SmallSpider : Summon {
         LocationStructure home = homeStructure;
         NPCSettlement settlement = homeSettlement;
         Region region = homeRegion;
-        HexTile ogTerritory = territory;
+        Area ogTerritory = territory;
         
         SetShowNotificationOnDeath(false);
         
@@ -106,7 +106,7 @@ public class SmallSpider : Summon {
 
         Log growUpLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
         growUpLog.AddToFillers(summon, summon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        growUpLog.AddLogToDatabase();
+        growUpLog.AddLogToDatabase(true);
         
         CharacterManager.Instance.PlaceSummonInitially(summon, tile);
         TraitManager.Instance.CopyStatuses(this, summon);

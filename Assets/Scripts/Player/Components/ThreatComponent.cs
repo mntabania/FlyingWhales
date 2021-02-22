@@ -148,13 +148,13 @@ public class ThreatComponent {
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
         CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
         Region region = targetDemonicStructure.region;
-        HexTile spawnHex = targetDemonicStructure.region.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && !currHex.isCorrupted);
+        Area spawnArea = targetDemonicStructure.region.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.gridTileComponent.HasCorruption());
         List<Character> characters = new List<Character>();
         int angelCount = 4; //UnityEngine.Random.Range(3, 6);
         for (int i = 0; i < angelCount; i++) {
             SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
             if (UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
-            LocationGridTile spawnTile = spawnHex.GetRandomTile();
+            LocationGridTile spawnTile = spawnArea.gridTileComponent.GetRandomTile();
             Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
             CharacterManager.Instance.PlaceSummonInitially(angel, spawnTile);
             angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);

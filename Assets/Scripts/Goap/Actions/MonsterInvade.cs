@@ -49,8 +49,8 @@ public class MonsterInvade : GoapAction {
             MonsterInvadeGathering monsterInvadeGathering = gathering as MonsterInvadeGathering;
             if(otherData[0].obj is LocationStructure targetStructure) {
                 monsterInvadeGathering.SetTargetStructure(targetStructure);
-            } else if (otherData[0].obj is HexTile hex) {
-                monsterInvadeGathering.SetTargetHex(hex);
+            } else if (otherData[0].obj is Area area) {
+                monsterInvadeGathering.SetTargetArea(area);
             }
         }
     }

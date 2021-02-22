@@ -1863,7 +1863,7 @@
   },
   "villageSettlementTemplates": [
     {
-      "hexTiles": [
+      "areas": [
         {
           "X": 6,
           "Y": 5

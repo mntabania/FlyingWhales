@@ -148,7 +148,7 @@ public class GoapPlanner {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan", providedTags: LOG_TAG.Work);
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
-                        owner.logComponent.RegisterLog(log);
+                        owner.logComponent.RegisterLog(log, true);
                     }
                 }
                 if (goapThread.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
@@ -457,9 +457,9 @@ public class GoapPlanner {
                             hasSet = true;
                         }
                     }
-                    for (int j = 0; j < settlement.tiles.Count; j++) {
-                        HexTile hex = settlement.tiles[j];
-                        if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                    for (int j = 0; j < settlement.areas.Count; j++) {
+                        Area area = settlement.areas[j];
+                        if (SetLowestCostActionGivenLocationAwareness(area.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
                             hasSet = true;
                         }
                     }
@@ -467,8 +467,8 @@ public class GoapPlanner {
                     if (SetLowestCostActionGivenLocationAwareness(structure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
                         hasSet = true;
                     }
-                } else if (location is HexTile hex) {
-                    if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                } else if (location is Area area) {
+                    if (SetLowestCostActionGivenLocationAwareness(area.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
                         hasSet = true;
                     }
                 }
@@ -496,23 +496,20 @@ public class GoapPlanner {
                 }
             }
 
-            HexTile currentHex = null;
-            if (currentGridTile.collectionOwner.isPartOfParentRegionMap) {
-                currentHex = currentGridTile.collectionOwner.partOfHextile.hexTileOwner;
-            }
+            Area currentArea = currentGridTile.area;
 
-            if (currentHex != null) {
+            if (currentArea != null) {
                 //Second step: Process current hex, if there is an action, skip next processing
-                bool hasSet = SetLowestCostActionGivenLocationAwareness(currentHex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                bool hasSet = SetLowestCostActionGivenLocationAwareness(currentArea.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
                 if (hasSet) {
                     return;
                 }
 
                 //Second step: Process adjacent hexes, if there is an action, skip next processing
-                List<HexTile> adjacentHexes = currentHex.AllNeighbours;
-                for (int i = 0; i < adjacentHexes.Count; i++) {
-                    HexTile hex = adjacentHexes[i];
-                    SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                List<Area> neighbours = currentArea.neighbourComponent.neighbours;
+                for (int i = 0; i < neighbours.Count; i++) {
+                    Area neighbour = neighbours[i];
+                    SetLowestCostActionGivenLocationAwareness(neighbour.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
                 }
             }
         }

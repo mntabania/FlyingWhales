@@ -630,6 +630,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8fd1850703ada46458deb8d2d181855e, type: 3}
   frozenExplosionAudio:
   - {fileID: 8300000, guid: fadc2acc3308b3646bdc57f6d3b4546e, type: 3}
+  placeStructureAudio:
+  - {fileID: 8300000, guid: 2cf8f81535b91724e81b193c7862201f, type: 3}
+  - {fileID: 8300000, guid: 48586b39a36182a4fb122571fc6edb69, type: 3}
+  - {fileID: 8300000, guid: 66a5c5e3c44c46644b38de252d7948e3, type: 3}
   bowAndArrowAudio:
   - {fileID: 8300000, guid: efa8730f0034b8e418e1fd7af5ee5d62, type: 3}
   - {fileID: 8300000, guid: a6a43c6638c737e44b3a876785e8083b, type: 3}

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -14,11 +14,11 @@ public class SkillData : IPlayerSkill {
     //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public SPELL_TARGET[] targetTypes { get; protected set; }
     //public int radius { get; protected set; }
-    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, 1f);
     public int charges { get; private set; }
-    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
-    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
-    public int threat => SpellUtilities.GetModifiedSpellCost(baseThreat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
+    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, 1f);
+    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, 1f);
+    public int threat => SpellUtilities.GetModifiedSpellCost(baseThreat, 1f);
     public int threatPerHour { get; private set; }
     public bool isInUse { get; private set; }
     public int currentCooldownTick { get; private set; }
@@ -29,14 +29,32 @@ public class SkillData : IPlayerSkill {
 
     public int baseMaxCharges { get; private set; }
     public int baseManaCost { get; private set; }
+    public float basePierce { get; private set; }
     public int baseCooldown { get; private set; }
     public int baseThreat { get; private set; }
+    public int currentLevel { get; set; }
+
+    public int unlockCost { get; set; }
+
+    public void LevelUp() {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
+        currentLevel = Mathf.Clamp(++currentLevel, 0, 3);
+        SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
+        SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
+        SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
+        SetCooldown(playerSkillData.skillUpgradeData.GetCoolDownPerLevel(currentLevel));
+
+        SetCharges(maxCharges);
+        FinishCooldown();
+    }
     
     protected SkillData() {
         ResetData();
     }
 
     #region Virtuals
+    public virtual void OnSetAsCurrentActiveSpell(){}
+    public virtual void OnNoLongerCurrentActiveSpell(){}
     public virtual void ActivateAbility(IPointOfInterest targetPOI) {
         OnExecutePlayerSkill();
     }
@@ -46,7 +64,7 @@ public class SkillData : IPlayerSkill {
     public virtual void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
         OnExecutePlayerSkill();
     }
-    public virtual void ActivateAbility(HexTile targetHex) {
+    public virtual void ActivateAbility(Area targetArea) {
         //if(targetHex.settlementOnTile != null) {
         //    if(targetHex.settlementOnTile.HasResidentInsideSettlement()){
         //        PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
@@ -75,8 +93,11 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbility();
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return CanPerformAbility(); }
-    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return CanPerformAbility(); }
-    public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        o_cannotPerformReason = string.Empty;
+        return CanPerformAbility();
+    }
+    public virtual bool CanPerformAbilityTowards(Area targetArea) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(StructureRoom room) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(BaseSettlement targetSettlement) { return CanPerformAbility(); }
@@ -84,7 +105,7 @@ public class SkillData : IPlayerSkill {
     /// Highlight the affected area of this spell given a tile.
     /// </summary>
     /// <param name="tile">The tile to take into consideration.</param>
-    public virtual void HighlightAffectedTiles(LocationGridTile tile) { }
+    public virtual void ShowValidHighlight(LocationGridTile tile) { }
     public virtual void UnhighlightAffectedTiles() {
         TileHighlighter.Instance.HideHighlight();
     }
@@ -94,7 +115,7 @@ public class SkillData : IPlayerSkill {
     /// <param name="tile"></param>
     /// <param name="invalidText"></param>
     /// <returns>True or false (Whether or not this spell showed an invalid highlight)</returns>
-    public virtual bool InvalidHighlight(LocationGridTile tile, ref string invalidText) { return false; }
+    public virtual bool ShowInvalidHighlight(LocationGridTile tile, ref string invalidText) { return false; }
     #endregion
 
     #region General
@@ -106,7 +127,9 @@ public class SkillData : IPlayerSkill {
         baseThreat = 0;
         threatPerHour = 0;
         currentCooldownTick = cooldown;
+        currentLevel = 0;
         isInUse = false;
+        currentLevel = 0;
     }
     public bool CanPerformAbilityTowards(IPointOfInterest poi) {
         if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -159,10 +182,10 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbilityTowards(poi);
     }
     public bool CanTarget(LocationGridTile tile) {
-        return CanPerformAbilityTowards(tile);
+        return CanPerformAbilityTowards(tile, out _);
     }
-    public bool CanTarget(HexTile hex) {
-        return CanPerformAbilityTowards(hex);
+    public bool CanTarget(Area p_area) {
+        return CanPerformAbilityTowards(p_area);
     }
     public bool CanTarget(BaseSettlement p_targetSettlement) {
         return CanPerformAbilityTowards(p_targetSettlement);
@@ -184,7 +207,7 @@ public class SkillData : IPlayerSkill {
     }
     public void OnExecutePlayerSkill() {
         if (!PlayerSkillManager.Instance.unlimitedCast) {
-            if(hasCharges) {
+            if (hasCharges) {
                 if(charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
                     AdjustCharges(-1);
                 }
@@ -214,10 +237,16 @@ public class SkillData : IPlayerSkill {
         }
     }
     private void StartCooldown() {
+        Debug.LogError(hasCooldown + " -- " + (currentCooldownTick == cooldown));
         if (hasCooldown && currentCooldownTick == cooldown) {
+            Debug.LogError("TEST");
             SetCurrentCooldownTick(0);
             Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
-            Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            if(cooldown > 0) {
+                Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            } else {
+                PerTickCooldown();
+            }
         }
     }
     private void PerTickCooldown() {
@@ -226,6 +255,7 @@ public class SkillData : IPlayerSkill {
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
         if(currentCooldownTick >= cooldown) {
             //SetCharges(maxCharges);
+            currentCooldownTick = cooldown;
             if(hasCharges && charges < maxCharges) {
                 AdjustCharges(1);
             } else {
@@ -238,15 +268,20 @@ public class SkillData : IPlayerSkill {
                     }
                 }
             }
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
-            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, this);
-            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            FinishCooldown();
 
-            if(hasCharges && charges < maxCharges) {
+            if (hasCharges && charges < maxCharges) {
                 StartCooldown();
             }
         }
         Profiler.EndSample();
+    }
+    public void FinishCooldown() {
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
+        Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, this);
+        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public string GetManaCostChargesCooldownStr() {
         string str = "Mana Cost: " + manaCost;
@@ -271,6 +306,15 @@ public class SkillData : IPlayerSkill {
             StartCooldown();
         }
     }
+
+    public void SetPierce(float amount) {
+        basePierce = amount;
+    }
+
+    public void SetUnlockCost(int amount) {
+        unlockCost = amount;
+    }
+
     public void SetManaCost(int amount) {
         baseManaCost = amount;
     }
@@ -290,6 +334,10 @@ public class SkillData : IPlayerSkill {
     public void SetIsInUse(bool state) {
         isInUse = state;
         // Debug.Log($"Set spell {name} in use to {isInUse.ToString()}");
+    }
+
+    public void SetCurrentLevel(int amount) {
+        currentLevel = amount;
     }
     #endregion
 }

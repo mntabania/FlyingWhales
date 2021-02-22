@@ -11,25 +11,39 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.behaviourComponent.canArson) {
-            if (character.behaviourComponent.arsonVillageTarget == null) {
-                List<HexTile> target = character.behaviourComponent.GetVillageTargetsByPriority();
-                character.behaviourComponent.SetArsonistVillageTarget(target);
+            if (character.behaviourComponent.arsonVillageTarget.Count <= 0) {
+                //character.behaviourComponent.ResetArsonistVillageTarget();
+                character.behaviourComponent.PopulateVillageTargetsByPriority(character.behaviourComponent.arsonVillageTarget);
+                //character.behaviourComponent.SetArsonistVillageTarget(target);
             } else {
                 //if already has arson village target, check if it is still valid.
-                for (int i = 0; i < character.behaviourComponent.arsonVillageTarget.Count; i++) {
-                    HexTile target = character.behaviourComponent.arsonVillageTarget[i];
-                    if (target.IsPartOfVillage(out var village)) {
-                        if (village.owner != null && !village.owner.IsHostileWith(PlayerManager.Instance.player.playerFaction)) {
-                            //target is no longer hostile with player faction, redetermine target.
-                            List<HexTile> newTarget = character.behaviourComponent.GetVillageTargetsByPriority();
-                            character.behaviourComponent.SetArsonistVillageTarget(newTarget);
-                            break;
-                        }
+                bool shouldRepopulate = false;
+                Area target = character.behaviourComponent.arsonVillageTarget[0];
+                if (target.IsPartOfVillage(out var village)) {
+                    if (village.owner != null && !village.owner.IsHostileWith(PlayerManager.Instance.player.playerFaction)) {
+                        //target is no longer hostile with player faction, redetermine target.
+                        shouldRepopulate = true;
                     }
                 }
+                //for (int i = 0; i < character.behaviourComponent.arsonVillageTarget.Count; i++) {
+                //    Area target = character.behaviourComponent.arsonVillageTarget[i];
+                //    if (target.IsPartOfVillage(out var village)) {
+                //        if (village.owner != null && !village.owner.IsHostileWith(PlayerManager.Instance.player.playerFaction)) {
+                //            //target is no longer hostile with player faction, redetermine target.
+                //            shouldRepopulate = true;
+                //            break;
+                //        }
+                //    }
+                //}
+                if (shouldRepopulate) {
+                    character.behaviourComponent.ResetArsonistVillageTarget();
+                    character.behaviourComponent.PopulateVillageTargetsByPriority(character.behaviourComponent.arsonVillageTarget);
+                    //character.behaviourComponent.SetArsonistVillageTarget(newTarget);
+                }
             }
-            if (character.behaviourComponent.arsonVillageTarget != null) {
-                if (character.hexTileLocation != null && character.behaviourComponent.arsonVillageTarget.Contains(character.hexTileLocation)) {
+            if (character.behaviourComponent.arsonVillageTarget.Count > 0) {
+                Area areaLocation = character.areaLocation;
+                if (areaLocation != null && character.behaviourComponent.arsonVillageTarget.Contains(areaLocation)) {
                     //character is already at village target, do arson job on random object inside village target
                     List<TileObject> arsonChoices = GetArsonTargetChoices(character);
                     if (arsonChoices != null) {
@@ -37,16 +51,16 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
                         return character.jobComponent.TriggerArson(target, out producedJob);
                     } else {
                         //no arson choices, go to random tile at village
-                        HexTile targetHextile =
+                        Area targetArea =
                             CollectionUtilities.GetRandomElement(character.behaviourComponent.arsonVillageTarget);
-                        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.borderTiles);
+                        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.borderTiles);
                         return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                     }
                 } else {
                     //go to target village
-                    HexTile targetHextile =
+                    Area targetArea =
                         CollectionUtilities.GetRandomElement(character.behaviourComponent.arsonVillageTarget);
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.borderTiles);
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.borderTiles);
                     return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                 }
             } else {
@@ -62,8 +76,9 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
         base.OnAddBehaviourToCharacter(character);
         character.behaviourComponent.OnBecomeArsonist();
         //immediately set arson village target, so that arsonist will immediately do arson.
-        List<HexTile> target = character.behaviourComponent.GetVillageTargetsByPriority();
-        character.behaviourComponent.SetArsonistVillageTarget(target);
+        character.behaviourComponent.ResetArsonistVillageTarget();
+        character.behaviourComponent.PopulateVillageTargetsByPriority(character.behaviourComponent.arsonVillageTarget);
+        //character.behaviourComponent.SetArsonistVillageTarget(target);
     }
     public override void OnRemoveBehaviourFromCharacter(Character character) {
         base.OnRemoveBehaviourFromCharacter(character);

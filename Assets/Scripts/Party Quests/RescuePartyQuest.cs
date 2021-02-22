@@ -30,8 +30,8 @@ public class RescuePartyQuest : PartyQuest {
     public override IPartyTargetDestination GetTargetDestination() {
         if(targetCharacter.currentStructure != null && targetCharacter.currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS) {
             return targetCharacter.currentStructure;
-        } else if(targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            return targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        } else if(targetCharacter.gridTileLocation != null) {
+            return targetCharacter.areaLocation;
         }
         return base.GetTargetDestination();
     }

@@ -24,7 +24,7 @@ public class VengefulGhost : Summon {
     }
     protected override void OnChangeFaction(Faction prevFaction, Faction newFaction) {
         base.OnChangeFaction(prevFaction, newFaction);
-        behaviourComponent.SetInvadeVillageTarget(null);
+        behaviourComponent.ResetInvadeVillageTarget();
     }
     #endregion
 }

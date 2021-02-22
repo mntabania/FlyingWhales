@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: Quarry Data
+  m_EditorClassIdentifier: 
+  structureSprite: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+  itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 2
+      structureType: 48
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 1
+      structureType: 48
+      hasValue: 1
+      isCorrupted: 0
+    m_values:
+    - data:
+      - {fileID: 2191746159434480874, guid: 0bfb522af2ecc3f4b94b4c8af3e9355b, type: 3}
+      - {fileID: 4501931057063128544, guid: d7351e1ded5553040997992aaf5222cf, type: 3}
+    - data:
+      - {fileID: 1626073781943236392, guid: 38e3864bc1d1e1147aaaebbc3f739903, type: 3}
+      - {fileID: 2944087448530267355, guid: 2d8094e9cf8869c43a56b37e59fda17b, type: 3}

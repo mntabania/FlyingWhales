@@ -232,6 +232,7 @@ public enum LANDMARK_TYPE {
     TEMPLE = 64,
     RUINED_ZOO = 65,
     BIOLAB = 66,
+    SPIRE = 67,
 }
 public enum CHARACTER_ROLE {
     NONE,
@@ -638,7 +639,7 @@ public enum SPELL_TARGET {
     CHARACTER,
     TILE_OBJECT,
     TILE,
-    HEX,
+    AREA,
     STRUCTURE,
     ROOM,
     SETTLEMENT,
@@ -693,6 +694,7 @@ public enum STRUCTURE_TYPE {
     TAILORING = 50,
     TANNERY = 51,
     FISHING_SHACK = 52,
+    SPIRE = 53,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -879,6 +881,8 @@ public enum TILE_OBJECT_TYPE {
     FISHING_SPOT = 165,
     HARPY_EGG = 166,
     RAT_MEAT = 167,
+    THIN_WALL = 168,
+    SPIRE = 169,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -971,15 +975,15 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     BREED_MONSTER = 62, COWARDICE = 67, PYROPHOBIA = 68, NARCOLEPSY = 69,
     PLANT_GERM = 70, MEDDLER = 71, EYE = 72, CRYPT = 73, KENNEL = 74, OSTRACIZER = 75, TORTURE_CHAMBERS = 76, DEMONIC_PRISON = 77,
     DEMON_WRATH = 78, DEMON_PRIDE = 79, DEMON_LUST = 80, DEMON_GLUTTONY = 81, DEMON_SLOTH = 82, DEMON_ENVY = 83, DEMON_GREED = 84,
-    SKELETON_MARAUDER = 85, KILL = 87, EMPOWER = 88, AGITATE = 89, HOTHEADED = 90, LAZINESS = 91, HEAL = 92, SPLASH_WATER = 93, WALL = 94,
+    KILL = 87, EMPOWER = 88, AGITATE = 89, HOTHEADED = 90, LAZINESS = 91, HEAL = 92, SPLASH_WATER = 93, WALL = 94,
     MUSIC_HATER = 95, DEFILER = 96, GLUTTONY = 99,
     WOLF = 100, GOLEM = 101, INCUBUS = 102, SUCCUBUS = 103, FIRE_ELEMENTAL = 104, KOBOLD = 105, GHOST = 106,
     ABOMINATION = 107, MIMIC = 108, PIG = 109, CHICKEN = 110, SHEEP = 111, SLUDGE = 112,
     WATER_NYMPH = 113, WIND_NYMPH = 114, ICE_NYMPH = 115,
     ELECTRIC_WISP = 116, EARTHEN_WISP = 117, FIRE_WISP = 118,
     GRASS_ENT = 119, SNOW_ENT = 120, CORRUPT_ENT = 121, DESERT_ENT = 122, FOREST_ENT = 123,
-    GIANT_SPIDER = 124, SMALL_SPIDER = 125,
-    SKELETON_ARCHER = 126, SKELETON_BARBARIAN = 127, SKELETON_CRAFTSMAN = 128, SKELETON_DRUID = 129, SKELETON_HUNTER = 130, SKELETON_MAGE = 131, SKELETON_KNIGHT = 132, SKELETON_MINER = 133, SKELETON_NOBLE = 134, SKELETON_PEASANT = 135, SKELETON_SHAMAN = 136, SKELETON_STALKER = 137,
+    GIANT_SPIDER = 124, SMALL_SPIDER = 125, 
+    
     BRAINWASH = 138, UNSUMMON = 139, TRIGGER_FLAW = 140,
     CULTIST_TRANSFORM = 141,
     CULTIST_POISON = 142,
@@ -992,7 +996,7 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     SCHEME = 158, INSTIGATE_WAR = 159, RESIGN = 160, LEAVE_FACTION = 161, LEAVE_HOME = 162, LEAVE_VILLAGE = 163,
     BREAK_UP = 164, JOIN_FACTION = 165, REBELLION = 166, OVERTHROW_LEADER = 167, INDUCE_MIGRATION = 168, STIFLE_MIGRATION = 169,
     RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
-    CULTIST_JOIN_FACTION = 179,
+    CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1085,7 +1089,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating, Transform_Revert, Teleport, Protection,
+    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
@@ -1100,7 +1104,7 @@ public enum RUMOR_TYPE { Action, Interrupt }
 public enum ASSUMPTION_TYPE { Action, Interrupt }
 public enum CRIMABLE_TYPE { Action, Interrupt }
 public enum OBJECT_TYPE { 
-    Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Hextile = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
+    Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Area = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
     Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21, Party_Quest = 22, Gathering = 23,
     Reaction_Quest = 24, Plague_Disease = 25
 }
@@ -1110,7 +1114,7 @@ public enum PASSIVE_SKILL {
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
 }
-public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
+public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Area, }
 public enum SETTLEMENT_TYPE { Human_Village, Elven_Hamlet, Capital, Cult_Town }
 
 public enum RELATIONS_FILTER {
@@ -1176,7 +1180,17 @@ public enum THREAT_AMOUNT {
 public enum OMNIPOTENT_MODE {
     Disabled, Enabled 
 }
-
 public enum VICTORY_CONDITION {
     Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Sandbox
+}
+public enum RESISTANCE {
+    None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
+}
+
+public enum UPGRADE_BONUS {
+    Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed,
+}
+
+public enum UNLOCKING_SKILL_REQUIREMENT {
+    Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count,
 }

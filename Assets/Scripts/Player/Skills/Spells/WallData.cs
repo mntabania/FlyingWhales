@@ -3,6 +3,8 @@ using Inner_Maps;
 using Traits;
 
 public class WallData : SkillData {
+
+    private int m_baseExpiryTick = 5;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WALL;
     public override string name => "Wall";
     public override string description => "This Spell spawns a single tile of durable wall. Can be chained together to block someone's path. Wall degrades and disappears after 5 hours.";
@@ -19,14 +21,15 @@ public class WallData : SkillData {
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
         wall.SetWallType(WALL_TYPE.Demon_Stone);
         GameDate expiryDate = GameManager.Instance.Today();
-        expiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
+        int processedTick = m_baseExpiryTick + (PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.WALL));
+        expiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(processedTick));
         wall.SetExpiry(expiryDate);
         targetTile.structure.AddPOI(wall, targetTile);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             if (targetTile.objHere is TileObject tileObject) {
                 if (tileObject.tileObjectType.IsTileObjectImportant()) {
@@ -43,7 +46,7 @@ public class WallData : SkillData {
         }
         return false;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }    
 }

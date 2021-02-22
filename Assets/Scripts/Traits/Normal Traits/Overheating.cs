@@ -152,7 +152,7 @@ namespace Traits {
                     if(result == "unconscious") {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "overheat_unconscious", null, LOG_TAG.Needs);
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddLogToDatabase();
+                        log.AddLogToDatabase(true);
 
                         character.traitContainer.AddTrait(character, "Unconscious");
                         return true;

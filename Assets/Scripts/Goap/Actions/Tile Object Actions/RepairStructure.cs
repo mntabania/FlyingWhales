@@ -58,8 +58,8 @@ public class RepairStructure : GoapAction {
         isOverridden = true;
         return p;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         log.AddToFillers(node.poiTarget.gridTileLocation.structure, node.poiTarget.gridTileLocation.structure.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -128,7 +128,7 @@ public class RepairStructure : GoapAction {
             tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             tile.genericTileObject.traitContainer.RemoveTrait(tile.genericTileObject, "Burnt");
             for (int j = 0; j < tile.walls.Count; j++) {
-                StructureWallObject structureWall = tile.walls[j];
+                ThinWall structureWall = tile.walls[j];
                 structureWall.traitContainer.RemoveTrait(structureWall, "Burnt");
                 structureWall.AdjustHP(structureWall.maxHP, ELEMENTAL_TYPE.Normal);
             }

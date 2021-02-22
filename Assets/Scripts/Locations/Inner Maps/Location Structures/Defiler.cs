@@ -2,14 +2,9 @@
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class Defiler : DemonicStructure {
-        public override Vector2 selectableSize { get; }
         
-        public Defiler(Region location) : base(STRUCTURE_TYPE.DEFILER, location) {
-            selectableSize = new Vector2(10f, 10f);
-        }
-        public Defiler(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
-        }
+        public Defiler(Region location) : base(STRUCTURE_TYPE.DEFILER, location) { }
+        public Defiler(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 
         #region Overrides
         public override void OnCharacterUnSeizedHere(Character character) {

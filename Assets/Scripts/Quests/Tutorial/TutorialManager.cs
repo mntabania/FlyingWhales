@@ -21,7 +21,6 @@ namespace Tutorial {
             Elemental_Interactions = 3,
             Character_Info = 4,
             Spawn_An_Invader = 5,
-            Regional_Map = 6,
             Share_An_Intel = 9,
             Afflictions = 10,
             Prison = 11,
@@ -34,7 +33,6 @@ namespace Tutorial {
             Frame_Up,
             Faction_Info,
             Create_A_Cultist,
-            World_Map,
             Biolab_Tutorial,
             Meddler_Tutorial
         }
@@ -66,7 +64,6 @@ namespace Tutorial {
             Tutorial.Frame_Up,
             Tutorial.Faction_Info,
             Tutorial.Create_A_Cultist,
-            Tutorial.World_Map,
             Tutorial.Biolab_Tutorial,
             Tutorial.Meddler_Tutorial,
         };

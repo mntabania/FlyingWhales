@@ -37,7 +37,7 @@ public class Dig : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
 
         string stateName = "Target Missing";
-        bool defaultTargetMissing = IsTargetMissing(node);
+        bool defaultTargetMissing = IsTargetMissingDig(node);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
@@ -51,7 +51,7 @@ public class Dig : GoapAction {
     }
     #endregion
 
-    private bool IsTargetMissing(ActualGoapNode node) {
+    private bool IsTargetMissingDig(ActualGoapNode node) {
         //Different target missing for dig since, we need to allow the actor to dig block walls from another structure
         //The only difference between this and the default target missing is when checking for neighbour, we will allow neighbours in a different structure
 

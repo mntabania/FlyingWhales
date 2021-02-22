@@ -35,9 +35,7 @@ public class ThreatParticleEffect : MonoBehaviour {
         }
     }
     private void OnInnerMapClosed(Region region) {
-        gameObject.transform.SetParent(WorldMapCameraMove.Instance.transform);
         gameObject.transform.localPosition = Vector3.zero;
-        UpdatePosition(WorldMapCameraMove.Instance.mainCamera);
         if (_isPlaying) {
             StopEffect();
             PlayEffect();

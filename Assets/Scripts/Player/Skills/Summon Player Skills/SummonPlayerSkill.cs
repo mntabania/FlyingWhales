@@ -26,9 +26,7 @@ public class SummonPlayerSkill : SkillData {
         if (targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN && targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
             summon.MigrateHomeStructureTo(targetTile.structure);
         } else {
-            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                summon.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
-            }
+            summon.SetTerritory(targetTile.area, false);
         }
         summon.jobQueue.CancelAllJobs();
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
@@ -43,11 +41,11 @@ public class SummonPlayerSkill : SkillData {
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             if (targetTile.structure is Kennel) {
                 return false;
@@ -59,7 +57,7 @@ public class SummonPlayerSkill : SkillData {
                     return false;
                 }
             }
-            if (!targetTile.collectionOwner.isPartOfParentRegionMap || !targetTile.IsPassable()) {
+            if (!targetTile.IsPassable()) {
                 //only allow summoning on linked tiles
                 return false;
             }

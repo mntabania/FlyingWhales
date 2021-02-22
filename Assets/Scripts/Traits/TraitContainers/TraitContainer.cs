@@ -6,6 +6,7 @@ using UnityEngine;
 using Inner_Maps;
 using Traits;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Debug = System.Diagnostics.Debug;
 namespace Traits {
     public class TraitContainer : ITraitContainer {
@@ -180,7 +181,7 @@ namespace Traits {
             } else if (traitName == "Zapped") {
                 if (HasTrait("Electric")) {
                     shouldAddTrait = false;
-                } else if(addTo is GenericTileObject || addTo is StructureWallObject) {
+                } else if(addTo is GenericTileObject || addTo is ThinWall) {
                     if (!HasTrait("Wet")) {
                         //Ground floor tiles and walls do not get Zapped by electric damage unless they are Wet.
                         shouldAddTrait = false;
@@ -639,7 +640,9 @@ namespace Traits {
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                     Trait trait = traitOverrideFunctions[i];
+                    Profiler.BeginSample($"{owner.name} - {trait.name} - Tick Started Process");
                     trait.OnTickStarted(owner);
+                    Profiler.EndSample();
                 }
             }
             //if (allTraitsAndStatuses != null) {

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using Locations.Region_Features;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Scenario_Maps;
 namespace Generator.Map_Generation.Components {
     public class FeaturesActivation : MapGenerationComponent {
@@ -28,10 +28,10 @@ namespace Generator.Map_Generation.Components {
         #endregion
         
         private IEnumerator ExecuteFeatureInitialActions() {
-            for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
-                HexTile tile = GridMap.Instance.normalHexTiles[i];
+            for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
+                Area tile = GridMap.Instance.allAreas[i];
                 for (int j = 0; j < tile.featureComponent.features.Count; j++) {
-                    TileFeature feature = tile.featureComponent.features[j];
+                    AreaFeature feature = tile.featureComponent.features[j];
                     feature.GameStartActions(tile);
                 }
                 yield return null;

@@ -16,7 +16,7 @@ public class BallLightning : MovingTileObject {
         Initialize(TILE_OBJECT_TYPE.BALL_LIGHTNING, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING));
     }
     public BallLightning(SaveDataBallLightning data) : base(data) {
         //SaveDataBallLightning saveDataBallLightning = data as SaveDataBallLightning;
@@ -41,12 +41,13 @@ public class BallLightning : MovingTileObject {
         return "Ball Lightning";
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
+        amount += PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
         LocationGridTile tileLocation = gridTileLocation;
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0) { 
@@ -55,12 +56,15 @@ public class BallLightning : MovingTileObject {
                 responsibleCharacter = character;
             }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            if (responsibleCharacter?.currentHP <= 0) {
+                responsibleCharacter.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, responsibleCharacter.marker.transform.position, 1, responsibleCharacter.currentRegion.innerMap);
+            }
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Ice) {
             //Electric Storm
-            if (tileLocation.collectionOwner.isPartOfParentRegionMap) {
-                tileLocation.collectionOwner.partOfHextile.hexTileOwner.spellsComponent.SetHasElectricStorm(true);
-            }
+            tileLocation.area.spellsComponent.SetHasElectricStorm(true);
+            
             _ballLightningMapVisual.Expire();
         } else if (currentHP == 0) {
             //object has been destroyed

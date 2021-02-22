@@ -13,18 +13,65 @@ MonoBehaviour:
   m_Name: Lightning
   m_EditorClassIdentifier: 
   skill: 23
-  manaCost: 10
-  charges: 2
-  cooldown: 144
+  manaCost: 25
+  charges: 1
+  cooldown: 240
   threat: 8
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: fe93d2c868609304880632137115e0cd, type: 3}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 2
+  baseLoadoutWeight: 300
+  resistanceType: 6
+  archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  requirementData:
+    requirements: 01000000
+    requiredArchetype: 0
+    requiredSkills: 06000000
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: c80000002c01000090010000
+    manacostPerLevel: 190000001e0000002300000028000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 0e0000000100000009000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 50
+    - 75
+    - 100
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 00000000140000001400000014000000
+    skillMovementSpeed: 
   thunderAudioClips:
   - {fileID: 8300000, guid: 613c9bbaa7fc8d447b629354111f388b, type: 3}
   - {fileID: 8300000, guid: 953a816924eff6f458c0800c37d729ad, type: 3}

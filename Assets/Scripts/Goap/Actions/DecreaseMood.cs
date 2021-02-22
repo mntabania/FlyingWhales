@@ -42,10 +42,10 @@ public class DecreaseMood : GoapAction {
     private void DecreaseEffect(ITraitable traitable, Character actor) {
         if (traitable is Character targetCharacter && actor.IsHostileWith(targetCharacter)) {
             targetCharacter.traitContainer.AddTrait(traitable, "Dolorous", actor);  
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Decrease Mood", "effect", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Decrease Mood", "effect", null, logTags);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
     }
     #endregion

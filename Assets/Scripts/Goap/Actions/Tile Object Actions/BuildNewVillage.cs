@@ -48,9 +48,6 @@ public class BuildNewVillage : GoapAction {
                 if (genericTileObject.blueprintOnTile != null) {
                     return false;
                 }
-                if (!genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    return false;
-                }
                 if (genericTileObject.gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
                     return false;
                 }
@@ -76,9 +73,7 @@ public class BuildNewVillage : GoapAction {
                     LandmarkManager.Instance.OwnSettlement(goapNode.actor.faction, settlement);
                 }
 
-                if (genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    settlement.AddTileToSettlement(genericTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
-                }
+                settlement.AddAreaToSettlement(genericTileObject.gridTileLocation.area);
                 
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));

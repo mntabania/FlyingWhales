@@ -13,15 +13,66 @@ MonoBehaviour:
   m_Name: Agitate
   m_EditorClassIdentifier: 
   skill: 89
-  manaCost: 15
-  charges: 3
-  cooldown: 96
+  manaCost: 20
+  charges: 1
+  cooldown: 160
   threat: 0
   threatPerHour: 0
   expCost: 0
+  cheatedLevel: 0
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 1
+  baseLoadoutWeight: 200
+  resistanceType: 9
+  archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 21300000, guid: 0e0660d7121fbec41ab7b927d1bea4c9, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
+  requirementData:
+    requirements: 
+    requiredArchetype: 2
+    requiredSkills: 2a00000022000000
+    actionCount: 2
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 6
+    tier2Count: 0
+    tier3Count: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 6400000096000000c8000000
+    manacostPerLevel: 14000000190000001e00000023000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 0e000000010000000600000004000000
+    additionalDamagePerLevel: 190000001900000019000000
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel:
+    - 0
+    - 25
+    - 50
+    - 75
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel:
+    - 0
+    - 25
+    - 50
+    - 75
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 0000000001000000
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 00000000140000001400000014000000
+    skillMovementSpeed: 

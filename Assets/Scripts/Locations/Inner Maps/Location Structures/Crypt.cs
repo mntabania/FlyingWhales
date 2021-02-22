@@ -4,15 +4,10 @@ using Inner_Maps;
 
 namespace Inner_Maps.Location_Structures {
     public class Crypt : DemonicStructure {
-        public override Vector2 selectableSize { get; }
         private Artifact _activatedArtifact;
         
-        public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){
-            selectableSize = new Vector2(10f, 10f);
-        }
-        public Crypt(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
-        }
+        public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){ }
+        public Crypt(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 
         //#region Overrides
         //public override void Initialize() {

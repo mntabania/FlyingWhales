@@ -12,10 +12,11 @@ public class LocustSwarm : MovingTileObject {
     public override System.Type serializedData => typeof(SaveDataLocustSwarm);
     
     public LocustSwarm() {
+        int processedTick = GameManager.Instance.GetTicksBasedOnHour(6) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.LOCUST_SWARM);
         Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+        expiryDate = GameManager.Instance.Today().AddTicks(processedTick);
     }
     public LocustSwarm(SaveDataLocustSwarm data) {
         //SaveDataLocustSwarm saveDataLocustSwarm = data as SaveDataLocustSwarm;
@@ -33,11 +34,11 @@ public class LocustSwarm : MovingTileObject {
         traitContainer.AddTrait(this, "Dangerous");
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0 && source != null) {

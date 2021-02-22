@@ -119,9 +119,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             manMadeStructure.SetStructureObject(structureObject);
 
-            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                structure.SetOccupiedArea(occupiedArea);
             }
             
             structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
@@ -132,8 +132,8 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 //load wall data
                 Assert.IsTrue(manMadeStructure.structureWalls.Count == saveDataManMadeStructure.structureWallObjects.Length, $"Structure walls of {structure} is inconsistent with save data!");
                 for (int j = 0; j < manMadeStructure.structureWalls.Count; j++) {
-                    StructureWallObject structureWallObject = manMadeStructure.structureWalls[j];
-                    SaveDataStructureWallObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
+                    ThinWall structureWallObject = manMadeStructure.structureWalls[j];
+                    SaveDataTileObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
                     structureWallObject.LoadDataFromSave(saveDataStructureWallObject);
                 }    
             }
@@ -149,9 +149,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             demonicStructure.SetStructureObject(structureObject);
 
-            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                structure.SetOccupiedArea(occupiedArea);
             }
             
             structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
@@ -161,14 +161,14 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             yield return null;
         } else if (structure is NaturalStructure naturalStructure && saveDataLocationStructure is SaveDataNaturalStructure saveDataNaturalStructure) {
             //natural structures
-            if (naturalStructure is Cave cave && saveDataNaturalStructure is SaveDataCave saveDataCave) {
-                cave.LoadOccupiedHexTiles(saveDataCave);
-            } else {
-                if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                    HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                    structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+            //if (naturalStructure is Cave cave && saveDataNaturalStructure is SaveDataCave saveDataCave) {
+            //    cave.LoadOccupiedHexTiles(saveDataCave);
+            //} else {
+                if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                    Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                    structure.SetOccupiedArea(occupiedArea);
                 }
-            }
+            //}
             
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class Evangelize : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
@@ -138,26 +139,26 @@ public class Evangelize : GoapAction {
         weights.LogDictionaryValues($"{goapNode.actor.name} evangelize of {targetCharacter.name} weights. Result: {result.ToString()}");
         
         if (result) {
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "success", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "success", goapNode, LogUtilities.Evangelize_Tags);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Cultist");
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         } else {
             if ((targetCharacter.relationshipContainer.IsFamilyMember(goapNode.actor) || 
                  targetCharacter.relationshipContainer.HasRelationshipWith(goapNode.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER) || 
                  targetCharacter.relationshipContainer.HasOpinionLabelWithCharacter(goapNode.actor, RelationshipManager.Close_Friend)) &&
                 !targetCharacter.relationshipContainer.IsEnemiesWith(goapNode.actor)) {
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "nothing_happens", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "nothing_happens", goapNode, LogUtilities.Evangelize_Tags);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             } else {
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "crime", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "crime", goapNode, LogUtilities.Evangelize_Tags);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 targetCharacter.assumptionComponent.CreateAndReactToNewAssumption(goapNode.actor, goapNode.actor, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             }
         }
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);

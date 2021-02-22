@@ -29,6 +29,7 @@ public class SpellItem : NameplateItem<SkillData> {
         Messenger.AddListener<SkillData>(SpellSignals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
         Messenger.AddListener<SkillData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SkillData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.AddListener<SkillData>(SpellSignals.SPELL_UPGRADED, OnSpellUpgraded);
         Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnExecuteSpell);
         Messenger.AddListener<SkillData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
@@ -41,13 +42,26 @@ public class SpellItem : NameplateItem<SkillData> {
     public void UpdateData() {
         mainLbl.text = spellData.name;
         currencyLbl.text = string.Empty;
-        if (spellData.manaCost > 0) {
-            currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{spellData.manaCost.ToString()} ";
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+        SkillData updatedSkillData = PlayerSkillManager.Instance.GetPlayerSkillData(this.spellData.type);
+        this.spellData = updatedSkillData;
+        if (playerSkillData != null) {
+            if (playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel) > 0) {
+                currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel).ToString()} ";
+            }
+            if (playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel) > 0) {
+                currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel).ToString()}  ";
+            }    
+        } else {
+            if (spellData.manaCost > 0) {
+                currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{spellData.manaCost.ToString()} ";
+            }
+            if (spellData.maxCharges > 0) {
+                currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{spellData.maxCharges.ToString()}  ";
+            }
         }
-        if (spellData.maxCharges > 0) {
-            currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{spellData.charges.ToString()}  ";
-        }
-        if (spellData.cooldown > 0) {
+        
+        if (spellData.cooldown >= 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.CooldownIcon()}{GameManager.GetTimeAsWholeDuration(spellData.cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(spellData.cooldown)}  ";
         }
         if (spellData.threat > 0) {
@@ -84,6 +98,15 @@ public class SpellItem : NameplateItem<SkillData> {
             }
         }
     }
+
+    private void OnSpellUpgraded(SkillData p_upgradedSkill) {
+        //Debug.LogError(spellData.type + " == " + p_upgradedSkill.type);
+        if (this.spellData.type == p_upgradedSkill.type) {
+            Debug.LogError("CALLED " + " LEVEL: " + p_upgradedSkill.currentLevel); 
+            UpdateData();
+        }
+    }
+
     private void OnSpellCooldownFinished(SkillData spellData) {
         if (this.spellData == spellData) {
             SetCooldownState(spellData.isInCooldown);

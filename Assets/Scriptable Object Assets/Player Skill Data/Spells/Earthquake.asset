@@ -13,15 +13,58 @@ MonoBehaviour:
   m_Name: Earthquake
   m_EditorClassIdentifier: 
   skill: 24
-  manaCost: 5
+  manaCost: 30
   charges: 1
-  cooldown: 144
+  cooldown: 320
   threat: 5
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 300
+  tier: 3
+  baseLoadoutWeight: 0
+  resistanceType: 7
+  archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  requirementData:
+    requirements: 04000000
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 3
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 5e010000f40100008a020000
+    manacostPerLevel: 1e00000023000000280000002d000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 01000000000000000e000000
+    additionalDamagePerLevel: 00000000320000004b00000064000000
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 40010000000100000001000000010000
+    skillMovementSpeed: 

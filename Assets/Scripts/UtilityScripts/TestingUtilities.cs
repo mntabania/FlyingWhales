@@ -99,15 +99,15 @@ namespace UtilityScripts {
             List<NPCSettlement> settlements = new List<NPCSettlement>();
             for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
                 NPCSettlement npcSettlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
-                if (npcSettlement.HasTileInRegion(region)) {
+                //if (npcSettlement.HasAreaInRegion(region)) {
                     settlements.Add(npcSettlement);
-                }
+                //}
             }
             return settlements;
         }
 
         #region Character
-         public static void ShowCharacterTestingInfo(Character activeCharacter) {
+        public static void ShowCharacterTestingInfo(Character activeCharacter) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}";
         summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
@@ -129,9 +129,9 @@ namespace UtilityScripts {
         summary = $"{summary} {"Is Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
         summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
         summary = $"{summary} {"Personal Religion: " + activeCharacter.religionComponent.religion.ToString()}";
-        summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
-        summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
-        summary = $"{summary}{"\nHappiness Time: " + (activeCharacter.needsComponent.happinessSecondForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.happinessSecondForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedSecondHappiness.ToString()})";
+        summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.Instance.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
+        summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.Instance.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
+        summary = $"{summary}{"\nHappiness Time: " + (activeCharacter.needsComponent.happinessSecondForcedTick == 0 ? "N/A" : GameManager.Instance.ConvertTickToTime(activeCharacter.needsComponent.happinessSecondForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedSecondHappiness.ToString()})";
         summary = $"{summary}{"\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString()}";
         summary = $"{summary}{"\nSexuality: " + activeCharacter.sexuality.ToString()}";
         summary = $"{summary}{"\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture)}";

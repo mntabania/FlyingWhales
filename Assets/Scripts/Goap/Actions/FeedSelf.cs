@@ -152,7 +152,7 @@ public class FeedSelf : GoapAction {
                         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddLogToDatabase();
-                        PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+                        PlayerManager.Instance.player.ShowNotificationFrom(actor, log, true);
                     }
 
                     if (actor.isNormalCharacter) {

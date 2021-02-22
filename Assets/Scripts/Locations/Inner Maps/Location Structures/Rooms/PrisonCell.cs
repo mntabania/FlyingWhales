@@ -13,7 +13,11 @@ namespace Inner_Maps.Location_Structures {
         public Summon skeleton { get; private set; }
         private AutoDestroyParticle _particleEffect;
 
-        public PrisonCell(List<LocationGridTile> tilesInRoom) : base("Prison Cell", tilesInRoom) { }
+        public PrisonCell(List<LocationGridTile> tilesInRoom) : base("Prison Cell", tilesInRoom) {
+            var worldLocation = GetCenterTile().centeredWorldLocation;
+            worldLocation.x += 0.5f;
+            worldPosition = worldLocation;
+        }
         
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
@@ -120,15 +124,20 @@ namespace Inner_Maps.Location_Structures {
                 skeleton.SetDestroyMarkerOnDeath(true);
                 skeleton.ClearPlayerActions();
                 skeleton.movementComponent.SetEnableDigging(true);
-                
+
                 // int modifiedX = tortureChamber.entrance.localPlace.x - 2;
                 // modifiedX = Mathf.Max(modifiedX, 0);
                 // LocationGridTile outsideTile = tortureChamber.region.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
 
-                List<LocationGridTile> dropChoices = parentStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(t => 
-                    t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
-
+                List<LocationGridTile> dropChoices = ObjectPoolManager.Instance.CreateNewGridTileList();
+                for (int i = 0; i < parentStructure.occupiedArea.gridTileComponent.gridTiles.Count; i++) {
+                    LocationGridTile tile = parentStructure.occupiedArea.gridTileComponent.gridTiles[i];
+                    if(tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                        dropChoices.Add(tile);
+                    }
+                }
                 LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);
+                ObjectPoolManager.Instance.ReturnGridTileListToPool(dropChoices);
                 
                 CharacterManager.Instance.PlaceSummonInitially(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, skeleton);

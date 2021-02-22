@@ -12,6 +12,7 @@ using UnityEngine.Assertions;
 using Tutorial;
 using UtilityScripts;
 using Locations.Settlements;
+using Object_Pools;
 using Prison = Inner_Maps.Location_Structures.Prison;
 using Random = System.Random;
 
@@ -161,8 +162,10 @@ public class ReactionComponent : CharacterComponent {
         //if (string.IsNullOrEmpty(reactable.currentStateName)) {
         //    return;
         //}
-        if (!reactable.informationLog.hasValue) {
-            throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
+        if (reactable.informationLog == null || !reactable.informationLog.hasValue) {
+            //throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
+            Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
+            return;
         }
         //if(reactable.target is TileObject item && reactable is ActualGoapNode node) {
         //    if (node.action.goapType == INTERACTION_TYPE.STEAL) {
@@ -224,8 +227,6 @@ public class ReactionComponent : CharacterComponent {
                     //Should not add witness log if the action log itself is not added to the actor
                 } else {
                     Log witnessLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "witness_event", reactable as ActualGoapNode, LOG_TAG.Witnessed);
-                    // witnessLog.SetLogType(LOG_TYPE.Witness);
-                    // witnessLog.AddTag(reactable.logTags);
                     witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
                     witnessLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                     witnessLog.AddToFillers(reactable.informationLog.fillers);
@@ -236,8 +237,8 @@ public class ReactionComponent : CharacterComponent {
                     emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
 
                     witnessLog.AddToFillers(null, emotionsLog.logText, LOG_IDENTIFIER.PARTY_2);
-                    witnessLog.AddLogToDatabase();
-                    // owner.logComponent.AddHistory(witnessLog);
+                    witnessLog.AddLogToDatabase(true);
+                    LogPool.Release(emotionsLog);
                 }
             }
         } else if (target == owner) {
@@ -257,7 +258,7 @@ public class ReactionComponent : CharacterComponent {
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
-                        log.AddLogToDatabase();
+                        log.AddLogToDatabase(true);
                     }
                 }
                 string response =
@@ -272,8 +273,10 @@ public class ReactionComponent : CharacterComponent {
         //}
     }
     private string ReactToInformedReactable(IReactable reactable, bool addLog) {
-        if (!reactable.informationLog.hasValue) {
-            throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} informed event {reactable.name} by {reactable.actor.name} does not have a log!");
+        if (reactable.informationLog == null || !reactable.informationLog.hasValue) {
+            //throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} informed event {reactable.name} by {reactable.actor.name} does not have a log!");
+            Debug.LogWarning ($"{GameManager.Instance.TodayLogString()}{owner.name} informed event {reactable.name} by {reactable.actor.name} does not have a log!");
+            return string.Empty;
         }
 
         Character actor = reactable.actor;
@@ -331,8 +334,6 @@ public class ReactionComponent : CharacterComponent {
 
             if (addLog && emotionsToActor != string.Empty) {
                 Log informedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "informed_event", reactable as ActualGoapNode, LOG_TAG.Informed);
-                // informedLog.AddTag(reactable.logTags);
-                // informedLog.SetLogType(LOG_TYPE.Informed);
                 informedLog.AddToFillers(reactable.informationLog.fillers);
                 informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
                 informedLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
@@ -343,9 +344,8 @@ public class ReactionComponent : CharacterComponent {
                 emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
 
                 informedLog.AddToFillers(null, emotionsLog.logText, LOG_IDENTIFIER.PARTY_2);
-
-                informedLog.AddLogToDatabase();
-                // owner.logComponent.AddHistory(informedLog);
+                informedLog.AddLogToDatabase(true);
+                LogPool.Release(emotionsLog);
             }
         } else if(target == owner && target is Character) {
             string emotionsOfTarget = reactable.ReactionOfTarget(actor, target, REACTION_STATUS.INFORMED);
@@ -360,11 +360,10 @@ public class ReactionComponent : CharacterComponent {
                 } else {
                     //add log of emotions felt
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Informed);
-                    // log.AddTag(reactable.logTags);
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsOfTarget, 2), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
             response = emotionsOfTarget;
@@ -1008,7 +1007,7 @@ public class ReactionComponent : CharacterComponent {
                     //nocturnal
                     if (targetCharacter.limiterComponent.canPerform && !targetCharacter.partyComponent.isMemberThatJoinedQuest && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
                         debugLog = $"{debugLog}\n-Target can perform and not an active member of a party that has a quest and has not yet witnessed a vampire crime of actor";
-                        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+                        TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
                         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                             debugLog = $"{debugLog}\n-Current time is After midnight";
                             if (disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
@@ -1419,7 +1418,7 @@ public class ReactionComponent : CharacterComponent {
         //}
         if (targetTileObject.traitContainer.HasTrait("Danger Remnant", "Lightning Remnant")) {
             if (!actor.traitContainer.HasTrait("Berserked")) {
-                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
+                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.corruptionComponent.isCorrupted) {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                 } else {
                     if (actor.traitContainer.HasTrait("Coward")) {
@@ -1441,7 +1440,7 @@ public class ReactionComponent : CharacterComponent {
         }
         if (targetTileObject.traitContainer.HasTrait("Surprised Remnant")) {
             if (!actor.traitContainer.HasTrait("Berserked")) {
-                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
+                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.corruptionComponent.isCorrupted) {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                 } else {
                     if (actor.traitContainer.HasTrait("Coward")) {
@@ -1567,7 +1566,7 @@ public class ReactionComponent : CharacterComponent {
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(targetTileObject, targetTileObject.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(targetTileObject.gridTileLocation.structure,  targetTileObject.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.limiterComponent.canMove) {

@@ -6,6 +6,7 @@ using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using Interrupts;
+using Object_Pools;
 using Quests;
 using UnityEngine.Assertions;
 
@@ -551,6 +552,9 @@ public class SaveDataNotification {
             UIManager.Instance.ShowPlayerNotification(intel, log, tickShown);
         } else {
             UIManager.Instance.ShowPlayerNotification(log, tickShown);
+        }
+        if (log != null) {
+            LogPool.Release(log);
         }
     }
 }

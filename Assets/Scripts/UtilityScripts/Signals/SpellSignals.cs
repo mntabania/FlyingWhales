@@ -50,4 +50,8 @@
     /// </summary>
     public static string PLAYER_ACTION_EXECUTED_TOWARDS_POI = "OnPlayerActionExecutedTowardsPOI";
     public static string FLAW_TRIGGERED_BY_PLAYER = "OnFlawTriggeredByPlayer";
+    /// <summary>
+    /// parameters (SpellData)
+    /// </summary>
+    public static string SPELL_UPGRADED = "OnSpellUpgraded";
 }

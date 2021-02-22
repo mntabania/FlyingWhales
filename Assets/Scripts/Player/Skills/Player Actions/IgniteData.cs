@@ -7,6 +7,7 @@ using UnityEngine;
 using Traits;
 
 public class IgniteData : PlayerAction {
+
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.IGNITE;
     public override string name => "Ignite";
     public override string description => "This Action can be used to apply Burning to an object.";
@@ -23,15 +24,10 @@ public class IgniteData : PlayerAction {
             BurningSource bs = null;
             targetTile.PerformActionOnTraitables((traitable) => IgniteEffect(traitable, ref bs));
         }
-
-        //BurningSource bs = new BurningSource();
-        //Burning burning = new Burning();
-        //burning.InitializeInstancedTrait();
-        //burning.SetSourceOfBurning(bs, targetPOI);
-        //targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
+        
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
@@ -51,7 +47,9 @@ public class IgniteData : PlayerAction {
     private void IgniteEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }
         Trait trait = null;
-        if (traitable.traitContainer.AddTrait(traitable, "Burning", out trait, bypassElementalChance: true)) {
+        int duration = TraitManager.Instance.allTraits["Burning"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.IGNITE);
+        if (traitable.traitContainer.AddTrait(traitable, "Burning", out trait, bypassElementalChance: true, 
+            overrideDuration: duration)) {
             TraitManager.Instance.ProcessBurningTrait(traitable, trait, ref bs);
         }
     }

@@ -27,13 +27,25 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {
-        traitable.AdjustHP(-400, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
+        int baseDamage = -400;
+        int additionalDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
+        if (additionalDamage > 0) {
+            additionalDamage *= -1;
+        }
+        int processedDamage = baseDamage + additionalDamage;
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true,
+                    piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
+        //traitable.AdjustHP(-400, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
         if (traitable is Character character && character.isDead == false) {
             traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
             traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
             traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
             if (Random.Range(0, 100) < 25) {
                 character.traitContainer.AddTrait(character, "Injured");
+            }
+            if (character.currentHP <= 0) {
+                character.skillCauseOfDeath = PLAYER_SKILL_TYPE.ICETEROIDS;
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
             }
         }
     }

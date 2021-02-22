@@ -69,7 +69,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
 		Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-		Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+		//Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
 		Messenger.AddListener<Table>(StructureSignals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.AddListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
@@ -88,7 +88,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
 		Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-		Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+		//Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
 		Messenger.RemoveListener<Table>(StructureSignals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.RemoveListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
@@ -223,7 +223,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			
 		}
 	}
-	private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
+	private void OnCharacterEnteredArea(Character character, Area p_area) {
         //Note: No more apprehension in settlement when criminal enters the settlement hex tiles
         //Now, creation of apprehend job towards criminal in settlement job queue is done in ReactionComponent, so this means, it is only added in settlement job queue when another character sees the criminal
         //The reason for this is due to a bug in burn at stake that when a criminal is brought outside to be burnt, when the criminal is dropped this will create another apprehend job in settlement even though the criminal is already being burnt at stake
@@ -293,17 +293,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			CheckIfShouldStopWaterWellCheck();
 		}
 	}
-	public void OnSettlementTileRemoved(HexTile p_hexTile, NPCSettlement p_settlement) {
+	public void OnSettlementAreaRemoved(Area p_area, NPCSettlement p_settlement) {
 		for (int i = 0; i < poisonedTiles.Count; i++) {
 			LocationGridTile tile = poisonedTiles[i];
-			if (p_hexTile.locationGridTiles.Contains(tile)) {
+			if (p_area.gridTileComponent.gridTiles.Contains(tile)) {
 				RemovePoisonedTile(tile);
 				i--;
 			}
 		}
 		for (int i = 0; i < wetTiles.Count; i++) {
 			LocationGridTile tile = wetTiles[i];
-			if (p_hexTile.locationGridTiles.Contains(tile)) {
+			if (p_area.gridTileComponent.gridTiles.Contains(tile)) {
 				RemoveWetTile(tile);
 				i--;
 			}

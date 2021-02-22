@@ -30,6 +30,11 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public string wallTileMapAssetName;
     public float floorSample;
 
+    //Components
+    public SaveDataGridTileCorruptionComponent corruptionComponent;
+    public SaveDataGridTileMouseEventsComponent mouseEventsComponent;
+    public SaveDataGridTileTileObjectComponent tileObjectComponent;
+
     public override void Save(LocationGridTile gridTile) {
         persistentID = gridTile.persistentID;
         isDefault = gridTile.isDefault;
@@ -54,10 +59,14 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         wallTileMapAssetName = gridTile.parentMap.structureTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
 
         floorSample = gridTile.floorSample;
+
+        corruptionComponent = new SaveDataGridTileCorruptionComponent(); corruptionComponent.Save(gridTile.corruptionComponent);
+        mouseEventsComponent = new SaveDataGridTileMouseEventsComponent(); mouseEventsComponent.Save(gridTile.mouseEventsComponent);
+        tileObjectComponent = new SaveDataGridTileTileObjectComponent(); tileObjectComponent.Save(gridTile.tileObjectComponent);
     }
 
-    public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap, SaveDataCurrentProgress saveData) {
-        LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
+    public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap, SaveDataCurrentProgress saveData, Area p_area) {
+        LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap, p_area);
         tile.SetFloorSample(floorSample);
         SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, genericTileObjectID);
         TileObject loadedObject = saveDataTileObject.Load();

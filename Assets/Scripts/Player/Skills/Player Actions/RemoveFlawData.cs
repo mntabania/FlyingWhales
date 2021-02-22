@@ -43,8 +43,14 @@ public class RemoveFlawData : PlayerAction {
     
     #region Remove Trait
     public void ActivateRemoveFlaw(string traitName, Character p_character) {
-        p_character.traitContainer.RemoveTrait(p_character, traitName);
-        Activate(p_character);
+        if (RollSuccessChance(p_character)) {
+            p_character.traitContainer.RemoveTrait(p_character, traitName);
+            Activate(p_character);
+        } else {
+            //Go into cooldown but do not activate ability
+            OnExecutePlayerSkill();
+            PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", p_character.name + " resisted the power of the Ruinarch!");
+        }
     }
     #endregion
     

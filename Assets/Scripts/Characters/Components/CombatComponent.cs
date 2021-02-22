@@ -967,7 +967,7 @@ public class CombatComponent : CharacterComponent {
                     return CombatManager.Defending_Home;
                 }
             } else if (owner.IsInTerritory()) {
-                if (!targetCharacter.IsTerritory(owner.hexTileLocation) && targetCharacter.IsInTerritoryOf(owner)) {
+                if (!targetCharacter.IsTerritory(owner.areaLocation) && targetCharacter.IsInTerritoryOf(owner)) {
                     return CombatManager.Defending_Territory;
                 }
             }
@@ -1085,6 +1085,15 @@ public class CombatComponent : CharacterComponent {
     }
     public void AdjustAttackModifier(int modification) {
         attackModification += modification;
+        UpdateAttack();
+    }
+
+    public void AddAttackBaseOnPercentage(float modification) {
+        attackModification += (int)(modification * attack);
+        UpdateAttack();
+    }
+    public void SubtractAttackBaseOnPercentage(float modification) {
+        attackModification -= (int)(modification * attack);
         UpdateAttack();
     }
     #endregion

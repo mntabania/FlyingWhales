@@ -46,6 +46,12 @@ public class BaseRelationshipData : IRelationshipData {
         }
         return false;
     }
+    public bool HasRelationship(RELATIONSHIP_TYPE rels) {
+        if (relationships.Contains(rels)) {
+            return true; //as long as the relationship has at least 1 relationship type from the list, consider this as true.
+        }
+        return false;
+    }
     public RELATIONSHIP_TYPE GetFirstMajorRelationship() {
         if(relationships.Count > 0) {
             return relationships[0];

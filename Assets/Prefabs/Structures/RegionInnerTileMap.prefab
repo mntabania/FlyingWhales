@@ -793,10 +793,12 @@ MonoBehaviour:
   centerGoPrefab: {fileID: 1235531871457826, guid: 2b36a36d8ac855246b9993705d70c259,
     type: 3}
   cameraBounds: {x: 0, y: 0, z: 0, w: 0}
-  tileCollectionPrefab: {fileID: 1128990682525240, guid: 74dab492db5997b48b9676d136a36650,
+  areaItemPrefab: {fileID: 1128990682525240, guid: 74dab492db5997b48b9676d136a36650,
     type: 3}
   _xSeed: 0
   _ySeed: 0
+  _biomeTransitionXSeed: 0
+  _biomeTransitionYSeed: 0
   pathLineRenderer: {fileID: 120253341268342332}
   _boundDrawer: {fileID: 603224281892743444}
   width: 0

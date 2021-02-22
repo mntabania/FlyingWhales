@@ -53,27 +53,27 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		ELEVATION[] elevationsToCheck = new[] {ELEVATION.WATER, ELEVATION.MOUNTAIN};
 		for (int i = 0; i < elevationsToCheck.Length; i++) {
 			ELEVATION elevation = elevationsToCheck[i];
-			List<HexTile> tilesOfThatElevation = GetTilesWithElevationInRegion(region, elevation);
+			List<Area> tilesOfThatElevation = GetTilesWithElevationInRegion(region, elevation);
 			List<ElevationIsland> initialIslands = CreateInitialIslands(tilesOfThatElevation, elevation);
 			List<ElevationIsland> mergedIslands = MergeIslands(initialIslands);
 			islands.AddRange(mergedIslands);
 		}
 		return islands;
 	}
-	private List<HexTile> GetTilesWithElevationInRegion(Region region, ELEVATION elevation) {
-		List<HexTile> tiles = new List<HexTile>();
-		for (int i = 0; i < region.tiles.Count; i++) {
-			HexTile tile = region.tiles[i];
+	private List<Area> GetTilesWithElevationInRegion(Region region, ELEVATION elevation) {
+		List<Area> tiles = new List<Area>();
+		for (int i = 0; i < region.areas.Count; i++) {
+			Area tile = region.areas[i];
 			if (tile.elevationType == elevation) {
 				tiles.Add(tile);
 			}
 		}
 		return tiles;
 	}
-	private List<ElevationIsland> CreateInitialIslands(List<HexTile> tiles, ELEVATION elevation) {
+	private List<ElevationIsland> CreateInitialIslands(List<Area> tiles, ELEVATION elevation) {
 		List<ElevationIsland> islands = new List<ElevationIsland>();
 		for (int i = 0; i < tiles.Count; i++) {
-			HexTile tile = tiles[i];
+			Area tile = tiles[i];
 			ElevationIsland island = new ElevationIsland(elevation);
 			island.AddTile(tile);
 			islands.Add(island);
@@ -106,26 +106,14 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	private IEnumerator GenerateElevationMap(ElevationIsland island, LocationStructure elevationStructure) {
 		List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
 		for (int i = 0; i < island.tilesInIsland.Count; i++) {
-			HexTile tileInIsland = island.tilesInIsland[i];
-			locationGridTiles.AddRange(tileInIsland.locationGridTiles);
+			Area tileInIsland = island.tilesInIsland[i];
+			locationGridTiles.AddRange(tileInIsland.gridTileComponent.gridTiles);
 		}
 
 		if (island.elevation == ELEVATION.WATER) {
 			yield return MapGenerator.Instance.StartCoroutine(WaterCellAutomata(locationGridTiles, elevationStructure));
 		} else if (island.elevation == ELEVATION.MOUNTAIN) {
 			yield return MapGenerator.Instance.StartCoroutine(MountainCellAutomata(locationGridTiles, elevationStructure, island));
-		}
-
-		for (int i = 0; i < island.tilesInIsland.Count; i++) {
-			HexTile hexTile = island.tilesInIsland[i];
-			hexTile.innerMapHexTile.Occupy();
-			// for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
-			// 	BuildingSpot spot = hexTile.ownedBuildSpots[j];
-			// 	if (spot.isOccupied == false) {
-			// 		spot.SetIsOccupied(true);
-			// 		spot.UpdateAdjacentSpotsOccupancy(hexTile.region.innerMap);	
-			// 	}
-			// }
 		}
 		yield return null;
 	}
@@ -155,6 +143,9 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		
 		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.objHere == null));
 		CreateFishingSpot(eastTile);
+
+		Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
+		elevationStructure.SetOccupiedArea(occupiedArea);
 		
 		yield return null;
 	}
@@ -170,8 +161,17 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		tile.SetStructure(structure);
 		tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, "Wet", overrideDuration: 0);
 	}
+	private bool ShouldTileBePartOfMountain(LocationGridTile p_tile, List<LocationGridTile> locationGridTiles) {
+		if (p_tile.HasNeighbourNotInList(locationGridTiles)) {
+			return false;
+		}
+		if (p_tile.IsAtEdgeOfMap()) {
+			return false;
+		}
+		return true;
+	}
 	private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, ElevationIsland elevationIsland) {
-		List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
+		List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => ShouldTileBePartOfMountain(t, locationGridTiles)).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
 		int fillPercent = 12;
@@ -190,12 +190,12 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			(locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure)));
 
 		for (int i = 0; i < elevationIsland.tilesInIsland.Count; i++) {
-			HexTile tile = elevationIsland.tilesInIsland[i];
-			LocationGridTile randomTile = tile.GetCenterLocationGridTile();
-			for (int j = 0; j < tile.AllNeighbours.Count; j++) {
-				HexTile neighbour = tile.AllNeighbours[j];
+			Area tile = elevationIsland.tilesInIsland[i];
+			LocationGridTile randomTile = tile.gridTileComponent.centerGridTile;
+			for (int j = 0; j < tile.neighbourComponent.neighbours.Count; j++) {
+				Area neighbour = tile.neighbourComponent.neighbours[j];
 				if (elevationIsland.tilesInIsland.Contains(neighbour)) {
-					LocationGridTile targetTile = neighbour.GetCenterLocationGridTile();
+					LocationGridTile targetTile = neighbour.gridTileComponent.centerGridTile;
 					bool hasPath = PathGenerator.Instance.GetPath(randomTile, targetTile, GRID_PATHFINDING_MODE.NORMAL) != null;
 					if (hasPath) {
 						continue; //already has path towards center of neighbour, skip.
@@ -214,6 +214,8 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			}
 			yield return null;
 		}
+		Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
+		elevationStructure.SetOccupiedArea(occupiedArea);
 
 		List<BlockWall> validWallsForOreVeins = elevationStructure.GetTileObjectsOfType<BlockWall>(IsBlockWallValidForOreVein);
 
@@ -295,20 +297,17 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 
 public class ElevationIsland {
 	public readonly ELEVATION elevation;
-	public readonly List<HexTile> tilesInIsland;
+	public readonly List<Area> tilesInIsland;
 
 	public ElevationIsland(ELEVATION elevation) {
 		this.elevation = elevation;
-		tilesInIsland = new List<HexTile>();
+		tilesInIsland = new List<Area>();
 	}
 
-	public void AddTile(HexTile tile) {
+	public void AddTile(Area tile) {
 		if (tilesInIsland.Contains(tile) == false) {
 			tilesInIsland.Add(tile);	
 		}
-	}
-	private void RemoveTile(HexTile tile) {
-		tilesInIsland.Remove(tile);
 	}
 	private void RemoveAllTiles() {
 		tilesInIsland.Clear();
@@ -316,7 +315,7 @@ public class ElevationIsland {
 	
 	public void MergeWithIsland(ElevationIsland otherIsland) {
 		for (int i = 0; i < otherIsland.tilesInIsland.Count; i++) {
-			HexTile tileInOtherIsland = otherIsland.tilesInIsland[i];
+			Area tileInOtherIsland = otherIsland.tilesInIsland[i];
 			AddTile(tileInOtherIsland);
 		}
 		otherIsland.RemoveAllTiles();
@@ -324,9 +323,9 @@ public class ElevationIsland {
 
 	public bool IsAdjacentToIsland(ElevationIsland otherIsland) {
 		for (int i = 0; i < tilesInIsland.Count; i++) {
-			HexTile tile = tilesInIsland[i];
-			for (int j = 0; j < tile.AllNeighbours.Count; j++) {
-				HexTile neighbour = tile.AllNeighbours[j];
+			Area tile = tilesInIsland[i];
+			for (int j = 0; j < tile.neighbourComponent.neighbours.Count; j++) {
+				Area neighbour = tile.neighbourComponent.neighbours[j];
 				if (otherIsland.tilesInIsland.Contains(neighbour)) {
 					//this island has a tile that has a neighbour that is part of the given island.
 					return true;

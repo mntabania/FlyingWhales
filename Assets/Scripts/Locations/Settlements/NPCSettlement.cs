@@ -139,17 +139,17 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             hasPeasants = saveDataNpcSettlement.hasPeasants;
             hasWorkers = saveDataNpcSettlement.hasWorkers;
             Initialize();
-            if (tiles.Count <= 0) {
+            if (areas.Count <= 0) {
                 UnsubscribeToSignals(); //make sure that settlements that have no more areas should no longer listen to signals.
-            } else {
-                //Update tile nameplates
-                //Fix for: https://trello.com/c/gAqpeACf/3194-loading-the-game-erases-the-faction-symbol-on-the-world-map
-                for (int i = 0; i < tiles.Count; i++) {
-                    HexTile tile = tiles[i];
-                    tile.landmarkOnTile?.nameplate.UpdateVisuals();
-                }    
-            }
-            
+            } 
+            //else {
+            //    //Update tile nameplates
+            //    //Fix for: https://trello.com/c/gAqpeACf/3194-loading-the-game-erases-the-faction-symbol-on-the-world-map
+            //    for (int i = 0; i < areas.Count; i++) {
+            //        Area tile = areas[i];
+            //        tile.landmarkOnTile?.nameplate.UpdateVisuals();
+            //    }    
+            //}
         }
     }
     private void LoadJobs(SaveDataNPCSettlement data) {
@@ -366,7 +366,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     LocationStructure cultTemple = GetFirstStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE);
                     if (cultTemple != null) {
                         if (!hasTriedToStealCorpse) {
-                            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                            TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
                             if (currentTime == TIME_IN_WORDS.MORNING) {
                                 hasTriedToStealCorpse = true;
                                 if (GameUtilities.RollChance(45)) {
@@ -386,9 +386,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Tiles
-    public override bool RemoveTileFromSettlement(HexTile tile) {
-        if (base.RemoveTileFromSettlement(tile)) {
-            npcSettlementEventDispatcher.ExecuteTileRemovedEvent(tile, this);
+    public override bool RemoveAreaFromSettlement(Area area) {
+        if (base.RemoveAreaFromSettlement(area)) {
+            npcSettlementEventDispatcher.ExecuteTileRemovedEvent(area, this);
             return true;
         }
         return false;
@@ -698,8 +698,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Character resident = residents[i];
             if(resident.limiterComponent.canPerform && !resident.isDead 
                 && !resident.isBeingSeized
-                && resident.gridTileLocation != null 
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && resident.gridTileLocation != null
                 && resident.gridTileLocation.IsPartOfSettlement(this)) {
                 return true;
             }
@@ -954,7 +953,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public StructureSetting GetValidFoodProducingStructure() {
         Assert.IsNotNull(owner);
-        List<HexTile> surroundingAreas = GetSurroundingAreas();
+        List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+        PopulateSurroundingAreas(surroundingAreas);
         WeightedDictionary<StructureSetting> choices = new WeightedDictionary<StructureSetting>();
         if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
             choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, owner.factionType.mainResource), 100);
@@ -963,7 +963,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, owner.factionType.mainResource), 20);    
         }
         choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, owner.factionType.mainResource), 20);
-
+        ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
         return choices.PickRandomElementGivenWeights();
     }
     #endregion
@@ -1274,6 +1274,18 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
+    public JobQueueItem GetFirstJobBasedOnVisionExcept(Character character, JOB_TYPE except) {
+            for (int i = 0; i < availableJobs.Count; i++) {
+                JobQueueItem job = availableJobs[i];
+                if (job.assignedCharacter == null && job is GoapPlanJob goapJob && except != goapJob.jobType) {
+                    if (goapJob.targetPOI != null && character.marker.IsPOIInVision(goapJob.targetPOI) &&
+                        character.jobQueue.CanJobBeAddedToQueue(goapJob)) {
+                        return goapJob;
+                    }
+                }
+            }
+            return null;
+        }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
         if (affectedStructure == mainStorage && (objectThatTriggeredChange == null || neededObjects.Contains(objectThatTriggeredChange.tileObjectType))) {
             for (int i = 0; i < neededObjects.Count; i++) {

@@ -285,9 +285,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 OccupyTiles(objData.occupiedSize, gridTileLocation);
             }
         }
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.OnPlacePOIInHex(this);
-        }
+        gridTileLocation.area.OnPlacePOIInHex(this);
         SubscribeListeners();
         if (gridTileLocation.genericTileObject.traitContainer.HasTrait("Poisoned")) {
             //add poisoned to floor
@@ -302,9 +300,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //OnRemoveTileObject(removedBy, previousTile);
         //SetPOIState(POI_STATE.INACTIVE);
         OnDestroyPOI();
-        if (previousTile != null && previousTile.collectionOwner.isPartOfParentRegionMap 
-                                 && previousTile.collectionOwner.partOfHextile.hexTileOwner) {
-            previousTile.collectionOwner.partOfHextile.hexTileOwner.OnRemovePOIInHex(this);
+        if (previousTile != null) { // && previousTile.area != null
+            previousTile.area.OnRemovePOIInHex(this);
         }
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
@@ -362,7 +359,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
             //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
-            && actor.trapStructure.SatisfiesForcedHex(this)
+            && actor.trapStructure.SatisfiesForcedArea(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
             LocationGridTile tileLocation = gridTileLocation;
             if (isBeingCarriedBy != null) {
@@ -516,9 +513,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return null;
     }
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
 
         if ((amount < 0  && CanBeDamaged()) || amount > 0) {
             //only added checking here because even if objects cannot be damaged,
@@ -603,7 +600,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         previousTile = gridTileLocation;
         gridTileLocation = tile;
         LocationAwarenessUtility.RemoveFromAwarenessList(this);
-        if (gridTileLocation != null) {
+        if (gridTileLocation != null && !(this is GenericTileObject)) {
             LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
         }
     }

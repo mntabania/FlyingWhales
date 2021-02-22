@@ -24,7 +24,7 @@ namespace Inner_Maps.Location_Structures {
         public BaseSettlement settlementLocation { get; private set; }
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> groupedTileObjects { get; private set; }
-        public virtual InnerMapHexTile occupiedHexTile { get; private set; }
+        public Area occupiedArea { get; private set; }
         //Inner Map
         public HashSet<LocationGridTile> tiles { get; private set; }
         public List<LocationGridTile> passableTiles { get; private set; }
@@ -44,14 +44,14 @@ namespace Inner_Maps.Location_Structures {
         //protected Faction _owner;
         
         /// <summary>
-        /// List of hex tiles that this structure has a tile on.
-        /// NOTE: This can have duplicates of the same HexTile, this is so that there is
-        /// no need to count the number of tiles that occupy a hextile, when trying to remove that hextile from the list
+        /// List of areas that this structure has a tile on.
+        /// NOTE: This can have duplicates of the same Area, this is so that there is
+        /// no need to count the number of tiles that occupy a area, when trying to remove that area from the list
         /// so it is safe to assume that number of tiles = length of this list.
         /// NOTE: This is not filled out in wilderness structure! Because it is not needed.
         /// NOTE: This isn't saved because this is filled out anytime a tile is added to this structure, and since those tiles are saved, there is no need to save this.
         /// </summary>
-        public List<HexTile> occupiedHexTiles { get; private set; }
+        public List<Area> occupiedAreas { get; private set; }
         
         #region getters
         public virtual string nameplateName => name;
@@ -83,7 +83,7 @@ namespace Inner_Maps.Location_Structures {
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
-            occupiedHexTiles = new List<HexTile>();
+            occupiedAreas = new List<Area>();
             SetMaxHPAndReset(3000);
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
@@ -107,7 +107,7 @@ namespace Inner_Maps.Location_Structures {
             unoccupiedTiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
-            occupiedHexTiles = new List<HexTile>();
+            occupiedAreas = new List<Area>();
             maxHP = data.maxHP;
             currentHP = data.currentHP;
             SetInteriorState(data.isInterior);
@@ -269,8 +269,8 @@ namespace Inner_Maps.Location_Structures {
         public void SetHasActiveSocialGathering(bool state) {
             hasActiveSocialGathering = state;
         }
-        public virtual bool HasTileOnHexTile(HexTile hexTile) {
-            return (occupiedHexTile != null && occupiedHexTile == hexTile.innerMapHexTile) || occupiedHexTiles.Contains(hexTile);
+        public virtual bool HasTileOnArea(Area p_area) {
+            return (occupiedArea != null && occupiedArea == p_area) || occupiedAreas.Contains(p_area);
         }
         #endregion
 
@@ -367,6 +367,17 @@ namespace Inner_Maps.Location_Structures {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi.IsAvailable() && poi is TileObject tileObj) {
                     if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                        return tileObj;
+                    }
+                }
+            }
+            return null;
+        }
+        public TileObject GetUnoccupiedTileObject(TILE_OBJECT_TYPE type) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi.IsAvailable() && poi is TileObject tileObj) {
+                    if (type == tileObj.tileObjectType && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                         return tileObj;
                     }
                 }
@@ -656,21 +667,24 @@ namespace Inner_Maps.Location_Structures {
         public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
             if (!pointsOfInterest.Contains(poi)) {
                 pointsOfInterest.Add(poi);
-                if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) {
+                //if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                //    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) {
+                //        pointsOfInterest.Remove(poi);
+                //        return false;
+                //    }
+                //}
+                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    TileObject tileObject = poi as TileObject;
+                    if (!PlaceAreaObjectAtAppropriateTile(tileObject, tileLocation)) {
                         pointsOfInterest.Remove(poi);
                         return false;
                     }
-                }
-                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                    TileObject tileObject = poi as TileObject;
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
                         groupedTileObjects[tileObject.tileObjectType].Add(tileObject);
                     } else {
                         groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
                     }
-                    if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                    if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.area.settlementOnArea is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemAddedToLocation(tileObject, this);
                     }
                     // if (tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
@@ -704,7 +718,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public virtual bool LoadPOI(IPointOfInterest poi, LocationGridTile tileLocation) {
+        public virtual bool LoadPOI(TileObject poi, LocationGridTile tileLocation) {
             if (!pointsOfInterest.Contains(poi)) {
                 pointsOfInterest.Add(poi);
                 if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -740,8 +754,7 @@ namespace Inner_Maps.Location_Structures {
                     //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
                 }
                 if (poi is TileObject tileObject) {
-                    if (tileLocation.collectionOwner.isPartOfParentRegionMap 
-                        && tileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                    if (tileLocation.area.settlementOnArea is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemRemovedFromLocation(tileObject, this, tileLocation);    
                     }
                 }
@@ -769,8 +782,7 @@ namespace Inner_Maps.Location_Structures {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
                     groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
-                    if (poi.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && poi.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                    if (poi.gridTileLocation.area.settlementOnArea is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemRemovedFromLocation(tileObject, this, poi.gridTileLocation);    
                     }
                 }
@@ -793,7 +805,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return pois;
         }
-        private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
+        private bool PlaceAreaObjectAtAppropriateTile(TileObject poi, LocationGridTile tile) {
             if (tile != null) {
                 region.innerMap.PlaceObject(poi, tile);
                 return true;
@@ -817,8 +829,7 @@ namespace Inner_Maps.Location_Structures {
                         return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()
                                                           && x.groundType != LocationGridTile.Ground_Type.Cave 
                                                           && x.groundType != LocationGridTile.Ground_Type.Water
-                                                          && x.collectionOwner.partOfHextile.hexTileOwner 
-                                                          && x.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN
+                                                          && x.area.elevationType == ELEVATION.PLAIN
                                                           && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
                                                           && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)
                                                           && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Water)
@@ -852,8 +863,16 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Tiles
-        protected virtual void OnTileAddedToStructure(LocationGridTile tile) { }
-        protected virtual void OnTileRemovedFromStructure(LocationGridTile tile) { }
+        protected virtual void OnTileAddedToStructure(LocationGridTile tile) {
+            if (structureType != STRUCTURE_TYPE.WILDERNESS) {
+                tile.area.structureComponent.AddStructureInArea(this);    
+            }
+        }
+        protected virtual void OnTileRemovedFromStructure(LocationGridTile tile) {
+            if (structureType != STRUCTURE_TYPE.WILDERNESS && !HasTileOnArea(tile.area)) {
+                tile.area.structureComponent.RemoveStructureInArea(this);
+            }
+        }
         public void AddTile(LocationGridTile tile) {
             if (!tiles.Contains(tile)) {
                 tiles.Add(tile);
@@ -870,8 +889,8 @@ namespace Inner_Maps.Location_Structures {
                 // if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
                 //     SetSettlementLocation(settlement);
                 // }
-                if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.collectionOwner.isPartOfParentRegionMap) {
-                    AddOccupiedHexTile(tile.collectionOwner.partOfHextile.hexTileOwner);
+                if (structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    AddOccupiedArea(tile.area);
                 }
                 OnTileAddedToStructure(tile);
             }
@@ -879,8 +898,8 @@ namespace Inner_Maps.Location_Structures {
         public void RemoveTile(LocationGridTile tile) {
             if (tiles.Remove(tile)) {
                 OnTileRemovedFromStructure(tile);
-                if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.collectionOwner.isPartOfParentRegionMap) {
-                    RemoveOccupiedHexTile(tile.collectionOwner.partOfHextile.hexTileOwner);
+                if (structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    RemoveOccupiedArea(tile.area);
                 }
             }
             RemovePassableTile(tile);
@@ -936,21 +955,18 @@ namespace Inner_Maps.Location_Structures {
         }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }
-        private void AddOccupiedHexTile(HexTile hexTile) {
-            occupiedHexTiles.Add(hexTile);
+        private void AddOccupiedArea(Area p_area) {
+            occupiedAreas.Add(p_area);
         }
-        private void RemoveOccupiedHexTile(HexTile hexTile) {
-            occupiedHexTiles.Remove(hexTile);
+        private void RemoveOccupiedArea(Area p_area) {
+            occupiedAreas.Remove(p_area);
         }
         #endregion
 
         #region Structure Objects
-        public void SetOccupiedHexTile(InnerMapHexTile hexTile) {
-            InnerMapHexTile previousOccupiedHexTile = occupiedHexTile;
-            occupiedHexTile = hexTile;
-            if (previousOccupiedHexTile != null) {
-                previousOccupiedHexTile.CheckIfVacated();
-            }
+        public void SetOccupiedArea(Area p_area) {
+            occupiedArea = p_area;
+            Debug.Log($"Set Occupied area of {name} to {occupiedArea}");
         }
         private void OnClickStructure() {
             Selector.Instance.Select(this);
@@ -1008,6 +1024,10 @@ namespace Inner_Maps.Location_Structures {
                 if (tile.groundType.IsStructureType()) {
                     tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
                 }
+                if (structureType.IsPlayerStructure()) {
+                    //once demonic structure is destroyed, revert all tiles to corrupted.
+                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
+                }
             }
             if (rooms != null) {
                 for (int i = 0; i < rooms.Length; i++) {
@@ -1021,8 +1041,8 @@ namespace Inner_Maps.Location_Structures {
             //disable game object. Destruction of structure game object is handled by it's parent structure template.
             region.RemoveStructure(this);
             settlementLocation.RemoveStructure(this);
-            Messenger.Broadcast(StructureSignals.STRUCTURE_OBJECT_REMOVED, this, occupiedHexTile);
-            SetOccupiedHexTile(null);
+            Messenger.Broadcast(StructureSignals.STRUCTURE_OBJECT_REMOVED, this, occupiedArea);
+            SetOccupiedArea(null);
             UnsubscribeListeners();
             Messenger.Broadcast(StructureSignals.STRUCTURE_DESTROYED, this);
         }
@@ -1076,6 +1096,10 @@ namespace Inner_Maps.Location_Structures {
         protected void OnObjectDamaged(TileObject tileObject, int amount) {
             if (objectsThatContributeToDamage.Contains(tileObject)) {
                 AdjustHP(amount);
+                if (!objectsThatContributeToDamage.Any(o => o.currentHP > 0)) {
+                    //if this structure no longer has any objects that have hp, then destroy this structure
+                    AdjustHP(-currentHP);
+                }
             }
         }
         protected void OnObjectRepaired(TileObject tileObject, int amount) {

@@ -53,7 +53,7 @@ namespace Traits {
             owner = addTo;
             if (addTo is IPointOfInterest poi) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burning, false);
-            } else if (addTo is StructureWallObject structureWallObject) {
+            } else if (addTo is ThinWall structureWallObject) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
             }
             sourceOfBurning?.AddObjectOnFire(owner);
@@ -85,7 +85,7 @@ namespace Traits {
                     //Will not reprocess if winter rose since it will be destroyed anyway
                     Messenger.Broadcast(CharacterSignals.REPROCESS_POI, poi);
                 }
-            } else if (addedTo is StructureWallObject structureWallObject) {
+            } else if (addedTo is ThinWall structureWallObject) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
             }
             if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
@@ -282,7 +282,7 @@ namespace Traits {
 
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "pyrophobic_burn", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             }
         }
         private bool ShouldSpreadFire() {

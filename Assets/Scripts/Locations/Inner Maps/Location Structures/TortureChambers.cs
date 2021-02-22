@@ -5,18 +5,14 @@ using UnityEngine;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
     public class TortureChambers : DemonicStructure {
-        public override Vector2 selectableSize { get; }
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
         public override string nameplateName => "Prison";
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
-            selectableSize = new Vector2(10f, 10f);
             nameWithoutID = "Prison";
             name = $"{nameWithoutID} {id.ToString()}";
         }
-        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
-        }
+        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {

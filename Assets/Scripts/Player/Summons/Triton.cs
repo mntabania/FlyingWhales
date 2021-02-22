@@ -22,7 +22,7 @@ public class Triton : Summon {
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
         if(spawnLocationTile == null) {
-            spawnLocationTile = tile.GetNeareastTileFromThisThatMeetCriteria(t => (t.IsPassable() || t.objHere is BlockWall) && t.structure.structureType != STRUCTURE_TYPE.OCEAN, null);
+            spawnLocationTile = tile.GetNeareastTileFromThisThatMeetCriteria(t => (t.IsPassable() || !t.tileObjectComponent.HasWalls()) && t.structure.structureType != STRUCTURE_TYPE.OCEAN, null);
             if(spawnLocationTile == null) {
                 spawnLocationTile = tile;
             }

@@ -223,14 +223,14 @@ public class CharacterVisuals {
     #region UI
     public string GetThoughtBubble() {
         if (_owner.isDead) {
-            if (_owner.deathLog.hasValue) {
+            if (_owner.deathLog != null) {
                 return _owner.deathLog.logText;
             } else {
                 return $"<b>{GetCharacterNameWithIconAndColor()}</b> has died.";    
             }
         }
         //Interrupt
-        if (_owner.interruptComponent.isInterrupted && _owner.interruptComponent.thoughtBubbleLog.hasValue) {
+        if (_owner.interruptComponent.isInterrupted && _owner.interruptComponent.thoughtBubbleLog != null) {
             return _owner.interruptComponent.thoughtBubbleLog.logText;
         }
 

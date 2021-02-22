@@ -2,13 +2,8 @@
 namespace Inner_Maps.Location_Structures {
     public class DemonicPrison : DemonicStructure {
         
-        public override Vector2 selectableSize { get; }
-        public DemonicPrison(Region location) : base(STRUCTURE_TYPE.DEMONIC_PRISON, location){
-            selectableSize = new Vector2(10f, 10f);
-        }
-        public DemonicPrison(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
-        }
+        public DemonicPrison(Region location) : base(STRUCTURE_TYPE.DEMONIC_PRISON, location){ }
+        public DemonicPrison(Region location, SaveDataDemonicStructure data) : base(location, data) { }
         
         #region Listeners
         protected override void SubscribeListeners() {

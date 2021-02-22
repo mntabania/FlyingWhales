@@ -51,24 +51,7 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void UpdateLocationIcons() {
-        if (_parentBase is RegionInfoUI) {
-            if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
-                restrainedIcon.SetActive(true);
-                unrestrainedGO.SetActive(false);
-            } else {
-                restrainedIcon.SetActive(false);
-                unrestrainedGO.SetActive(true);
-            }
-            if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld) {
-                travellingIcon.SetActive(true);
-                arrivedIcon.SetActive(false);
-                coverGO.SetActive(true);
-            } else {
-                travellingIcon.SetActive(false);
-                arrivedIcon.SetActive(false);
-                coverGO.SetActive(false);
-            }
-        } else if (_parentBase is TileObjectInfoUI) {
+        if (_parentBase is TileObjectInfoUI) {
             if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);

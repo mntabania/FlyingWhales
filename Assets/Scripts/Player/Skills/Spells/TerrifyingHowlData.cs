@@ -16,6 +16,7 @@ public class TerrifyingHowlData : SkillData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: false);
         //create generic tile object and destroy after 3 ticks.
+        
         BaseMapObjectVisual visual = targetTile.genericTileObject.GetOrCreateMapVisual();
         visual.visionTrigger.VoteToMakeVisibleToCharacters();
         SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(3),
@@ -31,19 +32,18 @@ public class TerrifyingHowlData : SkillData {
     }
     private void SpookCharacter(ITraitable traitable, LocationGridTile targetTile) {
         if (traitable is Character character) {
-            character.traitContainer.AddTrait(character, "Spooked");
             character.marker.AddPOIAsInVisionRange(targetTile.genericTileObject);
             character.combatComponent.Flight(targetTile.genericTileObject, "heard a terrifying howl");
         }
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             return targetTile.structure != null;
         }
         return canPerform;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }

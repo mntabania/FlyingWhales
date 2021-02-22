@@ -67,8 +67,8 @@ public class BuildBlueprint : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(ref log, goapNode);
+    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(log, goapNode);
         if (goapNode.poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
             log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
         }
@@ -137,7 +137,7 @@ public class BuildBlueprint : GoapAction {
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             LocationGridTile connectorTile = (LocationGridTile)goapNode.otherData[0].obj;
-            genericTileObject.BuildBlueprint(goapNode.actor.homeSettlement, connectorTile);
+            genericTileObject.BuildBlueprintOnTile(goapNode.actor.homeSettlement, connectorTile);
 
             if(genericTileObject.blueprintOnTile != null) {
                 //After successfully building house, no house faction leader/settlement ruler/nobles should have first dibs on the newly built house

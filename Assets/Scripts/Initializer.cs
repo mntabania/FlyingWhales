@@ -24,10 +24,9 @@ public class Initializer : MonoBehaviour {
         CrimeManager.Instance.Initialize();
         yield return null;
         TimerHubUI.Instance.Initialize();
-        WorldMapCameraMove.Instance.Initialize();
         InnerMapManager.Instance.Initialize();
         yield return null;
-        ObjectPoolManager.Instance.InitializeObjectPools();
+        // ObjectPoolManager.Instance.InitializeObjectPools();
         UIManager.Instance.InitializeUI();
         InteractionManager.Instance.Initialize();
         yield return null;

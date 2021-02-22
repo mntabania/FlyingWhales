@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
+using UtilityScripts;
 
 public class RaiseDeadData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RAISE_DEAD;
@@ -19,13 +21,17 @@ public class RaiseDeadData : PlayerAction {
         } else if (targetPOI is Tombstone) {
             target = (targetPOI as Tombstone).character;
         }
-        CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, PlayerManager.Instance.player.playerFaction, target.characterClass.className);
+        CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, PlayerManager.Instance.player.playerFaction);
         //target.RaiseFromDeath(1, faction: PlayerManager.Instance.player.playerFaction, className: target.characterClass.className);
 
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead", null, LogUtilities.Player_Life_Changes_Tags);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToDatabase();
+        float m_addedMaxHP = target.maxHP * PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD);
+        target.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
+        target.combatComponent.AddAttackBaseOnPercentage(PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD));
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        LogPool.Release(log);
         if (UIManager.Instance.characterInfoUI.isShowing) {
             UIManager.Instance.characterInfoUI.CloseMenu();
         }

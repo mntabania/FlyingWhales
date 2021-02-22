@@ -6,7 +6,7 @@ namespace Inner_Maps.Location_Structures {
     public abstract class ManMadeStructure : LocationStructure {
 
         private StructureTileObject _structureTileObject;
-        public List<StructureWallObject> structureWalls { get; private set; }
+        public List<ThinWall> structureWalls { get; private set; }
 
         public RESOURCE wallsAreMadeOf { get; protected set; }
         public LocationStructureObject structureObj {get; private set;}
@@ -22,15 +22,15 @@ namespace Inner_Maps.Location_Structures {
         #region Listeners
         protected override void SubscribeListeners() {
             if (hasBeenDestroyed) { return; }
-            Messenger.AddListener<StructureWallObject, int>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
-            Messenger.AddListener<StructureWallObject, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
+            Messenger.AddListener<ThinWall, int>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
+            Messenger.AddListener<ThinWall, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
             if (hasBeenDestroyed) { return; }
-            Messenger.RemoveListener<StructureWallObject, int>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
-            Messenger.RemoveListener<StructureWallObject, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
+            Messenger.RemoveListener<ThinWall, int>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
+            Messenger.RemoveListener<ThinWall, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
@@ -56,7 +56,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
         
         #region HP
-        private void OnWallRepaired(StructureWallObject structureWall, int amount) {
+        private void OnWallRepaired(ThinWall structureWall, int amount) {
             if (structureWalls != null && structureWalls.Contains(structureWall)) {
                 structureObj.RescanPathfindingGridOfStructure(region.innerMap);
                 CheckInteriorState();
@@ -65,7 +65,7 @@ namespace Inner_Maps.Location_Structures {
                 AdjustHP(amount);
             }
         }
-        private void OnWallDamaged(StructureWallObject structureWall, int amount) {
+        private void OnWallDamaged(ThinWall structureWall, int amount) {
             if (structureWalls != null && structureWalls.Contains(structureWall)) {
                 //create repair job
                 structureObj.RescanPathfindingGridOfStructure(region.innerMap);
@@ -163,16 +163,16 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void AfterStructureDestruction() {
             structureObj.OnOwnerStructureDestroyed(region.innerMap);
-            InnerMapHexTile innerMapHexTile = occupiedHexTile;
+            Area hexTile = occupiedArea;
             base.AfterStructureDestruction();
-            if (innerMapHexTile != null && innerMapHexTile.hexTileOwner != null) {
-                innerMapHexTile.hexTileOwner.CheckIfSettlementIsStillOnTile();
+            if (hexTile != null) {
+                hexTile.CheckIfSettlementIsStillOnArea();
             }
         }
         #endregion
 
         #region Walls
-        public void SetWallObjects(List<StructureWallObject> wallObjects, RESOURCE resource) {
+        public void SetWallObjects(List<ThinWall> wallObjects, RESOURCE resource) {
             structureWalls = wallObjects;
             wallsAreMadeOf = resource;
         }

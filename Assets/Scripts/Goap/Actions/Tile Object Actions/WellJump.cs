@@ -21,8 +21,8 @@ public class WellJump : GoapAction {
         base.Perform(goapNode);
         SetState("Well Jump Success", goapNode);
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         if (node.otherData != null && node.otherData.Length == 1) {
             string reason = (string)node.otherData[0].obj;
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);    

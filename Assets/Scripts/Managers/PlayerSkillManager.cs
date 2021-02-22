@@ -90,7 +90,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [NonSerialized]
     public PLAYER_SKILL_TYPE[] allDemonicStructureSkills = { PLAYER_SKILL_TYPE.MEDDLER, PLAYER_SKILL_TYPE.EYE, /*SPELL_TYPE.CRYPT,*/
-        PLAYER_SKILL_TYPE.KENNEL, /*SPELL_TYPE.OSTRACIZER,*/ PLAYER_SKILL_TYPE.TORTURE_CHAMBERS, /*SPELL_TYPE.DEMONIC_PRISON,*/ PLAYER_SKILL_TYPE.DEFILER, PLAYER_SKILL_TYPE.BIOLAB
+        PLAYER_SKILL_TYPE.KENNEL, /*SPELL_TYPE.OSTRACIZER,*/ PLAYER_SKILL_TYPE.TORTURE_CHAMBERS, /*SPELL_TYPE.DEMONIC_PRISON,*/ PLAYER_SKILL_TYPE.DEFILER, PLAYER_SKILL_TYPE.BIOLAB, PLAYER_SKILL_TYPE.SPIRE
     };
 
     [NonSerialized]
@@ -99,13 +99,12 @@ public class PlayerSkillManager : MonoBehaviour {
     };
 
     [NonSerialized]
-    public PLAYER_SKILL_TYPE[] allSummonPlayerSkills = { PLAYER_SKILL_TYPE.SKELETON_MARAUDER, PLAYER_SKILL_TYPE.WOLF, PLAYER_SKILL_TYPE.GOLEM, PLAYER_SKILL_TYPE.INCUBUS, PLAYER_SKILL_TYPE.SUCCUBUS, PLAYER_SKILL_TYPE.FIRE_ELEMENTAL, PLAYER_SKILL_TYPE.KOBOLD, PLAYER_SKILL_TYPE.GHOST,
+    public PLAYER_SKILL_TYPE[] allSummonPlayerSkills = { PLAYER_SKILL_TYPE.SKELETON, PLAYER_SKILL_TYPE.WOLF, PLAYER_SKILL_TYPE.GOLEM, PLAYER_SKILL_TYPE.INCUBUS, PLAYER_SKILL_TYPE.SUCCUBUS, PLAYER_SKILL_TYPE.FIRE_ELEMENTAL, PLAYER_SKILL_TYPE.KOBOLD, PLAYER_SKILL_TYPE.GHOST,
     PLAYER_SKILL_TYPE.ABOMINATION, PLAYER_SKILL_TYPE.MIMIC, PLAYER_SKILL_TYPE.PIG, PLAYER_SKILL_TYPE.CHICKEN, PLAYER_SKILL_TYPE.SHEEP, PLAYER_SKILL_TYPE.SLUDGE,
     PLAYER_SKILL_TYPE.WATER_NYMPH, PLAYER_SKILL_TYPE.WIND_NYMPH, PLAYER_SKILL_TYPE.ICE_NYMPH,
     PLAYER_SKILL_TYPE.ELECTRIC_WISP, PLAYER_SKILL_TYPE.EARTHEN_WISP, PLAYER_SKILL_TYPE.FIRE_WISP,
     PLAYER_SKILL_TYPE.GRASS_ENT, PLAYER_SKILL_TYPE.SNOW_ENT, PLAYER_SKILL_TYPE.CORRUPT_ENT, PLAYER_SKILL_TYPE.DESERT_ENT, PLAYER_SKILL_TYPE.FOREST_ENT,
     PLAYER_SKILL_TYPE.GIANT_SPIDER, PLAYER_SKILL_TYPE.SMALL_SPIDER,
-    PLAYER_SKILL_TYPE.SKELETON_ARCHER, PLAYER_SKILL_TYPE.SKELETON_BARBARIAN, PLAYER_SKILL_TYPE.SKELETON_CRAFTSMAN, PLAYER_SKILL_TYPE.SKELETON_DRUID, PLAYER_SKILL_TYPE.SKELETON_HUNTER, PLAYER_SKILL_TYPE.SKELETON_MAGE, PLAYER_SKILL_TYPE.SKELETON_KNIGHT, PLAYER_SKILL_TYPE.SKELETON_MINER, PLAYER_SKILL_TYPE.SKELETON_NOBLE, PLAYER_SKILL_TYPE.SKELETON_PEASANT, PLAYER_SKILL_TYPE.SKELETON_SHAMAN, PLAYER_SKILL_TYPE.SKELETON_STALKER,
     PLAYER_SKILL_TYPE.VENGEFUL_GHOST, PLAYER_SKILL_TYPE.WURM, PLAYER_SKILL_TYPE.TROLL, PLAYER_SKILL_TYPE.REVENANT, PLAYER_SKILL_TYPE.BONE_GOLEM, PLAYER_SKILL_TYPE.PLAGUED_RAT, PLAYER_SKILL_TYPE.SCORPION, PLAYER_SKILL_TYPE.HARPY };
 
     [NonSerialized]
@@ -371,6 +370,62 @@ public class PlayerSkillManager : MonoBehaviour {
             return passiveSkillsData[passiveSkill];
         }
         throw new Exception($"Could not find class for passive skill {passiveSkill.ToString()}");
+    }
+    #endregion
+
+    #region utility
+    public int GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(skillData.currentLevel);
+    }
+
+    public int GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetTileRangeBonusPerLevel(skillData.currentLevel);
+    }
+
+    public float GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(skillData.currentLevel);
+    }
+
+    public float GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(skillData.currentLevel);
+    }
+
+    public float GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(skillData.currentLevel);
+    }
+
+    public int GetAdditionalAttackActualPerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetAdditionalAttackActualPerLevelBaseOnLevel(skillData.currentLevel);
+    }
+
+    public float GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(skillData.currentLevel);
+    }
+
+    public int GetDurationBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel);
+    }
+
+    public int GetSkillMovementSpeedDownPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetSkillMovementSpeedDownPerLevel(skillData.currentLevel);
     }
     #endregion
 }

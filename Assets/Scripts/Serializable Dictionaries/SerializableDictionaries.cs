@@ -94,6 +94,8 @@ public class RaceDataDictionary : SerializableDictionary<RACE, RaceData> { }
 public class MonsterMigrationBiomeDictionary : SerializableDictionary<BIOMES, MonsterMigrationBiomeData> { }
 [System.Serializable]
 public class ScenarioSettingsDataDictionary : SerializableDictionary<WorldSettingsData.World_Type, ScenarioData> { }
+[System.Serializable]
+public class StructureDataDictionary : SerializableDictionary<STRUCTURE_TYPE, StructureData> { }
 
 //List storage
 [System.Serializable]
