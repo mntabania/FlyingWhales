@@ -15,12 +15,12 @@ namespace Inner_Maps {
         }
 
         #region Utilities
-        public void EnableMouseEventsForAllNeighbours() {
+        public void SetMouseEventsForAllNeighbours(bool state) {
             for (int i = 0; i < owner.neighbourList.Count; i++) {
-                owner.neighbourList[i].mouseEventsComponent.SetHasMouseEvents(true);
+                owner.neighbourList[i].mouseEventsComponent.SetHasMouseEvents(state);
             }
         }
-        private void SetHasMouseEvents(bool state) {
+        public void SetHasMouseEvents(bool state) {
             if(hasMouseEvents != state) {
                 hasMouseEvents = state;
                 if (hasMouseEvents) {
