@@ -43,6 +43,8 @@ public class SkillData : IPlayerSkill {
         SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
         SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
         SetCooldown(playerSkillData.skillUpgradeData.GetCoolDownPerLevel(currentLevel));
+
+        SetCharges(maxCharges);
         FinishCooldown();
     }
     
@@ -266,11 +268,9 @@ public class SkillData : IPlayerSkill {
                     }
                 }
             }
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
-            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, this);
-            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            FinishCooldown();
 
-            if(hasCharges && charges < maxCharges) {
+            if (hasCharges && charges < maxCharges) {
                 StartCooldown();
             }
         }
