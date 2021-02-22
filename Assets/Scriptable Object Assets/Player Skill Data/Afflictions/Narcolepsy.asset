@@ -13,14 +13,62 @@ MonoBehaviour:
   m_Name: Narcolepsy
   m_EditorClassIdentifier: 
   skill: 69
-  manaCost: 4
+  manaCost: 25
   charges: 1
-  cooldown: 576
+  cooldown: 240
   threat: 0
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 2
+  baseLoadoutWeight: 300
+  resistanceType: 9
+  archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 21300000, guid: aed08912ad482904f8fb50c3578510bd, type: 3}
   contextMenuColumn: 1
+  playerActionIcon: {fileID: 0}
+  requirementData:
+    requirements: 01000000
+    requiredArchetype: 0
+    requiredSkills: 5b000000
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 1
+    tier2Count: 0
+    tier3Count: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: c80000002c01000090010000
+    manacostPerLevel: 190000001e0000002300000028000000
+    chargesPerLevel: 01000000010000000200000002000000
+    bonuses: 0e0000000100000009000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel:
+    - 0
+    - 500
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 50
+    - 75
+    - 100
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 0000000014000000140000001e000000
+    skillMovementSpeed: 
