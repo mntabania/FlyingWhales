@@ -1989,6 +1989,7 @@
                 </e>
                 <e p="RuinedZoo.cs" t="Include" />
                 <e p="Smithy.cs" t="Include" />
+                <e p="Spire.cs" t="Include" />
                 <e p="Structure Objects" t="Include">
                   <e p="AncientGraveyardStructureObject.cs" t="Include" />
                   <e p="FarmStructureObject.cs" t="Include" />
@@ -1996,6 +1997,7 @@
                   <e p="LocationStructureObjectClickCollider.cs" t="Include" />
                   <e p="PortalStructureObject.cs" t="Include" />
                   <e p="RuinedZooStructureObject.cs" t="Include" />
+                  <e p="SpireStructureObject.cs" t="Include" />
                   <e p="StructureConnector.cs" t="Include" />
                   <e p="StructureItemGenerator.cs" t="Include" />
                   <e p="StructureTemplate.cs" t="Include" />
@@ -2492,6 +2494,7 @@
                 <e p="KennelData.cs" t="Include" />
                 <e p="MeddlerData.cs" t="Include" />
                 <e p="OstracizerData.cs" t="Include" />
+                <e p="SpireData.cs" t="Include" />
                 <e p="TortureChambersData.cs" t="Include" />
               </e>
               <e p="FakePlayer.cs" t="Include" />
@@ -2524,6 +2527,7 @@
                 <e p="CultistPoisonData.cs" t="Include" />
                 <e p="CultistTransformData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />
+                <e p="DrainSpiritData.cs" t="Include" />
                 <e p="EmpowerData.cs" t="Include" />
                 <e p="EvangelizeData.cs" t="Include" />
                 <e p="ExpelData.cs" t="Include" />

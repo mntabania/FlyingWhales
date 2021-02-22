@@ -139,6 +139,9 @@ public class LoadSecondWave : MapGenerationComponent {
                 // Debug.LogWarning($"{tileObject} with persistentID {tileObject.persistentID} does not have any save data.");
                 continue;
             }
+            if (tileObject is ThinWall) {
+                continue;
+            }
             if (tileObject is GenericTileObject || !saveDataTileObject.tileLocationID.hasValue) {
                 //the loaded object does not have a grid tile location, it will be loaded and in memory, but not placed in this section.
                 //if it in a character's inventory then it will be referenced by the character carrying it, when that character has been loaded.

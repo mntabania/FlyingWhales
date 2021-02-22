@@ -168,10 +168,10 @@ public class AreaStructureComponent : AreaComponent {
         return CanBuildDemonicStructureHere(out o_cannotBuildReason);
     }
     private bool CanBuildDemonicStructureHere(out string o_cannotBuildReason) {
-        if (owner.HasBlueprintOnTile()) {
-            o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_has_blueprint");
-            return false;
-        }
+        // if (owner.HasBlueprintOnTile()) {
+        //     o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_has_blueprint");
+        //     return false;
+        // }
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.isCurrentlyBuildingDemonicStructure) {
             o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_currently_building");
             return false;
