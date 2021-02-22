@@ -1235,7 +1235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clickCollider: {fileID: 5154489325789481850}
-  structureObject: {fileID: 0}
+  structureObject: {fileID: 7191739053260741459}
 --- !u!1001 &274857121258951198
 PrefabInstance:
   m_ObjectHideFlags: 0
