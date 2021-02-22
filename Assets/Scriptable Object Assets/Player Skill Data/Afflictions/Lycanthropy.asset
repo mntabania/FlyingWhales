@@ -70,5 +70,5 @@ MonoBehaviour:
     - 100
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 0000000014000000140000001e000000
+    cooldownPerLevel: 400100000001000000010000e0000000
     skillMovementSpeed: 

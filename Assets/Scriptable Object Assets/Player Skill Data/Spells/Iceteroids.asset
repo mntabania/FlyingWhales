@@ -70,7 +70,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 00000000140000001400000014000000
+    cooldownPerLevel: 40010000000100000001000000010000
     skillMovementSpeed: 
   impactClips:
   - {fileID: 8300000, guid: 223a75f1a728b7b41a220ffb28352a14, type: 3}
