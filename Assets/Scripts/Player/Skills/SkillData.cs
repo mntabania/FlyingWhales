@@ -236,7 +236,11 @@ public class SkillData : IPlayerSkill {
         if (hasCooldown && currentCooldownTick == cooldown) {
             SetCurrentCooldownTick(0);
             Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
-            Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            if(cooldown > 0) {
+                Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            } else {
+                PerTickCooldown();
+            }
         }
     }
     private void PerTickCooldown() {
@@ -245,6 +249,7 @@ public class SkillData : IPlayerSkill {
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
         if(currentCooldownTick >= cooldown) {
             //SetCharges(maxCharges);
+            currentCooldownTick = cooldown;
             if(hasCharges && charges < maxCharges) {
                 AdjustCharges(1);
             } else {
