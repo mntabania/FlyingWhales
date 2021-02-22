@@ -13,41 +13,44 @@ MonoBehaviour:
   m_Name: Remove Buff
   m_EditorClassIdentifier: 
   skill: 174
-  manaCost: 40
+  manaCost: 30
   charges: 1
-  cooldown: 192
+  cooldown: 320
   threat: 5
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
   pierce: 0
   buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
-  unlockCost: 0
+  unlockCost: 300
   tier: 3
   baseLoadoutWeight: 400
   resistanceType: 9
-  archetypeWeightedBonus: 0
+  archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 21300000, guid: 70a9302eac8b89042a5b9b01b68c601b, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
   requirementData:
-    requirements: 0100000002000000
+    requirements: 02000000
     requiredArchetype: 0
     requiredSkills: 
-    actionCount: 0
+    actionCount: 3
     afflictionCount: 0
     spellsCount: 0
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
+    isOR: 0
   skillUpgradeData:
     upgradeCosts: 5e010000f40100008a020000
-    manacostPerLevel: 
-    chargesPerLevel: 
-    bonuses: 0100000002000000
-    additionalDamagePerLevel: []
+    manacostPerLevel: 1e00000023000000280000002d000000
+    chargesPerLevel: 01000000010000000100000001000000
+    bonuses: 010000000e000000
+    additionalDamagePerLevel: 
     additionalPiercePerLevel:
+    - 0
     - 50
     - 100
     - 150
@@ -56,8 +59,15 @@ MonoBehaviour:
     - 100
     - 150
     additionalAttackPercentagePerLevel: []
-    additionalHpValuePerLevel: []
-    additionalAttackValuePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
-    durationBonusPerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 000000000a000000140000001e000000
+    skillMovementSpeed: 
