@@ -45,13 +45,23 @@ public class SpellItem : NameplateItem<SkillData> {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         SkillData updatedSkillData = PlayerSkillManager.Instance.GetPlayerSkillData(this.spellData.type);
         this.spellData = updatedSkillData;
-        if (playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel) > 0) {
-            currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel).ToString()} ";
+        if (playerSkillData != null) {
+            if (playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel) > 0) {
+                currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel).ToString()} ";
+            }
+            if (playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel) > 0) {
+                currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel).ToString()}  ";
+            }    
+        } else {
+            if (spellData.manaCost > 0) {
+                currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{spellData.manaCost.ToString()} ";
+            }
+            if (spellData.maxCharges > 0) {
+                currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{spellData.maxCharges.ToString()}  ";
+            }
         }
-        if (playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel) > 0) {
-            currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel).ToString()}  ";
-        }
-        if (spellData.cooldown > 0) {
+        
+        if (spellData.cooldown >= 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.CooldownIcon()}{GameManager.GetTimeAsWholeDuration(spellData.cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(spellData.cooldown)}  ";
         }
         if (spellData.threat > 0) {
