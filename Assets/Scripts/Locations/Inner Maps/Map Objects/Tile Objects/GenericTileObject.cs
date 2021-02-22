@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
@@ -332,6 +333,16 @@ public class GenericTileObject : TileObject {
                 tile.corruptionComponent.CorruptTile();
             } else {
                 tile.corruptionComponent.UncorruptTile();
+            }
+        }
+
+        if (structure is DemonicStructure && structure.structureType != STRUCTURE_TYPE.THE_PORTAL) {
+            for (int j = 0; j < structure.tiles.Count; j++) {
+                LocationGridTile tile = structure.tiles.ElementAt(j);
+                for (int k = 0; k < tile.neighbourList.Count; k++) {
+                    LocationGridTile neighbour = tile.neighbourList[k];
+                    neighbour.corruptionComponent.CorruptTile();
+                }
             }
         }
         
