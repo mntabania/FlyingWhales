@@ -13,15 +13,66 @@ MonoBehaviour:
   m_Name: Tornado
   m_EditorClassIdentifier: 
   skill: 18
-  manaCost: 20
-  charges: 2
-  cooldown: 288
+  manaCost: 25
+  charges: 1
+  cooldown: 240
   threat: 16
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
   buttonSprite: {fileID: 21300000, guid: 9cd696d31c2c8534b8a5ec2a949c43fa, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 95d6d7649422fb142bc71230ebf80ee6, type: 3}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 2
+  baseLoadoutWeight: 300
+  resistanceType: 8
+  archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  requirementData:
+    requirements: 01000000
+    requiredArchetype: 0
+    requiredSkills: 2c000000
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: c80000002c01000090010000
+    manacostPerLevel: 190000001e0000002300000028000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 0e000000010000000a0000000f00000006000000
+    additionalDamagePerLevel: 00000000000000000000000000000000
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel:
+    - 0
+    - 50
+    - 75
+    - 100
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 20
+    - 40
+    - 60
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 00000000140000001400000014000000
+    skillMovementSpeed: 000000000a000000140000001e000000
