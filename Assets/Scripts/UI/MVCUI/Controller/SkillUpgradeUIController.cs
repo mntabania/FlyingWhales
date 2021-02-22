@@ -208,6 +208,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
 		}
 		UpdateTopMenuSummary();
+		m_skillComponent.SetPlayerSkillData(p_type);
 		Messenger.Broadcast(SpellSignals.SPELL_UPGRADED, skillData);
 	}
 
