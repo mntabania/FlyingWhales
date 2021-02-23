@@ -61,7 +61,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         }
 
         //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
-        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
+        targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         Messenger.Broadcast(SpellSignals.METEOR_FELL);
         InnerMapCameraMove.Instance.MeteorShake();
         targetTile.RemoveMeteor();

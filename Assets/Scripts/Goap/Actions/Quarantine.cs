@@ -39,12 +39,12 @@ public class Quarantine : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = node.poiTarget as Character;
             Assert.IsNotNull(targetCharacter, $"Quarantine of {node.actor.name} is not a character! {node.poiTarget?.ToString() ?? "Null"}");
-            BedClinic targetBed = node.actor.gridTileLocation.objHere as BedClinic;
+            BedClinic targetBed = node.actor.gridTileLocation.tileObjectComponent.objHere as BedClinic;
             if (targetBed == null) {
                 //check neighbours
                 for (int i = 0; i < node.actor.gridTileLocation.neighbourList.Count; i++) {
                     LocationGridTile neighbour = node.actor.gridTileLocation.neighbourList[i];
-                    if (neighbour.objHere is BedClinic bed && bed.IsAvailable() && bed.CanUseBed(targetCharacter)) {
+                    if (neighbour.tileObjectComponent.objHere is BedClinic bed && bed.IsAvailable() && bed.CanUseBed(targetCharacter)) {
                         targetBed = bed;
                         break;
                     }
@@ -100,12 +100,12 @@ public class Quarantine : GoapAction {
         return null;
      }
      private BedClinic GetBedNearActor(Character actor, Character targetCharacter) {
-         BedClinic targetBed = actor.gridTileLocation.objHere as BedClinic;
+         BedClinic targetBed = actor.gridTileLocation.tileObjectComponent.objHere as BedClinic;
          if (targetBed == null || !targetBed.IsAvailable() || !targetBed.CanUseBed(targetCharacter)) {
              //check neighbours
              for (int i = 0; i < actor.gridTileLocation.neighbourList.Count; i++) {
                  LocationGridTile neighbour = actor.gridTileLocation.neighbourList[i];
-                 if (neighbour.objHere is BedClinic bed && bed.IsAvailable() && bed.CanUseBed(targetCharacter)) {
+                 if (neighbour.tileObjectComponent.objHere is BedClinic bed && bed.IsAvailable() && bed.CanUseBed(targetCharacter)) {
                      targetBed = bed;
                      break;
                  }

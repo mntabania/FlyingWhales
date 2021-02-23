@@ -17,13 +17,8 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public Vector3Save centeredLocalLocation;
     public LocationGridTile.Tile_Type tileType;
     public LocationGridTile.Tile_State tileState;
-    public string genericTileObjectID;
-    public bool hasLandmine;
-    public bool hasFreezingTrap;
-    public bool hasSnareTrap;
     public int meteorCount;
     public int connectorsCount;
-    public List<RACE> freezingTrapExclusions;
 
     //tilemap assets
     public string groundTileMapAssetName;
@@ -46,13 +41,8 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         centeredLocalLocation = gridTile.centeredLocalLocation;
         tileType = gridTile.tileType;
         tileState = gridTile.tileState;
-        hasLandmine = gridTile.hasLandmine;
-        hasFreezingTrap = gridTile.hasFreezingTrap;
-        hasSnareTrap = gridTile.hasSnareTrap;
         meteorCount = gridTile.meteorCount;
         connectorsCount = gridTile.connectorsOnTile;
-        freezingTrapExclusions = gridTile.freezingTrapExclusions;
-        genericTileObjectID = gridTile.genericTileObject.persistentID;
 
         //tilemap assets
         groundTileMapAssetName = gridTile.parentMap.groundTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
@@ -68,13 +58,13 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap, SaveDataCurrentProgress saveData, Area p_area) {
         LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap, p_area);
         tile.SetFloorSample(floorSample);
-        SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, genericTileObjectID);
+        SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, tileObjectComponent.genericTileObjectID);
         TileObject loadedObject = saveDataTileObject.Load();
         GenericTileObject genericTileObject = loadedObject as GenericTileObject;
         Assert.IsNotNull(genericTileObject);
         genericTileObject.SetTileOwner(tile);
         genericTileObject.ManualInitializeLoad(tile, saveDataTileObject);
-        tile.LoadGenericTileObject(genericTileObject);
+        tile.tileObjectComponent.LoadGenericTileObject(genericTileObject);
         return tile;
     }
 
@@ -82,7 +72,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         // for (int i = 0; i < traits.Count; i++) {
         //     Character responsibleCharacter = null;
         //     Trait trait = traits[i].Load(ref responsibleCharacter);
-        //     loadedGridTile.genericTileObject.traitContainer.AddTrait(loadedGridTile.genericTileObject, trait, responsibleCharacter);
+        //     loadedGridTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(loadedGridTile.tileObjectComponent.genericTileObject, trait, responsibleCharacter);
         // }
     // }
 }

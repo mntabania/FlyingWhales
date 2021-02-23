@@ -591,7 +591,7 @@ public class Player : ILeader, IObjectManipulator {
             return; //clicked on UI;
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null && hoveredTile.objHere == null) {
+        if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
             Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(currentActiveArtifact);
             hoveredTile.structure.AddPOI(artifact, hoveredTile);
         }
@@ -653,8 +653,8 @@ public class Player : ILeader, IObjectManipulator {
                     }
                 }
                 for (int i = 0; i < highlightedTiles.Count; i++) {
-                    if(highlightedTiles[i].objHere != null) {
-                        poisInHighlightedTiles.Add(highlightedTiles[i].objHere);
+                    if(highlightedTiles[i].tileObjectComponent.objHere != null) {
+                        poisInHighlightedTiles.Add(highlightedTiles[i].tileObjectComponent.objHere);
                     }
                 }
                 currentActiveCombatAbility.ActivateAbility(poisInHighlightedTiles);
@@ -729,7 +729,7 @@ public class Player : ILeader, IObjectManipulator {
             return; //clicked on UI;
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null && hoveredTile.objHere == null) {
+        if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
             TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(currentActiveItem);
             hoveredTile.structure.AddPOI(item, hoveredTile);
         }

@@ -129,12 +129,12 @@ public class MakeLove : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = node.poiTarget as Character;
             Assert.IsNotNull(targetCharacter, $"Make love of {node.actor.name} is not a character! {node.poiTarget?.ToString() ?? "Null"}");
-            Bed targetBed = node.actor.gridTileLocation.objHere as Bed;
+            Bed targetBed = node.actor.gridTileLocation.tileObjectComponent.objHere as Bed;
             if (targetBed == null) {
                 //check neighbours
                 for (int i = 0; i < node.actor.gridTileLocation.neighbourList.Count; i++) {
                     LocationGridTile neighbour = node.actor.gridTileLocation.neighbourList[i];
-                    if (neighbour.objHere is Bed bed) {
+                    if (neighbour.tileObjectComponent.objHere is Bed bed) {
                         targetBed = bed;
                     }
                 }

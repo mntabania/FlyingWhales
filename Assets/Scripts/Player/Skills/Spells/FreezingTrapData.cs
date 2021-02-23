@@ -16,7 +16,7 @@ public class FreezingTrapData : SkillData {
         targetTypes = new[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        targetTile.SetHasFreezingTrap(true);
+        targetTile.tileObjectComponent.SetHasFreezingTrap(true);
         AudioManager.Instance.TryCreateAudioObject(
             PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).placeTrapSound, targetTile, 1, false);
         //IncreaseThreatThatSeesTile(targetTile, 10);
@@ -25,7 +25,7 @@ public class FreezingTrapData : SkillData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            return !targetTile.hasFreezingTrap;
+            return !targetTile.tileObjectComponent.hasFreezingTrap;
         }
         return false;
     }

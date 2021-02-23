@@ -132,7 +132,7 @@ public class AreaSpellsComponent : AreaComponent {
         _centerEarthquakeTile = owner.gridTileComponent.centerGridTile;
         earthquakeTileObjects.Clear();
         for (int i = 0; i < owner.gridTileComponent.gridTiles.Count; i++) {
-            IPointOfInterest poi = owner.gridTileComponent.gridTiles[i].objHere;
+            IPointOfInterest poi = owner.gridTileComponent.gridTiles[i].tileObjectComponent.objHere;
             if (poi != null) {
                 AddEarthquakeTileObject(poi);
             }
@@ -414,7 +414,7 @@ public class AreaSpellsComponent : AreaComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, owner.gridTileComponent.gridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Lightning_Strike);
-            chosenTile.genericTileObject.traitContainer.AddTrait(chosenTile.genericTileObject, "Danger Remnant");
+            chosenTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(chosenTile.tileObjectComponent.genericTileObject, "Danger Remnant");
             // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
             // for (int i = 0; i < pois.Count; i++) {
             //     pois[i].AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);

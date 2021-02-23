@@ -79,8 +79,8 @@ namespace Traits {
         #region Carry/Drop
         private void OnCharacterFinishedAction(ActualGoapNode node) {
             if (node.action.goapType == INTERACTION_TYPE.DROP && node.poiTarget == this.owner) {
-                if (this.owner.gridTileLocation.objHere != null && this.owner.gridTileLocation.objHere is Bed) {
-                    CreateActualSleepJob(this.owner.gridTileLocation.objHere as Bed);
+                if (this.owner.gridTileLocation.tileObjectComponent.objHere != null && this.owner.gridTileLocation.tileObjectComponent.objHere is Bed) {
+                    CreateActualSleepJob(this.owner.gridTileLocation.tileObjectComponent.objHere as Bed);
                 } else if (this.owner.gridTileLocation.structure == this.owner.homeStructure) {
                     CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
                 } else {
@@ -176,8 +176,8 @@ namespace Traits {
         }
         private bool CreateSleepJob() {
             if (owner.homeStructure != null) {
-                if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is Bed) {
-                    CreateActualSleepJob(owner.gridTileLocation.objHere as Bed);
+                if (owner.gridTileLocation.tileObjectComponent.objHere != null && owner.gridTileLocation.tileObjectComponent.objHere is Bed) {
+                    CreateActualSleepJob(owner.gridTileLocation.tileObjectComponent.objHere as Bed);
                     return true;
                 }
                 //else {

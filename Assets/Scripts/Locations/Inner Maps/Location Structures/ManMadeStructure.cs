@@ -77,7 +77,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public override void OnTileRepaired(LocationGridTile tile, int amount) {
             if (hasBeenDestroyed) { return; }
-            if (tile.genericTileObject.currentHP >= tile.genericTileObject.maxHP) {
+            if (tile.tileObjectComponent.genericTileObject.currentHP >= tile.tileObjectComponent.genericTileObject.maxHP) {
                 // ReSharper disable once Unity.NoNullPropagation
                 structureObj?.ApplyGroundTileAssetForTile(tile);    
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();

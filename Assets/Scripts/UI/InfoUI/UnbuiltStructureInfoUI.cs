@@ -63,7 +63,7 @@ public class UnbuiltStructureInfoUI : InfoUIBase {
     }
      private void UpdateBasicInfo() {
          LocationGridTile centerTile = GridMap.Instance.mainRegion.innerMap.GetTileFromWorldPos(activeStructureObject.worldPosition);
-         int ticksRemaining = centerTile.genericTileObject.selfBuildingStructureDueDate.GetTickDifference(GameManager.Instance.Today());
+         int ticksRemaining = centerTile.tileObjectComponent.genericTileObject.selfBuildingStructureDueDate.GetTickDifference(GameManager.Instance.Today());
          nameLbl.text = $"Unbuilt {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(activeStructureObject.structureType.ToString())}";
          subLbl.text = $"(Ticks Remaining: {ticksRemaining.ToString()})";
          locationPortrait.SetPortrait(activeStructureObject.structureType);

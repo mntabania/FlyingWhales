@@ -55,13 +55,13 @@ public abstract class Nymph : Summon {
     private void ExecuteAOEEffect() {
         if (Random.Range(0, 100) < 25) {
             Profiler.BeginSample($"Nymph - Adjust HP Current Tile");
-            gridTileLocation.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
+            gridTileLocation.tileObjectComponent.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
             Profiler.EndSample();
             
             Profiler.BeginSample($"Nymph - Adjust HP Neighbours");
             for (int i = 0; i < gridTileLocation.neighbourList.Count; i++) {
                 LocationGridTile tile = gridTileLocation.neighbourList[i];
-                tile.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
+                tile.tileObjectComponent.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
             }
             Profiler.EndSample();
         }

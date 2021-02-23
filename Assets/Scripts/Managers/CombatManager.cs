@@ -322,15 +322,15 @@ public class CombatManager : BaseMonoBehaviour {
             Messenger.Broadcast(PlayerSignals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
         }
 
-        if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+        if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
             Trait trait = null;
-            traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric", out trait, characterResponsible: characterResponsible);
+            traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric", out trait, characterResponsible: characterResponsible);
             ChainedElectric chainedElectric = trait as ChainedElectric;
             chainedElectric.SetDamage(damage);
         }
 
-        //if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
-        //    traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
+        //if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+        //    traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
         //    StartCoroutine(ChainElectricDamageCoroutine(traitable.gridTileLocation.neighbourList, damage, characterResponsible, origin));
         //}
     }
@@ -341,7 +341,7 @@ public class CombatManager : BaseMonoBehaviour {
     private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage, Character characterResponsible, ITraitable origin) {
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            if (tile.genericTileObject.traitContainer.HasTrait("Wet") && !tile.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
+            if (tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Wet") && !tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
                 while (GameManager.Instance.isPaused) {
                     //Pause coroutine while game is paused
                     //Might be performance heavy, needs testing
@@ -357,11 +357,11 @@ public class CombatManager : BaseMonoBehaviour {
     }
 
     //public void StartChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin) {
-    //    if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+    //    if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
     //        if (characterResponsible == null) {
     //            Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
     //        }
-    //        traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
+    //        traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
     //        List<LocationGridTile> affectedTiles = new List<LocationGridTile>();
     //        List<LocationGridTile> tileHolder = new List<LocationGridTile>();
     //        tileHolder.AddRange(traitable.gridTileLocation.neighbourList);
@@ -376,7 +376,7 @@ public class CombatManager : BaseMonoBehaviour {
     //    affectedTiles.Clear();
     //    for (int i = 0; i < tileHolder.Count; i++) {
     //        LocationGridTile tile = tileHolder[i];
-    //        if (tile.genericTileObject.traitContainer.HasTrait("Wet") && !tile.genericTileObject.traitContainer.HasTrait("Zapped") && !tile.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+    //        if (tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Wet") && !tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Zapped") && !tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
     //            affectedTiles.Add(tile);
     //        }
     //    }

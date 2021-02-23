@@ -79,7 +79,7 @@ public class DropItem : GoapAction {
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //if current grid location is occupied and cannot get any unoccupied tile from current location, then just let the object disappear
         LocationGridTile tile = goapNode.actor.gridTileLocation;
-        if(tile != null && tile.objHere != null) {
+        if(tile != null && tile.tileObjectComponent.objHere != null) {
             tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
         bool addToLocation = tile != null;

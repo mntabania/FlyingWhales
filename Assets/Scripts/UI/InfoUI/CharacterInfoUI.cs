@@ -873,6 +873,7 @@ public class CharacterInfoUI : InfoUIBase {
             MoodModification moodModification = modification.Value;
             for (int i = 0; i < moodModification.flavorTexts.Count; i++) {
                 Log flavorLog = moodModification.flavorTexts[i];
+                if (flavorLog == null) { continue; }
                 int modificationAmount = moodModification.modifications[i];
                 GameDate expiryDate = moodModification.expiryDates.ElementAtOrDefault(moodModification.expiryDates.Count - 1 - i);
                 MoodSummaryEntry moodSummaryEntry;

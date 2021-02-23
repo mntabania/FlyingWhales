@@ -172,7 +172,7 @@ public class DropRestrained : GoapAction {
                     LocationStructure structure = areaLocation.structureComponent.GetMostImportantStructureOnTile();
                     if (structure is DemonicStructure) {
                         if (structure is Kennel) {
-                            List<LocationGridTile> choices = structure.passableTiles.Where(t => t.objHere == null || t.IsPassable()).ToList();
+                            List<LocationGridTile> choices = structure.passableTiles.Where(t => t.tileObjectComponent.objHere == null || t.IsPassable()).ToList();
                             if (choices.Count > 0) {
                                 LocationGridTile randomTile = CollectionUtilities.GetRandomElement(choices);
                                 targetCharacter.marker.PlaceMarkerAt(randomTile);
@@ -184,7 +184,7 @@ public class DropRestrained : GoapAction {
                             List<StructureRoom> roomChoices = structure.rooms.Where(r => r.CanUnseizeCharacterInRoom(targetCharacter)).ToList();
                             if (roomChoices.Count > 0) {
                                 StructureRoom randomRoom = CollectionUtilities.GetRandomElement(roomChoices);
-                                List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => t.objHere == null || t.IsPassable()).ToList();
+                                List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => t.tileObjectComponent.objHere == null || t.IsPassable()).ToList();
                                 if (choices.Count > 0) {
                                     LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(choices);
                                     targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);
