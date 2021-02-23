@@ -101,7 +101,11 @@ public class CharacterInfoUI : InfoUIBase {
     public GameObject btnRevealRelationship;
     #endregion
 
-    internal override void Initialize() {
+    #region pierce display UI
+    public PiercingAndResistancesInfo pierceUI;
+	#endregion
+
+	internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
@@ -989,6 +993,20 @@ public class CharacterInfoUI : InfoUIBase {
         string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.stamina.ToString("N0")}/100";
         UIManager.Instance.ShowSmallInfo(summary, "STAMINA");
+    }
+    #endregion
+
+    #region pierce UI
+    public void ClickPierce() {
+        if (pierceUI.isShowing) {
+            pierceUI.HidePiercingAndResistancesInfo();
+        } else {
+            pierceUI.ShowPiercingAndResistancesInfo(activeCharacter);
+        }
+    }
+
+    public void HidePierceUI() {
+        pierceUI.HidePiercingAndResistancesInfo();
     }
     #endregion
 

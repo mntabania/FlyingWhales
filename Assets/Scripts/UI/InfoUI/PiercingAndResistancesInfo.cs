@@ -49,7 +49,7 @@ public class PiercingAndResistancesInfo : MonoBehaviour {
         gameObject.SetActive(false);
     }
     private void UpdatePiercingAndResistancesInfo() {
-        UpdatePiercingInfo();
+        //UpdatePiercingInfo();
         UpdateResistancesInfo();
     }
     private void UpdatePiercingInfo() {

@@ -161,6 +161,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 
 	private void DisplayMenu() {
 		m_purchaseSkillUIView.ShowSkills();
+		MakeListForAvailableSkills();
 		SpawnItems();
 		if (m_isAvailable) {
 			StopCoroutine("ProcessAvailability");
@@ -203,6 +204,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			m_purchaseSkillUIView.DisableRerollButton();
 			m_isAvailable = false;
 			StartCoroutine("ProcessAvailability");
+			Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, p_type);
 		}
 	}
 	#endregion
