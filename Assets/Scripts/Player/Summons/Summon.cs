@@ -33,11 +33,13 @@ public class Summon : Character {
         this.summonType = summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = false;
+        isInfoUnlocked = true;
     }
     protected Summon(SaveDataSummon data) : base(data) {
         summonType = data.summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = data.isVolatileMonster;
+        isInfoUnlocked = true;
     }
 
     #region Overrides

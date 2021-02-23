@@ -84,8 +84,6 @@ public class CharacterInfoUI : InfoUIBase {
     private Character _activeCharacter;
     private Character _previousCharacter;
 
-    List<Character> m_unlockedCharacters = new List<Character>();
-
     public Character activeCharacter => _activeCharacter;
     public Character previousCharacter => _previousCharacter;
     private List<SkillData> afflictions;
@@ -997,8 +995,8 @@ public class CharacterInfoUI : InfoUIBase {
     #region Tabs
     public void OnRevealInfoclicked() {
         if (PlayerManager.Instance.player.plagueComponent.plaguePoints >= 1) {
-            if (!m_unlockedCharacters.Contains(activeCharacter)) {
-                m_unlockedCharacters.Add(activeCharacter);
+            if (!activeCharacter.isInfoUnlocked) {
+                activeCharacter.isInfoUnlocked = true;
                 PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1);
                 ProcessDisplay();
             }
@@ -1039,7 +1037,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (isOn) {
             m_currentViewMode = VIEW_MODE.Info;
             if (activeCharacter.race.IsSapient()) {
-                if (m_unlockedCharacters.Contains(activeCharacter)) {
+                if (activeCharacter.isInfoUnlocked) {
                     ShowInfoHideRevealButton();
                 } else {
                     ShowRevealButtonHideInfo();
@@ -1053,7 +1051,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (isOn) {
             m_currentViewMode = VIEW_MODE.Mood;
             if (activeCharacter.race.IsSapient()) {
-                if (m_unlockedCharacters.Contains(activeCharacter)) {
+                if (activeCharacter.isInfoUnlocked) {
                     ShowMoodHideRevealButton();
                 } else {
                     ShowRevealButtonHideMood();
@@ -1067,7 +1065,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (isOn) {
             m_currentViewMode = VIEW_MODE.Relationship;
             if (activeCharacter.race.IsSapient()) {
-                if (m_unlockedCharacters.Contains(activeCharacter)) {
+                if (activeCharacter.isInfoUnlocked) {
                     ShowRelationshipHideRevealButton();
                 } else {
                     ShowRevealButtonHideRelationship();
