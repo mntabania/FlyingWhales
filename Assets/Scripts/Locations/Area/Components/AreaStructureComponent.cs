@@ -121,17 +121,18 @@ public class AreaStructureComponent : AreaComponent {
             }
             return false;
         }
-        if (structureType == STRUCTURE_TYPE.EYE) {
-            if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
-                if (InnerMapManager.Instance.currentlyShowingLocation != null && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE)) {
-                    o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_eye");
-                    return false;        
-                } else {
-                    return true; //only 1 eye per region.    
-                }
-            }
-            return false;
-        }
+        //NOTE: No longer 1 eye per region
+        //if (structureType == STRUCTURE_TYPE.BEHOLDER) {
+        //    if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
+        //        if (InnerMapManager.Instance.currentlyShowingLocation != null && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.BEHOLDER)) {
+        //            o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_one_eye");
+        //            return false;        
+        //        } else {
+        //            return true; //only 1 eye per region.    
+        //        }
+        //    }
+        //    return false;
+        //}
         if (structureType == STRUCTURE_TYPE.SPIRE) {
             if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
                 if (InnerMapManager.Instance.currentlyShowingLocation != null && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.SPIRE)) {

@@ -282,7 +282,7 @@ public class MovementComponent : CharacterComponent {
         arriveLog.AddLogToDatabase(true);
 
         if (owner.isNormalCharacter) {
-            PlayerManager.Instance.player.ShowNotificationFrom(targetRegionToTravelInWorld, arriveLog);
+            PlayerManager.Instance.player.ShowNotificationFrom(entrance, arriveLog);
         }
 
         owner.EnableMarker();

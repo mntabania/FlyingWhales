@@ -33,7 +33,9 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     //Traits
     public SaveDataTraitContainer saveDataTraitContainer;
 
+    //Components
     public SaveDataLogComponent logComponent;
+    public SaveDataTileObjectHiddenComponent hiddenComponent;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
@@ -92,8 +94,8 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         saveDataTraitContainer = new SaveDataTraitContainer();
         saveDataTraitContainer.Save(data.traitContainer);
 
-        logComponent = new SaveDataLogComponent();
-        logComponent.Save(data.logComponent);
+        logComponent = new SaveDataLogComponent(); logComponent.Save(data.logComponent);
+        hiddenComponent = new SaveDataTileObjectHiddenComponent(); hiddenComponent.Save(data.hiddenComponent);
     }
     public override TileObject Load() {
         TileObject tileObject = InnerMapManager.Instance.LoadTileObject<TileObject>(this);

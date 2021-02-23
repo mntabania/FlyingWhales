@@ -11,7 +11,6 @@ using UnityEngine.EventSystems;
 using Locations.Settlements;
 using Locations;
 using Logs;
-using Locations.Settlements;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -58,7 +57,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public ILocationAwareness currentLocationAwareness { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
     private bool hasSubscribedToListeners;
-    public LogComponent logComponent { get; protected set; }
     public virtual StructureConnector structureConnector { get; protected set; }
 
     #region getters
@@ -77,7 +75,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Faction factionOwner => characterOwner?.faction;
     public bool canBeRepaired => repairCounter <= 0;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
-    public bool isHidden => false;
+    public bool isHidden => hiddenComponent.isHidden;
     public LocationStructure currentStructure => gridTileLocation?.structure;
     public BaseSettlement currentSettlement {
         get {
@@ -94,6 +92,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     #endregion
+
+    //Components
+    public LogComponent logComponent { get; protected set; }
+    public TileObjectHiddenComponent hiddenComponent { get; private set; }
 
     public TileObject() { }
     public TileObject(SaveDataTileObject data) { }
@@ -118,6 +120,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         ConstructDefaultActions();
         logComponent = new LogComponent(); logComponent.SetOwner(this);
+        hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
@@ -139,8 +142,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
         ConstructDefaultActions();
 
-        logComponent = data.logComponent.Load();
-        logComponent.SetOwner(this);
+        logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
+        hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
 
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
@@ -199,10 +202,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
 
     #region Listeners
-    protected void SubscribeListeners() {
+    protected virtual void SubscribeListeners() {
         //Messenger.AddListener(Signals.TICK_STARTED, ProcessTraitsOnTickStarted);
     }
-    protected void UnsubscribeListeners() {
+    protected virtual void UnsubscribeListeners() {
         //Messenger.RemoveListener(Signals.TICK_STARTED, ProcessTraitsOnTickStarted);
     }
     #endregion
@@ -427,7 +430,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         actions = new List<PLAYER_SKILL_TYPE>();
 
         if (tileObjectType == TILE_OBJECT_TYPE.RAVENOUS_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.FEEBLE_SPIRIT ||
-            tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT) {
+            tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.EYE_WARD) {
             return;
         }
 
@@ -442,6 +445,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     //public virtual void OnTileObjectAddedToInventoryOf(Character inventoryOwner) { }
     public virtual void OnTileObjectDroppedBy(Character inventoryOwner, LocationGridTile tile) { }
+    protected virtual void OnSetGridTileLocation() { }
     #endregion
 
     #region IPointOfInterest
@@ -603,6 +607,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (gridTileLocation != null && !(this is GenericTileObject)) {
             LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
         }
+        OnSetGridTileLocation();
     }
     public void OnSeizePOI() {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == this) {
@@ -1105,7 +1110,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     protected virtual void OnSetObjectAsBuilt(){
         Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-        mapVisual.SetVisualAlpha(255f / 255f);
+        //mapVisual.SetVisualAlpha(1f);
+        hiddenComponent.OnSetHiddenState();
         SetSlotAlpha(255f / 255f);
         SetPOIState(POI_STATE.ACTIVE);
         if (advertisedActions != null && advertisedActions.Count > 0) {

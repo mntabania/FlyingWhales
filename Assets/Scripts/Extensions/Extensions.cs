@@ -41,7 +41,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.POND:
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.THE_PORTAL:
-            case STRUCTURE_TYPE.EYE:
+            case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
@@ -112,7 +112,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.KENNEL:
             case STRUCTURE_TYPE.THE_ANVIL:
             case STRUCTURE_TYPE.MEDDLER:
-            case STRUCTURE_TYPE.EYE:
+            case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.THE_NEEDLES:
@@ -163,7 +163,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
-            case STRUCTURE_TYPE.EYE:
+            case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.CRYPT:
             case STRUCTURE_TYPE.OSTRACIZER:
             case STRUCTURE_TYPE.MEDDLER:

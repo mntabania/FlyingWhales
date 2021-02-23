@@ -113,7 +113,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CarryComponent carryComponent { get; private set; }
     public PartyComponent partyComponent { get; private set; }
     public GatheringComponent gatheringComponent { get; private set; }
-    public TileObjectComponent tileObjectComponent { get; private set; }
+    public CharacterTileObjectComponent tileObjectComponent { get; private set; }
     public CrimeComponent crimeComponent { get; private set; }
     public ReligionComponent religionComponent { get; private set; }
     public LimiterComponent limiterComponent { get; private set; }
@@ -309,7 +309,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         carryComponent = new CarryComponent(); carryComponent.SetOwner(this);
         partyComponent = new PartyComponent(); partyComponent.SetOwner(this);
         gatheringComponent = new GatheringComponent(); gatheringComponent.SetOwner(this);
-        tileObjectComponent = new TileObjectComponent(); tileObjectComponent.SetOwner(this);
+        tileObjectComponent = new CharacterTileObjectComponent(); tileObjectComponent.SetOwner(this);
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
         religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
         limiterComponent = new LimiterComponent(); limiterComponent.SetOwner(this);

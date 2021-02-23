@@ -739,26 +739,34 @@ namespace Inner_Maps.Location_Structures {
             return false;
         }
         public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
-            if (pointsOfInterest.Remove(poi)) {
-                if (poi is TileObject obj) {
-                    groupedTileObjects[obj.tileObjectType].Remove(obj);
+            LocationGridTile tileLocation = poi.gridTileLocation;
+            TileObject tileObj = poi as TileObject;
+            if (tileObj != null && tileObj.isHidden) {
+                if (tileLocation != null && tileLocation.tileObjectComponent.hiddenObjHere == tileObj) {
+                    tileLocation.tileObjectComponent.RemoveHiddenObjectHere(removedBy);
+                    return true;
                 }
-                LocationGridTile tileLocation = poi.gridTileLocation;
-                if (poi.gridTileLocation != null) {
-                    // Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
-                    if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                        //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
-                    } else {
-                        region.innerMap.RemoveObject(poi.gridTileLocation, removedBy);
+            } else {
+                if (pointsOfInterest.Remove(poi)) {
+                    if (tileObj != null) {
+                        groupedTileObjects[tileObj.tileObjectType].Remove(tileObj);
                     }
-                    //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
-                }
-                if (poi is TileObject tileObject) {
-                    if (tileLocation.area.settlementOnArea is NPCSettlement npcSettlement) {
-                        npcSettlement.OnItemRemovedFromLocation(tileObject, this, tileLocation);    
+                    if (tileLocation != null) {
+                        // Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
+                        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                            //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
+                        } else {
+                            region.innerMap.RemoveObject(tileLocation, removedBy);
+                        }
+                        //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
                     }
+                    if (tileObj != null) {
+                        if (tileLocation.area.settlementOnArea is NPCSettlement npcSettlement) {
+                            npcSettlement.OnItemRemovedFromLocation(tileObj, this, tileLocation);
+                        }
+                    }
+                    return true;
                 }
-                return true;
             }
             return false;
         }

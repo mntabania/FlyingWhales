@@ -5,11 +5,13 @@ using UnityEngine;
 namespace Inner_Maps {
     public class GridTileTileObjectComponent : LocationGridTileComponent {
         public TileObject objHere { get; private set; }
+        public TileObject hiddenObjHere { get; private set; }
         public GenericTileObject genericTileObject { get; private set; }
         public List<ThinWall> walls { get; private set; }
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
+        public bool isSeenByEyeWard { get; private set; }
         public RACE[] freezingTrapExclusions { get; private set; }
 
         private GameObject _landmineEffect;
@@ -24,48 +26,63 @@ namespace Inner_Maps {
             hasFreezingTrap = data.hasFreezingTrap;
             hasSnareTrap = data.hasSnareTrap;
             freezingTrapExclusions = data.freezingTrapExclusions;
+            isSeenByEyeWard = data.isSeenByEyeWard;
         }
 
         #region Object Here
         public void SetObjectHere(TileObject poi) {
-            bool isPassablePreviously = owner.IsPassable();
-            if (poi is TileObject tileObject) {
-                if (tileObject.OccupiesTile()) {
+            if (poi.isHidden) {
+                hiddenObjHere = poi;
+                poi.SetGridTileLocation(owner);
+                poi.OnPlacePOI();
+            } else {
+                bool isPassablePreviously = owner.IsPassable();
+                if (poi.OccupiesTile()) {
                     objHere = poi;
                 }
-            } else {
-                objHere = poi;
-            }
+                //if (poi is TileObject tileObject) {
+                //    if (tileObject.OccupiesTile()) {
+                //        objHere = poi;
+                //    }
+                //} else {
+                //    objHere = poi;
+                //}
 
-            poi.SetGridTileLocation(owner);
-            poi.OnPlacePOI();
-            owner.SetTileState(LocationGridTile.Tile_State.Occupied);
-            if (!owner.IsPassable()) {
-                owner.structure.RemovePassableTile(owner);
-            } else if (owner.IsPassable() && !isPassablePreviously) {
-                owner.structure.AddPassableTile(owner);
+                poi.SetGridTileLocation(owner);
+                poi.OnPlacePOI();
+                owner.SetTileState(LocationGridTile.Tile_State.Occupied);
+                if (!owner.IsPassable()) {
+                    owner.structure.RemovePassableTile(owner);
+                } else if (owner.IsPassable() && !isPassablePreviously) {
+                    owner.structure.AddPassableTile(owner);
+                }
+                Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, owner, poi);
             }
-            Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, owner, poi);
         }
         public void LoadObjectHere(TileObject poi) {
-            bool isPassablePreviously = owner.IsPassable();
-            if (poi is TileObject tileObject) {
-                if (tileObject.OccupiesTile()) {
+            if (poi.isHidden) {
+                hiddenObjHere = poi;
+                poi.SetGridTileLocation(owner);
+            } else {
+                bool isPassablePreviously = owner.IsPassable();
+                if (poi is TileObject tileObject) {
+                    if (tileObject.OccupiesTile()) {
+                        objHere = poi;
+                    }
+                } else {
                     objHere = poi;
                 }
-            } else {
-                objHere = poi;
-            }
 
-            poi.SetGridTileLocation(owner);
-            poi.OnLoadPlacePOI();
-            owner.SetTileState(LocationGridTile.Tile_State.Occupied);
-            if (!owner.IsPassable()) {
-                owner.structure.RemovePassableTile(owner);
-            } else if (owner.IsPassable() && !isPassablePreviously) {
-                owner.structure.AddPassableTile(owner);
+                poi.SetGridTileLocation(owner);
+                poi.OnLoadPlacePOI();
+                owner.SetTileState(LocationGridTile.Tile_State.Occupied);
+                if (!owner.IsPassable()) {
+                    owner.structure.RemovePassableTile(owner);
+                } else if (owner.IsPassable() && !isPassablePreviously) {
+                    owner.structure.AddPassableTile(owner);
+                }
+                Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, owner, poi);
             }
-            Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, owner, poi);
         }
         public TileObject RemoveObjectHere(Character removedBy) {
             if (objHere != null) {
@@ -80,6 +97,17 @@ namespace Inner_Maps {
                 //    removedObj.OnDestroyPOI();
                 //}
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
+                Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
+                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                return removedObj;
+            }
+            return null;
+        }
+        public TileObject RemoveHiddenObjectHere(Character removedBy) {
+            if (hiddenObjHere != null) {
+                TileObject removedObj = hiddenObjHere;
+                hiddenObjHere = null;
+                removedObj.RemoveTileObject(removedBy);
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
                 Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
@@ -278,6 +306,12 @@ namespace Inner_Maps {
         }
         #endregion
 
+        #region Eye Ward
+        public void SetIsSeenByEyeWard(bool state) {
+            isSeenByEyeWard = state;
+        }
+        #endregion
+
         #region Clean Up
         public void CleanUp() {
             objHere = null;
@@ -292,6 +326,7 @@ namespace Inner_Maps {
         public bool hasLandmine;
         public bool hasFreezingTrap;
         public bool hasSnareTrap;
+        public bool isSeenByEyeWard;
         public RACE[] freezingTrapExclusions;
         public override void Save(GridTileTileObjectComponent data) {
             base.Save(data);
@@ -300,6 +335,7 @@ namespace Inner_Maps {
             hasFreezingTrap = data.hasFreezingTrap;
             hasSnareTrap = data.hasSnareTrap;
             freezingTrapExclusions = data.freezingTrapExclusions;
+            isSeenByEyeWard = data.isSeenByEyeWard;
         }
         public override GridTileTileObjectComponent Load() {
             GridTileTileObjectComponent component = new GridTileTileObjectComponent(this);
