@@ -35,6 +35,7 @@ public class Player : ILeader, IObjectManipulator {
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
     public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }
+    public Dictionary<SUMMON_TYPE, Point> monsterCharges { get; }
 
     //Components
     public SeizeComponent seizeComponent { get; }
@@ -64,6 +65,7 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent = new PlayerSkillComponent();
         plagueComponent = new PlagueComponent();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        monsterCharges = new Dictionary<SUMMON_TYPE, Point>();
         AddListeners();
     }
     public Player(SaveDataPlayerGame data) {
@@ -854,6 +856,33 @@ public class Player : ILeader, IObjectManipulator {
     #region Building
     public void SetIsCurrentlyBuildingDemonicStructure(bool state) {
         isCurrentlyBuildingDemonicStructure = state;
+    }
+    #endregion
+
+    #region Monster Charges
+    public void AdjustMonsterCapacity(SUMMON_TYPE p_monsterType, int p_value) {
+        if (!monsterCharges.ContainsKey(p_monsterType)) {
+            monsterCharges.Add(p_monsterType, new Point(0, 0));
+        }
+        Point point = monsterCharges[p_monsterType]; 
+        point.Y += p_value;
+        monsterCharges[p_monsterType] = point;
+        CheckIfKeyShouldBeRemoved(p_monsterType);
+    }
+    public void AdjustMonsterCharges(SUMMON_TYPE p_monsterType, int p_value) {
+        if (!monsterCharges.ContainsKey(p_monsterType)) {
+            monsterCharges.Add(p_monsterType, new Point(0, 0));
+        }
+        Point point = monsterCharges[p_monsterType]; 
+        point.X += p_value;
+        monsterCharges[p_monsterType] = point;
+        CheckIfKeyShouldBeRemoved(p_monsterType);
+    }
+    private void CheckIfKeyShouldBeRemoved(SUMMON_TYPE p_monsterType) {
+        Point point = monsterCharges[p_monsterType];
+        if (point.X == 0 && point.Y == 0) {
+            monsterCharges.Remove(p_monsterType);
+        }
     }
     #endregion
 }

@@ -18,6 +18,10 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        protected override void DestroyStructure() {
+            StopDrainingCharactersHere();
+            base.DestroyStructure();
+        }
         #endregion
         
         #region Listeners
@@ -42,5 +46,12 @@ namespace Inner_Maps.Location_Structures {
             return new DefilerRoom(tilesInRoom);
         }
         #endregion
+        
+        private void StopDrainingCharactersHere() {
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                character.traitContainer.RemoveTrait(character, "Being Drained");
+            }
+        }
     }
 }

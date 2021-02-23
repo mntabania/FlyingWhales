@@ -549,15 +549,16 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public void SetStructure(LocationStructure structure) {
+        public void SetStructure(LocationStructure p_structure) {
             Profiler.BeginSample("Remove Tile");
-            this.structure?.RemoveTile(this);
+            LocationStructure previousStructure = structure;
+            structure?.RemoveTile(this);
             Profiler.EndSample();
             
-            this.structure = structure;
+            structure = p_structure;
             
             Profiler.BeginSample("Add Tile");
-            this.structure.AddTile(this);
+            structure.AddTile(this);
             Profiler.EndSample();
             
             Profiler.BeginSample("Generic Tile Object Initialize");
@@ -569,6 +570,14 @@ namespace Inner_Maps {
                 //Whenever a grid tile changes its structure (might be because a new structure is built on top of it), the object inside must update its awareness to that new structure
                 LocationAwarenessUtility.RemoveFromAwarenessList(objHere);
                 LocationAwarenessUtility.AddToAwarenessList(objHere, this);
+            }
+            if (previousStructure != structure) {
+                //if tile changed structures then transfer characters here to that structure.
+                //This is to prevent inconsistent data, so that we do not need to wait for the character to call CharacterMarker.UpdatePosition for its structure location to be updated.
+                for (int i = 0; i < charactersHere.Count; i++) {
+                    Character character = charactersHere[i];
+                    structure.AddCharacterAtLocation(character);
+                }    
             }
             Profiler.EndSample();
         }

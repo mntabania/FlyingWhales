@@ -5639,6 +5639,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 SetDeathLog(_deathLog);
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
+            eventDispatcher.ExecuteCharacterDied(this);
 
             List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {

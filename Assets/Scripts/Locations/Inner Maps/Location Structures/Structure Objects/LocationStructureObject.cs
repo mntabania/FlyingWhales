@@ -786,7 +786,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
             return false;
         }
         InnerTileMap map = centerTile.parentMap;
-        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+       for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
             Vector3Int currCoordinate = localOccupiedCoordinates[i];
 
             Vector3Int gridTileLocation = centerTile.localPlace;

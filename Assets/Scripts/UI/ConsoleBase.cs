@@ -119,13 +119,18 @@ public class ConsoleBase : InfoUIBase {
         worldSettingsText = $"{worldSettingsText}\nCharges: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount.ToString()}";
         worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.threatAmount.ToString()}";
         
+        worldSettingsText = $"{worldSettingsText}\nMonsters:";
+        foreach (var monsterCharge in PlayerManager.Instance.player.monsterCharges) {
+            worldSettingsText = $"{worldSettingsText}\n\t{monsterCharge.Key.ToString()}: {monsterCharge.Value.X.ToString()}/{monsterCharge.Value.Y.ToString()}";
+        }
+        
         worldSettingsText = $"{worldSettingsText}\nPathfinding:";
         if (AstarPath.active.graphs.Length > 0) {
             worldSettingsText = $"{worldSettingsText}\nTotal Nodes: {AstarPath.active.graphs[0].CountNodes().ToString()}";    
         }
         
-        worldSettingsText = $"{worldSettingsText}\nObject Pooling:";
-        worldSettingsText = $"{worldSettingsText}\nLogs in Pool:";
+        worldSettingsText = $"{worldSettingsText}\n\nObject Pooling:";
+        worldSettingsText = $"{worldSettingsText}\n\tLogs in Pool:";
         worldSettingsText = $"{worldSettingsText} {LogPool.GetCurrentLogsInPool().ToString()}";
         
         

@@ -276,19 +276,27 @@ namespace Inner_Maps.Location_Structures {
 
         #region Characters
         public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
+            bool wasAdded = false;
             if (!charactersHere.Contains(character)) {
+                wasAdded = true;
                 charactersHere.Add(character);
                 //location.AddCharacterToLocation(character);
                 AddPOI(character, tile);
             }
             character.SetCurrentStructureLocation(this);
+            if (wasAdded) {
+                AfterCharacterAddedToLocation(character);
+            }
         }
         public void RemoveCharacterAtLocation(Character character) {
             if (charactersHere.Remove(character)) {
                 character.SetCurrentStructureLocation(null);
                 RemovePOI(character);
+                AfterCharacterRemovedFromLocation(character);
             }
         }
+        protected virtual void AfterCharacterAddedToLocation(Character p_character) {}
+        protected virtual void AfterCharacterRemovedFromLocation(Character p_character) {}
         public int GetNumberOfSummonsHere() {
             int count = 0;
             for (int i = 0; i < charactersHere.Count; i++) {

@@ -14,6 +14,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 
+        #region Overrides
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {
                 character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
@@ -31,6 +32,11 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        protected override void DestroyStructure() {
+            StopDrainingCharactersHere();
+            base.DestroyStructure();
+        }
+        #endregion
         
         #region Listeners
         protected override void SubscribeListeners() {
@@ -69,5 +75,12 @@ namespace Inner_Maps.Location_Structures {
             return new PrisonCell(tilesInRoom);
         }
         #endregion
+        
+        private void StopDrainingCharactersHere() {
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                character.traitContainer.RemoveTrait(character, "Being Drained");
+            }
+        }
     }
 }

@@ -123,6 +123,7 @@ public class Minion {
             // character.traitContainer.AddTrait(character, dead, gainedFromDoing: deathFromAction);
             // PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, character);
+            character.eventDispatcher.ExecuteCharacterDied(character);
 
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
