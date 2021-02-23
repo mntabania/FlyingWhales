@@ -117,7 +117,7 @@ namespace Traits {
         }
         private bool CreateSleepJob(Character owner) {
             if (owner.homeStructure != null) {
-                if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is BedClinic bed) {
+                if (owner.gridTileLocation.tileObjectComponent.objHere != null && owner.gridTileLocation.tileObjectComponent.objHere is BedClinic bed) {
                     CreateActualSleepJob(owner, bed);
                     return true;
                 }

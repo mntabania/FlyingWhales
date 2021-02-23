@@ -95,7 +95,7 @@ namespace Inner_Maps {
                     return;
                 }
                 LocationGridTile hoveredTile = GetTileFromMousePosition();
-                if (hoveredTile != null && hoveredTile.objHere == null) {
+                if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
                     ShowTileData(hoveredTile);
                 }
             }
@@ -364,12 +364,12 @@ namespace Inner_Maps {
                 return;
             }
             if (UIManager.Instance.poiTestingUI.gameObject.activeSelf && 
-                (UIManager.Instance.poiTestingUI.gridTile == tile || UIManager.Instance.poiTestingUI.poi == tile.objHere 
+                (UIManager.Instance.poiTestingUI.gridTile == tile || UIManager.Instance.poiTestingUI.poi == tile.tileObjectComponent.objHere 
                 || UIManager.Instance.poiTestingUI.poi == character)) {
                 return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
             //else if (UIManager.Instance.minionCommandsUI.gameObject.activeSelf && 
-            //           (UIManager.Instance.minionCommandsUI.targetPOI == tile.objHere 
+            //           (UIManager.Instance.minionCommandsUI.targetPOI == tile.tileObjectComponent.objHere 
             //            || UIManager.Instance.minionCommandsUI.targetPOI == character)) {
             //    return; //do not show tooltip if right click menu is currently targeting the hovered object
             //}
@@ -394,14 +394,14 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
             summary = $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
             // summary = $"{summary}\nTile Traits: ";
-            // if (tile.genericTileObject != null && tile.traits.Count > 0) {
+            // if (tile.tileObjectComponent.genericTileObject != null && tile.traits.Count > 0) {
             //     summary = $"{summary}\n";
             //     summary = tile.traits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
             // } else {
             //     summary = $"{summary}None";
             // }
             // summary = $"{summary}\nTile Statuses: ";
-            // if (tile.genericTileObject != null && tile.statuses.Count > 0) {
+            // if (tile.tileObjectComponent.genericTileObject != null && tile.statuses.Count > 0) {
             //     summary = $"{summary}\n";
             //     summary = tile.statuses.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
             // } else {
@@ -409,9 +409,9 @@ namespace Inner_Maps {
             // }
 
             summary = $"{summary}\nWalls: ";
-            if (tile.walls != null && tile.walls.Count > 0) {
-                for (int i = 0; i < tile.walls.Count; i++) {
-                    ThinWall thinWall = tile.walls[i];
+            if (tile.tileObjectComponent.walls != null && tile.tileObjectComponent.walls.Count > 0) {
+                for (int i = 0; i < tile.tileObjectComponent.walls.Count; i++) {
+                    ThinWall thinWall = tile.tileObjectComponent.walls[i];
                     summary = $"{summary}\nWall {i.ToString()} - {thinWall.traitContainer.allTraitsAndStatuses.Keys.ToList().ComafyList()}";
                 }
             } else {
@@ -419,7 +419,7 @@ namespace Inner_Maps {
             }
             
             
-            IPointOfInterest poi = tile.objHere; //?? tile.genericTileObject
+            IPointOfInterest poi = tile.tileObjectComponent.objHere; //?? tile.tileObjectComponent.genericTileObject
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
                 summary = $"{summary}\nPUID: {poi.persistentID}";
@@ -468,9 +468,10 @@ namespace Inner_Maps {
             UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);
 #else
          //For build only
-        if (character == null && tile.objHere != null) {
-            string tooltip =  tile.objHere.name;
-            if (tile.objHere is TileObject tileObject && tileObject.users != null && tileObject.users.Length > 0) {
+        TileObject tileObject = tile.tileObjectComponent.objHere;
+        if (character == null && tileObject != null) {
+            string tooltip = tileObject.name;
+            if (tileObject.users != null && tileObject.users.Length > 0) {
                 tooltip += " used by:";
                 for (int i = 0; i < tileObject.users.Length; i++) {
                     Character user = tileObject.users[i];
@@ -849,8 +850,8 @@ namespace Inner_Maps {
 	    }
 	    private void SetAsWall(LocationGridTile tile, LocationStructure structure) {
             // if (GameManager.Instance.gameHasStarted) {
-                if (tile.objHere != null) {
-                    tile.structure.RemovePOI(tile.objHere);
+                if (tile.tileObjectComponent.objHere != null) {
+                    tile.structure.RemovePOI(tile.tileObjectComponent.objHere);
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
             // }
@@ -861,8 +862,8 @@ namespace Inner_Maps {
 	    }
 	    private void SetAsGround(LocationGridTile tile, LocationStructure structure) {
             // if (GameManager.Instance.gameHasStarted) {
-                if (tile.objHere != null) {
-                    tile.structure.RemovePOI(tile.objHere);
+                if (tile.tileObjectComponent.objHere != null) {
+                    tile.structure.RemovePOI(tile.tileObjectComponent.objHere);
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
             // }

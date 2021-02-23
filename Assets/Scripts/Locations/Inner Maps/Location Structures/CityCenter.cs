@@ -46,7 +46,7 @@ namespace Inner_Maps.Location_Structures {
         private void OnDayStarted() {
             if (GameUtilities.RollChance(50)) {
                 Area hex = occupiedArea;
-                LocationGridTile tile = hex.gridTileComponent.GetRandomTileThatMeetCriteria(t => t.objHere == null && t.structure != this && t.IsPassable());
+                LocationGridTile tile = hex.gridTileComponent.GetRandomTileThatMeetCriteria(t => t.tileObjectComponent.objHere == null && t.structure != this && t.IsPassable());
                 if(tile != null) {
                     int numberOfHerbPlants = hex.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.HERB_PLANT);
                     if(numberOfHerbPlants < 4) {

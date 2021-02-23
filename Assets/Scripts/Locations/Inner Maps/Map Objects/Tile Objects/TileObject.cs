@@ -228,7 +228,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual void OnCancelActionTowardsObject(ActualGoapNode action) { }
     /// <summary>
     /// When this tile object is placed on a tile, should it be set as that tile's object.
-    /// <see cref="LocationGridTile.objHere"/>
+    /// <see cref="LocationGridTile.tileObjectComponent.objHere"/>
     /// </summary>
     /// <returns></returns>
     public virtual bool OccupiesTile() { return true;}
@@ -287,7 +287,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         gridTileLocation.area.OnPlacePOIInHex(this);
         SubscribeListeners();
-        if (gridTileLocation.genericTileObject.traitContainer.HasTrait("Poisoned")) {
+        if (gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Poisoned")) {
             //add poisoned to floor
             //Reference: https://trello.com/c/mzPmP1Qv/1933-if-you-drop-food-on-a-poisoned-tile-it-should-also-get-poisoned
             traitContainer.AddTrait(this, "Poisoned");
@@ -627,11 +627,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         DestroyMapVisualGameObject();
         tileLocation.structure.AddPOI(this, tileLocation);
         if (!traitContainer.HasTrait("Burning")) {
-            if (tileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
+            if (tileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Burning")) {
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
             }
             //Commented out because this should not happen since you can only unseize a tile object on a tile that has no object
-            //else if (tileLocation.objHere != null && tileLocation.objHere.traitContainer.HasTrait("Burning")) {
+            //else if (tileLocation.tileObjectComponent.objHere != null && tileLocation.tileObjectComponent.objHere.traitContainer.HasTrait("Burning")) {
             //    traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
             //}
         }

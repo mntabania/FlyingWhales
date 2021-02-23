@@ -662,7 +662,7 @@ public class CharacterManager : BaseMonoBehaviour {
         if(targetTile == null) {
             targetTile = poi.gridTileLocation;
         }
-        if (targetTile != null && targetTile.objHere != null) {
+        if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
             targetTile = targetTile.GetFirstNearestTileFromThisWithNoObject();
         }
         if(targetTile != null) {

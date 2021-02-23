@@ -148,7 +148,7 @@ public class SeizeComponent {
             return false;
         }
         if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            if (tileLocation.objHere != null) {
+            if (tileLocation.tileObjectComponent.objHere != null) {
                 return false;
             }
         }

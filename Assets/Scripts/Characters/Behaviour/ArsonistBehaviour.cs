@@ -94,8 +94,9 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
             arson.gridTileLocation.GetTilesInRadius(2, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < area.Count; i++) {
             LocationGridTile tile = area[i];
-            if (tile.objHere is TileObject tileObject && 
-                tileObject.traitContainer.HasTrait("Burning", "Fireproof") == false && 
+            TileObject tileObject = tile.tileObjectComponent.objHere;
+            if (tileObject != null &&
+                tileObject.traitContainer.HasTrait("Burning", "Fireproof") == false &&
                 tileObject.traitContainer.HasTrait("Flammable")) {
                 if (choices == null) {
                     choices = new List<TileObject>();

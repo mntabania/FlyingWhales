@@ -14,14 +14,14 @@ public class SnareTrapData : SkillData {
         targetTypes = new[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        targetTile.SetHasSnareTrap(true);
+        targetTile.tileObjectComponent.SetHasSnareTrap(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            return !targetTile.hasSnareTrap;
+            return !targetTile.tileObjectComponent.hasSnareTrap;
         }
         return false;
     }

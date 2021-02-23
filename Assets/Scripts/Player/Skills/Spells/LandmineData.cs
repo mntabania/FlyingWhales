@@ -15,14 +15,14 @@ public class LandmineData : SkillData {
         targetTypes = new[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        targetTile.SetHasLandmine(true);
+        targetTile.tileObjectComponent.SetHasLandmine(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            return !targetTile.hasLandmine;
+            return !targetTile.tileObjectComponent.hasLandmine;
         }
         return canPerform;
     }
