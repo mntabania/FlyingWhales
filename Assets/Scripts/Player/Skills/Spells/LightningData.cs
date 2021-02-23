@@ -27,7 +27,7 @@ public class LightningData : SkillData {
         );
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
         targetTile.PerformActionOnTraitables(LightningDamage);
-        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Lightning Remnant");
+        targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Lightning Remnant");
 
         List<LocationGridTile> crossNeighbours = targetTile.GetCrossNeighbours();
         for (int i = 0; i < crossNeighbours.Count; i++) {

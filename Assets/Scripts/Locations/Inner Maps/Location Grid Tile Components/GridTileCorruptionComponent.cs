@@ -59,20 +59,19 @@ namespace Inner_Maps {
             if (!isCorrupted) {
                 owner.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
                 owner.CreateSeamlessEdgesForSelfAndNeighbours();
-                if (owner.objHere != null) {
-                    if (owner.objHere is TreeObject tree) {
+                TileObject tileObject = owner.tileObjectComponent.objHere;
+                if (tileObject != null) {
+                    if (tileObject is TreeObject tree) {
                         (tree.mapObjectVisual as TileObjectGameObject).UpdateTileObjectVisual(tree);
-                    } else if (owner.objHere is BlockWall blockWall) {
+                    } else if (tileObject is BlockWall blockWall) {
                         blockWall.SetWallType(WALL_TYPE.Demon_Stone);
                         blockWall.UpdateVisual(owner);
                     } else {
-                        if (owner.objHere is TileObject tileObject) {
-                            if (owner.objHere is Tombstone tombstone) {
-                                tombstone.SetRespawnCorpseOnDestroy(false);
-                            }
-                            if (!tileObject.tileObjectType.IsTileObjectImportant() && !tileObject.traitContainer.HasTrait("Indestructible")) {
-                                owner.structure.RemovePOI(owner.objHere);
-                            }
+                        if (tileObject is Tombstone tombstone) {
+                            tombstone.SetRespawnCorpseOnDestroy(false);
+                        }
+                        if (!tileObject.tileObjectType.IsTileObjectImportant() && !tileObject.traitContainer.HasTrait("Indestructible")) {
+                            owner.structure.RemovePOI(tileObject);
                         }
                         //structure.RemovePOI(objHere);
                     }
@@ -85,13 +84,13 @@ namespace Inner_Maps {
             if (isCorrupted) {
                 owner.RevertTileToOriginalPerlin();
                 owner.CreateSeamlessEdgesForSelfAndNeighbours();
-                //if (owner.objHere != null) {
-                //    if (owner.objHere is TileObject tileObject) {
+                //if (owner.tileObjectComponent.objHere != null) {
+                //    if (owner.tileObjectComponent.objHere is TileObject tileObject) {
                 //        if (!tileObject.traitContainer.HasTrait("Indestructible")) {
-                //            owner.structure.RemovePOI(owner.objHere);
+                //            owner.structure.RemovePOI(owner.tileObjectComponent.objHere);
                 //        }
                 //    } else {
-                //        owner.structure.RemovePOI(owner.objHere);
+                //        owner.structure.RemovePOI(owner.tileObjectComponent.objHere);
                 //    }
                 //}
                 if (!IsTileAdjacentToACorruption()) {
@@ -171,15 +170,15 @@ namespace Inner_Maps {
                     ObjectPoolManager.Instance.DestroyObject(_buildSmokeEffect);
                     _buildSmokeEffect = null;
                 }
-                owner.objHere.AdjustHP(-owner.objHere.currentHP, ELEMENTAL_TYPE.Normal, true);
+                owner.tileObjectComponent.objHere.AdjustHP(-owner.tileObjectComponent.objHere.currentHP, ELEMENTAL_TYPE.Normal, true);
                 owner.mouseEventsComponent.OnHoverExit();
             }
         }
         public bool CanBuildDemonicWall() {
-            return isCorrupted && !wallIsBeingBuilt && !wallIsBeingDestroyed && owner.objHere == null && owner.tileState != LocationGridTile.Tile_State.Occupied;
+            return isCorrupted && !wallIsBeingBuilt && !wallIsBeingDestroyed && owner.tileObjectComponent.objHere == null && owner.tileState != LocationGridTile.Tile_State.Occupied;
         }
         public bool CanDestroyDemonicWall() {
-            return isCorrupted && !wallIsBeingDestroyed && !wallIsBeingBuilt && owner.objHere is BlockWall wall && wall.wallType == WALL_TYPE.Demon_Stone;
+            return isCorrupted && !wallIsBeingDestroyed && !wallIsBeingBuilt && owner.tileObjectComponent.objHere is BlockWall wall && wall.wallType == WALL_TYPE.Demon_Stone;
         }
         #endregion
 

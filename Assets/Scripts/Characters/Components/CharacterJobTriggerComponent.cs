@@ -1081,9 +1081,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     //        if(chosenTile == null) {
     //            return TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE);
     //        }
-    //        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.GO_TO_TILE], owner, chosenTile.genericTileObject, null, 0);
+    //        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.GO_TO_TILE], owner, chosenTile.tileObjectComponent.genericTileObject, null, 0);
     //        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_HOME_URGENT, INTERACTION_TYPE.GO_TO_TILE, chosenTile.genericTileObject, owner);
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_HOME_URGENT, INTERACTION_TYPE.GO_TO_TILE, chosenTile.tileObjectComponent.genericTileObject, owner);
     //        goapPlan.SetDoNotRecalculate(true);
     //        job.SetCannotBePushedBack(true);
     //        job.SetAssignedPlan(goapPlan);
@@ -1144,9 +1144,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (chosenTile == null) {
                 return TriggerRoamAroundTile(out producedJob);
             }
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.GO_TO_TILE], owner, chosenTile.genericTileObject, null, 0);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.GO_TO_TILE], owner, chosenTile.tileObjectComponent.genericTileObject, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.GO_TO_TILE, chosenTile.genericTileObject, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.GO_TO_TILE, chosenTile.tileObjectComponent.genericTileObject, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -1997,7 +1997,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool CreateGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
 	    if(!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
 		    producedJob = job;
 		    return true;
@@ -2007,7 +2007,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool CreateGoToJob(LocationGridTile tile) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             return owner.jobQueue.AddJobInQueue(job);
         }
@@ -2015,7 +2015,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool CreatePartyGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             producedJob = job;
             return true;
@@ -2025,7 +2025,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool CreatePartyGoToJob(LocationGridTile tile) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             return owner.jobQueue.AddJobInQueue(job);
         }
@@ -2033,7 +2033,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool CreateGoToSpecificTileJob(LocationGridTile tile, out JobQueueItem producedJob) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_SPECIFIC_TILE, tile.genericTileObject, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_SPECIFIC_TILE, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             producedJob = job;
             return true;
@@ -2043,7 +2043,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool CreatePartyGoToSpecificTileJob(LocationGridTile tile, out JobQueueItem producedJob) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_SPECIFIC_TILE, tile.genericTileObject, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_SPECIFIC_TILE, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             producedJob = job;
             return true;
@@ -2053,7 +2053,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool CreateGoToWaitingJob(LocationGridTile tile, out JobQueueItem producedJob) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO_WAITING)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO_WAITING, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO_WAITING, INTERACTION_TYPE.GO_TO_TILE, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             job.SetDoNotRecalculate(true);
             producedJob = job;
@@ -2064,7 +2064,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool CreateFleeCrimeJob(LocationGridTile tile) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.FLEE_CRIME)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FLEE_CRIME, INTERACTION_TYPE.FLEE_CRIME, tile.genericTileObject, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FLEE_CRIME, INTERACTION_TYPE.FLEE_CRIME, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             return owner.jobQueue.AddJobInQueue(job);
         }
@@ -2953,10 +2953,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Place Blueprint
     public bool TriggerPlaceBlueprint(string structurePrefabName, int connectorIndex, StructureSetting structureSetting, LocationGridTile centerTile, LocationGridTile connectorTile, out JobQueueItem producedJob) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.PLACE_BLUEPRINT)) {
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PLACE_BLUEPRINT], owner, centerTile.genericTileObject, 
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PLACE_BLUEPRINT], owner, centerTile.tileObjectComponent.genericTileObject, 
 			    new OtherData[]{ new StringOtherData(structurePrefabName), new LocationGridTileOtherData(connectorTile), new StructureSettingOtherData(structureSetting), }, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, centerTile.genericTileObject);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.PLACE_BLUEPRINT, centerTile.genericTileObject, owner);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, centerTile.tileObjectComponent.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.PLACE_BLUEPRINT, centerTile.tileObjectComponent.genericTileObject, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetAssignedPlan(goapPlan);
 		    producedJob = job;
@@ -2971,9 +2971,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerBuildVampireCastle(LocationGridTile targetTile, out JobQueueItem producedJob, string structurePrefabName = "") {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE)) {
 		    var otherData = new OtherData[] {new StringOtherData(structurePrefabName)};
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.genericTileObject, otherData, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.genericTileObject, owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.tileObjectComponent.genericTileObject, otherData, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.tileObjectComponent.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.tileObjectComponent.genericTileObject, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetAssignedPlan(goapPlan);
 		    producedJob = job;
@@ -2985,9 +2985,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TriggerBuildVampireCastle(LocationGridTile targetTile, string structurePrefabName = "") {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE)) {
 		    var otherData = new OtherData[] {new StringOtherData(structurePrefabName)};
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.genericTileObject, otherData, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.genericTileObject, owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.tileObjectComponent.genericTileObject, otherData, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.tileObjectComponent.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.tileObjectComponent.genericTileObject, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetAssignedPlan(goapPlan);
 		    owner.jobQueue.AddJobInQueue(job);
@@ -3052,9 +3052,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerFindNewVillage(LocationGridTile targetTile, string structurePrefabName = "") {
         if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !owner.jobQueue.HasJob(JOB_TYPE.FIND_NEW_VILLAGE)) {
             var otherData = new OtherData[] { new StringOtherData(structurePrefabName) };
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_NEW_VILLAGE], owner, targetTile.genericTileObject, otherData, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FIND_NEW_VILLAGE, INTERACTION_TYPE.BUILD_NEW_VILLAGE, targetTile.genericTileObject, owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_NEW_VILLAGE], owner, targetTile.tileObjectComponent.genericTileObject, otherData, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.tileObjectComponent.genericTileObject);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FIND_NEW_VILLAGE, INTERACTION_TYPE.BUILD_NEW_VILLAGE, targetTile.tileObjectComponent.genericTileObject, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetAssignedPlan(goapPlan);
             return owner.jobQueue.AddJobInQueue(job);
@@ -3064,9 +3064,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerFindNewVillage(LocationGridTile targetTile, out JobQueueItem producedJob, string structurePrefabName = "") {
 	    if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !owner.jobQueue.HasJob(JOB_TYPE.FIND_NEW_VILLAGE)) {
 		    var otherData = new OtherData[] { new StringOtherData(structurePrefabName) };
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_NEW_VILLAGE], owner, targetTile.genericTileObject, otherData, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FIND_NEW_VILLAGE, INTERACTION_TYPE.BUILD_NEW_VILLAGE, targetTile.genericTileObject, owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_NEW_VILLAGE], owner, targetTile.tileObjectComponent.genericTileObject, otherData, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.tileObjectComponent.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FIND_NEW_VILLAGE, INTERACTION_TYPE.BUILD_NEW_VILLAGE, targetTile.tileObjectComponent.genericTileObject, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetAssignedPlan(goapPlan);
 		    producedJob = job;

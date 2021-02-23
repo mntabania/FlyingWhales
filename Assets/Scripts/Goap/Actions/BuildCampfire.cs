@@ -54,31 +54,31 @@ public class BuildCampfire : GoapAction {
         Character actor = goapNode.actor;
         LocationGridTile targetTile = actor.gridTileLocation;
 
-        if (targetTile != null && targetTile.objHere != null) {
-            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.area == targetTile.area);
+        if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
+            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.tileObjectComponent.objHere == null && x.IsPassable() && x.area == targetTile.area);
         }
-        if (targetTile != null && targetTile.objHere != null) {
-            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());
+        if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
+            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.tileObjectComponent.objHere == null && x.IsPassable());
         }
-        if (targetTile != null && targetTile.objHere != null) {
-            targetTile.structure.RemovePOI(targetTile.objHere);
+        if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
+            targetTile.structure.RemovePOI(targetTile.tileObjectComponent.objHere);
         }
         Campfire campfire = InnerMapManager.Instance.CreateNewTileObject<Campfire>(TILE_OBJECT_TYPE.CAMPFIRE);
         targetTile.structure.AddPOI(campfire, targetTile);
         goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
 
         if (targetTile != null) {
-            LocationGridTile foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.area == targetTile.area);
+            LocationGridTile foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.tileObjectComponent.objHere == null && x.IsPassable() && x.area == targetTile.area);
 
             if(foodPileTile == null) {
-                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());
+                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.tileObjectComponent.objHere == null && x.IsPassable());
             }
             if (foodPileTile == null) {
                 foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.IsPassable());
             }
             if(foodPileTile != null) {
-                if(foodPileTile.objHere != null) {
-                    foodPileTile.structure.RemovePOI(foodPileTile.objHere);
+                if(foodPileTile.tileObjectComponent.objHere != null) {
+                    foodPileTile.structure.RemovePOI(foodPileTile.tileObjectComponent.objHere);
                 }
                 int food = 12;
                 if (actor.partyComponent.isMemberThatJoinedQuest) {

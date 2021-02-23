@@ -100,7 +100,7 @@ public class DragonBehaviour : BaseMonsterBehaviour {
                                         log += $"\n-No target character, will attack area";
                                         LocationStructure randomStructure = targetSettlement.GetRandomStructure();
                                         LocationGridTile randomTile = randomStructure.GetRandomTile();
-                                        character.combatComponent.Fight(randomTile.genericTileObject, CombatManager.Hostility);
+                                        character.combatComponent.Fight(randomTile.tileObjectComponent.genericTileObject, CombatManager.Hostility);
                                         return true;
                                     }
                                 } else {

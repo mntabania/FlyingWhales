@@ -23,10 +23,10 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                 ObjectPoolManager.Instance.ReturnAreaListToPool(areaChoices);
                 LocationGridTile targetTile = chosenArea.gridTileComponent.GetRandomUnoccupiedNoFreezingTrapNotNextToSettlementTile();
                 //List<LocationGridTile> locationGridTileChoices = chosenArea.gridTileComponent.gridTiles.Where(x => 
-                //        x.hasFreezingTrap == false && x.isOccupied == false && x.IsNextToSettlement() == false).ToList();
+                //        x.tileObjectComponent.hasFreezingTrap == false && x.isOccupied == false && x.IsNextToSettlement() == false).ToList();
                 if (targetTile != null) {
                     //LocationGridTile targetTile = CollectionUtilities.GetRandomElement(locationGridTileChoices);
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, INTERACTION_TYPE.PLACE_FREEZING_TRAP, targetTile.genericTileObject, character);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, INTERACTION_TYPE.PLACE_FREEZING_TRAP, targetTile.tileObjectComponent.genericTileObject, character);
                     producedJob = job;
                     log += $"\nCreated job to place trap at {targetTile}.";
                     Profiler.EndSample();

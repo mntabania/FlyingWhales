@@ -125,10 +125,10 @@ public class RepairStructure : GoapAction {
         LocationStructure structure = goapNode.poiTarget.gridTileLocation.structure;
         for (int i = 0; i < structure.tiles.Count; i++) {
             LocationGridTile tile = structure.tiles.ElementAt(i);
-            tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
-            tile.genericTileObject.traitContainer.RemoveTrait(tile.genericTileObject, "Burnt");
-            for (int j = 0; j < tile.walls.Count; j++) {
-                ThinWall structureWall = tile.walls[j];
+            tile.tileObjectComponent.genericTileObject.AdjustHP(tile.tileObjectComponent.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
+            tile.tileObjectComponent.genericTileObject.traitContainer.RemoveTrait(tile.tileObjectComponent.genericTileObject, "Burnt");
+            for (int j = 0; j < tile.tileObjectComponent.walls.Count; j++) {
+                ThinWall structureWall = tile.tileObjectComponent.walls[j];
                 structureWall.traitContainer.RemoveTrait(structureWall, "Burnt");
                 structureWall.AdjustHP(structureWall.maxHP, ELEMENTAL_TYPE.Normal);
             }

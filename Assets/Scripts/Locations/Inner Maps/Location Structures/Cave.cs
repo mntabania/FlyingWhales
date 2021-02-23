@@ -89,14 +89,14 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void OnTileAddedToStructure(LocationGridTile tile) {
             base.OnTileAddedToStructure(tile);
-            tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.MINE);
+            tile.tileObjectComponent.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.MINE);
             //if (!caveAreas.Contains(tile.area)) {
             //    caveAreas.Add(tile.area);
             //}
         }
         protected override void OnTileRemovedFromStructure(LocationGridTile tile) {
             base.OnTileRemovedFromStructure(tile);
-            tile.genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.MINE);
+            tile.tileObjectComponent.genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.MINE);
         }
         public override void CenterOnStructure() {
             if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != region.innerMap) {

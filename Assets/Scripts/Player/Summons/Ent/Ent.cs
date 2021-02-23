@@ -42,7 +42,7 @@ public abstract class Ent : Summon {
     protected override void AfterDeath(LocationGridTile deathTileLocation) {
         base.AfterDeath(deathTileLocation);
         LocationGridTile placeForWoodPile = deathTileLocation;
-        if (deathTileLocation.objHere != null) {
+        if (deathTileLocation.tileObjectComponent.objHere != null) {
             placeForWoodPile = deathTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
         int wood = InnerMapManager.Big_Tree_Yield;

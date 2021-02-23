@@ -17,10 +17,10 @@ public class TerrifyingHowlData : SkillData {
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: false);
         //create generic tile object and destroy after 3 ticks.
         
-        BaseMapObjectVisual visual = targetTile.genericTileObject.GetOrCreateMapVisual();
+        BaseMapObjectVisual visual = targetTile.tileObjectComponent.genericTileObject.GetOrCreateMapVisual();
         visual.visionTrigger.VoteToMakeVisibleToCharacters();
         SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(3),
-            () => targetTile.genericTileObject.TryDestroyMapVisual(), this);
+            () => targetTile.tileObjectComponent.genericTileObject.TryDestroyMapVisual(), this);
         
         // for (int i = 0; i < tiles.Count; i++) {
         //     LocationGridTile tile = tiles[i];
@@ -32,8 +32,8 @@ public class TerrifyingHowlData : SkillData {
     }
     private void SpookCharacter(ITraitable traitable, LocationGridTile targetTile) {
         if (traitable is Character character) {
-            character.marker.AddPOIAsInVisionRange(targetTile.genericTileObject);
-            character.combatComponent.Flight(targetTile.genericTileObject, "heard a terrifying howl");
+            character.marker.AddPOIAsInVisionRange(targetTile.tileObjectComponent.genericTileObject);
+            character.combatComponent.Flight(targetTile.tileObjectComponent.genericTileObject, "heard a terrifying howl");
         }
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {

@@ -708,8 +708,8 @@ public class BehaviourComponent : CharacterComponent {
         return false;
     }
     public bool IsNestBlocked(out IPointOfInterest blocker) {
-        if (nest.objHere != null) {
-            blocker = nest.objHere;
+        if (nest.tileObjectComponent.objHere != null) {
+            blocker = nest.tileObjectComponent.objHere;
             return true;
         }
         blocker = null;

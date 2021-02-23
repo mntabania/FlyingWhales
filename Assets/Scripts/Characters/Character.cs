@@ -469,8 +469,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        Messenger.AddListener<IPointOfInterest>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
-        Messenger.AddListener<IPointOfInterest, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
+        Messenger.AddListener<TileObject>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
+        Messenger.AddListener<TileObject, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<IPointOfInterest, int>(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
@@ -508,8 +508,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
-        Messenger.RemoveListener<IPointOfInterest, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
+        Messenger.RemoveListener<TileObject>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
+        Messenger.RemoveListener<TileObject, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.RemoveListener<IPointOfInterest, int>(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.RemoveListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
@@ -3657,7 +3657,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (targetTile == null) {
                 return true; //if there is no tile to drop the item, just discard it
             }
-            if (targetTile.objHere != null) {
+            if (targetTile.tileObjectComponent.objHere != null) {
                 targetTile = targetTile.GetFirstNearestTileFromThisWithNoObject(true);
             }
             if (targetTile == null) {
@@ -4711,9 +4711,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         if (isNormalCharacter && !traitContainer.HasTrait("Burning")) {
-            if (tileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
+            if (tileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Burning")) {
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
-            } else if (tileLocation.objHere != null && tileLocation.objHere.traitContainer.HasTrait("Burning")) {
+            } else if (tileLocation.tileObjectComponent.objHere != null && tileLocation.tileObjectComponent.objHere.traitContainer.HasTrait("Burning")) {
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
             }
         }
