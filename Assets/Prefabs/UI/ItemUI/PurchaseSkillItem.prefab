@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 2391451670131388100}
   - component: {fileID: 7694491665042677196}
   m_Layer: 5
-  m_Name: PurchaseItemSkill
+  m_Name: PurchaseSkillItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -352,6 +352,12 @@ MonoBehaviour:
   txtLevel: {fileID: 158496754694522400}
   txtCost: {fileID: 6110011905499902301}
   imgIcon: {fileID: 1719895244631413701}
+  affliction: {fileID: 21300000, guid: 68d43a4826fefdf47b39441ee51a5686, type: 3}
+  spell: {fileID: 21300000, guid: 1f3f2f7afbe6b2c4dabd22ed1c065e6a, type: 3}
+  playerAction: {fileID: 21300000, guid: ff51b89a370e711428ef7ecfb2d07439, type: 3}
+  minion: {fileID: 21300000, guid: bbac829faec6b7d45836f5a188753091, type: 3}
+  passive: {fileID: 21300000, guid: 164305e52750d9741b15e01be34432be, type: 3}
+  structure: {fileID: 21300000, guid: c796fec1a02b4b34f9a32dea8af032bc, type: 3}
 --- !u!1 &2433428984509689632
 GameObject:
   m_ObjectHideFlags: 0
@@ -578,8 +584,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -789,7 +795,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -308.1, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 110, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4369968355127784177
 CanvasRenderer:

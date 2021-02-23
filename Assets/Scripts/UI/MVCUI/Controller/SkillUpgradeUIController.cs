@@ -187,7 +187,6 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	}
 
 	void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
-		Debug.Log("CLICKED");
 		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
 		skillData.LevelUp();

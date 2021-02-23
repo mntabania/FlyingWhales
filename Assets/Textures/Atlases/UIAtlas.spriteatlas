@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8952283
+    totalSpriteSurfaceArea: 9012283
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -88,6 +88,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 928068b129249a04f9badda171d03cfc, type: 3}
   - {fileID: 21300000, guid: 4be17fb16f3e2ae409dbf5c91d5a6b9b, type: 3}
   - {fileID: 21300000, guid: 3e32c1c1f8e1f4e4f9b73c1c29fc5b0b, type: 3}
+  - {fileID: 21300000, guid: c796fec1a02b4b34f9a32dea8af032bc, type: 3}
   - {fileID: 21300000, guid: f7307ed1d30887f4c9ee0318e4f12240, type: 3}
   - {fileID: 21300000, guid: fed4f602cdd25ce45ac3c95e68292179, type: 3}
   - {fileID: 21300000, guid: 4bdc5012594c6c2428feb60b9110bb6e, type: 3}
@@ -176,6 +177,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a30fe1d5e50fa5649a3c74b20fa6b3b0, type: 3}
   - {fileID: 21300000, guid: a604b4d5370241c46b74c71e0a1fb94d, type: 3}
   - {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
+  - {fileID: 21300000, guid: 164305e52750d9741b15e01be34432be, type: 3}
   - {fileID: 21300000, guid: 49b2e0f597de5a14d9e7507417c28aa0, type: 3}
   - {fileID: 21300000, guid: 1f6372f5791a668408ddf2b038fe81fc, type: 3}
   - {fileID: 21300000, guid: c00663f52c96c5542a7c80686c6efd58, type: 3}
@@ -231,6 +233,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 322efa28f960f9248adcb0def018a2fc, type: 3}
   - {fileID: 21300000, guid: f5935138697722d4587b4039ebd57c51, type: 3}
   - {fileID: 21300000, guid: aae9733859b32cc4eac38f0ae63e6bf2, type: 3}
+  - {fileID: 21300000, guid: 68d43a4826fefdf47b39441ee51a5686, type: 3}
   - {fileID: 21300000, guid: f56d96586b6f4de4684742593e1e1275, type: 3}
   - {fileID: 21300000, guid: 8aa19a68d3ea1d54e8ab581e3d5dd5ff, type: 3}
   - {fileID: 21300000, guid: 1f589b68222dcea4fa1e1d129cd7cbf5, type: 3}
@@ -295,8 +298,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 961e805ade57dfc409271e027df24371, type: 3}
   - {fileID: 21300000, guid: 56f8e76a2999fbc48a7232f935a520a0, type: 3}
   - {fileID: 21300000, guid: 33d2996ad8e115940aa9bc9ebfffa133, type: 3}
+  - {fileID: 21300000, guid: 1f3f2f7afbe6b2c4dabd22ed1c065e6a, type: 3}
   - {fileID: 21300000, guid: f67b178a31856b140aeca240e4ea35af, type: 3}
   - {fileID: 21300000, guid: 0896459a72f34e744871ced404221e73, type: 3}
+  - {fileID: 21300000, guid: ff51b89a370e711428ef7ecfb2d07439, type: 3}
   - {fileID: 21300000, guid: 25cb10aad517e434e99509d6aba74989, type: 3}
   - {fileID: 21300000, guid: 2ae9a0aae3ce1f6459679ea847c46218, type: 3}
   - {fileID: 21300000, guid: c9cbccaaa1257d34aa77e18c8ea8ffc2, type: 3}
@@ -405,6 +410,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8919fc7f513bc5a46b1f96846c3aeefc, type: 3}
   - {fileID: 21300000, guid: 78d7128fb67a18046823b7e2cf9a08fa, type: 3}
   - {fileID: 21300000, guid: 218e819f2d1dcb54097f2624ab4ffccc, type: 3}
+  - {fileID: 21300000, guid: bbac829faec6b7d45836f5a188753091, type: 3}
   - {fileID: 21300000, guid: eaeda79f85936bf4380b4d1f63ca658e, type: 3}
   - {fileID: 21300000, guid: 2764e6af55896cd47b3df12d138bb2cf, type: 3}
   - {fileID: 21300000, guid: 26ca39cf2c4aefc45882e0028f698aa1, type: 3}
@@ -457,6 +463,7 @@ SpriteAtlas:
   - spell_slot_empty
   - spell_list_button_disabled
   - button_base_clicked
+  - ability_icon_structures
   - tutorial_quest_container
   - tutorial_goal_checkbox_complete
   - tab_traits_inactive
@@ -545,6 +552,7 @@ SpriteAtlas:
   - button_base_disabled
   - threat_container
   - 7-Ice
+  - ability_icon_passives
   - scroll_button_left_on
   - BackButton
   - button_close_clicked
@@ -600,6 +608,7 @@ SpriteAtlas:
   - trait_exhausted
   - button_skills_clicked
   - button_unlock_hover
+  - ability_icon_afflictions
   - Enlarged-Border-Gray
   - button_back_disabled
   - text_scroll_thumb
@@ -664,8 +673,10 @@ SpriteAtlas:
   - icon_charges
   - tab_status_active
   - Icon-Puppetmaster-2
+  - ability_icon_spells
   - minion_tab_items_active
   - tab_items_active
+  - ability_icon_actions
   - assign_button_inactive
   - intel_row_disabled
   - button_back_default
@@ -774,6 +785,7 @@ SpriteAtlas:
   - 1x_button_default
   - faction_panel
   - button_psychopathcategory_clicked
+  - ability_icon_minions
   - nameplate_hover
   - scroll_button_right_on
   - 1x_button_disabled
