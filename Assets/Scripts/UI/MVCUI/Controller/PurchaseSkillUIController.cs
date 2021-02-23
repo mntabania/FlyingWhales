@@ -28,7 +28,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	
 	private bool m_firstRun = true;
 	private bool m_isAvailable;
-	
+	private bool m_isDrawn;
+
 	#region mono
 	private void Start() {
 		if (isTestScene) {
@@ -127,6 +128,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 				}
 			}
 		}
+		m_isDrawn = true;
 	}
 
 	//Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
@@ -161,10 +163,12 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 
 	private void DisplayMenu() {
 		m_purchaseSkillUIView.ShowSkills();
-		MakeListForAvailableSkills();
-		SpawnItems();
 		if (m_isAvailable) {
 			StopCoroutine("ProcessAvailability");
+			if (!m_isDrawn) {
+				MakeListForAvailableSkills();
+				SpawnItems();
+			}
 			m_purchaseSkillUIView.EnableRerollButton();
 		} else {
 			StartCoroutine("ProcessAvailability");
@@ -179,6 +183,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		m_purchaseSkillUIView.DisableRerollButton();
 		SpawnItems();
 		m_isAvailable = false;
+		m_isDrawn = false;
 		m_purchaseSkillUIView.HideSkills();
 		StartCoroutine("ProcessAvailability");
 	}
@@ -205,6 +210,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			m_isAvailable = false;
 			StartCoroutine("ProcessAvailability");
 			Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, p_type);
+			m_isDrawn = false;
 		}
 	}
 	#endregion
