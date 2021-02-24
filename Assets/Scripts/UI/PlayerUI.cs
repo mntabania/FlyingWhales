@@ -826,8 +826,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void OnGainSpell(PLAYER_SKILL_TYPE spell) {
         CreateNewSpellItem(spell);
-        HideSpells();
-        ShowSpells();
     }
     private void OnLostSpell(PLAYER_SKILL_TYPE spell) {
         DeleteSpellItem(spell);
