@@ -13,8 +13,8 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
     public PLAYER_ARCHETYPE archetype;
 
-    public List<string> minionIDs;
-    public List<string> summonIDs;
+    //public List<string> minionIDs;
+    //public List<string> summonIDs;
 
     public List<SaveDataActionIntel> actionIntels;
     public List<SaveDataInterruptIntel> interruptIntels;
@@ -27,6 +27,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public SaveDataThreatComponent threatComponent;
     public SaveDataPlayerSkillComponent playerSkillComponent;
     public SaveDataPlagueComponent plagueComponent;
+    public SaveDataPlayerUnderlingsComponent underlingsComponent;
 
     #region Overrides
     public override void Save() {
@@ -40,17 +41,17 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
         archetype = PlayerSkillManager.Instance.selectedArchetype;
 
-        minionIDs = new List<string>();
-        for (int i = 0; i < player.minions.Count; i++) {
-            Minion minion = player.minions[i];
-            minionIDs.Add(minion.character.persistentID);
-        }
+        //minionIDs = new List<string>();
+        //for (int i = 0; i < player.minions.Count; i++) {
+        //    Minion minion = player.minions[i];
+        //    minionIDs.Add(minion.character.persistentID);
+        //}
 
-        summonIDs = new List<string>();
-        for (int i = 0; i < player.summons.Count; i++) {
-            Summon summon = player.summons[i];
-            summonIDs.Add(summon.persistentID);
-        }
+        //summonIDs = new List<string>();
+        //for (int i = 0; i < player.summons.Count; i++) {
+        //    Summon summon = player.summons[i];
+        //    summonIDs.Add(summon.persistentID);
+        //}
 
         actionIntels = new List<SaveDataActionIntel>();
         interruptIntels = new List<SaveDataInterruptIntel>();
@@ -96,6 +97,9 @@ public class SaveDataPlayerGame : SaveData<Player> {
         
         plagueComponent = new SaveDataPlagueComponent();
         plagueComponent.Save(player.plagueComponent);
+
+        underlingsComponent = new SaveDataPlayerUnderlingsComponent();
+        underlingsComponent.Save(player.underlingsComponent);
     }
     public override Player Load() {
         Player player = new Player(this);
@@ -105,8 +109,8 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
     #region Clean Up
     public void CleanUp() {
-        minionIDs.Clear();
-        summonIDs.Clear();
+        //minionIDs.Clear();
+        //summonIDs.Clear();
         actionIntels.Clear();
         interruptIntels.Clear();
         allNotifs.Clear();

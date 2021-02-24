@@ -11,6 +11,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private Character _character;
     private PortraitSettings _portraitSettings;
+    private Sprite _portraitSprite;
 
     public bool ignoreInteractions = false;
 
@@ -61,11 +62,20 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         UpdatePortrait(makePixelPerfect);
         UpdateLeaderIcon();
     }
+    public void GeneratePortrait(SUMMON_TYPE p_monsterType, bool makePixelPerfect = true) {
+        _portraitSprite = CharacterManager.Instance.GetSummonSettings(p_monsterType).summonPortrait;
+        UpdatePortrait(makePixelPerfect);
+        UpdateLeaderIcon();
+    }
 
     private void UpdatePortrait(bool makePixelPerfect) {
         isPixelPerfect = makePixelPerfect;
-
-        if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
+        if (_portraitSprite != null) {
+            //use portrait sprite directly
+            SetWholeImageSprite(_portraitSprite);
+            SetWholeImageState(true);
+            SetFaceObjectStates(false);
+        } else if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
             //use whole image
             SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite(_portraitSettings.wholeImage));
             if (character != null) {
