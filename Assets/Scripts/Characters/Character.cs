@@ -530,12 +530,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Listeners
-    private void OnStopCurrentActionTargetingPOI(IPointOfInterest poi) {
+    private void OnStopCurrentActionTargetingPOI(TileObject poi) {
         if(currentActionNode != null && currentActionNode.poiTarget == poi) {
             StopCurrentActionNode();
         }
     }
-    private void OnStopCurrentActionTargetingPOIExceptActor(IPointOfInterest poi, Character actor) {
+    private void OnStopCurrentActionTargetingPOIExceptActor(TileObject poi, Character actor) {
         if (currentActionNode != null && currentActionNode.poiTarget == poi && this != actor) {
             StopCurrentActionNode();
         }

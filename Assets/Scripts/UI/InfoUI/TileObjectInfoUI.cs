@@ -66,12 +66,18 @@ public class TileObjectInfoUI : InfoUIBase {
     public override void CloseMenu() {
         base.CloseMenu();
         Selector.Instance.Deselect();
-        if(activeTileObject != null && activeTileObject.mapVisual != null) {
-            // activeTileObject.mapVisual.UnlockHoverObject();
-            // activeTileObject.mapVisual.SetHoverObjectState(false);
-            activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
-            if (InnerMapCameraMove.Instance.target == activeTileObject.mapObjectVisual.transform) {
-                InnerMapCameraMove.Instance.CenterCameraOn(null);
+        if(activeTileObject != null) {
+            if (activeTileObject.mapVisual != null) {
+                // activeTileObject.mapVisual.UnlockHoverObject();
+                // activeTileObject.mapVisual.SetHoverObjectState(false);
+                activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
+                if (InnerMapCameraMove.Instance.target == activeTileObject.mapObjectVisual.transform) {
+                    InnerMapCameraMove.Instance.CenterCameraOn(null);
+                }
+            }
+            if (activeTileObject is EyeWard eyeWard) {
+                //Show eye ward highlight of current eye ward
+                eyeWard.HideEyeWardHighlight();
             }
         }
         activeTileObject = null;
@@ -85,8 +91,14 @@ public class TileObjectInfoUI : InfoUIBase {
         // }
         
         activeTileObject = _data as TileObject;
-        if (previousTileObject != null && previousTileObject.mapVisual != null) {
-            previousTileObject.mapVisual.UpdateSortingOrders(previousTileObject);
+        if (previousTileObject != null) {
+            if(previousTileObject.mapVisual != null) {
+                previousTileObject.mapVisual.UpdateSortingOrders(previousTileObject);
+            }
+            if(previousTileObject is EyeWard previousEyeWard) {
+                //Hide eye ward highlight of previous eye ward
+                previousEyeWard.HideEyeWardHighlight();
+            }
         }
         if(activeTileObject.gridTileLocation != null && activeTileObject.mapObjectVisual != null) {
             bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeTileObject.currentRegion);
@@ -98,6 +110,10 @@ public class TileObjectInfoUI : InfoUIBase {
         if (activeTileObject.mapObjectVisual != null) {
             Selector.Instance.Select(activeTileObject, activeTileObject.mapObjectVisual.transform);    
             activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
+        }
+        if (activeTileObject is EyeWard eyeWard) {
+            //Show eye ward highlight of current eye ward
+            eyeWard.ShowEyeWardHighlight();
         }
         UIManager.Instance.HideObjectPicker();
         UpdateTabs();

@@ -5,6 +5,8 @@ using UnityEngine;
 public class EyeWard : TileObject {
     public const int EYE_WARD_VISION_RANGE = 7;
     private List<LocationGridTile> tilesInRadius;
+
+    private EyeWardHighlight _eyeWardHighlight;
     public EyeWard() {
         tilesInRadius = new List<LocationGridTile>();
         Initialize(TILE_OBJECT_TYPE.EYE_WARD, false);
@@ -19,6 +21,7 @@ public class EyeWard : TileObject {
     }
 
     #region Overrides
+
     protected override void OnSetGridTileLocation() {
         base.OnSetGridTileLocation();
         if (gridTileLocation != null && previousTile != gridTileLocation) {
@@ -52,6 +55,13 @@ public class EyeWard : TileObject {
     #endregion
 
     #region Utilities
+    public override void OnDestroyPOI() {
+        base.OnDestroyPOI();
+        if(_eyeWardHighlight != null) {
+            ObjectPoolManager.Instance.DestroyObject(_eyeWardHighlight.gameObject);
+            _eyeWardHighlight = null;
+        }
+    }
     public void ReduceHPBypassEverything(int amount) {
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
         if (Mathf.Abs(amount) > currentHP) {
@@ -77,6 +87,23 @@ public class EyeWard : TileObject {
             if (tile != null) {
                 tile.structure.RemovePOI(this);
             }
+        }
+    }
+    public void ShowEyeWardHighlight() {
+        if(_eyeWardHighlight == null) {
+            GameObject go = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Eye_Ward_Highlight, false);
+            if (go) {
+                _eyeWardHighlight = go.GetComponent<EyeWardHighlight>();
+            }
+        }
+        if(_eyeWardHighlight != null) {
+            _eyeWardHighlight.SetupHighlight(EYE_WARD_VISION_RANGE);
+            _eyeWardHighlight.gameObject.SetActive(true);
+        }
+    }
+    public void HideEyeWardHighlight() {
+        if (_eyeWardHighlight != null) {
+            _eyeWardHighlight.gameObject.SetActive(false);
         }
     }
     #endregion
