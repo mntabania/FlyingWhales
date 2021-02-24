@@ -21,7 +21,11 @@ public class PurchaseSkillItemUI : MonoBehaviour
 	public Sprite passive;
 	public Sprite structure;
 
+	public Image disabler;
+
 	private PLAYER_SKILL_TYPE m_skillType;
+
+	PlayerSkillData m_data;
 
 	private void OnEnable() {
 		btnSkill.onClick.AddListener(SkillClicked);
@@ -31,10 +35,10 @@ public class PurchaseSkillItemUI : MonoBehaviour
 		btnSkill.onClick.RemoveListener(SkillClicked);
 	}
 
-	public void InitItem(PLAYER_SKILL_TYPE p_type) {
-		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
+	public void InitItem(PLAYER_SKILL_TYPE p_type, int p_currentMana) {
+		m_data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
-		txtSkillName.text = data.name;
+		txtSkillName.text = m_data.name;
 		txtDescription.text = skillData.description;
 		switch (skillData.category) {
 			case PLAYER_SKILL_CATEGORY.AFFLICTION:
@@ -58,8 +62,31 @@ public class PurchaseSkillItemUI : MonoBehaviour
 			break;
 		}
 		txtLevel.text = "Level 0";
-		txtCost.text = data.unlockCost.ToString();
+		txtCost.text = m_data.unlockCost.ToString();
 		m_skillType = p_type;
+		if (m_data.unlockCost > p_currentMana) {
+			DisableButton();
+		} else {
+			EnableButton();
+		}
+	}
+
+	public void UpdateItem(int p_currentMana) {
+		if (m_data.unlockCost > p_currentMana) {
+			DisableButton();
+		} else {
+			EnableButton();
+		}
+	}
+
+	void DisableButton() {
+		btnSkill.interactable = false;
+		disabler.gameObject.SetActive(true);
+	}
+
+	void EnableButton() {
+		btnSkill.interactable = true;
+		disabler.gameObject.SetActive(false);
 	}
 
 	private void SkillClicked() {

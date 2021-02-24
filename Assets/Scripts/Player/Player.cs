@@ -133,7 +133,9 @@ public class Player : ILeader, IObjectManipulator {
 
     void OnHourStared() {
         if (m_manaPitCount > 0) {
-            AdjustMana(5 * m_manaPitCount);
+            if (mana < EditableValuesManager.Instance.maximumMana) {
+                AdjustMana(25 * m_manaPitCount);
+            }
         }
     }
     #endregion
