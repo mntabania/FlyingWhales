@@ -916,7 +916,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void ShowMoodTooltip() {
         string summary = $"Represents the Villagers' overall state of mind. Lower a Villagers' Mood to make them less effective and more volatile.\n\n" +
-                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
+                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
         UIManager.Instance.ShowSmallInfo(summary, $"MOOD: {_activeCharacter.moodComponent.moodStateName}");
     }
     public void HideSmallInfo() {

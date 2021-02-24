@@ -23,6 +23,7 @@ using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
 using System;
+using Prison = Tutorial.Prison;
 
 public class UIManager : BaseMonoBehaviour {
 
@@ -1806,7 +1807,7 @@ public class UIManager : BaseMonoBehaviour {
             }
         }
         if (spellData is BrainwashData && p_target is Character targetCharacter) {
-            fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";
+            fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";
         }
 
         fullDescription = $"{fullDescription}\n\n{additionalText}";

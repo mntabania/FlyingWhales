@@ -51,9 +51,7 @@ public class SummonPlayerSkill : SkillData {
                 return false;
             }
             if (targetTile.structure.IsTilePartOfARoom(targetTile, out var structureRoom)) {
-                if (structureRoom is DefilerRoom) {
-                    return false;
-                } else if (structureRoom is PrisonCell) {
+                if (structureRoom is PrisonCell) {
                     return false;
                 }
             }

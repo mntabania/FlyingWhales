@@ -16,7 +16,7 @@ public class BrainwashData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(StructureRoom room) {
-        if (room is DefilerRoom defilerRoom) {
+        if (room is PrisonCell defilerRoom) {
             defilerRoom.StartBrainwash();
         }
         base.ActivateAbility(room);
@@ -24,7 +24,7 @@ public class BrainwashData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
             if (targetCharacter.gridTileLocation != null && 
-                targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is DefilerRoom defilerRoom) {
+                targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell defilerRoom) {
                 defilerRoom.StartBrainwash(targetCharacter);
             }
         }
@@ -33,7 +33,7 @@ public class BrainwashData : PlayerAction {
     public override bool CanPerformAbilityTowards(StructureRoom room) {
         bool canPerform = base.CanPerformAbilityTowards(room);
         if (canPerform) {
-            if (room is DefilerRoom defilerRoom) {
+            if (room is PrisonCell defilerRoom) {
                 return defilerRoom.currentBrainwashTarget == null && defilerRoom.HasValidBrainwashTarget();
             }
             return false;
@@ -44,7 +44,7 @@ public class BrainwashData : PlayerAction {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
             if (targetCharacter.gridTileLocation != null && 
-                targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is DefilerRoom defilerRoom) {
+                targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell defilerRoom) {
                 return defilerRoom.currentBrainwashTarget == null && defilerRoom.IsValidBrainwashTarget(targetCharacter);
             }
             return false;
@@ -56,7 +56,7 @@ public class BrainwashData : PlayerAction {
         if (isValid) {
             if (target is Character targetCharacter) {
                 if (targetCharacter.gridTileLocation != null && 
-                    targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is DefilerRoom defilerRoom) {
+                    targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell defilerRoom) {
                     return true;
                 }
                 return false;

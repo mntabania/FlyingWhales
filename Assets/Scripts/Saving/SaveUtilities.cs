@@ -118,9 +118,7 @@ public static class SaveUtilities {
     #endregion
     
     public static SaveDataStructureRoom CreateSaveDataForRoom(StructureRoom structureRoom) {
-        if (structureRoom is DefilerRoom) {
-            return new SaveDataDefilerRoom();
-        } else if (structureRoom is PrisonCell) {
+        if (structureRoom is PrisonCell) {
             return new SaveDataPrisonCell();
         }
         return new SaveDataStructureRoom();
