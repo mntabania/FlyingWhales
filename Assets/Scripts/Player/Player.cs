@@ -42,6 +42,8 @@ public class Player : ILeader, IObjectManipulator {
     public PlayerSkillComponent playerSkillComponent { get; }
     public PlagueComponent plagueComponent { get; }
 
+    private int m_manaPitCount = 0;
+
     #region getters/setters
     public int id => -645;
     public string name => "Player";
@@ -104,6 +106,35 @@ public class Player : ILeader, IObjectManipulator {
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
+        Messenger.AddListener<LocationStructure, Area>(StructureSignals.STRUCTURE_OBJECT_REMOVED, OnStructureDestroyed);
+        Messenger.AddListener(Signals.HOUR_STARTED, OnHourStared);
+    }
+    #endregion
+
+    #region structure event listener(FOR MANA_PIT)
+    void OnStructurePlaced(LocationStructure p_structure) {
+        if (p_structure.structureType == STRUCTURE_TYPE.MANA_PIT) {
+            EditableValuesManager.Instance.maximumMana += 20;
+            m_manaPitCount++;
+        }
+    }
+
+    void OnStructureDestroyed(LocationStructure p_structure, Area p_area) {
+        if (p_structure.structureType == STRUCTURE_TYPE.MANA_PIT) {
+            EditableValuesManager.Instance.maximumMana -= 20;
+            if (mana > EditableValuesManager.Instance.maximumMana) { 
+                AdjustMana(EditableValuesManager.Instance.maximumMana - mana);
+            }
+            m_manaPitCount--;
+        }
+    }
+
+    void OnHourStared() {
+        if (m_manaPitCount > 0) {
+            AdjustMana(5 * m_manaPitCount);
+        }
     }
     #endregion
 

@@ -5620,7 +5620,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -20058,7 +20058,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -0.34991455, y: 381.62997}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -288.71, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &681767371
 MonoBehaviour:
@@ -34295,7 +34295,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1291172670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39703,7 +39703,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -39814,12 +39814,12 @@ PrefabInstance:
     - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
         type: 3}
       propertyPath: structureData.m_keys.Array.size
-      value: 43
+      value: 44
       objectReference: {fileID: 0}
     - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
         type: 3}
       propertyPath: structureData.m_values.Array.size
-      value: 43
+      value: 44
       objectReference: {fileID: 0}
     - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
         type: 3}
@@ -39836,6 +39836,17 @@ PrefabInstance:
       propertyPath: structureData.m_values.Array.data[42]
       value: 
       objectReference: {fileID: 11400000, guid: 16594a63389c49e42a2fcf338476b95b,
+        type: 2}
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 3}
+      propertyPath: structureData.m_keys.Array.data[43]
+      value: 54
+      objectReference: {fileID: 0}
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 3}
+      propertyPath: structureData.m_values.Array.data[43]
+      value: 
+      objectReference: {fileID: 11400000, guid: b1ce5078294e0db44b529a34e1a08c33,
         type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
@@ -50671,7 +50682,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1787269773
 RectTransform:
   m_ObjectHideFlags: 0
