@@ -121,7 +121,7 @@ public class ConsoleBase : InfoUIBase {
         
         worldSettingsText = $"{worldSettingsText}\nMonsters:";
         foreach (var monsterCharge in PlayerManager.Instance.player.monsterCharges) {
-            worldSettingsText = $"{worldSettingsText}\n\t{monsterCharge.Key.ToString()}: {monsterCharge.Value.X.ToString()}/{monsterCharge.Value.Y.ToString()}";
+            worldSettingsText = $"{worldSettingsText}\n\t{monsterCharge.Key.ToString()}: {monsterCharge.Value.remainingCharges.ToString()}/{monsterCharge.Value.maxCapacity.ToString()}";
         }
         
         worldSettingsText = $"{worldSettingsText}\nPathfinding:";

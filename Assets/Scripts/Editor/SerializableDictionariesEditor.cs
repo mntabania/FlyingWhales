@@ -55,6 +55,8 @@ public class WallResourceAssetDictionaryPropertyDrawer : SerializableDictionaryP
 public class WallAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ParticleEffectAssetDictionary))]
 public class ParticleEffectAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(SoundEffectDictionary))]
+public class SoundEffectDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ProjectileDictionary))]
 public class ProjectileDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TimeOfDayLightDictionary))]
@@ -109,3 +111,5 @@ public class ElementalDamageDataDictionaryPropertyDrawer : SerializableDictionar
 public class MonsterTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectSettingListStorage))]
 public class TileObjectTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(AudioClipListStorage))]
+public class AudioClipListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

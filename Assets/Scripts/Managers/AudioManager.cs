@@ -9,6 +9,7 @@ using Settings;
 using Tutorial;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 using UtilityScripts;
 using Counterattack = Quests.Counterattack;
 using DivineIntervention = Quests.DivineIntervention;
@@ -58,6 +59,7 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioClip[] zapAudio;
     [SerializeField] private AudioClip[] frozenExplosionAudio;
     [SerializeField] private AudioClip[] placeStructureAudio;
+    [SerializeField] private SoundEffectDictionary soundEffectDictionary;
     
     [Header("Combat Audio")]
     [SerializeField] private AudioClip[] bowAndArrowAudio;
@@ -306,6 +308,18 @@ public class AudioManager : MonoBehaviour {
     #region Base Building
     public void CreatePlaceDemonicStructureSound(LocationGridTile tile) {
         TryCreateAudioObject(CollectionUtilities.GetRandomElement(placeStructureAudio), tile, 3, false, true);
+    }
+    #endregion
+
+    #region SFX
+    public void CreateSFXAt(LocationGridTile p_tile, SOUND_EFFECT p_sfx) {
+        TryCreateAudioObject(GetRandomAudioClip(p_sfx), p_tile, 1, false, true);
+    }
+    private AudioClip GetRandomAudioClip(SOUND_EFFECT p_sfx) {
+        if (soundEffectDictionary.ContainsKey(p_sfx)) {
+            return CollectionUtilities.GetRandomElement(soundEffectDictionary[p_sfx]);
+        }
+        throw new Exception($"No SFX found for {p_sfx}");
     }
     #endregion
 

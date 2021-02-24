@@ -255,14 +255,18 @@ public class CharacterVisuals {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
         }
 
+        if (_owner.traitContainer.HasTrait("Quarantined")) {
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is Quarantined.";
+        } else if (_owner.traitContainer.HasTrait("Being Drained")) {
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b>'s Spirit is Being Drained.";
+        }
+        
         //Default - Do nothing/Idle
         if (_owner.currentStructure != null) {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
 
-        if (_owner.traitContainer.HasTrait("Quarantined")) {
-            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is Quarantined.";
-        }
+        
 
         if(_owner.minion != null && !_owner.minion.isSummoned) {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is unsummoned.";

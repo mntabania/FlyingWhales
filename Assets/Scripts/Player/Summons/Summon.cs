@@ -268,7 +268,9 @@ public class Summon : Character {
         AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
         AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
         AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
-        AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_LIFE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
+        AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
+        AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
     }
     #endregion
 

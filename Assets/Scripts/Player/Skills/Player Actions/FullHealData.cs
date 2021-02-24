@@ -1,18 +1,19 @@
-﻿public class HealData : PlayerAction {
+﻿using Inner_Maps.Location_Structures;
 
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.HEAL;
-    public override string name => "Heal";
-    public override string description => "This Action partially replenishes a character's HP.";
-    public HealData() : base() {
+public class FullHealData : PlayerAction {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FULL_HEAL;
+    public override string name => "Full Heal";
+    public override string description => "This Action fully replenishes a character's HP.";
+    public FullHealData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
-
+    
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
-            int processedHeal = (int)(targetCharacter.maxHP * PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.HEAL));
-            targetCharacter.AdjustHP(processedHeal, ELEMENTAL_TYPE.Normal, showHPBar: true,
-                piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.HEAL));
+            AudioManager.Instance.CreateSFXAt(targetCharacter.gridTileLocation, SOUND_EFFECT.Heal);
+            GameManager.Instance.CreateParticleEffectAt(targetCharacter, PARTICLE_EFFECT.Heal, false);
+            targetCharacter.AdjustHP(targetCharacter.maxHP, ELEMENTAL_TYPE.Normal, showHPBar: true);
         }
         base.ActivateAbility(targetPOI);
     }
@@ -40,6 +41,16 @@
             reasons += "Characters being drained cannot be healed.";
         }
         return reasons;
+    }
+    public override bool IsValid(IPlayerActionTarget target) {
+        bool isValid = base.IsValid(target);
+        if (isValid) {
+            if (target is Character targetCharacter) {
+                return targetCharacter.currentStructure is Kennel || targetCharacter.currentStructure is TortureChambers;
+            }
+            return false;
+        }
+        return false;
     }
     #endregion
 }

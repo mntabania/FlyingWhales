@@ -21,7 +21,8 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
     public List<SaveDataNotification> allNotifs;
     public List<SaveDataChaosOrb> allChaosOrbs;
-
+    public Dictionary<SUMMON_TYPE, MonsterCapacity> monsterCharges;
+    
     //Components
     public SaveDataSeizeComponent seizeComponent;
     public SaveDataThreatComponent threatComponent;
@@ -84,6 +85,8 @@ public class SaveDataPlayerGame : SaveData<Player> {
                 allChaosOrbs.Add(saveOrb);
             }
         }
+
+        monsterCharges = player.monsterCharges;
 
         seizeComponent = new SaveDataSeizeComponent();
         seizeComponent.Save(player.seizeComponent);

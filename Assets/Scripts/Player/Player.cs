@@ -35,7 +35,7 @@ public class Player : ILeader, IObjectManipulator {
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
     public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }
-    public Dictionary<SUMMON_TYPE, Point> monsterCharges { get; }
+    public Dictionary<SUMMON_TYPE, MonsterCapacity> monsterCharges { get; }
 
     //Components
     public SeizeComponent seizeComponent { get; }
@@ -65,7 +65,7 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent = new PlayerSkillComponent();
         plagueComponent = new PlagueComponent();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
-        monsterCharges = new Dictionary<SUMMON_TYPE, Point>();
+        monsterCharges = new Dictionary<SUMMON_TYPE, MonsterCapacity>();
         AddListeners();
     }
     public Player(SaveDataPlayerGame data) {
@@ -81,6 +81,7 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent.SetPlayer(this);
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        monsterCharges = data.monsterCharges;
         AddListeners();
     }
 
@@ -98,8 +99,6 @@ public class Player : ILeader, IObjectManipulator {
 
     #region Listeners
     private void AddListeners() {
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
         Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
 
@@ -109,18 +108,7 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region ILeader
-    //public void LevelUp() { }
-    #endregion
-
     #region Settlement
-    //public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
-    //    PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
-    //    npcSettlement.SetName("Demonic Intrusion");
-    //    SetPlayerArea(npcSettlement);
-    //    // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
-    //    return npcSettlement;
-    //}
     public void LoadPlayerArea(SaveDataPlayerGame saveDataPlayerGame) {
         BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataPlayerGame.settlementID);
         PlayerSettlement pSettlement = settlement as PlayerSettlement;
@@ -129,16 +117,6 @@ public class Player : ILeader, IObjectManipulator {
     }
     public void SetPlayerArea(PlayerSettlement npcSettlement) {
         playerSettlement = npcSettlement;
-    }
-    private void OnInnerMapOpened(Region area) {
-        //for (int i = 0; i < minions.Count; i++) {
-        //    minions[i].ResetCombatAbilityCD();
-        //}
-        //ResetInterventionAbilitiesCD();
-        //currentTargetFaction = npcSettlement.owner;
-    }
-    private void OnInnerMapClosed(Region area) {
-        //currentTargetFaction = null;
     }
     #endregion
 
@@ -156,9 +134,6 @@ public class Player : ILeader, IObjectManipulator {
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
     }
-    //public void SetPlayerTargetFaction(Faction faction) {
-    //    currentTargetFaction = faction;
-    //}
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
         if(faction == playerFaction) {
             //if(character.minion != null) {
@@ -217,25 +192,6 @@ public class Player : ILeader, IObjectManipulator {
     private void OnUnsummonMinion(Minion minion) {
         RemoveMinion(minion);
     }
-    //public void SetMinionLeader(Minion minion) {
-    //    currentMinionLeader = minion;
-    //}
-    //private void ReplaceMinion(object objToReplace, object objToAdd) {
-    //    Minion minionToBeReplaced = objToReplace as Minion;
-    //    Minion minionToBeAdded = objToAdd as Minion;
-
-    //    for (int i = 0; i < minions.Count; i++) {
-    //        if(minions[i] == minionToBeReplaced) {
-    //            minionToBeAdded.SetIndexDefaultSort(i);
-    //            minions[i] = minionToBeAdded;
-    //            if(currentMinionLeader == minionToBeReplaced) {
-    //                SetMinionLeader(minionToBeAdded);
-    //            }
-    //            break;
-    //        }
-    //    }
-    //}
-    private void RejectMinion(object obj) { }
     #endregion
 
     #region Role Actions
@@ -598,24 +554,6 @@ public class Player : ILeader, IObjectManipulator {
             hoveredTile.structure.AddPOI(artifact, hoveredTile);
         }
     }
-    //public bool HasArtifact(string artifactName) {
-    //    for (int i = 0; i < artifacts.Count; i++) {
-    //        Artifact currArtifact = artifacts[i];
-    //        if (currArtifact.name == artifactName) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-    //private Artifact GetArtifactOfType(ARTIFACT_TYPE type) {
-    //    for (int i = 0; i < artifacts.Count; i++) {
-    //        Artifact currArtifact = artifacts[i];
-    //        if (currArtifact.type == type) {
-    //            return currArtifact;
-    //        }
-    //    }
-    //    return null;
-    //}
     #endregion
 
     #region Combat Ability
@@ -759,57 +697,6 @@ public class Player : ILeader, IObjectManipulator {
     private void SaveExp() {
         SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
     }
-    //public void SaveSummons() {
-    //    List<LocationStructure> kennels = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
-    //    List<Summon> kennelSummons = null;
-    //    if(kennels != null) {
-    //        for (int i = 0; i < kennels.Count; i++) {
-    //            LocationStructure currKennel = kennels[i];
-    //            for (int j = 0; j < currKennel.charactersHere.Count; j++) {
-    //                Character character = currKennel.charactersHere[j];
-    //                if(character is Summon summon) {
-    //                    if(summon.gridTileLocation != null && summon.marker) {
-    //                        if(kennelSummons == null) {
-    //                            kennelSummons = new List<Summon>();
-    //                        }
-    //                        kennelSummons.Add(summon);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //    if(kennelSummons != null) {
-    //        SaveManager.Instance.currentSaveDataPlayer.SaveSummons(kennelSummons);
-    //    }
-    //}
-    // public void SaveTileObjects() {
-    //     List<LocationStructure> crypts = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.CRYPT);
-    //     List<TileObject> cryptTileObjects = null;
-    //     if (crypts != null) {
-    //         for (int i = 0; i < crypts.Count; i++) {
-    //             LocationStructure currCrypt = crypts[i];
-    //             foreach (TileObjectsAndCount tileObjectsAndCount in currCrypt.groupedTileObjects.Values) {
-    //                 if(tileObjectsAndCount.tileObjects != null && tileObjectsAndCount.tileObjects.Count > 0) {
-    //                     for (int j = 0; j < tileObjectsAndCount.tileObjects.Count; j++) {
-    //                         TileObject tileObject = tileObjectsAndCount.tileObjects[j];
-    //                         if(tileObject.gridTileLocation != null 
-    //                             && tileObject.tileObjectType != TILE_OBJECT_TYPE.BLOCK_WALL
-    //                             && tileObject.preplacedLocationStructure != currCrypt
-    //                             && !tileObject.isSaved) {
-    //                             if (cryptTileObjects == null) {
-    //                                 cryptTileObjects = new List<TileObject>();
-    //                             }
-    //                             cryptTileObjects.Add(tileObject);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     if (cryptTileObjects != null) {
-    //         SaveManager.Instance.currentSaveDataPlayer.SaveTileObjects(cryptTileObjects);
-    //     }
-    // }
     #endregion
 
     #region Loading
@@ -860,28 +747,35 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Monster Charges
-    public void AdjustMonsterCapacity(SUMMON_TYPE p_monsterType, int p_value) {
+    public void AdjustMonsterCapacity(SUMMON_TYPE p_monsterType, RACE p_monsterRace, string p_monsterClass, int p_value) {
+        bool isNew = false;
         if (!monsterCharges.ContainsKey(p_monsterType)) {
-            monsterCharges.Add(p_monsterType, new Point(0, 0));
+            isNew = true;
+            monsterCharges.Add(p_monsterType, new MonsterCapacity(p_monsterType, p_monsterRace, p_monsterClass));
         }
-        Point point = monsterCharges[p_monsterType]; 
-        point.Y += p_value;
-        monsterCharges[p_monsterType] = point;
+        MonsterCapacity monsterCapacity = monsterCharges[p_monsterType]; 
+        monsterCapacity.AdjustMaxCapacity(p_value);
+        monsterCharges[p_monsterType] = monsterCapacity;
+        Messenger.Broadcast(isNew ? PlayerSignals.PLAYER_GAINED_NEW_MONSTER : PlayerSignals.PLAYER_UPDATED_MONSTER_CHARGES_OR_CAPACITY, monsterCapacity);
         CheckIfKeyShouldBeRemoved(p_monsterType);
     }
-    public void AdjustMonsterCharges(SUMMON_TYPE p_monsterType, int p_value) {
+    public void AdjustMonsterCharges(SUMMON_TYPE p_monsterType, RACE p_monsterRace, string p_monsterClass, int p_value) {
+        bool isNew = false;
         if (!monsterCharges.ContainsKey(p_monsterType)) {
-            monsterCharges.Add(p_monsterType, new Point(0, 0));
+            isNew = true;
+            monsterCharges.Add(p_monsterType, new MonsterCapacity(p_monsterType, p_monsterRace, p_monsterClass));
         }
-        Point point = monsterCharges[p_monsterType]; 
-        point.X += p_value;
-        monsterCharges[p_monsterType] = point;
+        MonsterCapacity monsterCapacity = monsterCharges[p_monsterType]; 
+        monsterCapacity.AdjustRemainingCharges(p_value);
+        monsterCharges[p_monsterType] = monsterCapacity;
+        Messenger.Broadcast(isNew ? PlayerSignals.PLAYER_GAINED_NEW_MONSTER : PlayerSignals.PLAYER_UPDATED_MONSTER_CHARGES_OR_CAPACITY, monsterCapacity);
         CheckIfKeyShouldBeRemoved(p_monsterType);
     }
     private void CheckIfKeyShouldBeRemoved(SUMMON_TYPE p_monsterType) {
-        Point point = monsterCharges[p_monsterType];
-        if (point.X == 0 && point.Y == 0) {
+        MonsterCapacity monsterCapacity = monsterCharges[p_monsterType];
+        if (monsterCapacity.maxCapacity == 0 && monsterCapacity.remainingCharges == 0) {
             monsterCharges.Remove(p_monsterType);
+            Messenger.Broadcast(PlayerSignals.PLAYER_REMOVED_MONSTER, monsterCapacity);
         }
     }
     #endregion

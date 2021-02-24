@@ -2415,6 +2415,7 @@
               <e p="SeizeComponent.cs" t="Include" />
               <e p="ThreatComponent.cs" t="Include" />
             </e>
+            <e p="MonsterCapacity.cs" t="Include" />
             <e p="Plague Related Scripts" t="Include">
               <e p="Death Effects" t="Include">
                 <e p="Explosion.cs" t="Include" />
@@ -2527,13 +2528,15 @@
                 <e p="CultistPoisonData.cs" t="Include" />
                 <e p="CultistTransformData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />
-                <e p="DrainLifeData.cs" t="Include" />
+                <e p="DrainSpiritData.cs" t="Include" />
                 <e p="EmpowerData.cs" t="Include" />
                 <e p="EvangelizeData.cs" t="Include" />
                 <e p="ExpelData.cs" t="Include" />
                 <e p="FoundCultData.cs" t="Include" />
+                <e p="FullHealData.cs" t="Include" />
                 <e p="HealData.cs" t="Include" />
                 <e p="IgniteData.cs" t="Include" />
+                <e p="LetGoData.cs" t="Include" />
                 <e p="PlayerAction.cs" t="Include" />
                 <e p="PoisonData.cs" t="Include" />
                 <e p="RaiseDeadData.cs" t="Include" />
@@ -3336,6 +3339,7 @@
               <e p="EnumNameplateItem.cs" t="Include" />
               <e p="FactionNameplateItem.cs" t="Include" />
               <e p="MinionCharacterItem.cs" t="Include" />
+              <e p="MonsterCapacityNameplateItem.cs" t="Include" />
               <e p="NameplateButton.cs" t="Include" />
               <e p="NameplateItem.cs" t="Include" />
               <e p="PlayerSkillLoadoutNameplateItem.cs" t="Include" />

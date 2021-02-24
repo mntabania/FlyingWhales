@@ -24,7 +24,7 @@ public class SeizeMonsterData : PlayerAction {
             if (targetCharacter.race == RACE.TRITON) {
                 return false;
             }
-            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Hibernating");
+            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Hibernating") && !targetCharacter.traitContainer.HasTrait("Being Drained");
         }
         return canPerform;
     }
@@ -38,7 +38,8 @@ public class SeizeMonsterData : PlayerAction {
             } else {
                 reasons += "Hibernating characters cannot be seized.";    
             }
-            
+        } else if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
+            reasons += "Characters being drained cannot be seized.";
         }
         return reasons;
     }

@@ -986,7 +986,9 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     SCHEME = 158, INSTIGATE_WAR = 159, RESIGN = 160, LEAVE_FACTION = 161, LEAVE_HOME = 162, LEAVE_VILLAGE = 163,
     BREAK_UP = 164, JOIN_FACTION = 165, REBELLION = 166, OVERTHROW_LEADER = 167, INDUCE_MIGRATION = 168, STIFLE_MIGRATION = 169,
     RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
-    CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, DRAIN_LIFE = 182,
+    CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, DRAIN_SPIRIT = 182,
+    LET_GO,
+    FULL_HEAL
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1079,7 +1081,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure
+    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Heal
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
@@ -1183,4 +1185,8 @@ public enum UPGRADE_BONUS {
 
 public enum UNLOCKING_SKILL_REQUIREMENT {
     Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count,
+}
+
+public enum SOUND_EFFECT {
+    Heal
 }

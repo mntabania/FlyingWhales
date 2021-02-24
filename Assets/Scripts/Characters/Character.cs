@@ -5223,6 +5223,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_BUFF);
         AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_FLAW);
         AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_JOIN_FACTION);
+        AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
+        AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
+        AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {

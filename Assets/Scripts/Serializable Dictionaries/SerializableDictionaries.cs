@@ -63,6 +63,8 @@ public class WallAssetDictionary : SerializableDictionary<string, WallAsset> { }
 [System.Serializable]
 public class ParticleEffectAssetDictionary : SerializableDictionary<PARTICLE_EFFECT, GameObject> { }
 [System.Serializable]
+public class SoundEffectDictionary : SerializableDictionary<SOUND_EFFECT, List<AudioClip>, AudioClipListStorage> { }
+[System.Serializable]
 public class ProjectileDictionary : SerializableDictionary<ELEMENTAL_TYPE, GameObject> { }
 [System.Serializable]
 public class TimeOfDayLightDictionary : SerializableDictionary<TIME_IN_WORDS, float> { }
@@ -114,3 +116,5 @@ public class GameObjectListStorage : SerializableDictionary.Storage<List<GameObj
 public class MonsterSettingListStorage : SerializableDictionary.Storage<List<MonsterSetting>> { }
 [System.Serializable]
 public class TileObjectSettingListStorage : SerializableDictionary.Storage<List<ItemSetting>> { }
+[System.Serializable]
+public class AudioClipListStorage : SerializableDictionary.Storage<List<AudioClip>> { }

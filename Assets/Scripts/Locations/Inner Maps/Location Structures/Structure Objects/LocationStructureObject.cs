@@ -388,6 +388,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();
         SetPreplacedObjectsState(false);
+        SetClickColliderState(false);
         Messenger.Broadcast(StructureSignals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnOwnerStructureDestroyed(InnerTileMap innerTileMap) {
