@@ -43,6 +43,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.THE_PORTAL:
             case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.SPIRE:
+            case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
                 return true;
@@ -114,6 +115,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MEDDLER:
             case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.SPIRE:
+            case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
@@ -181,7 +183,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.MONSTER_LAIR:
             case STRUCTURE_TYPE.SPIRE:
-                return true;
+            case STRUCTURE_TYPE.MANA_PIT:
+            return true;
             default:
                 return false;
         }
@@ -1017,6 +1020,7 @@ public static class Extensions {
             case LANDMARK_TYPE.THE_NEEDLES:
             case LANDMARK_TYPE.TORTURE_CHAMBERS:
             case LANDMARK_TYPE.SPIRE:
+            case LANDMARK_TYPE.MANA_PIT:
             return true;
             default:
                 return false;

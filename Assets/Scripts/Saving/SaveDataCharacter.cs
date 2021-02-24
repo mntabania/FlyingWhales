@@ -77,6 +77,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> ownedItems;
     public List<string> jobs;
     public List<string> forceCancelJobsOnTickEnded;
+
+    public bool isInfoUnlocked;
     
     public SaveDataTraitContainer saveDataTraitContainer;
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
@@ -183,6 +185,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         limiterComponent = new SaveDataLimiterComponent(); limiterComponent.Save(data.limiterComponent);
         piercingAndResistancesComponent = new SaveDataPiercingAndResistancesComponent(); piercingAndResistancesComponent.Save(data.piercingAndResistancesComponent);
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
+
+        isInfoUnlocked = data.isInfoUnlocked;
 
         if (data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;
