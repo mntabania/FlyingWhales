@@ -201,7 +201,7 @@ public class SkillUpgradeData
     public string GetDescriptionBaseOnFirstBonus(int p_currentLevel) {
         if (bonuses == null || bonuses.Count <= 0) {
             return "n/a";
-        }   
+        }
         return GetDescription(bonuses[0], p_currentLevel);
     }
 
@@ -269,6 +269,14 @@ public class SkillUpgradeData
                 p_currentLevel = additionalTileRangeBonusPerLevel.Count - 1;
             }
             return additionalTileRangeBonusPerLevel[p_currentLevel] + "%";
+            case UPGRADE_BONUS.Cooldown:
+            if (cooldownPerLevel.Count < 0) {
+                return "Tiles: No Data";
+            }
+            if (p_currentLevel >= cooldownPerLevel.Count) {
+                p_currentLevel = cooldownPerLevel.Count - 1;
+            }
+            return cooldownPerLevel[p_currentLevel] + "%";
         }
         return "n/a";
 	}
