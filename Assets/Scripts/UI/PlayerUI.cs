@@ -192,6 +192,7 @@ public class PlayerUI : BaseMonoBehaviour {
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);        
 #endif
+        summonList.UpdateMonsterUnderlingQuantityList();
     }
     public void InitializeAfterLoadOutPicked() {
         UpdateIntel();

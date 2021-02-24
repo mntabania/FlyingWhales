@@ -5,7 +5,7 @@ using UnityEngine;
 public class EditableValuesManager : MonoBehaviour {
 
 	public static EditableValuesManager Instance;
-	
+
 	[Header("Character Values")]
 	[Header("Mood")]
 	[SerializeField] private int _normalMoodMinThreshold;
@@ -19,13 +19,13 @@ public class EditableValuesManager : MonoBehaviour {
 	[Tooltip("Number days a character needs to be in a low mood to have a 100% chance to trigger a minor mental break.")]
 	[SerializeField] private int _minorMentalBreakDayThreshold;
 
-	[Header("Needs")] 
+	[Header("Needs")]
 	[SerializeField] private float _baseFullnessDecreaseRate;
 	[SerializeField] private float _baseTirednessDecreaseRate;
 	[SerializeField] private float _baseHappinessDecreaseRate;
 	//[SerializeField] private float _baseStaminaDecreaseRate;
 
-	[Header("Mana")] 
+	[Header("Mana")]
 	[SerializeField] private int _startingMana;
 	[SerializeField] private int _maximumMana;
 	[SerializeField] private int _summonMinionManaCost;
@@ -33,16 +33,16 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _triggerFlawManaCost;
 	[SerializeField] private int _buildStructureManaCost;
 
-	[Header("Visuals")] 
+	[Header("Visuals")]
 	[SerializeField] private int _sortingOrdersInBetweenHexTileRows = 20; //this is the number of sorting orders in between rows of the world map.
 
-    public int vaporStacks;
-    public int poisonCloudStacks;
-    public int frostyFogStacks;
+	public int vaporStacks;
+	public int poisonCloudStacks;
+	public int frostyFogStacks;
 
-    //getters
-    //mood
-    public int normalMoodMinThreshold => _normalMoodMinThreshold;
+	//getters
+	//mood
+	public int normalMoodMinThreshold => _normalMoodMinThreshold;
 	public int lowMoodMinThreshold => _lowMoodMinThreshold;
 	public int lowMoodHighThreshold => _lowMoodHighThreshold;
 	public int criticalMoodHighThreshold => _criticalMoodHighThreshold;
@@ -55,7 +55,10 @@ public class EditableValuesManager : MonoBehaviour {
 
 	//mana
 	public int summonMinionManaCost => _summonMinionManaCost;
-	public int maximumMana => _maximumMana;
+	public int maximumMana {
+		get { return _maximumMana; }
+		set { _maximumMana = value; }
+	}
 	public int startingMana => _startingMana;
 	public int corruptTileManaCost => _corruptTileManaCost;
 	public int triggerFlawManaCost => _triggerFlawManaCost;

@@ -237,9 +237,7 @@ public class SkillData : IPlayerSkill {
         }
     }
     private void StartCooldown() {
-        //Debug.LogError(hasCooldown + " -- " + (currentCooldownTick == cooldown));
         if (hasCooldown && currentCooldownTick == cooldown) {
-            //Debug.LogError("TEST");
             SetCurrentCooldownTick(0);
             Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
             if(cooldown > 0) {

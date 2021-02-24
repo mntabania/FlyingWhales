@@ -173,6 +173,16 @@ public class SummonListUI : PopupMenuBase {
             ObjectPoolManager.Instance.DestroyObject(item);
         }
     }
+
+    public void UpdateMonsterUnderlingQuantityList() {
+        Player player = PlayerManager.Instance.player;
+        if (player != null) {
+            Dictionary<SUMMON_TYPE, MonsterUnderlingCharges> kvp = player.underlingsComponent.monsterUnderlingCharges;
+            foreach (MonsterUnderlingCharges item in kvp.Values) {
+                CreateNewMonsterUnderlingQuantityItem(item);
+            }
+        }
+    }
     #endregion
 
     private void OnHoverEnterReserveSummon(SkillData spellData) {
