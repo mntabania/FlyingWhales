@@ -63,6 +63,7 @@ namespace Inner_Maps {
             if (poi.isHidden) {
                 hiddenObjHere = poi;
                 poi.SetGridTileLocation(owner);
+                poi.OnLoadPlacePOI();
             } else {
                 bool isPassablePreviously = owner.IsPassable();
                 if (poi is TileObject tileObject) {

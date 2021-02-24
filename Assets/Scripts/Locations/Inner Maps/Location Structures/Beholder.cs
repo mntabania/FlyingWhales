@@ -2,8 +2,6 @@
 
 namespace Inner_Maps.Location_Structures {
     public class Beholder : DemonicStructure {
-
-        public int currentEyeWardCharge { get; private set; }
         public Beholder(Region location) : base(STRUCTURE_TYPE.BEHOLDER, location){ }
         public Beholder(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 

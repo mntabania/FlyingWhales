@@ -8,6 +8,7 @@ public class TileObjectHiddenComponent : TileObjectComponent {
     public TileObjectHiddenComponent() {
     }
     public TileObjectHiddenComponent(SaveDataTileObjectHiddenComponent data) {
+        isHidden = data.isHidden;
     }
 
     #region Utilities
@@ -33,13 +34,19 @@ public class TileObjectHiddenComponent : TileObjectComponent {
         }
     }
     #endregion
+
+    #region Loading
+    public void LoadSecondWave() {
+        OnSetHiddenState();
+    }
+    #endregion
 }
 
 public class SaveDataTileObjectHiddenComponent : SaveData<TileObjectHiddenComponent> {
-
+    public bool isHidden;
     public override void Save(TileObjectHiddenComponent data) {
         base.Save(data);
-
+        isHidden = data.isHidden;
     }
     public override TileObjectHiddenComponent Load() {
         TileObjectHiddenComponent component = new TileObjectHiddenComponent(this);

@@ -180,6 +180,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (!string.IsNullOrEmpty(data.isBeingCarriedByID)) {
             isBeingCarriedBy = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.isBeingCarriedByID);
         }
+        hiddenComponent.LoadSecondWave();
     }
     /// <summary>
     /// Load more info, this is called after character markers have been created.
