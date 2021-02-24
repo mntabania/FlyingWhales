@@ -24,7 +24,7 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: 9cd696d31c2c8534b8a5ec2a949c43fa, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: b123165bb9b9c484fb83dd83c3153ee3, type: 3}
   tooltipImage: {fileID: 0}
-  unlockCost: 0
+  unlockCost: 100
   tier: 1
   baseLoadoutWeight: 200
   resistanceType: 8
