@@ -148,6 +148,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			DisplayMenu();
 			m_purchaseSkillUIView.HideSkills();
 		}
+		
 	}
 
 	private void DisplayMenuFirstTime() {
@@ -158,6 +159,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			ShowUI();
 			m_purchaseSkillUIView.ShowSkills();
 			SpawnItems();
+			GameManager.Instance.SetPausedState(true);
 		});
 	}
 
@@ -173,6 +175,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		} else {
 			StartCoroutine("ProcessAvailability");
 		}
+		GameManager.Instance.SetPausedState(true);
 	}
 
 	#region Listeners
@@ -189,6 +192,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	public void OnCloseClicked() {
 		StopCoroutine("ProcessAvailability");
+		GameManager.Instance.SetPausedState(false);
 		HideUI();
 	}
 

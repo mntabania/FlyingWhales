@@ -64,7 +64,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		}
 	}
 
-	public void Open() {
+	public void Open() { 
 		ShowUI();
 		Messenger.AddListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}
@@ -79,8 +79,10 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		base.ShowUI();
 		UpdateTopMenuSummary();
 		m_skillUpgradeUIView.SetTransmissionTabIsOnWithoutNotify(true);
+		GameManager.Instance.SetPausedState(true);
 	}
 	public override void HideUI() {
+		GameManager.Instance.SetPausedState(false);
 		base.HideUI();
 		Messenger.RemoveListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}
