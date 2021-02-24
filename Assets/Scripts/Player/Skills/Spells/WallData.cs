@@ -15,8 +15,9 @@ public class WallData : SkillData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        if(targetTile.objHere != null && targetTile.objHere is TileObject tileObject && !tileObject.tileObjectType.IsTileObjectImportant()) {
-            targetTile.structure.RemovePOI(targetTile.objHere);
+        TileObject tileObject = targetTile.tileObjectComponent.objHere;
+        if (tileObject != null && !tileObject.tileObjectType.IsTileObjectImportant()) {
+            targetTile.structure.RemovePOI(tileObject);
         }
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
         wall.SetWallType(WALL_TYPE.Demon_Stone);
@@ -31,7 +32,8 @@ public class WallData : SkillData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            if (targetTile.objHere is TileObject tileObject) {
+            TileObject tileObject = targetTile.tileObjectComponent.objHere;
+            if (tileObject != null) {
                 if (tileObject.tileObjectType.IsTileObjectImportant()) {
                     return false;    
                 }

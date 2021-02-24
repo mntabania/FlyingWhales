@@ -281,6 +281,9 @@ public static class TileObjectDB {
                 new TileObjectRecipe(new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.METAL_PILE, 10)),
             }
         } },
+        { TILE_OBJECT_TYPE.EYE_WARD, new TileObjectData() {
+            maxHP = 48,
+        } },
     };
 
     public static bool HasTileObjectData(TILE_OBJECT_TYPE objType) {

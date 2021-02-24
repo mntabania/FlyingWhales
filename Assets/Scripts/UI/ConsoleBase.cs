@@ -1490,7 +1490,7 @@ public class ConsoleBase : InfoUIBase {
         if (UtilityScripts.Utilities.IsInRange(x, 0, region.innerMap.width) && 
             UtilityScripts.Utilities.IsInRange(y, 0, region.innerMap.height)) {
             LocationGridTile tile = region.innerMap.map[x, y];
-            tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
+            tile.tileObjectComponent.genericTileObject.AdjustHP(-tile.tileObjectComponent.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             AddSuccessMessage($"Successfully damaged {tile.localPlace.ToString()}!");    
         }
         else {

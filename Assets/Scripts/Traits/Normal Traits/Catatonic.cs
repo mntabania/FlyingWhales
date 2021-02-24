@@ -108,8 +108,8 @@ namespace Traits {
         #region Carry/Drop
         private void OnCharacterFinishedAction(ActualGoapNode node) {
             if (node.action.goapType == INTERACTION_TYPE.DROP && node.poiTarget == owner) {
-                if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is Bed) {
-                    CreateActualSleepJob(owner.gridTileLocation.objHere as Bed);
+                if (owner.gridTileLocation.tileObjectComponent.objHere != null && owner.gridTileLocation.tileObjectComponent.objHere is Bed) {
+                    CreateActualSleepJob(owner.gridTileLocation.tileObjectComponent.objHere as Bed);
                 }
             }
         }
@@ -124,8 +124,8 @@ namespace Traits {
         }
         private bool CreateSleepJob() {
             if (owner.homeStructure != null) {
-                if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is Bed) {
-                    CreateActualSleepJob(owner.gridTileLocation.objHere as Bed);
+                if (owner.gridTileLocation.tileObjectComponent.objHere != null && owner.gridTileLocation.tileObjectComponent.objHere is Bed) {
+                    CreateActualSleepJob(owner.gridTileLocation.tileObjectComponent.objHere as Bed);
                     return true;
                 }
                 //else {

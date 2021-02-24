@@ -23,7 +23,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
             ), 
             targetTile, 1, false
         );
-        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
+        targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {

@@ -127,7 +127,7 @@ namespace Inner_Maps {
                     Area area = DetermineAreaGivenCoordinates(x, y);
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this, area);
                     area.gridTileComponent.AddGridTile(tile);
-                    tile.CreateGenericTileObject();
+                    tile.tileObjectComponent.CreateGenericTileObject();
                     tile.SetStructure(wilderness);
                     allTiles.Add(tile);
                     if (tile.IsAtEdgeOfWalkableMap()) {
@@ -189,11 +189,11 @@ namespace Inner_Maps {
                         tile = existingSaveData.InitialLoad(groundTilemap, this, saveData, area);
                     } else {
                         tile = new LocationGridTile(x, y, groundTilemap, this, area);
-                        tile.CreateGenericTileObject();    
+                        tile.tileObjectComponent.CreateGenericTileObject();    
                     }
                     area.gridTileComponent.AddGridTile(tile);
                     tile.SetStructure(wilderness);
-                    tile.genericTileObject.SetGridTileLocation(tile); //had to do this since I could not set tile location before setting structure because awareness list depends on it.
+                    tile.tileObjectComponent.genericTileObject.SetGridTileLocation(tile); //had to do this since I could not set tile location before setting structure because awareness list depends on it.
                     allTiles.Add(tile);
                     if (tile.IsAtEdgeOfWalkableMap()) {
                         allEdgeTiles.Add(tile);
@@ -333,35 +333,35 @@ namespace Inner_Maps {
         
         #region Points of Interest
         public void PlaceObject(TileObject obj, LocationGridTile tile, bool placeAsset = true) {
-            tile.SetObjectHere(obj);
+            tile.tileObjectComponent.SetObjectHere(obj);
             //switch (obj.poiType) {
             //    case POINT_OF_INTEREST_TYPE.CHARACTER:
             //        OnPlaceCharacterOnTile(obj as Character, tile);
             //        break;
             //    default:
-            //        tile.SetObjectHere(obj);
+            //        tile.tileObjectComponent.SetObjectHere(obj);
             //        break;
             //}
         }
         public void LoadObject(TileObject obj, LocationGridTile tile) {
-            tile.LoadObjectHere(obj);
+            tile.tileObjectComponent.LoadObjectHere(obj);
             //switch (obj.poiType) {
             //    case POINT_OF_INTEREST_TYPE.CHARACTER:
             //        OnPlaceCharacterOnTile(obj as Character, tile);
             //        break;
             //    default:
-            //        tile.LoadObjectHere(obj);
+            //        tile.tileObjectComponent.LoadObjectHere(obj);
             //        break;
             //}
         }
         public void RemoveObject(LocationGridTile tile, Character removedBy = null) {
-            tile.RemoveObjectHere(removedBy);
+            tile.tileObjectComponent.RemoveObjectHere(removedBy);
         }
         public void RemoveObjectWithoutDestroying(LocationGridTile tile) {
-            tile.RemoveObjectHereWithoutDestroying();
+            tile.tileObjectComponent.RemoveObjectHereWithoutDestroying();
         }
         public void RemoveObjectDestroyVisualOnly(LocationGridTile tile, Character remover = null) {
-            tile.RemoveObjectHereDestroyVisualOnly(remover);
+            tile.tileObjectComponent.RemoveObjectHereDestroyVisualOnly(remover);
         }
         private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
             GameObject markerGO = character.marker.gameObject; 
@@ -745,7 +745,7 @@ namespace Inner_Maps {
             float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
 
             //trees and shrubs
-            if (currTile.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
+            if (currTile.tileObjectComponent.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
                 if (sampleDetail < 0.55f) {
                     if (Random.Range(0, 100) < 50) {
                         //shrubs

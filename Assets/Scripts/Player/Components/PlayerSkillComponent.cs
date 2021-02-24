@@ -279,7 +279,7 @@ public class PlayerSkillComponent {
             Debug.LogError(skillType.ToString() + " data is null!");
         }
         if (!testScene && WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
-            skillType == PLAYER_SKILL_TYPE.EYE) {
+            skillType == PLAYER_SKILL_TYPE.BEHOLDER) {
             //if map is tutorial and spell is THE_EYE, Set max charges to only 1
             spellData.SetMaxCharges(1);  
             spellData.SetCharges(1);

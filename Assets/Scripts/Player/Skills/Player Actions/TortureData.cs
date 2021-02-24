@@ -56,7 +56,7 @@ public class TortureData : PlayerAction {
             if (target is Character targetCharacter) {
                 if (targetCharacter.gridTileLocation != null && 
                     targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell tortureRoom) {
-                    return tortureRoom.IsValidTortureTarget(targetCharacter);
+                    return true; //tortureRoom.IsValidTortureTarget(targetCharacter);
                 }
                 return false;
             }

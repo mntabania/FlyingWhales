@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Traits;
-using UnityEngine;
-using UnityEngine.Assertions;
+
 namespace Inner_Maps.Location_Structures {
     public class TortureChambers : DemonicStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
@@ -17,12 +14,7 @@ namespace Inner_Maps.Location_Structures {
         #region Overrides
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {
-                character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
-                //character.traitContainer.AddTrait(character, "Restrained");
-                //Prisoner prisonerTrait = character.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                //if (prisonerTrait != null) {
-                //    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
-                //}
+                // character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
                 if (character.partyComponent.hasParty) {
                     //We remove the character from the party quest if he is put in the defiler so he will not dig out of it and do the quest
                     character.partyComponent.currentParty.RemoveMemberThatJoinedQuest(character);
@@ -38,22 +30,19 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
         
-        #region Listeners
-        protected override void SubscribeListeners() {
-            base.SubscribeListeners();
-            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        }
-        protected override void UnsubscribeListeners() {
-            base.UnsubscribeListeners();
-            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        }
-        #endregion
-        
-        private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-            if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell prisonCell && prisonCell.skeleton == null) {
+        protected override void AfterCharacterAddedToLocation(Character p_character) {
+            base.AfterCharacterAddedToLocation(p_character);
+            p_character.movementComponent.SetEnableDigging(false);
+            if (p_character.isNormalCharacter && IsTilePartOfARoom(p_character.gridTileLocation, out var room) && room is PrisonCell prisonCell && prisonCell.skeleton == null) {
                 DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
                 door?.Close();
             }
+            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+        }
+        protected override void AfterCharacterRemovedFromLocation(Character p_character) {
+            base.AfterCharacterRemovedFromLocation(p_character);
+            p_character.movementComponent.SetEnableDigging(true);
+            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         }
 
         #region Structure Object

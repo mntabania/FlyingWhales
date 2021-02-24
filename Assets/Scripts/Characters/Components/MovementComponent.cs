@@ -282,7 +282,7 @@ public class MovementComponent : CharacterComponent {
         arriveLog.AddLogToDatabase(true);
 
         if (owner.isNormalCharacter) {
-            PlayerManager.Instance.player.ShowNotificationFrom(targetRegionToTravelInWorld, arriveLog);
+            PlayerManager.Instance.player.ShowNotificationFrom(entrance, arriveLog);
         }
 
         owner.EnableMarker();
@@ -486,7 +486,7 @@ public class MovementComponent : CharacterComponent {
 
 
         //Debug.Log($"No Path found for {owner.name} towards {owner.behaviourComponent.currentAbductTarget?.name ?? "null"}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
-        //Assert.IsNotNull(targetTile.objHere, $"Object at {targetTile} is null, but {owner.name} wants to dig it.");
+        //Assert.IsNotNull(targetTile.tileObjectComponent.objHere, $"Object at {targetTile} is null, but {owner.name} wants to dig it.");
 
         if (targetTile != null && targetTile.tileObjectComponent.HasWalls()) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.DIG_THROUGH)) {

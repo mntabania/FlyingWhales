@@ -4,7 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 
-public class TileObjectComponent : CharacterComponent {
+public class CharacterTileObjectComponent : CharacterComponent {
     public Bed primaryBed { get; private set; }
     public BaseBed bedBeingUsed { get; private set; }
 
@@ -12,9 +12,9 @@ public class TileObjectComponent : CharacterComponent {
     public bool isUsingBed => bedBeingUsed != null;
     #endregion
 
-    public TileObjectComponent() {
+    public CharacterTileObjectComponent() {
     }
-    public TileObjectComponent(SaveDataTileObjectComponent data) {
+    public CharacterTileObjectComponent(SaveDataCharacterTileObjectComponent data) {
     }
 
     #region General
@@ -27,7 +27,7 @@ public class TileObjectComponent : CharacterComponent {
     #endregion
 
     #region Loading
-    public void LoadReferences(SaveDataTileObjectComponent data) {
+    public void LoadReferences(SaveDataCharacterTileObjectComponent data) {
         if (!string.IsNullOrEmpty(data.primaryBed)) {
             primaryBed = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.primaryBed) as Bed;
         }
@@ -39,12 +39,12 @@ public class TileObjectComponent : CharacterComponent {
 }
 
 [System.Serializable]
-public class SaveDataTileObjectComponent : SaveData<TileObjectComponent> {
+public class SaveDataCharacterTileObjectComponent : SaveData<CharacterTileObjectComponent> {
     public string primaryBed;
     public string bedBeingUsed;
 
     #region Overrides
-    public override void Save(TileObjectComponent data) {
+    public override void Save(CharacterTileObjectComponent data) {
         if(data.primaryBed != null) {
             primaryBed = data.primaryBed.persistentID;
         }
@@ -53,8 +53,8 @@ public class SaveDataTileObjectComponent : SaveData<TileObjectComponent> {
         }
     }
 
-    public override TileObjectComponent Load() {
-        TileObjectComponent component = new TileObjectComponent(this);
+    public override CharacterTileObjectComponent Load() {
+        CharacterTileObjectComponent component = new CharacterTileObjectComponent(this);
         return component;
     }
     #endregion

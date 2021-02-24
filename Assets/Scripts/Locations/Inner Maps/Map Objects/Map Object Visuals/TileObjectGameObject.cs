@@ -64,6 +64,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             tileObject.state,
             area.biomeType,
             tileObject.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
+        tileObject.hiddenComponent.OnSetHiddenState();
     }
 
     #region Pointer Events

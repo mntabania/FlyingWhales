@@ -257,7 +257,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
+            tile.tileObjectComponent.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
         }
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];

@@ -20,7 +20,8 @@ public abstract class MapObject<T> : BaseMapObject where T: IDamageable {
         CreateMapObjectVisual();
         mapVisual.Initialize(obj);
         InitializeVisionTrigger(obj);
-        if (mapVisual.selectable is TileObject tileObject) {
+        if (obj is TileObject tileObject) {
+            tileObject.hiddenComponent.OnSetHiddenState();
             Assert.IsNotNull(tileObject.traitContainer, $"Trait Container of {tileObject.name} {tileObject.id.ToString()} {tileObject.tileObjectType.ToString()} is null!");
             List<Trait> traitOverrideFunctions = tileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
             if (traitOverrideFunctions != null) {

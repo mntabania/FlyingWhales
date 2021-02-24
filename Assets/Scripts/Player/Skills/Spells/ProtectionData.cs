@@ -18,7 +18,7 @@ public class ProtectionData : SkillData {
             LocationGridTile tile = tiles[i];
             for (int j = 0; j < tile.charactersHere.Count; j++) {
                 Character character = tile.charactersHere[j];
-                if (tile.objHere is Tombstone tombstone && tombstone.character == character) {
+                if (tile.tileObjectComponent.objHere is Tombstone tombstone && tombstone.character == character) {
                     //NOTE: Skip characters in tombstone when damaging character's here. //TODO: This is a quick fix
                     continue;
                 }

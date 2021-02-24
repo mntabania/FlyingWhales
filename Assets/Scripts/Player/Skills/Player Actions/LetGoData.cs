@@ -27,12 +27,26 @@ public class LetGoData : PlayerAction {
         if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
             return false;
         }
+        if (targetCharacter.interruptComponent.isInterrupted) {
+            if (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Brainwashed ||
+                targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
+                //do not allow characters being tortured or brainwashed to be seized
+                return false;
+            }
+        }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
             reasons += "Characters being drained cannot be Let Go.";
+        }
+        if (targetCharacter.interruptComponent.isInterrupted) {
+            if (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Brainwashed) {
+                reasons += "Character is currently being Brainwashed.";
+            }else if (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
+                reasons += "Character is currently being Tortured.";
+            }
         }
         return reasons;
     }

@@ -5,7 +5,6 @@ using Inner_Maps;
 using Logs;
 
 public class DestroyData : PlayerAction {
-   
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DESTROY;
     public override string name => "Destroy";
     public override string description => "This Action destroys an object.";

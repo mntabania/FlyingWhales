@@ -11,6 +11,8 @@ namespace Traits {
             ticksDuration = 0;
             isHidden = true;
             hindersSocials = true;
+            hindersPerform = true;
+            hindersWitness = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Ended_Trait);
         }
         public override bool OnDeath(Character character) {

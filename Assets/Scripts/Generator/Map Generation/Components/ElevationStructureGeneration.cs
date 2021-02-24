@@ -132,16 +132,16 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
 		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
 		
-		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.objHere == null));
+		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.tileObjectComponent.objHere == null));
 		CreateFishingSpot(northTile);
 		
-		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.objHere == null));
+		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.tileObjectComponent.objHere == null));
 		CreateFishingSpot(southTile);
 		
-		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.objHere == null));
+		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.tileObjectComponent.objHere == null));
 		CreateFishingSpot(westTile);
 		
-		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.objHere == null));
+		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.tileObjectComponent.objHere == null));
 		CreateFishingSpot(eastTile);
 
 		Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
@@ -159,7 +159,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	private void SetAsWater(LocationGridTile tile, LocationStructure structure) {
 		tile.SetTileState(LocationGridTile.Tile_State.Occupied);
 		tile.SetStructure(structure);
-		tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, "Wet", overrideDuration: 0);
+		tile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(tile.tileObjectComponent.genericTileObject, "Wet", overrideDuration: 0);
 	}
 	private bool ShouldTileBePartOfMountain(LocationGridTile p_tile, List<LocationGridTile> locationGridTiles) {
 		if (p_tile.HasNeighbourNotInList(locationGridTiles)) {
@@ -205,8 +205,8 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 					if (path != null) {
 						for (int k = 0; k < path.Count; k++) {
 							LocationGridTile pathTile = path[k];
-							if (pathTile.objHere is BlockWall) {
-								pathTile.structure.RemovePOI(pathTile.objHere);
+							if (pathTile.tileObjectComponent.objHere is BlockWall) {
+								pathTile.structure.RemovePOI(pathTile.tileObjectComponent.objHere);
 							}		
 						}	
 					}
@@ -247,7 +247,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	}
 	private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
 		if (p_blockWall.gridTileLocation != null) {
-			int caveNeighbours = p_blockWall.gridTileLocation.neighbourList.Count(t => t.objHere is BlockWall);
+			int caveNeighbours = p_blockWall.gridTileLocation.neighbourList.Count(t => t.tileObjectComponent.objHere is BlockWall);
 			if (caveNeighbours == 2 || caveNeighbours == 5) {
 				return p_blockWall.gridTileLocation.neighbourList.Count(t => t.structure is Wilderness) >= 3;	
 			}
@@ -256,8 +256,8 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	}
 	private void CreateOreVeinAt(LocationGridTile tile) {
 		if (tile != null) {
-			if (tile.objHere != null) {
-				tile.structure.RemovePOI(tile.objHere);
+			if (tile.tileObjectComponent.objHere != null) {
+				tile.structure.RemovePOI(tile.tileObjectComponent.objHere);
 			}
 			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE_VEIN);
 			tile.structure.AddPOI(well, tile);

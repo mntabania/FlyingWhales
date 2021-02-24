@@ -459,7 +459,10 @@ public class MoodComponent : CharacterComponent {
 	public void UpdateMoodSummaryLogsOnCharacterChangedName(Character p_character) {
 		foreach (var moodModification in allMoodModifications) {
 			for (int i = 0; i < moodModification.Value.flavorTexts.Count; i++) {
-				moodModification.Value.flavorTexts[i].TryUpdateLogAfterRename(p_character);
+				var flavorText = moodModification.Value.flavorTexts[i];
+				if (flavorText != null) {
+					flavorText.TryUpdateLogAfterRename(p_character);	
+				}
 			}
 		}
 	}

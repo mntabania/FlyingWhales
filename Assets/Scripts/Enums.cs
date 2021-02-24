@@ -676,7 +676,7 @@ public enum STRUCTURE_TYPE {
     MEDDLER = 32,
     DEFILER = 33,
     THE_ANVIL = 34,
-    EYE = 35,
+    BEHOLDER = 35,
     THE_NEEDLES = 36,
     TORTURE_CHAMBERS = 37,
     DEMONIC_PRISON = 38,
@@ -883,6 +883,7 @@ public enum TILE_OBJECT_TYPE {
     RAT_MEAT = 167,
     THIN_WALL = 168,
     SPIRE = 169,
+    EYE_WARD = 170,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -973,7 +974,7 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     POISON_BLOOM = 39, LANDMINE = 40, TERRIFYING_HOWL = 41, FREEZING_TRAP = 42, SNARE_TRAP = 43, WIND_BLAST = 44, ICETEROIDS = 45, HEAT_WAVE = 46, TORTURE = 47,
     SEIZE_OBJECT = 50, SEIZE_CHARACTER = 51, SEIZE_MONSTER = 52, BUILD_DEMONIC_STRUCTURE = 59, AFFLICT = 60,
     BREED_MONSTER = 62, COWARDICE = 67, PYROPHOBIA = 68, NARCOLEPSY = 69,
-    PLANT_GERM = 70, MEDDLER = 71, EYE = 72, CRYPT = 73, KENNEL = 74, OSTRACIZER = 75, TORTURE_CHAMBERS = 76, DEMONIC_PRISON = 77,
+    PLANT_GERM = 70, MEDDLER = 71, BEHOLDER = 72, CRYPT = 73, KENNEL = 74, OSTRACIZER = 75, TORTURE_CHAMBERS = 76, DEMONIC_PRISON = 77,
     DEMON_WRATH = 78, DEMON_PRIDE = 79, DEMON_LUST = 80, DEMON_GLUTTONY = 81, DEMON_SLOTH = 82, DEMON_ENVY = 83, DEMON_GREED = 84,
     KILL = 87, EMPOWER = 88, AGITATE = 89, HOTHEADED = 90, LAZINESS = 91, HEAL = 92, SPLASH_WATER = 93, WALL = 94,
     MUSIC_HATER = 95, DEFILER = 96, GLUTTONY = 99, WOLF = 100, GOLEM = 101, INCUBUS = 102, SUCCUBUS = 103, FIRE_ELEMENTAL = 104, KOBOLD = 105, GHOST = 106,
@@ -986,9 +987,8 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     SCHEME = 158, INSTIGATE_WAR = 159, RESIGN = 160, LEAVE_FACTION = 161, LEAVE_HOME = 162, LEAVE_VILLAGE = 163,
     BREAK_UP = 164, JOIN_FACTION = 165, REBELLION = 166, OVERTHROW_LEADER = 167, INDUCE_MIGRATION = 168, STIFLE_MIGRATION = 169,
     RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
-    CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, DRAIN_SPIRIT = 182,
-    LET_GO,
-    FULL_HEAL
+    CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, SPAWN_EYE_WARD = 182, DESTROY_EYE_WARD = 183, DRAIN_SPIRIT = 184,
+    LET_GO = 185, FULL_HEAL = 186
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1081,7 +1081,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Heal
+    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Eye_Ward_Highlight, Heal
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }

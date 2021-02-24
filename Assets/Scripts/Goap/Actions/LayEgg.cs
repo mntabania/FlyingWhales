@@ -35,7 +35,7 @@ public class LayEgg : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
-            return actor.gridTileLocation != null && actor.gridTileLocation.objHere == null;
+            return actor.gridTileLocation != null && actor.gridTileLocation.tileObjectComponent.objHere == null;
         }
         return false;
     }
@@ -44,7 +44,7 @@ public class LayEgg : GoapAction {
     #region State Effects
     public void AfterLaySuccess(ActualGoapNode goapNode) {
         if(goapNode.actor is Summon summon) {
-            if(summon.gridTileLocation != null && summon.gridTileLocation.objHere == null) {
+            if(summon.gridTileLocation != null && summon.gridTileLocation.tileObjectComponent.objHere == null) {
                 TILE_OBJECT_TYPE eggType = CharacterManager.Instance.GetEggType(summon.summonType);
                 if(eggType != TILE_OBJECT_TYPE.NONE) {
                     MonsterEgg egg = InnerMapManager.Instance.CreateNewTileObject<MonsterEgg>(eggType);

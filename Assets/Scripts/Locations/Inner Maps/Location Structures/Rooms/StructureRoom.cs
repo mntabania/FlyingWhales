@@ -96,7 +96,7 @@ namespace Inner_Maps.Location_Structures {
         public T GetTileObjectInRoom<T>() where T : TileObject{
             for (int i = 0; i < tilesInRoom.Count; i++) {
                 LocationGridTile tile = tilesInRoom[i];
-                if (tile.objHere != null && tile.objHere is T obj) {
+                if (tile.tileObjectComponent.objHere != null && tile.tileObjectComponent.objHere is T obj) {
                     return obj;
                 }
             }

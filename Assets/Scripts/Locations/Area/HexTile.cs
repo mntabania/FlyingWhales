@@ -398,7 +398,7 @@
 //         List<LocationGridTile> tiles = null;
 //         for (int i = 0; i < locationGridTiles.Length; i++) {
 //             LocationGridTile tile = locationGridTiles[i];
-//             if (tile.objHere == null) {
+//             if (tile.tileObjectComponent.objHere == null) {
 //                 if (tiles == null) { tiles = new List<LocationGridTile>(); }
 //                 tiles.Add(tile);
 //             }
@@ -1187,7 +1187,7 @@
 //     public void PopulateTileObjectsInHexTile(List<TileObject> p_tileObjectList, TILE_OBJECT_TYPE type) {
 //         for (int i = 0; i < locationGridTiles.Length; i++) {
 //             LocationGridTile tile = locationGridTiles[i];
-//             if (tile.objHere != null && tile.objHere is TileObject obj && obj.tileObjectType == type) {
+//             if (tile.tileObjectComponent.objHere != null && tile.tileObjectComponent.objHere is TileObject obj && obj.tileObjectType == type) {
 //                 p_tileObjectList.Add(obj);
 //             }
 //         }
@@ -1196,7 +1196,7 @@
 //         int count = 0;
 //         for (int i = 0; i < locationGridTiles.Length; i++) {
 //             LocationGridTile tile = locationGridTiles[i];
-//             if (tile.objHere != null && tile.objHere is TileObject obj && obj.tileObjectType == type) {
+//             if (tile.tileObjectComponent.objHere != null && tile.tileObjectComponent.objHere is TileObject obj && obj.tileObjectType == type) {
 //                 count++;
 //             }
 //         }
@@ -1206,7 +1206,7 @@
 //         List<T> tileObjects = null;
 //         for (int i = 0; i < locationGridTiles.Length; i++) {
 //             LocationGridTile tile = locationGridTiles[i];
-//             if (tile.objHere is T obj) {
+//             if (tile.tileObjectComponent.objHere is T obj) {
 //                 if (tileObjects == null) {
 //                     tileObjects = new List<T>();
 //                 }
@@ -1512,7 +1512,7 @@
 //             } else {
 //                 currTile.parentMap.groundTilemap.SetTile(position, groundTile);
 //                 currTile.UpdateGroundTypeBasedOnAsset();
-//                 if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
+//                 if (currTile.tileObjectComponent.objHere != null && currTile.tileObjectComponent.objHere.mapObjectVisual && currTile.tileObjectComponent.objHere is TileObject tileObject) {
 //                     tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
 //                 }
 //                 currTile.CreateSeamlessEdgesForSelfAndNeighbours();    
@@ -1538,7 +1538,7 @@
 //             
 //             currTile.parentMap.groundTilemap.SetTile(position, groundTile);
 //             currTile.UpdateGroundTypeBasedOnAsset();
-//             if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
+//             if (currTile.tileObjectComponent.objHere != null && currTile.tileObjectComponent.objHere.mapObjectVisual && currTile.tileObjectComponent.objHere is TileObject tileObject) {
 //                 tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
 //             }
 //             currTile.CreateSeamlessEdgesForSelfAndNeighbours();
@@ -1592,8 +1592,8 @@
 //     public bool HasTileObjectInsideHexThatMeetCriteria(Func<TileObject, bool> criteria) {
 //         for (int i = 0; i < locationGridTiles.Length; i++) {
 //             LocationGridTile tile = locationGridTiles[i];
-//             if (tile.objHere != null) {
-//                 TileObject obj = tile.objHere as TileObject;
+//             if (tile.tileObjectComponent.objHere != null) {
+//                 TileObject obj = tile.tileObjectComponent.objHere as TileObject;
 //                 if (obj != null && criteria.Invoke(obj)) {
 //                     return true;
 //                 }

@@ -30,7 +30,7 @@ public class WindBlastData : SkillData {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(ApplyWindDamage);
         }
-        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
+        targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

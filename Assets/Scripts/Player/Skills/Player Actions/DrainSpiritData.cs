@@ -19,7 +19,11 @@ public class DrainSpiritData : PlayerAction {
                 if (targetCharacter.isDead) {
                     return false;
                 }
-                return targetCharacter.currentStructure is Kennel || targetCharacter.currentStructure is Defiler || targetCharacter.currentStructure is TortureChambers;
+                if (targetCharacter is Summon) {
+                    return targetCharacter.currentStructure is Kennel;
+                } else {
+                    return targetCharacter.currentStructure is TortureChambers;
+                }
             }
         }
         return false;
@@ -30,6 +34,13 @@ public class DrainSpiritData : PlayerAction {
             if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
                 return false;
             }
+            if (targetCharacter.interruptComponent.isInterrupted) {
+                if (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Brainwashed ||
+                    targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
+                    //do not allow characters being tortured or brainwashed to be seized
+                    return false;
+                }
+            }
             return true;
         }
         return false;
@@ -37,7 +48,14 @@ public class DrainSpiritData : PlayerAction {
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
-            reasons += "Characters is already being drained.";
+            reasons += "Character is already being drained.";
+        }
+        if (targetCharacter.interruptComponent.isInterrupted) {
+            if (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Brainwashed) {
+                reasons += "Character is currently being Brainwashed.";
+            }else if (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
+                reasons += "Character is currently being Tortured.";
+            }
         }
         return reasons;
     }

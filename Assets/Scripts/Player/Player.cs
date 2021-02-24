@@ -426,45 +426,73 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Player Notifications
-    private bool ShouldShowNotificationFrom(Region location) {
-        return location.canShowNotifications;
+    private bool ShouldShowNotificationFrom(LocationGridTile location) {
+        return location != null && location.tileObjectComponent.isSeenByEyeWard;
     }
     private bool ShouldShowNotificationFrom(Character character) {
-        return character.currentRegion != null && ShouldShowNotificationFrom(character.currentRegion);
+        return ShouldShowNotificationFrom(character.gridTileLocation);
     }
     private bool ShouldShowNotificationFrom(Character character, in Log log) {
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
-                || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
+            for (int i = 0; i < log.fillers.Count; i++) {
+                object fillerObject = log.fillers[i].GetObjectForFiller();
+                if (fillerObject is Character fillerCharacter) {
+                    if (ShouldShowNotificationFrom(fillerCharacter)) {
+                        return true;
+                    }
+                } else if (fillerObject is LocationGridTile fillerGridTile) {
+                    if (ShouldShowNotificationFrom(fillerGridTile)) {
+                        return true;
+                    }
+                }
+            }
+            //NOTE: Replaced with the loop above to avoid garbage
+            //return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
+            //    || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
         }
+        return false;
     }
-    private bool ShouldShowNotificationFrom(Region location, in Log log) {
+    private bool ShouldShowNotificationFrom(LocationGridTile location, in Log log) {
         if (ShouldShowNotificationFrom(location)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
-                   || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
-        }
-    }
-    private bool ShouldShowNotificationFrom(Character[] characters) {
-        for (int i = 0; i < characters.Length; i++) {
-            if (ShouldShowNotificationFrom(characters[i])) {
-                return true;
+            for (int i = 0; i < log.fillers.Count; i++) {
+                object fillerObject = log.fillers[i].GetObjectForFiller();
+                if (fillerObject is Character fillerCharacter) {
+                    if (ShouldShowNotificationFrom(fillerCharacter)) {
+                        return true;
+                    }
+                } else if (fillerObject is LocationGridTile fillerGridTile) {
+                    if (ShouldShowNotificationFrom(fillerGridTile)) {
+                        return true;
+                    }
+                }
             }
+            //NOTE: Replaced with the loop above to avoid garbage
+            //return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
+            //       || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(Region[] locations) {
-        for (int i = 0; i < locations.Length; i++) {
-            if (ShouldShowNotificationFrom(locations[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool ShowNotificationFrom(Region location, Log log, bool releaseLogAfter = false) {
+    //private bool ShouldShowNotificationFrom(Character[] characters) {
+    //    for (int i = 0; i < characters.Length; i++) {
+    //        if (ShouldShowNotificationFrom(characters[i])) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //private bool ShouldShowNotificationFrom(LocationGridTile[] locations) {
+    //    for (int i = 0; i < locations.Length; i++) {
+    //        if (ShouldShowNotificationFrom(locations[i])) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    public bool ShowNotificationFrom(LocationGridTile location, Log log, bool releaseLogAfter = false) {
         if (ShouldShowNotificationFrom(location, log)) {
             ShowNotification(log, releaseLogAfter);
             return true;
@@ -549,7 +577,7 @@ public class Player : ILeader, IObjectManipulator {
             return; //clicked on UI;
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null && hoveredTile.objHere == null) {
+        if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
             Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(currentActiveArtifact);
             hoveredTile.structure.AddPOI(artifact, hoveredTile);
         }
@@ -593,8 +621,8 @@ public class Player : ILeader, IObjectManipulator {
                     }
                 }
                 for (int i = 0; i < highlightedTiles.Count; i++) {
-                    if(highlightedTiles[i].objHere != null) {
-                        poisInHighlightedTiles.Add(highlightedTiles[i].objHere);
+                    if(highlightedTiles[i].tileObjectComponent.objHere != null) {
+                        poisInHighlightedTiles.Add(highlightedTiles[i].tileObjectComponent.objHere);
                     }
                 }
                 currentActiveCombatAbility.ActivateAbility(poisInHighlightedTiles);
@@ -669,7 +697,7 @@ public class Player : ILeader, IObjectManipulator {
             return; //clicked on UI;
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null && hoveredTile.objHere == null) {
+        if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
             TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(currentActiveItem);
             hoveredTile.structure.AddPOI(item, hoveredTile);
         }

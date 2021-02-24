@@ -42,14 +42,8 @@ namespace Inner_Maps {
         public Ground_Type groundType { get; private set; }
         public LocationStructure structure { get; private set; }
         public List<LocationGridTile> neighbourList { get; private set; }
-        public TileObject objHere { get; private set; }
         public List<Character> charactersHere { get; private set; }
-        public GenericTileObject genericTileObject { get; private set; }
-        public List<ThinWall> walls { get; private set; }
         // public LocationGridTileCollection collectionOwner { get; private set; }
-        public bool hasLandmine { get; private set; }
-        public bool hasFreezingTrap { get; private set; }
-        public bool hasSnareTrap { get; private set; }
         /// <summary>
         /// Does this tile have a blueprint on it.
         /// NOTE: This is not saved since blueprint placement is handled by GenericTileObject loading
@@ -64,7 +58,6 @@ namespace Inner_Maps {
         /// The generated perlin noise sample of this tile.
         /// </summary>
         public float floorSample { get; private set; }
-        public List<RACE> freezingTrapExclusions { get; private set; }
         /// <summary>
         /// Is this tile using the default settings (i.e. No Traits other than Flammable, No Jobs targeting its Generic Tile Object, etc.)
         /// </summary>
@@ -75,10 +68,7 @@ namespace Inner_Maps {
         /// <see cref="InnerTileMap.GroundPerlin"/>
         /// </summary>
         public Ground_Type initialGroundType { get; private set; }
-        
-        private GameObject _landmineEffect;
-        private GameObject _freezingTrapEffect;
-        private GameObject _snareTrapEffect;
+
         private Dictionary<GridNeighbourDirection, LocationGridTile> _neighbours;
         private Dictionary<GridNeighbourDirection, LocationGridTile> _fourNeighbours;
 
@@ -121,7 +111,6 @@ namespace Inner_Maps {
             tileType = Tile_Type.Empty;
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
-            walls = new List<ThinWall>();
             _fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             _neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             neighbourList = new List<LocationGridTile>();
@@ -146,7 +135,6 @@ namespace Inner_Maps {
             tileType = data.tileType;
             tileState = data.tileState;
             charactersHere = new List<Character>();
-            walls = new List<ThinWall>();
             _fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             _neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             neighbourList = new List<LocationGridTile>();
@@ -160,15 +148,15 @@ namespace Inner_Maps {
 
         #region Loading
         public void LoadSecondWave(SaveDataLocationGridTile saveDataLocationGridTile) {
-            if (saveDataLocationGridTile.hasLandmine) {
-                SetHasLandmine(true);
-            }
-            if (saveDataLocationGridTile.hasFreezingTrap) {
-                SetHasFreezingTrap(true, saveDataLocationGridTile.freezingTrapExclusions?.ToArray());
-            }
-            if (saveDataLocationGridTile.hasSnareTrap) {
-                SetHasSnareTrap(true);
-            }
+            //if (saveDataLocationGridTile.tileObjectComponent.hasLandmine) {
+            //    SetHasLandmine(true);
+            //}
+            //if (saveDataLocationGridTile.tileObjectComponent.hasFreezingTrap) {
+            //    SetHasFreezingTrap(true, saveDataLocationGridTile.tileObjectComponent.freezingTrapExclusions?.ToArray());
+            //}
+            //if (saveDataLocationGridTile.tileObjectComponent.hasSnareTrap) {
+            //    SetHasSnareTrap(true);
+            //}
             for (int i = 0; i < saveDataLocationGridTile.meteorCount; i++) {
                 AddMeteor();
             }
@@ -193,30 +181,24 @@ namespace Inner_Maps {
         public void SetTileType(Tile_Type tileType) {
             this.tileType = tileType;
         }
-        public void CreateGenericTileObject() {
-            genericTileObject = new GenericTileObject(this);
-        }
-        public void LoadGenericTileObject(GenericTileObject genericTileObject) {
-            this.genericTileObject = genericTileObject;
-        }
         private void SetGroundType(Ground_Type newGroundType, bool isInitial = false) {
             Ground_Type previousType = this.groundType;
             this.groundType = newGroundType;
-            if (genericTileObject != null) {
+            if (tileObjectComponent.genericTileObject != null) {
                 switch (newGroundType) {
                     case Ground_Type.Grass:
                     case Ground_Type.Wood:
                     case Ground_Type.Sand:
                     case Ground_Type.Desert_Grass:
                     case Ground_Type.Structure_Stone:
-                        genericTileObject.traitContainer.AddTrait(genericTileObject, "Flammable");
+                        tileObjectComponent.genericTileObject.traitContainer.AddTrait(tileObjectComponent.genericTileObject, "Flammable");
                         break;
                     case Ground_Type.Snow:
                         // genericTileObject.traitContainer.AddTrait(genericTileObject, "Frozen", bypassElementalChance: true, overrideDuration: 0);
-                        genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
+                        tileObjectComponent.genericTileObject.traitContainer.RemoveTrait(tileObjectComponent.genericTileObject, "Flammable");
                         break;
                     default:
-                        genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
+                        tileObjectComponent.genericTileObject.traitContainer.RemoveTrait(tileObjectComponent.genericTileObject, "Flammable");
                         break;
                 }
             }
@@ -371,9 +353,9 @@ namespace Inner_Maps {
         public void SetGroundTilemapVisual(TileBase tileBase, bool updateEdges = false) {
             parentMap.groundTilemap.SetTile(localPlace, tileBase);
             parentMap.groundTilemap.RefreshTile(localPlace);
-            if (genericTileObject.mapObjectVisual != null && genericTileObject.mapObjectVisual.usedSprite != null) {
+            if (tileObjectComponent.genericTileObject.mapObjectVisual != null && tileObjectComponent.genericTileObject.mapObjectVisual.usedSprite != null) {
                 //if this tile's map object is shown and is showing a visual, update it's sprite to use the updated sprite.
-                genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
+                tileObjectComponent.genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
             }
             UpdateGroundTypeBasedOnAsset();
             if (updateEdges) {
@@ -562,14 +544,14 @@ namespace Inner_Maps {
             Profiler.EndSample();
             
             Profiler.BeginSample("Generic Tile Object Initialize");
-            genericTileObject.ManualInitialize(this);
+            tileObjectComponent.genericTileObject.ManualInitialize(this);
             Profiler.EndSample();
 
             Profiler.BeginSample("Update Awareness");
-            if(objHere != null) {
+            if(tileObjectComponent.objHere != null) {
                 //Whenever a grid tile changes its structure (might be because a new structure is built on top of it), the object inside must update its awareness to that new structure
-                LocationAwarenessUtility.RemoveFromAwarenessList(objHere);
-                LocationAwarenessUtility.AddToAwarenessList(objHere, this);
+                LocationAwarenessUtility.RemoveFromAwarenessList(tileObjectComponent.objHere);
+                LocationAwarenessUtility.AddToAwarenessList(tileObjectComponent.objHere, this);
             }
             if (previousStructure != structure) {
                 //if tile changed structures then transfer characters here to that structure.
@@ -606,21 +588,21 @@ namespace Inner_Maps {
             }
                 
             // }
-            if (genericTileObject != null) {
-                List<Trait> traitOverrideFunctions = genericTileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Enter_Grid_Tile_Trait);
+            if (tileObjectComponent.genericTileObject != null) {
+                List<Trait> traitOverrideFunctions = tileObjectComponent.genericTileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Enter_Grid_Tile_Trait);
                 if (traitOverrideFunctions != null) {
                     for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                         Trait trait = traitOverrideFunctions[i];
-                        trait.OnEnterGridTile(character, genericTileObject);
+                        trait.OnEnterGridTile(character, tileObjectComponent.genericTileObject);
                     }
                 }
             }
-            if (hasLandmine) {
-                GameManager.Instance.StartCoroutine(TriggerLandmine(character));
+            if (tileObjectComponent.hasLandmine) {
+                GameManager.Instance.StartCoroutine(tileObjectComponent.TriggerLandmine(character));
             }
 
             if (!character.movementComponent.cameFromWurmHole) {
-                if (objHere != null && objHere is WurmHole wurmHole) {
+                if (tileObjectComponent.objHere != null && tileObjectComponent.objHere is WurmHole wurmHole) {
                     if (wurmHole.wurmHoleConnection.gridTileLocation != null) {
                         wurmHole.TravelThroughWurmHole(character);
                         return;
@@ -630,7 +612,7 @@ namespace Inner_Maps {
                 character.movementComponent.SetCameFromWurmHole(false);
             }
 
-            if (objHere != null && objHere is Rug rug) {
+            if (tileObjectComponent.objHere != null && tileObjectComponent.objHere is Rug rug) {
                 //Booby trapped Rug should explode on contact
                 //https://trello.com/c/rveaE94E/1942-booby-trapped-rug-should-explode-on-contact
                 if(rug.traitContainer.HasTrait("Booby Trapped")) {
@@ -642,11 +624,11 @@ namespace Inner_Maps {
                     }
                 }
             }
-            if (hasFreezingTrap && (freezingTrapExclusions == null || !freezingTrapExclusions.Contains(character.race))) {
-                TriggerFreezingTrap(character);
+            if (tileObjectComponent.hasFreezingTrap && (tileObjectComponent.freezingTrapExclusions == null || !tileObjectComponent.freezingTrapExclusions.Contains(character.race))) {
+                tileObjectComponent.TriggerFreezingTrap(character);
             }
-            if (hasSnareTrap) {
-                TriggerSnareTrap(character);
+            if (tileObjectComponent.hasSnareTrap) {
+                tileObjectComponent.TriggerSnareTrap(character);
             }
 
             Character scorpionCharacter = HasRaceHere(RACE.SCORPION);
@@ -671,7 +653,7 @@ namespace Inner_Maps {
                         //Right now, the flee path sometimes gets messed up when the character tries to run from another character, sometimes they go to the same direction, it is because right now, we always take into account the corrupted hex tile even if they are too far
                         if (character.marker && character.marker.hasFleePath && character.isNormalCharacter) {
                             if (character.gridTileLocation != null) {
-                                //TileObject genericTileObject = character.gridTileLocation.hexTileOwner.GetCenterLocationGridTile().genericTileObject;
+                                //TileObject genericTileObject = character.gridTileLocation.hexTileOwner.GetCenterLocationGridTile().tileObjectComponent.genericTileObject;
                                 character.movementComponent.SetHasMovedOnCorruption(true);
                                 //character.marker.AddPOIAsInVisionRange(genericTileObject);
                                 //character.combatComponent.Flight(genericTileObject, "saw something frightening", forcedFlight: true);
@@ -754,101 +736,6 @@ namespace Inner_Maps {
                 return hex == character.territory;
             }
             return false;
-        }
-        #endregion
-
-        #region Points of Interest
-        public void SetObjectHere(TileObject poi) {
-            bool isPassablePreviously = IsPassable();
-            if (poi is TileObject tileObject) {
-                if (tileObject.OccupiesTile()) {
-                    objHere = poi;
-                }
-            } else {
-                objHere = poi;    
-            }
-            
-            poi.SetGridTileLocation(this);
-            poi.OnPlacePOI();
-            SetTileState(Tile_State.Occupied);
-            if (!IsPassable()) {
-                structure.RemovePassableTile(this);
-            } else if (IsPassable() && !isPassablePreviously) {
-                structure.AddPassableTile(this);
-            }
-            Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, this, poi);
-        }
-        public void LoadObjectHere(TileObject poi) {
-            bool isPassablePreviously = IsPassable();
-            if (poi is TileObject tileObject) {
-                if (tileObject.OccupiesTile()) {
-                    objHere = poi;
-                }
-            } else {
-                objHere = poi;    
-            }
-            
-            poi.SetGridTileLocation(this);
-            poi.OnLoadPlacePOI();
-            SetTileState(Tile_State.Occupied);
-            if (!IsPassable()) {
-                structure.RemovePassableTile(this);
-            } else if (IsPassable() && !isPassablePreviously) {
-                structure.AddPassableTile(this);
-            }
-            Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, this, poi);
-        }
-        public IPointOfInterest RemoveObjectHere(Character removedBy) {
-            if (objHere != null) {
-                IPointOfInterest removedObj = objHere;
-                objHere = null;
-                if (removedObj is TileObject tileObject) {
-                    //if the object in this tile is a tile object and it was removed by a character, use tile object specific function
-                    tileObject.RemoveTileObject(removedBy);
-                } else {
-                    removedObj.SetGridTileLocation(null);
-                    removedObj.OnDestroyPOI();
-                }
-                SetTileState(Tile_State.Empty);
-                Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
-                return removedObj;
-            }
-            return null;
-        }
-        public IPointOfInterest RemoveObjectHereWithoutDestroying() {
-            if (objHere != null) {
-                IPointOfInterest removedObj = objHere;
-                LocationGridTile gridTile = objHere.gridTileLocation;
-                objHere.SetGridTileLocation(null);
-                objHere = null;
-                SetTileState(Tile_State.Empty);
-                if (removedObj is TileObject tileObject) {
-                    tileObject.OnRemoveTileObject(null, gridTile, false, false);
-                }
-                removedObj.SetPOIState(POI_STATE.INACTIVE);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
-                return removedObj;
-            }
-            return null;
-        }
-        public IPointOfInterest RemoveObjectHereDestroyVisualOnly(Character remover = null) {
-            if (objHere != null) {
-                IPointOfInterest removedObj = objHere;
-                LocationGridTile gridTile = objHere.gridTileLocation;
-                objHere.SetGridTileLocation(null);
-                objHere = null;
-                SetTileState(Tile_State.Empty);
-                if (removedObj is TileObject removedTileObj) {
-                    removedTileObj.OnRemoveTileObject(null, gridTile, false, false);
-                    removedTileObj.DestroyMapVisualGameObject();
-                }
-                removedObj.SetPOIState(POI_STATE.INACTIVE);
-                Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
-                return removedObj;
-            }
-            return null;
         }
         #endregion
 
@@ -1054,7 +941,7 @@ namespace Inner_Maps {
         }
         public bool IsAdjacentTo(Type type) {
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {
-                if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type)) {
+                if ((keyValuePair.Value.tileObjectComponent.objHere != null && keyValuePair.Value.tileObjectComponent.objHere.GetType() == type)) {
                     return true;
                 }
             }
@@ -1306,7 +1193,7 @@ namespace Inner_Maps {
             for (int i = 0; i < neighbourList.Count; i++) {
                 LocationGridTile neighbor = neighbourList[i];
                 if (!thisStructureOnly || neighbor.structure == structure) {
-                    if (neighbor.objHere == null) {
+                    if (neighbor.tileObjectComponent.objHere == null) {
                         return neighbor;
                     }
                 }
@@ -1320,7 +1207,7 @@ namespace Inner_Maps {
             if (!checkedTiles.Contains(this)) {
                 checkedTiles.Add(this);
 
-                if (objHere == null && this != exception) {
+                if (tileObjectComponent.objHere == null && this != exception) {
                     return this;
                 }
                 LocationGridTile chosenTile = GetFirstNoObjectNeighbor(thisStructureOnly);
@@ -1404,14 +1291,14 @@ namespace Inner_Maps {
         }
         public List<ITraitable> GetTraitablesOnTile() {
             List<ITraitable> traitables = new List<ITraitable>();
-            traitables.Add(genericTileObject);
-            for (int i = 0; i < walls.Count; i++) {
-                ThinWall structureWallObject = walls[i];
+            traitables.Add(tileObjectComponent.genericTileObject);
+            for (int i = 0; i < tileObjectComponent.walls.Count; i++) {
+                ThinWall structureWallObject = tileObjectComponent.walls[i];
                 traitables.Add(structureWallObject);
             }
-            if (objHere != null) {
-                if ((objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT)) {//|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
-                    traitables.Add(objHere);
+            if (tileObjectComponent.objHere != null) {
+                if (tileObjectComponent.objHere.mapObjectState == MAP_OBJECT_STATE.BUILT) {//|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
+                    traitables.Add(tileObjectComponent.objHere);
                 }
             }
             for (int i = 0; i < charactersHere.Count; i++) {
@@ -1421,24 +1308,24 @@ namespace Inner_Maps {
             return traitables;
         }
         public void PerformActionOnTraitables(TraitableCallback callback) {
-            callback.Invoke(genericTileObject);
-            for (int i = 0; i < walls.Count; i++) {
-                ThinWall structureWallObject = walls[i];
+            callback.Invoke(tileObjectComponent.genericTileObject);
+            for (int i = 0; i < tileObjectComponent.walls.Count; i++) {
+                ThinWall structureWallObject = tileObjectComponent.walls[i];
                 callback.Invoke(structureWallObject);
             }
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
-                if (objHere is Tombstone tombstone && tombstone.character == character) {
+                if (tileObjectComponent.objHere is Tombstone tombstone && tombstone.character == character) {
                     //NOTE: Skip characters in tombstone when damaging character's here. //TODO: This is a quick fix
                     continue;
                 }
                 callback.Invoke(character);
             }
-            if (objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
-                callback.Invoke(objHere);
+            if (tileObjectComponent.objHere != null && tileObjectComponent.objHere.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                callback.Invoke(tileObjectComponent.objHere);
                 //Sleeping characters in bed should also receive damage
                 //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
-                if (tileObject is BaseBed bed) {
+                if (tileObjectComponent.objHere is BaseBed bed) {
                     if (bed.users != null && bed.users.Length > 0) {
                         for (int i = 0; i < bed.users.Length; i++) {
                             Character user = bed.users[i];
@@ -1454,10 +1341,10 @@ namespace Inner_Maps {
         }
         public List<IPointOfInterest> GetPOIsOnTile() {
             List<IPointOfInterest> pois = new List<IPointOfInterest>();
-            pois.Add(genericTileObject);
-            if (objHere != null) {
-                if ((objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT)) {
-                    pois.Add(tileObject);
+            pois.Add(tileObjectComponent.genericTileObject);
+            if (tileObjectComponent.objHere != null) {
+                if (tileObjectComponent.objHere.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    pois.Add(tileObjectComponent.objHere);
                 }
             }
             for (int i = 0; i < charactersHere.Count; i++) {
@@ -1467,10 +1354,10 @@ namespace Inner_Maps {
             return pois;
         }
         public void AddTraitToAllPOIsOnTile(string traitName) {
-            genericTileObject.traitContainer.AddTrait(genericTileObject, traitName);
-            if (objHere != null) {
-                if ((objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT)) {
-                    tileObject.traitContainer.AddTrait(objHere, traitName);
+            tileObjectComponent.genericTileObject.traitContainer.AddTrait(tileObjectComponent.genericTileObject, traitName);
+            if (tileObjectComponent.objHere != null) {
+                if (tileObjectComponent.objHere.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    tileObjectComponent.objHere.traitContainer.AddTrait(tileObjectComponent.objHere, traitName);
                 }
             }
             for (int i = 0; i < charactersHere.Count; i++) {
@@ -1592,7 +1479,7 @@ namespace Inner_Maps {
                         }
                         LocationGridTile result = parentMap.map[dx, dy];
                         if (result.structure == null) { continue; } //do not include tiles with no structures
-                        if (!includeTilesWithObject && result.objHere != null) { continue; }
+                        if (!includeTilesWithObject && result.tileObjectComponent.objHere != null) { continue; }
                         if (!includeTilesInDifferentStructure 
                             && (result.structure != structure && (!result.structure.structureType.IsOpenSpace() || !structure.structureType.IsOpenSpace()))) { continue; }
                         if(!includeImpassable && !result.IsPassable()) { continue; }
@@ -1627,7 +1514,7 @@ namespace Inner_Maps {
                         }
                         LocationGridTile result = parentMap.map[dx, dy];
                         if (result.structure == null) { continue; } //do not include tiles with no structures
-                        if (!includeTilesWithObject && result.objHere != null) { continue; }
+                        if (!includeTilesWithObject && result.tileObjectComponent.objHere != null) { continue; }
                         if (!includeTilesInDifferentStructure
                             && (result.structure != structure && (!result.structure.structureType.IsOpenSpace() || !structure.structureType.IsOpenSpace()))) { continue; }
                         if (!includeImpassable && !result.IsPassable()) { continue; }
@@ -1637,7 +1524,7 @@ namespace Inner_Maps {
             }
         }
         public bool IsPassable() {
-            return (objHere == null || !objHere.IsUnpassable()) && !tileObjectComponent.HasWalls() && groundType != Ground_Type.Water;
+            return (tileObjectComponent.objHere == null || !tileObjectComponent.objHere.IsUnpassable()) && !tileObjectComponent.HasWalls() && groundType != Ground_Type.Water;
         }
         private LocationGridTile GetTargetTileToGoToRegion(Region region) {
             //if (currentRegion != null) {
@@ -1670,137 +1557,20 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Walls
-        public void AddWallObject(ThinWall structureWallObject) {
-            walls.Add(structureWallObject);
-            //if(objHere is BlockWall) {
-            //    //Thin walls cannot co-exist with block walls, so if a thin wall is placed, all block walls must be destroyed
-            //    objHere.AdjustHP(-objHere.maxHP, ELEMENTAL_TYPE.Normal, true);
-            //}
-        }
-        public void ClearWallObjects() {
-            walls.Clear();
-        }
-        #endregion
-
         public void InstantPlaceDemonicStructure(StructureSetting p_structureSetting) {
             List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(p_structureSetting.structureType, p_structureSetting.resource);
             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-            genericTileObject.InstantPlaceStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement);
+            tileObjectComponent.genericTileObject.InstantPlaceStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement);
         }
         public void PlaceSelfBuildingDemonicStructure(StructureSetting p_structureSetting, int p_buildingTimeInTicks) {
             if (p_buildingTimeInTicks > 0) {
                 List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(p_structureSetting.structureType, p_structureSetting.resource);
                 GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                genericTileObject.PlaceSelfBuildingStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement, p_buildingTimeInTicks);
+                tileObjectComponent.genericTileObject.PlaceSelfBuildingStructure(chosenStructurePrefab.name, PlayerManager.Instance.player.playerSettlement, p_buildingTimeInTicks);
             } else {
                 InstantPlaceDemonicStructure(p_structureSetting);
             }
         }
-        #region Landmine
-        public void SetHasLandmine(bool state) {
-            if(hasLandmine != state) {
-                SetIsDefault(false);
-                hasLandmine = state;
-                if (hasLandmine) {
-                    _landmineEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Landmine, InnerMapManager.DetailsTilemapSortingOrder - 1);
-                } else {
-                    ObjectPoolManager.Instance.DestroyObject(_landmineEffect);
-                    _landmineEffect = null;
-                }
-            }
-        }
-        private IEnumerator TriggerLandmine(Character triggeredBy) {
-            GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Landmine_Explosion);
-            genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
-            int baseDamage = -500;
-            yield return new WaitForSeconds(0.5f);
-            SetHasLandmine(false);
-            List<LocationGridTile> tiles = GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
-            BurningSource bs = null;
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile tile = tiles[i];
-                List<IPointOfInterest> pois = tile.GetPOIsOnTile();
-                for (int j = 0; j < pois.Count; j++) {
-                    IPointOfInterest poi = pois[j];
-                    if (poi.gridTileLocation == null) {
-                        continue; //skip
-                    }
-                    int processedDamage = baseDamage + PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE);
-                    if (poi is TileObject obj) {
-                        if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
-                        } else {
-                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj);
-                        }
-                    } else if (poi is Character character) {
-                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
-                        if (character.currentHP <= 0) {
-                            character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
-                            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
-                        }
-                    } else {
-                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
-                    }
-                }
-            }
-        }
-        #endregion
-
-        #region Freezing Trap
-        public void SetHasFreezingTrap(bool state, params RACE[] freezingTrapExclusions) {
-            if (hasFreezingTrap != state) {
-                SetIsDefault(false);
-                hasFreezingTrap = state;
-                if (hasFreezingTrap) {
-                    area.AddFreezingTrapInArea();
-                    this.freezingTrapExclusions = new List<RACE>(freezingTrapExclusions);
-                    _freezingTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Freezing_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
-                } else {
-                    area.RemoveFreezingTrapInArea();
-                    ObjectPoolManager.Instance.DestroyObject(_freezingTrapEffect);
-                    _freezingTrapEffect = null;
-                    this.freezingTrapExclusions = null;
-                }
-            }
-        }
-        private void TriggerFreezingTrap(Character triggeredBy) {
-            GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
-            AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, this, 1, false);
-            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP);
-            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FREEZING_TRAP);
-            SetHasFreezingTrap(false);
-            for (int i = 0; i < 3; i++) {
-                if (triggeredBy.traitContainer.HasTrait("Frozen")) {
-                    break;
-                } else {
-                    int duration = TraitManager.Instance.allTraits["Freezing"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
-                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: duration);
-                }
-            }
-        }
-        #endregion
-
-        #region Freezing Trap
-        public void SetHasSnareTrap(bool state) {
-            if (hasSnareTrap != state) {
-                SetIsDefault(false);
-                hasSnareTrap = state;
-                if (hasSnareTrap) {
-                    _snareTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Snare_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
-                } else {
-                    ObjectPoolManager.Instance.DestroyObject(_snareTrapEffect);
-                    _snareTrapEffect = null;
-                }
-            }
-        }
-        private void TriggerSnareTrap(Character triggeredBy) {
-            GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
-            SetHasSnareTrap(false);
-            int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
-            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
-        }
-        #endregion
 
         #region Hextile
         public Area GetNearestHexTileWithinRegion() {
@@ -1891,12 +1661,9 @@ namespace Inner_Maps {
             _fourNeighbours = null;
             neighbourList?.Clear();
             neighbourList = null;
-            objHere = null;
             charactersHere?.Clear();
             // charactersHere = null;
-            genericTileObject = null;
-            walls?.Clear();
-            walls = null;
+            tileObjectComponent.CleanUp();
         }
         #endregion
     }

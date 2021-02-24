@@ -95,7 +95,7 @@ namespace Traits {
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         character.logComponent.RegisterLog(log);
-                        PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log, true);
+                        PlayerManager.Instance.player.ShowNotificationFrom(character.gridTileLocation, log, true);
                         return true;
                     }
                 }
@@ -128,7 +128,7 @@ namespace Traits {
                     log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     this.character.logComponent.RegisterLog(log);
-                    PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log, true);
+                    PlayerManager.Instance.player.ShowNotificationFrom(character.gridTileLocation, log, true);
                 }
                 if(targetVictim == null) {
                     return "no_target";

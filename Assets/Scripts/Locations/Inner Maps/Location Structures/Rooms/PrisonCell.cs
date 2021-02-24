@@ -86,7 +86,7 @@ namespace Inner_Maps.Location_Structures {
             return false;
         }
         public bool IsValidTortureTarget(Character p_character) {
-            return p_character.isNormalCharacter && !p_character.isDead && !p_character.traitContainer.HasTrait("Being Drained");
+            return p_character.isNormalCharacter && !p_character.isDead && !p_character.traitContainer.HasTrait("Being Drained") && !p_character.interruptComponent.isInterrupted;;
         } 
         private void StartTorture(Character target) {
             currentTortureTarget = target;
@@ -262,7 +262,8 @@ namespace Inner_Maps.Location_Structures {
             return false;
         }
         public bool IsValidBrainwashTarget(Character p_character) {
-            return p_character.isNormalCharacter && !p_character.isDead && !p_character.traitContainer.HasTrait("Cultist") && !p_character.traitContainer.IsBlessed() && !p_character.traitContainer.HasTrait("Being Drained");
+            return p_character.isNormalCharacter && !p_character.isDead && !p_character.traitContainer.HasTrait("Cultist") && !p_character.traitContainer.IsBlessed() && 
+                   !p_character.traitContainer.HasTrait("Being Drained") && !p_character.interruptComponent.isInterrupted;
         } 
         public void StartBrainwash() {
             wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);

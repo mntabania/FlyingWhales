@@ -214,7 +214,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
-            || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW || p_playerAction.type == PLAYER_SKILL_TYPE.DESTROY
+            || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW || p_playerAction.type == PLAYER_SKILL_TYPE.DESTROY || p_playerAction.type == PLAYER_SKILL_TYPE.DESTROY_EYE_WARD
             || p_playerAction.category == PLAYER_SKILL_CATEGORY.SCHEME) {
             HidePlayerActionContextMenu();    
         } else {
@@ -1838,9 +1838,11 @@ public class UIManager : BaseMonoBehaviour {
         for (int i = 0; i < p_target.actions.Count; i++) {
             PLAYER_SKILL_TYPE skillType = p_target.actions[i];
             PlayerAction playerAction = PlayerSkillManager.Instance.GetPlayerSkillData(skillType) as PlayerAction;
-            if (playerAction != null && playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
-                if (contextMenuItems == null) { contextMenuItems = new List<IContextMenuItem>(); }
-                contextMenuItems.Add(playerAction);
+            if(playerAction != null && playerAction.shouldShowOnContextMenu) {
+                if (playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
+                    if (contextMenuItems == null) { contextMenuItems = new List<IContextMenuItem>(); }
+                    contextMenuItems.Add(playerAction);
+                }
             }
         }
         return contextMenuItems;

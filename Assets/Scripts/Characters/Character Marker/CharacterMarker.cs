@@ -254,7 +254,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateAnimation();
         pathfindingAI.Teleport(tile.centeredWorldLocation);
         UpdatePosition();
-        if (!(tile.objHere is WurmHole)) {
+        if (!(tile.tileObjectComponent.objHere is WurmHole)) {
             //NOTE: SPECIAL CASE only set structure if character the target tile does not have a wurm hole. Because this will cause conflicts in structure location when the character is teleported
             //but this will set the structure location of the character to th target tile instead
             character.currentStructure?.RemoveCharacterAtLocation(character);

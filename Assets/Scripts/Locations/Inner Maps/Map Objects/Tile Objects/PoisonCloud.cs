@@ -122,11 +122,11 @@ public sealed class PoisonCloud : MovingTileObject {
             }
             //If the radius is less than or equal to zero this means we will only get the gridTileLocation itself
             if (radius <= 0) {
-                gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, "Poisoned", bypassElementalChance: true);
+                gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTileLocation.tileObjectComponent.genericTileObject, "Poisoned", bypassElementalChance: true);
             } else {
                 List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < tiles.Count; i++) {
-                    tiles[i].genericTileObject.traitContainer.AddTrait(tiles[i].genericTileObject, "Poisoned", bypassElementalChance: true);
+                    tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Poisoned", bypassElementalChance: true);
                 }
             }
         }
