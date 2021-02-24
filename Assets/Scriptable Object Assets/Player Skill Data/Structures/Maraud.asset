@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af6b250ddb9365c4a924f945cd5f95b6, type: 3}
-  m_Name: ManaPit
+  m_Name: Maraud
   m_EditorClassIdentifier: 
-  skill: 184
+  skill: 185
   manaCost: -1
   charges: 2
   cooldown: 576

@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -36925,27 +36925,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
-        type: 3}
-      propertyPath: _playerSkillDataDictionary.m_keys.Array.size
-      value: 105
-      objectReference: {fileID: 0}
-    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
-        type: 3}
-      propertyPath: _playerSkillDataDictionary.m_values.Array.size
-      value: 105
-      objectReference: {fileID: 0}
-    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
-        type: 3}
-      propertyPath: _playerSkillDataDictionary.m_keys.Array.data[104]
-      value: 183
-      objectReference: {fileID: 0}
-    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
-        type: 3}
-      propertyPath: _playerSkillDataDictionary.m_values.Array.data[104]
-      value: 
-      objectReference: {fileID: 11400000, guid: bf4e27cde02f24748987abd35c3db660,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}
 --- !u!1001 &9016050650342384831
