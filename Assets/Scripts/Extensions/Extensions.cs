@@ -122,6 +122,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.BIOLAB:
+            case STRUCTURE_TYPE.IMP_HUT:
                 return true;
             default:
                 return false;
@@ -186,6 +187,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.MARAUD:
+            case STRUCTURE_TYPE.IMP_HUT:
             return true;
             default:
                 return false;
