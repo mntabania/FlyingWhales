@@ -124,6 +124,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.BIOLAB:
+            case STRUCTURE_TYPE.IMP_HUT:
                 return true;
             default:
                 return false;
@@ -168,7 +169,6 @@ public static class Extensions {
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
-            case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.CRYPT:
             case STRUCTURE_TYPE.OSTRACIZER:
             case STRUCTURE_TYPE.MEDDLER:
@@ -189,7 +189,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.MARAUD:
             case STRUCTURE_TYPE.DEFENSE_POINT:
-            return true;
+            case STRUCTURE_TYPE.IMP_HUT:
+                return true;
             default:
                 return false;
         }

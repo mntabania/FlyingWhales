@@ -39764,7 +39764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   racesDictionary:
-    m_keys: 17000000200000001a0000000e000000080000001300000002000000160000000f0000001f000000060000001200000001000000140000001b000000150000001c0000001800000022000000190000000d0000001e00000011000000070000001d0000000a000000210000002300000024000000250000002600000027000000
+    m_keys: 17000000200000001a0000000e000000080000001300000002000000160000000f0000001f000000060000001200000001000000140000001b000000150000001c0000001800000022000000190000000d0000001e00000011000000070000001d0000000a00000021000000230000002400000025000000260000002700000028000000
     m_values:
     - {fileID: 11400000, guid: d2664475901456e4899b4b95f8666be6, type: 2}
     - {fileID: 11400000, guid: f51b6309caa63724db7613b6286d6622, type: 2}
@@ -39798,6 +39798,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 32e114352512f7148b3f5f921d245565, type: 2}
     - {fileID: 11400000, guid: 097fff931b51da3479bcad5f346ed8e7, type: 2}
     - {fileID: 11400000, guid: 6f076bf03c47a664daced83824add8e8, type: 2}
+    - {fileID: 11400000, guid: 32f4af9024fdcf3478eeee8a3f155c21, type: 2}
 --- !u!1 &1476203693
 GameObject:
   m_ObjectHideFlags: 0
@@ -40030,63 +40031,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
         type: 3}
-      propertyPath: structureData.m_keys.Array.size
-      value: 46
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_values.Array.size
-      value: 46
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
       propertyPath: innerMapsParent
       value: 
       objectReference: {fileID: 1536722383}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_keys.Array.data[42]
-      value: 53
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_values.Array.data[42]
-      value: 
-      objectReference: {fileID: 11400000, guid: 16594a63389c49e42a2fcf338476b95b,
-        type: 2}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_keys.Array.data[43]
-      value: 54
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_values.Array.data[43]
-      value: 
-      objectReference: {fileID: 11400000, guid: b1ce5078294e0db44b529a34e1a08c33,
-        type: 2}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_keys.Array.data[44]
-      value: 55
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_values.Array.data[44]
-      value: 
-      objectReference: {fileID: 11400000, guid: 680a0be53b030dd41bb2c02e17ff2d8f,
-        type: 2}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_keys.Array.data[45]
-      value: 56
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_values.Array.data[45]
-      value: 
-      objectReference: {fileID: 11400000, guid: 0010b5fd65538c142bc72d8c6f15c688,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
 --- !u!1 &1494702483

@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
-  m_Name: Eye Data
+  m_Name: Imp Hut Data
   m_EditorClassIdentifier: 
-  _structureSprite: {fileID: 21300000, guid: fa84bfdc8ef46db48925a710fb46e9f1, type: 3}
+  _structureSprite: {fileID: 21300000, guid: 62010842570b65e439820a973fa02e8a, type: 3}
   _itemGenerationSetting: {fileID: 0}
   structurePrefabs:
     m_keys:
     - resource: 4
-      structureType: 35
+      structureType: 57
       hasValue: 1
       isCorrupted: 0
     m_values:
     - data:
-      - {fileID: 1052932554014340, guid: ec1344a647044f743aee490ada758923, type: 3}
+      - {fileID: 1052932554014340, guid: fe39261797274ee43bba282731c472e3, type: 3}
