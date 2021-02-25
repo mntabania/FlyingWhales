@@ -44,6 +44,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.MARAUD:
+            case STRUCTURE_TYPE.DEFENSE_POINT:
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
@@ -117,6 +118,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.MARAUD:
+            case STRUCTURE_TYPE.DEFENSE_POINT:
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.THE_NEEDLES:
@@ -187,8 +189,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.MARAUD:
+            case STRUCTURE_TYPE.DEFENSE_POINT:
             case STRUCTURE_TYPE.IMP_HUT:
-            return true;
+                return true;
             default:
                 return false;
         }
@@ -1034,6 +1037,7 @@ public static class Extensions {
             case LANDMARK_TYPE.SPIRE:
             case LANDMARK_TYPE.MANA_PIT:
             case LANDMARK_TYPE.MARAUD:
+            case LANDMARK_TYPE.DEFENSE_POINT:
             return true;
             default:
                 return false;
