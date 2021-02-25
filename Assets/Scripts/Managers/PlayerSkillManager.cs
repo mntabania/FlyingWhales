@@ -110,7 +110,7 @@ public class PlayerSkillManager : MonoBehaviour {
     PLAYER_SKILL_TYPE.VENGEFUL_GHOST, PLAYER_SKILL_TYPE.WURM, PLAYER_SKILL_TYPE.TROLL, PLAYER_SKILL_TYPE.REVENANT, PLAYER_SKILL_TYPE.BONE_GOLEM, PLAYER_SKILL_TYPE.PLAGUED_RAT, PLAYER_SKILL_TYPE.SCORPION, PLAYER_SKILL_TYPE.HARPY };
 
     [NonSerialized]
-    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Enemies_Chaos_Orb, PASSIVE_SKILL.Monster_Chaos_Orb, PASSIVE_SKILL.Undead_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb,  };
+    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Prayer_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb, PASSIVE_SKILL.Spell_Damage_Chaos_Orb, PASSIVE_SKILL.Mental_Break_Chaos_Orb, };
     
     private void Awake() {
         if (Instance == null) {

@@ -35,9 +35,10 @@ public class DestroyData : PlayerAction {
             if (eachTile != null) {
                 GameManager.Instance.CreateParticleEffectAt(eachTile, PARTICLE_EFFECT.Destroy_Explosion);
                 eachTile.charactersHere.ForEach((eachCharacters) => {
-                    eachCharacters.AdjustHP(PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY) * -1,
-                        ELEMENTAL_TYPE.Normal, showHPBar: true,
+                    int processedDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY);
+                    eachCharacters.AdjustHP(processedDamage * -1, ELEMENTAL_TYPE.Normal, showHPBar: true,
                         piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY));
+                    Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, eachCharacters, processedDamage);
                     if (eachCharacters.currentHP <= 0) {
                         eachCharacters.skillCauseOfDeath = PLAYER_SKILL_TYPE.DESTROY;
                         Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, eachCharacters.marker.transform.position, 1, eachCharacters.currentRegion.innerMap);

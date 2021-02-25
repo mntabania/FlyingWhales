@@ -28,7 +28,7 @@ MonoBehaviour:
   miscs:
     extraSlots: 0
     fixedSkills: 0600000034000000320000005c0000008c000000
-  passiveSkills: 0100000003000000
+  passiveSkills: 05000000060000000700000003000000
   availableSpells: 
   availableAfflictions: 
   availableMinions: 

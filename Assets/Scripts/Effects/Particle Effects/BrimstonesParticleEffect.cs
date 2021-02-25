@@ -51,6 +51,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
             character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, 
                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
             bs = burningSource;
+            Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
             if (character.currentHP <= 0) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);

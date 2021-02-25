@@ -88,8 +88,14 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //    traitable.AdjustHP(-500, ELEMENTAL_TYPE.Fire, 
         //        elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
         //}
-        if (traitable is Character character && traitable.currentHP <= 0) {
+        Character character = traitable as Character;
+        if (character != null) {
+            Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
+        }
+
+        if (character != null && traitable.currentHP <= 0) {
             (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.METEOR;
+            Debug.LogError(character.marker + " -- " + character.currentRegion + " -- " + character.currentRegion.innerMap);
             Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
         }
         bs = burningSource;

@@ -132,6 +132,10 @@ public class Player : ILeader, IObjectManipulator {
             if (mana < EditableValuesManager.Instance.maximumMana) {
                 AdjustMana(25 * m_manaPitCount);
             }
+        } else {
+            if (mana < EditableValuesManager.Instance.maximumMana) {
+                AdjustMana(5);
+            }
         }
     }
     #endregion

@@ -43,7 +43,8 @@
     /// </summary>
     public static string CREATE_CHAOS_ORBS = "CreateChaosOrbs";
     public static string CREATE_SPIRIT_ENERGY = "CreateSpiritEnergy";
-    
+    public static string PLAYER_HIT_CHARACTER_VIA_SPELL = "OnPlayerHitCharacterViaSpell";
+
     public static string PLAYER_NO_ACTIVE_ITEM = "OnPlayerNoActiveItem";
     public static string PLAYER_NO_ACTIVE_ARTIFACT = "OnPlayerNoActiveArtifact";
     /// <summary>

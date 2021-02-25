@@ -56,6 +56,7 @@ public class BallLightning : MovingTileObject {
                 responsibleCharacter = character;
             }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, responsibleCharacter, amount);
             if (responsibleCharacter?.currentHP <= 0) {
                 responsibleCharacter.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, responsibleCharacter.marker.transform.position, 1, responsibleCharacter.currentRegion.innerMap);

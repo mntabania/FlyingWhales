@@ -108,7 +108,7 @@ public class Pray : GoapAction {
         if (goapNode.actor.religionComponent.religion == RELIGION.Demon_Worship) {
             //Demon Worshippers produce 1 Chaos Orb when they Pray
             //https://trello.com/c/qnZzSwcW/2590-demon-worshippers-produce-1-chaos-orb-when-they-pray
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, 1, goapNode.poiTarget.gridTileLocation.parentMap);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_PRAY_SUCCESS, goapNode.poiTarget as Character);
         }
     }
     #endregion

@@ -164,7 +164,10 @@ namespace Inner_Maps.Location_Structures {
                 failWeight = 0;
                 successWeight = 100;
             } else {
+                
                 GetBrainwashSuccessAndFailWeights(actor, out successWeight, out failWeight);
+                failWeight = 0;
+                successWeight = 100;
             }
 
             // successWeight = 100;

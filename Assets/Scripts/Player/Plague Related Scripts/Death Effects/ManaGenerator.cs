@@ -51,7 +51,7 @@ namespace Plague.Death_Effect {
 
         private void CreateManaOrbs(int amount, Character p_character) {
             if (p_character.marker && p_character.currentRegion != null) {
-                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.marker.transform.position, amount, p_character.currentRegion.innerMap);
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.marker.transform.position, amount, p_character.currentRegion.innerMap, CURRENCY.Mana);
             }
         }
     }
