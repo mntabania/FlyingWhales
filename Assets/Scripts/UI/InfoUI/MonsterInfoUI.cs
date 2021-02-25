@@ -193,14 +193,16 @@ public class MonsterInfoUI : InfoUIBase {
             speedLbl.text = $"{summon.combatComponent.attackSpeed / 1000f}s";
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(summon.race)}";
             elementLbl.text = $"{summon.combatComponent.elementalDamage.type.ToString()}";
-            behaviourLbl.text = $"<link=\"0\">{summon.bredBehaviour}</link>";    
+            behaviourLbl.gameObject.SetActive(false);
+            // behaviourLbl.text = $"<link=\"0\">{summon.bredBehaviour}</link>";    
         } else {
             hpLbl.text = $"{_activeMonster.currentHP.ToString()}/{_activeMonster.maxHP.ToString()}";
             attackLbl.text = $"{_activeMonster.combatComponent.attack.ToString()}";
             speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeMonster.race)}";
             elementLbl.text = $"{_activeMonster.combatComponent.elementalDamage.type.ToString()}";
-            behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";    
+            // behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";
+            behaviourLbl.gameObject.SetActive(false);
         }
     }
     public void OnHoverBehaviour(object obj) {
