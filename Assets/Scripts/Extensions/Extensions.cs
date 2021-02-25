@@ -156,7 +156,6 @@ public static class Extensions {
             case STRUCTURE_TYPE.RAIDER_CAMP:
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.ASSASSIN_GUILD:
-            case STRUCTURE_TYPE.DEMONIC_PRISON:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.MAGE_TOWER:
             case STRUCTURE_TYPE.ABANDONED_MINE:
@@ -237,6 +236,14 @@ public static class Extensions {
                 return p_tile.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature);
             default:
                 return true;
+        }
+    }
+    public static string StructureName(this STRUCTURE_TYPE structureType) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.TORTURE_CHAMBERS:
+                return "Prison";
+            default:
+                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
     }
     #endregion

@@ -670,7 +670,7 @@ namespace Inner_Maps {
 
                     LocationStructure mostImportantStructureOnTile = area.structureComponent.GetMostImportantStructureOnTile();
                     if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
-                        if (!character.behaviourComponent.isAttackingDemonicStructure 
+                        if (character.limiterComponent.canWitness && !character.behaviourComponent.isAttackingDemonicStructure 
                             && character.homeSettlement != null && character.necromancerTrait == null && character.race.IsSapient()
                             && character.hasMarker && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
                             && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) 
@@ -683,11 +683,11 @@ namespace Inner_Maps {
                         }
                         //If cannot report flee instead
                         //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
-                        if (!character.behaviourComponent.isAttackingDemonicStructure 
-                            && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
-                            && character.isAlliedWithPlayer == false 
-                            && character.necromancerTrait == null
-                            && !character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
+                        if (character.limiterComponent.canWitness && !character.behaviourComponent.isAttackingDemonicStructure 
+                              && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
+                              && character.isAlliedWithPlayer == false 
+                              && character.necromancerTrait == null
+                              && !character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
                             if (!character.movementComponent.hasMovedOnCorruption) {
                                 character.movementComponent.SetHasMovedOnCorruption(true);
                                 if (character.isNormalCharacter) {

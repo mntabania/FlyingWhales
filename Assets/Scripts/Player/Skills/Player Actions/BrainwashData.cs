@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Traits;
-using UnityEngine;
-using UnityEngine.Assertions;
-using Inner_Maps.Location_Structures;
+﻿using Inner_Maps.Location_Structures;
 
 public class BrainwashData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.BRAINWASH;
@@ -34,7 +29,7 @@ public class BrainwashData : PlayerAction {
         bool canPerform = base.CanPerformAbilityTowards(room);
         if (canPerform) {
             if (room is PrisonCell defilerRoom) {
-                return defilerRoom.currentBrainwashTarget == null && defilerRoom.HasValidBrainwashTarget();
+                return defilerRoom.currentBrainwashTarget == null && defilerRoom.currentTortureTarget == null && defilerRoom.HasValidBrainwashTarget();
             }
             return false;
         }
@@ -45,7 +40,7 @@ public class BrainwashData : PlayerAction {
         if (canPerform) {
             if (targetCharacter.gridTileLocation != null && 
                 targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell defilerRoom) {
-                return defilerRoom.currentBrainwashTarget == null && defilerRoom.IsValidBrainwashTarget(targetCharacter);
+                return defilerRoom.currentBrainwashTarget == null && defilerRoom.currentTortureTarget == null && defilerRoom.IsValidBrainwashTarget(targetCharacter);
             }
             return false;
         }

@@ -89,7 +89,11 @@ public class SkillSlotItem : MonoBehaviour {
     }
     private void UpdateText() {
         if(skillData != null) {
-            spellText.text = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill).name;
+            var playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
+            if (playerSkillData == null) {
+                Debug.Log("asduhadgajh");
+            }
+            spellText.text = playerSkillData.name;
         } else {
             if (!isFixed) {
                 spellText.text = "Click to Assign a Skill";

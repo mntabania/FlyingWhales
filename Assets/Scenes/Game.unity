@@ -175,7 +175,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -636.1, y: 0}
+  m_AnchoredPosition: {x: -636, y: 0}
   m_SizeDelta: {x: 200, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &4452501
@@ -663,7 +663,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 273774671}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9995656
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5709,7 +5709,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 211.54, y: -465}
+  m_AnchoredPosition: {x: 212, y: -465}
   m_SizeDelta: {x: 423.0487, y: 834}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &275758064
@@ -8142,7 +8142,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1479440302}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99972165
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -27422,7 +27422,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 883206537}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99976605
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -36804,7 +36804,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -278.6, y: 0}
+  m_AnchoredPosition: {x: -278, y: 0}
   m_SizeDelta: {x: 178, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1414646975
@@ -39115,30 +39115,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
         type: 3}
-      propertyPath: structureData.m_keys.Array.size
-      value: 43
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_values.Array.size
-      value: 43
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
       propertyPath: innerMapsParent
       value: 
       objectReference: {fileID: 1536722383}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_keys.Array.data[42]
-      value: 53
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 3}
-      propertyPath: structureData.m_values.Array.data[42]
-      value: 
-      objectReference: {fileID: 11400000, guid: 16594a63389c49e42a2fcf338476b95b,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
 --- !u!1 &1494702483
@@ -40432,7 +40411,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -448.9, y: 0}
+  m_AnchoredPosition: {x: -449, y: 0}
   m_SizeDelta: {x: 200, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1533776042
@@ -45805,6 +45784,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1538653385}
+    - target: {fileID: 224362300656238626, guid: bb062f8c3be91104299ceda438b731f4,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.000015258789
+      objectReference: {fileID: 0}
     - target: {fileID: 224632036395511240, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -45918,6 +45902,11 @@ PrefabInstance:
     - target: {fileID: 224657538717953538, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224657538717953538, guid: bb062f8c3be91104299ceda438b731f4,
+        type: 3}
+      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5887194569051060141, guid: bb062f8c3be91104299ceda438b731f4,

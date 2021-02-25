@@ -33,18 +33,18 @@ public class TortureData : PlayerAction {
         bool canPerform = base.CanPerformAbilityTowards(room);
         if (canPerform) {
             if (room is PrisonCell tortureRoom) {
-                return tortureRoom.currentTortureTarget == null && tortureRoom.HasValidTortureTarget();
+                return tortureRoom.currentTortureTarget == null && tortureRoom.currentBrainwashTarget == null && tortureRoom.HasValidTortureTarget();
             }
             return false;
         }
-        return canPerform;
+        return false;
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
             if (targetCharacter.gridTileLocation != null && 
                 targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell tortureRoom) {
-                return tortureRoom.currentTortureTarget == null && tortureRoom.IsValidTortureTarget(targetCharacter);
+                return tortureRoom.currentTortureTarget == null && tortureRoom.currentBrainwashTarget == null && tortureRoom.IsValidTortureTarget(targetCharacter);
             }
             return false;
         }

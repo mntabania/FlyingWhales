@@ -27,7 +27,7 @@ public class PlaceBlueprint : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(log, goapNode);
         StructureSetting structureSetting = (StructureSetting)goapNode.otherData[2].obj;
-        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, structureSetting.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
     }
     #endregion
 
@@ -64,13 +64,13 @@ public class PlaceBlueprint : GoapAction {
                         // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
                         settlement.AddToAvailableJobs(buildJob);
                     }
-                    goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+                    goapNode.descriptionLog.AddToFillers(null, structureSetting.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
                 }
             }
             if (!successfullyPlacedBlueprint) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "fail", goapNode, LOG_TAG.Work);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, structureSetting.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
                 goapNode.OverrideDescriptionLog(log);
             }
         }

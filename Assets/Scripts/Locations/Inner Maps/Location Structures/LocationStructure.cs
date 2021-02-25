@@ -71,7 +71,7 @@ namespace Inner_Maps.Location_Structures {
             persistentID = Guid.NewGuid().ToString();
             id = UtilityScripts.Utilities.SetID(this);
             this.structureType = structureType;
-            nameWithoutID = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
+            nameWithoutID = structureType.StructureName();
             name = $"{nameWithoutID} {id.ToString()}";
             this.region = location;
             charactersHere = new List<Character>();

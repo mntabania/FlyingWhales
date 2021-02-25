@@ -15,7 +15,7 @@ public class CultistsListUI : PopupMenuBase {
     }
     public void Initialize() {
         //check if player can build a defiler,
-        if (PlayerManager.Instance.player.playerSkillComponent.CanBuildDemonicStructure(PLAYER_SKILL_TYPE.DEFILER)) {
+        if (PlayerManager.Instance.player.playerSkillComponent.CanBuildDemonicStructure(PLAYER_SKILL_TYPE.TORTURE_CHAMBERS)) {
             //if they can activate cultist toggle
             cultistsToggle.gameObject.SetActive(true);
             Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);

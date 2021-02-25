@@ -35,7 +35,7 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
                 subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(npcSettlement.settlementType.settlementType.ToString());    
             } else if (npcSettlement.structures.Count > 0) {
                 STRUCTURE_TYPE structureType = npcSettlement.structures.First().Key;
-                subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+                subLbl.text = structureType.StructureName();
             } else {
                 subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(_settlement.locationType.ToString());
             }

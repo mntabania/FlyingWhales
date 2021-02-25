@@ -423,6 +423,15 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
+    public bool HasHostageIntel(Character p_hostage) {
+        for (int i = 0; i < allIntel.Count; i++) {
+            IIntel intel = allIntel[i];
+            if (intel is ActionIntel actionIntel && actionIntel.actor == p_hostage && actionIntel.reactable is ActualGoapNode node && node.action.goapType == INTERACTION_TYPE.IS_IMPRISONED) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Player Notifications
@@ -764,6 +773,7 @@ public class Player : ILeader, IObjectManipulator {
         for (int i = 0; i < data.allChaosOrbs.Count; i++) {
             data.allChaosOrbs[i].Load();
         }
+        playerSkillComponent.LoadReferences(data.playerSkillComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion

@@ -1535,6 +1535,7 @@
               <e p="HuntHeirloom.cs" t="Include" />
               <e p="Invite.cs" t="Include" />
               <e p="IsCultist.cs" t="Include" />
+              <e p="IsImprisoned.cs" t="Include" />
               <e p="IsPlagued.cs" t="Include" />
               <e p="IsVampire.cs" t="Include" />
               <e p="IsWerewolf.cs" t="Include" />
@@ -1957,7 +1958,6 @@
                 <e p="Crypt.cs" t="Include" />
                 <e p="CultTemple.cs" t="Include" />
                 <e p="Defiler.cs" t="Include" />
-                <e p="DemonicPrison.cs" t="Include" />
                 <e p="DemonicStructure.cs" t="Include" />
                 <e p="Dwelling.cs" t="Include" />
                 <e p="Farm.cs" t="Include" />
@@ -2496,7 +2496,6 @@
                 <e p="BiolabData.cs" t="Include" />
                 <e p="CryptData.cs" t="Include" />
                 <e p="DefilerData.cs" t="Include" />
-                <e p="DemonicPrisonData.cs" t="Include" />
                 <e p="DemonicStructurePlayerSkill.cs" t="Include" />
                 <e p="KennelData.cs" t="Include" />
                 <e p="MeddlerData.cs" t="Include" />
@@ -2529,6 +2528,7 @@
                 <e p="BrainwashData.cs" t="Include" />
                 <e p="BreedMonsterData.cs" t="Include" />
                 <e p="BuildDemonicStructureData.cs" t="Include" />
+                <e p="CreateBlackmailData.cs" t="Include" />
                 <e p="CultistBoobyTrapData.cs" t="Include" />
                 <e p="CultistJoinFactionData.cs" t="Include" />
                 <e p="CultistPoisonData.cs" t="Include" />

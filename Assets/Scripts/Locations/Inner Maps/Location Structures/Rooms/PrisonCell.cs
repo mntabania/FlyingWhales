@@ -32,17 +32,22 @@ namespace Inner_Maps.Location_Structures {
             SaveDataPrisonCell saveData = saveDataStructureRoom as SaveDataPrisonCell;
             if (!string.IsNullOrEmpty(saveData.tortureID)) {
                 currentTortureTarget = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.tortureID);
+            } else if (!string.IsNullOrEmpty(saveData.brainwashTargetID)) {
+                currentBrainwashTarget = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.brainwashTargetID);
             }
             if (!string.IsNullOrEmpty(saveData.skeletonID)) {
                 skeleton = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.skeletonID) as Summon;
             }
-            if (currentTortureTarget != null && skeleton == null) {
-                Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
-                LocationGridTile centerTile = GetCenterTile();
-                _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
-            }
-            if (skeleton != null) {
+            if (skeleton == null) {
+                if (currentTortureTarget != null) {
+                    Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+                    Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+                    LocationGridTile centerTile = GetCenterTile();
+                    _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
+                } else if (currentBrainwashTarget != null) {
+                    Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+                }    
+            } else {
                 //if skeleton is not null then, listen for drop job to be finished
                 Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
@@ -111,11 +116,6 @@ namespace Inner_Maps.Location_Structures {
                 Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
 
                 character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
-                //character.traitContainer.AddTrait(character, "Restrained");
-                //Prisoner prisonerTrait = character.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                //if (prisonerTrait != null) {
-                //    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
-                //}
                 //open door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Open();
@@ -127,10 +127,6 @@ namespace Inner_Maps.Location_Structures {
                 skeleton.SetDestroyMarkerOnDeath(true);
                 skeleton.ClearPlayerActions();
                 skeleton.movementComponent.SetEnableDigging(true);
-
-                // int modifiedX = tortureChamber.entrance.localPlace.x - 2;
-                // modifiedX = Mathf.Max(modifiedX, 0);
-                // LocationGridTile outsideTile = tortureChamber.region.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
 
                 List<LocationGridTile> dropChoices = ObjectPoolManager.Instance.CreateNewGridTileList();
                 for (int i = 0; i < parentStructure.occupiedArea.gridTileComponent.gridTiles.Count; i++) {
@@ -151,30 +147,6 @@ namespace Inner_Maps.Location_Structures {
                 skeleton.jobQueue.AddJobInQueue(job);
                 
                 Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
-            }
-        }
-        private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
-            if (character == skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
-                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
-                //close door
-                DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
-                door?.Close();
-                
-                //kill skeleton
-                // GameManager.Instance.CreateParticleEffectAt(_skeleton.gridTileLocation, PARTICLE_EFFECT.Zombie_Transformation);
-                LocationStructure deathLocation = skeleton.currentStructure;
-                skeleton.Death();
-                deathLocation?.RemoveCharacterAtLocation(skeleton);
-                currentTortureTarget.traitContainer.RemoveRestrainAndImprison(currentTortureTarget);
-                currentTortureTarget.jobComponent.DisableReportStructure();
-                if (!currentTortureTarget.traitContainer.HasTrait("Paralyzed")) {
-                    //No need to daze paralyzed characters, because we expect that characters than cannot perform should not be dazed.
-                    currentTortureTarget.traitContainer.AddTrait(currentTortureTarget, "Dazed");    
-                }
-                
-                
-                skeleton = null;
-                StopTorture();
             }
         }
         #endregion
@@ -307,12 +279,6 @@ namespace Inner_Maps.Location_Structures {
                     BrainwashDone();
                 } else {
                     chosenTarget.traitContainer.RestrainAndImprison(chosenTarget, null, PlayerManager.Instance.player.playerFaction);
-
-                    //chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
-                    //Prisoner prisonerTrait = chosenTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner"); 
-                    //if(prisonerTrait != null) {
-                    //    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
-                    //}
                     //spawn skeleton to carry target
                     skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
                     skeleton.SetIsVolatile(true);
@@ -341,13 +307,16 @@ namespace Inner_Maps.Location_Structures {
                     job.SetCannotBePushedBack(true);
                     skeleton.jobQueue.AddJobInQueue(job);
                     
-                    Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnBrainwashJobRemovedFromCharacter);
+                    Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
                 }                
             }
         }
-        private void OnBrainwashJobRemovedFromCharacter(JobQueueItem job, Character character) {
+        #endregion
+
+        #region Shared Functions
+        private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
             if (character == skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
-                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnBrainwashJobRemovedFromCharacter);
+                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
                 //close door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Close();
@@ -356,15 +325,24 @@ namespace Inner_Maps.Location_Structures {
                 LocationStructure deathLocation = skeleton.currentStructure;
                 skeleton.Death();
                 deathLocation?.RemoveCharacterAtLocation(skeleton);
-                currentBrainwashTarget.traitContainer.RemoveRestrainAndImprison(currentBrainwashTarget);
-                currentBrainwashTarget.jobComponent.DisableReportStructure();
-                if (!currentBrainwashTarget.traitContainer.HasTrait("Paralyzed")) {
+
+                bool isTorture = currentTortureTarget != null;
+                var targetCharacter = isTorture ? currentTortureTarget : currentBrainwashTarget;
+                
+                targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter);
+                targetCharacter.jobComponent.DisableReportStructure();
+                if (!targetCharacter.traitContainer.HasTrait("Paralyzed")) {
                     //No need to daze paralyzed characters, because we expect that characters than cannot perform should not be dazed.
-                    currentBrainwashTarget.traitContainer.AddTrait(currentBrainwashTarget, "Dazed");    
+                    targetCharacter.traitContainer.AddTrait(targetCharacter, "Dazed");    
                 }
                 
+                
                 skeleton = null;
-                BrainwashDone();
+                if (isTorture) {
+                    StopTorture();    
+                } else {
+                    BrainwashDone();    
+                }
             }
         }
         #endregion
@@ -396,11 +374,13 @@ namespace Inner_Maps.Location_Structures {
 #region Save Data
 public class SaveDataPrisonCell : SaveDataStructureRoom {
     public string tortureID;
+    public string brainwashTargetID;
     public string skeletonID;
     public override void Save(StructureRoom data) {
         base.Save(data);
         PrisonCell prisonCell = data as PrisonCell;
         tortureID = prisonCell.currentTortureTarget == null ? string.Empty : prisonCell.currentTortureTarget.persistentID;
+        brainwashTargetID = prisonCell.currentBrainwashTarget == null ? string.Empty : prisonCell.currentBrainwashTarget.persistentID;
         skeletonID = prisonCell.skeleton == null ? string.Empty : prisonCell.skeleton.persistentID;
     }
 }
