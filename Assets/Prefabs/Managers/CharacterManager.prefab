@@ -622,6 +622,39 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: IMP
+    race: 40
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: cbb07a794c232b944a5fb53de05ce5aa, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: KOBOLD
     race: 20
     neutralAssets:
@@ -1300,7 +1333,7 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 2c02cfd9ad40a474298f29d1f6fd8fda, type: 3}
       - {fileID: 21300000, guid: 6987d8f375e6a494c91f9c60dac1a1b7, type: 3}
   summonSettings:
-    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f0000002000000021000000220000002300000024000000250000002600000027000000
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000
     m_values:
     - summonPortrait: {fileID: 21300000, guid: bb519cc5a55c1284d8bfe22ff5cd0e25, type: 3}
     - summonPortrait: {fileID: 21300000, guid: 362b5aa2e37e9da499ca8a81f43cdae7, type: 3}
@@ -1341,6 +1374,7 @@ MonoBehaviour:
     - summonPortrait: {fileID: 21300000, guid: 178794461f348bf4bbfa485a335d0c96, type: 3}
     - summonPortrait: {fileID: 21300000, guid: ed184afac7a62a7469733a2479af94e8, type: 3}
     - summonPortrait: {fileID: 21300000, guid: 5a559ddc24c142e45afcc44ad0833f80, type: 3}
+    - summonPortrait: {fileID: 21300000, guid: cbb07a794c232b944a5fb53de05ce5aa, type: 3}
   artifactSettings:
     m_keys: 000000000100000002000000030000000400000005000000
     m_values:

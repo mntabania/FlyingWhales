@@ -688,7 +688,9 @@ public class Player : ILeader, IObjectManipulator {
             //}
             string bredBehaviour;
             if (character is Summon summon) {
-                bredBehaviour = summon.bredBehaviour;
+                //Note: only Disabled bred behaviour for now, will remove it completely when change has been confirmed
+                bredBehaviour = string.Empty;
+                // bredBehaviour = summon.bredBehaviour;
             } else {
                 bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
             }
@@ -708,7 +710,9 @@ public class Player : ILeader, IObjectManipulator {
             //}
             string bredBehaviour;
             if (character is Summon summon) {
-                bredBehaviour = summon.bredBehaviour;
+                //Note: only Disabled bred behaviour for now, will remove it completely when change has been confirmed
+                bredBehaviour = string.Empty;
+                // bredBehaviour = summon.bredBehaviour;
             } else {
                 bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
             }

@@ -60,11 +60,11 @@ public class SummonListUI : PopupMenuBase {
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
 
-        if (!string.IsNullOrEmpty(summon.bredBehaviour) && TraitManager.Instance.allTraits.ContainsKey(summon.bredBehaviour)) {
-            Trait trait = TraitManager.Instance.allTraits[summon.bredBehaviour];
-            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
-            item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
-        }
+        // if (!string.IsNullOrEmpty(summon.bredBehaviour) && TraitManager.Instance.allTraits.ContainsKey(summon.bredBehaviour)) {
+        //     Trait trait = TraitManager.Instance.allTraits[summon.bredBehaviour];
+        //     item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
+        //     item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
+        // }
     }
     private SummonMinionPlayerSkillNameplateItem CreateNewReserveSummonItem(PLAYER_SKILL_TYPE summonPlayerSkillType) {
         SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summonPlayerSkillType);
@@ -72,11 +72,11 @@ public class SummonListUI : PopupMenuBase {
         SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
         item.SetObject(summonPlayerSkill);
         
-        if (!string.IsNullOrEmpty(summonPlayerSkill.bredBehaviour) && TraitManager.Instance.allTraits.ContainsKey(summonPlayerSkill.bredBehaviour)) {
-            Trait trait = TraitManager.Instance.allTraits[summonPlayerSkill.bredBehaviour];
-            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
-            item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
-        }
+        // if (!string.IsNullOrEmpty(summonPlayerSkill.bredBehaviour) && TraitManager.Instance.allTraits.ContainsKey(summonPlayerSkill.bredBehaviour)) {
+        //     Trait trait = TraitManager.Instance.allTraits[summonPlayerSkill.bredBehaviour];
+        //     item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
+        //     item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
+        // }
         
         _summonPlayerSkillItems.Add(item);
         return item;
