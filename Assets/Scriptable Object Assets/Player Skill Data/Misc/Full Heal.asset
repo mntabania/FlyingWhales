@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af6b250ddb9365c4a924f945cd5f95b6, type: 3}
   m_Name: Full Heal
   m_EditorClassIdentifier: 
-  skill: 186
+  skill: 188
   manaCost: 0
   charges: 1
   cooldown: 0

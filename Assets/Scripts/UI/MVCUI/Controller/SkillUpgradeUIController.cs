@@ -64,7 +64,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		}
 	}
 
-	public void Open() {
+	public void Open() { 
 		ShowUI();
 		Messenger.AddListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}
@@ -79,8 +79,10 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		base.ShowUI();
 		UpdateTopMenuSummary();
 		m_skillUpgradeUIView.SetTransmissionTabIsOnWithoutNotify(true);
+		GameManager.Instance.SetPausedState(true);
 	}
 	public override void HideUI() {
+		GameManager.Instance.SetPausedState(false);
 		base.HideUI();
 		Messenger.RemoveListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}
@@ -114,13 +116,17 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		p_skillSets.ForEach((eachSkill) => {
 			if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
 			GetUpgradeCostBaseOnLevel(PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel) <= plaguePoints) {
-				skillToBeDisplayed.Add(eachSkill);
+				if (!skillToBeDisplayed.Contains(eachSkill)) {
+					skillToBeDisplayed.Add(eachSkill);
+				}
 			}
 		});
 		p_skillSets.ForEach((eachSkill) => {
 			if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
 			GetUpgradeCostBaseOnLevel(PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel) > plaguePoints) {
-				skillToBeDisplayed.Add(eachSkill);
+				if (!skillToBeDisplayed.Contains(eachSkill)) {
+					skillToBeDisplayed.Add(eachSkill);
+				}
 			}
 		});
 		SpawnSkillItems(skillToBeDisplayed);
@@ -187,7 +193,6 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	}
 
 	void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
-		Debug.Log("CLICKED");
 		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
 		skillData.LevelUp();
@@ -208,7 +213,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
 		}
 		UpdateTopMenuSummary();
-		m_skillComponent.SetPlayerSkillData(p_type);
+		//m_skillComponent.SetPlayerSkillData(p_type);
 		Messenger.Broadcast(SpellSignals.SPELL_UPGRADED, skillData);
 	}
 

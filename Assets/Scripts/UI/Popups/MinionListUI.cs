@@ -32,9 +32,9 @@ public class MinionListUI : PopupMenuBase {
         Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
     public void UpdateList() {
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.allCharacters[i];
-            if (character.minion != null && character.faction != null && character.faction.isPlayerFaction && !character.isDead && !character.isPreplaced) {
+        for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
+            Character character = PlayerManager.Instance.player.playerFaction.characters[i];
+            if (character.minion != null && !character.isDead && !character.isPreplaced) {
                 CreateNewActiveMinionItem(character.minion);
             }
         }

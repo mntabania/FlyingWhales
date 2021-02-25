@@ -163,6 +163,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool canBeTargetedByLandActions => !movementComponent.isFlying && !reactionComponent.isHidden && !traitContainer.HasTrait("Disabler", "DeMooder");
 
     public int maxHP => combatComponent.maxHP;
+
+    public bool isInfoUnlocked { set; get; }
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => visuals.selectableSize;
     public Transform worldObject {
@@ -5815,6 +5817,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Loading
     public virtual void LoadReferences(SaveDataCharacter data) {
+        isInfoUnlocked = data.isInfoUnlocked;
         ConstructDefaultActions();
         if (data.hasLycan && lycanData == null) {
             LycanthropeData lycanData = data.lycanData.Load();

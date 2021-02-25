@@ -221,6 +221,10 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
         toggle.interactable = state;
         coverGO.SetActive(!state);
     }
+    public void SetAsDisplayOnly() {
+        button.gameObject.SetActive(false);
+        toggle.gameObject.SetActive(false);
+    }
     #endregion
 
     #region Supporting Text

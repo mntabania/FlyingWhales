@@ -95,16 +95,9 @@
     public static string UNSET_PLAGUE_DEATH_EFFECT = "UnsetPlagueDeathEffect";
 
     public static string UPDATED_PLAGUE_POINTS = "UpdatedPlaguePoints";
+
     /// <summary>
-    /// Parameters: MonsterCapacity
+    /// Signals for MONSTER UNDERLINGS of PLAYER
     /// </summary>
-    public static string PLAYER_GAINED_NEW_MONSTER = "OnPlayerGainedNewMonster";
-    /// <summary>
-    /// Parameters: MonsterCapacity
-    /// </summary>
-    public static string PLAYER_REMOVED_MONSTER = "OnPlayerRemovedMonster";
-    /// <summary>
-    /// Parameters: MonsterCapacity
-    /// </summary>
-    public static string PLAYER_UPDATED_MONSTER_CHARGES_OR_CAPACITY = "OnPlayerUpdatedMonsterChargesOrCapacity";
+    public static string UPDATED_MONSTER_UNDERLING = "UpdatedMonsterUnderling";
 }

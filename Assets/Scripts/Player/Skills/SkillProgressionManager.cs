@@ -35,8 +35,7 @@ public class SkillProgressionManager {
 			playerSkilldata.requirementData.spellsCount <= p_availablePlayerSkills.spells.Count &&
 			playerSkilldata.requirementData.tier1Count <= p_availablePlayerSkills.tier1Count &&
 			playerSkilldata.requirementData.tier2Count <= p_availablePlayerSkills.tier2Count &&
-			playerSkilldata.requirementData.tier3Count <= p_availablePlayerSkills.tier3Count &&
-			playerSkilldata.unlockCost <= p_mana) {
+			playerSkilldata.requirementData.tier3Count <= p_availablePlayerSkills.tier3Count) {
 			return playerSkilldata.unlockCost;
 		}
 		return -1;
