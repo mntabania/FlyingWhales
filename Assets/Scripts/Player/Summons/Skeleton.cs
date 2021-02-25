@@ -14,7 +14,7 @@ public class Skeleton : Summon {
     public Skeleton() : base(SUMMON_TYPE.Skeleton, "Skeleton", RACE.SKELETON, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
-    public Skeleton(string className) : base(SUMMON_TYPE.Skeleton, "Skeleton", RACE.SKELETON, UtilityScripts.Utilities.GetRandomGender()) {
+    public Skeleton(string className) : base(SUMMON_TYPE.Skeleton, className, RACE.SKELETON, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
     public Skeleton(SaveDataSummon data) : base(data) {

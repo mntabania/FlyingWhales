@@ -17,7 +17,7 @@ MonoBehaviour:
   structurePrefabs:
     m_keys:
     - resource: 4
-      structureType: 56
+      structureType: 57
       hasValue: 1
       isCorrupted: 0
     m_values:

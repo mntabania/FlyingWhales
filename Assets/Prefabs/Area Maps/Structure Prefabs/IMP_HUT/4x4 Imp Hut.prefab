@@ -561,7 +561,7 @@ GameObject:
   - component: {fileID: 114520684233025900}
   - component: {fileID: 4037226489697887671}
   m_Layer: 14
-  m_Name: 4x4 Kennel
+  m_Name: 4x4 Imp Hut
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -595,7 +595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  structureType: 30
+  structureType: 57
   _groundTileMap: {fileID: 8195094280897768460}
   _detailTileMap: {fileID: 8195094282726245286}
   _groundTileMapRenderer: {fileID: 3664157343861086866}

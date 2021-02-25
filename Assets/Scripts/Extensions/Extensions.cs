@@ -169,7 +169,6 @@ public static class Extensions {
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
-            case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.CRYPT:
             case STRUCTURE_TYPE.OSTRACIZER:
             case STRUCTURE_TYPE.MEDDLER:

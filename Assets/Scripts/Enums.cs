@@ -66,6 +66,7 @@ public enum RACE{
     SCORPION = 37, 
     HARPY = 38,
     TRITON = 39,
+    IMP = 40,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
