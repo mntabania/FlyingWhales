@@ -327,8 +327,16 @@ namespace Traits {
         private void ActivateTriggerFlawConfirmation(Character p_character) {
             string traitName = name;
             Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
-            string question = "Are you sure you want to trigger " + traitName + "?";
-            string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect")}";
+            string question;
+            string effect;
+            if (p_character.isInfoUnlocked) {
+                question = "Are you sure you want to trigger " + traitName + "?";
+                effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect")}";
+            } else {
+                question = "Are you sure you want to trigger ?????" + "?";
+                effect = $"<b>Effect</b>: ?????";
+            }
+            
             string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
 
             UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => TriggerFlawData.ActivateTriggerFlaw(trait, p_character), layer: 26, showCover: true, pauseAndResume: true);

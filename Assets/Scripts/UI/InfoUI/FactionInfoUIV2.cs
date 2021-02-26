@@ -391,7 +391,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     public void FilterCharacters() {
         for (int i = 0; i < _characterItems.Count; i++) {
             CharacterNameplateItem nameplate = _characterItems[i];
-            if(nameplate.character != null) {
+            if(nameplate.character != null && nameplate.character.isInfoUnlocked) {
                 nameplate.gameObject.SetActive(ShouldCharacterNameplateBeShown(nameplate.character));
             } else {
                 nameplate.gameObject.SetActive(false);
