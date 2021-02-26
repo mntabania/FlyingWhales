@@ -66,7 +66,18 @@ public class FactionInfoUIV2 : MonoBehaviour {
     private List<Region> filteredRegions;
     //private int traitFilterHalfCount;
 
+    public GameObject overviewScrollRectParent;
+    public GameObject membersScrollRectParent;
+    public GameObject logScrollRectParent;
+    public GameObject crimesScrollRectParent;
+    public GameObject relationshipScrollRectParent;
+
+    public GameObject btnRevealInfo;
+
     public Faction activeFaction { get; private set; }
+
+    private enum VIEW_MODE { Overview = 0, Members, Crimes, Relations, Logs }
+    private VIEW_MODE m_viewMode = VIEW_MODE.Members;
 
     public void Initialize() {
         _characterItems = new List<CharacterNameplateItem>();
@@ -115,6 +126,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
             UpdateAllHistoryInfo();
             UpdateAllCharacters();
             ResetScrollPositions();
+            ProcessDisplay();
         }
     }
     //public void UpdateFactionInfo() {
@@ -158,6 +170,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private void UpdateOverview() {
+       
         if (activeFaction.leader is Character leader) {
             Character characterToShow = leader;
             if (leader.isLycanthrope) {
@@ -170,12 +183,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
             leaderNameplateItem.gameObject.SetActive(false);
             noLeaderTextGO.SetActive(true);
         }
-
         Character[] successors = activeFaction.successionComponent.successors;
         for (int i = 0; i < successorPortraits.Length; i++) {
             CharacterPortrait portrait = successorPortraits[i];
             Character successor = null;
-            if(i >= 0 && i < successors.Length) {
+            if (i >= 0 && i < successors.Length) {
                 successor = successors[i];
             }
             if (successor == null) {
@@ -190,7 +202,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         for (int i = 0; i < activeFaction.factionType.ideologies.Count; i++) {
             FactionIdeology ideology = activeFaction.factionType.ideologies[i];
             ideologyLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   <link=\"{i}\">{ideology.GetIdeologyName()}</link>\n";
-        }
+        }    
     }
     public void OnHoverIdeology(object obj) {
         if (obj is string text) {
@@ -321,7 +333,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 crimeLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}\n";
             }
         }
-        crimesScrollRect.gameObject.SetActive(true);
+        
         //crimesScrollRectTransform.ForceUpdateRectTransforms();
         //Canvas.ForceUpdateCanvases();
         //for (int i = 0; i < crimesTransform.Length; i++) {
@@ -371,8 +383,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 //this is a solution for https://trello.com/c/EbPTZFAv/2288-03314-skeleton-from-defiler-appears-on-vagrant-tab
                 continue;
             }
-            if(currCharacter.race != RACE.ANGEL) {
-                if(currCharacter.isLycanthrope) {
+            if (currCharacter.race != RACE.ANGEL) {
+                if (currCharacter.isLycanthrope) {
                     currCharacter = currCharacter.lycanData.activeForm;
                 }
                 if (!currCharacter.isDead) {
@@ -601,6 +613,34 @@ public class FactionInfoUIV2 : MonoBehaviour {
     }
     #endregion
 
+    public void RevealInfo() {
+        if (PlayerManager.Instance.player.mana >= 1) {
+            PlayerManager.Instance.player.AdjustMana(-1);
+            activeFaction.isInfoUnlocked = true;
+            ProcessDisplay();
+        }
+    }
+
+    void ProcessDisplay() {
+        switch (m_viewMode) {
+            case VIEW_MODE.Overview:
+            OnToggleOverview(true);
+            break;
+            case VIEW_MODE.Members:
+            OnToggleMembers(true);
+            break;
+            case VIEW_MODE.Relations:
+            OnToggleRelations(true);
+            break;
+            case VIEW_MODE.Crimes:
+            OnToggleCrimes(true);
+            break;
+            case VIEW_MODE.Logs:
+            OnToggleLogs(true);
+            break;
+        }
+    }
+
     #region Utilities
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
@@ -639,7 +679,97 @@ public class FactionInfoUIV2 : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
     }
     #endregion
-    
+
+    #region toggles tabs
+    public void OnToggleOverview(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            m_viewMode = VIEW_MODE.Overview;
+            if (activeFaction.isInfoUnlocked) {
+                overviewScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                overviewScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            overviewScrollRectParent.SetActive(false);
+        }
+    }
+
+    public void OnToggleMembers(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            m_viewMode = VIEW_MODE.Members;
+            if (activeFaction.isInfoUnlocked) {
+                membersScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                membersScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            membersScrollRectParent.SetActive(false);
+        }
+    }
+
+    public void OnToggleRelations(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            m_viewMode = VIEW_MODE.Relations;
+            if (activeFaction.isInfoUnlocked) {
+                relationshipScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                relationshipScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            relationshipScrollRectParent.SetActive(false);
+        }
+    }
+
+    public void OnToggleCrimes(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            m_viewMode = VIEW_MODE.Crimes;
+            if (activeFaction.isInfoUnlocked) {
+                crimesScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                crimesScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            crimesScrollRectParent.SetActive(false);
+        }
+    }
+
+    public void OnToggleLogs(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            m_viewMode = VIEW_MODE.Logs;
+            if (activeFaction.isInfoUnlocked) {
+                logScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                logScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            logScrollRectParent.SetActive(false);
+        }
+    }
+
+    void HideAllScrollView() {
+        overviewScrollRectParent.SetActive(false);
+        membersScrollRectParent.SetActive(false);
+        relationshipScrollRectParent.SetActive(false);
+        crimesScrollRectParent.SetActive(false);
+        logScrollRectParent.SetActive(false);
+    }
+    #endregion
+
     #region History
     private void UpdateHistory(Log log) {
         if (activeFaction != null && log.IsInvolved(activeFaction)) {

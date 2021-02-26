@@ -37,6 +37,8 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
     public SaveDataFactionIdeologyComponent ideologyComponent;
     public SaveDataFactionSuccessionComponent successionComponent;
 
+    public bool isInfoUnlocked;
+
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     #endregion

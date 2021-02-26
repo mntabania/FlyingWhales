@@ -47329,11 +47329,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: FactionInfoHubUI
       objectReference: {fileID: 0}
-    - target: {fileID: 8328683881399225946, guid: 65a159b014602c143bbf2126de537ad7,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65a159b014602c143bbf2126de537ad7, type: 3}
 --- !u!224 &1679385049 stripped
