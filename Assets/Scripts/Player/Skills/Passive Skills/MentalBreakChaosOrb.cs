@@ -3,7 +3,7 @@ using UtilityScripts;
 using Traits;
 using Interrupts;
 
-public class MentlBreakChaosOrb : PassiveSkill {
+public class MentalBreakChaosOrb : PassiveSkill {
     public override string name => "Mana Orbs upon mental break";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Mental_Break_Chaos_Orb;
 
