@@ -1018,6 +1018,7 @@ public class CharacterInfoUI : InfoUIBase {
                 activeCharacter.isInfoUnlocked = true;
                 PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1);
                 ProcessDisplay();
+                Messenger.Broadcast(CharacterSignals.CHARACTER_INFO_REVEALED);
             }
         }
     }

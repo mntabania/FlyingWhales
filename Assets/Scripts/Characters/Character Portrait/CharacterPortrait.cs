@@ -48,7 +48,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private bool isPixelPerfect;
 
     private void OnEnable() {
-        //Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
+        Messenger.AddListener(CharacterSignals.CHARACTER_INFO_REVEALED, UpdateLeaderIcon);
         SubscribeListeners();
     }
     public void GeneratePortrait(PortraitSettings portraitSettings, bool makePixelPerfect = true) {
@@ -336,7 +336,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #region Leader Icon
     private void UpdateLeaderIcon() {
         if (character != null) {
-            leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);    
+            if (character.isInfoUnlocked) {
+                leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
+            } else {
+                leaderIcon.SetActive(false);
+            }
         } else {
             leaderIcon.SetActive(false);
         }

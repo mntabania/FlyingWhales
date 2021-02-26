@@ -83,7 +83,7 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Duration)) {
-                DisplayFloatList(data.skillUpgradeData.statsIncreasedPercentagePerLevel, "Duration Bonus(min) per level");
+                DisplayIntList(data.skillUpgradeData.durationBonusPerLevel, "Duration Bonus(min) per level");
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Chance_Bonus_Percentage)) {
