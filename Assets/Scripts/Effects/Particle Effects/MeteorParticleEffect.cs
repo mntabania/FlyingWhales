@@ -95,7 +95,6 @@ public class MeteorParticleEffect : BaseParticleEffect {
 
         if (character != null && traitable.currentHP <= 0) {
             (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.METEOR;
-            Debug.LogError(character.marker + " -- " + character.currentRegion + " -- " + character.currentRegion.innerMap);
             Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
         }
         bs = burningSource;

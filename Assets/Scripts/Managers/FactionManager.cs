@@ -158,6 +158,9 @@ public class FactionManager : BaseMonoBehaviour {
         if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
         }
+        if (newFaction.race.IsSapient()) {
+            newFaction.isInfoUnlocked = false;
+        }
         return newFaction;
     }
     private void DetermineFactionEmblem(Faction faction) {
