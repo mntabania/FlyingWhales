@@ -7,7 +7,7 @@ public class MaraudUIView : MVCUIView {
 	public interface IListener {
 		void OnDeployClicked();
 		void OnCloseClicked();
-		void OnLesserDemonClicked(bool isOn);
+		void OnSummonsClicked(bool isOn);
 		void OnMinionClicked(bool isOn);
 	}
 	#endregion
@@ -37,9 +37,19 @@ public class MaraudUIView : MVCUIView {
 	#endregion
 
 	#region user defined functions
-	public Transform GetAvailableLesserDemonParent() {
-		return UIModel.availableLesserDemonParent;
+	public void ShowMinionTab() {
+		UIModel.scrollViewMinions.gameObject.SetActive(true);
+		UIModel.scrollViewSummons.gameObject.SetActive(false);
 	}
+
+	public void ShowSummonTab() {
+		UIModel.scrollViewMinions.gameObject.SetActive(false);
+		UIModel.scrollViewSummons.gameObject.SetActive(true);
+	}
+	public Transform GetAvailableSummonsParent() {
+		return UIModel.availableSummonsParent;
+	}
+
 	public Transform GetAvailableMinionsParent() {
 		return UIModel.availableMinionsParent;
 	}
@@ -52,15 +62,15 @@ public class MaraudUIView : MVCUIView {
 	public void Subscribe(IListener p_listener) {
 		UIModel.onDeployClicked += p_listener.OnDeployClicked;
 		UIModel.onCloseClicked += p_listener.OnCloseClicked;
-		UIModel.onLesserDemonClicked += p_listener.OnLesserDemonClicked;
-		UIModel.onMinionsClicked += p_listener.OnMinionClicked;
+		UIModel.onMinionClicked += p_listener.OnMinionClicked;
+		UIModel.onSummonClicked += p_listener.OnSummonsClicked;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
 		UIModel.onDeployClicked -= p_listener.OnDeployClicked;
 		UIModel.onCloseClicked -= p_listener.OnCloseClicked;
-		UIModel.onLesserDemonClicked -= p_listener.OnLesserDemonClicked;
-		UIModel.onMinionsClicked -= p_listener.OnMinionClicked;
+		UIModel.onMinionClicked -= p_listener.OnMinionClicked;
+		UIModel.onSummonClicked -= p_listener.OnSummonsClicked;
 	}
 	#endregion
 }

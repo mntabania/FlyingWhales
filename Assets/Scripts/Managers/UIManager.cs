@@ -22,13 +22,14 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
-using System;
 using Prison = Tutorial.Prison;
 
 public class UIManager : BaseMonoBehaviour {
 
     public Action onPortalClicked;
     public Action onSpireClicked;
+    public Action onMaraudClicked;
+    public Action onDefensePointClicked;
 
     public static UIManager Instance = null;
 
@@ -1037,6 +1038,13 @@ public class UIManager : BaseMonoBehaviour {
         }
         if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
             onSpireClicked?.Invoke();
+        }
+        Debug.LogError(structure.structureType);
+        if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
+            onMaraudClicked?.Invoke();
+        }
+        if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
+            onDefensePointClicked?.Invoke();
         }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();

@@ -3,35 +3,38 @@ using System;
 using Ruinarch.Custom_UI;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 public class MaraudUIModel : MVCUIModel {
 
-	public Action<bool> onLesserDemonClicked;
-	public Action<bool> onMinionsClicked;
+	public Action<bool> onMinionClicked;
+	public Action<bool> onSummonClicked;
 	public Action onDeployClicked;
 	public Action onCloseClicked;
 
+	public List<DeployedMonsterItemUI> deployedMonsterItemUIs = new List<DeployedMonsterItemUI>();
+
 	public Button btnDeploy;
 	public Button btnClose;
-	public RuinarchToggle btnLesserDemonsTab;
+	public RuinarchToggle btnSummonsTab;
 	public RuinarchToggle btnMinionsTab;
 
-	public Transform scrollViewLesserDemon;
+	public Transform scrollViewSummons;
 	public Transform scrollViewMinions;
-	public Transform availableLesserDemonParent;
+	public Transform availableSummonsParent;
 	public Transform availableMinionsParent;
 	public Transform deplyedMonstersParent;
 
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);
-		btnLesserDemonsTab.onValueChanged.AddListener(ClickLesserDemonsTab);
+		btnSummonsTab.onValueChanged.AddListener(ClickSummonsTab);
 		btnMinionsTab.onValueChanged.AddListener(ClickMinionsTab);
 	}
 
 	private void OnDisable() {
 		btnDeploy.onClick.RemoveListener(ClickDeploy);
 		btnClose.onClick.RemoveListener(ClickClose);
-		btnLesserDemonsTab.onValueChanged.RemoveListener(ClickLesserDemonsTab);
+		btnSummonsTab.onValueChanged.RemoveListener(ClickSummonsTab);
 		btnMinionsTab.onValueChanged.RemoveListener(ClickMinionsTab);
 	}
 
@@ -43,12 +46,12 @@ public class MaraudUIModel : MVCUIModel {
 	void ClickClose() {
 		onCloseClicked?.Invoke();
 	}
-	void ClickLesserDemonsTab(bool isOn) {
-		onLesserDemonClicked?.Invoke(isOn);
+	void ClickSummonsTab(bool isOn) {
+		onSummonClicked?.Invoke(isOn);
 	}
 
 	void ClickMinionsTab(bool isOn) {
-		onMinionsClicked?.Invoke(isOn);
+		onMinionClicked?.Invoke(isOn); 
 	}
 	#endregion
 }

@@ -1202,3 +1202,7 @@ public enum SOUND_EFFECT {
 public enum CURRENCY { 
     Mana = 0, Chaotic_Energy, Spirit_Energy,
 }
+
+public enum MINIONS { 
+    
+}

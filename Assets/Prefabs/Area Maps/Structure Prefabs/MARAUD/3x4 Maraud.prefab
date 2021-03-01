@@ -628,7 +628,7 @@ MonoBehaviour:
   _predeterminedOccupiedCoordinates: []
   _connectors: []
   roomTemplates: []
-  _clickCollider: {fileID: 0}
+  _clickCollider: {fileID: 3770597647315987689}
   wallsContributeToDamage: 0
   wallTileMap: {fileID: 4355130883704314595}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}

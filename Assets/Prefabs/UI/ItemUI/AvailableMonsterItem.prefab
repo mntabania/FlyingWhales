@@ -215,12 +215,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 380408f2dab372c43b7f8083d9b6d92e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myButton: {fileID: 2771371547691879521}
+  maxCharges: 0
+  currentCharges: 0
   txtName: {fileID: 629110906244075881}
   txtHP: {fileID: 6626225234607471870}
   txtAtk: {fileID: 6626225235120306383}
   txtAtkSpd: {fileID: 6626225234310474751}
   txtManaCost: {fileID: 6020987617594840056}
   txtChargeCount: {fileID: 6626225233706416828}
+  isMinion: 0
+  imgIcon: {fileID: 1196704873876107616}
+  disabler: {fileID: 3725160405828019609}
 --- !u!1 &2774360196924329349
 GameObject:
   m_ObjectHideFlags: 0
@@ -627,7 +633,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b01760fa846b3474eac6f467194029d0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

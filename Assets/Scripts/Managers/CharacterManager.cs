@@ -1546,6 +1546,7 @@ public class PortraitFrame {
 
 [Serializable]
 public struct SummonSettings {
+    public string className;
     public Sprite summonPortrait;
 }
 
