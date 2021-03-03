@@ -6,7 +6,9 @@ namespace Inner_Maps.Location_Structures {
         public DefensePoint(Region location) : base(STRUCTURE_TYPE.DEFENSE_POINT, location) {
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         }
-        public DefensePoint(Region location, SaveDataDemonicStructure data) : base(location, data) { }
+        public DefensePoint(Region location, SaveDataDemonicStructure data) : base(location, data) {
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        }
 
         public int deployedCount => deployedClass.Count;
 

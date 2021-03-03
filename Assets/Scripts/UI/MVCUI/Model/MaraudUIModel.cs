@@ -11,7 +11,8 @@ public class MaraudUIModel : MVCUIModel {
 	public Action onDeployClicked;
 	public Action onCloseClicked;
 
-	public List<DeployedMonsterItemUI> deployedMonsterItemUIs = new List<DeployedMonsterItemUI>();
+	public List<DeployedMonsterItemUI> deployedItemSummonsUI = new List<DeployedMonsterItemUI>();
+	public List<DeployedMonsterItemUI> deployedItemMinionsUI = new List<DeployedMonsterItemUI>();
 
 	public Button btnDeploy;
 	public Button btnClose;
@@ -22,7 +23,8 @@ public class MaraudUIModel : MVCUIModel {
 	public Transform scrollViewMinions;
 	public Transform availableSummonsParent;
 	public Transform availableMinionsParent;
-	public Transform deplyedMonstersParent;
+	public Transform deployedMinionsParent;
+	public Transform deployedSummonsParent;
 
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);

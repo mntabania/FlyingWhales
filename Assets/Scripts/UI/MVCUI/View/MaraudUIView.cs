@@ -53,8 +53,11 @@ public class MaraudUIView : MVCUIView {
 	public Transform GetAvailableMinionsParent() {
 		return UIModel.availableMinionsParent;
 	}
-	public Transform GetDeployedMonsterParent() {
-		return UIModel.deplyedMonstersParent;
+	public Transform GetDeployedMinionsParent() {
+		return UIModel.deployedMinionsParent;
+	}
+	public Transform GetDeployedSummonsParent() {
+		return UIModel.deployedSummonsParent;
 	}
 	#endregion
 

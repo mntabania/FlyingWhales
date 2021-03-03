@@ -28,6 +28,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 
     public bool isReadyForDeploy;
     public bool isDeployed;
+    public bool isMinion;
     public CharacterClass characterClass;
     public SummonSettings summonSettings;
     public SUMMON_TYPE summonType;
