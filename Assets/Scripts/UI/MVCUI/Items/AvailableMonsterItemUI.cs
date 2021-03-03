@@ -13,6 +13,7 @@ public class AvailableMonsterItemUI : MonoBehaviour
     public CharacterClass characterClass;
     public SummonSettings summonSettings;
     public SUMMON_TYPE summonType;
+    public PLAYER_SKILL_TYPE playerSkillType;
 
     public RuinarchText txtName;
     public RuinarchText txtHP;
@@ -40,8 +41,30 @@ public class AvailableMonsterItemUI : MonoBehaviour
         txtManaCost.text = p_manaCost.ToString();
         txtChargeCount.text = currentCharges.ToString() + "/" + maxCharges.ToString();
         imgIcon.sprite = p_settings.summonPortrait;
+        isMinion = false;
         if (currentCharges  <= 0) {
             DisableButton(); 
+        } else {
+            EnableButton();
+        }
+    }
+
+    public void InitializeItem(PLAYER_SKILL_TYPE p_skillType, int p_manaCost, int p_chargeCount, int p_maxChargeCount) {
+        playerSkillType = p_skillType;
+        PlayerSkillData playerData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        isMinion = true;
+        currentCharges = p_chargeCount;
+        maxCharges = p_maxChargeCount;
+        txtName.text = playerData.name;
+        txtName.text = txtName.text.Replace("Demon ", "");
+        txtHP.text = "n/a";
+        txtAtk.text = "n/a";
+        txtAtkSpd.text = "n/a";
+        txtManaCost.text = p_manaCost.ToString();
+        txtChargeCount.text = currentCharges.ToString() + "/" + maxCharges.ToString();
+        imgIcon.sprite = playerData.contextMenuIcon;
+        if (currentCharges <= 0) {
+            DisableButton();
         } else {
             EnableButton();
         }
@@ -62,7 +85,6 @@ public class AvailableMonsterItemUI : MonoBehaviour
 
     public void AddOneCharge(bool isDisabled = false) {
         currentCharges++;
-        Debug.LogError(currentCharges);
         txtChargeCount.text = currentCharges.ToString() + "/" + maxCharges.ToString();
         EnableButton();
         if (isDisabled) {

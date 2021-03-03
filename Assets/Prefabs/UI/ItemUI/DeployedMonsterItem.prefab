@@ -229,10 +229,12 @@ MonoBehaviour:
   unlockPrice: 0
   isReadyForDeploy: 0
   isDeployed: 0
+  isMinion: 0
   summonSettings:
     className: 
     summonPortrait: {fileID: 0}
   summonType: 0
+  playerSkillType: 0
 --- !u!1 &1485519852463924173
 GameObject:
   m_ObjectHideFlags: 0
@@ -267,8 +269,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -41.8, y: 29.3}
-  m_SizeDelta: {x: 100, y: 30}
+  m_AnchoredPosition: {x: -15, y: 29.3}
+  m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5409868464328135668
 CanvasRenderer:
@@ -297,7 +299,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Dibel
+  m_text: GIANT SPIDER
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,

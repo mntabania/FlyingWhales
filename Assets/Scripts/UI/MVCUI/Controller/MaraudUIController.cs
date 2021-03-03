@@ -84,24 +84,33 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	public void Init() {
 		InstantiateUI();
 		InitializeSummons();
+		InitializeMinions();
 		InitializeDeployedItems();
 	}
 
 	void HideDeployedItems() {
 		int x = 0;
-		for (; x < m_targetMaraudStructure.maxLimitDeployedCount; ++x) {
+		for (; x < m_targetMaraudStructure.maxSummonLimitDeployCount; ++x) {
 			m_deployedSummonsUI[x].MakeSlotEmpty();
 		}
 		for (; x < 4; ++x) {
 			m_deployedSummonsUI[x].MakeSlotLocked();
 		}
-		m_targetMaraudStructure.readyForDeployCount = 0;
+		m_deployedMinionsUI[0].MakeSlotEmpty();
+		m_targetMaraudStructure.readyForDeployMinionCount = 0;
+		m_targetMaraudStructure.readyForDeploySummonCount = 0;
 	}
 
 	void DisplayDeployedItems() {
-		for (int x = 0; x < m_targetMaraudStructure.deployedClass.Count; ++x) {
-			m_deployedSummonsUI[x].InitializeItem(m_targetMaraudStructure.deployedClass[x], m_targetMaraudStructure.deployedSettings[x], m_targetMaraudStructure.deployedSummonType[x], true);
+		for (int x = 0; x < m_targetMaraudStructure.deployedCSummonlass.Count; ++x) {
+			m_deployedSummonsUI[x].InitializeItem(m_targetMaraudStructure.deployedCSummonlass[x], m_targetMaraudStructure.deployedSummonSettings[x], m_targetMaraudStructure.deployedSummonType[x], true);
 		}
+		if (m_targetMaraudStructure.deployedMinionCount > 0) {
+			m_deployedMinionsUI[0].InitializeItem(m_targetMaraudStructure.deployedMinionsSkillType[0], true);
+		} else {
+			m_deployedMinionsUI[0].MakeSlotEmpty();
+		}
+		
 	}
 
 	void InitializeDeployedItems() {
@@ -111,6 +120,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void HideSommonItems() {
 		m_summonList.ForEach((eachItem) => {
+			eachItem.onClicked -= OnAvailableMonsterClicked;
+			eachItem.gameObject.SetActive(false);
+		});
+		m_minionList.ForEach((eachItem) => {
 			eachItem.onClicked -= OnAvailableMonsterClicked;
 			eachItem.gameObject.SetActive(false);
 		});
@@ -135,43 +148,89 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 	}
 
+	void InitializeMinions() {
+		int ctr = 0;
+		foreach (PLAYER_SKILL_TYPE eachSkill in PlayerSkillManager.Instance.allMinionPlayerSkills) {
+			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill);
+			if (ctr < m_minionList.Count) {
+				m_minionList[ctr].gameObject.SetActive(true);
+				m_minionList[ctr].onClicked += OnAvailableMonsterClicked;
+				m_minionList[ctr++].InitializeItem(eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);
+			} else {
+				AvailableMonsterItemUI minionItem = Instantiate(m_availableMonsterItemUI);
+				minionItem.InitializeItem(eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);
+				minionItem.transform.SetParent(m_maraudUIView.GetAvailableMinionsParent());
+				m_minionList.Add(minionItem);
+				m_minionList[ctr++].onClicked += OnAvailableMonsterClicked;
+			}
+		}
+	}
+
 	void OnAvailableMonsterClicked(AvailableMonsterItemUI p_clickedItem) {
-		if (m_targetMaraudStructure.readyForDeployCount + m_targetMaraudStructure.deployedCount < m_targetMaraudStructure.maxLimitDeployedCount) {
+		if (m_targetMaraudStructure.readyForDeploySummonCount + m_targetMaraudStructure.deployedSummonCount < m_targetMaraudStructure.maxSummonLimitDeployCount) {
 			int price = manaCostToDeploySummon;
 			p_clickedItem.DeductOneCharge(PlayerManager.Instance.player.mana < price);
-			m_targetMaraudStructure.readyForDeployCount++;
-
-			for (int x = 0; x < m_deployedSummonsUI.Count; ++x) {
-				if (!m_deployedSummonsUI[x].isReadyForDeploy && !m_deployedSummonsUI[x].isDeployed) {
-					m_deployedSummonsUI[x].InitializeItem(p_clickedItem.characterClass, p_clickedItem.summonSettings, p_clickedItem.summonType);
-					break;
+			if (!p_clickedItem.isMinion) {
+				m_targetMaraudStructure.readyForDeploySummonCount++;
+				for (int x = 0; x < m_deployedSummonsUI.Count; ++x) {
+					if (!m_deployedSummonsUI[x].isReadyForDeploy && !m_deployedSummonsUI[x].isDeployed) {
+						m_deployedSummonsUI[x].InitializeItem(p_clickedItem.characterClass, p_clickedItem.summonSettings, p_clickedItem.summonType);
+						break;
+					}
+				}
+			} else {
+				bool exitLoop = false;
+				for (int x = 0; x < m_deployedMinionsUI.Count && !exitLoop; ++x) {
+					if (m_deployedMinionsUI[x].isReadyForDeploy || m_deployedMinionsUI[x].isDeployed) {
+						for (int y = 0; y < m_minionList.Count; ++y) {
+							if (m_minionList[y].playerSkillType == m_deployedMinionsUI[x].playerSkillType) {
+								m_minionList[y].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
+								m_deployedMinionsUI[x].InitializeItem(p_clickedItem.playerSkillType);
+								exitLoop = true;
+								break;
+							}
+						}
+					} else if (!m_deployedMinionsUI[x].isDeployed && !m_deployedMinionsUI[x].isReadyForDeploy) {
+						m_targetMaraudStructure.readyForDeployMinionCount++;
+						m_deployedMinionsUI[x].InitializeItem(p_clickedItem.playerSkillType);
+						break;
+					}
 				}
 			}
 		}
 	}
 
 	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
-		m_targetMaraudStructure.readyForDeployCount--;
-
-		for (int x = 0; x < m_summonList.Count; ++x) {
-			if (m_summonList[x].characterClass == p_itemUI.characterClass && (p_itemUI.isDeployed || p_itemUI.isReadyForDeploy)) {
-				int price = manaCostToDeploySummon;
-				if (p_itemUI.isDeployed) {
-					PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[m_summonList[x].summonType].currentCharges++;
-					m_targetMaraudStructure.RemoveItemOnRight(p_itemUI);
+		m_targetMaraudStructure.readyForDeploySummonCount--;
+		m_targetMaraudStructure.RemoveItemOnRight(p_itemUI);
+		if (!p_itemUI.isMinion) {
+			for (int x = 0; x < m_summonList.Count; ++x) {
+				if (m_summonList[x].characterClass == p_itemUI.characterClass && (p_itemUI.isDeployed || p_itemUI.isReadyForDeploy)) {
+					if (p_itemUI.isDeployed) {
+						PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[m_summonList[x].summonType].currentCharges++;	
+					}
+					m_summonList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
 				}
-				m_summonList[x].AddOneCharge(PlayerManager.Instance.player.mana < price);
+			}
+		} else {
+			for (int x = 0; x < m_minionList.Count; ++x) {
+				if (m_minionList[x].playerSkillType == p_itemUI.playerSkillType && (p_itemUI.isReadyForDeploy)) {
+					m_minionList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
+				}
 			}
 		}
 		p_itemUI.MakeSlotEmpty();
 	}
 
 	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
-		m_targetMaraudStructure.maxLimitDeployedCount++;
+		m_targetMaraudStructure.maxSummonLimitDeployCount++;
 	}
 
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
+		if (m_targetMaraudStructure.readyForDeployMinionCount <= 0) {
+			return; //TODO: MESSAGE PLAYER THAT HE NEEDS LEADER
+		}
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				m_targetMaraudStructure.AddDeployedItem(eachMonsterToBeDeployed);
@@ -179,6 +238,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[eachMonsterToBeDeployed.summonType].currentCharges--;
 			}
 		});
+		if (m_deployedMinionsUI[0].isReadyForDeploy && m_deployedMinionsUI[0].isMinion) {
+			m_deployedMinionsUI[0].Deploy();
+			m_targetMaraudStructure.AddDeployedItem(m_deployedMinionsUI[0]);
+		}
 	}
 
 	public void OnCloseClicked() {

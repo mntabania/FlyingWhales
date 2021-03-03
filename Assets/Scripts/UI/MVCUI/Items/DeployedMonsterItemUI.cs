@@ -32,6 +32,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public CharacterClass characterClass;
     public SummonSettings summonSettings;
     public SUMMON_TYPE summonType;
+    public PLAYER_SKILL_TYPE playerSkillType;
 
     private void OnEnable() {
         btnMonster.onClick.AddListener(OnClicked);
@@ -54,6 +55,30 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         txtAtkSpd.text = p_class.baseAttackSpeed.ToString();
 
         imgPortrait.sprite = p_settings.summonPortrait;
+        if (!p_isDeployed) {
+            isReadyForDeploy = true;
+            isDeployed = false;
+            txtStatus.text = "Ready";
+        } else {
+            txtStatus.text = "Deployed";
+            isReadyForDeploy = false;
+            isDeployed = true;
+        }
+        lockCover.SetActive(false);
+        emptyCover.SetActive(false);
+    }
+
+    public void InitializeItem(PLAYER_SKILL_TYPE p_skillType, bool p_isDeployed = false) {
+        playerSkillType = p_skillType;
+        PlayerSkillData playerData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        txtUnlockPrice.text = unlockPrice.ToString();
+        txtName.text = playerData.name;
+        txtName.text = txtName.text.Replace("Demon ", "");
+        txtHP.text = "n/a";
+        txtAtk.text = "n/a";
+        txtAtkSpd.text = "n/a";
+        isMinion = true;
+        imgPortrait.sprite = playerData.contextMenuIcon;
         if (!p_isDeployed) {
             isReadyForDeploy = true;
             isDeployed = false;
