@@ -17,6 +17,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public RuinarchText txtHP;
     public RuinarchText txtAtk;
     public RuinarchText txtAtkSpd;
+    public RuinarchText txtStatus;
     public Image imgPortrait;
 
     public RuinarchText txtUnlockPrice;
@@ -25,10 +26,13 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 
     public int unlockPrice;
 
+    public bool isReadyForDeploy;
     public bool isDeployed;
     public CharacterClass characterClass;
+    public SummonSettings summonSettings;
+    public SUMMON_TYPE summonType;
 
-	private void OnEnable() {
+    private void OnEnable() {
         btnMonster.onClick.AddListener(OnClicked);
         btnUnlock.onClick.AddListener(OnUnlocked);
 	}
@@ -38,7 +42,9 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         btnUnlock.onClick.RemoveListener(OnUnlocked);
     }
 
-	public void InitializeItem(CharacterClass p_class, Sprite p_sprite) {
+	public void InitializeItem(CharacterClass p_class, SummonSettings p_settings, SUMMON_TYPE p_summonType, bool p_isDeployed = false) {
+        summonType = p_summonType;
+        summonSettings = p_settings;
         characterClass = p_class;
         txtUnlockPrice.text = unlockPrice.ToString();
         txtName.text = p_class.className;
@@ -46,13 +52,31 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         txtAtk.text = p_class.baseAttackPower.ToString();
         txtAtkSpd.text = p_class.baseAttackSpeed.ToString();
 
-        imgPortrait.sprite = p_sprite;
-
+        imgPortrait.sprite = p_settings.summonPortrait;
+        if (!p_isDeployed) {
+            isReadyForDeploy = true;
+            isDeployed = false;
+            txtStatus.text = "Ready";
+        } else {
+            txtStatus.text = "Deployed";
+            isReadyForDeploy = false;
+            isDeployed = true;
+        }
+        lockCover.SetActive(false);
         emptyCover.SetActive(false);
     }
 
     public void MakeSlotEmpty() {
+        isDeployed = false;
+        isReadyForDeploy = false;
         emptyCover.SetActive(true);
+    }
+
+    public void MakeSlotLocked() {
+        isDeployed = false;
+        isReadyForDeploy = false;
+        emptyCover.SetActive(false);
+        lockCover.SetActive(true);
     }
 
     public void EnableButton() {
@@ -60,15 +84,9 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         lockCover.SetActive(false);
     }
 
-    public void DisableButton() {
-        btnMonster.interactable = false;
-        lockCover.SetActive(true);
-    }
-
     void OnClicked() {
-        MakeSlotEmpty();
-        isDeployed = false;
         onClicked?.Invoke(this);
+        MakeSlotEmpty();
     }
 
     void OnUnlocked() {
@@ -78,5 +96,11 @@ public class DeployedMonsterItemUI : MonoBehaviour {
             MakeSlotEmpty();
         }
         onUnlocked?.Invoke(this);
+    }
+
+    public void Deploy() {
+        txtStatus.text = "Deployed";
+        isDeployed = true;
+        isReadyForDeploy = false;
     }
 }

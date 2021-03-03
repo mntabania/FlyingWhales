@@ -1335,7 +1335,7 @@ MonoBehaviour:
   summonSettings:
     m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000
     m_values:
-    - className: Wolf
+    - className: Ravager
       summonPortrait: {fileID: 21300000, guid: bb519cc5a55c1284d8bfe22ff5cd0e25, type: 3}
     - className: Skeleton
       summonPortrait: {fileID: 21300000, guid: 362b5aa2e37e9da499ca8a81f43cdae7, type: 3}
@@ -1345,15 +1345,15 @@ MonoBehaviour:
       summonPortrait: {fileID: 21300000, guid: b01760fa846b3474eac6f467194029d0, type: 3}
     - className: Incubus
       summonPortrait: {fileID: 21300000, guid: 7acfc5bc61f73a141ad190bb96a66cea, type: 3}
-    - className: FireElemental
+    - className: Fire Elemental
       summonPortrait: {fileID: 21300000, guid: 8079e2be5be425e4984d3bff7e212764, type: 3}
     - className: Kobold
       summonPortrait: {fileID: 21300000, guid: fa0619b7cb438ad43bd60489182d2aa1, type: 3}
-    - className: GiantSpider
+    - className: Giant Spider
       summonPortrait: {fileID: 21300000, guid: 24ddc0decde552649b24891f92edac8b, type: 3}
     - className: Mimic
       summonPortrait: {fileID: 21300000, guid: a139866de57b9d84b814b5a52126a901, type: 3}
-    - className: SmallSpider
+    - className: Small Spider
       summonPortrait: {fileID: 21300000, guid: 24ddc0decde552649b24891f92edac8b, type: 3}
     - className: Abomination
       summonPortrait: {fileID: 21300000, guid: 9b0e42b61dbe3bb47ae54d8d3d8d6393, type: 3}
@@ -1363,37 +1363,37 @@ MonoBehaviour:
       summonPortrait: {fileID: 21300000, guid: e03a0da1821763243b38cfa2edaef43e, type: 3}
     - className: Chicken
       summonPortrait: {fileID: 21300000, guid: 59f382848bf662e49a24e9fa7fd1080b, type: 3}
-    - className: DesertEnt
+    - className: Desert Ent
       summonPortrait: {fileID: 21300000, guid: 68cd1ff0454ef1e4cb4ebea1f50e6be3, type: 3}
-    - className: ForestEnt
+    - className: Forest Ent
       summonPortrait: {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - className: SnowEnt
+    - className: Snow Ent
       summonPortrait: {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - className: GrassEnt
+    - className: Grass Ent
       summonPortrait: {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - className: CorruptEnt
+    - className: Corrupt Ent
       summonPortrait: {fileID: 21300000, guid: 98d557a1c3fa4a74fb348a35421e9b98, type: 3}
-    - className: IceNymph
+    - className: Ice Nymph
       summonPortrait: {fileID: 21300000, guid: c758c0d0c1ffb0344ae5cc5f2ee78197, type: 3}
-    - className: WaterNymph
+    - className: Water Nymph
       summonPortrait: {fileID: 21300000, guid: ec424fd5a02dea54b825c08a5a5e2b9a, type: 3}
-    - className: WindNymph
+    - className: Wind Nymph
       summonPortrait: {fileID: 21300000, guid: 1181dd6621aeee2458f1b80f7103dff5, type: 3}
-    - className: ElectricWisp
+    - className: Electric Wisp
       summonPortrait: {fileID: 21300000, guid: e7a2781c7d87254478da24e883eb4144, type: 3}
-    - className: FireWisp
+    - className: Fire Wisp
       summonPortrait: {fileID: 21300000, guid: 7de9bb4993f04944fa5f7b7e5b2c9a5a, type: 3}
-    - className: EarthenWisp
+    - className: Earthen Wisp
       summonPortrait: {fileID: 21300000, guid: 2922f110bc541a44998a3c638c284f78, type: 3}
     - className: Sludge
       summonPortrait: {fileID: 21300000, guid: 22cfd84bf71a94148a77f19eecc86c75, type: 3}
     - className: Ghost
       summonPortrait: {fileID: 21300000, guid: 7357917f81b59fc4c8bd413941774aa7, type: 3}
-    - className: WarriorAngel
+    - className: Warrior Angel
       summonPortrait: {fileID: 21300000, guid: 815519bddcb4aad47ab2af8b83324dfb, type: 3}
-    - className: MagicalAngel
+    - className: Magical Angel
       summonPortrait: {fileID: 21300000, guid: d4a2b85f04c8ab648b7a67249d128e4e, type: 3}
-    - className: VengefulGhost
+    - className: Vengeful Ghost
       summonPortrait: {fileID: 21300000, guid: 8e3f91766d658f94d9459a4f8369c875, type: 3}
     - className: Wurm
       summonPortrait: {fileID: 21300000, guid: 4e988cd7d035c5f4c912ac30b3ef0421, type: 3}
@@ -1403,7 +1403,7 @@ MonoBehaviour:
       summonPortrait: {fileID: 21300000, guid: 5483171b9e7c90743943dbbd7fa20a7a, type: 3}
     - className: Troll
       summonPortrait: {fileID: 21300000, guid: 372b94906660deb43b5bd3f454be6217, type: 3}
-    - className: BoneGolem
+    - className: Bone Golem
       summonPortrait: {fileID: 21300000, guid: 3187860cdb845ff4a8fe10bb432bd421, type: 3}
     - className: Rat
       summonPortrait: {fileID: 21300000, guid: 24b73dbd41dbd1f459072d0dcf1f4314, type: 3}

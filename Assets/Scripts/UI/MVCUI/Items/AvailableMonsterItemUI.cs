@@ -11,6 +11,8 @@ public class AvailableMonsterItemUI : MonoBehaviour
     public int maxCharges;
     public int currentCharges;
     public CharacterClass characterClass;
+    public SummonSettings summonSettings;
+    public SUMMON_TYPE summonType;
 
     public RuinarchText txtName;
     public RuinarchText txtHP;
@@ -25,20 +27,23 @@ public class AvailableMonsterItemUI : MonoBehaviour
 
     public GameObject disabler;
 
-    public void InitializeItem(CharacterClass p_class, Sprite p_portrait, int p_manaCost, int p_chargeCount, bool p_isDisabled = false) {
+    public void InitializeItem(CharacterClass p_class, SummonSettings p_settings, SUMMON_TYPE p_summonType, int p_manaCost, int p_chargeCount, int p_maxChargeCount) {
+        summonType = p_summonType;
+        summonSettings = p_settings;
         characterClass = p_class;
-        currentCharges = maxCharges = p_chargeCount;
+        currentCharges = p_chargeCount;
+        maxCharges = p_maxChargeCount;
         txtName.text = p_class.className;
         txtHP.text = p_class.baseHP.ToString();
         txtAtk.text = p_class.baseAttackPower.ToString();
         txtAtkSpd.text = p_class.baseAttackSpeed.ToString();
         txtManaCost.text = p_manaCost.ToString();
         txtChargeCount.text = currentCharges.ToString() + "/" + maxCharges.ToString();
-        imgIcon.sprite = p_portrait;
-        if (!p_isDisabled) {
-            EnableButton();
+        imgIcon.sprite = p_settings.summonPortrait;
+        if (currentCharges  <= 0) {
+            DisableButton(); 
         } else {
-            DisableButton();
+            EnableButton();
         }
     }
 
@@ -57,6 +62,7 @@ public class AvailableMonsterItemUI : MonoBehaviour
 
     public void AddOneCharge(bool isDisabled = false) {
         currentCharges++;
+        Debug.LogError(currentCharges);
         txtChargeCount.text = currentCharges.ToString() + "/" + maxCharges.ToString();
         EnableButton();
         if (isDisabled) {

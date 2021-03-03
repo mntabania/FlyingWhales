@@ -28,8 +28,8 @@ public class UIManager : BaseMonoBehaviour {
 
     public Action onPortalClicked;
     public Action onSpireClicked;
-    public Action onMaraudClicked;
-    public Action onDefensePointClicked;
+    public Action<LocationStructure> onMaraudClicked;
+    public Action<LocationStructure> onDefensePointClicked;
 
     public static UIManager Instance = null;
 
@@ -1039,12 +1039,11 @@ public class UIManager : BaseMonoBehaviour {
         if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
             onSpireClicked?.Invoke();
         }
-        Debug.LogError(structure.structureType);
         if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
-            onMaraudClicked?.Invoke();
+            onMaraudClicked?.Invoke(structure);
         }
         if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
-            onDefensePointClicked?.Invoke();
+            onDefensePointClicked?.Invoke(structure);
         }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();

@@ -18444,6 +18444,7 @@ Transform:
   - {fileID: 1333819175}
   - {fileID: 1848850208}
   - {fileID: 1726233549}
+  - {fileID: 1063994933}
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -29608,6 +29609,60 @@ MonoBehaviour:
   portrait: {fileID: 1742962994}
   hoverObj: {fileID: 0}
   disableInteraction: 0
+--- !u!1 &1063994932
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1063994933}
+  - component: {fileID: 1063994934}
+  m_Layer: 0
+  m_Name: DefensePointUIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1063994933
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063994932}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 615060822}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1063994934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063994932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30bf99afd3b47f34d8463a55305a3c3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _canvas: {fileID: 694160819}
+  m_defensePointUIModel: {fileID: 2753937090414460560, guid: 1a567448215f38941be3b6358180ff7e,
+    type: 3}
+  m_availableMonsterItemUI: {fileID: 2771371547691879450, guid: adf0cb294c5a0624587d3614a0925c6c,
+    type: 3}
+  m_deployedMonsterItemUI: {fileID: 5273214898117788424, guid: 9a6ad23b2df0e5a4cb931e2cb4b11018,
+    type: 3}
+  m_deployedMonsters: []
+  fakePlayer: {fileID: 0}
+  isTestScene: 0
+  manaCostToDeploySummon: 10
 --- !u!1 &1066969039
 GameObject:
   m_ObjectHideFlags: 0
@@ -48915,8 +48970,11 @@ MonoBehaviour:
     type: 3}
   m_deployedMonsterItemUI: {fileID: 5273214898117788424, guid: 9a6ad23b2df0e5a4cb931e2cb4b11018,
     type: 3}
+  m_deployedMonsters: []
   fakePlayer: {fileID: 0}
   isTestScene: 0
+  manaCostToDeploySummon: 10
+  manaCostToDeployMinion: 100
 --- !u!1 &1726405995
 GameObject:
   m_ObjectHideFlags: 0

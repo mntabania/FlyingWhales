@@ -903,7 +903,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   structureObjects:
-  - {fileID: 0}
+  - {fileID: 7520276560411847552}
 --- !u!114 &7520276560411847552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -934,8 +934,8 @@ MonoBehaviour:
   _connectors: []
   roomTemplates: []
   _clickCollider: {fileID: 1281096122946599741}
-  wallsContributeToDamage: 1
-  wallTileMap: {fileID: 0}
+  wallsContributeToDamage: 0
+  wallTileMap: {fileID: 1865630169074142519}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}
   topWall: {fileID: 1585498277213060, guid: 271421acd1b23f144af6e1200fa8f342, type: 3}

@@ -35,9 +35,8 @@ public class DefensePointUIView : MVCUIView {
 	#endregion
 
 	#region user defined functions
-
-	public Transform GetAvailableMonsterParent() {
-		return UIModel.availableMonstersParent;
+	public Transform GetAvailableSummonsParent() {
+		return UIModel.availableSummonsParent;
 	}
 	public Transform GetDeployedMonsterParent() {
 		return UIModel.deplyedMonstersParent;

@@ -10,10 +10,4 @@ public class DefensePointData : DemonicStructurePlayerSkill {
     public DefensePointData() {
         structureType = STRUCTURE_TYPE.DEFENSE_POINT;
     }
-    protected override string InvalidMessage(LocationGridTile tile) {
-        if (tile.parentMap.region.HasStructure(STRUCTURE_TYPE.DEFENSE_POINT)) {
-            return "You can only have 1 Defense Point per region.";
-        }
-        return base.InvalidMessage(tile);
-    }
 }

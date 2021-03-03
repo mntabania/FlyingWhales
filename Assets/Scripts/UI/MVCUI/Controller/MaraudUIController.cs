@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using Ruinarch.MVCFramework;
-using System;
 using System.Linq;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 
 public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
@@ -34,6 +34,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	private int m_defaultUnlockedCount = 3;
 
+	private Maraud m_targetMaraudStructure;
+
 	private void Start() {
 		if (isTestScene) {
 			CharacterManager.Instance.Initialize();
@@ -56,8 +58,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		});
 	}
 
-	private void OnMaraudClicked() {
+	private void OnMaraudClicked(LocationStructure p_clickedMaraud) {
 		if (GameManager.Instance.gameHasStarted) {
+			m_targetMaraudStructure = p_clickedMaraud as Maraud;
 			m_underlingComponent = PlayerManager.Instance.player.underlingsComponent;
 			Init();
 		}
@@ -92,14 +95,26 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			
 			Debug.LogError(cClass.className);
 			if (ctr < m_summonList.Count) {
+				int currentCharges = 0;
 				m_summonList[ctr].gameObject.SetActive(true);
 				m_summonList[ctr].isMinion = false;
 				m_summonList[ctr].onClicked += OnAvailableMonsterClicked;
-				m_summonList[ctr++].InitializeItem(cClass, settings.summonPortrait, manaCostToDeploySummon, entry.Value.currentCharges);
+				m_targetMaraudStructure.deployedClass.ForEach((eachClass) => {
+					if (cClass == eachClass) {
+						currentCharges++;
+					}
+				});
+				m_summonList[ctr++].InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges - currentCharges, entry.Value.currentCharges);
 				
 			} else {
+				int currentCharges = 0;
 				AvailableMonsterItemUI summonItem = Instantiate(m_availableMonsterItemUI) as AvailableMonsterItemUI;
-				summonItem.InitializeItem(cClass, settings.summonPortrait, manaCostToDeploySummon, entry.Value.currentCharges);
+				m_targetMaraudStructure.deployedClass.ForEach((eachClass) => {
+					if (cClass == eachClass) {
+						currentCharges++;
+					}
+				});
+				summonItem.InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges - currentCharges, entry.Value.currentCharges);
 				summonItem.isMinion = false;
 				summonItem.transform.SetParent(m_maraudUIView.GetAvailableSummonsParent());
 				m_summonList.Add(summonItem);
@@ -127,14 +142,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	void OnAvailableMonsterClicked(AvailableMonsterItemUI p_clickedItem) {
 		if (!p_clickedItem.isMinion && currentDeployedCount < maxLimitDeployedCount) {
 			int price = p_clickedItem.isMinion ? manaCostToDeployMinion : manaCostToDeploySummon;
-			p_clickedItem.DeductOneCharge(PlayerManager.Instance.player.mana > price);
+			p_clickedItem.DeductOneCharge(PlayerManager.Instance.player.mana < price);
 			currentDeployedCount++;
 
 			for (int x = 0; x < m_deployedMonsters.Count; ++x) {
-				if (!m_deployedMonsters[x].isDeployed) {
-					m_deployedMonsters[x].InitializeItem(p_clickedItem.characterClass, p_clickedItem.imgIcon.sprite);
-					m_deployedMonsters[x].onClicked += OnDeployedMonsterClicked;
-					m_deployedMonsters[x].onUnlocked += OnUnlockClicked;
+				if (!m_deployedMonsters[x].isReadyForDeploy) {
+					m_deployedMonsters[x].InitializeItem(p_clickedItem.characterClass, p_clickedItem.summonSettings, p_clickedItem.summonType);
 					break;
 				}
 			}
@@ -147,7 +160,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_summonList.ForEach((eachSummon) => {
 			if (eachSummon.characterClass == p_itemUI.characterClass) {
 				int price = eachSummon.isMinion ? manaCostToDeployMinion : manaCostToDeploySummon;
-				eachSummon.AddOneCharge(PlayerManager.Instance.player.mana > price);
+				eachSummon.AddOneCharge(PlayerManager.Instance.player.mana < price);
 			}
 		});
 	}
