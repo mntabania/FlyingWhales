@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0a98fa76aabbf145b7a38991c60183e, type: 3}
-  m_Name: Wind Blast
+  m_Script: {fileID: 11500000, guid: a48e808b2f3374f4a9ce55d83e620508, type: 3}
+  m_Name: Ice Blast
   m_EditorClassIdentifier: 
-  skill: 44
+  skill: 192
   manaCost: 20
   charges: 1
   cooldown: 160
@@ -21,13 +21,13 @@ MonoBehaviour:
   expCost: 300
   cheatedLevel: 0
   pierce: 0
-  buttonSprite: {fileID: 21300000, guid: 9cd696d31c2c8534b8a5ec2a949c43fa, type: 3}
-  tooltipVideoClip: {fileID: 32900000, guid: b123165bb9b9c484fb83dd83c3153ee3, type: 3}
+  buttonSprite: {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
+  tooltipVideoClip: {fileID: 32900000, guid: f0dcf5b0b408d6641b9c6ecac91f583e, type: 3}
   tooltipImage: {fileID: 0}
   unlockCost: 100
   tier: 1
   baseLoadoutWeight: 200
-  resistanceType: 8
+  resistanceType: 5
   archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
@@ -47,29 +47,25 @@ MonoBehaviour:
     upgradeCosts: 6400000096000000c8000000
     manacostPerLevel: 14000000190000001e00000023000000
     chargesPerLevel: 01000000010000000200000003000000
-    bonuses: 0000000001000000060000000e000000
-    additionalDamagePerLevel: 64000000c80000002c01000090010000
+    bonuses: 070000000e00000001000000
+    additionalDamagePerLevel: 
     additionalPiercePerLevel:
     - 0
     - 50
     - 75
     - 100
     additionalHpPercentagePerLevel: []
-    additionalAttackPercentagePerLevel:
-    - 0
-    - 25
-    - 50
-    - 75
+    additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
-    additionalAttackValuePerLevel: 
+    additionalAttackValuePerLevel: 2c01000090010000f401000058020000
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
-    additionalTileRangeBonusPerLevel: 00000000010000000200000003000000
+    additionalTileRangeBonusPerLevel: 00000000000000000000000000000000
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: a0000000800000008000000080000000
+    cooldownPerLevel: a0000000f000000040010000e0010000
     skillMovementSpeed: 
   blastSound: {fileID: 8300000, guid: 9fc4b4de02e399c4fa4471f2ee024e6b, type: 3}

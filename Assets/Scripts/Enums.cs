@@ -995,7 +995,7 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     BREAK_UP = 164, JOIN_FACTION = 165, REBELLION = 166, OVERTHROW_LEADER = 167, INDUCE_MIGRATION = 168, STIFLE_MIGRATION = 169,
     RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
     CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, SPAWN_EYE_WARD = 182, DESTROY_EYE_WARD = 183, MANA_PIT = 184, MARAUD = 185,
-    DRAIN_SPIRIT = 186, LET_GO = 187, FULL_HEAL = 188, CREATE_BLACKMAIL = 189, DEFENSE_POINT = 190, IMP_HUT = 191,
+    DRAIN_SPIRIT = 186, LET_GO = 187, FULL_HEAL = 188, CREATE_BLACKMAIL = 189, DEFENSE_POINT = 190, IMP_HUT = 191, ICE_BLAST = 192, EARTH_SPIKE = 193, WATER_SPIKE = 194,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1089,7 +1089,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Eye_Ward_Highlight, Heal
+    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Eye_Ward_Highlight, Heal, Ice_Blast, Earth_Spike, Water_Spike,
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
