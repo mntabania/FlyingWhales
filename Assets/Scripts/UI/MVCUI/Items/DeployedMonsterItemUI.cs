@@ -33,7 +33,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public SummonSettings summonSettings;
     public SUMMON_TYPE summonType;
     public PLAYER_SKILL_TYPE playerSkillType;
-
+    public Character deployedCharacter;
     private void OnEnable() {
         btnMonster.onClick.AddListener(OnClicked);
         btnUnlock.onClick.AddListener(OnUnlocked);
@@ -124,7 +124,12 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         onUnlocked?.Invoke(this);
     }
 
-    public void Deploy() {
+    public void UndeployCharacter() {
+        deployedCharacter = null;
+    }
+
+    public void Deploy(Character p_createdCharacter = null) {
+        deployedCharacter = p_createdCharacter;
         txtStatus.text = "Deployed";
         isDeployed = true;
         isReadyForDeploy = false;

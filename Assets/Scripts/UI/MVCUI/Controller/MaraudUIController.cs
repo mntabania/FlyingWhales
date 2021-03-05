@@ -50,7 +50,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	private List<DeployedMonsterItemUI> m_deployedMinionsUI = new List<DeployedMonsterItemUI>();
 
 	private Maraud m_targetMaraudStructure;
-
+	private int m_behaviour = 0;
 	public int manaCostToDeploySummon = 10;
 
 	private void Start() {
@@ -181,7 +181,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			} else {
 				bool exitLoop = false;
 				for (int x = 0; x < m_deployedMinionsUI.Count && !exitLoop; ++x) {
-					if (m_deployedMinionsUI[x].isReadyForDeploy || m_deployedMinionsUI[x].isDeployed) {
+					if (m_deployedMinionsUI[x].isReadyForDeploy) {
 						for (int y = 0; y < m_minionList.Count; ++y) {
 							if (m_minionList[y].playerSkillType == m_deployedMinionsUI[x].playerSkillType) {
 								m_minionList[y].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
@@ -207,20 +207,23 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			for (int x = 0; x < m_summonList.Count; ++x) {
 				if (m_summonList[x].characterClass == p_itemUI.characterClass && (p_itemUI.isDeployed || p_itemUI.isReadyForDeploy)) {
 					if (p_itemUI.isDeployed) {
-						PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[m_summonList[x].summonType].currentCharges++;	
+						PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[m_summonList[x].summonType].currentCharges++;
+						m_targetMaraudStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
+						p_itemUI.UndeployCharacter();
 					}
 					m_summonList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
+					p_itemUI.MakeSlotEmpty();
 				}
 			}
 		} else {
 			for (int x = 0; x < m_minionList.Count; ++x) {
 				if (m_minionList[x].playerSkillType == p_itemUI.playerSkillType && (p_itemUI.isReadyForDeploy)) {
 					m_minionList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
+					p_itemUI.MakeSlotEmpty();
 				}
 			}
 		}
-		p_itemUI.MakeSlotEmpty();
-	}
+    }
 
 	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
 		m_targetMaraudStructure.maxSummonLimitDeployCount++;
@@ -234,13 +237,28 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				m_targetMaraudStructure.AddDeployedItem(eachMonsterToBeDeployed);
-				eachMonsterToBeDeployed.Deploy();
+				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetMaraudStructure.currentSettlement); ;
+				if (m_behaviour == 0) {
+					summon.traitContainer.AddTrait(summon, "Snatcher");
+				} else {
+					summon.traitContainer.AddTrait(summon, "Defender");
+				}
+				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetMaraudStructure.GetRandomTile());
+				eachMonsterToBeDeployed.Deploy(summon);
 				PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[eachMonsterToBeDeployed.summonType].currentCharges--;
 			}
 		});
 		if (m_deployedMinionsUI[0].isReadyForDeploy && m_deployedMinionsUI[0].isMinion) {
-			m_deployedMinionsUI[0].Deploy();
+			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(m_deployedMinionsUI[0].playerSkillType);
+			Character minion = null;
+			skillData.ActivateAbility(m_targetMaraudStructure.GetRandomTile(), ref minion);
+			if (m_behaviour == 0) {
+				minion.traitContainer.AddTrait(minion, "Snatcher");
+			} else {
+				minion.traitContainer.AddTrait(minion, "Defender");
+			}
 			m_targetMaraudStructure.AddDeployedItem(m_deployedMinionsUI[0]);
+			m_deployedMinionsUI[0].Deploy(minion);
 		}
 	}
 
@@ -258,6 +276,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (isOn) {
 			m_maraudUIView.ShowMinionTab();
 		}
+	}
+
+	public void OnDropDownBheaviourclicked(int val) {
+		m_behaviour = val;
 	}
 	#endregion
 }

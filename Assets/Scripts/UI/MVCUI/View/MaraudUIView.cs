@@ -9,6 +9,7 @@ public class MaraudUIView : MVCUIView {
 		void OnCloseClicked();
 		void OnSummonsClicked(bool isOn);
 		void OnMinionClicked(bool isOn);
+		void OnDropDownBheaviourclicked(int val);
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -67,6 +68,7 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseClicked += p_listener.OnCloseClicked;
 		UIModel.onMinionClicked += p_listener.OnMinionClicked;
 		UIModel.onSummonClicked += p_listener.OnSummonsClicked;
+		UIModel.onDropDownBehaviourChanged += p_listener.OnDropDownBheaviourclicked;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -74,6 +76,7 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseClicked -= p_listener.OnCloseClicked;
 		UIModel.onMinionClicked -= p_listener.OnMinionClicked;
 		UIModel.onSummonClicked -= p_listener.OnSummonsClicked;
+		UIModel.onDropDownBehaviourChanged -= p_listener.OnDropDownBheaviourclicked;
 	}
 	#endregion
 }

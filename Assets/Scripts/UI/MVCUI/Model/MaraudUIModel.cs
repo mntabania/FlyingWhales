@@ -4,10 +4,12 @@ using Ruinarch.Custom_UI;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 public class MaraudUIModel : MVCUIModel {
 
 	public Action<bool> onMinionClicked;
 	public Action<bool> onSummonClicked;
+	public Action<int> onDropDownBehaviourChanged;
 	public Action onDeployClicked;
 	public Action onCloseClicked;
 
@@ -26,11 +28,14 @@ public class MaraudUIModel : MVCUIModel {
 	public Transform deployedMinionsParent;
 	public Transform deployedSummonsParent;
 
+	public TMP_Dropdown drpDwnBehaviour;
+
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);
 		btnSummonsTab.onValueChanged.AddListener(ClickSummonsTab);
 		btnMinionsTab.onValueChanged.AddListener(ClickMinionsTab);
+		drpDwnBehaviour.onValueChanged.AddListener(OnDropDownBehaviourChanged);
 	}
 
 	private void OnDisable() {
@@ -38,6 +43,7 @@ public class MaraudUIModel : MVCUIModel {
 		btnClose.onClick.RemoveListener(ClickClose);
 		btnSummonsTab.onValueChanged.RemoveListener(ClickSummonsTab);
 		btnMinionsTab.onValueChanged.RemoveListener(ClickMinionsTab);
+		drpDwnBehaviour.onValueChanged.RemoveListener(OnDropDownBehaviourChanged);
 	}
 
 	#region Buttons OnClick trigger
@@ -54,6 +60,10 @@ public class MaraudUIModel : MVCUIModel {
 
 	void ClickMinionsTab(bool isOn) {
 		onMinionClicked?.Invoke(isOn); 
+	}
+
+	void OnDropDownBehaviourChanged(int val) {
+		onDropDownBehaviourChanged?.Invoke(val);
 	}
 	#endregion
 }

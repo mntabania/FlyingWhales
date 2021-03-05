@@ -26,6 +26,16 @@ namespace Inner_Maps.Location_Structures {
             deployedSettings.Add(p_itemUI.summonSettings);
             deployedSummonType.Add(p_itemUI.summonType);
         }
+
+        public void AddCharacterOnList(Character p_newSummon) {
+            deployedMonsters.Add(p_newSummon);
+        }
+
+        public void RemoveCharacterOnList(Character p_removeSummon) {
+            deployedMonsters.Remove(p_removeSummon);
+            p_removeSummon.DestroyMarker();
+            CharacterManager.Instance.RemoveCharacter(p_removeSummon, true);
+        }
         //this list has different count to the set of lists above
         public List<Character> deployedMonsters = new List<Character>();
         public List<SummonSettings> deployedSettings = new List<SummonSettings>();

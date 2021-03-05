@@ -146,6 +146,8 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 				if (p_itemUI.isDeployed) {
 					PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[m_summonList[x].summonType].currentCharges++;
 					m_targetDefensePointStructure.RemoveItemOnRight(p_itemUI);
+					m_targetDefensePointStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
+					p_itemUI.UndeployCharacter();
 				}
 				m_summonList[x].AddOneCharge(PlayerManager.Instance.player.mana < price);
 			}
@@ -162,7 +164,10 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		m_deployedMonsters.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				m_targetDefensePointStructure.AddDeployedItem(eachMonsterToBeDeployed);
-				eachMonsterToBeDeployed.Deploy();
+				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetDefensePointStructure.currentSettlement); ;
+				summon.traitContainer.AddTrait(summon, "Defender");
+				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetDefensePointStructure.GetRandomTile());
+				eachMonsterToBeDeployed.Deploy(summon);
 				PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[eachMonsterToBeDeployed.summonType].currentCharges--;
 			}
 		});

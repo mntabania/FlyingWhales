@@ -35,6 +35,16 @@ namespace Inner_Maps.Location_Structures {
                 deployedMinionsSkillType.Add(p_itemUI.playerSkillType);
             }
         }
+
+        public void AddCharacterOnList(Character p_newSummon) {
+            deployedMinions.Add(p_newSummon);
+        }
+
+        public void RemoveCharacterOnList(Character p_removeSummon) {
+            deployedMinions.Remove(p_removeSummon);
+            CharacterManager.Instance.RemoveCharacter(p_removeSummon, true);
+        }
+
         //summon list
         public List<Character> deployedSummons = new List<Character>();
         public List<SummonSettings> deployedSummonSettings = new List<SummonSettings>();
@@ -53,6 +63,13 @@ namespace Inner_Maps.Location_Structures {
                     deployedSummonSettings.RemoveAt(x);
                     deployedCSummonlass.RemoveAt(x);
                     deployedSummonType.RemoveAt(x);
+                    break;
+                }
+            }
+            for (int x = 0; x < deployedMinions.Count; ++x) {
+                if (p_deadMonster == deployedMinions[x]) {
+                    deployedMinions.RemoveAt(x);
+                    deployedMinionsSkillType.RemoveAt(x);
                     break;
                 }
             }
