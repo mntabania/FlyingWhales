@@ -173,8 +173,8 @@ public class SummonListUI : PopupMenuBase {
         }
         return null;
     }
-    private void DeleteMonsterUndItem(Summon summon) {
-        CharacterNameplateItem item = GetSummonItem(summon);
+    private void DeleteMonsterUnderlingItem(MonsterUnderlingCharges p_underlingCharges) {
+        MonsterUnderlingQuantityNameplateItem item = GetMonsterUnderlingQuantityNameplateItem(p_underlingCharges);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item);
         }

@@ -31,6 +31,7 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterUnderl
         mainLbl.text = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(_monster.monsterType.ToString());
     }
     private void UpdateQuantityText() {
-        subLbl.text = _monster.currentCharges + "/" + _monster.maxCharges;
+        int currentCharges = Math.Max(0, _monster.currentCharges);
+        subLbl.text = currentCharges + "/" + _monster.maxCharges;
     }
 }
