@@ -25,6 +25,7 @@ public class SummonListUI : PopupMenuBase {
         base.Open();
         _mainToggle.SetIsOnWithoutNotify(true);
         UpdateSummonPlayerSkillItems();
+        UpdateUnderlingItems();
     }
     public override void Close() {
         base.Close();
@@ -50,6 +51,11 @@ public class SummonListUI : PopupMenuBase {
     private void UpdateSummonPlayerSkillItems() {
         for (int i = 0; i < _summonPlayerSkillItems.Count; i++) {
             _summonPlayerSkillItems[i].UpdateData();
+        }
+    }
+    private void UpdateUnderlingItems() {
+        for (int i = 0; i < _monsterUnderlingQuantityNameplateItems.Count; i++) {
+            _monsterUnderlingQuantityNameplateItems[i].UpdateBasicData();
         }
     }
     private void CreateNewActiveSummonItem(Summon summon) {

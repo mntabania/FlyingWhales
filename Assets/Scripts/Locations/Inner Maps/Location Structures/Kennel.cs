@@ -79,7 +79,7 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(p_summon);
             _occupyingSummon = p_summon;
             occupyingSummon.eventDispatcher.SubscribeToCharacterDied(this);
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
+            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity, false);
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
             Debug.Log($"Set occupant of {name} to {occupyingSummon?.name}");
         }
@@ -87,7 +87,7 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(occupyingSummon, $"Problem un occupying summon at {name}");
             Debug.Log($"Removed {occupyingSummon.name} as occupant of {name}");
             occupyingSummon.eventDispatcher.UnsubscribeToCharacterDied(this);
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity);
+            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity, false);
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity);
             _occupyingSummon = null;
 

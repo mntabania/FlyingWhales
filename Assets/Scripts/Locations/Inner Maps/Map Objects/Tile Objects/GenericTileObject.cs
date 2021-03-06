@@ -336,7 +336,7 @@ public class GenericTileObject : TileObject {
             }
         }
 
-        if (structure is DemonicStructure && structure.structureType != STRUCTURE_TYPE.THE_PORTAL) {
+        if (structure is DemonicStructure) {
             for (int j = 0; j < structure.tiles.Count; j++) {
                 LocationGridTile tile = structure.tiles.ElementAt(j);
                 for (int k = 0; k < tile.neighbourList.Count; k++) {
