@@ -25,24 +25,16 @@ public class EyeWardHighlight : PooledObject {
             ParticleSystem.ShapeModule shapeModule = p.shape;
             shapeModule.scale = scale;
 
-            int maxParticles = diameter * 72;
-            float rateOverTime = diameter * 25f;
-
-            //if (biome == BIOMES.SNOW) {
-            //    maxParticles = diameter * 80;
-            //    rateOverTime = diameter * 40;  
-            //} else {
-            //    maxParticles = diameter * 25;
-            //    rateOverTime = diameter * 10;
-            //}
+            //int maxParticles = diameter * 72;
+            //float rateOverTime = diameter * 25f;
             
             //max particles
-            ParticleSystem.MainModule mainModule = p.main; 
-            mainModule.maxParticles = maxParticles;
+            //ParticleSystem.MainModule mainModule = p.main; 
+            //mainModule.maxParticles = maxParticles;
 
             //emission module
-            ParticleSystem.EmissionModule emissionModule = p.emission;
-            emissionModule.rateOverTime = rateOverTime;
+            //ParticleSystem.EmissionModule emissionModule = p.emission;
+            //emissionModule.rateOverTime = rateOverTime;
 
         }
     }
