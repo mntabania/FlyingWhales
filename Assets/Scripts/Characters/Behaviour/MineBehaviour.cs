@@ -19,12 +19,14 @@ public class MineBehaviour : CharacterBehaviourComponent {
         if (homeSettlement != null) {
             List<LocationStructure> mineShacks = homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.MINE_SHACK);
             LocationGridTile targetTile = null;
-            if(mineShacks != null) {
+            if(mineShacks != null && mineShacks.Count > 0) {
                 for (int i = 0; i < mineShacks.Count; i++) {
                     MineShack mineShack = mineShacks[i] as MineShack;
-                    targetTile = mineShack.connectedCave.GetRandomPassableTileThatMeetCriteria(t => !t.isOccupied);
-                    if(targetTile != null) {
-                        break;
+                    if(mineShack != null && mineShack.connectedCave != null) {
+                        targetTile = mineShack.connectedCave.GetRandomPassableTileThatMeetCriteria(t => !t.isOccupied);
+                        if (targetTile != null) {
+                            break;
+                        }
                     }
                 }
             }

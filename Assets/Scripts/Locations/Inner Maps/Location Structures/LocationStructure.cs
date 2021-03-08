@@ -958,10 +958,12 @@ namespace Inner_Maps.Location_Structures {
                     filteredList.Add(tile);
                 }
             }
+            LocationGridTile chosenTile = null;
             if(filteredList.Count > 0) {
-                return filteredList[UtilityScripts.Utilities.Rng.Next(0, filteredList.Count)];
+                chosenTile = filteredList[UtilityScripts.Utilities.Rng.Next(0, filteredList.Count)];
             }
-            return null;
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(filteredList);
+            return chosenTile;
         }
         public LocationGridTile GetRandomUnoccupiedTile() {
             if (unoccupiedTiles.Count <= 0) {
