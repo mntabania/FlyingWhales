@@ -189,7 +189,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				}
 			}
 		}
-		if (m_targetMaraudStructure.deployedMinionCount <= 0) {
+		if (m_targetMaraudStructure.deployedMinionCount <= 0 && p_clickedItem.isMinion) {
 			bool exitLoop = false;
 			for (int x = 0; x < m_deployedMinionsUI.Count && !exitLoop; ++x) {
 				if (m_deployedMinionsUI[x].isReadyForDeploy) {
