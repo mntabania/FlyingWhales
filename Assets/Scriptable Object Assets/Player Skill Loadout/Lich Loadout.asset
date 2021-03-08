@@ -15,19 +15,19 @@ MonoBehaviour:
   archetype: 2
   spells:
     extraSlots: 0
-    fixedSkills: 16000000290000002c000000
+    fixedSkills: 1500000029000000
   afflictions:
     extraSlots: 0
-    fixedSkills: 0e00000001000000
+    fixedSkills: 0c000000
   minions:
     extraSlots: 0
     fixedSkills: 4f000000
   structures:
     extraSlots: 0
-    fixedSkills: 6000000049000000
+    fixedSkills: 49000000b8000000be000000
   miscs:
     extraSlots: 0
-    fixedSkills: 9400000008000000
+    fixedSkills: 2100000059000000
   passiveSkills: 0500000006000000070000000800000003000000
   availableSpells: 090000002c000000130000001400000015000000190000002a00000018000000200000002900000017000000ad000000
   availableAfflictions: 6300000045000000020000000c0000004400000043000000
