@@ -89,9 +89,9 @@ public class SkillSlotItem : MonoBehaviour {
     }
     private void UpdateText() {
         if(skillData != null) {
-            var playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
+            SkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
             if (playerSkillData == null) {
-                Debug.Log("asduhadgajh");
+                Debug.LogError(skillData.skill.ToString() + " skill data is null!");
             }
             spellText.text = playerSkillData.name;
         } else {
