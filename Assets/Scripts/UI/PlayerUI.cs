@@ -19,10 +19,10 @@ using Random = UnityEngine.Random;
 public class PlayerUI : BaseMonoBehaviour {
     public static PlayerUI Instance;
 
-    [Header("Top Menu")]
-    public GameObject regionNameTopMenuGO;
-    public TextMeshProUGUI regionNameTopMenuText;
-    public HoverHandler regionNameHoverHandler;
+    //[Header("Top Menu")]
+    //public GameObject regionNameTopMenuGO;
+    //public TextMeshProUGUI regionNameTopMenuText;
+    //public HoverHandler regionNameHoverHandler;
 
     [Header("Spirit Energy")]
     public TextMeshProUGUI spiritEnergyLabel;
@@ -151,8 +151,8 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener(UISignals.ON_CLOSE_CONVERSATION_MENU, OnCloseConversationMenu);
         
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
         Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
@@ -209,12 +209,12 @@ public class PlayerUI : BaseMonoBehaviour {
     }
 
     #region Listeners
-    private void OnInnerMapOpened(Region location) {
-        UpdateRegionNameState();
-    }
-    private void OnInnerMapClosed(Region location) {
-        UpdateRegionNameState();
-    }
+    //private void OnInnerMapOpened(Region location) {
+    //    UpdateRegionNameState();
+    //}
+    //private void OnInnerMapClosed(Region location) {
+    //    UpdateRegionNameState();
+    //}
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.F9) {
             UIManager.Instance.optionsMenu.QuickSave();
@@ -326,20 +326,20 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     #endregion
 
-    private void UpdateRegionNameState() {
-        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
-            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
-            regionNameTopMenuText.text = location.name;
-            regionNameTopMenuGO.SetActive(true);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
-            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
-#endif
-        } else {
-            regionNameTopMenuGO.SetActive(false);
-        }
-    }
+//    private void UpdateRegionNameState() {
+//        if (InnerMapManager.Instance.isAnInnerMapShowing) {
+//            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
+//            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
+//            regionNameTopMenuText.text = location.name;
+//            regionNameTopMenuGO.SetActive(true);
+//#if UNITY_EDITOR || DEVELOPMENT_BUILD
+//            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
+//            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
+//#endif
+//        } else {
+//            regionNameTopMenuGO.SetActive(false);
+//        }
+//    }
 
     #region SpiritEnergy
     private void OnSpiritEnergyAdjusted(int adjustedAmount, int spiritEnergy) {
