@@ -25,8 +25,8 @@ public class EyeWardHighlight : PooledObject {
             ParticleSystem.ShapeModule shapeModule = p.shape;
             shapeModule.scale = scale;
 
-            int maxParticles = diameter * 25;
-            int rateOverTime = diameter * 10;
+            int maxParticles = diameter * 72;
+            float rateOverTime = diameter * 25f;
 
             //if (biome == BIOMES.SNOW) {
             //    maxParticles = diameter * 80;
@@ -43,6 +43,7 @@ public class EyeWardHighlight : PooledObject {
             //emission module
             ParticleSystem.EmissionModule emissionModule = p.emission;
             emissionModule.rateOverTime = rateOverTime;
+
         }
     }
     //private void SetupHighlight(int radius) {
@@ -64,6 +65,15 @@ public class EyeWardHighlight : PooledObject {
     //    gameObject.SetActive(true);
     //}
     public void HideHighlight() {
+        for (int i = 0; i < _particleSystems.Length; i++) {
+            _particleSystems[i].Stop();
+        }
         gameObject.SetActive(false);
+    }
+    public void ShowHighlight() {
+        for (int i = 0; i < _particleSystems.Length; i++) {
+            _particleSystems[i].Play();
+        }
+        gameObject.SetActive(true);
     }
 }

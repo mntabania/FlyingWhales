@@ -40,6 +40,7 @@ public class Player : ILeader, IObjectManipulator {
     public PlayerSkillComponent playerSkillComponent { get; }
     public PlagueComponent plagueComponent { get; }
     public PlayerUnderlingsComponent underlingsComponent { get; private set; }
+    public PlayerTileObjectComponent tileObjectComponent { get; private set; }
 
     private ManaRegenComponent m_manaRegenComponent { get; set; }
 
@@ -67,6 +68,7 @@ public class Player : ILeader, IObjectManipulator {
         plagueComponent = new PlagueComponent();
         underlingsComponent = new PlayerUnderlingsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
+        tileObjectComponent = new PlayerTileObjectComponent();
         AddListeners();
         
     }
@@ -76,6 +78,7 @@ public class Player : ILeader, IObjectManipulator {
         threatComponent = data.threatComponent.Load();
         playerSkillComponent = data.playerSkillComponent.Load();
         underlingsComponent = data.underlingsComponent.Load();
+        tileObjectComponent = data.tileObjectComponent.Load();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);
         playerSkillComponent.SetPlayer(this);
@@ -271,6 +274,9 @@ public class Player : ILeader, IObjectManipulator {
             SetCurrentlyActivePlayerSpell(null);
         }
         //Debug.Log(GameManager.Instance.TodayLogString() + summary);
+    }
+    public bool IsCurrentActiveSpell(PLAYER_SKILL_TYPE p_skillType) {
+        return currentActivePlayerSpell != null && currentActivePlayerSpell.type == p_skillType;
     }
     #endregion
 
