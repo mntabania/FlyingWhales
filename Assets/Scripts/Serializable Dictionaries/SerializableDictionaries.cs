@@ -45,6 +45,8 @@ public class AreaTypeSpriteDictionary : SerializableDictionary<LOCATION_TYPE, Sp
 [System.Serializable]
 public class SummonSettingDictionary : SerializableDictionary<SUMMON_TYPE, SummonSettings> { }
 [System.Serializable]
+public class MinionSettingDictionary : SerializableDictionary<MINION_TYPE, MinionSettings> { }
+[System.Serializable]
 public class ArtifactSettingDictionary : SerializableDictionary<ARTIFACT_TYPE, ArtifactSettings> { }
 [System.Serializable]
 public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridTile.Ground_Type, List<TileBase>, TileBaseListStorage> { }

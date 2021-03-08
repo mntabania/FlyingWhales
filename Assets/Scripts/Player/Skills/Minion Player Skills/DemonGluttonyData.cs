@@ -8,6 +8,7 @@ public class DemonGluttonyData : MinionPlayerSkill {
     public override string description => "This Demon is a robust ranged magic-user that deals Water damage. Can be summoned to defend an Area or Structure. NOTE: Cannot be summoned on an active settlement.";
 
     public DemonGluttonyData() {
+        minionType = MINION_TYPE.Gluttony;
         className = "Gluttony";
     }
 }

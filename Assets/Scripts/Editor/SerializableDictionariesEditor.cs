@@ -38,6 +38,8 @@ public class AreaTypeSpriteDictionaryPropertyDrawer : SerializableDictionaryProp
 [CustomPropertyDrawer(typeof(SummonSettingDictionary))]
 public class SummonSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ArtifactSettingDictionary))]
+public class MinionSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(MinionSettingDictionary))]
 public class ArtifactSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(SeamlessEdgeAssetsDictionary))]
 public class SeamlessEdgeAssetsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }

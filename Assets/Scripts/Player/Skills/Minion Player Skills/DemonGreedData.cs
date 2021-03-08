@@ -8,6 +8,7 @@ public class DemonGreedData : MinionPlayerSkill {
     public override string description => "This Demon is a harsh melee combatant that deals Wind damage. Can be summoned to invade villages in the region it was spawned.";
 
     public DemonGreedData() {
+        minionType = MINION_TYPE.Greed;
         className = "Greed";
     }
 }

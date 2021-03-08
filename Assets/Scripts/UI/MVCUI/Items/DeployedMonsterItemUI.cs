@@ -68,15 +68,16 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         emptyCover.SetActive(false);
     }
 
-    public void InitializeItem(PLAYER_SKILL_TYPE p_skillType, bool p_isDeployed = false) {
+    public void InitializeItem(CharacterClass p_class, PLAYER_SKILL_TYPE p_skillType, bool p_isDeployed = false) {
+        characterClass = p_class;
         playerSkillType = p_skillType;
         PlayerSkillData playerData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         txtUnlockPrice.text = unlockPrice.ToString();
         txtName.text = playerData.name;
         txtName.text = txtName.text.Replace("Demon ", "");
-        txtHP.text = "n/a";
-        txtAtk.text = "n/a";
-        txtAtkSpd.text = "n/a";
+        txtHP.text = p_class.baseHP.ToString();
+        txtAtk.text = p_class.baseAttackPower.ToString();
+        txtAtkSpd.text = p_class.baseAttackSpeed.ToString();
         isMinion = true;
         imgPortrait.sprite = playerData.contextMenuIcon;
         if (!p_isDeployed) {
@@ -112,7 +113,6 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 
     void OnClicked() {
         onClicked?.Invoke(this);
-        MakeSlotEmpty();
     }
 
     void OnUnlocked() {

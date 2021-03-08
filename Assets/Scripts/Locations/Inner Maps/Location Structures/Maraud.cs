@@ -22,6 +22,7 @@ namespace Inner_Maps.Location_Structures {
                 deployedSummonSettings.Remove(p_itemUI.summonSettings);
                 deployedSummonType.Remove(p_itemUI.summonType);
             } else {
+                deployedMinionClass.Remove(p_itemUI.characterClass);
                 deployedMinionsSkillType.Remove(p_itemUI.playerSkillType);
             }
         }
@@ -32,6 +33,7 @@ namespace Inner_Maps.Location_Structures {
                 deployedSummonSettings.Add(p_itemUI.summonSettings);
                 deployedSummonType.Add(p_itemUI.summonType);
             } else {
+                deployedMinionClass.Add(p_itemUI.characterClass);
                 deployedMinionsSkillType.Add(p_itemUI.playerSkillType);
             }
         }
@@ -54,6 +56,7 @@ namespace Inner_Maps.Location_Structures {
         //minion list
         public List<Character> deployedMinions = new List<Character>();
         public List<PLAYER_SKILL_TYPE> deployedMinionsSkillType = new List<PLAYER_SKILL_TYPE>();
+        public List<CharacterClass> deployedMinionClass = new List<CharacterClass>();
 
         void OnCharacterDied(Character p_deadMonster) {
             for (int x = 0; x < deployedSummons.Count; ++x) {
@@ -68,6 +71,7 @@ namespace Inner_Maps.Location_Structures {
             }
             for (int x = 0; x < deployedMinions.Count; ++x) {
                 if (p_deadMonster == deployedMinions[x]) {
+                    deployedMinionClass.RemoveAt(x);
                     deployedMinions.RemoveAt(x);
                     deployedMinionsSkillType.RemoveAt(x);
                     break;

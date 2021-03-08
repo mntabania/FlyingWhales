@@ -1203,6 +1203,6 @@ public enum CURRENCY {
     Mana = 0, Chaotic_Energy, Spirit_Energy,
 }
 
-public enum MINIONS { 
-    
+public enum MINION_TYPE { 
+    Lust = 0, Envy, Greed, Gluttony, Pride, Sloth, Wrath, 
 }

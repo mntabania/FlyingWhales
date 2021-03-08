@@ -94,6 +94,8 @@ public class CharacterManager : BaseMonoBehaviour {
 
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
+    [Header("Minion Settings")]
+    [SerializeField] private MinionSettingDictionary minionSettings;
     [Header("Artifact Settings")]
     [SerializeField] private ArtifactSettingDictionary artifactSettings;
     [Header("Character Marker Effects")] 
@@ -975,6 +977,10 @@ public class CharacterManager : BaseMonoBehaviour {
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
     }
+
+    public MinionSettings GetMintionSettings(MINION_TYPE type) {
+        return minionSettings[type];
+    }
     public ArtifactSettings GetArtifactSettings(ARTIFACT_TYPE type) {
         return artifactSettings[type];
     }
@@ -1548,6 +1554,12 @@ public class PortraitFrame {
 public struct SummonSettings {
     public string className;
     public Sprite summonPortrait;
+}
+
+[Serializable]
+public struct MinionSettings {
+    public string className;
+    public Sprite minionPortrait;
 }
 
 [Serializable]

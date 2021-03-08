@@ -8,6 +8,7 @@ public class DemonPrideData : MinionPlayerSkill {
     public override string description => "This Demon is a strong ranged magic-user that deals Electric damage. Can be summoned to invade villages in the region it was spawned.";
 
     public DemonPrideData() {
+        minionType = MINION_TYPE.Pride;
         className = "Pride";
     }
 }
