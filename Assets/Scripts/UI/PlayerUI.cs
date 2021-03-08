@@ -118,7 +118,7 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private BuildListUI _buildListUI;
     
     [Header("Plague Points")]
-    [SerializeField] private TextMeshProUGUI plaguePointLbl;
+    [SerializeField] public TextMeshProUGUI plaguePointLbl;
     [SerializeField] private RectTransform plaguePointsContainer;
     
     void Awake() {
@@ -192,6 +192,7 @@ public class PlayerUI : BaseMonoBehaviour {
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);        
 #endif
+        summonList.UpdateMonsterUnderlingQuantityList();
     }
     public void InitializeAfterLoadOutPicked() {
         UpdateIntel();

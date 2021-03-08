@@ -32,8 +32,8 @@ namespace Inner_Maps.Location_Structures {
             base.OnUseStructureConnector(p_usedConnector);
             Assert.IsTrue(p_usedConnector.structure is Ocean, $"{name} did not connect to a tile inside an Ocean!");
             connectedOcean = p_usedConnector.structure as Ocean;
-            Assert.IsTrue(p_usedConnector.objHere is FishingSpot, $"{name} did not connect to a tile with a Fishing Spot!");
-            (p_usedConnector.objHere as FishingSpot).SetConnectedFishingShack(this);
+            Assert.IsTrue(p_usedConnector.tileObjectComponent.objHere is FishingSpot, $"{name} did not connect to a tile with a Fishing Spot!");
+            (p_usedConnector.tileObjectComponent.objHere as FishingSpot).SetConnectedFishingShack(this);
         }
         protected override void AfterStructureDestruction() {
             base.AfterStructureDestruction();

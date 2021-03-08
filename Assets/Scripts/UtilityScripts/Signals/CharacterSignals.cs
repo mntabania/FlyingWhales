@@ -154,4 +154,10 @@
     public static string CHARACTER_TICK_ENDED_MOVEMENT = "OnTickEndedCharacterMovement";
     public static string PROCESS_ALL_UNPOROCESSED_POIS = "ProcessAllUnprocessedPOIS";
     public static string CHARACTER_TICK_ENDED = "OnCharacterTickEnded";
+
+    public static string CHARACTER_INFO_REVEALED = "OnCharacterInfoRevealed";
+
+    #region used for chaotic energy generation
+    public static string CHARACTER_PRAY_SUCCESS = "OnCharacterPraySuccess";
+	#endregion
 }

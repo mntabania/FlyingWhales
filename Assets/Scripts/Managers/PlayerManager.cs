@@ -54,7 +54,7 @@ public class PlayerManager : BaseMonoBehaviour {
     public void Initialize() {
         availableChaosOrbs = new List<ChaosOrb>();
         _playerInputModules = new List<PlayerInputModule>();
-        Messenger.AddListener<Vector3, int, InnerTileMap>(PlayerSignals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
+        Messenger.AddListener<Vector3, int, InnerTileMap, CURRENCY>(PlayerSignals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener< Vector3, int, InnerTileMap>(PlayerSignals.CREATE_SPIRIT_ENERGY, CreateSpiritEnergyAt);
         Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
         Messenger.AddListener<string>(PlayerSignals.WIN_GAME, WinGame);
@@ -132,23 +132,23 @@ public class PlayerManager : BaseMonoBehaviour {
 
     #region Mana Orbs
     public List<ChaosOrb> availableChaosOrbs;
-    public void CreateChaosOrbFromSave(Vector3 worldPos, Region region) {
+    public void CreateChaosOrbFromSave(Vector3 worldPos, Region region, CURRENCY currency) {
         GameObject chaosOrbGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(chaosOrbPrefab.name, Vector3.zero, Quaternion.identity, region.innerMap.objectsParent);
         chaosOrbGO.transform.position = worldPos;
         ChaosOrb chaosOrb = chaosOrbGO.GetComponent<ChaosOrb>();
-        chaosOrb.Initialize(worldPos, region);
+        chaosOrb.Initialize(worldPos, region, currency);
         availableChaosOrbs.Add(chaosOrb);
     }
-    private void CreateChaosOrbsAt(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
-        StartCoroutine(ChaosOrbCreationCoroutine(worldPos, amount, mapLocation));
+    private void CreateChaosOrbsAt(Vector3 worldPos, int amount, InnerTileMap mapLocation, CURRENCY currency) {
+        StartCoroutine(ChaosOrbCreationCoroutine(worldPos, amount, mapLocation, currency));
     }
-    private IEnumerator ChaosOrbCreationCoroutine(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+    private IEnumerator ChaosOrbCreationCoroutine(Vector3 worldPos, int amount, InnerTileMap mapLocation, CURRENCY currency) {
         for (int i = 0; i < amount; i++) {
             GameObject chaosOrbGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(chaosOrbPrefab.name, Vector3.zero, 
                 Quaternion.identity, mapLocation.objectsParent);
             chaosOrbGO.transform.position = worldPos;
             ChaosOrb chaosOrb = chaosOrbGO.GetComponent<ChaosOrb>();
-            chaosOrb.Initialize(mapLocation.region);
+            chaosOrb.Initialize(mapLocation.region, currency);
             AddAvailableChaosOrb(chaosOrb);
             yield return null;
         }
@@ -197,7 +197,7 @@ public class PlayerManager : BaseMonoBehaviour {
                 }
                 if(orbsToCreate != 0) {
                     character.logComponent.PrintLogIfActive($"{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Mana Orbs.");
-                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, character.currentRegion.innerMap);
+                    //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, character.currentRegion.innerMap);
                 }
             }    
         }
@@ -214,7 +214,7 @@ public class PlayerManager : BaseMonoBehaviour {
 
     #region Spirit Energy
     public List<SpiritEnergy> availableSpiritEnergy;
-    public void CreateSpiritEnergy(Vector3 worldPos, Region region) {
+    public void CreateSpiritEnergyFromSave(Vector3 worldPos, Region region) {
         GameObject spiritEnergyGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(spiritnEnergyPrefab.name, Vector3.zero, Quaternion.identity, region.innerMap.objectsParent);
         spiritEnergyGO.transform.position = worldPos;
         SpiritEnergy spiritEnergy = spiritEnergyGO.GetComponent<SpiritEnergy>();

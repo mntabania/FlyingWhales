@@ -16,7 +16,8 @@ using UnityEngine.Tilemaps;
 public class LocationStructureObject : PooledObject, ISelectable {
 
     public enum Structure_Visual_Mode { Blueprint, Built,
-        Demonic_Structure_Blueprint
+        Demonic_Structure_Blueprint,
+        Demonic_Structure_Placement
     }
 
     public STRUCTURE_TYPE structureType;
@@ -177,12 +178,12 @@ public class LocationStructureObject : PooledObject, ISelectable {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
             Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
             LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
-            if (tile.objHere != null) {
-                if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
+            if (tile.tileObjectComponent.objHere != null) {
+                if (tile.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible")) {
                     //skip placement if current object there is indestructible
                     continue;
                 } else {
-                    tile.structure.RemovePOI(tile.objHere);    
+                    tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
                 }
             }
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
@@ -279,16 +280,17 @@ public class LocationStructureObject : PooledObject, ISelectable {
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             StructureTemplateObjectData preplacedObj = GetStructureTemplateObjectData(tile, tile.parentMap);
-            if (tile.objHere != null && tile.objHere is TileObject tileObject && (tileObject is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+            TileObject tileObject = tile.tileObjectComponent.objHere;
+            if (tileObject != null && (tileObject is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
                 if (tileObject.traitContainer.HasTrait("Indestructible")) {
                     tile.structure.OnlyRemovePOIFromList(tileObject);
                 } else {
-                    if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
+                    if (isDemonicStructure && tileObject is Tombstone tombstone) {
                         tombstone.SetRespawnCorpseOnDestroy(false);
                     }
                     bool hasBlockWall = _blockWallsTilemap == null ? false : _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
                     if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall || structureType == STRUCTURE_TYPE.THE_PORTAL) {
-                        tile.structure.RemovePOI(tile.objHere);    
+                        tile.structure.RemovePOI(tileObject);    
                     }    
                 }
                 
@@ -304,14 +306,14 @@ public class LocationStructureObject : PooledObject, ISelectable {
             List<LocationGridTile> differentStructureTiles = tile.neighbourList.Where(x => !tiles.Contains(x)).ToList();
             for (int j = 0; j < differentStructureTiles.Count; j++) {
                 LocationGridTile diffTile = differentStructureTiles[j];
-                // if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
-                //     if (diffTile.objHere.traitContainer.HasTrait("Indestructible")) {
-                //         diffTile.structure.OnlyRemovePOIFromList(diffTile.objHere);
+                // if (diffTile.tileObjectComponent.objHere != null && (diffTile.tileObjectComponent.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                //     if (diffTile.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible")) {
+                //         diffTile.structure.OnlyRemovePOIFromList(diffTile.tileObjectComponent.objHere);
                 //     } else {
-                //         if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
+                //         if (isDemonicStructure && diffTile.tileObjectComponent.objHere is Tombstone tombstone) {
                 //             tombstone.SetRespawnCorpseOnDestroy(false);
                 //         }
-                //         diffTile.structure.RemovePOI(diffTile.objHere);    
+                //         diffTile.structure.RemovePOI(diffTile.tileObjectComponent.objHere);    
                 //     }
                 //     
                 // }
@@ -388,6 +390,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();
         SetPreplacedObjectsState(false);
+        SetClickColliderState(false);
         Messenger.Broadcast(StructureSignals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnOwnerStructureDestroyed(InnerTileMap innerTileMap) {
@@ -494,6 +497,15 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 OverrideDefaultSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 50);
                 SetClickColliderState(true);
                 break;
+            case Structure_Visual_Mode.Demonic_Structure_Placement:
+                color.a = 128f / 255f;
+                SetStructureColor(color);
+                SetPreplacedObjectsState(true);
+                SetPreplacedObjectsColor(color);
+                SetWallCollidersState(false);
+                OverrideDefaultSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 50);
+                SetClickColliderState(false);
+                break;
             default:
                 color = Color.white;
                 SetStructureColor(color);
@@ -557,12 +569,12 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 if (blockWallAsset != null) {
                     if (blockWallAsset.name.Contains("Wall")) {
                         bool shouldBuildBlockWall = true;
-                        if (tile.objHere != null) {
-                            if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
+                        if (tile.tileObjectComponent.objHere != null) {
+                            if (tile.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible")) {
                                 shouldBuildBlockWall = false;
-                                tile.structure.OnlyAddPOIToList(tile.objHere);
+                                tile.structure.OnlyAddPOIToList(tile.tileObjectComponent.objHere);
                             } else {
-                                tile.structure.RemovePOI(tile.objHere);    
+                                tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
                             }
                         }
                         if (shouldBuildBlockWall) {
@@ -596,7 +608,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
                 tile.SetTileType(LocationGridTile.Tile_Type.Wall);
                 thinWall.SetGridTileLocation(tile);
-                tile.AddWallObject(thinWall);
+                tile.tileObjectComponent.AddWallObject(thinWall);
                 createdWalls++;
                 totalWalls++;
                 if (wallsContributeToDamage) {
@@ -624,12 +636,12 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 if (blockWallAsset != null) {
                     if (blockWallAsset.name.Contains("Wall")) {
                         bool shouldBuildBlockWall = true;
-                        if (tile.objHere != null) {
-                            if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
+                        if (tile.tileObjectComponent.objHere != null) {
+                            if (tile.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible")) {
                                 shouldBuildBlockWall = false;
-                                tile.structure.OnlyAddPOIToList(tile.objHere);
+                                tile.structure.OnlyAddPOIToList(tile.tileObjectComponent.objHere);
                             } else {
-                                tile.structure.RemovePOI(tile.objHere);    
+                                tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
                             }
                         }
 
@@ -672,7 +684,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
                     LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
                     tile.SetTileType(LocationGridTile.Tile_Type.Wall);
                     thinWall.SetGridTileLocation(tile);
-                    tile.AddWallObject(thinWall);
+                    tile.tileObjectComponent.AddWallObject(thinWall);
                     createdWalls++;
                     totalWalls++;
                     if (wallsContributeToDamage) {
@@ -786,7 +798,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
             return false;
         }
         InnerTileMap map = centerTile.parentMap;
-        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+       for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
             Vector3Int currCoordinate = localOccupiedCoordinates[i];
 
             Vector3Int gridTileLocation = centerTile.localPlace;
@@ -1170,12 +1182,8 @@ public class LocationStructureObject : PooledObject, ISelectable {
     public void LeftSelectAction() {
         UIManager.Instance.ShowUnbuiltStructureInfo(this);
     }
-    public void RightSelectAction() {
-        UIManager.Instance.ShowUnbuiltStructureInfo(this);
-    }
-    public void MiddleSelectAction() {
-        UIManager.Instance.ShowUnbuiltStructureInfo(this);
-    }
+    public void RightSelectAction() { }
+    public void MiddleSelectAction() { }
     public bool CanBeSelected() {
         return true;
     }

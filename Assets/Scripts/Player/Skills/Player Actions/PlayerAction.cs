@@ -5,9 +5,8 @@ using UnityEngine;
 using UtilityScripts;
 
 public class PlayerAction : SkillData, IContextMenuItem {
-
     public virtual bool canBeCastOnBlessed => false;
-
+    public virtual bool shouldShowOnContextMenu => true;
     public virtual Sprite contextMenuIcon => PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type)?.contextMenuIcon;
     public string contextMenuName => name;
     public virtual int contextMenuColumn  => PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type)?.contextMenuColumn ?? 0;
@@ -47,7 +46,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
     }
     #endregion  
 
-    public void Activate(IPlayerActionTarget target) {
+    public virtual void Activate(IPlayerActionTarget target) {
         if (RollSuccessChance(target) || category == PLAYER_SKILL_CATEGORY.SCHEME) {
             //Schemes should always be activated regardless of piercing and resistances because the success calculation for it upon activation of actual scheme in the Scheme UI Controller
             if (target is IPointOfInterest targetPOI) {

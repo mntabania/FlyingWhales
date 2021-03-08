@@ -76,14 +76,6 @@ public class RelationshipManager : BaseMonoBehaviour {
                 return RELATIONSHIP_TYPE.LOVER;
             case RELATIONSHIP_TYPE.AFFAIR:
                 return RELATIONSHIP_TYPE.AFFAIR;
-            case RELATIONSHIP_TYPE.MASTER:
-                return RELATIONSHIP_TYPE.SERVANT;
-            case RELATIONSHIP_TYPE.SERVANT:
-                return RELATIONSHIP_TYPE.MASTER;
-            case RELATIONSHIP_TYPE.SAVER:
-                return RELATIONSHIP_TYPE.SAVE_TARGET;
-            case RELATIONSHIP_TYPE.SAVE_TARGET:
-                return RELATIONSHIP_TYPE.SAVER;
             case RELATIONSHIP_TYPE.EX_LOVER:
                 return RELATIONSHIP_TYPE.EX_LOVER;
             default:

@@ -52,7 +52,7 @@ public class ContextMenuUIView : MVCUIView
 		DisplayMenu(p_mainItems, 0, p_canvas);
 	}
 	
-	private void DisplayMenu(List<IContextMenuItem> p_UIMenu, int p_targetColumn, Canvas p_canvas) {
+	private void DisplayMenu(List<IContextMenuItem> p_UIMenu, int p_targetColumn, Canvas p_canvas, bool dontShowName = false) {
 		clickableMenuUIObjects.Clear();
 		ScrollRect columnScrollRect = UIModel.menuParent[p_targetColumn].scrollRect;
 		columnScrollRect.gameObject.SetActive(true);
@@ -66,7 +66,7 @@ public class ContextMenuUIView : MVCUIView
 			for (int x = 0; x < p_UIMenu.Count; ++x) {
 				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("ContextMenuItem", Vector3.zero, Quaternion.identity, columnScrollRect.content.transform);
 				ContextMenuUIObject contextMenuUI = go.GetComponent<ContextMenuUIObject>();
-				contextMenuUI.SetMenuDetails(p_UIMenu[x]);
+				contextMenuUI.SetMenuDetails(p_UIMenu[x], dontShowName);
 				contextMenuUI.btnActivate.ForceUpdateGlow();
 			}	
 		}
@@ -77,8 +77,8 @@ public class ContextMenuUIView : MVCUIView
 			columnRect.gameObject.SetActive(false);
 		}
 	}
-	public void DisplaySubMenu(List<IContextMenuItem> p_UIMenu, int p_targetColumn, Canvas p_canvas) {
-		DisplayMenu(p_UIMenu, p_targetColumn, p_canvas);
+	public void DisplaySubMenu(List<IContextMenuItem> p_UIMenu, int p_targetColumn, Canvas p_canvas, bool dontShowName = false) {
+		DisplayMenu(p_UIMenu, p_targetColumn, p_canvas, dontShowName);
 		ScrollRect columnScrollRect = UIModel.menuParent[p_targetColumn].scrollRect;
 		columnScrollRect.gameObject.SetActive(true);
 		if (p_targetColumn == 1) {

@@ -118,14 +118,14 @@ public class ConsoleBase : InfoUIBase {
         worldSettingsText = $"{worldSettingsText}\nCosts: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount.ToString()}";
         worldSettingsText = $"{worldSettingsText}\nCharges: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount.ToString()}";
         worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.threatAmount.ToString()}";
-        
+
         worldSettingsText = $"{worldSettingsText}\nPathfinding:";
         if (AstarPath.active.graphs.Length > 0) {
             worldSettingsText = $"{worldSettingsText}\nTotal Nodes: {AstarPath.active.graphs[0].CountNodes().ToString()}";    
         }
         
-        worldSettingsText = $"{worldSettingsText}\nObject Pooling:";
-        worldSettingsText = $"{worldSettingsText}\nLogs in Pool:";
+        worldSettingsText = $"{worldSettingsText}\n\nObject Pooling:";
+        worldSettingsText = $"{worldSettingsText}\n\tLogs in Pool:";
         worldSettingsText = $"{worldSettingsText} {LogPool.GetCurrentLogsInPool().ToString()}";
         
         
@@ -1485,7 +1485,7 @@ public class ConsoleBase : InfoUIBase {
         if (UtilityScripts.Utilities.IsInRange(x, 0, region.innerMap.width) && 
             UtilityScripts.Utilities.IsInRange(y, 0, region.innerMap.height)) {
             LocationGridTile tile = region.innerMap.map[x, y];
-            tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
+            tile.tileObjectComponent.genericTileObject.AdjustHP(-tile.tileObjectComponent.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             AddSuccessMessage($"Successfully damaged {tile.localPlace.ToString()}!");    
         }
         else {

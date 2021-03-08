@@ -47,6 +47,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     //private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
+    public bool isInfoUnlocked;
+
 
     #region getters/setters
     public bool isDisbanded => characters.Count <= 0;
@@ -120,7 +122,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         //newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         factionEventDispatcher = new FactionEventDispatcher();
-
+        isInfoUnlocked = data.isInfoUnlocked;
         AddListeners();
     }
 

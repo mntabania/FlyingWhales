@@ -17,7 +17,7 @@ public class SnowMound : TileObject{
         if (previousTile != null) {
             List<LocationGridTile> tiles = previousTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
-                tiles[i].genericTileObject.traitContainer.AddTrait(tiles[i].genericTileObject, "Wet");
+                tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Wet");
             }
         }
     }

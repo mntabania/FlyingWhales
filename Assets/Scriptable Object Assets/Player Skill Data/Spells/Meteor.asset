@@ -24,7 +24,7 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: 7ecd3228d54a4dc4f817bd86a29d1f1a, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 3a9d7052cb7ee0343b1da53d3b8d6639, type: 3}
   tooltipImage: {fileID: 0}
-  unlockCost: 0
+  unlockCost: 200
   tier: 2
   baseLoadoutWeight: 300
   resistanceType: 2
@@ -47,7 +47,7 @@ MonoBehaviour:
     upgradeCosts: c80000002c01000090010000
     manacostPerLevel: 190000001e0000002300000028000000
     chargesPerLevel: 01000000010000000200000003000000
-    bonuses: 0e0000000100000009000000
+    bonuses: 000000000100000009000000
     additionalDamagePerLevel: 10270000102700001027000010270000
     additionalPiercePerLevel:
     - 0
@@ -70,7 +70,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 00000000140000001400000014000000
+    cooldownPerLevel: f0000000c0000000c0000000c0000000
     skillMovementSpeed: 
   impactSounds:
   - {fileID: 8300000, guid: 584d7df54b0e6ba468199f66277304e0, type: 3}

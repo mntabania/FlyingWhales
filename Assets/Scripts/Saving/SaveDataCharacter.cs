@@ -77,6 +77,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> ownedItems;
     public List<string> jobs;
     public List<string> forceCancelJobsOnTickEnded;
+
+    public bool isInfoUnlocked;
     
     public SaveDataTraitContainer saveDataTraitContainer;
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
@@ -100,7 +102,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataCarryComponent carryComponent;
     public SaveDataPartyComponent partyComponent;
     public SaveDataGatheringComponent gatheringComponent;
-    public SaveDataTileObjectComponent tileObjectComponent;
+    public SaveDataCharacterTileObjectComponent tileObjectComponent;
     public SaveDataCrimeComponent crimeComponent;
     public SaveDataReligionComponent religionComponent;
     public SaveDataLimiterComponent limiterComponent;
@@ -177,12 +179,14 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         carryComponent = new SaveDataCarryComponent(); carryComponent.Save(data.carryComponent);
         partyComponent = new SaveDataPartyComponent(); partyComponent.Save(data.partyComponent);
         gatheringComponent = new SaveDataGatheringComponent(); gatheringComponent.Save(data.gatheringComponent);
-        tileObjectComponent = new SaveDataTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
+        tileObjectComponent = new SaveDataCharacterTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
         religionComponent = new SaveDataReligionComponent(); religionComponent.Save(data.religionComponent);
         limiterComponent = new SaveDataLimiterComponent(); limiterComponent.Save(data.limiterComponent);
         piercingAndResistancesComponent = new SaveDataPiercingAndResistancesComponent(); piercingAndResistancesComponent.Save(data.piercingAndResistancesComponent);
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
+
+        isInfoUnlocked = data.isInfoUnlocked;
 
         if (data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;

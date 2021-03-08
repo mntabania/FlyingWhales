@@ -26,8 +26,6 @@ public class Player : ILeader, IObjectManipulator {
     public int spiritEnergy { get; private set; }
     public int experience { get; private set; }
     public List<IIntel> allIntel { get; private set; }
-    public List<Minion> minions { get; private set; }
-    public List<Summon> summons { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
     //public HexTile portalTile { get; private set; }
@@ -41,6 +39,9 @@ public class Player : ILeader, IObjectManipulator {
     public ThreatComponent threatComponent { get; }
     public PlayerSkillComponent playerSkillComponent { get; }
     public PlagueComponent plagueComponent { get; }
+    public PlayerUnderlingsComponent underlingsComponent { get; private set; }
+
+    private ManaRegenComponent m_manaRegenComponent { get; set; }
 
     #region getters/setters
     public int id => -645;
@@ -56,29 +57,31 @@ public class Player : ILeader, IObjectManipulator {
 
     public Player() {
         allIntel = new List<IIntel>();
-        minions = new List<Minion>();
-        summons = new List<Summon>();
         mana = EditableValuesManager.Instance.startingMana;
+        currentActiveItem = TILE_OBJECT_TYPE.NONE;
+
+        //Components
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
         playerSkillComponent = new PlayerSkillComponent();
         plagueComponent = new PlagueComponent();
-        currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        underlingsComponent = new PlayerUnderlingsComponent();
+        m_manaRegenComponent = new ManaRegenComponent(this);
         AddListeners();
+        
     }
     public Player(SaveDataPlayerGame data) {
         allIntel = new List<IIntel>();
-        minions = new List<Minion>();
-        summons = new List<Summon>();
         seizeComponent = data.seizeComponent.Load();
         threatComponent = data.threatComponent.Load();
         playerSkillComponent = data.playerSkillComponent.Load();
+        underlingsComponent = data.underlingsComponent.Load();
         plagueComponent = new PlagueComponent(data.plagueComponent);
-
         threatComponent.SetPlayer(this);
         playerSkillComponent.SetPlayer(this);
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        m_manaRegenComponent = new ManaRegenComponent(this);
         AddListeners();
     }
 
@@ -98,12 +101,12 @@ public class Player : ILeader, IObjectManipulator {
     private void AddListeners() {
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
-        Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
-        Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
 
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        
+        underlingsComponent.AddListeners();
     }
     #endregion
 
@@ -157,83 +160,6 @@ public class Player : ILeader, IObjectManipulator {
     //public void SetPlayerTargetFaction(Faction faction) {
     //    currentTargetFaction = faction;
     //}
-    private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        if(faction == playerFaction) {
-            //if(character.minion != null) {
-            //    AddMinion(character.minion);
-            //} 
-            //else if(character is Summon summon) {
-            //    AddSummon(summon);
-            //}
-            string bredBehaviour;
-            if (character is Summon summon) {
-                bredBehaviour = summon.bredBehaviour;
-            } else {
-                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
-            }
-            if (!string.IsNullOrEmpty(bredBehaviour)) {
-                character.traitContainer.AddTrait(character, bredBehaviour);
-            }
-        }
-    }
-    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
-        if (faction == playerFaction) {
-            //if (character.minion != null) {
-            //    RemoveMinion(character.minion);
-            //} 
-            //else if (character is Summon summon) {
-            //    RemoveSummon(summon);
-            //}
-            string bredBehaviour;
-            if (character is Summon summon) {
-                bredBehaviour = summon.bredBehaviour;
-            } else {
-                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
-            }
-            if (!string.IsNullOrEmpty(bredBehaviour)) {
-                character.traitContainer.RemoveTrait(character, bredBehaviour);
-            }
-        }
-    }
-    #endregion
-
-    #region Minions
-    public void AddMinion(Minion minion) {
-        if (!minions.Contains(minion)) {
-            minions.Add(minion);
-            Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_MINION, minion);
-        }
-    }
-    public void RemoveMinion(Minion minion) {
-        if (minions.Remove(minion)) {
-            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_MINION, minion);
-        }
-    }
-    private void OnSummonMinion(Minion minion) {
-        AddMinion(minion);
-    }
-    private void OnUnsummonMinion(Minion minion) {
-        RemoveMinion(minion);
-    }
-    //public void SetMinionLeader(Minion minion) {
-    //    currentMinionLeader = minion;
-    //}
-    //private void ReplaceMinion(object objToReplace, object objToAdd) {
-    //    Minion minionToBeReplaced = objToReplace as Minion;
-    //    Minion minionToBeAdded = objToAdd as Minion;
-
-    //    for (int i = 0; i < minions.Count; i++) {
-    //        if(minions[i] == minionToBeReplaced) {
-    //            minionToBeAdded.SetIndexDefaultSort(i);
-    //            minions[i] = minionToBeAdded;
-    //            if(currentMinionLeader == minionToBeReplaced) {
-    //                SetMinionLeader(minionToBeAdded);
-    //            }
-    //            break;
-    //        }
-    //    }
-    //}
-    private void RejectMinion(object obj) { }
     #endregion
 
     #region Role Actions
@@ -465,48 +391,85 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
+    public bool HasHostageIntel(Character p_hostage) {
+        for (int i = 0; i < allIntel.Count; i++) {
+            IIntel intel = allIntel[i];
+            if (intel is ActionIntel actionIntel && actionIntel.reactable is ActualGoapNode action && action.actor == p_hostage && action.goapType == INTERACTION_TYPE.IS_IMPRISONED) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Player Notifications
-    private bool ShouldShowNotificationFrom(Region location) {
-        return location.canShowNotifications;
+    private bool ShouldShowNotificationFrom(LocationGridTile location) {
+        return location != null && location.tileObjectComponent.isSeenByEyeWard;
     }
     private bool ShouldShowNotificationFrom(Character character) {
-        return character.currentRegion != null && ShouldShowNotificationFrom(character.currentRegion);
+        return ShouldShowNotificationFrom(character.gridTileLocation);
     }
     private bool ShouldShowNotificationFrom(Character character, in Log log) {
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
-                || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
+            for (int i = 0; i < log.fillers.Count; i++) {
+                object fillerObject = log.fillers[i].GetObjectForFiller();
+                if (fillerObject is Character fillerCharacter) {
+                    if (ShouldShowNotificationFrom(fillerCharacter)) {
+                        return true;
+                    }
+                } else if (fillerObject is LocationGridTile fillerGridTile) {
+                    if (ShouldShowNotificationFrom(fillerGridTile)) {
+                        return true;
+                    }
+                }
+            }
+            //NOTE: Replaced with the loop above to avoid garbage
+            //return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
+            //    || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
         }
+        return false;
     }
-    private bool ShouldShowNotificationFrom(Region location, in Log log) {
+    private bool ShouldShowNotificationFrom(LocationGridTile location, in Log log) {
         if (ShouldShowNotificationFrom(location)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
-                   || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
-        }
-    }
-    private bool ShouldShowNotificationFrom(Character[] characters) {
-        for (int i = 0; i < characters.Length; i++) {
-            if (ShouldShowNotificationFrom(characters[i])) {
-                return true;
+            for (int i = 0; i < log.fillers.Count; i++) {
+                object fillerObject = log.fillers[i].GetObjectForFiller();
+                if (fillerObject is Character fillerCharacter) {
+                    if (ShouldShowNotificationFrom(fillerCharacter)) {
+                        return true;
+                    }
+                } else if (fillerObject is LocationGridTile fillerGridTile) {
+                    if (ShouldShowNotificationFrom(fillerGridTile)) {
+                        return true;
+                    }
+                }
             }
+            //NOTE: Replaced with the loop above to avoid garbage
+            //return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
+            //       || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(Region[] locations) {
-        for (int i = 0; i < locations.Length; i++) {
-            if (ShouldShowNotificationFrom(locations[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool ShowNotificationFrom(Region location, Log log, bool releaseLogAfter = false) {
+    //private bool ShouldShowNotificationFrom(Character[] characters) {
+    //    for (int i = 0; i < characters.Length; i++) {
+    //        if (ShouldShowNotificationFrom(characters[i])) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //private bool ShouldShowNotificationFrom(LocationGridTile[] locations) {
+    //    for (int i = 0; i < locations.Length; i++) {
+    //        if (ShouldShowNotificationFrom(locations[i])) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    public bool ShowNotificationFrom(LocationGridTile location, Log log, bool releaseLogAfter = false) {
         if (ShouldShowNotificationFrom(location, log)) {
             ShowNotification(log, releaseLogAfter);
             return true;
@@ -545,26 +508,6 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region Summons
-    private void AddSummon(Summon summon) {
-        if (!summons.Contains(summon)) {
-            summons.Add(summon);
-            Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
-        }
-    }
-    private void RemoveSummon(Summon summon) {
-        if (summons.Remove(summon)) {
-            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_SUMMON, summon);
-        }
-    }
-    private void OnCharacterDied(Character character) {
-        if (character.faction == playerFaction && character is Summon summon) {
-            // RemoveSummon(summon);
-            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_SUMMON, summon);
-        }
-    }
-    #endregion
-
     #region Artifacts
     public ARTIFACT_TYPE currentActiveArtifact { get; private set; }
     public void SetCurrentlyActiveArtifact(ARTIFACT_TYPE artifact) {
@@ -591,7 +534,7 @@ public class Player : ILeader, IObjectManipulator {
             return; //clicked on UI;
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null && hoveredTile.objHere == null) {
+        if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
             Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(currentActiveArtifact);
             hoveredTile.structure.AddPOI(artifact, hoveredTile);
         }
@@ -653,8 +596,8 @@ public class Player : ILeader, IObjectManipulator {
                     }
                 }
                 for (int i = 0; i < highlightedTiles.Count; i++) {
-                    if(highlightedTiles[i].objHere != null) {
-                        poisInHighlightedTiles.Add(highlightedTiles[i].objHere);
+                    if(highlightedTiles[i].tileObjectComponent.objHere != null) {
+                        poisInHighlightedTiles.Add(highlightedTiles[i].tileObjectComponent.objHere);
                     }
                 }
                 currentActiveCombatAbility.ActivateAbility(poisInHighlightedTiles);
@@ -704,6 +647,58 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
+    #region Characters
+    private void OnCharacterAddedToFaction(Character character, Faction faction) {
+        if (faction == playerFaction) {
+            //if(character.minion != null) {
+            //    AddMinion(character.minion);
+            //} 
+            //else if(character is Summon summon) {
+            //    AddSummon(summon);
+            //}
+            string bredBehaviour;
+            if (character is Summon summon) {
+                //Note: only Disabled bred behaviour for now, will remove it completely when change has been confirmed
+                bredBehaviour = string.Empty;
+                // bredBehaviour = summon.bredBehaviour;
+            } else {
+                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
+            }
+            if (!string.IsNullOrEmpty(bredBehaviour)) {
+                character.traitContainer.AddTrait(character, bredBehaviour);
+            }
+            underlingsComponent.OnCharacterAddedToPlayerFaction(character);
+        }
+    }
+    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
+        if (faction == playerFaction) {
+            //if (character.minion != null) {
+            //    RemoveMinion(character.minion);
+            //} 
+            //else if (character is Summon summon) {
+            //    RemoveSummon(summon);
+            //}
+            string bredBehaviour;
+            if (character is Summon summon) {
+                //Note: only Disabled bred behaviour for now, will remove it completely when change has been confirmed
+                bredBehaviour = string.Empty;
+                // bredBehaviour = summon.bredBehaviour;
+            } else {
+                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
+            }
+            if (!string.IsNullOrEmpty(bredBehaviour)) {
+                character.traitContainer.RemoveTrait(character, bredBehaviour);
+            }
+            underlingsComponent.OnCharacterRemovedFromPlayerFaction(character);
+        }
+    }
+    private void OnCharacterDied(Character p_character) {
+        if(p_character.faction == playerFaction) {
+            underlingsComponent.OnFactionMemberDied(p_character);
+        }
+    }
+    #endregion
+
     #region Tile Objects
     public void SetCurrentlyActiveItem(TILE_OBJECT_TYPE item) {
         if (currentActiveItem != item) {
@@ -729,7 +724,7 @@ public class Player : ILeader, IObjectManipulator {
             return; //clicked on UI;
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null && hoveredTile.objHere == null) {
+        if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
             TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(currentActiveItem);
             hoveredTile.structure.AddPOI(item, hoveredTile);
         }
@@ -812,14 +807,14 @@ public class Player : ILeader, IObjectManipulator {
 
     #region Loading
     public void LoadReferences(SaveDataPlayerGame data) {
-        for (int i = 0; i < data.minionIDs.Count; i++) {
-            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.minionIDs[i]);
-            minions.Add(character.minion);
-        }
-        for (int i = 0; i < data.summonIDs.Count; i++) {
-            Summon summon = CharacterManager.Instance.GetCharacterByPersistentID(data.summonIDs[i]) as Summon;
-            summons.Add(summon);
-        }
+        //for (int i = 0; i < data.minionIDs.Count; i++) {
+        //    Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.minionIDs[i]);
+        //    minions.Add(character.minion);
+        //}
+        //for (int i = 0; i < data.summonIDs.Count; i++) {
+        //    Summon summon = CharacterManager.Instance.GetCharacterByPersistentID(data.summonIDs[i]) as Summon;
+        //    summons.Add(summon);
+        //}
 
         AdjustMana(data.mana);
         SetPortalTile(GridMap.Instance.map[data.portalTileXCoordinate, data.portalTileYCoordinate]);

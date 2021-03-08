@@ -45,6 +45,8 @@ public class AreaTypeSpriteDictionary : SerializableDictionary<LOCATION_TYPE, Sp
 [System.Serializable]
 public class SummonSettingDictionary : SerializableDictionary<SUMMON_TYPE, SummonSettings> { }
 [System.Serializable]
+public class MinionSettingDictionary : SerializableDictionary<MINION_TYPE, MinionSettings> { }
+[System.Serializable]
 public class ArtifactSettingDictionary : SerializableDictionary<ARTIFACT_TYPE, ArtifactSettings> { }
 [System.Serializable]
 public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridTile.Ground_Type, List<TileBase>, TileBaseListStorage> { }
@@ -62,6 +64,8 @@ public class WallResourceAssetDictionary : SerializableDictionary<RESOURCE, Wall
 public class WallAssetDictionary : SerializableDictionary<string, WallAsset> { }
 [System.Serializable]
 public class ParticleEffectAssetDictionary : SerializableDictionary<PARTICLE_EFFECT, GameObject> { }
+[System.Serializable]
+public class SoundEffectDictionary : SerializableDictionary<SOUND_EFFECT, List<AudioClip>, AudioClipListStorage> { }
 [System.Serializable]
 public class ProjectileDictionary : SerializableDictionary<ELEMENTAL_TYPE, GameObject> { }
 [System.Serializable]
@@ -114,3 +118,5 @@ public class GameObjectListStorage : SerializableDictionary.Storage<List<GameObj
 public class MonsterSettingListStorage : SerializableDictionary.Storage<List<MonsterSetting>> { }
 [System.Serializable]
 public class TileObjectSettingListStorage : SerializableDictionary.Storage<List<ItemSetting>> { }
+[System.Serializable]
+public class AudioClipListStorage : SerializableDictionary.Storage<List<AudioClip>> { }

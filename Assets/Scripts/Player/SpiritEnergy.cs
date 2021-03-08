@@ -92,7 +92,7 @@ public class SpiritEnergy : PooledObject {
 		transform.DOPath(new[] { manaContainerPos, controlPointA, controlPointB }, 0.7f, PathType.CubicBezier)
 			.SetEase(Ease.InSine)
 			.OnComplete(GainSpiritEnergy);
-		Messenger.Broadcast(PlayerSignals.CHAOS_ORB_COLLECTED);
+		Messenger.Broadcast(PlayerSignals.SPIRIT_ENERGY_COLLECTED);
 	}
 	private void GainSpiritEnergy() {
 		PlayerManager.Instance.player.AdjustSpiritEnergy(m_amount);
@@ -120,6 +120,6 @@ public class SaveSpiritEnergy {
 
 	public void Load() {
 		Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(regionID);
-		PlayerManager.Instance.CreateChaosOrbFromSave(pos, region);
+		PlayerManager.Instance.CreateSpiritEnergyFromSave(pos, region);
 	}
 }

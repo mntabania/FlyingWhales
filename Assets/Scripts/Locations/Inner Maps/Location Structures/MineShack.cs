@@ -39,8 +39,8 @@ namespace Inner_Maps.Location_Structures {
             if (path != null) {
                 for (int i = 0; i < path.Count; i++) {
                     LocationGridTile pathTile = path[i];
-                    if (pathTile.objHere is BlockWall || pathTile.objHere is OreVein) {
-                        pathTile.structure.RemovePOI(pathTile.objHere);
+                    if (pathTile.tileObjectComponent.objHere is BlockWall || pathTile.tileObjectComponent.objHere is OreVein) {
+                        pathTile.structure.RemovePOI(pathTile.tileObjectComponent.objHere);
                     }		
                 }
             }

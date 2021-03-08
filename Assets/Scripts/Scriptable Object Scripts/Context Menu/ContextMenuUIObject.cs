@@ -63,7 +63,7 @@ public class ContextMenuUIObject : PooledObject {
             
         }
     }
-    public void SetMenuDetails(IContextMenuItem p_parentUIMenu) {
+    public void SetMenuDetails(IContextMenuItem p_parentUIMenu, bool dontShowName = false) {
         ImgIcon.gameObject.SetActive(p_parentUIMenu.contextMenuIcon != null);
         if (ImgIcon.gameObject.activeSelf) {
             txtMenuName.text = p_parentUIMenu.contextMenuName;
@@ -75,7 +75,12 @@ public class ContextMenuUIObject : PooledObject {
                 fullName = $"{p_parentUIMenu.GetManaCost()}{UtilityScripts.Utilities.ManaIcon()}  ";
             }
             fullName = $"{fullName}{p_parentUIMenu.contextMenuName}";
-            txtMenuFullName.text = fullName;
+            if (dontShowName) {
+                txtMenuFullName.text = "?????";
+            } else {
+                txtMenuFullName.text = fullName;
+            }
+            
             txtMenuFullName.gameObject.SetActive(true);
             txtMenuName.gameObject.SetActive(false);
         }

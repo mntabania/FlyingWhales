@@ -5,6 +5,7 @@ using Traits;
 using Tutorial;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Prison = Tutorial.Prison;
 namespace Interrupts {
     public class BeingBrainwashed : Interrupt {
         
@@ -18,7 +19,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            if (interruptHolder.actor.gridTileLocation.structure.IsTilePartOfARoom(interruptHolder.actor.gridTileLocation, out var room) && room is DefilerRoom defilerRoom) {
+            if (interruptHolder.actor.gridTileLocation.structure.IsTilePartOfARoom(interruptHolder.actor.gridTileLocation, out var room) && room is PrisonCell defilerRoom) {
                 Log log;
                 if (defilerRoom.WasBrainwashSuccessful(interruptHolder.actor)) {
                     //successfully converted

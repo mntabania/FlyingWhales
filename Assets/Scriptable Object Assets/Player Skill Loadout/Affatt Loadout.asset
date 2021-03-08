@@ -24,11 +24,11 @@ MonoBehaviour:
     fixedSkills: 540000005300000052000000
   structures:
     extraSlots: 0
-    fixedSkills: 600000004c00000048000000
+    fixedSkills: 4c00000048000000
   miscs:
     extraSlots: 0
     fixedSkills: 0600000033000000320000005c0000008c00000021000000
-  passiveSkills: 020000000300000004000000
+  passiveSkills: 0500000006000000070000000800000003000000
   availableSpells: 
   availableAfflictions: 
   availableMinions: 

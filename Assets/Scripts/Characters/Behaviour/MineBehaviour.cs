@@ -19,17 +19,19 @@ public class MineBehaviour : CharacterBehaviourComponent {
         if (homeSettlement != null) {
             List<LocationStructure> mineShacks = homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.MINE_SHACK);
             LocationGridTile targetTile = null;
-            if(mineShacks != null) {
+            if(mineShacks != null && mineShacks.Count > 0) {
                 for (int i = 0; i < mineShacks.Count; i++) {
                     MineShack mineShack = mineShacks[i] as MineShack;
-                    targetTile = mineShack.connectedCave.GetRandomPassableTileThatMeetCriteria(t => !t.isOccupied);
-                    if(targetTile != null) {
-                        break;
+                    if(mineShack != null && mineShack.connectedCave != null) {
+                        targetTile = mineShack.connectedCave.GetRandomPassableTileThatMeetCriteria(t => !t.isOccupied);
+                        if (targetTile != null) {
+                            break;
+                        }
                     }
                 }
             }
             if(targetTile != null) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE, targetTile.genericTileObject, character);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE, targetTile.tileObjectComponent.genericTileObject, character);
                 job.SetDoNotRecalculate(true);
                 job.SetCannotBePushedBack(true);
                 producedJob = job;
@@ -55,7 +57,7 @@ public class MineBehaviour : CharacterBehaviourComponent {
         //    character.behaviourComponent.SetTargetMiningTile(targetTile);
         //}
         //if (character.behaviourComponent.targetMiningTile != null) {
-        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE, character.behaviourComponent.targetMiningTile.genericTileObject, character);
+        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE, character.behaviourComponent.targetMiningTile.tileObjectComponent.genericTileObject, character);
         //    job.SetDoNotRecalculate(true);
         //    job.SetCannotBePushedBack(true);
         //    producedJob = job;
@@ -81,7 +83,7 @@ public class MineBehaviour : CharacterBehaviourComponent {
     //     LocationGridTile targetTile;
     //     
     //     LocationGridTile tile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
-    //     if (tile.objHere is BlockWall) {
+    //     if (tile.tileObjectComponent.objHere is BlockWall) {
     //         targetTile = tile;
     //     } else {
     //         Vector2 direction = character.behaviourComponent.targetMiningTile.centeredWorldLocation - tile.centeredWorldLocation;
@@ -98,10 +100,10 @@ public class MineBehaviour : CharacterBehaviourComponent {
     //             //west
     //             targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.West);
     //         }
-    //         if (targetTile != null && targetTile.objHere == null) {
+    //         if (targetTile != null && targetTile.tileObjectComponent.objHere == null) {
     //             for (int i = 0; i < targetTile.neighbourList.Count; i++) {
     //                 LocationGridTile neighbour = targetTile.neighbourList[i];
-    //                 if (neighbour.objHere is BlockWall) {
+    //                 if (neighbour.tileObjectComponent.objHere is BlockWall) {
     //                     targetTile = neighbour;
     //                     break;
     //                 }
@@ -111,10 +113,10 @@ public class MineBehaviour : CharacterBehaviourComponent {
     //     
     //     
     //     Debug.Log($"No Path found for {character.name} towards {character.behaviourComponent.targetMiningTile}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
-    //     Assert.IsNotNull(targetTile.objHere, $"Object at {targetTile} is null, but {character.name} wants to dig it.");
+    //     Assert.IsNotNull(targetTile.tileObjectComponent.objHere, $"Object at {targetTile} is null, but {character.name} wants to dig it.");
     //     
     //     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG,
-    //         targetTile.objHere, character);
+    //         targetTile.tileObjectComponent.objHere, character);
     //     character.jobQueue.AddJobInQueue(job);
     //     character.behaviourComponent.SetCurrentMiningPath(null); //so behaviour can be run again after job has been added
     // }

@@ -86,7 +86,7 @@ namespace Traits {
                 List<LocationGridTile> neighbours = currentTile.neighbourList;
                 for (int i = 0; i < neighbours.Count; i++) {
                     LocationGridTile tile = neighbours[i];
-                    if (tile.genericTileObject.traitContainer.HasTrait("Wet") && !tile.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
+                    if (tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Wet") && !tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
                         tile.PerformActionOnTraitables((t) => ChainElectricEffect(t, chainDamage, responsibleCharacter));
                     }
                 }

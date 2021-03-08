@@ -23,7 +23,7 @@ public class Initializer : MonoBehaviour {
         PlayerManager.Instance.Initialize();
         CrimeManager.Instance.Initialize();
         yield return null;
-        TimerHubUI.Instance.Initialize();
+        //TimerHubUI.Instance.Initialize();
         InnerMapManager.Instance.Initialize();
         yield return null;
         // ObjectPoolManager.Instance.InitializeObjectPools();

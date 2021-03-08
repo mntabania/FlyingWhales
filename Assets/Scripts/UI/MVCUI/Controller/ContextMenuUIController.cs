@@ -71,7 +71,13 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
         if (!p_isAction) {
             if (p_UIMenu.CanBePickedRegardlessOfCooldown()) {
                 currentlyOpenedParentContextItem = p_UIMenu;
-                m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
+				bool dontShowName = false;
+				if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+					if (p_UIMenu.contextMenuName == "Trigger Flaw" && !targetCharacter.isInfoUnlocked) {
+						dontShowName = true;
+					}
+				}
+				m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas , dontShowName);
 			}
 		} else {
 			p_UIMenu.OnPickAction();

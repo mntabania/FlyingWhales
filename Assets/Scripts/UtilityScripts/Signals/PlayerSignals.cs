@@ -43,7 +43,8 @@
     /// </summary>
     public static string CREATE_CHAOS_ORBS = "CreateChaosOrbs";
     public static string CREATE_SPIRIT_ENERGY = "CreateSpiritEnergy";
-    
+    public static string PLAYER_HIT_CHARACTER_VIA_SPELL = "OnPlayerHitCharacterViaSpell";
+
     public static string PLAYER_NO_ACTIVE_ITEM = "OnPlayerNoActiveItem";
     public static string PLAYER_NO_ACTIVE_ARTIFACT = "OnPlayerNoActiveArtifact";
     /// <summary>
@@ -95,4 +96,9 @@
     public static string UNSET_PLAGUE_DEATH_EFFECT = "UnsetPlagueDeathEffect";
 
     public static string UPDATED_PLAGUE_POINTS = "UpdatedPlaguePoints";
+
+    /// <summary>
+    /// Signals for MONSTER UNDERLINGS of PLAYER
+    /// </summary>
+    public static string UPDATED_MONSTER_UNDERLING = "UpdatedMonsterUnderling";
 }

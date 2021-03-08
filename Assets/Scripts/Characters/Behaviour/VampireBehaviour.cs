@@ -36,7 +36,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                     if (unoccupiedCastle != null) {
                         log += $"\n-{character.homeSettlement.name} has an unoccupied vampire castle {unoccupiedCastle.name}. Setting home to that.";
                         //Transfer home
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().genericTileObject);
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().tileObjectComponent.genericTileObject);
                         producedJob = null;
                         return true;
                     } else if (GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
@@ -53,7 +53,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                     if (unoccupiedCastle != null) {
                         log += $"\n-Found unoccupied castle {unoccupiedCastle.name}";
                         //Transfer home
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().genericTileObject);
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().tileObjectComponent.genericTileObject);
                         producedJob = null;
                         return true;
                     } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15

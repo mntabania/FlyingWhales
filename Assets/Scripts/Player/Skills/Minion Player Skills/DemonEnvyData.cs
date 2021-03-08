@@ -8,6 +8,7 @@ public class DemonEnvyData : MinionPlayerSkill {
     public override string description => "This Demon is a non-combatant with a special utility. When spawned, it will immediately cast a spell that will ensnare all nearby Villagers and prevent them from moving for a duration. It will immediately despawn afterwards.";
 
     public DemonEnvyData() {
+        minionType = MINION_TYPE.Envy;
         className = "Envy";
     }
 }

@@ -18,6 +18,7 @@ public class Summon : Character {
     /// </summary>
     public bool isVolatileMonster { get; private set; }
     public virtual Faction defaultFaction => FactionManager.Instance.neutralFaction;
+    public virtual int gainedKennelSummonCapacity => 5;
 
     #region getters
     public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
@@ -33,11 +34,13 @@ public class Summon : Character {
         this.summonType = summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = false;
+        isInfoUnlocked = true;
     }
     protected Summon(SaveDataSummon data) : base(data) {
         summonType = data.summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = data.isVolatileMonster;
+        isInfoUnlocked = true;
     }
 
     #region Overrides
@@ -114,7 +117,6 @@ public class Summon : Character {
             }
             if (homeRegion != null) {
                 Region home = homeRegion;
-                LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 MigrateHomeStructureTo(null, addToRegionResidents: false);
                 SetHomeRegion(home); //keep this data with character to prevent errors
@@ -144,8 +146,11 @@ public class Summon : Character {
                 traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this as Character);
-
-            marker?.OnDeath(deathTile);
+            eventDispatcher.ExecuteCharacterDied(this);
+            
+            if (hasMarker) {
+                marker.OnDeath(deathTile);    
+            }
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 
@@ -258,13 +263,16 @@ public class Summon : Character {
             actions.Clear();
         }
         AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_MONSTER);
-        AddPlayerAction(PLAYER_SKILL_TYPE.BREED_MONSTER);
+        // AddPlayerAction(PLAYER_SKILL_TYPE.BREED_MONSTER);
         AddPlayerAction(PLAYER_SKILL_TYPE.AGITATE);
         AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
-        AddPlayerAction(PLAYER_SKILL_TYPE.SACRIFICE);
+        // AddPlayerAction(PLAYER_SKILL_TYPE.SACRIFICE);
         AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
         AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
         AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
+        AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
+        AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
+        AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
     }
     #endregion
 
@@ -287,43 +295,6 @@ public class Summon : Character {
         isVolatileMonster = isVolatile;
     }
     #endregion
-}
-
-public class SummonSlot {
-    public int level;
-    public Summon summon;
-    public bool isLocked {
-        get { return false; }
-    }
-
-    public SummonSlot() {
-        level = 1;
-        summon = null;
-    }
-
-    public void SetSummon(Summon summon) {
-        this.summon = summon;
-        //if (this.summon != null) {
-        //    this.summon.StartingLevel();
-        //}
-    }
-
-    //public void LevelUp() {
-    //    level++;
-    //    level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
-    //    if (this.summon != null) {
-    //        this.summon.SetLevel(level);
-    //    }
-    //    Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
-    //}
-    //public void SetLevel(int amount) {
-    //    level = amount;
-    //    level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
-    //    if (this.summon != null) {
-    //        this.summon.SetLevel(level);
-    //    }
-    //    Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
-    //}
 }
 
 [System.Serializable]

@@ -30,7 +30,7 @@ public class ManifestFoodData : SkillData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            return targetTile.objHere == null;
+            return targetTile.tileObjectComponent.objHere == null;
         }
         return canPerform;
     }

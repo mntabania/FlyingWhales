@@ -94,7 +94,7 @@ public class BuildListUI : PopupMenuBase {
 
         if (canChooseLandmark) {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-                if (p_spellData.type == PLAYER_SKILL_TYPE.EYE) {
+                if (p_spellData.type == PLAYER_SKILL_TYPE.BEHOLDER) {
                     return TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
                            TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
                 } else if (p_spellData.type == PLAYER_SKILL_TYPE.KENNEL) {

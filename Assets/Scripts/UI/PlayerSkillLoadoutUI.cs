@@ -125,6 +125,12 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
             if(extraSkills != null && extraSkills.Count > 0 && i < extraSkills.Count) {
                 skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(extraSkills[i]);
             }
+            if (skillData != null) {
+                var playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
+                if (playerSkillData == null) {
+                    continue;
+                }    
+            }
             SkillSlotItem skillSlotItem = CreateNewSkillSlotItem(parent);
             skillSlotItem.SetSkillSlotItem(loadout.archetype, skillData, false);
             skillSlotItem.SetOnHoverEnterAction(OnHoverEnterSkillSlotItem);

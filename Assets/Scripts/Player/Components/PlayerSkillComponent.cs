@@ -20,6 +20,9 @@ public class PlayerSkillComponent {
     public int tier1Count { get; protected set; }
     public int tier2Count { get; protected set; }
     public int tier3Count { get; protected set; }
+    
+    //Blackmail
+    public List<Character> blackmailedCharacters { get; private set; }
 
     public PlayerSkillComponent() {
         //nodesData = new List<PlayerSkillTreeNodeData>();
@@ -31,6 +34,7 @@ public class PlayerSkillComponent {
         minionsSkills = new List<PLAYER_SKILL_TYPE>();
         summonsSkills = new List<PLAYER_SKILL_TYPE>();
         passiveSkills = new List<PASSIVE_SKILL>();
+        blackmailedCharacters = new List<Character>();
         //summons = new List<Summon>();
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
@@ -219,7 +223,7 @@ public class PlayerSkillComponent {
             //                      && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             // } else {
                 shouldAddSpell = PlayerSkillManager.Instance.GetPlayerSkillData(data.skill) != null 
-                && data.skill != PLAYER_SKILL_TYPE.OSTRACIZER && data.skill != PLAYER_SKILL_TYPE.CRYPT && data.skill != PLAYER_SKILL_TYPE.SKELETON;
+                && data.skill != PLAYER_SKILL_TYPE.OSTRACIZER && data.skill != PLAYER_SKILL_TYPE.SKELETON;
             // }
             if (shouldAddSpell) {
                 SetPlayerSkillData(data);
@@ -279,7 +283,7 @@ public class PlayerSkillComponent {
             Debug.LogError(skillType.ToString() + " data is null!");
         }
         if (!testScene && WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
-            skillType == PLAYER_SKILL_TYPE.EYE) {
+            skillType == PLAYER_SKILL_TYPE.BEHOLDER) {
             //if map is tutorial and spell is THE_EYE, Set max charges to only 1
             spellData.SetMaxCharges(1);  
             spellData.SetCharges(1);
@@ -377,6 +381,33 @@ public class PlayerSkillComponent {
     }
     #endregion
 
+    #region Blackmail
+    /// <summary>
+    /// Add a character to the list of characters that the player has
+    /// blackmail material on.
+    /// </summary>
+    /// <param name="p_character">The character to add.</param>
+    public void AddCharacterToBlackmailList(Character p_character) {
+        blackmailedCharacters.Add(p_character);
+    }
+    /// <summary>
+    /// Remove a character to the list of characters that the player has
+    /// blackmail material on.
+    /// </summary>
+    /// <param name="p_character">The character to remove.</param>
+    public void RemoveCharacterFromBlackmailList(Character p_character) {
+        blackmailedCharacters.Remove(p_character);
+    }
+    /// <summary>
+    /// Has the player already stored blackmail for a given character.
+    /// </summary>
+    /// <param name="p_character">The character in question.</param>
+    /// <returns>True or false.</returns>
+    public bool AlreadyHasBlackmail(Character p_character) {
+        return blackmailedCharacters.Contains(p_character) || PlayerManager.Instance.player.HasHostageIntel(p_character);
+    }
+    #endregion
+
     #region Loading
     public void OnLoadSaveData() {
         for (int i = 0; i < spells.Count; i++) {
@@ -418,11 +449,15 @@ public class PlayerSkillComponent {
         PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();
         PopulatePassiveSkills(loadout.passiveSkills);
     }
+    public void LoadReferences(SaveDataPlayerSkillComponent data) {
+        blackmailedCharacters = SaveUtilities.ConvertIDListToCharacters(data.blackmailedCharacters);
+    }
     #endregion
 }
 [System.Serializable]
 public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
     public List<SaveDataPlayerSkill> skills;
+    public List<string> blackmailedCharacters;
     //public bool canTriggerFlaw;
     //public bool canRemoveTraits;
 
@@ -473,6 +508,8 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);
         }
+
+        blackmailedCharacters = SaveUtilities.ConvertSavableListToIDs(component.blackmailedCharacters);
     }
     public override PlayerSkillComponent Load() {
         PlayerSkillComponent component = new PlayerSkillComponent();

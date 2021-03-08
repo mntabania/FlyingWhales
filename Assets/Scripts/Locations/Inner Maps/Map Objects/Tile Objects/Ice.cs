@@ -15,7 +15,7 @@ public class Ice : TileObject{
         base.OnDestroyPOI();
         traitContainer.RemoveTrait(this, "Melting");
         if (previousTile != null) {
-            previousTile.genericTileObject.traitContainer.AddTrait(previousTile.genericTileObject, "Wet");
+            previousTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(previousTile.tileObjectComponent.genericTileObject, "Wet");
         }
     }
 

@@ -8,6 +8,7 @@ public class DemonWrathData : MinionPlayerSkill {
     public override string description => "This Demon is a powerful melee combatant that deals Normal damage. Can be summoned to invade villages in the region it was spawned.";
 
     public DemonWrathData() {
+        minionType = MINION_TYPE.Wrath;
         className = "Wrath";
     }
 }

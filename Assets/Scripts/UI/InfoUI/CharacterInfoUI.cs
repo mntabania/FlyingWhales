@@ -8,6 +8,9 @@ using Traits;
 using UtilityScripts;
 
 public class CharacterInfoUI : InfoUIBase {
+
+    private enum VIEW_MODE { None = 0, Info, Mood, Relationship }
+    private VIEW_MODE m_currentViewMode = VIEW_MODE.None;
     
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
@@ -89,7 +92,20 @@ public class CharacterInfoUI : InfoUIBase {
     private RELATIONS_FILTER[] allFilters;
     private Dictionary<string, MoodSummaryEntry> _dictMoodSummary;
 
-    internal override void Initialize() {
+    #region reveal info objects
+    public GameObject infoContent;
+    public GameObject btnRevealInfo;
+    public GameObject moodContent;
+    public GameObject btnRevealMood;
+    public GameObject relationshipContent;
+    public GameObject btnRevealRelationship;
+    #endregion
+
+    #region pierce display UI
+    public PiercingAndResistancesInfo pierceUI;
+	#endregion
+
+	internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
@@ -184,6 +200,7 @@ public class CharacterInfoUI : InfoUIBase {
             character.marker.UpdateNameplateElementsState();
         }
         piercingAndResistancesInfo.HidePiercingAndResistancesInfo();
+        m_currentViewMode = VIEW_MODE.None;
     }
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
@@ -216,8 +233,28 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
         UpdateMoodSummary();
+        ProcessDisplay();
     }
     #endregion
+
+    void ProcessDisplay() {
+        switch (m_currentViewMode) {
+            case VIEW_MODE.Info:    
+            OnToggleInfo(true);
+            break;
+            case VIEW_MODE.Mood:
+            OnToggleMood(true);
+            break;
+            case VIEW_MODE.Relationship:
+            OnToggleRelations(true);
+            break;
+            default:
+            OnToggleInfo(false);
+            OnToggleMood(false);
+            OnToggleRelations(false);
+            break;
+        }
+	}
 
     #region Utilities
     private void ResetAllScrollPositions() {
@@ -917,7 +954,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void ShowMoodTooltip() {
         string summary = $"Represents the Villagers' overall state of mind. Lower a Villagers' Mood to make them less effective and more volatile.\n\n" +
-                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
+                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
         UIManager.Instance.ShowSmallInfo(summary, $"MOOD: {_activeCharacter.moodComponent.moodStateName}");
     }
     public void HideSmallInfo() {
@@ -960,13 +997,110 @@ public class CharacterInfoUI : InfoUIBase {
     }
     #endregion
 
+    #region pierce UI
+    public void ClickPierce() {
+        if (pierceUI.isShowing) {
+            pierceUI.HidePiercingAndResistancesInfo();
+        } else {
+            pierceUI.ShowPiercingAndResistancesInfo(activeCharacter);
+        }
+    }
+
+    public void HidePierceUI() {
+        pierceUI.HidePiercingAndResistancesInfo();
+    }
+    #endregion
+
     #region Tabs
-    public void OnToggleInfo(bool isOn) { }
-    public void OnToggleMood(bool isOn) { }
+    public void OnRevealInfoclicked() {
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints >= 1) {
+            if (!activeCharacter.isInfoUnlocked) {
+                activeCharacter.isInfoUnlocked = true;
+                PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1);
+                ProcessDisplay();
+                Messenger.Broadcast(CharacterSignals.CHARACTER_INFO_REVEALED);
+            }
+        }
+    }
+
+    void ShowInfoHideRevealButton() {
+        btnRevealInfo.SetActive(false);
+        infoContent.SetActive(true);
+    }
+
+    void ShowRevealButtonHideInfo() {
+        btnRevealInfo.SetActive(true);
+        infoContent.SetActive(false);
+    }
+
+    void ShowMoodHideRevealButton() {
+        btnRevealMood.SetActive(false);
+        moodContent.SetActive(true);
+    }
+
+    void ShowRevealButtonHideMood() {
+        btnRevealMood.SetActive(true);
+        moodContent.SetActive(false);
+    }
+
+    void ShowRelationshipHideRevealButton() {
+        btnRevealRelationship.SetActive(false);
+        relationshipContent.SetActive(true);
+    }
+
+    void ShowRevealButtonHideRelationship() {
+        btnRevealRelationship.SetActive(true);
+        relationshipContent.SetActive(false);
+    }
+
+    public void OnToggleInfo(bool isOn) {
+        if (isOn) {
+            m_currentViewMode = VIEW_MODE.Info;
+            if (activeCharacter.race.IsSapient()) {
+                if (activeCharacter.isInfoUnlocked) {
+                    ShowInfoHideRevealButton();
+                } else {
+                    ShowRevealButtonHideInfo();
+                }
+            } else {
+                ShowInfoHideRevealButton();
+            }
+        }
+    }
+    public void OnToggleMood(bool isOn) {
+        if (isOn) {
+            m_currentViewMode = VIEW_MODE.Mood;
+            if (activeCharacter.race.IsSapient()) {
+                if (activeCharacter.isInfoUnlocked) {
+                    ShowMoodHideRevealButton();
+                } else {
+                    ShowRevealButtonHideMood();
+                }
+            } else {
+                ShowMoodHideRevealButton();
+            }
+        }
+    }
     public void OnToggleRelations(bool isOn) {
+        if (isOn) {
+            m_currentViewMode = VIEW_MODE.Relationship;
+            if (activeCharacter.race.IsSapient()) {
+                if (activeCharacter.isInfoUnlocked) {
+                    ShowRelationshipHideRevealButton();
+                } else {
+                    ShowRevealButtonHideRelationship();
+                }
+            } else {
+                ShowRelationshipHideRevealButton();
+            }
+        }
         LayoutRebuilder.ForceRebuildLayoutImmediate(relationshipsScrollView.content);
     }
-    public void OnToggleLogs(bool isOn) { }
+    public void OnToggleLogs(bool isOn) {
+        if (isOn) {
+            m_currentViewMode = VIEW_MODE.None;
+        }
+    }
     #endregion
 
     #region Party

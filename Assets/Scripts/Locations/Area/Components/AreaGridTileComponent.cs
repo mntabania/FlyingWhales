@@ -107,7 +107,7 @@ public class AreaGridTileComponent : AreaComponent {
         List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            if (tile.objHere == null) {
+            if (tile.tileObjectComponent.objHere == null) {
                 tiles.Add(tile);
             }
         }
@@ -137,7 +137,7 @@ public class AreaGridTileComponent : AreaComponent {
         List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            if (tile.hasFreezingTrap == false && tile.isOccupied == false && tile.IsNextToSettlement() == false) {
+            if (tile.tileObjectComponent.hasFreezingTrap == false && tile.isOccupied == false && tile.IsNextToSettlement() == false) {
                 tiles.Add(tile);
             }
         }
@@ -152,7 +152,7 @@ public class AreaGridTileComponent : AreaComponent {
         List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            if (tile.objHere == null && tile.groundType != LocationGridTile.Ground_Type.Water && tile.IsPassable()) {
+            if (tile.tileObjectComponent.objHere == null && tile.groundType != LocationGridTile.Ground_Type.Water && tile.IsPassable()) {
                 tiles.Add(tile);
             }
         }
@@ -181,7 +181,7 @@ public class AreaGridTileComponent : AreaComponent {
     public void PopulateUnoccupiedTiles(List<LocationGridTile> tiles) {
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            if (tile.objHere == null) {
+            if (tile.tileObjectComponent.objHere == null) {
                 tiles.Add(tile);
             }
         }
@@ -197,7 +197,8 @@ public class AreaGridTileComponent : AreaComponent {
             } else {
                 currTile.parentMap.groundTilemap.SetTile(position, groundTile);
                 currTile.UpdateGroundTypeBasedOnAsset();
-                if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
+                TileObject tileObject = currTile.tileObjectComponent.objHere;
+                if (tileObject != null && tileObject.mapVisual) {
                     tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
                 }
                 currTile.CreateSeamlessEdgesForSelfAndNeighbours();
@@ -218,7 +219,8 @@ public class AreaGridTileComponent : AreaComponent {
 
             currTile.parentMap.groundTilemap.SetTile(position, groundTile);
             currTile.UpdateGroundTypeBasedOnAsset();
-            if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
+            TileObject tileObject = currTile.tileObjectComponent.objHere;
+            if (tileObject != null && tileObject.mapVisual) {
                 tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
             }
             currTile.CreateSeamlessEdgesForSelfAndNeighbours();
@@ -261,7 +263,7 @@ public class AreaGridTileComponent : AreaComponent {
         List<LocationGridTile> tiles = null;
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile tile = gridTiles[i];
-            if (tile.objHere == null) {
+            if (tile.tileObjectComponent.objHere == null) {
                 if (tiles == null) { tiles = new List<LocationGridTile>(); }
                 tiles.Add(tile);
             }

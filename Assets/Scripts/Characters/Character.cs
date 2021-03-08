@@ -113,7 +113,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CarryComponent carryComponent { get; private set; }
     public PartyComponent partyComponent { get; private set; }
     public GatheringComponent gatheringComponent { get; private set; }
-    public TileObjectComponent tileObjectComponent { get; private set; }
+    public CharacterTileObjectComponent tileObjectComponent { get; private set; }
     public CrimeComponent crimeComponent { get; private set; }
     public ReligionComponent religionComponent { get; private set; }
     public LimiterComponent limiterComponent { get; private set; }
@@ -163,6 +163,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool canBeTargetedByLandActions => !movementComponent.isFlying && !reactionComponent.isHidden && !traitContainer.HasTrait("Disabler", "DeMooder");
 
     public int maxHP => combatComponent.maxHP;
+
+    public bool isInfoUnlocked { set; get; }
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => visuals.selectableSize;
     public Transform worldObject {
@@ -309,7 +311,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         carryComponent = new CarryComponent(); carryComponent.SetOwner(this);
         partyComponent = new PartyComponent(); partyComponent.SetOwner(this);
         gatheringComponent = new GatheringComponent(); gatheringComponent.SetOwner(this);
-        tileObjectComponent = new TileObjectComponent(); tileObjectComponent.SetOwner(this);
+        tileObjectComponent = new CharacterTileObjectComponent(); tileObjectComponent.SetOwner(this);
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
         religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
         limiterComponent = new LimiterComponent(); limiterComponent.SetOwner(this);
@@ -469,8 +471,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        Messenger.AddListener<IPointOfInterest>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
-        Messenger.AddListener<IPointOfInterest, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
+        Messenger.AddListener<TileObject>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
+        Messenger.AddListener<TileObject, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<IPointOfInterest, int>(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
@@ -508,8 +510,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
-        Messenger.RemoveListener<IPointOfInterest, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
+        Messenger.RemoveListener<TileObject>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
+        Messenger.RemoveListener<TileObject, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.RemoveListener<IPointOfInterest, int>(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.RemoveListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
@@ -530,12 +532,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Listeners
-    private void OnStopCurrentActionTargetingPOI(IPointOfInterest poi) {
+    private void OnStopCurrentActionTargetingPOI(TileObject poi) {
         if(currentActionNode != null && currentActionNode.poiTarget == poi) {
             StopCurrentActionNode();
         }
     }
-    private void OnStopCurrentActionTargetingPOIExceptActor(IPointOfInterest poi, Character actor) {
+    private void OnStopCurrentActionTargetingPOIExceptActor(TileObject poi, Character actor) {
         if (currentActionNode != null && currentActionNode.poiTarget == poi && this != actor) {
             StopCurrentActionNode();
         }
@@ -3657,7 +3659,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (targetTile == null) {
                 return true; //if there is no tile to drop the item, just discard it
             }
-            if (targetTile.objHere != null) {
+            if (targetTile.tileObjectComponent.objHere != null) {
                 targetTile = targetTile.GetFirstNearestTileFromThisWithNoObject(true);
             }
             if (targetTile == null) {
@@ -4711,9 +4713,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         if (isNormalCharacter && !traitContainer.HasTrait("Burning")) {
-            if (tileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
+            if (tileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Burning")) {
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
-            } else if (tileLocation.objHere != null && tileLocation.objHere.traitContainer.HasTrait("Burning")) {
+            } else if (tileLocation.tileObjectComponent.objHere != null && tileLocation.tileObjectComponent.objHere.traitContainer.HasTrait("Burning")) {
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
             }
         }
@@ -5223,6 +5225,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_BUFF);
         AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_FLAW);
         AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_JOIN_FACTION);
+        AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
+        AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
+        AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
@@ -5639,6 +5644,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 SetDeathLog(_deathLog);
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
+            eventDispatcher.ExecuteCharacterDied(this);
 
             List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {
@@ -5811,6 +5817,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Loading
     public virtual void LoadReferences(SaveDataCharacter data) {
+        isInfoUnlocked = data.isInfoUnlocked;
         ConstructDefaultActions();
         if (data.hasLycan && lycanData == null) {
             LycanthropeData lycanData = data.lycanData.Load();

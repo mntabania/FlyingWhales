@@ -91,7 +91,7 @@ namespace Traits {
                 if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
                     chance = 0.5f;
                 }
-                if (roll < chance && owner.gridTileLocation.objHere == null) {
+                if (roll < chance && owner.gridTileLocation.tileObjectComponent.objHere == null) {
                     //spawn werewolf pelt
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, owner);
                 }

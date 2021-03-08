@@ -43,10 +43,11 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 6027977
+    totalSpriteSurfaceArea: 6049241
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: c6a4c900e32e8bd40bbbfaa89f592b21, type: 3}
   - {fileID: 21300000, guid: c5ca1d00d1f15d244be650f0e58aec8b, type: 3}
   - {fileID: 21300000, guid: ca12721056084994c8308795077e28b7, type: 3}
   - {fileID: 21300000, guid: e72289104aad2d34d9424ddece5b22f5, type: 3}
@@ -93,6 +94,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fe4ba1e0659ca8747b4d036337fc0cfe, type: 3}
   - {fileID: 21300000, guid: bdb5c2e04e2231f48a7354de5b9eb43a, type: 3}
   - {fileID: 21300000, guid: 2f4c86e0783795b418ff84f23fb05486, type: 3}
+  - {fileID: 21300000, guid: d219c8e0f655ec44fa9fa169b9bd1a8e, type: 3}
   - {fileID: 21300000, guid: 555a7ae013b04564eae82891cc86219b, type: 3}
   - {fileID: 21300000, guid: c92602f0ec244524ebdacea49bcd93e1, type: 3}
   - {fileID: 21300000, guid: 9bcc44f049534bc4b9d77848c21a670e, type: 3}
@@ -228,6 +230,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5c93a493cf0381742ae5b3d0ca89a59a, type: 3}
   - {fileID: 21300000, guid: 8247a993a713f2544b5d9b65f0d52842, type: 3}
   - {fileID: 21300000, guid: c27c5b939b47f2f44b06cb9055e4b939, type: 3}
+  - {fileID: 21300000, guid: ab70bd930bc805544a8411e1b3128480, type: 3}
   - {fileID: 21300000, guid: 1a0354a39d650594488e98aa5edeb9f5, type: 3}
   - {fileID: 21300000, guid: 53d33aa311ef06945afa38a792e3cac7, type: 3}
   - {fileID: 21300000, guid: 64b4ada30f787a24383a3651492e4684, type: 3}
@@ -860,6 +863,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 58e22aff68f6df949a4b41de690e5248, type: 3}
   - {fileID: 21300000, guid: 8b54aeff68186d34589773221ad17cfa, type: 3}
   m_PackedSpriteNamesToIndex:
+  - sleep_1
   - archer_elf_body
   - interact_1
   - attack_4
@@ -906,6 +910,7 @@ SpriteAtlas:
   - attack_2
   - idle_1
   - walk_3
+  - dead_1
   - idle_2
   - interact_1
   - attack_4
@@ -1041,6 +1046,7 @@ SpriteAtlas:
   - idle_2
   - interact_1
   - sleep_1
+  - idle_1
   - sleep_1
   - attack_3
   - interact_1

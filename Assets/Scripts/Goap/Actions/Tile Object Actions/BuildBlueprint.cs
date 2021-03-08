@@ -70,7 +70,7 @@ public class BuildBlueprint : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(log, goapNode);
         if (goapNode.poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
-            log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, genericTileObject.blueprintOnTile.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
         }
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -131,7 +131,7 @@ public class BuildBlueprint : GoapAction {
                 carriedPile.AdjustResourceInPile(-genericTileObject.blueprintOnTile.craftCost);
                 goapNode.poiTarget.AdjustResource(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost);    
             }
-            goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+            goapNode.descriptionLog.AddToFillers(null, genericTileObject.blueprintOnTile.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
         }
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {

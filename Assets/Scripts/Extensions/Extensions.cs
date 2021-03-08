@@ -41,8 +41,11 @@ public static class Extensions {
             case STRUCTURE_TYPE.POND:
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.THE_PORTAL:
-            case STRUCTURE_TYPE.EYE:
+            case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.SPIRE:
+            case STRUCTURE_TYPE.MARAUD:
+            case STRUCTURE_TYPE.DEFENSE_POINT:
+            case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
                 return true;
@@ -112,12 +115,16 @@ public static class Extensions {
             case STRUCTURE_TYPE.KENNEL:
             case STRUCTURE_TYPE.THE_ANVIL:
             case STRUCTURE_TYPE.MEDDLER:
-            case STRUCTURE_TYPE.EYE:
+            case STRUCTURE_TYPE.BEHOLDER:
             case STRUCTURE_TYPE.SPIRE:
+            case STRUCTURE_TYPE.MARAUD:
+            case STRUCTURE_TYPE.DEFENSE_POINT:
+            case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.BIOLAB:
+            case STRUCTURE_TYPE.IMP_HUT:
                 return true;
             default:
                 return false;
@@ -156,14 +163,12 @@ public static class Extensions {
             case STRUCTURE_TYPE.RAIDER_CAMP:
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.ASSASSIN_GUILD:
-            case STRUCTURE_TYPE.DEMONIC_PRISON:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.MAGE_TOWER:
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
-            case STRUCTURE_TYPE.EYE:
             case STRUCTURE_TYPE.CRYPT:
             case STRUCTURE_TYPE.OSTRACIZER:
             case STRUCTURE_TYPE.MEDDLER:
@@ -181,6 +186,10 @@ public static class Extensions {
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.MONSTER_LAIR:
             case STRUCTURE_TYPE.SPIRE:
+            case STRUCTURE_TYPE.MANA_PIT:
+            case STRUCTURE_TYPE.MARAUD:
+            case STRUCTURE_TYPE.DEFENSE_POINT:
+            case STRUCTURE_TYPE.IMP_HUT:
                 return true;
             default:
                 return false;
@@ -237,6 +246,14 @@ public static class Extensions {
                 return p_tile.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature);
             default:
                 return true;
+        }
+    }
+    public static string StructureName(this STRUCTURE_TYPE structureType) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.TORTURE_CHAMBERS:
+                return "Prison";
+            default:
+                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
     }
     #endregion
@@ -1017,6 +1034,9 @@ public static class Extensions {
             case LANDMARK_TYPE.THE_NEEDLES:
             case LANDMARK_TYPE.TORTURE_CHAMBERS:
             case LANDMARK_TYPE.SPIRE:
+            case LANDMARK_TYPE.MANA_PIT:
+            case LANDMARK_TYPE.MARAUD:
+            case LANDMARK_TYPE.DEFENSE_POINT:
             return true;
             default:
                 return false;

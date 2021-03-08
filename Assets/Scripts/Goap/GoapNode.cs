@@ -756,9 +756,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     private void EndEffectVigilant() {
         if (descriptionLog != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
             descriptionLog.AddLogToDatabase();
-            if(actor.currentRegion != null) {
-                PlayerManager.Instance.player.ShowNotificationFrom(actor.currentRegion, descriptionLog);
-            }
+            PlayerManager.Instance.player.ShowNotificationFrom(actor.gridTileLocation, descriptionLog);
         }
         JobQueueItem currentJob = actor.currentJob;
         //Result of the action will be "successful" but only in writing

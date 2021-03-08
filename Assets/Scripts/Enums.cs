@@ -66,6 +66,7 @@ public enum RACE{
     SCORPION = 37, 
     HARPY = 38,
     TRITON = 39,
+    IMP = 40,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -233,6 +234,9 @@ public enum LANDMARK_TYPE {
     RUINED_ZOO = 65,
     BIOLAB = 66,
     SPIRE = 67,
+    MANA_PIT = 68,
+    MARAUD = 69,
+    DEFENSE_POINT = 70,
 }
 public enum CHARACTER_ROLE {
     NONE,
@@ -511,7 +515,8 @@ public enum INTERACTION_TYPE {
     BURROW = 220,
     PLAGUE_FATALITY = 221,
     PICKPOCKET = 222,
-    DISPOSE_FOOD
+    DISPOSE_FOOD = 223,
+    IS_IMPRISONED = 224,
 }
 public enum INTERRUPT {
     None,
@@ -676,10 +681,9 @@ public enum STRUCTURE_TYPE {
     MEDDLER = 32,
     DEFILER = 33,
     THE_ANVIL = 34,
-    EYE = 35,
+    BEHOLDER = 35,
     THE_NEEDLES = 36,
     TORTURE_CHAMBERS = 37,
-    DEMONIC_PRISON = 38,
     FARM = 39,
     LUMBERYARD = 40,
     MINE_SHACK = 41,
@@ -695,16 +699,16 @@ public enum STRUCTURE_TYPE {
     TANNERY = 51,
     FISHING_SHACK = 52,
     SPIRE = 53,
+    MANA_PIT = 54,
+    MARAUD = 55,
+    DEFENSE_POINT = 56,
+    IMP_HUT = 57,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
     RELATIVE = 3,
     LOVER = 4,
     AFFAIR = 5,
-    MASTER = 6,
-    SERVANT = 7,
-    SAVER = 8,
-    SAVE_TARGET = 9,
     EX_LOVER = 10,
     SIBLING = 11,
     PARENT = 12,
@@ -883,6 +887,10 @@ public enum TILE_OBJECT_TYPE {
     RAT_MEAT = 167,
     THIN_WALL = 168,
     SPIRE = 169,
+    EYE_WARD = 170,
+    MANA_PIT = 171,
+    MARAUD = 172,
+    DEFENSE_POINT = 173,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -973,30 +981,21 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     POISON_BLOOM = 39, LANDMINE = 40, TERRIFYING_HOWL = 41, FREEZING_TRAP = 42, SNARE_TRAP = 43, WIND_BLAST = 44, ICETEROIDS = 45, HEAT_WAVE = 46, TORTURE = 47,
     SEIZE_OBJECT = 50, SEIZE_CHARACTER = 51, SEIZE_MONSTER = 52, BUILD_DEMONIC_STRUCTURE = 59, AFFLICT = 60,
     BREED_MONSTER = 62, COWARDICE = 67, PYROPHOBIA = 68, NARCOLEPSY = 69,
-    PLANT_GERM = 70, MEDDLER = 71, EYE = 72, CRYPT = 73, KENNEL = 74, OSTRACIZER = 75, TORTURE_CHAMBERS = 76, DEMONIC_PRISON = 77,
+    PLANT_GERM = 70, MEDDLER = 71, BEHOLDER = 72, CRYPT = 73, KENNEL = 74, OSTRACIZER = 75, TORTURE_CHAMBERS = 76, DEMONIC_PRISON = 77,
     DEMON_WRATH = 78, DEMON_PRIDE = 79, DEMON_LUST = 80, DEMON_GLUTTONY = 81, DEMON_SLOTH = 82, DEMON_ENVY = 83, DEMON_GREED = 84,
     KILL = 87, EMPOWER = 88, AGITATE = 89, HOTHEADED = 90, LAZINESS = 91, HEAL = 92, SPLASH_WATER = 93, WALL = 94,
-    MUSIC_HATER = 95, DEFILER = 96, GLUTTONY = 99,
-    WOLF = 100, GOLEM = 101, INCUBUS = 102, SUCCUBUS = 103, FIRE_ELEMENTAL = 104, KOBOLD = 105, GHOST = 106,
+    MUSIC_HATER = 95, DEFILER = 96, GLUTTONY = 99, WOLF = 100, GOLEM = 101, INCUBUS = 102, SUCCUBUS = 103, FIRE_ELEMENTAL = 104, KOBOLD = 105, GHOST = 106,
     ABOMINATION = 107, MIMIC = 108, PIG = 109, CHICKEN = 110, SHEEP = 111, SLUDGE = 112,
-    WATER_NYMPH = 113, WIND_NYMPH = 114, ICE_NYMPH = 115,
-    ELECTRIC_WISP = 116, EARTHEN_WISP = 117, FIRE_WISP = 118,
+    WATER_NYMPH = 113, WIND_NYMPH = 114, ICE_NYMPH = 115, ELECTRIC_WISP = 116, EARTHEN_WISP = 117, FIRE_WISP = 118,
     GRASS_ENT = 119, SNOW_ENT = 120, CORRUPT_ENT = 121, DESERT_ENT = 122, FOREST_ENT = 123,
-    GIANT_SPIDER = 124, SMALL_SPIDER = 125, 
-    
-    BRAINWASH = 138, UNSUMMON = 139, TRIGGER_FLAW = 140,
-    CULTIST_TRANSFORM = 141,
-    CULTIST_POISON = 142,
-    CULTIST_BOOBY_TRAP = 143,
-    VENGEFUL_GHOST = 144, WURM = 145, TROLL = 146,
-    REVENANT = 147,
-    SNATCH = 148,
-    SACRIFICE = 149, REPAIR = 150, EVANGELIZE = 151, SPREAD_RUMOR = 152,
-    FOUND_CULT = 153, BONE_GOLEM = 154, BIOLAB = 155, PLAGUED_RAT = 156, UPGRADE = 157,
+    GIANT_SPIDER = 124, SMALL_SPIDER = 125, BRAINWASH = 138, UNSUMMON = 139, TRIGGER_FLAW = 140, CULTIST_TRANSFORM = 141,
+    CULTIST_POISON = 142, CULTIST_BOOBY_TRAP = 143, VENGEFUL_GHOST = 144, WURM = 145, TROLL = 146, REVENANT = 147, SNATCH = 148,
+    SACRIFICE = 149, REPAIR = 150, EVANGELIZE = 151, SPREAD_RUMOR = 152, FOUND_CULT = 153, BONE_GOLEM = 154, BIOLAB = 155, PLAGUED_RAT = 156, UPGRADE = 157,
     SCHEME = 158, INSTIGATE_WAR = 159, RESIGN = 160, LEAVE_FACTION = 161, LEAVE_HOME = 162, LEAVE_VILLAGE = 163,
     BREAK_UP = 164, JOIN_FACTION = 165, REBELLION = 166, OVERTHROW_LEADER = 167, INDUCE_MIGRATION = 168, STIFLE_MIGRATION = 169,
     RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
-    CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181,
+    CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, SPAWN_EYE_WARD = 182, DESTROY_EYE_WARD = 183, MANA_PIT = 184, MARAUD = 185,
+    DRAIN_SPIRIT = 186, LET_GO = 187, FULL_HEAL = 188, CREATE_BLACKMAIL = 189, DEFENSE_POINT = 190, IMP_HUT = 191, ICE_BLAST = 192, EARTH_SPIKE = 193, WATER_SPIKE = 194,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1056,6 +1055,7 @@ public enum SUMMON_TYPE {
     Scorpion,
     Harpy,
     Triton,
+    Imp,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -1089,7 +1089,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure
+    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Eye_Ward_Highlight, Heal, Ice_Blast, Earth_Spike, Water_Spike,
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
@@ -1109,7 +1109,7 @@ public enum OBJECT_TYPE {
     Reaction_Quest = 24, Plague_Disease = 25
 }
 public enum PASSIVE_SKILL {
-    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
+    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb,
 }
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
@@ -1193,4 +1193,16 @@ public enum UPGRADE_BONUS {
 
 public enum UNLOCKING_SKILL_REQUIREMENT {
     Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count,
+}
+
+public enum SOUND_EFFECT {
+    Heal
+}
+
+public enum CURRENCY { 
+    Mana = 0, Chaotic_Energy, Spirit_Energy,
+}
+
+public enum MINION_TYPE { 
+    Lust = 0, Envy, Greed, Gluttony, Pride, Sloth, Wrath, 
 }

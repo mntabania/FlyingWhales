@@ -155,9 +155,9 @@ namespace Locations.Area_Features {
             for (int i = 0; i < p_area.gridTileComponent.gridTiles.Count; i++) {
                 LocationGridTile gridTile = p_area.gridTileComponent.gridTiles[i];
                 if (!gridTile.structure.isInterior) {
-                    gridTile.genericTileObject.traitContainer.AddTrait(gridTile.genericTileObject, "Wet");
-                    if (gridTile.objHere != null) {
-                        gridTile.objHere.traitContainer.AddTrait(gridTile.objHere, "Wet");
+                    gridTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTile.tileObjectComponent.genericTileObject, "Wet");
+                    if (gridTile.tileObjectComponent.objHere != null) {
+                        gridTile.tileObjectComponent.objHere.traitContainer.AddTrait(gridTile.tileObjectComponent.objHere, "Wet");
                     }
                 }
             }

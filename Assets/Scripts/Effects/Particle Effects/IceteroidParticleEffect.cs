@@ -23,7 +23,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
             ), 
             targetTile, 1, false
         );
-        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
+        targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {
@@ -43,6 +43,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
             if (Random.Range(0, 100) < 25) {
                 character.traitContainer.AddTrait(character, "Injured");
             }
+            Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
             if (character.currentHP <= 0) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.ICETEROIDS;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);

@@ -5,6 +5,7 @@ using UnityEngine;
 using Locations.Settlements;
 
 public class MinionPlayerSkill : SkillData {
+    public MINION_TYPE minionType = MINION_TYPE.Envy;
     public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.MINION; } }
     public RACE race { get; protected set; }
     public string className { get; protected set; }

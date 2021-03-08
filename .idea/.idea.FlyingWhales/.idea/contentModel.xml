@@ -1192,6 +1192,7 @@
               <e p="CharacterEventDispatcher.cs" t="Include" />
               <e p="CharacterFactionComponent.cs" t="Include" />
               <e p="CharacterJobTriggerComponent.cs" t="Include" />
+              <e p="CharacterTileObjectComponent.cs" t="Include" />
               <e p="CombatComponent.cs" t="Include" />
               <e p="CrimeComponent.cs" t="Include" />
               <e p="GatheringComponent.cs" t="Include" />
@@ -1212,7 +1213,6 @@
                 <e p="IMoodModifier.cs" t="Include" />
                 <e p="OpinionData.cs" t="Include" />
               </e>
-              <e p="TileObjectComponent.cs" t="Include" />
               <e p="TrapStructure.cs" t="Include" />
             </e>
             <e p="Couple.cs" t="Include" />
@@ -1327,6 +1327,7 @@
               <e p="BlizzardParticleEffect.cs" t="Include" />
               <e p="BrimstonesParticleEffect.cs" t="Include" />
               <e p="BuildStructureParticleEffect.cs" t="Include" />
+              <e p="EyeWardHighlight.cs" t="Include" />
               <e p="HeatWaveParticleEffect.cs" t="Include" />
               <e p="IceteroidParticleEffect.cs" t="Include" />
               <e p="LightningParticleEffect.cs" t="Include" />
@@ -1534,6 +1535,7 @@
               <e p="HuntHeirloom.cs" t="Include" />
               <e p="Invite.cs" t="Include" />
               <e p="IsCultist.cs" t="Include" />
+              <e p="IsImprisoned.cs" t="Include" />
               <e p="IsPlagued.cs" t="Include" />
               <e p="IsVampire.cs" t="Include" />
               <e p="IsWerewolf.cs" t="Include" />
@@ -1947,6 +1949,7 @@
                 <e p="AncientRuin.cs" t="Include" />
                 <e p="AssassinGuild.cs" t="Include" />
                 <e p="Barracks.cs" t="Include" />
+                <e p="Beholder.cs" t="Include" />
                 <e p="Biolab.cs" t="Include" />
                 <e p="Cave.cs" t="Include" />
                 <e p="Cemetery.cs" t="Include" />
@@ -1955,10 +1958,8 @@
                 <e p="Crypt.cs" t="Include" />
                 <e p="CultTemple.cs" t="Include" />
                 <e p="Defiler.cs" t="Include" />
-                <e p="DemonicPrison.cs" t="Include" />
                 <e p="DemonicStructure.cs" t="Include" />
                 <e p="Dwelling.cs" t="Include" />
-                <e p="Eye.cs" t="Include" />
                 <e p="Farm.cs" t="Include" />
                 <e p="FishingShack.cs" t="Include" />
                 <e p="Granary.cs" t="Include" />
@@ -2082,6 +2083,10 @@
                   <e p="Carpet.cs" t="Include" />
                   <e p="Cauldron.cs" t="Include" />
                   <e p="Chains.cs" t="Include" />
+                  <e p="Components" t="Include">
+                    <e p="TileObjectComponent.cs" t="Include" />
+                    <e p="TileObjectHiddenComponent.cs" t="Include" />
+                  </e>
                   <e p="CornCrop.cs" t="Include" />
                   <e p="CorruptedPit.cs" t="Include" />
                   <e p="CorruptedSpike.cs" t="Include" />
@@ -2112,6 +2117,7 @@
                   <e p="Ember.cs" t="Include" />
                   <e p="Excalibur.cs" t="Include" />
                   <e p="Eyeball.cs" t="Include" />
+                  <e p="EyeWard.cs" t="Include" />
                   <e p="FeebleSpirit.cs" t="Include" />
                   <e p="FeedingTrough.cs" t="Include" />
                   <e p="FireBall.cs" t="Include" />
@@ -2415,6 +2421,7 @@
               <e p="SeizeComponent.cs" t="Include" />
               <e p="ThreatComponent.cs" t="Include" />
             </e>
+            <e p="MonsterCapacity.cs" t="Include" />
             <e p="Plague Related Scripts" t="Include">
               <e p="Death Effects" t="Include">
                 <e p="Explosion.cs" t="Include" />
@@ -2485,12 +2492,11 @@
                 <e p="VampirismData.cs" t="Include" />
               </e>
               <e p="Demonic Structure Player Skills" t="Include">
+                <e p="BeholderData.cs" t="Include" />
                 <e p="BiolabData.cs" t="Include" />
                 <e p="CryptData.cs" t="Include" />
                 <e p="DefilerData.cs" t="Include" />
-                <e p="DemonicPrisonData.cs" t="Include" />
                 <e p="DemonicStructurePlayerSkill.cs" t="Include" />
-                <e p="EyeData.cs" t="Include" />
                 <e p="KennelData.cs" t="Include" />
                 <e p="MeddlerData.cs" t="Include" />
                 <e p="OstracizerData.cs" t="Include" />
@@ -2522,18 +2528,22 @@
                 <e p="BrainwashData.cs" t="Include" />
                 <e p="BreedMonsterData.cs" t="Include" />
                 <e p="BuildDemonicStructureData.cs" t="Include" />
+                <e p="CreateBlackmailData.cs" t="Include" />
                 <e p="CultistBoobyTrapData.cs" t="Include" />
                 <e p="CultistJoinFactionData.cs" t="Include" />
                 <e p="CultistPoisonData.cs" t="Include" />
                 <e p="CultistTransformData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />
+                <e p="DestroyEyeWardData.cs" t="Include" />
                 <e p="DrainSpiritData.cs" t="Include" />
                 <e p="EmpowerData.cs" t="Include" />
                 <e p="EvangelizeData.cs" t="Include" />
                 <e p="ExpelData.cs" t="Include" />
                 <e p="FoundCultData.cs" t="Include" />
+                <e p="FullHealData.cs" t="Include" />
                 <e p="HealData.cs" t="Include" />
                 <e p="IgniteData.cs" t="Include" />
+                <e p="LetGoData.cs" t="Include" />
                 <e p="PlayerAction.cs" t="Include" />
                 <e p="PoisonData.cs" t="Include" />
                 <e p="RaiseDeadData.cs" t="Include" />
@@ -2547,6 +2557,7 @@
                 <e p="SeizeMonsterData.cs" t="Include" />
                 <e p="SeizeObjectData.cs" t="Include" />
                 <e p="SnatchData.cs" t="Include" />
+                <e p="SpawnEyeWardData.cs" t="Include" />
                 <e p="SpreadRumorData.cs" t="Include" />
                 <e p="TortureData.cs" t="Include" />
                 <e p="TriggerFlawData.cs" t="Include" />
@@ -3004,6 +3015,7 @@
               <e p="Angry.cs" t="Include" />
               <e p="Arsonist.cs" t="Include" />
               <e p="BabyInfestor.cs" t="Include" />
+              <e p="BeingDrained.cs" t="Include" />
               <e p="Berserked.cs" t="Include" />
               <e p="Betrayed.cs" t="Include" />
               <e p="BoobyTrapped.cs" t="Include" />
@@ -3335,6 +3347,7 @@
               <e p="EnumNameplateItem.cs" t="Include" />
               <e p="FactionNameplateItem.cs" t="Include" />
               <e p="MinionCharacterItem.cs" t="Include" />
+              <e p="MonsterCapacityNameplateItem.cs" t="Include" />
               <e p="NameplateButton.cs" t="Include" />
               <e p="NameplateItem.cs" t="Include" />
               <e p="PlayerSkillLoadoutNameplateItem.cs" t="Include" />
@@ -3344,7 +3357,6 @@
               <e p="StringNameplateItem.cs" t="Include" />
               <e p="StructureNameplateItem.cs" t="Include" />
               <e p="SummonMinionPlayerSkillNameplateItem.cs" t="Include" />
-              <e p="SummonSlotPickerItem.cs" t="Include" />
               <e p="WorldEventNameplate.cs" t="Include" />
             </e>
             <e p="ObjectPicker.cs" t="Include" />

@@ -257,7 +257,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
+            tile.tileObjectComponent.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
         }
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
@@ -282,7 +282,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
             if (damageable is Character character) {
-                damageable.AdjustHP(-120, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
+                int processedDamage = -120;
+                damageable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
+                Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                 if (damageable.currentHP <= 0) {
                     (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
                     Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);

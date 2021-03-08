@@ -24,7 +24,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             Character actor = interruptHolder.actor;
             if(actor.marker && actor.currentRegion != null) {
-                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, actor.marker.transform.position, 1, actor.currentRegion.innerMap);
+                //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, actor.marker.transform.position, 1, actor.currentRegion.innerMap);
             }
             if (actor.isLycanthrope) {
                 actor.lycanData.TurnToWolf();

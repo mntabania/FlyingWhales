@@ -30,15 +30,17 @@ public class WindBlastData : SkillData {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(ApplyWindDamage);
         }
-        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
+        targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
     private void ApplyWindDamage(ITraitable traitable) {
         int processedDamage = m_baseWindDamage - (m_baseWindDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.WIND_BLAST));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, showHPBar: true);
-        if (traitable is Character character) { 
-            if(character.currentHP <= 0){
+
+        if (traitable is Character character) {
+            Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
+            if (character.currentHP <= 0){
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.WIND_BLAST;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
             }

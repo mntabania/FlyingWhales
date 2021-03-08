@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class HealData : PlayerAction {
+﻿public class HealData : PlayerAction {
 
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.HEAL;
     public override string name => "Heal";
-    public override string description => "This Action fully replenishes a character's HP.";
+    public override string description => "This Action partially replenishes a character's HP.";
     public HealData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
@@ -27,6 +23,9 @@ public class HealData : PlayerAction {
         if(targetCharacter.currentHP >= targetCharacter.maxHP) {
             return false;
         }
+        if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
+            return false;
+        }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
@@ -36,6 +35,9 @@ public class HealData : PlayerAction {
         }
         if (targetCharacter.currentHP >= targetCharacter.maxHP) {
             reasons += $"{targetCharacter.name} is at full HP,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
+            reasons += "Characters being drained cannot be healed.";
         }
         return reasons;
     }

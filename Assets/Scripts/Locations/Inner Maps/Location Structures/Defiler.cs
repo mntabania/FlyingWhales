@@ -18,6 +18,10 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        protected override void DestroyStructure() {
+            StopDrainingCharactersHere();
+            base.DestroyStructure();
+        }
         #endregion
         
         #region Listeners
@@ -30,7 +34,7 @@ namespace Inner_Maps.Location_Structures {
             Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-            if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is DefilerRoom defilerRoom && defilerRoom.skeleton == null) {
+            if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell defilerRoom && defilerRoom.skeleton == null) {
                 DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
                 door?.Close();
             }
@@ -39,8 +43,15 @@ namespace Inner_Maps.Location_Structures {
 
         #region Rooms
         protected override StructureRoom CreteNewRoomForStructure(List<LocationGridTile> tilesInRoom) {
-            return new DefilerRoom(tilesInRoom);
+            return new PrisonCell(tilesInRoom);
         }
         #endregion
+        
+        private void StopDrainingCharactersHere() {
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                character.traitContainer.RemoveTrait(character, "Being Drained");
+            }
+        }
     }
 }

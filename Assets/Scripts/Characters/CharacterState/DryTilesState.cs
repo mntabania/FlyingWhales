@@ -57,14 +57,14 @@ public class DryTilesState : CharacterState {
         }
         LocationGridTile nearestTile = null;
         float nearest = 99999f;
-        if (currentTarget != null && currentTarget.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet") != null) {
+        if (currentTarget != null && currentTarget.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet") != null) {
             nearest = Vector2.Distance(stateComponent.owner.worldObject.transform.position, currentTarget.worldLocation);
             nearestTile = currentTarget;
         }
 
         for (int i = 0; i < stateComponent.owner.homeSettlement.settlementJobTriggerComponent.wetTiles.Count; i++) {
             LocationGridTile wetTile = stateComponent.owner.homeSettlement.settlementJobTriggerComponent.wetTiles[i];
-            Wet wet = wetTile.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
+            Wet wet = wetTile.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
             if (wet != null && wet.dryer == null) {
                 //only consider dousing fire that is not yet assigned
                 float dist = Vector2.Distance(stateComponent.owner.worldObject.transform.position, wetTile.worldLocation);
@@ -77,7 +77,7 @@ public class DryTilesState : CharacterState {
         if (nearestTile != null) {
             _isDryingTile = true;
             currentTarget = nearestTile;
-            Wet wet = nearestTile.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet"); 
+            Wet wet = nearestTile.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet"); 
             Assert.IsNotNull(wet, $"Wet of {nearestTile} is null.");
             wet.SetDryer(stateComponent.owner);
             stateComponent.owner.marker.GoTo(nearestTile, Dry);
@@ -86,7 +86,7 @@ public class DryTilesState : CharacterState {
 
     private void Dry() {
         if (currentTarget != null) {
-            currentTarget.genericTileObject.traitContainer.RemoveStatusAndStacks(currentTarget.genericTileObject, "Wet", stateComponent.owner);
+            currentTarget.tileObjectComponent.genericTileObject.traitContainer.RemoveStatusAndStacks(currentTarget.tileObjectComponent.genericTileObject, "Wet", stateComponent.owner);
             currentTarget = null;
         }
         _isDryingTile = false;

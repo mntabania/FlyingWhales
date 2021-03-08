@@ -168,10 +168,10 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             }
         }
         
-        if (spellData is BrainwashData && UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is DefilerRoom defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
+        if (spellData is BrainwashData && UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
             Character targetCharacter = defilerRoom.charactersInRoom.First();
             if (targetCharacter != null) {
-                fullDescription += $"\n<b>{targetCharacter.name} Brainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
+                fullDescription += $"\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
             }
         }
         

@@ -47,6 +47,8 @@ namespace Interrupts {
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             Log log = default;
+            //Do not log if the new home is same as previous home so that it will not spam in the log tab
+            //This is also the fix for this: https://trello.com/c/Ecjx7j55/3762-live-v03502-cultist-found-new-home-loop
             if (actor.homeStructure != null && actor.homeStructure != actor.previousCharacterDataComponent.previousHomeStructure) {
                 log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "set_new_home_structure", null, logTags);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

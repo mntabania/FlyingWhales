@@ -70,8 +70,8 @@ public class ThinWall : TileObject {
         if(gridTileLocation != null) {
             LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
             ////Thin walls cannot co-exist with block walls, so if a thin wall is placed, all block walls must be destroyed
-            //if (gridTileLocation.objHere is BlockWall) {
-            //    gridTileLocation.objHere.AdjustHP(-gridTileLocation.objHere.maxHP, ELEMENTAL_TYPE.Normal, true);
+            //if (gridTileLocation.tileObjectComponent.objHere is BlockWall) {
+            //    gridTileLocation.tileObjectComponent.objHere.AdjustHP(-gridTileLocation.tileObjectComponent.objHere.maxHP, ELEMENTAL_TYPE.Normal, true);
             //}
         }
     }

@@ -16,14 +16,24 @@ public class SacrificeData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Summon summon) {
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, summon.worldPosition, 2, summon.currentRegion.innerMap);
+            //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, summon.worldPosition, 2, summon.currentRegion.innerMap);
             summon.Death("sacrifice");
             base.ActivateAbility(targetPOI);
         }
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
+            reasons += "Characters being drained cannot be Sacrificed.";
+        }
+        return reasons;
+    }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
+            if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
+                return false;
+            }
             if (targetCharacter is Summon) {
                 if (!targetCharacter.isDead && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null) {
                     if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL) {

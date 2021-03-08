@@ -24,6 +24,9 @@ public class SeizeCharacterData : PlayerAction {
             if(targetCharacter.race == RACE.TRITON) {
                 return false;
             }
+            if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
+                return false;
+            }
             if (targetCharacter.interruptComponent.isInterrupted) {
                 if (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Brainwashed ||
                     targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
@@ -40,6 +43,9 @@ public class SeizeCharacterData : PlayerAction {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (targetCharacter.race == RACE.TRITON) {
             reasons += "Tritons cannot be seized,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
+            reasons += "Characters being drained cannot be seized.";
         }
         return reasons;
     }

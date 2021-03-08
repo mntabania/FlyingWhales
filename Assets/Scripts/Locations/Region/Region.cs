@@ -41,13 +41,13 @@ public class Region : ISavable, ILogFiller {
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
-    private int _canShowNotificationVotes;
+    //private int _canShowNotificationVotes;
 
     #region getter/setter
     public InnerTileMap innerMap => _regionInnerTileMap;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Region;
     public Type serializedData => typeof(SaveDataRegion);
-    public bool canShowNotifications => _canShowNotificationVotes > 0;
+    //public bool canShowNotifications => _canShowNotificationVotes > 0;
     #endregion
 
     private Region() {
@@ -498,12 +498,12 @@ public class Region : ISavable, ILogFiller {
     public bool IsRequiredByLocation(TileObject item) {
         return false;
     }
-    public void AllowNotifications() {
-        _canShowNotificationVotes++;
-    }
-    public void BlockNotifications() {
-        _canShowNotificationVotes--;
-    }
+    //public void AllowNotifications() {
+    //    _canShowNotificationVotes++;
+    //}
+    //public void BlockNotifications() {
+    //    _canShowNotificationVotes--;
+    //}
     public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
         List<TileObject> objs = new List<TileObject>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
