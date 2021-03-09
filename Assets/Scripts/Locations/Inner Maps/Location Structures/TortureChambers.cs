@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace Inner_Maps.Location_Structures {
-    public class TortureChambers : DemonicStructure {
+    public class TortureChambers : PartyStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
         public override string nameplateName => "Prison";

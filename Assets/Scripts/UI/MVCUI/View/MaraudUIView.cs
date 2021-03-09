@@ -10,6 +10,10 @@ public class MaraudUIView : MVCUIView {
 		void OnAddSummonClicked();
 		void OnAddMinionClicked();
 		void OnAddTargetClicked();
+
+		void OnCloseSummonSubContainer();
+		void OnCloseMinionSubContainer();
+		void OnCloseTargetSubContainer();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -106,6 +110,10 @@ public class MaraudUIView : MVCUIView {
 		UIModel.txtTitle.text = p_title;
 	}
 
+	public void SetButtonDeployText(string p_text) {
+		UIModel.btnDeploy.GetComponentInChildren<RuinarchText>().text = p_text;
+	}
+
 	public void HideAllSubMenu() {
 		UIModel.subMinionContainer.SetActive(false);
 		UIModel.subSummonContainer.SetActive(false);
@@ -131,6 +139,9 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onAddMinionClicked += p_listener.OnAddMinionClicked;
 		UIModel.onAddSummonClicked += p_listener.OnAddSummonClicked;
 		UIModel.onAddTargetClicked += p_listener.OnAddTargetClicked;
+		UIModel.onCloseSummonSubContainer += p_listener.OnCloseSummonSubContainer;
+		UIModel.onCloseMinionSubContainer += p_listener.OnCloseMinionSubContainer;
+		UIModel.onCloseTargetSubContainer += p_listener.OnCloseTargetSubContainer;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -139,6 +150,9 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onAddMinionClicked -= p_listener.OnAddMinionClicked;
 		UIModel.onAddSummonClicked -= p_listener.OnAddSummonClicked;
 		UIModel.onAddTargetClicked -= p_listener.OnAddTargetClicked;
+		UIModel.onCloseSummonSubContainer -= p_listener.OnCloseSummonSubContainer;
+		UIModel.onCloseMinionSubContainer -= p_listener.OnCloseMinionSubContainer;
+		UIModel.onCloseTargetSubContainer -= p_listener.OnCloseTargetSubContainer;
 	}
 	#endregion
 }

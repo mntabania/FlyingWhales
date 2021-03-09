@@ -1746,6 +1746,9 @@ MonoBehaviour:
   btnAddSummon: {fileID: 5042080369103619472}
   btnAddMinion: {fileID: 5042080369486123160}
   btnAddTarget: {fileID: 5042080370107026298}
+  btnCloseSummonSubContainer: {fileID: 5042080370142339759}
+  btnCloseMinionSubContainer: {fileID: 2060806864155386062}
+  btnCloseTargetSubContainer: {fileID: 5042080369901104622}
   scrollViewDeployedSummons: {fileID: 2904461018820844335}
   scrollViewDeployedMinions: {fileID: 5088873002125383782}
   scrollViewDeployedTargets: {fileID: 6698905039120052258}
@@ -1756,7 +1759,7 @@ MonoBehaviour:
   subSummonContainer: {fileID: 5042080370055992357}
   subMinionContainer: {fileID: 5042080370174003674}
   subTargetContainer: {fileID: 5042080368509301726}
-  txtTitle: {fileID: 0}
+  txtTitle: {fileID: 5042080370346153784}
 --- !u!1 &2060806865342996991
 GameObject:
   m_ObjectHideFlags: 0
@@ -7373,10 +7376,10 @@ RectTransform:
   m_Father: {fileID: 117324093082651269}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 145, y: -28}
+  m_SizeDelta: {x: 290, y: 56}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5401141114350016916
 CanvasRenderer:
