@@ -238,6 +238,7 @@ MonoBehaviour:
     summonPortrait: {fileID: 0}
   summonType: 0
   playerSkillType: 0
+  manaIconAndPrice: {fileID: 4979527502256935085}
 --- !u!1 &1485519852463924173
 GameObject:
   m_ObjectHideFlags: 0
