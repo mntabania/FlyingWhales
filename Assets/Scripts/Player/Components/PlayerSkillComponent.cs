@@ -105,7 +105,7 @@ public class PlayerSkillComponent {
     public void PlayerChoseMinionToUnlock(PLAYER_SKILL_TYPE p_skillType, int p_unlockCost) {
         currentDemonBeingSummoned = p_skillType;
         currentDemonUnlockCost = p_unlockCost;
-        timerSummonDemon.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour), OnCompleteMinionUnlock);
+        timerSummonDemon.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteMinionUnlock);
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_DEMON_TO_UNLOCK, p_skillType, p_unlockCost);
     }
     public void CancelCurrentMinionUnlock() {
@@ -125,7 +125,7 @@ public class PlayerSkillComponent {
     public void PlayerChoseStructureToUnlock(PLAYER_SKILL_TYPE p_skillType, int p_unlockCost) {
         currentStructureBeingUnlocked = p_skillType;
         currentStructureUnlockCost = p_unlockCost;
-        timerUnlockStructure.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour), OnCompleteStructureUnlock);
+        timerUnlockStructure.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteStructureUnlock);
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_STRUCTURE_TO_UNLOCK, p_skillType, p_unlockCost);
     }
     public void CancelCurrentStructureUnlock() {
