@@ -134,4 +134,12 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         isDeployed = true;
         isReadyForDeploy = false;
     }
+
+    public void HideRemoveButton() {
+        btnMonster.gameObject.SetActive(false);
+    }
+
+    public void ShowRemoveButton() {
+        btnMonster.gameObject.SetActive(true);
+    }
 }

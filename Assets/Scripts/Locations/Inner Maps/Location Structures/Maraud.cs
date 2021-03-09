@@ -12,7 +12,7 @@ namespace Inner_Maps.Location_Structures {
         public int deployedSummonCount => deployedCSummonlass.Count;
         public int deployedMinionCount => deployedMinionsSkillType.Count;
 
-        public int maxSummonLimitDeployCount = 2;
+        public int maxSummonLimitDeployCount = 5;
         public int readyForDeploySummonCount;
         public int readyForDeployMinionCount;
 

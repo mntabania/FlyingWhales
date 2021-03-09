@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using TMPro;
 public class MaraudUIModel : MVCUIModel {
 
-	public Action<bool> onMinionClicked;
-	public Action<bool> onSummonClicked;
-	public Action<int> onDropDownBehaviourChanged;
+	public Action onAddMinionClicked;
+	public Action onAddSummonClicked;
+	public Action onAddTargetClicked;
 	public Action onDeployClicked;
 	public Action onCloseClicked;
 
@@ -18,32 +18,38 @@ public class MaraudUIModel : MVCUIModel {
 
 	public Button btnDeploy;
 	public Button btnClose;
-	public RuinarchToggle btnSummonsTab;
-	public RuinarchToggle btnMinionsTab;
+	public Button btnAddSummon;
+	public Button btnAddMinion;
+	public Button btnAddTarget;
 
-	public Transform scrollViewSummons;
-	public Transform scrollViewMinions;
+	public Transform scrollViewDeployedSummons;
+	public Transform scrollViewDeployedMinions;
+	public Transform scrollViewDeployedTargets;
 	public Transform availableSummonsParent;
 	public Transform availableMinionsParent;
 	public Transform deployedMinionsParent;
 	public Transform deployedSummonsParent;
 
-	public TMP_Dropdown drpDwnBehaviour;
+	public GameObject subSummonContainer;
+	public GameObject subMinionContainer;
+	public GameObject subTargetContainer;
+
+	public Text txtTitle;
 
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);
-		btnSummonsTab.onValueChanged.AddListener(ClickSummonsTab);
-		btnMinionsTab.onValueChanged.AddListener(ClickMinionsTab);
-		drpDwnBehaviour.onValueChanged.AddListener(OnDropDownBehaviourChanged);
+		btnAddSummon.onClick.AddListener(ClickAddSummon);
+		btnAddMinion.onClick.AddListener(ClickAddMinion);
+		btnAddTarget.onClick.AddListener(ClickAddTarget);
 	}
 
 	private void OnDisable() {
 		btnDeploy.onClick.RemoveListener(ClickDeploy);
 		btnClose.onClick.RemoveListener(ClickClose);
-		btnSummonsTab.onValueChanged.RemoveListener(ClickSummonsTab);
-		btnMinionsTab.onValueChanged.RemoveListener(ClickMinionsTab);
-		drpDwnBehaviour.onValueChanged.RemoveListener(OnDropDownBehaviourChanged);
+		btnAddSummon.onClick.RemoveListener(ClickAddSummon);
+		btnAddMinion.onClick.RemoveListener(ClickAddMinion);
+		btnAddTarget.onClick.RemoveListener(ClickAddTarget);
 	}
 
 	#region Buttons OnClick trigger
@@ -54,16 +60,16 @@ public class MaraudUIModel : MVCUIModel {
 	void ClickClose() {
 		onCloseClicked?.Invoke();
 	}
-	void ClickSummonsTab(bool isOn) {
-		onSummonClicked?.Invoke(isOn);
+	void ClickAddSummon() {
+		onAddSummonClicked?.Invoke();
 	}
 
-	void ClickMinionsTab(bool isOn) {
-		onMinionClicked?.Invoke(isOn); 
+	void ClickAddMinion() {
+		onAddMinionClicked?.Invoke(); 
 	}
 
-	void OnDropDownBehaviourChanged(int val) {
-		onDropDownBehaviourChanged?.Invoke(val);
+	void ClickAddTarget() {
+		onAddTargetClicked?.Invoke();
 	}
 	#endregion
 }
