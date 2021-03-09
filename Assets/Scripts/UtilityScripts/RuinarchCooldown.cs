@@ -15,7 +15,9 @@ namespace UtilityScripts {
         public RuinarchCooldown(string p_name) {
             cooldownName = p_name;
         }
-        
+        public void LoadStart() {
+            Messenger.AddListener(Signals.TICK_ENDED, TimerTick);
+        }
         public void Start(GameDate p_start, GameDate p_end) {
             cooldownStart = p_start;
             cooldownEnd = p_end;

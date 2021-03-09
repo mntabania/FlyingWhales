@@ -39,7 +39,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private GameObject hoverObj;
     [SerializeField] private GameObject leaderIcon;
 
-    private System.Action onClickAction;
+    private System.Action _onClickAction;
     private bool _isSubscribedToListeners;
     #region getters/setters
     public Character character => _character;
@@ -197,6 +197,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Pointer Actions
+    public void AddPointerClickAction(System.Action p_action) {
+        _onClickAction += p_action;
+    }
     public void OnPointerClick(PointerEventData eventData) {
         if (ignoreInteractions) {
             return;
@@ -214,7 +217,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         OnPointerClick(eventData as PointerEventData);
     }
     public void OnLeftClick() {
-        ShowCharacterMenu();
+        if (_onClickAction != null) {
+            _onClickAction?.Invoke();
+        } else {
+            ShowCharacterMenu();    
+        }
     }
     private void OnRightClick() {
         if (_character != null) {
@@ -301,6 +308,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public override void Reset() {
         base.Reset();
         _character = null;
+        _onClickAction = null;
         ignoreInteractions = false;
         RemoveListeners();
     }

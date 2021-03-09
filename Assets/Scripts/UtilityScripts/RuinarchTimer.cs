@@ -17,7 +17,10 @@ namespace UtilityScripts {
         public RuinarchTimer(string p_name) {
             timerName = p_name;
         }
-        
+        public void LoadStart(System.Action p_endAction) {
+            _onTimerEndAction = p_endAction;
+            Messenger.AddListener(Signals.TICK_ENDED, TimerTick);
+        }
         public void Start(GameDate p_start, GameDate p_end, System.Action p_endAction) {
             timerStart = p_start;
             timerEnd = p_end;
@@ -42,7 +45,11 @@ namespace UtilityScripts {
         /// </summary>
         /// <returns>A percentage value divided by 100 (eg 1% = 0.01f, 25% = 0.25f, etc.)</returns>
         public float GetCurrentTimerProgressPercent() {
-            return (float) currentTimerProgress / totalTicksInTimer;
+            float currentTimerProgressPercent = (float) currentTimerProgress / totalTicksInTimer;
+            if (float.IsNaN(currentTimerProgressPercent)) {
+                currentTimerProgressPercent = 0f;
+            }
+            return currentTimerProgressPercent;
         }
         public void Stop() {
             timerStart = default;

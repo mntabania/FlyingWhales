@@ -841,6 +841,7 @@ public class Player : ILeader, IObjectManipulator {
         for (int i = 0; i < data.allChaosOrbs.Count; i++) {
             data.allChaosOrbs[i].Load();
         }
+        playerSkillComponent.LoadReferences(data.playerSkillComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion

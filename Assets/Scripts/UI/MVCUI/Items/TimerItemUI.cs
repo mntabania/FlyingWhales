@@ -34,11 +34,7 @@ public class TimerItemUI : MonoBehaviour {
         // barProgress.value = p_progress;
     }
     private void ForceUpdateOnEnable() {
-        if (_timer == null) {
-            barProgress.value = 0f;
-        } else {
-            barProgress.value = _timer.GetCurrentTimerProgressPercent();
-        }
+        barProgress.value = _timer?.GetCurrentTimerProgressPercent() ?? 0f;
     }
     private void OnDestroy() {
         _timer = null;

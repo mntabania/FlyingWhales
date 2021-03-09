@@ -14,6 +14,7 @@ namespace UtilityScripts {
          * */
         public static void AddToAwarenessList(IPointOfInterest poi, LocationGridTile gridTileLocation) {
             ILocationAwareness locationAwareness = null;
+            if (gridTileLocation == null) { return; }
             if (gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && gridTileLocation.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                 locationAwareness = gridTileLocation.structure.locationAwareness;
             } else {

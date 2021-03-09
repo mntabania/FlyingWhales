@@ -58,6 +58,14 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	#endregion
 
+	public override void HideUI() {
+		base.HideUI();
+		UIManager.Instance.SetSpeedTogglesState(true);
+		UIManager.Instance.ResumeLastProgressionSpeed();
+	}
+	public override void ShowUI() {
+		m_mvcUIView.ShowUI();
+	}
 	bool GetIsAvailable() { 
 		return GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased) <= 0;
 	}
@@ -85,33 +93,57 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			if (m_weightedList.Count < count) {
 				count = m_weightedList.Count;
 			}
-
-			if (m_skillItems.Count <= 0) {
-				//AddTestSkill(PLAYER_SKILL_TYPE.PLAGUE);
-				for (int x = 0; x < m_numberOfSkills; ++x) {
-					PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_purchaseSkillUIView.GetSkillsParent(), true);
+			if (PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count <= 0) {
+				//randomize from weights if no choices have been set.
+				for (int i = 0; i < count; i++) {
 					SkillData data = m_weightedList.PickRandomElementGivenWeights();
+					m_weightedList.RemoveElement(data);
+					PlayerManager.Instance.player.playerSkillComponent.AddCurrentPlayerSpellChoice(data.type);
+				}
+			}
+			
+			
+			if (m_skillItems.Count <= 0) {
+				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
+					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
+					SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
+					PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_purchaseSkillUIView.GetSkillsParent(), true);
 					go.InitItem(data.type, PlayerManager.Instance.player.mana);
 					go.onButtonClick += OnSkillClick;
 					m_skillItems.Add(go);
-					m_weightedList.RemoveElement(data);
 				}
+				//AddTestSkill(PLAYER_SKILL_TYPE.PLAGUE);
+				// for (int x = 0; x < m_numberOfSkills; ++x) {
+				// 	PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_purchaseSkillUIView.GetSkillsParent(), true);
+				// 	SkillData data = m_weightedList.PickRandomElementGivenWeights();
+				// 	go.InitItem(data.type, PlayerManager.Instance.player.mana);
+				// 	go.onButtonClick += OnSkillClick;
+				// 	m_skillItems.Add(go);
+				// 	m_weightedList.RemoveElement(data);
+				// }
 			} else {
-				for (int x = 0; x < count; ++x) {
-					/* should remove if everything has a weight */
-					if (m_weightedList.Count <= 0) {
-						break;
-					}
-					SkillData data = m_weightedList.PickRandomElementGivenWeights();
-					if (data == null) { /* should remove if everything has a weight */
-						m_weightedList.RemoveElement(data);
-						--x;
-						continue;
-					}
-					m_skillItems[x].gameObject.SetActive(true);
-					m_skillItems[x].InitItem(data.type, PlayerManager.Instance.player.mana);
-					m_weightedList.RemoveElement(data);
+				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
+					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
+					SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
+					PurchaseSkillItemUI skillItem = m_skillItems[i];
+					skillItem.gameObject.SetActive(true);
+					skillItem.InitItem(data.type, PlayerManager.Instance.player.mana);
 				}
+				// for (int x = 0; x < count; ++x) {
+				// 	/* should remove if everything has a weight */
+				// 	if (m_weightedList.Count <= 0) {
+				// 		break;
+				// 	}
+				// 	SkillData data = m_weightedList.PickRandomElementGivenWeights();
+				// 	if (data == null) { /* should remove if everything has a weight */
+				// 		m_weightedList.RemoveElement(data);
+				// 		--x;
+				// 		continue;
+				// 	}
+				// 	m_skillItems[x].gameObject.SetActive(true);
+				// 	m_skillItems[x].InitItem(data.type, PlayerManager.Instance.player.mana);
+				// 	m_weightedList.RemoveElement(data);
+				// }
 			}
 			m_weightedList.Clear();
 		}
@@ -172,10 +204,14 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			m_purchaseSkillUIView = p_ui;
 			m_purchaseSkillUIView.Subscribe(this);
 			InitUI(p_ui.UIModel, p_ui);
+			int orderInHierarchy = UIManager.Instance.structureInfoUI.transform.GetSiblingIndex() + 2;
+			m_purchaseSkillUIView.UIModel.transform.SetSiblingIndex(orderInHierarchy);
 			ShowUI();
 			m_purchaseSkillUIView.ShowSkills();
 			SpawnItems();
-			GameManager.Instance.SetPausedState(true);
+			UpdateRerollBtn();
+			UIManager.Instance.Pause();
+			UIManager.Instance.SetSpeedTogglesState(false);
 		});
 	}
 
@@ -195,7 +231,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			m_purchaseSkillUIView.HideSkills();
 			m_purchaseSkillUIView.SetMessage("New Abilities will be available after " + (GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased)) + " ticks");
 		}
-		GameManager.Instance.SetPausedState(true);
+		UIManager.Instance.Pause();
+		UIManager.Instance.SetSpeedTogglesState(false);
 	}
 
 	#region Reroll
@@ -222,7 +259,6 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		// m_purchaseSkillUIView.SetMessage("New Abilities will be available after " + (GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased)) + " ticks");
 	}
 	public void OnCloseClicked() {
-		GameManager.Instance.SetPausedState(false);
 		HideUI();
 	}
 	public void OnHoverOverReroll() {

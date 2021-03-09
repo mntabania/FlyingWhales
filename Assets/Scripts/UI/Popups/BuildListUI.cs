@@ -15,7 +15,7 @@ public class BuildListUI : PopupMenuBase {
     [SerializeField] private GameObject spellItemPrefab;
     [SerializeField] private UIHoverPosition tooltipPosition;
     
-    private SpellItem[] buildItems;
+    private List<SpellItem> buildItems = new List<SpellItem>();
     
     private void Awake() {
         buildToggle.interactable = false;
@@ -53,24 +53,29 @@ public class BuildListUI : PopupMenuBase {
     public void Initialize() {
         PopulateBuildingList();
         Messenger.AddListener(UISignals.UPDATE_BUILD_LIST, UpdateBuildList);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, OnPlayerGainedDemonicStructure);
         buildToggle.interactable = true;
     }
-    
-    public void PopulateBuildingList() {
-        buildItems = new SpellItem[PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Count];
+    private void OnPlayerGainedDemonicStructure(PLAYER_SKILL_TYPE p_structureType) {
+        CreateStructureItem(p_structureType);
+    }
+    private void PopulateBuildingList() {
+        UtilityScripts.Utilities.DestroyChildrenObjectPool(buildingsScrollRect.content);  
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Count; i++) {
             PLAYER_SKILL_TYPE structureSpell = PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills[i];
-            DemonicStructurePlayerSkill demonicStructurePlayerSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureSpell);
-            GameObject spellNameplate = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name,
-                Vector3.zero, Quaternion.identity, buildingsScrollRect.content);
-            SpellItem spellItem = spellNameplate.GetComponent<SpellItem>();
-            spellItem.SetObject(demonicStructurePlayerSkill);
-            spellItem.SetInteractableChecker(CanChooseLandmark);
-            spellItem.AddHoverEnterAction(OnHoverSpellItem);
-            spellItem.AddHoverExitAction(OnHoverExitSpellItem);
-            spellItem.ForceUpdateInteractableState();
-            buildItems[i] = spellItem;
+            CreateStructureItem(structureSpell);
         }
+    }
+    private void CreateStructureItem(PLAYER_SKILL_TYPE structureSpell) {
+        DemonicStructurePlayerSkill demonicStructurePlayerSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureSpell);
+        GameObject spellNameplate = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, buildingsScrollRect.content);
+        SpellItem spellItem = spellNameplate.GetComponent<SpellItem>();
+        spellItem.SetObject(demonicStructurePlayerSkill);
+        spellItem.SetInteractableChecker(CanChooseLandmark);
+        spellItem.AddHoverEnterAction(OnHoverSpellItem);
+        spellItem.AddHoverExitAction(OnHoverExitSpellItem);
+        spellItem.ForceUpdateInteractableState();
+        buildItems.Add(spellItem);
     }
     private void OnHoverSpellItem(SkillData spellData) {
         PlayerUI.Instance.OnHoverSpell(spellData, tooltipPosition);
@@ -79,7 +84,7 @@ public class BuildListUI : PopupMenuBase {
         PlayerUI.Instance.OnHoverOutSpell(spellData);
     }
     private void UpdateBuildList() {
-        for (int i = 0; i < buildItems.Length; i++) {
+        for (int i = 0; i < buildItems.Count; i++) {
             SpellItem item = buildItems[i];
             item.ForceUpdateInteractableState();
             // if (item.toggle.interactable) {

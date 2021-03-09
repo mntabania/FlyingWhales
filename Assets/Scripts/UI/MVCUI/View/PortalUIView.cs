@@ -64,4 +64,24 @@ public class PortalUIView : MVCUIView {
         UIModel.goTimerReleaseAbility.SetActive(false);
         UIModel.btnReleaseAbility.gameObject.SetActive(true);
     }
+    
+    public void ShowUnlockDemonTimerAndHideButton(SkillData p_skillToUnlock) {
+        UIModel.timerSummonDemon.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillToUnlock.name}");
+        UIModel.goTimerSummonDemon.SetActive(true);
+        UIModel.btnSummonDemon.gameObject.SetActive(false);
+    }
+    public void ShowUnlockDemonButtonAndHideTimer() {
+        UIModel.goTimerSummonDemon.SetActive(false);
+        UIModel.btnSummonDemon.gameObject.SetActive(true);
+    }
+    
+    public void ShowUnlockStructureTimerAndHideButton(SkillData p_skillToUnlock) {
+        UIModel.timerObtainBlueprint.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "obtain_blueprint_active")} {p_skillToUnlock.name}");
+        UIModel.goTimerObtainBlueprint.SetActive(true);
+        UIModel.btnObtainBlueprint.gameObject.SetActive(false);
+    }
+    public void ShowUnlockStructureButtonAndHideTimer() {
+        UIModel.goTimerObtainBlueprint.SetActive(false);
+        UIModel.btnObtainBlueprint.gameObject.SetActive(true);
+    }
 }
