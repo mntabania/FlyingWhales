@@ -8344,6 +8344,8 @@ GameObject:
   - component: {fileID: 379918036}
   - component: {fileID: 379918035}
   - component: {fileID: 379918034}
+  - component: {fileID: 379918038}
+  - component: {fileID: 379918037}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -8463,6 +8465,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 379918032}
   m_CullTransparentMesh: 0
+--- !u!114 &379918037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379918032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dafb368b9b14ef44fbbf5b9ce4fd6711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &379918038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379918032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0.5
+  m_Width: 0.3
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 1
+    initialPlayDelay: 0
+    duration: 3
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &380557548
 GameObject:
   m_ObjectHideFlags: 0
@@ -18209,9 +18249,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b78f9ebfd38b9ad48a4bea7c131dac2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  regionNameTopMenuGO: {fileID: 1701809088}
-  regionNameTopMenuText: {fileID: 190503514}
-  regionNameHoverHandler: {fileID: 1701809092}
   spiritEnergyLabel: {fileID: 443145493}
   spiritEnergyContainer: {fileID: 1414646974}
   manaLbl: {fileID: 2065112572}
@@ -20169,6 +20206,8 @@ GameObject:
   - component: {fileID: 688492914}
   - component: {fileID: 688492913}
   - component: {fileID: 688492912}
+  - component: {fileID: 688492916}
+  - component: {fileID: 688492915}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -20288,6 +20327,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 688492910}
   m_CullTransparentMesh: 0
+--- !u!114 &688492915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688492910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dafb368b9b14ef44fbbf5b9ce4fd6711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &688492916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688492910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0.5
+  m_Width: 0.3
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 1
+    initialPlayDelay: 0
+    duration: 3
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &688820180
 GameObject:
   m_ObjectHideFlags: 0
@@ -21999,6 +22076,8 @@ GameObject:
   - component: {fileID: 750484743}
   - component: {fileID: 750484742}
   - component: {fileID: 750484741}
+  - component: {fileID: 750484745}
+  - component: {fileID: 750484744}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -22118,6 +22197,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 750484739}
   m_CullTransparentMesh: 0
+--- !u!114 &750484744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 750484739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dafb368b9b14ef44fbbf5b9ce4fd6711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &750484745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 750484739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0.5
+  m_Width: 0.3
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 1
+    initialPlayDelay: 0
+    duration: 3
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &752113106
 GameObject:
   m_ObjectHideFlags: 0
