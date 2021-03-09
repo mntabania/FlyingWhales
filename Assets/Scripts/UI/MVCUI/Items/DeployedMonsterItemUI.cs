@@ -63,6 +63,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
             txtStatus.text = "Deployed";
             isReadyForDeploy = false;
             isDeployed = true;
+            HideRemoveButton();
         }
         lockCover.SetActive(false);
         emptyCover.SetActive(false);
@@ -88,12 +89,19 @@ public class DeployedMonsterItemUI : MonoBehaviour {
             txtStatus.text = "Deployed";
             isReadyForDeploy = false;
             isDeployed = true;
+            HideRemoveButton();
         }
         lockCover.SetActive(false);
         emptyCover.SetActive(false);
     }
 
     public void MakeSlotEmpty() {
+        isDeployed = false;
+        isReadyForDeploy = false;
+        emptyCover.SetActive(true);
+    }
+
+    public void ResetButton() {
         isDeployed = false;
         isReadyForDeploy = false;
         emptyCover.SetActive(true);
@@ -133,6 +141,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         txtStatus.text = "Deployed";
         isDeployed = true;
         isReadyForDeploy = false;
+        HideRemoveButton();
     }
 
     public void HideRemoveButton() {
