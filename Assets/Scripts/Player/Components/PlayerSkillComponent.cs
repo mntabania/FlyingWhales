@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class PlayerSkillComponent {
     //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
@@ -23,6 +24,18 @@ public class PlayerSkillComponent {
     
     //Blackmail
     public List<Character> blackmailedCharacters { get; private set; }
+    
+    //Skill Unlocking
+    public PLAYER_SKILL_TYPE currentSpellBeingUnlocked { get; private set; }
+    public int currentSpellUnlockCost { get; private set; }
+    public RuinarchTimer timerUnlockSpell { get; }
+    public RuinarchCooldown cooldownReroll { get; }
+        
+    public PLAYER_SKILL_TYPE currentDemonBeingSummoned { get; private set; }
+    public RuinarchTimer timerSummonDemon { get; }
+        
+    public PLAYER_SKILL_TYPE currentBlueprintBeingObtained { get; private set; }
+    public RuinarchTimer timerObtainBlueprint { get; }
 
     public PlayerSkillComponent() {
         //nodesData = new List<PlayerSkillTreeNodeData>();
@@ -38,23 +51,13 @@ public class PlayerSkillComponent {
         //summons = new List<Summon>();
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
-    }
-
-    public void SetPlayer(Player player) {
-        
-    }
-
-    public bool CheckIfSkillIsAvailable(PLAYER_SKILL_TYPE p_targetSkill) {
-        if (spells.Contains(p_targetSkill)) {
-            return true;
-        }
-        if (playerActions.Contains(p_targetSkill)) {
-            return true;
-        }
-        if (afflictions.Contains(p_targetSkill)) {
-            return true;
-        }
-        return false;
+        currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        timerUnlockSpell = new RuinarchTimer("Spell Unlock");
+        cooldownReroll = new RuinarchCooldown("Reroll");
+        currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
+        timerSummonDemon = new RuinarchTimer("Summon Demon");
+        currentBlueprintBeingObtained = PLAYER_SKILL_TYPE.NONE;
+        timerObtainBlueprint = new RuinarchTimer("Obtain Blueprint");
     }
 
     #region Loading
@@ -65,6 +68,33 @@ public class PlayerSkillComponent {
                 CategorizePlayerSkill(spell);
             }
         }
+    }
+    #endregion
+
+    #region Unlocking
+    public void PlayerChoseSkillToUnlock(SkillData p_skillData, int p_unlockCost) {
+        currentSpellBeingUnlocked = p_skillData.type;
+        currentSpellUnlockCost = p_unlockCost;
+        timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteSpellUnlockTimer);
+        Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, p_skillData, p_unlockCost);
+    }
+    public void CancelCurrentPlayerSkillUnlock() {
+        //Refund player mana
+        PlayerManager.Instance.player.AdjustMana(currentSpellUnlockCost);
+        currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        currentSpellUnlockCost = 0;
+        timerUnlockSpell.Stop();
+        Messenger.Broadcast(PlayerSignals.PLAYER_SKILL_UNLOCK_CANCELLED);
+    }
+    private void OnCompleteSpellUnlockTimer() {
+        PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(currentSpellBeingUnlocked);
+        Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);
+        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, currentSpellBeingUnlocked, currentSpellUnlockCost);
+        currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        currentSpellUnlockCost = 0;
+    }
+    public void OnRerollUsed() {
+        cooldownReroll.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour));
     }
     #endregion
 
@@ -156,7 +186,6 @@ public class PlayerSkillComponent {
             break;
         }
     }
-
     public int GetLevelOfSkill(SkillData p_targetSkill) {
         int currentLevel = 0;
         switch (p_targetSkill.category) {
@@ -187,6 +216,18 @@ public class PlayerSkillComponent {
     }
 
     #region Utilities
+    public bool CheckIfSkillIsAvailable(PLAYER_SKILL_TYPE p_targetSkill) {
+        if (spells.Contains(p_targetSkill)) {
+            return true;
+        }
+        if (playerActions.Contains(p_targetSkill)) {
+            return true;
+        }
+        if (afflictions.Contains(p_targetSkill)) {
+            return true;
+        }
+        return false;
+    }
     public bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {
         return PlayerSkillManager.Instance.GetPlayerSkillData(type).isInUse;
     }

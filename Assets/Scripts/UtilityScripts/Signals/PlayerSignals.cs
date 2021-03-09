@@ -101,4 +101,14 @@
     /// Signals for MONSTER UNDERLINGS of PLAYER
     /// </summary>
     public static string UPDATED_MONSTER_UNDERLING = "UpdatedMonsterUnderling";
+
+    /// <summary>
+    /// Parameters: SkillData skill, int upgradeCost
+    /// </summary>
+    public static string PLAYER_CHOSE_SKILL_TO_UNLOCK = "OnPlayerChoseSkillToUnlock";
+    /// <summary>
+    /// Parameters: SkillData skill, int upgradeCost
+    /// </summary>
+    public static string PLAYER_FINISHED_SKILL_UNLOCK = "OnPlayerFinishedSkillUnlock";
+    public static string PLAYER_SKILL_UNLOCK_CANCELLED = "OnPlayerSkillUnlocked";
 }

@@ -67,7 +67,7 @@ public class Player : ILeader, IObjectManipulator {
         plagueComponent = new PlagueComponent();
         underlingsComponent = new PlayerUnderlingsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
-        AddListeners();
+        SubscribeListeners();
         
     }
     public Player(SaveDataPlayerGame data) {
@@ -78,11 +78,10 @@ public class Player : ILeader, IObjectManipulator {
         underlingsComponent = data.underlingsComponent.Load();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);
-        playerSkillComponent.SetPlayer(this);
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         m_manaRegenComponent = new ManaRegenComponent(this);
-        AddListeners();
+        SubscribeListeners();
     }
 
     public void LoadPlayerData(SaveDataPlayer save) {
@@ -98,7 +97,7 @@ public class Player : ILeader, IObjectManipulator {
     }
 
     #region Listeners
-    private void AddListeners() {
+    private void SubscribeListeners() {
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
 
@@ -106,7 +105,7 @@ public class Player : ILeader, IObjectManipulator {
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         
-        underlingsComponent.AddListeners();
+        underlingsComponent.SubscribeListeners();
     }
     #endregion
 

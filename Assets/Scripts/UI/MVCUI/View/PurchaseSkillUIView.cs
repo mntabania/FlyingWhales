@@ -7,7 +7,8 @@ public class PurchaseSkillUIView : MVCUIView {
 	public interface IListener {
 		void OnRerollClicked();
 		void OnCloseClicked();
-		
+		void OnHoverOverReroll();
+		void OnHoverOutReroll();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -65,11 +66,15 @@ public class PurchaseSkillUIView : MVCUIView {
 	public void Subscribe(IListener p_listener) {
 		UIModel.onCloseClicked += p_listener.OnCloseClicked;
 		UIModel.onRerollClicked += p_listener.OnRerollClicked;
+		UIModel.onHoverOverReroll += p_listener.OnHoverOverReroll;
+		UIModel.onHoverOutReroll += p_listener.OnHoverOutReroll;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
 		UIModel.onCloseClicked -= p_listener.OnCloseClicked;
 		UIModel.onRerollClicked -= p_listener.OnRerollClicked;
+		UIModel.onHoverOverReroll -= p_listener.OnHoverOverReroll;
+		UIModel.onHoverOutReroll -= p_listener.OnHoverOutReroll;
 	}
 	#endregion
 }

@@ -12,14 +12,14 @@ public class SkillProgressionManager {
 		return success;
 	}
 
-	public int CheckAndUnlock(PlayerSkillComponent p_skills, CurrenciesComponent p_currencies, PLAYER_SKILL_TYPE p_type) {
-		int manaCost = CheckRequirement(p_skills, p_currencies.Mana, p_type);
-		return manaCost;
+	public int CheckRequirementsAndGetUnlockCost(PlayerSkillComponent p_skills, CurrenciesComponent p_currencies, PLAYER_SKILL_TYPE p_type) {
+		int unlockCost = CheckRequirement(p_skills, p_currencies.Mana, p_type);
+		return unlockCost;
 	}
 
-	public int CheckAndUnlock(PlayerSkillComponent p_skills, int p_mana, PLAYER_SKILL_TYPE p_type) {
-		int manaCost = CheckRequirement(p_skills, p_mana, p_type);
-		return manaCost;
+	public int CheckRequirementsAndGetUnlockCost(PlayerSkillComponent p_skills, int p_mana, PLAYER_SKILL_TYPE p_type) {
+		int unlockCost = CheckRequirement(p_skills, p_mana, p_type);
+		return unlockCost;
 	}
 
 	private int CheckRequirement(PlayerSkillComponent p_availablePlayerSkills, int p_mana, PLAYER_SKILL_TYPE p_type) {

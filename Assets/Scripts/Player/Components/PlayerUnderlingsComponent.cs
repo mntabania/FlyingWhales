@@ -41,7 +41,7 @@ public class PlayerUnderlingsComponent {
     #endregion
 
     #region Listeners
-    public void AddListeners() {
+    public void SubscribeListeners() {
         Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
         Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
     }

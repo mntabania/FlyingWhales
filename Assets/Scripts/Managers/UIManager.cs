@@ -136,7 +136,7 @@ public class UIManager : BaseMonoBehaviour {
     
     public bool tempDisableShowInfoUI { get; private set; }
 
-    public List<UnallowOverlaps> unallowOverlaps;
+    public List<UnallowOverlaps> unallowOverlaps = new List<UnallowOverlaps>();
     
     #region Monobehaviours
     private void Awake() {
@@ -161,7 +161,6 @@ public class UIManager : BaseMonoBehaviour {
     internal void InitializeUI() {
         _pointer = new PointerEventData(EventSystem.current);
         _raycastResults = new List<RaycastResult>();
-        unallowOverlaps = new List<UnallowOverlaps>();
         allMenus = transform.GetComponentsInChildren<InfoUIBase>(true);
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();

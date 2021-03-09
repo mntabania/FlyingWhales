@@ -1,4 +1,5 @@
 ﻿using Coffee.UIExtensions;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,6 +9,7 @@ namespace Ruinarch.Custom_UI {
         private UIShiny shineEffect;
         private System.Action _onHoverOverAction;
         private System.Action _onHoverOutAction;
+        private TextMeshProUGUI _lblBtnName;
         
         #region Monobehaviours
         protected override void Awake() {
@@ -20,6 +22,7 @@ namespace Ruinarch.Custom_UI {
                 if (shineEffect != null) {
                     shineEffect.Stop();
                 }
+                _lblBtnName = GetComponentInChildren<TextMeshProUGUI>();
             }
         }
         protected override void OnEnable() {
@@ -83,7 +86,6 @@ namespace Ruinarch.Custom_UI {
             _onHoverOutAction -= p_hoverOutAction;
         }
         #endregion
-        
 
         #region Shine
         public void StartGlow() {
@@ -109,6 +111,14 @@ namespace Ruinarch.Custom_UI {
         public void ForceUpdateGlow() {
             if (InputManager.Instance != null && InputManager.Instance.ShouldBeHighlighted(this)) {
                 StartGlow();
+            }
+        }
+        #endregion
+
+        #region Label
+        public void SetButtonLabelName(string p_name) {
+            if (_lblBtnName != null) {
+                _lblBtnName.name = p_name;    
             }
         }
         #endregion
