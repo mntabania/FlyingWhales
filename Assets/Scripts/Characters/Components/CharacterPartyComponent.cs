@@ -46,6 +46,7 @@ public class CharacterPartyComponent : CharacterComponent {
                 Character beacon = currentParty.beaconComponent.currentBeaconCharacter;
                 if (beacon != null && owner.hasMarker) {
                     isFollowingBeacon = true;
+                    owner.movementComponent.UpdateSpeed();
                     owner.marker.GoToPOI(beacon, OnArriveFollowingBeacon);
                 }
             }
@@ -68,6 +69,7 @@ public class CharacterPartyComponent : CharacterComponent {
         if (isFollowingBeacon) {
             if (hasParty && owner.hasMarker) {
                 isFollowingBeacon = false;
+                owner.movementComponent.UpdateSpeed();
                 owner.marker.pathfindingAI.ClearAllCurrentPathData();
                 owner.marker.StopMovement();
             }

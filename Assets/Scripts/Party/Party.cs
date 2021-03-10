@@ -309,7 +309,6 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
         //Every switch of state we must cancel all jobs currently in the party, because we assume that the jobs in list is just relevant to the previous state
         ForceCancelAllJobs();
-        beaconComponent.UpdateBeaconCharacter();
         if (state == PARTY_STATE.None) {
             OnSwitchToNoneState(prevState);
         } else if (state == PARTY_STATE.Waiting) {
@@ -321,6 +320,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         } else if (state == PARTY_STATE.Working) {
             OnSwitchToWorkingState(prevState);
         }
+        beaconComponent.UpdateBeaconCharacter();
     }
     #endregion
 
@@ -372,7 +372,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         if (partyState == PARTY_STATE.Waiting && !isDisbanded && isActive) {
             //Messenger.RemoveListener(Signals.HOUR_STARTED, WaitingPerHour); //Removed this because there is already a call on OnSwitchFromWaitingState
 
-            if (membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
+            if (membersThatJoinedQuest.Count >= currentQuest.minimumPartySize || isPlayerParty) {
                 for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
                     Character member = membersThatJoinedQuest[i];
                     //Member can only dig once the party is travelling
