@@ -29,6 +29,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public SaveDataPlayerSkillComponent playerSkillComponent;
     public SaveDataPlagueComponent plagueComponent;
     public SaveDataPlayerUnderlingsComponent underlingsComponent;
+    public SaveDataPlayerTileObjectComponent tileObjectComponent;
     public SaveDataStoredTargetsComponent storedTargetsComponent;
 
     #region Overrides
@@ -102,6 +103,9 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
         underlingsComponent = new SaveDataPlayerUnderlingsComponent();
         underlingsComponent.Save(player.underlingsComponent);
+
+        tileObjectComponent = new SaveDataPlayerTileObjectComponent();
+        tileObjectComponent.Save(player.tileObjectComponent);
         
         storedTargetsComponent = new SaveDataStoredTargetsComponent();
         storedTargetsComponent.Save(player.storedTargetsComponent);

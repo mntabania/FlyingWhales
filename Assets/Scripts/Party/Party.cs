@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -8,7 +9,6 @@ using UtilityScripts;
 using Logs;
 using Object_Pools;
 using UnityEngine.Profiling;
-
 public class Party : ILogFiller, ISavable, IJobOwner {
     public string persistentID { get; private set; }
     public string partyName { get; private set; }
@@ -28,6 +28,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public Area targetCamp { get; private set; }
     public IPartyTargetDestination targetDestination { get; private set; }
     public PartyQuest currentQuest { get; private set; }
+    public float partyWalkSpeed { get; private set; } //Do not save this because this is updated once all members in the party is loaded from save data. see LoadReferences
 
     //public Character campSetter { get; private set; }
     //public Character foodProducer { get; private set; }
@@ -54,6 +55,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party;
     public System.Type serializedData => typeof(SaveDataParty);
     public bool isActive => currentQuest != null;
+    public bool isPlayerParty => partyFaction != null && partyFaction.isPlayerFaction;
     public List<Character> activeMembers => GetActiveMembers();
     public JOB_OWNER ownerType => JOB_OWNER.PARTY;
     public JobTriggerComponent jobTriggerComponent => _jobComponent;
@@ -74,7 +76,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         }
         partyName = PartyManager.Instance.GetNewPartyName(partyCreator);
-        partySettlement = partyCreator.homeSettlement;
+        if (partyCreator.faction != null && partyCreator.faction.isPlayerFaction) {
+            partySettlement = PlayerManager.Instance.player.playerSettlement;
+        } else {
+            partySettlement = partyCreator.homeSettlement;
+        }
         partyFaction = partyCreator.faction;
         isDisbanded = false;
         //hasRested = true;
@@ -208,13 +214,19 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         //    TryAcceptQuest();
         //}
     }
-    private void TryAcceptQuest() {
+    public void TryAcceptQuest() {
         if (isDisbanded) {
             return;
         }
         if (!isActive) {
-            TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
-            if (canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)) {
+            bool acceptQuest = false;
+            if (isPlayerParty) {
+                acceptQuest = true;
+            } else {
+                TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+                acceptQuest = canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON);
+            }
+            if (acceptQuest) {
                 PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
                 if (quest != null) {
                     //hasStartedAcceptingQuests = false;
@@ -316,17 +328,26 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
     #region Waiting State
     private void OnSwitchToWaitingState(PARTY_STATE prevState) {
-        //Cancel all tiredness recovery upon switching to waiting state, so that the members of the party must go to the waiting place immediately
-        //Only tiredness recovery are cancelled because typically they take around 8 hours which by then the quest will be dropped already if all members are asleep
-        CancelAllTirednessRecoveryJobsOfMembers();
-        SetMeetingPlace();
-        StartWaitTimer();
+        if (isPlayerParty) {
+            StartWaitTimer();
+        } else {
+            //Cancel all tiredness recovery upon switching to waiting state, so that the members of the party must go to the waiting place immediately
+            //Only tiredness recovery are cancelled because typically they take around 8 hours which by then the quest will be dropped already if all members are asleep
+            CancelAllTirednessRecoveryJobsOfMembers();
+            SetMeetingPlace();
+            StartWaitTimer();
+        }
+
     }
     private void OnSwitchFromWaitingState(PARTY_STATE prevState) {
     }
     private void StartWaitTimer() {
         perHourElapsedInWaiting = 0;
-        waitingEndDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
+        int ticksToWait = 1; //If Demon Party, only wait for 1 tick before moving because we assume that this party is premade already
+        if (!isPlayerParty) {
+            ticksToWait = GameManager.Instance.GetTicksBasedOnHour(5);
+        }
+        waitingEndDate = GameManager.Instance.Today().AddTicks(ticksToWait);
         SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
     }
     private void PerHourInWaitingState() {
@@ -672,10 +693,12 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         return false;
     }
     private void OnAddMemberThatJoinedQuest(Character character) {
+        UpdatePartyWalkSpeed();
         character.behaviourComponent.AddBehaviourComponent(currentQuest.relatedBehaviour);
         Messenger.Broadcast(PartySignals.CHARACTER_JOINED_PARTY_QUEST, this, character);
     }
     private void OnRemoveMemberThatJoinedQuest(Character character, bool broadcastSignal) {
+        character.movementComponent.UpdateSpeed();
         if (character.traitContainer.HasTrait("Travelling")) {
             character.movementComponent.SetEnableDigging(false);
             character.traitContainer.RemoveTrait(character, "Travelling");
@@ -979,6 +1002,16 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     }
     #endregion
 
+    #region Party Walk Speed
+    private void UpdatePartyWalkSpeed() {
+        if (!isPlayerParty) { return; } //Party Walk Speed applies only on demon parties for now
+        partyWalkSpeed = membersThatJoinedQuest.Min(c => c.movementComponent.walkSpeed);
+        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            membersThatJoinedQuest[i].movementComponent.UpdateSpeed();
+        }
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataParty data) {
         jobBoard.LoadReferences(data.jobBoard);
@@ -1031,6 +1064,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         if (!string.IsNullOrEmpty(data.partyFaction)) {
             partyFaction = FactionManager.Instance.GetFactionByPersistentID(data.partyFaction);
         }
+        UpdatePartyWalkSpeed();
     }
     #endregion
 

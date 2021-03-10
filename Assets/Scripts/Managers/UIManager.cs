@@ -29,6 +29,8 @@ public class UIManager : BaseMonoBehaviour {
     public Action onPortalClicked;
     public Action onSpireClicked;
     public Action<LocationStructure> onMaraudClicked;
+    public Action<LocationStructure> onKennelClicked;
+    public Action<LocationStructure> onTortureChamberClicked;
     public Action<LocationStructure> onDefensePointClicked;
 
     public static UIManager Instance = null;
@@ -1040,6 +1042,12 @@ public class UIManager : BaseMonoBehaviour {
         }
         if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
             onMaraudClicked?.Invoke(structure);
+        }
+        if (structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+            onTortureChamberClicked?.Invoke(structure);
+        }
+        if (structure.structureType == STRUCTURE_TYPE.KENNEL) {
+            onKennelClicked?.Invoke(structure);
         }
         if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
             onDefensePointClicked?.Invoke(structure);

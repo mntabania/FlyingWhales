@@ -10,7 +10,7 @@ namespace Ruinarch.Custom_UI {
         private System.Action _onHoverOverAction;
         private System.Action _onHoverOutAction;
         private TextMeshProUGUI _lblBtnName;
-        
+
         #region Monobehaviours
         protected override void Awake() {
             base.Awake();
@@ -20,7 +20,11 @@ namespace Ruinarch.Custom_UI {
                     shineEffect = targetGraphic.gameObject.GetComponent<UIShiny>();
                 }
                 if (shineEffect != null) {
-                    shineEffect.Stop();
+                    if(targetGraphic.gameObject.GetComponent<PlayShineEffectOnAwake>() == null) {
+                        shineEffect.Stop();
+                    } else {
+                        shineEffect.Play();
+                    }
                 }
                 _lblBtnName = GetComponentInChildren<TextMeshProUGUI>();
             }
