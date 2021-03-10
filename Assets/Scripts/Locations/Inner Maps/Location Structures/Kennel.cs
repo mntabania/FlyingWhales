@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
-    public class Kennel : DemonicStructure, CharacterEventDispatcher.IDeathListener {
+    public class Kennel : PartyStructure, CharacterEventDispatcher.IDeathListener {
         public override string nameplateName => $"{name}";
         public Summon occupyingSummon => _occupyingSummon;
         public override Type serializedData => typeof(SaveDataKennel);
