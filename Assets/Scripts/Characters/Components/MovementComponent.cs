@@ -100,12 +100,16 @@ public class MovementComponent : CharacterComponent {
     }
     private float GetSpeed() {
         float speed = runSpeed;
+        bool isPartOfActiveParty = owner.partyComponent.isMemberThatJoinedQuest && owner.partyComponent.currentParty.isPlayerParty; //Party Walk Speed applies only on demon parties for now
         if (!isRunning) {
             speed = walkSpeed;
         }
         speed += (speed * speedModifier);
         if (speed <= 0f) {
             speed = 0.5f;
+        }
+        if (isPartOfActiveParty && !isRunning) {
+            speed = Mathf.Min(owner.partyComponent.currentParty.partyWalkSpeed, speed);
         }
         if (owner.marker) {
             speed *= owner.marker.progressionSpeedMultiplier;
