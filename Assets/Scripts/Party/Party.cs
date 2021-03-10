@@ -220,7 +220,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                 acceptQuest = true;
             } else {
                 TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
-                acceptQuest = canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)
+                acceptQuest = canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON);
             }
             if (acceptQuest) {
                 PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
