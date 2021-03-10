@@ -75,7 +75,9 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private SpellListUI spellList;
     [SerializeField] private CustomDropdownList customDropdownList;
     [SerializeField] private CultistsListUI cultistsList;
+    [SerializeField] private TargetsListUI targetsList;
     public Toggle monsterToggle;
+    public Toggle targetsToggle;
     
     [Header("Minion List")]
     [SerializeField] private MinionListUI minionList;
@@ -143,7 +145,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
         minionList.Initialize();
         summonList.Initialize();
-        
+
         Messenger.AddListener(PlayerSignals.UPDATED_CURRENCIES, UpdateUI);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
@@ -181,6 +183,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
         
+        targetsList.Initialize();
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
 #if UNITY_EDITOR
@@ -484,30 +487,12 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void OnCloseConversationMenu() {
         intelToggle.interactable = true;
-        //for (int i = 0; i < roleSlots.Length; i++) {
-        //    RoleSlotItem rsi = roleSlots[i];
-        //    //rsi.UpdateActionButtons();
-        //    rsi.OverrideDraggableState(true);
-        //}
-        //assignBtn.interactable = true;
-        //if (UIManager.Instance.characterInfoUI.isShowing) {
-        //    ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
-        //}else if (UIManager.Instance.tileObjectInfoUI.isShowing) {
-        //    ShowActionButtonsFor(UIManager.Instance.tileObjectInfoUI.activeTileObject);
-        //}
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
         if (state) {
             Messenger.Broadcast(UISignals.INTEL_MENU_OPENED);    
         }
-        //RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
-        //Vector3 previousPos = rt.anchoredPosition;
-        //if (!state) {
-        //    rt.anchoredPosition = new Vector3(-640f, previousPos.y, previousPos.z);
-        //} else {
-        //    rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
-        //}
     }
     public IntelItem GetIntelItemWithIntel(IIntel intel) {
         for (int i = 0; i < intelItems.Length; i++) {
@@ -1067,6 +1052,22 @@ public class PlayerUI : BaseMonoBehaviour {
     public void OnClickPlaguePoints() {
         if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
             UIManager.Instance.ShowBiolabUI();    
+        }
+    }
+    #endregion
+
+    #region Targets
+    public void OnToggleTargetsTab(bool p_state) {
+        if (p_state) {
+            targetsList.Open();
+        } else {
+            targetsList.Close();
+        }
+    }
+    private Tweener _currentTargetPunchEffect;
+    public void DoTargetTabPunchEffect() {
+        if (_currentTargetPunchEffect == null) {
+            _currentTargetPunchEffect = targetsToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f).OnComplete(() => _currentTargetPunchEffect = null);
         }
     }
     #endregion

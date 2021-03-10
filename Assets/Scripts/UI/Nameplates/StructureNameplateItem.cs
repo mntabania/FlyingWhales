@@ -9,11 +9,16 @@ public class StructureNameplateItem : NameplateItem<LocationStructure> {
     [Header("Settlement Attributes")]
     [SerializeField] private LocationPortrait portrait;
 
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
+    
     private LocationStructure _structure;
     
     public override void SetObject(LocationStructure o) {
         base.SetObject(o);
         _structure = o;
+        btnStoreTarget.SetTarget(_structure);
         UpdateVisuals();
     }
     private void UpdateVisuals() {

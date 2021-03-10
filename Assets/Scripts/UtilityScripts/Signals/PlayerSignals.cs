@@ -131,4 +131,13 @@
     /// </summary>
     public static string PLAYER_FINISHED_STRUCTURE_UNLOCK = "OnPlayerFinishedStructureUnlock";
     public static string PLAYER_STRUCTURE_UNLOCK_CANCELLED = "OnStructureUnlockCancelled";
+    
+    /// <summary>
+    /// Parameters: IStoredTarget
+    /// </summary>
+    public static string PLAYER_STORED_TARGET = "OnPlayerStoredTarget";
+    /// <summary>
+    /// Parameters: IStoredTarget
+    /// </summary>
+    public static string PLAYER_REMOVED_STORED_TARGET = "OnPlayerRemovedStoredTarget";
 }

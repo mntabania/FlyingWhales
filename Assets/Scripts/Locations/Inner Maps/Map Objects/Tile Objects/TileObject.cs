@@ -14,7 +14,7 @@ using Logs;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyQuestTarget, IGatheringTarget, ISavable {
+public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyQuestTarget, IGatheringTarget, ISavable, IStoredTarget {
     public string persistentID { get; protected set; }
     public string name { get; protected set; }
     public int id { get; private set; }
@@ -58,10 +58,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     //public bool isInPendingAwarenessList { get; private set; }
     private bool hasSubscribedToListeners;
     public virtual StructureConnector structureConnector { get; protected set; }
+    
+    //Components
+    public LogComponent logComponent { get; protected set; }
+    public TileObjectHiddenComponent hiddenComponent { get; private set; }
+    public TileObjectEventDispatcher eventDispatcher { get; private set; }
 
     #region getters
     public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
+    public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Tile_Objects;
+    public string iconRichText => UtilityScripts.Utilities.ThreatIcon();
     public virtual Type serializedData => typeof(SaveDataTileObject);
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
     public virtual Vector3 worldPosition => mapVisual.transform.position;
@@ -93,10 +100,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     #endregion
 
-    //Components
-    public LogComponent logComponent { get; protected set; }
-    public TileObjectHiddenComponent hiddenComponent { get; private set; }
-
     public TileObject() { }
     public TileObject(SaveDataTileObject data) { }
 
@@ -121,6 +124,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         ConstructDefaultActions();
         logComponent = new LogComponent(); logComponent.SetOwner(this);
         hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
+        eventDispatcher = new TileObjectEventDispatcher();
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
@@ -144,6 +148,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
         logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
         hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
+        eventDispatcher = new TileObjectEventDispatcher();
 
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
@@ -253,6 +258,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         UnsubscribeListeners();
+        eventDispatcher.ExecuteTileObjectDestroyed(this);
     }
     public void OnDiscardCarriedObject() {
         //DisableGameObject();
@@ -1242,6 +1248,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// Called when this object has been added as a filler in a log.
     /// </summary>
     public virtual void OnReferencedInALog() { }
+    #endregion
+    
+    #region IStoredTarget
+    public bool CanBeStoredAsTarget() {
+        return mapVisual != null;
+    }
     #endregion
 }
 

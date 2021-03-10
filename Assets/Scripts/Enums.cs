@@ -1206,3 +1206,7 @@ public enum CURRENCY {
 public enum MINION_TYPE { 
     Lust = 0, Envy, Greed, Gluttony, Pride, Sloth, Wrath, 
 }
+
+public enum STORED_TARGET_TYPE {
+    Character, Tile_Objects, Structures
+}

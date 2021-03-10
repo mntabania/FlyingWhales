@@ -2427,6 +2427,7 @@
               <e p="PlayerSkillComponent.cs" t="Include" />
               <e p="PlayerUnderlingsComponent.cs" t="Include" />
               <e p="SeizeComponent.cs" t="Include" />
+              <e p="StoredTargetsComponent.cs" t="Include" />
               <e p="ThreatComponent.cs" t="Include" />
             </e>
             <e p="ManaRegenComponent.cs" t="Include" />
@@ -3197,6 +3198,7 @@
               <e p="RaceStringButton.cs" t="Include" />
               <e p="RequirementButton.cs" t="Include" />
               <e p="SkillsPerLevelButton.cs" t="Include" />
+              <e p="StoreTargetButton.cs" t="Include" />
               <e p="StructureTypeButton.cs" t="Include" />
               <e p="TraitEffectButton.cs" t="Include" />
               <e p="WeaponTypeButton.cs" t="Include" />
@@ -3441,6 +3443,7 @@
               <e p="SmallInfoWithVisual.cs" t="Include" />
               <e p="SpellListUI.cs" t="Include" />
               <e p="SummonListUI.cs" t="Include" />
+              <e p="TargetsListUI.cs" t="Include" />
               <e p="VillagersListUI.cs" t="Include" />
               <e p="YesNoConfirmation.cs" t="Include" />
             </e>
@@ -3479,6 +3482,7 @@
               <e p="BlackmailUIItem.cs" t="Include" />
               <e p="FactionSettingUIItem.cs" t="Include" />
               <e p="SchemeUIItem.cs" t="Include" />
+              <e p="StoredTargetUIItem.cs" t="Include" />
               <e p="VillageSettingUIItem.cs" t="Include" />
             </e>
             <e p="UI Utilities" t="Include">

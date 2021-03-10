@@ -38,6 +38,10 @@ public class TileObjectInfoUI : InfoUIBase {
 
     [Space(10)] [Header("Logs")] 
     [SerializeField] private LogsWindow logsWindow;
+    
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
 
     public TileObject activeTileObject { get; private set; }
 
@@ -115,6 +119,7 @@ public class TileObjectInfoUI : InfoUIBase {
             //Show eye ward highlight of current eye ward
             eyeWard.ShowEyeWardHighlight();
         }
+        btnStoreTarget.SetTarget(activeTileObject);
         UIManager.Instance.HideObjectPicker();
         UpdateTabs();
         UpdateBasicInfo();

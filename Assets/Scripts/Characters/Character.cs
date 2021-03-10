@@ -17,7 +17,7 @@ using Locations;
 using Object_Pools;
 using UnityEngine.Profiling;
 
-public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
+public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, IStoredTarget {
     private int _id;
     private string _firstName;
     private string _surName;
@@ -126,6 +126,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
+    public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Character;
+    public string iconRichText => visuals.GetCharacterStringIcon();
     public virtual Type serializedData => typeof(SaveDataCharacter);
     public virtual string name => _firstName;
     public virtual string raceClassName => GetDefaultRaceClassName();
@@ -5812,6 +5814,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public bool IsUnpassable() {
         return false;
+    }
+    #endregion
+
+    #region IStoredTarget
+    public bool CanBeStoredAsTarget() {
+        return !isDead;
     }
     #endregion
 

@@ -11,7 +11,7 @@ using Locations;
 namespace Inner_Maps.Location_Structures {
 
     [System.Serializable]
-    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, ILocation {
+    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, ILocation, IStoredTarget {
         public string persistentID { get; }
         public int id { get; private set; }
         public string name { get; protected set; }
@@ -38,8 +38,8 @@ namespace Inner_Maps.Location_Structures {
         public List<Character> residents { get; protected set; }
         public StructureRoom[] rooms { get; protected set; }
         public bool hasActiveSocialGathering { get; protected set; }
-
         public LocationAwareness locationAwareness { get; protected set; }
+        public LocationStructureEventDispatcher eventDispatcher { get; }
 
         //protected Faction _owner;
         
@@ -64,6 +64,8 @@ namespace Inner_Maps.Location_Structures {
         public BaseSettlement currentSettlement => settlementLocation;
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Structure;
+        public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Structures;
+        public string iconRichText => UtilityScripts.Utilities.ChargesIcon();
         public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
         #endregion
 
@@ -90,6 +92,7 @@ namespace Inner_Maps.Location_Structures {
             maxResidentCapacity = 5;
 
             locationAwareness = new LocationAwareness();
+            eventDispatcher = new LocationStructureEventDispatcher();
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
             persistentID = data.persistentID;
@@ -115,6 +118,7 @@ namespace Inner_Maps.Location_Structures {
             hasBeenDestroyed = data.hasBeenDestroyed;
             
             locationAwareness = new LocationAwareness();
+            eventDispatcher = new LocationStructureEventDispatcher();
         }
 
         #region Loading
@@ -1063,6 +1067,7 @@ namespace Inner_Maps.Location_Structures {
             SetOccupiedArea(null);
             UnsubscribeListeners();
             Messenger.Broadcast(StructureSignals.STRUCTURE_DESTROYED, this);
+            eventDispatcher.ExecuteStructureDestroyed(this);
         }
         #endregion
 
@@ -1317,6 +1322,12 @@ namespace Inner_Maps.Location_Structures {
                 summary += $"\n\t- {damageable}";
             }
             return summary;
+        }
+        #endregion
+        
+        #region IStoredTarget
+        public bool CanBeStoredAsTarget() {
+            return !hasBeenDestroyed;
         }
         #endregion
     }
