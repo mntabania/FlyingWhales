@@ -1,8 +1,7 @@
-﻿using UnityEngine;
+﻿using Inner_Maps.Location_Structures;
 using Ruinarch.MVCFramework;
-using System.Linq;
 using System.Collections.Generic;
-using Inner_Maps.Location_Structures;
+using UnityEngine;
 
 public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
@@ -85,6 +84,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			eachDeployedItem.onClicked -= OnDeployedMonsterClicked;
 			eachDeployedItem.onUnlocked -= OnUnlockClicked;
 		});
+		m_summonList.ForEach((eachItem) => {
+			eachItem.onClicked -= OnAvailableMonsterClicked;
+		});
+		m_minionList.ForEach((eachItem) => {
+			eachItem.onClicked -= OnAvailableMonsterClicked;
+		});
 	}
 	private void OnMaraudClicked(LocationStructure p_clickedDefensePoint) {
 		if (GameManager.Instance.gameHasStarted) {
@@ -160,13 +165,11 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		DisplayDeployedItems();
 	}
 
-	void HideSummonItems() {
+	void HideAvailableMonsters() {
 		m_summonList.ForEach((eachItem) => {
-			eachItem.onClicked -= OnAvailableMonsterClicked;
 			eachItem.gameObject.SetActive(false);
 		});
 		m_minionList.ForEach((eachItem) => {
-			eachItem.onClicked -= OnAvailableMonsterClicked;
 			eachItem.gameObject.SetActive(false);
 		});
 	}
@@ -178,7 +181,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 			if (ctr < m_summonList.Count) {
 				m_summonList[ctr].gameObject.SetActive(true);
-				m_summonList[ctr].onClicked += OnAvailableMonsterClicked;
 				m_summonList[ctr++].InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges, entry.Value.maxCharges);
 			} else {
 				AvailableMonsterItemUI summonItem = Instantiate(m_availableMonsterItemUI);
@@ -199,7 +201,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
 				CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 				m_minionList[ctr].gameObject.SetActive(true);
-				m_minionList[ctr].onClicked += OnAvailableMonsterClicked;
 				m_minionList[ctr++].InitializeItem(cClass, eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);
 
 			} else {
@@ -288,13 +289,26 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
-		if (m_targetPartyStructure.readyForDeployMinionCount <= 0) {
+		if (m_targetPartyStructure.readyForDeployMinionCount <= 0 && !m_isTeamDeployed) {
 			return; //TODO: MESSAGE PLAYER THAT HE NEEDS LEADER
 		}
 		if (m_isTeamDeployed) {
+			m_isTeamDeployed = false;
 			m_targetPartyStructure.UnDeployAll();
+			m_deployedSummonsUI.ForEach((eachSummon) => {
+				m_targetPartyStructure.RemoveItemOnRight(eachSummon);
+				eachSummon.UndeployCharacter();
+				eachSummon.ResetButton();
+			});
+			m_deployedMinionsUI.ForEach((eachMinion) => {
+				m_targetPartyStructure.RemoveItemOnRight(eachMinion);
+				eachMinion.UndeployCharacter();
+				eachMinion.ResetButton();
+			});
+			m_maraudUIView.ShowMinionButtonHideMinionContainer();
+			m_maraudUIView.ProcessSummonDisplay();
 			Init();
-			return;
+			return; // <----- we have a return here 
 		}
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
@@ -313,11 +327,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			m_targetPartyStructure.AddDeployedItem(m_deployedMinionsUI[0]);
 		}
 		m_targetPartyStructure.DeployParty();
+		m_isTeamDeployed = true;
 		m_maraudUIView.SetButtonDeployText("Undeploy");
 	}
 
 	public void OnCloseClicked() {
-		HideSummonItems();
+		HideAvailableMonsters();
 		HideUI();
 		m_maraudUIView.HideAllSubMenu();
 	}

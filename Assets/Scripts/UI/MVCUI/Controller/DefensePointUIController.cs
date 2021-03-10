@@ -10,6 +10,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	private DefensePointUIModel m_defensePointUIModel;
 	private DefensePointUIView m_defensePointUIView;
 
+	bool m_isAllItemDeployed;
 	//Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
 	[ContextMenu("Instantiate UI")]
 	public override void InstantiateUI() {
@@ -66,6 +67,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			eachDeployedItem.onClicked -= OnDeployedMonsterClicked;
 			eachDeployedItem.onUnlocked -= OnUnlockClicked;
 		});
+		m_summonList.ForEach((eachItem) => {
+			eachItem.onClicked -= OnAvailableMonsterClicked;
+		});
 	}
 	private void OnDefensePointClicked(LocationStructure p_clickedDefensePoint) {
 		if (GameManager.Instance.gameHasStarted) {
@@ -79,6 +83,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InitializeSummons();
 		InitializeDeployedItems();
 		m_defensePointUIView.SetTitle("Defense Point");
+		ProcessDeployButtonDisplay();
 	}
 
 	void HideDeployedItems() {
@@ -109,7 +114,6 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	void HideSummonItems() {
 		m_summonList.ForEach((eachItem) => {
-			eachItem.onClicked -= OnAvailableMonsterClicked;
 			eachItem.gameObject.SetActive(false);
 		});
 	}
@@ -121,7 +125,6 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 			if (ctr < m_summonList.Count) {
 				m_summonList[ctr].gameObject.SetActive(true);
-				m_summonList[ctr].onClicked += OnAvailableMonsterClicked;
 				m_summonList[ctr++].InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges, entry.Value.maxCharges);
 			} else {
 				AvailableMonsterItemUI summonItem = Instantiate(m_availableMonsterItemUI);
@@ -146,6 +149,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			}
 			m_defensePointUIView.ProcessSummonDisplay();
 		}
+		ProcessDeployButtonDisplay();
 	}
 
 	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
@@ -167,6 +171,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 				m_defensePointUIView.ProcessSummonDisplay();
 			}
 		}
+		ProcessDeployButtonDisplay();
 	}
 
 	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
@@ -175,16 +180,57 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
-		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
-			if (eachMonsterToBeDeployed.isReadyForDeploy) {
-				m_targetPartyStructure.AddDeployedItem(eachMonsterToBeDeployed);
-				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement); ;
-				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
-				eachMonsterToBeDeployed.HideManaCost();
-				eachMonsterToBeDeployed.Deploy(summon, true);
-				PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachMonsterToBeDeployed.summonType, -1);
+		if (!m_isAllItemDeployed) {
+			m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
+				if (eachSummonToBeDeployed.isReadyForDeploy) {
+					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement); ;
+					CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
+					eachSummonToBeDeployed.HideManaCost();
+					eachSummonToBeDeployed.Deploy(summon, true);
+					m_targetPartyStructure.AddDeployedItem(eachSummonToBeDeployed);
+					PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachSummonToBeDeployed.summonType, -1);
+				}
+			});
+		} else {
+			m_deployedSummonsUI.ForEach((eachSummonThatAreDployed) => {
+				if (eachSummonThatAreDployed.isDeployed) {
+					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonThatAreDployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement); ;
+					eachSummonThatAreDployed.ShowManaCost();
+					eachSummonThatAreDployed.UndeployCharacter();
+					eachSummonThatAreDployed.ResetButton();
+					eachSummonThatAreDployed.gameObject.SetActive(false);
+				}
+			});
+			m_targetPartyStructure.UnDeployAll();
+			Init();
+			m_defensePointUIView.ProcessSummonDisplay();
+		}
+		ProcessDeployButtonDisplay();
+	}
+	
+
+	private void ProcessDeployButtonDisplay() {
+		int displayedCount = 0;
+		int deployedCount = m_targetPartyStructure.deployedSummonCount;
+		m_deployedSummonsUI.ForEach((eachUi) => {
+			if (eachUi.isReadyForDeploy) {
+				displayedCount++;
 			}
 		});
+
+		if (displayedCount > 0) {
+			m_isAllItemDeployed = false;
+			m_defensePointUIView.SetButtonDeployText("Deploy");
+		} else if (deployedCount > 0 && displayedCount <= 0) {
+			m_isAllItemDeployed = true;
+			m_defensePointUIView.SetButtonDeployText("Undeploy");
+		} else if (deployedCount >= 5) {
+			m_isAllItemDeployed = true;
+			m_defensePointUIView.SetButtonDeployText("Undeploy");
+		} else {
+			m_isAllItemDeployed = false;
+			m_defensePointUIView.SetButtonDeployText("Deploy");
+		}
 	}
 
 	public void OnCloseClicked() {

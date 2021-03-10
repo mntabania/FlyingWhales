@@ -65,20 +65,31 @@ public class PartyStructure : DemonicStructure {
     }
 
     public void RemoveCharacterOnList(Character p_removeSummon) {
-        deployedMinions.Remove(p_removeSummon);
+        deployedSummons.Remove(p_removeSummon);
         CharacterManager.Instance.RemoveCharacter(p_removeSummon, true);
     }
 
-    public void UnDeployAll() {
+    public virtual void UnDeployAll() {
         deployedSummons.ForEach((eachSummon) => {
             m_party.RemoveMember(eachSummon);
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
+            m_party.RemoveMemberThatJoinedQuest(eachSummon);
+            CharacterManager.Instance.RemoveCharacter(eachSummon, true);
         });
         m_party.RemoveMemberThatJoinedQuest(deployedMinions[0]);
-        deployedSummons.ForEach((eachSummon) => m_party.RemoveMemberThatJoinedQuest(eachSummon));
+        CharacterManager.Instance.RemoveCharacter(deployedMinions[0], true);
+        deployedSummons.Clear();
+        deployedSummonSettings.Clear();
+        deployedCSummonlass.Clear();
+        deployedSummonType.Clear();
+        deployedMinionClass.Clear();
+        deployedMinionsSkillType.Clear();
+        deployedMinions.Clear();
+        readyForDeployMinionCount = 0;
+        readyForDeploySummonCount = 0;
     }
 
-    void OnCharacterDied(Character p_deadMonster) {
+    public virtual void OnCharacterDied(Character p_deadMonster) {
         for (int x = 0; x < deployedSummons.Count; ++x) {
             if (p_deadMonster == deployedSummons[x]) {
                 PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
@@ -87,7 +98,6 @@ public class PartyStructure : DemonicStructure {
                 deployedCSummonlass.RemoveAt(x);
                 deployedSummonType.RemoveAt(x);
                 m_party.RemoveMember(p_deadMonster);
-                break;
             }
         }
         for (int x = 0; x < deployedMinions.Count; ++x) {
