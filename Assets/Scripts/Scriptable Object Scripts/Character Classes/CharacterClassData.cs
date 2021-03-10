@@ -7,6 +7,9 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Character Class Data", menuName = "Scriptable Objects/Character Class Data")]
 public class CharacterClassData : ScriptableObject {
+    [Header("Misc")] 
+    public int summonCost;
+    [Header("Visuals")]
     public CharacterClassAsset defaultSprites;
     public RaceSpriteListDictionary raceSprites;
 

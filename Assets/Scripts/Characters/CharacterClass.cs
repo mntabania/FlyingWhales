@@ -44,22 +44,14 @@ public class CharacterClass {
     //private int _blockRate;
 
     #region getters/setters
-    public string className {
-        get { return _className; }
-        //set { _className = value; }
-    }
-    public string identifier {
-        get { return _identifier; }
-    }
-    public string traitNameOnTamedByPlayer {
-        get { return _traitNameOnTamedByPlayer; }
-    }
+    public string className => _className;
+    //set { _className = value; }
+    public string identifier => _identifier;
+    public string traitNameOnTamedByPlayer => _traitNameOnTamedByPlayer;
     //public bool isNormalNonCombatant {
     //    get { return _isNormalNonCombatant; }
     //}
-    public int baseAttackPower {
-        get { return _baseAttackPower; }
-    }
+    public int baseAttackPower => _baseAttackPower;
     //public int attackPowerPerLevel {
     //    get { return _attackPowerPerLevel; }
     //}
@@ -69,51 +61,35 @@ public class CharacterClass {
     //public int speedPerLevel {
     //    get { return _speedPerLevel; }
     //}
-    public int baseHP {
-        get { return _baseHP; }
-    }
-    public int baseAttackSpeed {
-        get { return _baseAttackSpeed; }
-    }
+    public int baseHP => _baseHP;
+    public int baseAttackSpeed => _baseAttackSpeed;
     //public int hpPerLevel {
     //    get { return _hpPerLevel; }
     //}
-    public float attackRange {
-        get { return _attackRange; }
-    }
-    public float staminaReduction {
-        get { return _staminaReduction; }
-    }
+    public float attackRange => _attackRange;
+    public float staminaReduction => _staminaReduction;
     //public float runSpeedMod {
     //    get { return _runSpeedMod; }
     //}
     //public float walkSpeedMod {
     //    get { return _walkSpeedMod; }
     //}
-    public int inventoryCapacity {
-        get { return _inventoryCapacity; }
-    }
+    public int inventoryCapacity => _inventoryCapacity;
     //public CHARACTER_ROLE roleType {
     //    get { return _roleType; }
     //}
     //public JOB jobType {
     //    get { return _jobType; }
     //}
-    public ELEMENTAL_TYPE elementalType {
-        get { return _elementalType; }
-    }
+    public ELEMENTAL_TYPE elementalType => _elementalType;
     //public COMBAT_POSITION combatPosition {
     //    get { return _combatPosition; }
     //}
     //public COMBAT_TARGET combatTarget {
     //    get { return _combatTarget; }
     //}
-    public ATTACK_TYPE attackType {
-        get { return _attackType; }
-    }
-    public RANGE_TYPE rangeType {
-        get { return _rangeType; }
-    }
+    public ATTACK_TYPE attackType => _attackType;
+    public RANGE_TYPE rangeType => _rangeType;
     //public DAMAGE_TYPE damageType {
     //    get { return _damageType; }
     //}
@@ -123,24 +99,12 @@ public class CharacterClass {
     //public string skillName {
     //    get { return _skillName; }
     //}
-    public string[] traitNames {
-        get { return _traitNames; }
-    }
-    public string[] interestedItemNames {
-        get { return _interestedItemNames; }
-    }
-    public STRUCTURE_TYPE[] relatedStructures {
-        get { return _relatedStructures; }
-    }
-    public JOB_TYPE[] priorityJobs {
-        get { return _priorityJobs; }
-    }
-    public JOB_TYPE[] secondaryJobs {
-        get { return _secondaryJobs; }
-    }
-    public JOB_TYPE[] ableJobs {
-        get { return _ableJobs; }
-    }
+    public string[] traitNames => _traitNames;
+    public string[] interestedItemNames => _interestedItemNames;
+    public STRUCTURE_TYPE[] relatedStructures => _relatedStructures;
+    public JOB_TYPE[] priorityJobs => _priorityJobs;
+    public JOB_TYPE[] secondaryJobs => _secondaryJobs;
+    public JOB_TYPE[] ableJobs => _ableJobs;
     #endregion
 
     public CharacterClass CreateNewCopy() {
