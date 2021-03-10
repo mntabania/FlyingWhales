@@ -13,8 +13,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	private bool m_isTeamDeployed;
 
-	public enum PARTY_TYPE { Raid = 0, Snatcher_Sapient, Snatcher_Monster }
-	private PARTY_TYPE m_partyType;
 	//Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
 	[ContextMenu("Instantiate UI")]
 	public override void InstantiateUI() {
@@ -91,26 +89,25 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	private void OnMaraudClicked(LocationStructure p_clickedDefensePoint) {
 		if (GameManager.Instance.gameHasStarted) {
 			m_targetPartyStructure = p_clickedDefensePoint as PartyStructure;
-			Init(PARTY_TYPE.Raid, "Raid Party");
+			Init("Raid Party");
 		}
 	}
 
 	private void OnKennelClicked(LocationStructure p_clickedDefensePoint) {
 		if (GameManager.Instance.gameHasStarted) {
 			m_targetPartyStructure = p_clickedDefensePoint as PartyStructure;
-			Init(PARTY_TYPE.Snatcher_Monster, "Snatch Party");
+			Init("Snatch Party");
 		}
 	}
 
 	private void OnTortureChambersClicked(LocationStructure p_clickedDefensePoint) {
 		if (GameManager.Instance.gameHasStarted) {
 			m_targetPartyStructure = p_clickedDefensePoint as PartyStructure;
-			Init(PARTY_TYPE.Snatcher_Sapient, "Snatch Party");
+			Init("Snatch Party");
 		}
 	}
 
-	public void Init(PARTY_TYPE p_partyType, string p_title) {
-		m_partyType = p_partyType;
+	public void Init(string p_title = "") {
 		InstantiateUI();
 		InitializeSummons();
 		InitializeMinions();
@@ -120,7 +117,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.SetButtonDeployText("Deploy");
 		}
-		m_maraudUIView.SetTitle(p_title);
+		if (p_title != string.Empty) {
+			m_maraudUIView.SetTitle(p_title);
+		}
 	}
 
 	void HideDeployedItems() {
@@ -254,6 +253,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
+		if (m_isTeamDeployed) {
+			return;
+		}
 		if (!p_itemUI.isMinion) {
 			for (int x = 0; x < m_summonList.Count; ++x) {
 				if (m_summonList[x].characterClass == p_itemUI.characterClass && (p_itemUI.isDeployed || p_itemUI.isReadyForDeploy)) {
@@ -286,16 +288,20 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
-		if (m_targetPartyStructure.readyForDeployMinionCount <= 0 || m_isTeamDeployed) {
+		if (m_targetPartyStructure.readyForDeployMinionCount <= 0) {
 			return; //TODO: MESSAGE PLAYER THAT HE NEEDS LEADER
+		}
+		if (m_isTeamDeployed) {
+			m_targetPartyStructure.UnDeployAll();
+			Init();
+			return;
 		}
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
-				m_targetPartyStructure.AddDeployedItem(eachMonsterToBeDeployed);
 				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement); ;
-				summon.traitContainer.AddTrait(summon, "Snatcher");
 				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
 				eachMonsterToBeDeployed.Deploy(summon);
+				m_targetPartyStructure.AddDeployedItem(eachMonsterToBeDeployed);
 				PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachMonsterToBeDeployed.summonType, -1);
 			}
 		});
@@ -303,10 +309,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(m_deployedMinionsUI[0].playerSkillType);
 			Character minion = null;
 			skillData.ActivateAbility(m_targetPartyStructure.GetRandomTile(), ref minion);
-			minion.traitContainer.AddTrait(minion, "Snatcher");
-			m_targetPartyStructure.AddDeployedItem(m_deployedMinionsUI[0]);
 			m_deployedMinionsUI[0].Deploy(minion);
+			m_targetPartyStructure.AddDeployedItem(m_deployedMinionsUI[0]);
 		}
+		m_targetPartyStructure.DeployParty();
 		m_maraudUIView.SetButtonDeployText("Undeploy");
 	}
 

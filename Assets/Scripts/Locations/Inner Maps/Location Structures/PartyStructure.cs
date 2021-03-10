@@ -12,6 +12,19 @@ public class PartyStructure : DemonicStructure {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
 
+    protected Party m_party;
+
+    //summon list
+    public List<Character> deployedSummons = new List<Character>();
+    public List<SummonSettings> deployedSummonSettings = new List<SummonSettings>();
+    public List<CharacterClass> deployedCSummonlass = new List<CharacterClass>();
+    public List<SUMMON_TYPE> deployedSummonType = new List<SUMMON_TYPE>();
+
+    //minion list
+    public List<Character> deployedMinions = new List<Character>();
+    public List<PLAYER_SKILL_TYPE> deployedMinionsSkillType = new List<PLAYER_SKILL_TYPE>();
+    public List<CharacterClass> deployedMinionClass = new List<CharacterClass>();
+
     public int deployedSummonCount => deployedCSummonlass.Count;
     public int deployedMinionCount => deployedMinionsSkillType.Count;
 
@@ -35,14 +48,20 @@ public class PartyStructure : DemonicStructure {
             deployedCSummonlass.Add(p_itemUI.characterClass);
             deployedSummonSettings.Add(p_itemUI.summonSettings);
             deployedSummonType.Add(p_itemUI.summonType);
+            AddSummonOnCharacterList(p_itemUI.deployedCharacter);
         } else {
             deployedMinionClass.Add(p_itemUI.characterClass);
             deployedMinionsSkillType.Add(p_itemUI.playerSkillType);
+            AddMinionOnCharacterList(p_itemUI.deployedCharacter);
         }
     }
 
-    public void AddCharacterOnList(Character p_newSummon) {
+    public void AddMinionOnCharacterList(Character p_newSummon) {
         deployedMinions.Add(p_newSummon);
+    }
+
+    public void AddSummonOnCharacterList(Character p_newSummon) {
+        deployedSummons.Add(p_newSummon);
     }
 
     public void RemoveCharacterOnList(Character p_removeSummon) {
@@ -50,25 +69,24 @@ public class PartyStructure : DemonicStructure {
         CharacterManager.Instance.RemoveCharacter(p_removeSummon, true);
     }
 
-    //summon list
-    public List<Character> deployedSummons = new List<Character>();
-    public List<SummonSettings> deployedSummonSettings = new List<SummonSettings>();
-    public List<CharacterClass> deployedCSummonlass = new List<CharacterClass>();
-    public List<SUMMON_TYPE> deployedSummonType = new List<SUMMON_TYPE>();
-
-    //minion list
-    public List<Character> deployedMinions = new List<Character>();
-    public List<PLAYER_SKILL_TYPE> deployedMinionsSkillType = new List<PLAYER_SKILL_TYPE>();
-    public List<CharacterClass> deployedMinionClass = new List<CharacterClass>();
+    public void UnDeployAll() {
+        deployedSummons.ForEach((eachSummon) => {
+            m_party.RemoveMember(eachSummon);
+            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
+        });
+        m_party.RemoveMemberThatJoinedQuest(deployedMinions[0]);
+        deployedSummons.ForEach((eachSummon) => m_party.RemoveMemberThatJoinedQuest(eachSummon));
+    }
 
     void OnCharacterDied(Character p_deadMonster) {
         for (int x = 0; x < deployedSummons.Count; ++x) {
             if (p_deadMonster == deployedSummons[x]) {
-                PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[deployedSummonType[x]].currentCharges++;
+                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
                 deployedSummons.RemoveAt(x);
                 deployedSummonSettings.RemoveAt(x);
                 deployedCSummonlass.RemoveAt(x);
                 deployedSummonType.RemoveAt(x);
+                m_party.RemoveMember(p_deadMonster);
                 break;
             }
         }
@@ -77,8 +95,13 @@ public class PartyStructure : DemonicStructure {
                 deployedMinionClass.RemoveAt(x);
                 deployedMinions.RemoveAt(x);
                 deployedMinionsSkillType.RemoveAt(x);
+                m_party.RemoveMember(p_deadMonster);
                 break;
             }
         }
+    }
+
+    public virtual void DeployParty() {
+
     }
 }

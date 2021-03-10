@@ -76,7 +76,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         }
         partyName = PartyManager.Instance.GetNewPartyName(partyCreator);
-        partySettlement = partyCreator.homeSettlement;
+        if (partyCreator.faction != null && partyCreator.faction.isPlayerFaction) {
+            partySettlement = PlayerManager.Instance.player.playerSettlement;
+        } else {
+            partySettlement = partyCreator.homeSettlement;
+        }
         partyFaction = partyCreator.faction;
         isDisbanded = false;
         //hasRested = true;
