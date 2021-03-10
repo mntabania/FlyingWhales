@@ -80,6 +80,9 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                         if (tile != null) {
                                             hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
                                         }
+                                        if (character.partyComponent.CanFollowBeacon()) {
+                                            character.partyComponent.FollowBeacon();
+                                        }
                                     }
                                 }
                             } else if (party.partyState == PARTY_STATE.Resting) {

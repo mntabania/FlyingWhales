@@ -111,7 +111,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public MovementComponent movementComponent { get; private set; }
     public StateAwarenessComponent stateAwarenessComponent { get; private set; }
     public CarryComponent carryComponent { get; private set; }
-    public PartyComponent partyComponent { get; private set; }
+    public CharacterPartyComponent partyComponent { get; private set; }
     public GatheringComponent gatheringComponent { get; private set; }
     public CharacterTileObjectComponent tileObjectComponent { get; private set; }
     public CrimeComponent crimeComponent { get; private set; }
@@ -309,7 +309,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         movementComponent = new MovementComponent(); movementComponent.SetOwner(this);
         stateAwarenessComponent = new StateAwarenessComponent(); stateAwarenessComponent.SetOwner(this);
         carryComponent = new CarryComponent(); carryComponent.SetOwner(this);
-        partyComponent = new PartyComponent(); partyComponent.SetOwner(this);
+        partyComponent = new CharacterPartyComponent(); partyComponent.SetOwner(this);
         gatheringComponent = new GatheringComponent(); gatheringComponent.SetOwner(this);
         tileObjectComponent = new CharacterTileObjectComponent(); tileObjectComponent.SetOwner(this);
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
@@ -3186,7 +3186,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
             && (carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false)
-            && (marker && !marker.hasFleePath) && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted;
+            && (marker && !marker.hasFleePath) && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted
+            && !partyComponent.isFollowingBeacon;
     }
     private bool CanTryToTakeSettlementJobInVision(out string invalidReason) {
         if (isDead) {
@@ -3274,7 +3275,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& limiterComponent.canWitness*/
          && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
          && carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false && (marker && !marker.hasFleePath) 
-         && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 
+         && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted
+         && !partyComponent.isFollowingBeacon; //minion == null && doNotDisturb <= 0 
         return canPerformEndTickJobs;
     }
     /// <summary>

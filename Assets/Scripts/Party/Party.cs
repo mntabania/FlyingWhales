@@ -47,6 +47,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public JobBoard jobBoard { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
 
+    //Components
+    public PartyBeaconComponent beaconComponent { get; private set; }
+
     private List<Character> _activeMembers;
     private PartyJobTriggerComponent _jobComponent;
 
@@ -69,6 +72,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         _jobComponent = new PartyJobTriggerComponent(this);
         jobBoard = new JobBoard();
+        beaconComponent = new PartyBeaconComponent(); beaconComponent.SetOwner(this);
     }
 
     public void Initialize(Character partyCreator) { //In order to create a party, there must always be a party creator
@@ -84,6 +88,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         perHourElapsedInWaiting = 0;
         forcedCancelJobsOnTickEnded.Clear();
         jobBoard.Initialize();
+        beaconComponent.Initialize();
 
         SetPartyState(PARTY_STATE.None);
         //SetTakeQuestSchedule();
@@ -122,6 +127,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
 
         jobBoard.InitializeFromSaveData(data.jobBoard);
+        beaconComponent.Initialize(data.beaconComponent);
 
         if (partyName != string.Empty) {
             Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
@@ -220,7 +226,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                 acceptQuest = true;
             } else {
                 TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
-                acceptQuest = canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)
+                acceptQuest = canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON);
             }
             if (acceptQuest) {
                 PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
@@ -299,6 +305,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
         //Every switch of state we must cancel all jobs currently in the party, because we assume that the jobs in list is just relevant to the previous state
         ForceCancelAllJobs();
+        beaconComponent.UpdateBeaconCharacter();
         if (state == PARTY_STATE.None) {
             OnSwitchToNoneState(prevState);
         } else if (state == PARTY_STATE.Waiting) {
@@ -1060,6 +1067,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         if (!string.IsNullOrEmpty(data.partyFaction)) {
             partyFaction = FactionManager.Instance.GetFactionByPersistentID(data.partyFaction);
         }
+        beaconComponent.LoadReferences(data.beaconComponent);
         UpdatePartyWalkSpeed();
     }
     #endregion
@@ -1149,6 +1157,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
     #region Object Pool
     private void DestroyParty() {
+        beaconComponent.OnDestroyParty();
         ObjectPoolManager.Instance.ReturnPartyToPool(this);
     }
     public void Reset() {
@@ -1225,6 +1234,9 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public List<string> members;
     public List<string> membersThatJoinedQuest;
 
+    //Components
+    public SaveDataPartyBeaconComponent beaconComponent;
+
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party;
     #endregion
@@ -1286,6 +1298,9 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
             currentQuest = data.currentQuest.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentQuest);
         }
+
+        beaconComponent = new SaveDataPartyBeaconComponent();
+        beaconComponent.Save(data.beaconComponent);
         //if (data.campSetter != null) {
         //    campSetter = data.campSetter.persistentID;
         //}
