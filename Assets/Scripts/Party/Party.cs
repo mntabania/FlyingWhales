@@ -210,13 +210,19 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         //    TryAcceptQuest();
         //}
     }
-    private void TryAcceptQuest() {
+    public void TryAcceptQuest() {
         if (isDisbanded) {
             return;
         }
         if (!isActive) {
-            TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
-            if (canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)) {
+            bool acceptQuest = false;
+            if (isPlayerParty) {
+                acceptQuest = true;
+            } else {
+                TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+                acceptQuest = canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)
+            }
+            if (acceptQuest) {
                 PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
                 if (quest != null) {
                     //hasStartedAcceptingQuests = false;
@@ -318,17 +324,26 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
     #region Waiting State
     private void OnSwitchToWaitingState(PARTY_STATE prevState) {
-        //Cancel all tiredness recovery upon switching to waiting state, so that the members of the party must go to the waiting place immediately
-        //Only tiredness recovery are cancelled because typically they take around 8 hours which by then the quest will be dropped already if all members are asleep
-        CancelAllTirednessRecoveryJobsOfMembers();
-        SetMeetingPlace();
-        StartWaitTimer();
+        if (isPlayerParty) {
+            StartWaitTimer();
+        } else {
+            //Cancel all tiredness recovery upon switching to waiting state, so that the members of the party must go to the waiting place immediately
+            //Only tiredness recovery are cancelled because typically they take around 8 hours which by then the quest will be dropped already if all members are asleep
+            CancelAllTirednessRecoveryJobsOfMembers();
+            SetMeetingPlace();
+            StartWaitTimer();
+        }
+
     }
     private void OnSwitchFromWaitingState(PARTY_STATE prevState) {
     }
     private void StartWaitTimer() {
         perHourElapsedInWaiting = 0;
-        waitingEndDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
+        int ticksToWait = 1; //If Demon Party, only wait for 1 tick before moving because we assume that this party is premade already
+        if (!isPlayerParty) {
+            ticksToWait = GameManager.Instance.GetTicksBasedOnHour(5);
+        }
+        waitingEndDate = GameManager.Instance.Today().AddTicks(ticksToWait);
         SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
     }
     private void PerHourInWaitingState() {
