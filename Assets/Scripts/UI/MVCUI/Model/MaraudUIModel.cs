@@ -7,43 +7,62 @@ using System.Collections.Generic;
 using TMPro;
 public class MaraudUIModel : MVCUIModel {
 
-	public Action<bool> onMinionClicked;
-	public Action<bool> onSummonClicked;
-	public Action<int> onDropDownBehaviourChanged;
+	public Action onAddMinionClicked;
+	public Action onAddSummonClicked;
+	public Action onAddTargetClicked;
 	public Action onDeployClicked;
 	public Action onCloseClicked;
+	public Action onCloseSummonSubContainer;
+	public Action onCloseMinionSubContainer;
+	public Action onCloseTargetSubContainer;
 
 	public List<DeployedMonsterItemUI> deployedItemSummonsUI = new List<DeployedMonsterItemUI>();
 	public List<DeployedMonsterItemUI> deployedItemMinionsUI = new List<DeployedMonsterItemUI>();
 
 	public Button btnDeploy;
 	public Button btnClose;
-	public RuinarchToggle btnSummonsTab;
-	public RuinarchToggle btnMinionsTab;
+	public Button btnAddSummon;
+	public Button btnAddMinion;
+	public Button btnAddTarget;
 
-	public Transform scrollViewSummons;
-	public Transform scrollViewMinions;
+	public Button btnCloseSummonSubContainer;
+	public Button btnCloseMinionSubContainer;
+	public Button btnCloseTargetSubContainer;
+
+	public Transform scrollViewDeployedSummons;
+	public Transform scrollViewDeployedMinions;
+	public Transform scrollViewDeployedTargets;
 	public Transform availableSummonsParent;
 	public Transform availableMinionsParent;
 	public Transform deployedMinionsParent;
 	public Transform deployedSummonsParent;
 
-	public TMP_Dropdown drpDwnBehaviour;
+	public GameObject subSummonContainer;
+	public GameObject subMinionContainer;
+	public GameObject subTargetContainer;
+
+	public RuinarchText txtTitle;
 
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);
-		btnSummonsTab.onValueChanged.AddListener(ClickSummonsTab);
-		btnMinionsTab.onValueChanged.AddListener(ClickMinionsTab);
-		drpDwnBehaviour.onValueChanged.AddListener(OnDropDownBehaviourChanged);
+		btnAddSummon.onClick.AddListener(ClickAddSummon);
+		btnAddMinion.onClick.AddListener(ClickAddMinion);
+		btnAddTarget.onClick.AddListener(ClickAddTarget);
+		btnCloseSummonSubContainer.onClick.AddListener(ClickCloseSummonSubContainer);
+		btnCloseMinionSubContainer.onClick.AddListener(ClickCloseMinionSubContainer);
+		btnCloseTargetSubContainer.onClick.AddListener(ClickCloseTargetSubContainer);
 	}
 
 	private void OnDisable() {
 		btnDeploy.onClick.RemoveListener(ClickDeploy);
 		btnClose.onClick.RemoveListener(ClickClose);
-		btnSummonsTab.onValueChanged.RemoveListener(ClickSummonsTab);
-		btnMinionsTab.onValueChanged.RemoveListener(ClickMinionsTab);
-		drpDwnBehaviour.onValueChanged.RemoveListener(OnDropDownBehaviourChanged);
+		btnAddSummon.onClick.RemoveListener(ClickAddSummon);
+		btnAddMinion.onClick.RemoveListener(ClickAddMinion);
+		btnAddTarget.onClick.RemoveListener(ClickAddTarget);
+		btnCloseSummonSubContainer.onClick.RemoveListener(ClickCloseSummonSubContainer);
+		btnCloseMinionSubContainer.onClick.RemoveListener(ClickCloseMinionSubContainer);
+		btnCloseTargetSubContainer.onClick.RemoveListener(ClickCloseTargetSubContainer);
 	}
 
 	#region Buttons OnClick trigger
@@ -54,16 +73,28 @@ public class MaraudUIModel : MVCUIModel {
 	void ClickClose() {
 		onCloseClicked?.Invoke();
 	}
-	void ClickSummonsTab(bool isOn) {
-		onSummonClicked?.Invoke(isOn);
+	void ClickAddSummon() {
+		onAddSummonClicked?.Invoke();
 	}
 
-	void ClickMinionsTab(bool isOn) {
-		onMinionClicked?.Invoke(isOn); 
+	void ClickAddMinion() {
+		onAddMinionClicked?.Invoke(); 
 	}
 
-	void OnDropDownBehaviourChanged(int val) {
-		onDropDownBehaviourChanged?.Invoke(val);
+	void ClickAddTarget() {
+		onAddTargetClicked?.Invoke();
+	}
+
+	void ClickCloseSummonSubContainer() {
+		onCloseSummonSubContainer?.Invoke();
+	}
+
+	void ClickCloseMinionSubContainer() {
+		onCloseMinionSubContainer?.Invoke();
+	}
+
+	void ClickCloseTargetSubContainer() {
+		onCloseTargetSubContainer?.Invoke();
 	}
 	#endregion
 }

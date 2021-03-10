@@ -34,6 +34,8 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public SUMMON_TYPE summonType;
     public PLAYER_SKILL_TYPE playerSkillType;
     public Character deployedCharacter;
+
+    public GameObject manaIconAndPrice;
     private void OnEnable() {
         btnMonster.onClick.AddListener(OnClicked);
         btnUnlock.onClick.AddListener(OnUnlocked);
@@ -44,7 +46,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         btnUnlock.onClick.RemoveListener(OnUnlocked);
     }
 
-	public void InitializeItem(CharacterClass p_class, SummonSettings p_settings, SUMMON_TYPE p_summonType, bool p_isDeployed = false) {
+	public void InitializeItem(CharacterClass p_class, SummonSettings p_settings, SUMMON_TYPE p_summonType, bool p_isDeployed = false, bool p_hideRemoveButton = false) {
         summonType = p_summonType;
         summonSettings = p_settings;
         characterClass = p_class;
@@ -63,6 +65,12 @@ public class DeployedMonsterItemUI : MonoBehaviour {
             txtStatus.text = "Deployed";
             isReadyForDeploy = false;
             isDeployed = true;
+            
+        }
+        if (p_hideRemoveButton) {
+            HideRemoveButton();
+        } else {
+            ShowRemoveButton();
         }
         lockCover.SetActive(false);
         emptyCover.SetActive(false);
@@ -88,12 +96,19 @@ public class DeployedMonsterItemUI : MonoBehaviour {
             txtStatus.text = "Deployed";
             isReadyForDeploy = false;
             isDeployed = true;
+            HideRemoveButton();
         }
         lockCover.SetActive(false);
         emptyCover.SetActive(false);
     }
 
     public void MakeSlotEmpty() {
+        isDeployed = false;
+        isReadyForDeploy = false;
+        emptyCover.SetActive(true);
+    }
+
+    public void ResetButton() {
         isDeployed = false;
         isReadyForDeploy = false;
         emptyCover.SetActive(true);
@@ -128,10 +143,32 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         deployedCharacter = null;
     }
 
-    public void Deploy(Character p_createdCharacter = null) {
+    public void HideManaCost() {
+        manaIconAndPrice.gameObject.SetActive(false);
+    }
+
+    public void ShowManaCost() {
+        manaIconAndPrice.gameObject.SetActive(true);
+    }
+
+    public void Deploy(Character p_createdCharacter = null, bool p_dontHideremoveButton = false) {
         deployedCharacter = p_createdCharacter;
         txtStatus.text = "Deployed";
         isDeployed = true;
         isReadyForDeploy = false;
+        if (p_dontHideremoveButton) {
+            ShowRemoveButton();
+        } else {
+            HideRemoveButton(); 
+        }
+        
+    }
+
+    public void HideRemoveButton() {
+        btnMonster.gameObject.SetActive(false);
+    }
+
+    public void ShowRemoveButton() {
+        btnMonster.gameObject.SetActive(true);
     }
 }
