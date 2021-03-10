@@ -100,7 +100,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataMovementComponent movementComponent;
     public SaveDataStateAwarenessComponent stateAwarenessComponent;
     public SaveDataCarryComponent carryComponent;
-    public SaveDataPartyComponent partyComponent;
+    public SaveDataCharacterPartyComponent partyComponent;
     public SaveDataGatheringComponent gatheringComponent;
     public SaveDataCharacterTileObjectComponent tileObjectComponent;
     public SaveDataCrimeComponent crimeComponent;
@@ -177,7 +177,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         movementComponent = new SaveDataMovementComponent(); movementComponent.Save(data.movementComponent);
         stateAwarenessComponent = new SaveDataStateAwarenessComponent(); stateAwarenessComponent.Save(data.stateAwarenessComponent);
         carryComponent = new SaveDataCarryComponent(); carryComponent.Save(data.carryComponent);
-        partyComponent = new SaveDataPartyComponent(); partyComponent.Save(data.partyComponent);
+        partyComponent = new SaveDataCharacterPartyComponent(); partyComponent.Save(data.partyComponent);
         gatheringComponent = new SaveDataGatheringComponent(); gatheringComponent.Save(data.gatheringComponent);
         tileObjectComponent = new SaveDataCharacterTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);

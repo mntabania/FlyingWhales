@@ -21,7 +21,7 @@ public class PartyQuestBoard {
         PartyQuest chosenSecondaryQuest = null; //The quest that is not made in the location. Party must prioritize quest that is made in their settlement, if there is none, just get the first unassigned, i.e the secondary quest
         for (int i = 0; i < availablePartyQuests.Count; i++) {
             PartyQuest quest = availablePartyQuests[i];
-            if (!quest.isAssigned && party.members.Count >= quest.minimumPartySize) {
+            if (!quest.isAssigned && (party.members.Count >= quest.minimumPartySize || party.isPlayerParty)) {
                 if(quest.madeInLocation != null && quest.madeInLocation == party.partySettlement) {
                     return quest;
                 } else {
@@ -84,7 +84,7 @@ public class PartyQuestBoard {
 
     #region Party Quest Creations
     public void CreateExplorationPartyQuest(Character questCreator, BaseSettlement madeInLocation, Region region) {
-        if(!owner.isMajorNonPlayer) {
+        if(!owner.isMajorFaction) {
             //Cannot post quests on faction that are not major
             return;
         }
@@ -95,7 +95,7 @@ public class PartyQuestBoard {
         AddPartyQuest(quest, questCreator);
     }
     public void CreateRescuePartyQuest(Character questCreator, BaseSettlement madeInLocation, Character targetCharacter) {
-        if (!owner.isMajorNonPlayer) {
+        if (!owner.isMajorFaction) {
             //Cannot post quests on faction that are not major
             return;
         }
@@ -105,7 +105,7 @@ public class PartyQuestBoard {
         AddPartyQuest(quest, questCreator);
     }
     public void CreateExterminatePartyQuest(Character questCreator, BaseSettlement madeInLocation, LocationStructure targetStructure, NPCSettlement originSettlement) {
-        if (!owner.isMajorNonPlayer) {
+        if (!owner.isMajorFaction) {
             //Cannot post quests on faction that are not major
             return;
         }
@@ -116,7 +116,7 @@ public class PartyQuestBoard {
         AddPartyQuest(quest, questCreator);
     }
     public void CreateCounterattackPartyQuest(Character questCreator, BaseSettlement madeInLocation, LocationStructure targetStructure) {
-        if (!owner.isMajorNonPlayer) {
+        if (!owner.isMajorFaction) {
             //Cannot post quests on faction that are not major
             return;
         }
@@ -126,7 +126,7 @@ public class PartyQuestBoard {
         AddPartyQuest(quest, questCreator);
     }
     public void CreateRaidPartyQuest(Character questCreator, BaseSettlement madeInLocation, BaseSettlement targetSettlement) {
-        if (!owner.isMajorNonPlayer) {
+        if (!owner.isMajorFaction) {
             //Cannot post quests on faction that are not major
             return;
         }
