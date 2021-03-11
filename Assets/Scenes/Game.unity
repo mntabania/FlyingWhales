@@ -50635,10 +50635,13 @@ MonoBehaviour:
     type: 3}
   m_availableMonsterItemUI: {fileID: 2771371547691879450, guid: adf0cb294c5a0624587d3614a0925c6c,
     type: 3}
+  m_availableTargetItemUI: {fileID: 4197504112873557005, guid: f95f0b3bb27942d42a1be4e39a2ad8c2,
+    type: 3}
   m_deployedMonsterItemUI: {fileID: 5273214898117788424, guid: 9a6ad23b2df0e5a4cb931e2cb4b11018,
     type: 3}
   m_deployedSummonsUI: []
   m_deployedMinionsUI: []
+  m_deployedTargetItemUI: []
   manaCostToDeploySummon: 10
 --- !u!1 &1726405995
 GameObject:

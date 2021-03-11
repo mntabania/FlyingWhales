@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 
 public class PartyStructure : DemonicStructure {
 
-    public List<Character> allPossibleTargets = new List<Character>();
+    public List<IStoredTarget> allPossibleTargets = new List<IStoredTarget>();
 
     public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
@@ -28,10 +28,12 @@ public class PartyStructure : DemonicStructure {
     public List<CharacterClass> deployedMinionClass = new List<CharacterClass>();
 
     //targets
-    public List<Character> currentTargets = new List<Character>();
+    public List<IStoredTarget> deployedTargets = new List<IStoredTarget>();
 
     public int deployedSummonCount => deployedCSummonlass.Count;
     public int deployedMinionCount => deployedMinionsSkillType.Count;
+
+    public int deployedTargetCount => deployedTargets.Count;
 
     public int maxSummonLimitDeployCount = 5;
     public int readyForDeploySummonCount;
@@ -70,15 +72,15 @@ public class PartyStructure : DemonicStructure {
         deployedSummons.Add(p_newSummon);
     }
 
-    public void AddTargetOnCurrentList(Character p_newTarget) {
-        if (!currentTargets.Contains(p_newTarget)) {
-            currentTargets.Add(p_newTarget);
+    public void AddTargetOnCurrentList(IStoredTarget p_newTarget) {
+        if (!deployedTargets.Contains(p_newTarget)) {
+            deployedTargets.Add(p_newTarget);
         }
 	}
 
-    public void RemoveTargetOnCurrentList(Character p_newTarget) {
-        if (currentTargets.Contains(p_newTarget)) {
-            currentTargets.Remove(p_newTarget);
+    public void RemoveTargetOnCurrentList(IStoredTarget p_newTarget) {
+        if (deployedTargets.Contains(p_newTarget)) {
+            deployedTargets.Remove(p_newTarget);
         }
     }
 
@@ -103,6 +105,7 @@ public class PartyStructure : DemonicStructure {
         deployedMinionClass.Clear();
         deployedMinionsSkillType.Clear();
         deployedMinions.Clear();
+        deployedTargets.Clear();
         readyForDeployMinionCount = 0;
         readyForDeploySummonCount = 0;
         readyForDeployTargetCount = 0;

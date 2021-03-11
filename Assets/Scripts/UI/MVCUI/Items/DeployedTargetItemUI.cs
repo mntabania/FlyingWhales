@@ -10,19 +10,25 @@ public class DeployedTargetItemUI : MonoBehaviour {
     public RuinarchText txtName;
 
     public Image imgIcon;
-    public IPointOfInterest poi;
+    public IStoredTarget target;
 
     public bool isDeployed;
     public bool isReadyForDeploy;
 
-    public void InitializeItem(IPointOfInterest p_poi, bool p_isDeployed = false) {
-        poi = p_poi;
+    public void InitializeItem(IStoredTarget p_target, bool p_isDeployed = false) {
+        txtName.text = p_target.name;
+        target = p_target;
         if (p_isDeployed) {
+            HideRemoveButton();
             Deploy();
         } else {
             isDeployed = false;
             isReadyForDeploy = true;
         }
+    }
+
+    public void UndeployCharacter() {
+        target = null;
     }
 
     public void Deploy() {

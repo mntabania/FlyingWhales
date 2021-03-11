@@ -10,10 +10,12 @@ public class AvailableTargetItemUI : MonoBehaviour {
     public RuinarchText txtName;
 
     public Image imgIcon;
-    public IPointOfInterest poi;
+    public IStoredTarget target;
 
-    public void InitializeItem(IPointOfInterest p_poi) {
-        poi = p_poi;
+    public void InitializeItem(IStoredTarget p_target) {
+        target = p_target;
+
+        txtName.text = p_target.name;
     }
 
     private void OnEnable() {

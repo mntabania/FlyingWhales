@@ -86,7 +86,7 @@ public class MaraudUIView : MVCUIView {
 		UIModel.scrollViewDeployedTargets.gameObject.SetActive(true);
 	}
 
-	public void ShowtargetButtonHideTargetContainer() {
+	public void ShowTargetButtonHideTargetContainer() {
 		UIModel.btnAddTarget.gameObject.SetActive(true);
 		UIModel.scrollViewDeployedTargets.gameObject.SetActive(false);
 	}
@@ -104,11 +104,6 @@ public class MaraudUIView : MVCUIView {
 		} else {
 			UIModel.btnAddSummon.gameObject.SetActive(true);
 		}
-	}
-
-	public void ShowTargetButtonHideTargetContainer() {
-		UIModel.btnAddMinion.gameObject.SetActive(true);
-		UIModel.scrollViewDeployedMinions.gameObject.SetActive(false);
 	}
 
 	public void SetTitle(string p_title) {
