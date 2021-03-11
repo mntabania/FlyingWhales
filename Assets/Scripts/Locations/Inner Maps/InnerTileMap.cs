@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
+using Perlin_Noise;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
@@ -27,6 +28,7 @@ namespace Inner_Maps {
         public TilemapCollider2D structureTilemapCollider;
         public Tilemap upperGroundTilemap;
         public TilemapRenderer upperGroundTilemapRenderer;
+        public Tilemap perlinTilemap;
         
         [Header("Seamless Edges")]
         public Tilemap northEdgeTilemap;
@@ -54,6 +56,54 @@ namespace Inner_Maps {
         [Header("Perlin Noise")]
         [SerializeField] private float _xSeed;
         [SerializeField] private float _ySeed;
+        [SerializeField] private PerlinNoiseSettings _biomePerlinSettings = new PerlinNoiseSettings() {
+            noiseScale = 40.4f,
+            octaves = 3,
+            persistance = 0f,
+            lacunarity = 2,
+            offset = new Vector2(13.09f, 12f),
+            regions = new PerlinNoiseRegion[] {
+                new PerlinNoiseRegion() {
+                    name = "Desert",
+                    color = Color.yellow,
+                    height = 0.3f,
+                },
+                new PerlinNoiseRegion() {
+                    name = "Grassland",
+                    color = Color.green,
+                    height = 0.65f,
+                },
+                new PerlinNoiseRegion() {
+                    name = "Snow",
+                    color = Color.white,
+                    height = 1f,
+                },
+            }
+        };
+        [SerializeField] private PerlinNoiseSettings _perlinElevationSettings = new PerlinNoiseSettings() {
+            noiseScale = 34.15f,
+            octaves = 4,
+            persistance = 0.5f,
+            lacunarity = 2,
+            offset = new Vector2(13.09f, 12f),
+            regions = new PerlinNoiseRegion[] {
+                new PerlinNoiseRegion() {
+                    name = "Water",
+                    color = Color.blue,
+                    height = 0.25f,
+                },
+                new PerlinNoiseRegion() {
+                    name = "Plain",
+                    color = Color.green,
+                    height = 0.65f,
+                },
+                new PerlinNoiseRegion() {
+                    name = "Cave",
+                    color = Color.black,
+                    height = 1f,
+                },
+            }
+        };
         
         [SerializeField] private float _biomeTransitionXSeed;
         [SerializeField] private float _biomeTransitionYSeed;
@@ -89,6 +139,8 @@ namespace Inner_Maps {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
+            _biomePerlinSettings.seed = Random.Range(0, 999999);
+            _perlinElevationSettings.seed = Random.Range(0, 999999);
             _biomeTransitionXSeed = biomeTransitionXSeed;
             _biomeTransitionYSeed = biomeTransitionYSeed;
             
@@ -628,6 +680,8 @@ namespace Inner_Maps {
             mapGenerationComponent.AddLog($"{region.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         protected IEnumerator GroundPerlin(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
+            BiomePerlin();
+
             Vector3Int[] positionArray = new Vector3Int[tiles.Count];
             TileBase[] groundTilesArray = new TileBase[tiles.Count];
             
@@ -637,9 +691,9 @@ namespace Inner_Maps {
                 float yCoord = (float)currTile.localPlace.y / ySize * 11f + ySeed;
 
                 float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
-                positionArray[i] = currTile.localPlace;
                 currTile.SetFloorSample(floorSample);
-                groundTilesArray[i] = GetGroundAssetPerlin(floorSample, currTile.biomeType);
+                positionArray[i] = currTile.localPlace;
+                groundTilesArray[i] = GetGroundAssetPerlin(floorSample, currTile.biomeType); //currTile.biomeType
             }
             
             //Mass Update tiles
@@ -650,70 +704,28 @@ namespace Inner_Maps {
             }
             yield return null;
         }
-        // protected IEnumerator GenerateBiomeTransitions() {
-        //     List<Vector3Int> positions = new List<Vector3Int>();
-        //     List<TileBase> groundTiles = new List<TileBase>();
-        //     //generate biome transitions
-        //     //https://trello.com/c/tLBo6oAp/3451-perlin-noise-on-biome-transitions
-        //     int gridTileCollectionX = locationGridTileCollections.GetUpperBound(0);
-        //     int gridTileCollectionY = locationGridTileCollections.GetUpperBound(1);
-        //     List<LocationGridTileCollection> clearedCollections = new List<LocationGridTileCollection>();
-        //     List<LocationGridTile> tilesToPerlin = new List<LocationGridTile>();
-        //     for (int x = 0; x <= gridTileCollectionX; x++) {
-        //         for (int y = 0; y <= gridTileCollectionY; y++) {
-        //             LocationGridTileCollection collection = locationGridTileCollections[x, y];
-        //             tilesToPerlin.Clear();
-        //             if (!clearedCollections.Contains(collection) && collection.HasDifferentBiomeNeighbour(out BIOMES diffBiome, out LocationGridTileCollection neighbour)) {
-        //                 tilesToPerlin.AddRange(neighbour.tilesInTerritory);
-        //                 // tilesToPerlin.AddRange(collection.tilesInTerritory);
-        //                 
-        //                 clearedCollections.Add(neighbour);
-        //                 clearedCollections.Add(collection);
-        //                 
-        //                 int minX = tilesToPerlin.Min(t => t.localPlace.x);
-        //                 int maxX = tilesToPerlin.Max(t => t.localPlace.x);
-        //                 int minY = tilesToPerlin.Min(t => t.localPlace.y);
-        //                 int maxY = tilesToPerlin.Max(t => t.localPlace.y);
-        //                 int xSize = maxX - minX;
-        //                 int ySize = maxY - minY;
-        //
-        //                 BIOMES biome1 = collection.GetConnectedHextileOrNearestHextile().biomeType;
-        //                 BIOMES biome2 = diffBiome;
-        //                 
-        //                 for (int i = 0; i < tilesToPerlin.Count; i++) {
-        //                     LocationGridTile tile = tilesToPerlin[i];
-        //                     if (tile.isDefault) {
-        //                         float xCoord = (float)tile.localPlace.x / xSize * 300f; //+ _biomeTransitionXSeed;
-        //                         float yCoord = (float)tile.localPlace.y / ySize * 300f; //+ _biomeTransitionYSeed;
-        //                         float sample = Mathf.PerlinNoise(xCoord, yCoord);
-        //                         // tile.parentMap.groundTilemap.SetColor(tile.localPlace, new Color(sample, sample, sample));
-        //                         BIOMES biomeToUse;
-        //                         if (sample < 0.5f) {
-        //                             biomeToUse = biome1;
-        //                             // tile.parentMap.groundTilemap.SetColor(tile.localPlace, Color.red);
-        //                         } else {
-        //                             biomeToUse = biome2;
-        //                             // tile.parentMap.groundTilemap.SetColor(tile.localPlace, Color.blue);
-        //                         }
-        //                         positions.Add(tile.localPlace);
-        //                         groundTiles.Add(GetGroundAssetPerlin(tile.floorSample, biomeToUse));
-        //                     }
-        //                 }    
-        //             }
-        //             // break;
-        //         }
-        //     }
-        //
-        //     //Mass Update tiles
-        //     groundTilemap.SetTiles(positions.ToArray(), groundTiles.ToArray());
-        //     for (int i = 0; i < positions.Count; i++) {
-        //         LocationGridTile tile = map[positions[i].x, positions[i].y];
-        //         tile.InitialUpdateGroundTypeBasedOnAsset();
-        //     }
-        //     yield return null;
-        // }
-        
-        
+        private void BiomePerlin() {
+            float[,] noiseMap = Noise.GenerateNoiseMap(_biomePerlinSettings, width, height);
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    float currentHeight = noiseMap[x, y];
+                    PerlinNoiseRegion noiseRegion = _biomePerlinSettings.GetPerlinNoiseRegion(currentHeight);
+                    LocationGridTile tile = map[x, y];
+                    if (noiseRegion.name == "Snow") {
+                        tile.SetIndividualBiomeType(BIOMES.SNOW);
+                    }
+                    else if (noiseRegion.name == "Desert") {
+                        tile.SetIndividualBiomeType(BIOMES.DESERT);
+                    }
+                    else {
+                        tile.SetIndividualBiomeType(BIOMES.GRASSLAND);
+                    }
+                    // perlinTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.outsideTile);
+                    // perlinTilemap.SetColor(tile.localPlace, noiseRegion.color);
+                }
+            }
+        }
         private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
             yield return StartCoroutine(GroundPerlin(tiles, xSize, ySize, xSeed, ySeed));
             // yield return StartCoroutine(GenerateBiomeTransitions());
@@ -826,6 +838,35 @@ namespace Inner_Maps {
         }
         #endregion
 
+        #region Elevation
+        public void GenerateElevationMap() {
+            float[,] noiseMap = Noise.GenerateNoiseMap(_perlinElevationSettings, width, height);
+            int size = width * height;
+            Vector3Int[] positionArray = new Vector3Int[size];
+            TileBase[] tileMap = new TileBase[size];
+        
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    float currentHeight = noiseMap[x, y];
+                    PerlinNoiseRegion noiseRegion = _perlinElevationSettings.GetPerlinNoiseRegion(currentHeight);
+                    int index = y * width + x;
+                    LocationGridTile tile = map[x, y];
+                    TileBase tileBase = null;
+                    if (noiseRegion.name.Equals("Water", StringComparison.InvariantCultureIgnoreCase)) {
+                        tileBase = InnerMapManager.Instance.assetManager.waterTle;
+                    } else if (noiseRegion.name.Equals("Cave", StringComparison.InvariantCultureIgnoreCase)) {
+                        tileBase = InnerMapManager.Instance.assetManager.caveWallTile;
+                    } else {
+                        tileBase = groundTilemap.GetTile(tile.localPlace);
+                    }
+                    tileMap[index] = tileBase;
+                    positionArray[index] = new Vector3Int(x, y, 0);
+                }
+            }
+            groundTilemap.SetTiles(positionArray, tileMap);
+        }
+        #endregion
+        
         #region Monobehaviours
         public void Update() {
             Character activeCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();

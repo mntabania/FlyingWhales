@@ -2408,6 +2408,10 @@
             <e p="RuinarchGridGraph.cs" t="Include" />
             <e p="SpacialObject.cs" t="Include" />
           </e>
+          <e p="Perlin Noise" t="Include">
+            <e p="Noise.cs" t="Include" />
+            <e p="PerlinNoiseSettings.cs" t="Include" />
+          </e>
           <e p="Player" t="Include">
             <e p="Archetypes" t="Include">
               <e p="Lich.cs" t="Include" />

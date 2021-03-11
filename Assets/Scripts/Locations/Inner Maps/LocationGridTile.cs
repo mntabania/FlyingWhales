@@ -40,6 +40,7 @@ namespace Inner_Maps {
         public Tile_Type tileType { get; private set; }
         public Tile_State tileState { get; private set; }
         public Ground_Type groundType { get; private set; }
+        public BIOMES individualBiomeType { get; private set; }
         public LocationStructure structure { get; private set; }
         public List<LocationGridTile> neighbourList { get; private set; }
         public List<Character> charactersHere { get; private set; }
@@ -81,7 +82,7 @@ namespace Inner_Maps {
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
         public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
-        public BIOMES biomeType => area.biomeType;
+        public BIOMES biomeType => individualBiomeType;//area.biomeType;
         #endregion
         
         #region Pathfinding
@@ -1640,6 +1641,12 @@ namespace Inner_Maps {
         }
         public void RemoveMeteor() {
             meteorCount--;
+        }
+        #endregion
+
+        #region Biomes
+        public void SetIndividualBiomeType(BIOMES p_biome) {
+            individualBiomeType = p_biome;
         }
         #endregion
 

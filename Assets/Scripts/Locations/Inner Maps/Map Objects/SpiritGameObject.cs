@@ -22,10 +22,9 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
         bool isCorrupted = tileObject.gridTileLocation.corruptionComponent.isCorrupted;
-        Area area = tileObject.gridTileLocation.area;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state,
-            area.biomeType,
+            tileObject.gridTileLocation.biomeType,
             isCorrupted));  
         visionTrigger = this.transform.GetComponentInChildren<TileObjectVisionTrigger>();
         _isMenuShowing = () => IsMenuShowing(tileObject);
@@ -65,10 +64,9 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        Area area = tileObject.gridTileLocation.area;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
             tileObject.state,
-            area.biomeType,
+            tileObject.gridTileLocation.biomeType,
             tileObject.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
     }
 

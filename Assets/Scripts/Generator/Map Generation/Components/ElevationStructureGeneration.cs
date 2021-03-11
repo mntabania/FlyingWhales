@@ -14,23 +14,25 @@ using Random = System.Random;
 
 public class ElevationStructureGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-			Region region = GridMap.Instance.allRegions[i];
-			List<ElevationIsland> islandsInRegion = GetElevationIslandsInRegion(region);
-			for (int j = 0; j < islandsInRegion.Count; j++) {
-				ElevationIsland currIsland = islandsInRegion[j];
-				STRUCTURE_TYPE structureType = GetStructureTypeFor(currIsland.elevation);
-				NPCSettlement settlement = null;
-				if (structureType == STRUCTURE_TYPE.CAVE) {
-					//only create settlement for caves
-					settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON, currIsland.tilesInIsland.ToArray());	
-				}
-				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
-				
-				yield return MapGenerator.Instance.StartCoroutine(GenerateElevationMap(currIsland, elevationStructure));
-				yield return MapGenerator.Instance.StartCoroutine(RefreshTilemapCollider(region.innerMap.structureTilemapCollider));
-			}
-		}
+		// for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+		// 	Region region = GridMap.Instance.allRegions[i];
+		// 	List<ElevationIsland> islandsInRegion = GetElevationIslandsInRegion(region);
+		// 	for (int j = 0; j < islandsInRegion.Count; j++) {
+		// 		ElevationIsland currIsland = islandsInRegion[j];
+		// 		STRUCTURE_TYPE structureType = GetStructureTypeFor(currIsland.elevation);
+		// 		NPCSettlement settlement = null;
+		// 		if (structureType == STRUCTURE_TYPE.CAVE) {
+		// 			//only create settlement for caves
+		// 			settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON, currIsland.tilesInIsland.ToArray());	
+		// 		}
+		// 		LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
+		// 		
+		// 		yield return MapGenerator.Instance.StartCoroutine(GenerateElevationMap(currIsland, elevationStructure));
+		// 		yield return MapGenerator.Instance.StartCoroutine(RefreshTilemapCollider(region.innerMap.structureTilemapCollider));
+		// 	}
+		// }
+		GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.SetActive(false);
+		GridMap.Instance.mainRegion.innerMap.GenerateElevationMap();
 		yield return null;
 	}
 	private IEnumerator RefreshTilemapCollider(TilemapCollider2D tilemapCollider2D) {
