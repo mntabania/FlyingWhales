@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree;
+using System.IO;
 
 public class SavePlayerManager : MonoBehaviour {
-    private const string savedPlayerDataFileName = "SAVED_PLAYER_DATA_2";
+    public const string savedPlayerDataFileName = "SAVED_PLAYER_DATA_2";
     public SaveDataPlayer currentSaveDataPlayer { get; private set; }
 
     #region getters
@@ -42,4 +43,18 @@ public class SavePlayerManager : MonoBehaviour {
         SetCurrentSaveDataPlayer(saveDataPlayer);
     }
     #endregion
+
+    public string GetSaveContent() {
+        string content = string.Empty;
+        if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)){
+            string path = UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName;
+
+            //Read the text from directly from the test.txt file
+            StreamReader reader = new StreamReader(path);
+            content = reader.ReadToEnd();
+            reader.Close();
+        }
+        Debug.Log(content);
+        return content;
+    }
 }
