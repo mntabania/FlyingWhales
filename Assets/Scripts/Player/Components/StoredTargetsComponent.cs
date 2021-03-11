@@ -151,7 +151,7 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     }
     #endregion
 
-    public void OnCharacterDied(Character p_character) {
+    public void OnCharacterSubscribedToDied(Character p_character) {
         Remove(p_character as IStoredTarget);
     }
     public void OnTileObjectDestroyed(TileObject p_tileObject) {

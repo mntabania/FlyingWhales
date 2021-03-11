@@ -108,7 +108,7 @@ namespace Inner_Maps.Location_Structures {
                 character.traitContainer.RemoveTrait(character, "Being Drained");
             }
         }
-        public override void OnCharacterDied(Character p_character) {
+        public void OnCharacterSubscribedToDied(Character p_character) {
             Assert.IsTrue(p_character == occupyingSummon, $"{name} is subscribed to death event of non occupying summon {p_character?.name}! Occupying summon is {occupyingSummon?.name}");
             UnOccupyKennelAndCheckForNewOccupant();
         }
