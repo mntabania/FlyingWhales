@@ -1210,3 +1210,6 @@ public enum MINION_TYPE {
 public enum STORED_TARGET_TYPE {
     Character, Tile_Objects, Structures
 }
+public enum CHARACTER_COMBAT_BEHAVIOUR {
+    Tower, Attacker, Snatcher, Razer, Healer, Tank, Escort, Glass_Cannon, Defender,
+}

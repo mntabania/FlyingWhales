@@ -58,6 +58,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<TileObject> inVisionTileObjects { get; private set; } //POI's in this characters vision collider
     public Action arrivalAction { get; private set; }
+    public Action arrivalActionBeforeDigging { get; private set; }
     //private Action failedToComputePathAction { get; set; }
 
     //movement
@@ -632,13 +633,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
             StartMovement();
         }
     }
-    public void GoToPOI(IPointOfInterest targetPOI, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+    public void GoToPOI(IPointOfInterest targetPOI, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null, Action p_arrivalActionBeforeDigging = null) {
         if (character.movementComponent.isStationary) {
             return;
         }
         pathfindingAI.ClearAllCurrentPathData();
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.arrivalAction = arrivalAction;
+        arrivalActionBeforeDigging = p_arrivalActionBeforeDigging;
         //this.failedToComputePathAction = failedToComputePathAction;
         this.targetPOI = targetPOI;
         switch (targetPOI.poiType) {
@@ -691,7 +693,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         LocationGridTile actualDestinationTile = null;
         LocationGridTile attainedDestinationTile = null;
         ProcessDestinationAndAttainedDestinationTile(ref actualDestinationTile, ref attainedDestinationTile);
-        
+
+        Action actionBeforeDigging = arrivalActionBeforeDigging;
+        //set arrival action to null, because some arrival actions set it
+        arrivalActionBeforeDigging = null;
+        actionBeforeDigging?.Invoke();
+
         if (character.traitContainer.HasTrait("Vampire")) {
             if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked

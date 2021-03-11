@@ -633,7 +633,7 @@ namespace Inner_Maps {
 
             Character scorpionCharacter = HasRaceHere(RACE.SCORPION);
             Scorpion scorpion = scorpionCharacter as Scorpion;
-            if (scorpion != null && !scorpion.isDead && scorpion.limiterComponent.canPerform && scorpion.limiterComponent.canMove && scorpion != character && scorpion.heldCharacter == null) {
+            if (scorpion != null && !scorpion.isDead && scorpion.limiterComponent.canPerform && scorpion.limiterComponent.canMove && scorpion != character && scorpion.heldCharacter == null && scorpion.isHidden) {
                 if (character.canBeTargetedByLandActions) {
                     if (!scorpion.hasPulledForTheDay) {
                         scorpion.SetHasPulledForTheDay(true);
