@@ -1192,6 +1192,7 @@
               <e p="CharacterEventDispatcher.cs" t="Include" />
               <e p="CharacterFactionComponent.cs" t="Include" />
               <e p="CharacterJobTriggerComponent.cs" t="Include" />
+              <e p="CharacterPartyComponent.cs" t="Include" />
               <e p="CharacterTileObjectComponent.cs" t="Include" />
               <e p="CombatComponent.cs" t="Include" />
               <e p="CrimeComponent.cs" t="Include" />
@@ -1202,7 +1203,6 @@
               <e p="MoodComponent.cs" t="Include" />
               <e p="MovementComponent.cs" t="Include" />
               <e p="NonActionEventsComponent.cs" t="Include" />
-              <e p="PartyComponent.cs" t="Include" />
               <e p="PiercingAndResistancesComponent.cs" t="Include" />
               <e p="PreviousCharacterDataComponent.cs" t="Include" />
               <e p="ReactionComponent.cs" t="Include" />
@@ -2374,6 +2374,10 @@
             <e p="ObjectPoolManager.cs" t="Include" />
           </e>
           <e p="Party" t="Include">
+            <e p="Components" t="Include">
+              <e p="PartyBeaconComponent.cs" t="Include" />
+              <e p="PartyComponent.cs" t="Include" />
+            </e>
             <e p="Party.cs" t="Include" />
             <e p="PartyNameAdjectives.cs" t="Include" />
             <e p="PartyNameDeclarations.cs" t="Include" />
