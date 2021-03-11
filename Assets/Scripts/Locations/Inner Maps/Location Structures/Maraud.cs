@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Inner_Maps.Location_Structures {
     public class Maraud : PartyStructure {
         public Maraud(Region location) : base(STRUCTURE_TYPE.MARAUD, location) {
-            
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedCharacters;
         }
         public Maraud(Region location, SaveDataDemonicStructure data) : base(location, data) {
             

@@ -10,6 +10,10 @@ using Logs;
 using Object_Pools;
 using UnityEngine.Profiling;
 public class Party : ILogFiller, ISavable, IJobOwner {
+
+    public interface PartyEvents {
+        void OnPartyEnds();
+    }
     public string persistentID { get; private set; }
     public string partyName { get; private set; }
     public PARTY_STATE partyState { get; private set; }

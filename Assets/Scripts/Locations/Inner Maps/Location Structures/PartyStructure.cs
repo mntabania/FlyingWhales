@@ -5,6 +5,8 @@ using Inner_Maps.Location_Structures;
 
 public class PartyStructure : DemonicStructure {
 
+    public List<Character> allPossibleTargets = new List<Character>();
+
     public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
@@ -25,12 +27,16 @@ public class PartyStructure : DemonicStructure {
     public List<PLAYER_SKILL_TYPE> deployedMinionsSkillType = new List<PLAYER_SKILL_TYPE>();
     public List<CharacterClass> deployedMinionClass = new List<CharacterClass>();
 
+    //targets
+    public List<Character> currentTargets = new List<Character>();
+
     public int deployedSummonCount => deployedCSummonlass.Count;
     public int deployedMinionCount => deployedMinionsSkillType.Count;
 
     public int maxSummonLimitDeployCount = 5;
     public int readyForDeploySummonCount;
     public int readyForDeployMinionCount;
+    public int readyForDeployTargetCount;
 
     public void RemoveItemOnRight(DeployedMonsterItemUI p_itemUI) {
         if (!p_itemUI.isMinion) {
@@ -64,6 +70,18 @@ public class PartyStructure : DemonicStructure {
         deployedSummons.Add(p_newSummon);
     }
 
+    public void AddTargetOnCurrentList(Character p_newTarget) {
+        if (!currentTargets.Contains(p_newTarget)) {
+            currentTargets.Add(p_newTarget);
+        }
+	}
+
+    public void RemoveTargetOnCurrentList(Character p_newTarget) {
+        if (currentTargets.Contains(p_newTarget)) {
+            currentTargets.Remove(p_newTarget);
+        }
+    }
+
     public void RemoveCharacterOnList(Character p_removeSummon) {
         deployedSummons.Remove(p_removeSummon);
         CharacterManager.Instance.RemoveCharacter(p_removeSummon, true);
@@ -87,6 +105,7 @@ public class PartyStructure : DemonicStructure {
         deployedMinions.Clear();
         readyForDeployMinionCount = 0;
         readyForDeploySummonCount = 0;
+        readyForDeployTargetCount = 0;
     }
 
     public virtual void OnCharacterDied(Character p_deadMonster) {
@@ -97,7 +116,6 @@ public class PartyStructure : DemonicStructure {
                 deployedSummonSettings.RemoveAt(x);
                 deployedCSummonlass.RemoveAt(x);
                 deployedSummonType.RemoveAt(x);
-                m_party.RemoveMember(p_deadMonster);
             }
         }
         for (int x = 0; x < deployedMinions.Count; ++x) {
@@ -105,7 +123,6 @@ public class PartyStructure : DemonicStructure {
                 deployedMinionClass.RemoveAt(x);
                 deployedMinions.RemoveAt(x);
                 deployedMinionsSkillType.RemoveAt(x);
-                m_party.RemoveMember(p_deadMonster);
                 break;
             }
         }

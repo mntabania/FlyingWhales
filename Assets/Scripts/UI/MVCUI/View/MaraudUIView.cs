@@ -81,6 +81,16 @@ public class MaraudUIView : MVCUIView {
 		UIModel.scrollViewDeployedMinions.gameObject.SetActive(false);
 	}
 
+	public void HideTargetButtonShowTargetContainer() {
+		UIModel.btnAddTarget.gameObject.SetActive(false);
+		UIModel.scrollViewDeployedTargets.gameObject.SetActive(true);
+	}
+
+	public void ShowtargetButtonHideTargetContainer() {
+		UIModel.btnAddTarget.gameObject.SetActive(true);
+		UIModel.scrollViewDeployedTargets.gameObject.SetActive(false);
+	}
+
 	public void ProcessSummonDisplay() {
 		int count = 0;
 		for (int x = 0; x < UIModel.deployedItemSummonsUI.Count; ++x) {
@@ -94,11 +104,6 @@ public class MaraudUIView : MVCUIView {
 		} else {
 			UIModel.btnAddSummon.gameObject.SetActive(true);
 		}
-	}
-
-	public void HideTargetButtonShowTargetContainer() {
-		UIModel.btnAddMinion.gameObject.SetActive(false);
-		UIModel.scrollViewDeployedMinions.gameObject.SetActive(true);
 	}
 
 	public void ShowTargetButtonHideTargetContainer() {
@@ -120,6 +125,9 @@ public class MaraudUIView : MVCUIView {
 		UIModel.subTargetContainer.SetActive(false);
 	}
 	#endregion
+	public Transform GetAvailableTargetParent() {
+		return UIModel.availableTargetsParent;
+	}
 
 	public Transform GetAvailableMinionsParent() {
 		return UIModel.availableMinionsParent;

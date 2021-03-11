@@ -97,6 +97,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		m_defensePointUIView.ProcessSummonDisplay();
 		m_targetPartyStructure.readyForDeployMinionCount = 0;
 		m_targetPartyStructure.readyForDeploySummonCount = 0;
+		m_targetPartyStructure.readyForDeployTargetCount = 0;
 	}
 
 	void DisplayDeployedItems() {

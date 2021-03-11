@@ -18,6 +18,7 @@ public class MaraudUIModel : MVCUIModel {
 
 	public List<DeployedMonsterItemUI> deployedItemSummonsUI = new List<DeployedMonsterItemUI>();
 	public List<DeployedMonsterItemUI> deployedItemMinionsUI = new List<DeployedMonsterItemUI>();
+	public List<DeployedTargetItemUI> deployedTargetItemUI = new List<DeployedTargetItemUI>();
 
 	public Button btnDeploy;
 	public Button btnClose;
@@ -36,6 +37,8 @@ public class MaraudUIModel : MVCUIModel {
 	public Transform availableMinionsParent;
 	public Transform deployedMinionsParent;
 	public Transform deployedSummonsParent;
+	public Transform availableTargetsParent;
+	public Transform deployedTargetsParent;
 
 	public GameObject subSummonContainer;
 	public GameObject subMinionContainer;
