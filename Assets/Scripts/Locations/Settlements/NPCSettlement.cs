@@ -420,8 +420,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public override bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
         if (base.AddResident(character, chosenHome, ignoreCapacity)) {
             //region.AddResident(character);
-            character.SetHomeSettlement(this);
             OnAddResident(character);
+            character.SetHomeSettlement(this);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
                 jobPriorityComponent.OnAddResident(character);    

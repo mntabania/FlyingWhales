@@ -153,6 +153,9 @@ public class MovementComponent : CharacterComponent {
                     SetIsRunning(true);
                     return;
                 }
+            } else if (owner.partyComponent.isFollowingBeacon) {
+                SetIsRunning(true);
+                return;
             }
         }
     }

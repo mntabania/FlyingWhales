@@ -43,7 +43,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                     if(structure != null) {
                         LocationGridTile tile = structure.GetRandomPassableTile();
                         if(tile != null) {
-                            hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                            hasJob = character.jobComponent.CreateGoToSpecificTileJob(tile, out producedJob);
                         } else {
                             hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                         }
