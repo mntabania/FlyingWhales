@@ -88,7 +88,6 @@ namespace Inner_Maps.Location_Structures {
 
         public void RemoveCharacterOnList(Character p_removeSummon) {
             deployedSummons.Remove(p_removeSummon);
-            CharacterManager.Instance.RemoveCharacter(p_removeSummon, true);
         }
 
         public virtual void UnDeployAll() {
@@ -134,6 +133,10 @@ namespace Inner_Maps.Location_Structures {
                     break;
                 }
             }
+
+            if(deployedSummonCount <= 0 && deployedMinionCount <= 0) {
+                deployedTargets.Clear();
+			}
         }
 
         public virtual void DeployParty() {
