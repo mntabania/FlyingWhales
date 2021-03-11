@@ -47,7 +47,7 @@ public class CharacterPartyComponent : CharacterComponent {
                 if (beacon != null && owner.hasMarker) {
                     isFollowingBeacon = true;
                     owner.movementComponent.UpdateSpeed();
-                    owner.marker.GoToPOI(beacon, OnArriveFollowingBeacon);
+                    owner.marker.GoToPOI(beacon, p_arrivalActionBeforeDigging: OnArriveFollowingBeacon);
                 }
             }
         } else {
@@ -61,7 +61,7 @@ public class CharacterPartyComponent : CharacterComponent {
         if (hasParty) {
             Character beacon = currentParty.beaconComponent.currentBeaconCharacter;
             if (beacon != null && owner.hasMarker) {
-                owner.marker.GoToPOI(beacon, OnArriveFollowingBeacon);
+                owner.marker.GoToPOI(beacon, p_arrivalActionBeforeDigging: OnArriveFollowingBeacon);
             }
         }
     }

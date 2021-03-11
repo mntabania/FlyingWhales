@@ -76,12 +76,13 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                         return hasJob;
                                         //hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                                     } else {
-                                        LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
-                                        if (tile != null) {
-                                            hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
-                                        }
                                         if (character.partyComponent.CanFollowBeacon()) {
                                             character.partyComponent.FollowBeacon();
+                                        } else {
+                                            LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
+                                            if (tile != null) {
+                                                hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                                            }
                                         }
                                     }
                                 }
