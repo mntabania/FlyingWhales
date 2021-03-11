@@ -25,7 +25,8 @@ namespace Inner_Maps.Location_Structures {
         public override void UnDeployAll() {
             deployedSummons.ForEach((eachSummon) => {
                 PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
-                CharacterManager.Instance.RemoveCharacter(eachSummon, true);
+                eachSummon.SetDestroyMarkerOnDeath(true);
+                eachSummon.Death();
             });
             deployedSummons.Clear();
             deployedSummonSettings.Clear();

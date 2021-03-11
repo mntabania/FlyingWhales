@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Inner_Maps.Location_Structures {
-    public class PartyStructure : DemonicStructure {
+    public class PartyStructure : DemonicStructure, Party.PartyEventsIListener {
 
         public List<IStoredTarget> allPossibleTargets = new List<IStoredTarget>();
 
         public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
-            Debug.LogError("CALLED");
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         }
         public PartyStructure(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            Debug.LogError("CALLED");
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         }
 
@@ -90,15 +88,21 @@ namespace Inner_Maps.Location_Structures {
             deployedSummons.Remove(p_removeSummon);
         }
 
+        protected void ListenToParty() {
+            m_party.Subscribe(this);
+        }
+
         public virtual void UnDeployAll() {
             deployedSummons.ForEach((eachSummon) => {
                 m_party.RemoveMember(eachSummon);
                 PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
                 m_party.RemoveMemberThatJoinedQuest(eachSummon);
-                CharacterManager.Instance.RemoveCharacter(eachSummon, true);
+                eachSummon.SetDestroyMarkerOnDeath(true);
+                eachSummon.Death();
             });
             m_party.RemoveMemberThatJoinedQuest(deployedMinions[0]);
-            CharacterManager.Instance.RemoveCharacter(deployedMinions[0], true);
+            deployedMinions[0].SetDestroyMarkerOnDeath(true);
+            deployedMinions[0].Death();
             deployedSummons.Clear();
             deployedSummonSettings.Clear();
             deployedCSummonlass.Clear();
@@ -113,7 +117,6 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public virtual void OnCharacterDied(Character p_deadMonster) {
-            Debug.LogError(p_deadMonster.name);
             for (int x = 0; x < deployedSummons.Count; ++x) {
                 if (p_deadMonster == deployedSummons[x]) {
                     PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
@@ -125,7 +128,6 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
             for (int x = 0; x < deployedMinions.Count; ++x) {
-                Debug.LogError(p_deadMonster.name + " -- " + deployedMinions[x].name);
                 if (p_deadMonster == deployedMinions[x]) {
                     deployedMinionClass.RemoveAt(x);
                     deployedMinions.RemoveAt(x);
@@ -142,5 +144,10 @@ namespace Inner_Maps.Location_Structures {
         public virtual void DeployParty() {
 
         }
+
+        #region Party.EventsIListener
+        public void OnQuestEnds() { UnDeployAll(); m_party.Unsubscribe(this); }
+        public void OnQuestDropped() { UnDeployAll(); m_party.Unsubscribe(this); }
+        #endregion
     }
 }
