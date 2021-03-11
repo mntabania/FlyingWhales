@@ -54,10 +54,10 @@ namespace Ruinarch {
                     SettingsManager.Instance.CloseSettings();
                     return;
                 }
-            } else if (Input.GetKeyDown(KeyCode.F8)) {
-                if (!CanUseHotkey(KeyCode.F8)) return;
+            } else if (Input.GetKeyDown(KeyCode.F10)) {
+                if (!CanUseHotkey(KeyCode.F10)) return;
                 ReportABug();
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F8);
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F10);
             }
             
             if (runUpdate == false) { return; }
@@ -111,16 +111,18 @@ namespace Ruinarch {
             } else if (Input.GetKeyDown(KeyCode.F4)) {
                 BroadcastHotkeyPress("Intel Tab", KeyCode.F4);
             } else if (Input.GetKeyDown(KeyCode.F5)) {
-                BroadcastHotkeyPress("Villagers Tab", KeyCode.F5);
+                BroadcastHotkeyPress("Targets Tab", KeyCode.F5);
             } else if (Input.GetKeyDown(KeyCode.F6)) {
-                BroadcastHotkeyPress("Build Tab", KeyCode.F6);
+                BroadcastHotkeyPress("Villagers Tab", KeyCode.F6);
             } else if (Input.GetKeyDown(KeyCode.F7)) {
+                BroadcastHotkeyPress("Build Tab", KeyCode.F7);
+            } else if (Input.GetKeyDown(KeyCode.F8)) {
                 BroadcastHotkeyPress("Cultist Tab", KeyCode.F7);
-            } else if (Input.GetKeyDown(KeyCode.M)) {
-                BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
             } else if (Input.GetKeyDown(KeyCode.F9)) {
                 if (!CanUseHotkey(KeyCode.F9)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F9);
+            } else if (Input.GetKeyDown(KeyCode.M)) {
+                BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
             } else if (Input.GetKeyDown(KeyCode.Tab)) {
                 if (!CanUseHotkey(KeyCode.Tab)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)

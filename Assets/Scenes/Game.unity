@@ -509,7 +509,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 90, y: 36}
+  m_SizeDelta: {x: 108.34018, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &16455709
 MonoBehaviour:
@@ -15845,7 +15845,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Build <size=60%>(F6)
+  m_text: Build <size=60%>(F7)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -22491,7 +22491,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Villagers <size=60%>(F5)
+  m_text: Villagers <size=60%>(F6)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -30994,7 +30994,7 @@ MonoBehaviour:
     type: 3}
   m_deployedMonsterItemUI: {fileID: 5273214898117788424, guid: 9a6ad23b2df0e5a4cb931e2cb4b11018,
     type: 3}
-  m_deployedMonsters: []
+  m_deployedSummonsUI: []
   manaCostToDeploySummon: 10
 --- !u!1 &1066969039
 GameObject:
@@ -31527,7 +31527,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Targets <size=60%>
+  m_text: Targets <size=60%> (F5)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -54605,7 +54605,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Cultists <size=60%>(F7)
+  m_text: Cultists <size=60%>(F8)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,

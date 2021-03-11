@@ -1337,6 +1337,7 @@
               <e p="ParticleCollisionListener.cs" t="Include" />
               <e p="ParticleEffectCallback.cs" t="Include" />
               <e p="RainParticleEffect.cs" t="Include" />
+              <e p="StoreTargetEffect.cs" t="Include" />
               <e p="TerrifyingHowlCollisionListener.cs" t="Include" />
               <e p="ThreatParticleEffect.cs" t="Include" />
               <e p="WindBlastCollisionListener.cs" t="Include" />
@@ -1954,6 +1955,9 @@
                 <e p="Cave.cs" t="Include" />
                 <e p="Cemetery.cs" t="Include" />
                 <e p="CityCenter.cs" t="Include" />
+                <e p="Components" t="Include">
+                  <e p="LocationStructureEventDispatcher.cs" t="Include" />
+                </e>
                 <e p="CraftingStructure.cs" t="Include" />
                 <e p="Crypt.cs" t="Include" />
                 <e p="CultTemple.cs" t="Include" />
@@ -1982,6 +1986,7 @@
                 <e p="NaturalStructure.cs" t="Include" />
                 <e p="Ocean.cs" t="Include" />
                 <e p="Ostracizer.cs" t="Include" />
+                <e p="PartyStructure.cs" t="Include" />
                 <e p="Pond.cs" t="Include" />
                 <e p="Prison.cs" t="Include" />
                 <e p="Quarry.cs" t="Include" />
@@ -2092,6 +2097,7 @@
                   <e p="Chains.cs" t="Include" />
                   <e p="Components" t="Include">
                     <e p="TileObjectComponent.cs" t="Include" />
+                    <e p="TileObjectEventDispatcher.cs" t="Include" />
                     <e p="TileObjectHiddenComponent.cs" t="Include" />
                   </e>
                   <e p="CornCrop.cs" t="Include" />
@@ -2425,6 +2431,7 @@
               <e p="CurrenciesComponent.cs" t="Include" />
               <e p="PlagueComponent.cs" t="Include" />
               <e p="PlayerSkillComponent.cs" t="Include" />
+              <e p="PlayerTileObjectComponent.cs" t="Include" />
               <e p="PlayerUnderlingsComponent.cs" t="Include" />
               <e p="SeizeComponent.cs" t="Include" />
               <e p="StoredTargetsComponent.cs" t="Include" />
@@ -3423,6 +3430,7 @@
             <e p="PlayerSkillTreeItem.cs" t="Include" />
             <e p="PlayerSkillTreeUI.cs" t="Include" />
             <e p="PlayerUI.cs" t="Include" />
+            <e p="PlayShineEffectOnAwake.cs" t="Include" />
             <e p="POITestingUI.cs" t="Include" />
             <e p="PopupMessageBox.cs" t="Include" />
             <e p="Popups" t="Include">
@@ -3509,6 +3517,7 @@
             <e p="EliminateVillagerTracker.cs" t="Include" />
             <e p="EnvelopContentUnityUI.cs" t="Include" />
             <e p="FollowerComponent.cs" t="Include" />
+            <e p="FollowMouseUtility.cs" t="Include" />
             <e p="FPSDisplay.cs" t="Include" />
             <e p="GameUtilities.cs" t="Include" />
             <e p="HoverHandler.cs" t="Include" />
