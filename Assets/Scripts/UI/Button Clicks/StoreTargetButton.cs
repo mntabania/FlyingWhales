@@ -61,7 +61,7 @@ public class StoreTargetButton : MonoBehaviour {
         storeTargetEffect.SetImageState(false);
     }
     
-    private void UpdateInteractableState() {
+    public void UpdateInteractableState() {
         if (_target == null) { return; }
         if (!_target.CanBeStoredAsTarget() || !GameManager.Instance.gameHasStarted) {
             //cannot store this target. hide button
@@ -70,7 +70,7 @@ public class StoreTargetButton : MonoBehaviour {
             gameObject.SetActive(true);
             bool isAlreadyStored = PlayerManager.Instance.player.storedTargetsComponent.IsAlreadyStored(_target);
             btn.interactable = !isAlreadyStored;
-            goCover.SetActive(isAlreadyStored);    
+            goCover.SetActive(isAlreadyStored);
         }
     }
     private void OnHoverOver() {

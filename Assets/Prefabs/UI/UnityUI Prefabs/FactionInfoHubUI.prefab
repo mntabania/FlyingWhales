@@ -15517,7 +15517,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376, type: 3}
       propertyPath: m_Name
-      value: CharacterNameplateItem
+      value: FactionLeaderNameplate
       objectReference: {fileID: 0}
     - target: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376, type: 3}
       propertyPath: m_IsActive

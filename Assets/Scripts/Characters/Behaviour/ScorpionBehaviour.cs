@@ -28,4 +28,9 @@ public class ScorpionBehaviour : BaseMonsterBehaviour {
 
         return false;
     }
+    protected override bool MonsterUnderlingBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
+        //Scorpions should not burrow when part of player faction
+        p_producedJob = null;
+        return false;
+    }
 }
