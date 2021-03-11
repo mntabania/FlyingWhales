@@ -1183,6 +1183,12 @@
               <e p="StrollState.cs" t="Include" />
             </e>
             <e p="CharacterVisuals.cs" t="Include" />
+            <e p="Combat" t="Include">
+              <e p="Behaviours" t="Include">
+                <e p="CharacterCombatBehaviour.cs" t="Include" />
+              </e>
+              <e p="Projectile.cs" t="Include" />
+            </e>
             <e p="Components" t="Include">
               <e p="AssumptionComponent.cs" t="Include" />
               <e p="BehaviourComponent.cs" t="Include" />
@@ -1248,9 +1254,6 @@
             <e p="Minion.cs" t="Include" />
             <e p="PreCharacterData.cs" t="Include" />
             <e p="PreCharacterRelationship.cs" t="Include" />
-          </e>
-          <e p="Combat" t="Include">
-            <e p="Projectile.cs" t="Include" />
           </e>
           <e p="Crime" t="Include">
             <e p="Crime Severity" t="Include">

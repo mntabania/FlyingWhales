@@ -126,7 +126,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
-    public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Character;
+    public STORED_TARGET_TYPE storedTargetType => this is Summon ? STORED_TARGET_TYPE.Monster : STORED_TARGET_TYPE.Character;
     public string iconRichText => visuals.GetCharacterStringIcon();
     public virtual Type serializedData => typeof(SaveDataCharacter);
     public virtual string name => _firstName;
