@@ -173,6 +173,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
 			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.deployedCSummonlass[x], m_targetPartyStructure.deployedSummonSettings[x], m_targetPartyStructure.deployedSummonType[x], true, true);
 		}
+		Debug.LogError(m_targetPartyStructure.deployedMinionCount);
 		if (m_targetPartyStructure.deployedMinionCount > 0) {
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
 			m_deployedMinionsUI[0].InitializeItem(m_targetPartyStructure.deployedMinionClass[0], m_targetPartyStructure.deployedMinionsSkillType[0], true);
@@ -367,7 +368,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
-		if (m_targetPartyStructure.readyForDeployMinionCount <= 0 && !m_isTeamDeployed) {
+		if ((m_targetPartyStructure.readyForDeployMinionCount <= 0 || m_targetPartyStructure.readyForDeployTargetCount <= 0) && !m_isTeamDeployed) {
 			return; //TODO: MESSAGE PLAYER THAT HE NEEDS LEADER
 		}
 		if (m_isTeamDeployed) {
