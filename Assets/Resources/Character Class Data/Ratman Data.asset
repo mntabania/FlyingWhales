@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Ratman Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  summonCost: 0
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: 4d1e31e05de27b34c8a712290e10bbc6, type: 3}
     animationSprites:

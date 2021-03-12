@@ -711,7 +711,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             character.traitContainer.RemoveTrait(character, "Travelling");
         }
         character.behaviourComponent.RemoveBehaviourComponent(currentQuest.relatedBehaviour);
-
+        beaconComponent.OnRemoveMemberThatJoinedQuest(character);
         //Remove trap structure every time a character is remove from the quest so that he will return to normal behaviour
         //character.trapStructure.SetForcedStructure(null);
         //character.trapStructure.SetForcedHex(null);

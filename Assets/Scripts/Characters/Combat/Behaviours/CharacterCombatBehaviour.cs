@@ -11,4 +11,9 @@ public class CharacterCombatBehaviour {
         behaviourType = p_type;
         name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(behaviourType.ToString());
     }
+
+    #region Virtuals
+    public virtual void SetAsCombatBehaviourOf(Character p_character) { }
+    public virtual void UnsetAsCombatBehaviourOf(Character p_character) { }
+    #endregion
 }
