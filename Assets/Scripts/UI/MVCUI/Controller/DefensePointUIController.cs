@@ -77,7 +77,6 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			Init();
 		}
 	}
-
 	public void Init() {
 		InstantiateUI();
 		InitializeSummons();
@@ -89,23 +88,21 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	void HideDeployedItems() {
 		int x = 0;
-		for (; x < m_targetPartyStructure.maxSummonLimitDeployCount; ++x) {
+		for (; x < m_targetPartyStructure.partyData.maxSummonLimitDeployCount; ++x) {
 			m_deployedSummonsUI[x].ShowRemoveButton();
 			m_deployedSummonsUI[x].ResetButton();
 			m_deployedSummonsUI[x].ShowManaCost();
 			m_deployedSummonsUI[x].gameObject.SetActive(false);
 		}
 		m_defensePointUIView.ProcessSummonDisplay();
-		m_targetPartyStructure.readyForDeployMinionCount = 0;
-		m_targetPartyStructure.readyForDeploySummonCount = 0;
-		m_targetPartyStructure.readyForDeployTargetCount = 0;
+		m_targetPartyStructure.partyData.ResetAllReadyCounts();
 	}
 
 	void DisplayDeployedItems() {
-		for (int x = 0; x < m_targetPartyStructure.deployedCSummonlass.Count; ++x) {
+		for (int x = 0; x < m_targetPartyStructure.partyData.deployedCSummonlass.Count; ++x) {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
 			m_deployedSummonsUI[x].HideManaCost();
-			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.deployedCSummonlass[x], m_targetPartyStructure.deployedSummonSettings[x], m_targetPartyStructure.deployedSummonType[x], true, false);
+			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedCSummonlass[x], m_targetPartyStructure.partyData.deployedSummonSettings[x], (m_targetPartyStructure.partyData.deployedSummons[x] as Summon).summonType, true, false);
 		}
 	}
 
@@ -139,9 +136,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	}
 
 	void OnAvailableMonsterClicked(AvailableMonsterItemUI p_clickedItem) {
-		if (!p_clickedItem.isMinion && m_targetPartyStructure.readyForDeploySummonCount + m_targetPartyStructure.deployedSummonCount < m_targetPartyStructure.maxSummonLimitDeployCount) {
+		if (!p_clickedItem.isMinion && m_targetPartyStructure.partyData.readyForDeploySummonCount + m_targetPartyStructure.partyData.deployedSummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
 			p_clickedItem.DeductOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
-			m_targetPartyStructure.readyForDeploySummonCount++;
+			m_targetPartyStructure.partyData.readyForDeploySummonCount++;
 			for (int x = 0; x < m_deployedSummonsUI.Count; ++x) {
 				if (!m_deployedSummonsUI[x].isReadyForDeploy && !m_deployedSummonsUI[x].isDeployed) {
 					m_deployedSummonsUI[x].gameObject.SetActive(true);
@@ -158,7 +155,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		if (!p_itemUI.isMinion) {
 			for (int x = 0; x < m_summonList.Count; ++x) {
 				if (m_summonList[x].characterClass == p_itemUI.characterClass && (p_itemUI.isDeployed || p_itemUI.isReadyForDeploy)) {
-					m_targetPartyStructure.readyForDeploySummonCount--;
+					m_targetPartyStructure.partyData.readyForDeploySummonCount--;
 					m_targetPartyStructure.RemoveItemOnRight(p_itemUI);
 					if (p_itemUI.isDeployed) {
 						PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(m_summonList[x].summonType, 1);
@@ -177,7 +174,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	}
 
 	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
-		m_targetPartyStructure.maxSummonLimitDeployCount++;
+		m_targetPartyStructure.partyData.maxSummonLimitDeployCount++;
 	}
 
 	#region MaraudUIView implementation
@@ -213,7 +210,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	private void ProcessDeployButtonDisplay() {
 		int displayedCount = 0;
-		int deployedCount = m_targetPartyStructure.deployedSummonCount;
+		int deployedCount = m_targetPartyStructure.partyData.deployedSummonCount;
 		m_deployedSummonsUI.ForEach((eachUi) => {
 			if (eachUi.isReadyForDeploy) {
 				displayedCount++;

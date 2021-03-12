@@ -19,7 +19,6 @@ public class DeployedTargetItemUI : MonoBehaviour {
         txtName.text = p_target.name;
         target = p_target;
         if (p_isDeployed) {
-            HideRemoveButton();
             Deploy();
         } else {
             isDeployed = false;
@@ -34,6 +33,7 @@ public class DeployedTargetItemUI : MonoBehaviour {
     public void Deploy() {
         isDeployed = true;
         isReadyForDeploy = false;
+        HideRemoveButton();
     }
 
     private void OnEnable() {

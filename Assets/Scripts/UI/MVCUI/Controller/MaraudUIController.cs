@@ -148,7 +148,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void HideDeployedItems() {
 		int x = 0;
-		for (; x < m_targetPartyStructure.maxSummonLimitDeployCount; ++x) {
+		for (; x < m_targetPartyStructure.partyData.maxSummonLimitDeployCount; ++x) {
 			m_deployedSummonsUI[x].ShowRemoveButton();
 			m_deployedSummonsUI[x].ResetButton();
 			m_deployedSummonsUI[x].gameObject.SetActive(false);
@@ -160,31 +160,29 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_maraudUIView.ShowMinionButtonHideMinionContainer();
 		m_maraudUIView.ShowTargetButtonHideTargetContainer();
 		m_maraudUIView.ProcessSummonDisplay();
-		m_targetPartyStructure.readyForDeployMinionCount = 0;
-		m_targetPartyStructure.readyForDeploySummonCount = 0;
-		m_targetPartyStructure.readyForDeployTargetCount = 0;
+		m_targetPartyStructure.partyData.ResetAllReadyCounts();
 	}
 
 	void DisplayDeployedItems() {
-		if ((m_targetPartyStructure.deployedMinionCount > 0 || m_targetPartyStructure.deployedSummonCount > 0) && (m_targetPartyStructure.deployedTargetCount > 0)) {
+		if ((m_targetPartyStructure.partyData.deployedMinionCount > 0 || m_targetPartyStructure.partyData.deployedSummonCount > 0) && (m_targetPartyStructure.partyData.deployedTargetCount > 0)) {
 			m_isTeamDeployed = true;
 		} else {
 			m_isTeamDeployed = false;
 		}
-		for (int x = 0; x < m_targetPartyStructure.deployedCSummonlass.Count; ++x) {
+		for (int x = 0; x < m_targetPartyStructure.partyData.deployedCSummonlass.Count; ++x) {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
-			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.deployedCSummonlass[x], m_targetPartyStructure.deployedSummonSettings[x], m_targetPartyStructure.deployedSummonType[x], true, true);
+			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedCSummonlass[x], m_targetPartyStructure.partyData.deployedSummonSettings[x], (m_targetPartyStructure.partyData.deployedSummons[x] as Summon).summonType, true, true);
 		}
-		if (m_targetPartyStructure.deployedMinionCount > 0) {
+		if (m_targetPartyStructure.partyData.deployedMinionCount > 0) {
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
-			m_deployedMinionsUI[0].InitializeItem(m_targetPartyStructure.deployedMinionClass[0], m_targetPartyStructure.deployedMinionsSkillType[0], true);
+			m_deployedMinionsUI[0].InitializeItem(m_targetPartyStructure.partyData.deployedMinionClass[0], m_targetPartyStructure.partyData.deployedMinionsSkillType[0], true);
 		} else {
 			m_maraudUIView.ShowMinionButtonHideMinionContainer();
 		}
 
-		if (m_targetPartyStructure.deployedTargetCount > 0) {
+		if (m_targetPartyStructure.partyData.deployedTargetCount > 0) {
 			m_maraudUIView.HideTargetButtonShowTargetContainer();
-			m_deployedTargetItemUI[0].InitializeItem(m_targetPartyStructure.deployedTargets[0], true);
+			m_deployedTargetItemUI[0].InitializeItem(m_targetPartyStructure.partyData.deployedTargets[0], true);
 		} else {
 			m_maraudUIView.ShowTargetButtonHideTargetContainer();
 		}
@@ -272,12 +270,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 						m_deployedTargetItemUI[x].InitializeItem(p_itemUI.target);
 						exitLoop = true;
 						m_maraudUIView.HideTargetButtonShowTargetContainer();
-						m_targetPartyStructure.readyForDeployTargetCount++;
+						m_targetPartyStructure.partyData.readyForDeployTargetCount++;
 						break;
 					}
 				}
 			} else if (!m_deployedTargetItemUI[x].isDeployed && !m_deployedTargetItemUI[x].isReadyForDeploy) {
-				m_targetPartyStructure.readyForDeployTargetCount++;
+				m_targetPartyStructure.partyData.readyForDeployTargetCount++;
 				m_deployedTargetItemUI[x].InitializeItem(p_itemUI.target);
 				m_maraudUIView.HideTargetButtonShowTargetContainer();
 				break;
@@ -287,9 +285,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void OnAvailableMonsterClicked(AvailableMonsterItemUI p_clickedItem) {
-		if (!p_clickedItem.isMinion && m_targetPartyStructure.readyForDeploySummonCount + m_targetPartyStructure.deployedSummonCount < m_targetPartyStructure.maxSummonLimitDeployCount) {
+		if (!p_clickedItem.isMinion && m_targetPartyStructure.partyData.readyForDeploySummonCount + m_targetPartyStructure.partyData.deployedSummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
 			p_clickedItem.DeductOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
-			m_targetPartyStructure.readyForDeploySummonCount++;
+			m_targetPartyStructure.partyData.readyForDeploySummonCount++;
 			for (int x = 0; x < m_deployedSummonsUI.Count; ++x) {
 				if (!m_deployedSummonsUI[x].isReadyForDeploy && !m_deployedSummonsUI[x].isDeployed) {
 					m_deployedSummonsUI[x].gameObject.SetActive(true);
@@ -299,7 +297,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			}
 			m_maraudUIView.ProcessSummonDisplay();
 		}
-		if (p_clickedItem.isMinion && m_targetPartyStructure.deployedMinionCount <= 0) {
+		if (p_clickedItem.isMinion && m_targetPartyStructure.partyData.deployedMinionCount <= 0) {
 			bool exitLoop = false;
 			for (int x = 0; x < m_deployedMinionsUI.Count && !exitLoop; ++x) {
 				if (m_deployedMinionsUI[x].isReadyForDeploy) {
@@ -310,13 +308,13 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 							m_deployedMinionsUI[x].InitializeItem(p_clickedItem.characterClass, p_clickedItem.playerSkillType);
 							exitLoop = true;
 							m_maraudUIView.HideMinionButtonShowMinionContainer();
-							m_targetPartyStructure.readyForDeployMinionCount++;
+							m_targetPartyStructure.partyData.readyForDeployMinionCount++;
 							break;
 						}
 					}
 				} else if (!m_deployedMinionsUI[x].isDeployed && !m_deployedMinionsUI[x].isReadyForDeploy) {
 					p_clickedItem.DeductOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
-					m_targetPartyStructure.readyForDeployMinionCount++;
+					m_targetPartyStructure.partyData.readyForDeployMinionCount++;
 					m_deployedMinionsUI[x].InitializeItem(p_clickedItem.characterClass, p_clickedItem.playerSkillType);
 					m_maraudUIView.HideMinionButtonShowMinionContainer();
 					break;
@@ -328,7 +326,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void ProcessButtonAvailability() {
 		if (!m_isTeamDeployed) {
-			if (m_targetPartyStructure.readyForDeployMinionCount > 0 && m_targetPartyStructure.readyForDeployTargetCount > 0) {
+			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				m_maraudUIView.EnableDeployButton();
 			} else {
 				m_maraudUIView.DisableDeployButton();
@@ -345,7 +343,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		for (int x = 0; x < m_targetList.Count; ++x) {
 			if (m_targetList[x].target == p_itemUI.target && (p_itemUI.isReadyForDeploy)) {
 				m_maraudUIView.ShowTargetButtonHideTargetContainer();
-				m_targetPartyStructure.readyForDeployTargetCount--;
+				m_targetPartyStructure.partyData.readyForDeployTargetCount--;
 			}
 		}
 		ProcessButtonAvailability();
@@ -358,7 +356,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (!p_itemUI.isMinion) {
 			for (int x = 0; x < m_summonList.Count; ++x) {
 				if (m_summonList[x].characterClass == p_itemUI.characterClass && (p_itemUI.isDeployed || p_itemUI.isReadyForDeploy)) {
-					m_targetPartyStructure.readyForDeploySummonCount--;
+					m_targetPartyStructure.partyData.readyForDeploySummonCount--;
 					m_targetPartyStructure.RemoveItemOnRight(p_itemUI);
 					if (p_itemUI.isDeployed) {
 						PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(m_summonList[x].summonType, 1);
@@ -376,7 +374,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				if (m_minionList[x].playerSkillType == p_itemUI.playerSkillType && (p_itemUI.isReadyForDeploy)) {
 					m_minionList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
 					m_maraudUIView.ShowMinionButtonHideMinionContainer();
-					m_targetPartyStructure.readyForDeployMinionCount--;
+					m_targetPartyStructure.partyData.readyForDeployMinionCount--;
 				}
 			}
 		}
@@ -384,15 +382,15 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
-		m_targetPartyStructure.maxSummonLimitDeployCount++;
+		m_targetPartyStructure.partyData.maxSummonLimitDeployCount++;
 	}
 
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
-		if ((m_targetPartyStructure.readyForDeployMinionCount <= 0 || m_targetPartyStructure.readyForDeployTargetCount <= 0) && !m_isTeamDeployed) {
+		if ((m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0 || m_targetPartyStructure.partyData.readyForDeployTargetCount <= 0) && !m_isTeamDeployed) {
 			return; //TODO: MESSAGE PLAYER THAT HE NEEDS LEADER
 		}
-		if (m_isTeamDeployed) {
+		if (m_isTeamDeployed) { //this if is the UNDEPLOY trigger
 			m_isTeamDeployed = false;
 			m_targetPartyStructure.UnDeployAll();
 			m_deployedSummonsUI.ForEach((eachSummon) => {
@@ -435,7 +433,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 		if (m_deployedTargetItemUI[0].isReadyForDeploy) {
 			m_deployedTargetItemUI[0].Deploy();
-			m_deployedTargetItemUI[0].HideRemoveButton();
 			m_targetPartyStructure.AddTargetOnCurrentList(m_deployedTargetItemUI[0].target);
 		}
 		m_targetPartyStructure.DeployParty();
@@ -462,13 +459,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (m_isTeamDeployed) {
 			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
 		} else {
-			if (m_targetPartyStructure.readyForDeployMinionCount > 0 && m_targetPartyStructure.readyForDeployTargetCount > 0) {
+			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
 			} else {
 				Tooltip.Instance.ShowSmallInfo("Should atleast have 1 target and 1 leader", "Deploy team", autoReplaceText: false);
 			}
 		}
-		
 	}
 
 	public void OnHoverOut() {
