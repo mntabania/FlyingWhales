@@ -15,5 +15,7 @@ public class CharacterCombatBehaviour {
     #region Virtuals
     public virtual void SetAsCombatBehaviourOf(Character p_character) { }
     public virtual void UnsetAsCombatBehaviourOf(Character p_character) { }
+    public virtual void OnCharacterJoinedPartyQuest(Character p_character, PARTY_QUEST_TYPE p_questType) { }
+    public virtual void OnCharacterLeftPartyQuest(Character p_character, PARTY_QUEST_TYPE p_questType) { }
     #endregion
 }

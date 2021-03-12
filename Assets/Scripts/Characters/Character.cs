@@ -36,12 +36,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int currentHP { get; protected set; }
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
-    public int attackPowerMod { get; protected set; }
-    public int speedMod { get; protected set; }
-    public int maxHPMod { get; protected set; }
-    public int attackPowerPercentMod { get; protected set; }
-    public int speedPercentMod { get; protected set; }
-    public int maxHPPercentMod { get; protected set; }
     public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public string deathStr { get; private set; }
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
@@ -350,12 +344,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         sexuality = data.sexuality;
         currentHP = data.currentHP;
         doNotRecoverHP = data.doNotRecoverHP;
-        attackPowerMod = data.attackPowerMod;
-        speedMod = data.speedMod;
-        maxHPMod = data.maxHPMod;
-        attackPowerPercentMod = data.attackPowerPercentMod;
-        speedPercentMod = data.speedPercentMod;
-        maxHPPercentMod = data.maxHPPercentMod;
         advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
         canCombat = data.canCombat;
         deathStr = data.deathStr;
@@ -2563,6 +2551,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             attackSummary += $"\nTarget Cannot Perform/Move Knockout Chance: 50%";
         } else {
             chanceToKnockout = GetChanceToBeKnockedOutBy(characterThatAttacked, ref attackSummary);
+        }
+        if (characterThatAttacked.combatComponent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Snatcher)) {
+            //Temporary additional chance to knockout for snatcher combat behaviour
+            chanceToKnockout += 20;
         }
 
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;

@@ -37,6 +37,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public Area targetCamp { get; private set; }
     public IPartyTargetDestination targetDestination { get; private set; }
     public PartyQuest currentQuest { get; private set; }
+    public PARTY_QUEST_TYPE prevQuestType { get; private set; }
     public float partyWalkSpeed { get; private set; } //Do not save this because this is updated once all members in the party is loaded from save data. see LoadReferences
 
     //public Character campSetter { get; private set; }
@@ -138,6 +139,8 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
         canAcceptQuests = data.canAcceptQuests;
         canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+
+        prevQuestType = data.prevQuestType;
 
         jobBoard.InitializeFromSaveData(data.jobBoard);
         beaconComponent.Initialize(data.beaconComponent);
@@ -576,7 +579,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     #region Quest
     private void AcceptQuest(PartyQuest quest) {
         if (!isActive && quest != null) {
-            currentQuest = quest;
+            SetCurrentQuest(quest);
             currentQuest.SetAssignedParty(this);
             SetPartyState(PARTY_STATE.Waiting);
 
@@ -612,12 +615,22 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             partyFaction.partyQuestBoard.RemovePartyQuest(currentQuest);
             SetPartyState(PARTY_STATE.None);
             currentQuest.SetAssignedParty(null);
-            currentQuest = null;
+            SetCurrentQuest(null);
             targetRestingTavern = null;
             meetingPlace = null;
             targetCamp = null;
             targetDestination = null;
             SetHasChangedTargetDestination(false);
+        }
+    }
+    private void SetCurrentQuest(PartyQuest p_quest) {
+        if(currentQuest != p_quest) {
+            if (currentQuest != null) {
+                prevQuestType = currentQuest.partyQuestType;
+            } else {
+                prevQuestType = PARTY_QUEST_TYPE.None;
+            }
+            currentQuest = p_quest;
         }
     }
     private void OnAcceptQuest(PartyQuest quest) {
@@ -712,11 +725,17 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     }
     private void OnAddMemberThatJoinedQuest(Character character) {
         UpdatePartyWalkSpeed();
+        character.combatComponent.currentCombatBehaviour?.OnCharacterJoinedPartyQuest(character, currentQuest.partyQuestType);
         character.behaviourComponent.AddBehaviourComponent(currentQuest.relatedBehaviour);
         Messenger.Broadcast(PartySignals.CHARACTER_JOINED_PARTY_QUEST, this, character);
     }
     private void OnRemoveMemberThatJoinedQuest(Character character, bool broadcastSignal) {
         character.movementComponent.UpdateSpeed();
+        if (isActive) {
+            character.combatComponent.currentCombatBehaviour?.OnCharacterLeftPartyQuest(character, currentQuest.partyQuestType);
+        } else {
+            character.combatComponent.currentCombatBehaviour?.OnCharacterLeftPartyQuest(character, prevQuestType);
+        }
         if (character.traitContainer.HasTrait("Travelling")) {
             character.movementComponent.SetEnableDigging(false);
             character.traitContainer.RemoveTrait(character, "Travelling");
@@ -1189,6 +1208,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         targetCamp = null;
         targetDestination = null;
         currentQuest = null;
+        prevQuestType = PARTY_QUEST_TYPE.None;
         meetingPlace = null;
         //campSetter = null;
         //foodProducer = null;
@@ -1245,6 +1265,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public string targetDestination;
     public PARTY_TARGET_DESTINATION_TYPE targetDestinationType;
     public string currentQuest;
+    public PARTY_QUEST_TYPE prevQuestType;
     //public bool hasStartedAcceptingQuests;
     public GameDate nextQuestCheckDate;
     public bool canAcceptQuests;
@@ -1292,6 +1313,8 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
 
         waitingEndDate = data.waitingEndDate;
+
+        prevQuestType = data.prevQuestType;
 
         members = SaveUtilities.ConvertSavableListToIDs(data.members);
         membersThatJoinedQuest = SaveUtilities.ConvertSavableListToIDs(data.membersThatJoinedQuest);

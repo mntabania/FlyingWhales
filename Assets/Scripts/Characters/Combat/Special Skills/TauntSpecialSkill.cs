@@ -28,7 +28,7 @@ public class TauntSpecialSkill : CombatSpecialSkill {
         if (p_character.hasMarker) {
             for (int i = 0; i < p_character.marker.inVisionCharacters.Count; i++) {
                 Character visionCharacter = p_character.marker.inVisionCharacters[i];
-                if (!visionCharacter.isDead) {
+                if (!visionCharacter.isDead && !visionCharacter.traitContainer.HasTrait("Taunted")) {
                     if (p_character.faction != null
                         && visionCharacter.faction != null 
                         && p_character.faction.IsHostileWith(visionCharacter.faction)

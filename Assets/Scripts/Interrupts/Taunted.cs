@@ -19,6 +19,7 @@ namespace Interrupts {
             Character taunted = interruptHolder.actor;
             bool isLethalCombat = taunted.combatComponent.GetCurrentTargetCombatLethality();
 
+            taunted.traitContainer.AddTrait(taunted, "Taunted", characterResponsible: characterThatTaunt);
             taunted.combatComponent.ClearHostilesInRange(false);
             taunted.combatComponent.Fight(characterThatTaunt, CombatManager.Taunted, isLethal: isLethalCombat);
             return true;
