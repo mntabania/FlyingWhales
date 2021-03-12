@@ -55,7 +55,7 @@ namespace Traits {
             //            characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
             //                + " Hothead Assault Chance: 2, Roll: " + chance);
             //            if (characterThatWillDoJob.combatComponent.AddHostileInRange(targetCharacter, false, false, false)) {
-            //                if (!characterThatWillDoJob.combatComponent.avoidInRange.Contains(targetCharacter)) {
+            //                if (!characterThatWillDoJob.combatComponent.IsAvoidInRange(targetCharacter)) {
             //                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "hothead_assault");
             //                    log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //                    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -19,16 +19,10 @@ public class CombatComponent : CharacterComponent {
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public List<Character> bannedFromHostileList { get; private set; }
     public Dictionary<IPointOfInterest, CombatData> combatDataDictionary { get; private set; }
-    //public string avoidReason { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
-    //public ActualGoapNode actionThatTriggeredCombatState { get; private set; }
-    //public GoapPlanJob jobThatTriggeredCombatState { get; private set; }
-    // public ActualGoapNode combatConnectedActionNode { get; private set; }
 
-    //delegates
-    //public delegate void OnProcessCombat(CombatState state);
-    //private OnProcessCombat onProcessCombat; //actions to be executed and cleared when a character processes combat.
-
+    public CharacterCombatBehaviour currentCombatBehaviour { get; private set; }
+    public CombatSpecialSkillWrapper specialSkillParent { get; private set; }
     public bool willProcessCombat { get; private set; }
 
     #region getters
@@ -47,6 +41,7 @@ public class CombatComponent : CharacterComponent {
         avoidInRange = new List<IPointOfInterest>();
         bannedFromHostileList = new List<Character>();
         combatDataDictionary = new Dictionary<IPointOfInterest, CombatData>();
+        specialSkillParent = new CombatSpecialSkillWrapper();
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
         //UpdateBasicData(true);
@@ -66,6 +61,7 @@ public class CombatComponent : CharacterComponent {
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
         willProcessCombat = data.willProcessCombat;
         numOfKilledCharacters = data.numOfKilledCharacters;
+        specialSkillParent = data.specialSkillParent.Load();
     }
 
     #region Signals
@@ -232,7 +228,7 @@ public class CombatComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.None);
         }
-        if (hostilesInRange.Contains(target) || avoidInRange.Contains(target)) {
+        if (IsHostileInRange(target) || IsAvoidInRange(target)) {
             debugLog += "\n-Target is already in hostile/avoid list, will no longer trigger fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.None);
@@ -394,7 +390,7 @@ public class CombatComponent : CharacterComponent {
         bool hasFought = false;
         bool cannotFight = (reason == CombatManager.Hostility && target is Character targetCharacter && bannedFromHostileList.Contains(targetCharacter)) || !owner.limiterComponent.canPerform;
         if (!cannotFight) {
-            if (!hostilesInRange.Contains(target)) {
+            if (!IsHostileInRange(target)) {
                 hostilesInRange.Add(target);
                 avoidInRange.Remove(target);
                 SetWillProcessCombat(true);
@@ -448,7 +444,7 @@ public class CombatComponent : CharacterComponent {
         }
         string debugLog = $"Triggered FLIGHT response for {owner.name} against {target.nameWithID}";
         if (owner.limiterComponent.canMove) {
-            if (!avoidInRange.Contains(target)) {
+            if (!IsAvoidInRange(target)) {
                 if (owner.marker.IsPOIInVision(target)) {
                     avoidInRange.Add(target);
                     SetWillProcessCombat(true);
@@ -540,7 +536,7 @@ public class CombatComponent : CharacterComponent {
     #region Hostiles
     //private bool AddHostileInRange(IPointOfInterest poi, bool processCombatBehaviour = true, bool isLethal = true) {
     //    //Not yet applicable
-    //    //if (!hostilesInRange.Contains(poi)) {
+    //    //if (!IsHostileInRange(poi)) {
     //    //    hostilesInRange.Add(poi);
     //    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
     //    //        lethalCharacters.Add(poi as Character, isLethal);
@@ -604,6 +600,31 @@ public class CombatComponent : CharacterComponent {
             return combatDataDictionary[character].isLethal;
         }
         return true;
+    }
+    public bool GetCurrentTargetCombatLethality() {
+        bool isLethal = true;
+        if (isInCombat) {
+            CombatState state = owner.stateComponent.currentState as CombatState;
+            if (state.currentClosestHostile != null && state.currentClosestHostile is Character currentHostileTarget) {
+                if (!IsLethalCombatForTarget(currentHostileTarget)) {
+                    isLethal = false;
+                    return isLethal;
+                }
+            }
+        }
+        if (hostilesInRange.Count > 0) {
+            for (int i = 0; i < hostilesInRange.Count; i++) {
+                IPointOfInterest poi = hostilesInRange[i];
+                if(poi is Character hostile) {
+                    if (!IsLethalCombatForTarget(hostile)) {
+                        isLethal = false;
+                        return isLethal;
+                    }
+                    break;
+                }
+            }
+        }
+        return isLethal;
     }
     public bool HasLethalCombatTarget() {
         for (int i = 0; i < hostilesInRange.Count; i++) {
@@ -690,7 +711,7 @@ public class CombatComponent : CharacterComponent {
         return GetNearestValidHostile();
     }
     //public void OnItemRemovedFromTile(SpecialToken token, LocationGridTile removedFrom) {
-    //    if (hostilesInRange.Contains(token)) {
+    //    if (IsHostileInRange(token)) {
     //        RemoveHostileInRange(token);
     //    }
     //}
@@ -724,7 +745,7 @@ public class CombatComponent : CharacterComponent {
             for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                 Character inVision = owner.marker.inVisionCharacters[i];
                 if(inVision != hostile) {
-                    if (inVision.combatComponent.hostilesInRange.Contains(hostile)) {
+                    if (inVision.combatComponent.IsHostileInRange(hostile)) {
                         return true;
                     }
                 }
@@ -733,13 +754,27 @@ public class CombatComponent : CharacterComponent {
         }
         return false;
     }
+    public bool IsCurrentlyAttackingFriendlyWith(Character p_character) {
+        if (isInCombat) {
+            CombatState state = owner.stateComponent.currentState as CombatState;
+            if(state.currentClosestHostile != null && state.currentClosestHostile is Character currentHostileTarget) {
+                if (currentHostileTarget.faction != null && p_character.faction != null && currentHostileTarget.faction.IsFriendlyWith(p_character.faction)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool IsHostileInRange(IPointOfInterest p_poi) {
+        return hostilesInRange.Contains(p_poi);
+    }
     #endregion
 
     #region Avoid
     private bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
         if (owner.limiterComponent.canMove) {
         //if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
-            if (!avoidInRange.Contains(poi)) {
+            if (!IsAvoidInRange(poi)) {
                 avoidInRange.Add(poi);
                 SetWillProcessCombat(true);
                 //avoidReason = reason;
@@ -760,7 +795,7 @@ public class CombatComponent : CharacterComponent {
         }
     }
     public void RemoveAvoidInRangeSchedule(IPointOfInterest poi, bool processCombatBehavior = true) {
-        if (avoidInRange.Contains(poi)) {
+        if (IsAvoidInRange(poi)) {
             GameDate dueDate = GameManager.Instance.Today();
             dueDate.AddTicks(3);
             SchedulingManager.Instance.AddEntry(dueDate, () => FinalCheckForRemoveAvoidSchedule(poi, processCombatBehavior), owner);
@@ -774,7 +809,7 @@ public class CombatComponent : CharacterComponent {
         }
     }
     public void RemoveHostileInRangeSchedule(IPointOfInterest poi, bool processCombatBehavior = true) {
-        if (hostilesInRange.Contains(poi)) {
+        if (IsHostileInRange(poi)) {
             if(combatDataDictionary.ContainsKey(poi) && combatDataDictionary[poi].reasonForCombat != CombatManager.Demon_Kill && combatDataDictionary[poi].connectedAction == null) {
                 GameDate dueDate = GameManager.Instance.Today();
                 dueDate.AddTicks(2);
@@ -800,6 +835,9 @@ public class CombatComponent : CharacterComponent {
                 //}
             }
         }
+    }
+    public bool IsAvoidInRange(IPointOfInterest p_poi) {
+        return avoidInRange.Contains(p_poi);
     }
     #endregion
 
@@ -1115,30 +1153,52 @@ public class CombatComponent : CharacterComponent {
     }
     #endregion
 
+    #region Combat Behaviour
+    private void SetCombatBehaviour(CharacterCombatBehaviour p_combatBehaviour) {
+        if(currentCombatBehaviour != p_combatBehaviour) {
+            CharacterCombatBehaviour prevBehaviour = currentCombatBehaviour;
+            currentCombatBehaviour = p_combatBehaviour;
+            if(prevBehaviour != null) {
+                prevBehaviour.UnsetAsCombatBehaviourOf(owner);
+            }
+            if(currentCombatBehaviour != null) {
+                currentCombatBehaviour.SetAsCombatBehaviourOf(owner);
+            }
+        }
+    }
+    public void SetCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR p_behaviourType) {
+        CharacterCombatBehaviour behaviour = CombatManager.Instance.GetCombatBehaviour(p_behaviourType);
+        SetCombatBehaviour(behaviour);
+    }
+    public bool IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR p_behaviourType) {
+        return currentCombatBehaviour?.behaviourType == p_behaviourType;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCombatComponent data) {
         for (int i = 0; i < data.hostileCharactersInRange.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.hostileCharactersInRange[i]);
-            if (!hostilesInRange.Contains(character)) {
+            if (!IsHostileInRange(character)) {
                 hostilesInRange.Add(character);
             }
         }
         for (int i = 0; i < data.hostileTileObjectsInRange.Count; i++) {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.hostileTileObjectsInRange[i]);
-            if (!hostilesInRange.Contains(tileObject)) {
+            if (!IsHostileInRange(tileObject)) {
                 hostilesInRange.Add(tileObject);
             }
         }
 
         for (int i = 0; i < data.avoidCharactersInRange.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.avoidCharactersInRange[i]);
-            if (!avoidInRange.Contains(character)) {
+            if (!IsAvoidInRange(character)) {
                 avoidInRange.Add(character);
             }
         }
         for (int i = 0; i < data.avoidTileObjectsInRange.Count; i++) {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.avoidTileObjectsInRange[i]);
-            if (!avoidInRange.Contains(tileObject)) {
+            if (!IsAvoidInRange(tileObject)) {
                 avoidInRange.Add(tileObject);
             }
         }
@@ -1160,6 +1220,8 @@ public class CombatComponent : CharacterComponent {
                 bannedFromHostileList.Add(character);
             }
         }
+        currentCombatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.currentCombatBehaviour);
+        specialSkillParent.LoadReferences();
     }
     #endregion
 }
@@ -1257,6 +1319,8 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public Dictionary<string, SaveDataCombatData> tileObjectCombatData;
 
     public ELEMENTAL_TYPE elementalDamageType;
+    public CHARACTER_COMBAT_BEHAVIOUR currentCombatBehaviour;
+    public SaveDataCombatSpecialSkillWrapper specialSkillParent;
 
     public bool willProcessCombat;
 
@@ -1310,6 +1374,14 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
         for (int i = 0; i < data.bannedFromHostileList.Count; i++) {
             bannedFromHostileList.Add(data.bannedFromHostileList[i].persistentID);
         }
+
+        currentCombatBehaviour = CHARACTER_COMBAT_BEHAVIOUR.None;
+        if(data.currentCombatBehaviour != null) {
+            currentCombatBehaviour = data.currentCombatBehaviour.behaviourType;
+        }
+
+        specialSkillParent = new SaveDataCombatSpecialSkillWrapper(); 
+        specialSkillParent.Save(data.specialSkillParent);
     }
 
     public override CombatComponent Load() {

@@ -253,7 +253,7 @@ public class Minion {
         Messenger.Broadcast(SpellSignals.SUMMON_MINION, this);
     }
     private void Unsummon() {
-        if(character.currentHP < 0) {
+        if(!character.HasHealth()) {
             character.SetHP(0);
         }
         Messenger.AddListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
@@ -288,7 +288,7 @@ public class Minion {
         this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
         SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         spellData.SetCurrentCooldownTick(spellData.currentCooldownTick + 1);
-        if (character.currentHP >= character.maxHP) {
+        if (character.IsHealthFull()) {
             //minion can be summoned again
             spellData.SetCooldown(-1);
             spellData.AdjustCharges(1);

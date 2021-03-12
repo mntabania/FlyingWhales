@@ -1115,6 +1115,9 @@ namespace Inner_Maps.Location_Structures {
         #region HP
         public void AddObjectAsDamageContributor(IDamageable damageable) {
             objectsThatContributeToDamage.Add(damageable);
+            if(damageable is TileObject to) {
+                to.SetAsDamageContributorToStructure(true);
+            }
         }
         protected void OnObjectDamaged(TileObject tileObject, int amount) {
             if (objectsThatContributeToDamage.Contains(tileObject)) {

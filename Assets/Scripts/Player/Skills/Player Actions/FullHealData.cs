@@ -21,7 +21,7 @@ public class FullHealData : PlayerAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if(targetCharacter.currentHP >= targetCharacter.maxHP) {
+        if(targetCharacter.IsHealthFull()) {
             return false;
         }
         if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
@@ -34,7 +34,7 @@ public class FullHealData : PlayerAction {
         if (targetCharacter.isDead) {
             reasons += $"{targetCharacter.name} is already dead,";
         }
-        if (targetCharacter.currentHP >= targetCharacter.maxHP) {
+        if (targetCharacter.IsHealthFull()) {
             reasons += $"{targetCharacter.name} is at full HP,";
         }
         if (targetCharacter.traitContainer.HasTrait("Being Drained")) {

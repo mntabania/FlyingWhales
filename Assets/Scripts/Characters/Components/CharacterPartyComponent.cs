@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterPartyComponent : CharacterComponent {
     public Party currentParty { get; private set; }
-    public bool isFollowingBeacon { get; private set; }
+    public bool isFollowingBeacon { get; private set; } //Do not save this because this will be set when character go to its behaviour
 
     #region getters
     public bool hasParty => currentParty != null;

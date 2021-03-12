@@ -511,7 +511,7 @@ public class MovementComponent : CharacterComponent {
 
         if (targetTile != null && targetTile.tileObjectComponent.HasWalls()) {
             TileObject wall = targetTile.tileObjectComponent.GetFirstWall();
-            if (owner.combatComponent.hostilesInRange.Contains(wall)) {
+            if (owner.combatComponent.IsHostileInRange(wall)) {
                 owner.combatComponent.SetWillProcessCombat(true);
             } else {
                 owner.combatComponent.Fight(wall, CombatManager.Dig);

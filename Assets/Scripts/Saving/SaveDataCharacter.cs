@@ -21,12 +21,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     public int currentHP;
     public int doNotRecoverHP;
-    public int attackPowerMod;
-    public int speedMod;
-    public int maxHPMod;
-    public int attackPowerPercentMod;
-    public int speedPercentMod;
-    public int maxHPPercentMod;
 
     public Vector3 worldPos;
     public Quaternion rotation;
@@ -126,12 +120,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         //isAlliedWithPlayer = data.isAlliedWithPlayer;
         currentHP = data.currentHP;
         doNotRecoverHP = data.doNotRecoverHP;
-        attackPowerMod = data.attackPowerMod;
-        speedMod = data.speedMod;
-        maxHPMod = data.maxHPMod;
-        attackPowerPercentMod = data.attackPowerPercentMod;
-        speedPercentMod = data.speedPercentMod;
-        maxHPPercentMod = data.maxHPPercentMod;
         portraitSettings = data.visuals.portraitSettings;
         advertisedActions = data.advertisedActions;
         canCombat = data.canCombat;

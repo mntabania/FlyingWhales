@@ -137,6 +137,8 @@ namespace UtilityScripts {
         summary = $"{summary}{"\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture)}";
         summary = $"{summary}{"\nAttack Speed: " + activeCharacter.combatComponent.attackSpeed.ToString()}";
         summary = $"{summary}{"\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString()}";
+        summary = $"{summary}{"\nCombat Behaviour: " + activeCharacter.combatComponent.currentCombatBehaviour?.name}";
+        summary = $"{summary}{"\nCombat Special Skill: " + activeCharacter.combatComponent.specialSkillParent.specialSkill?.name + ", Cooldown: " + activeCharacter.combatComponent.specialSkillParent.currentCooldown + "/" + activeCharacter.combatComponent.specialSkillParent.specialSkill?.cooldownInTicks}";
         summary = $"{summary}{"\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name}";
         summary = $"{summary}{"\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString()}";
         summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";

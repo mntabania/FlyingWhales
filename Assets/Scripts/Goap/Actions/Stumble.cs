@@ -47,7 +47,7 @@ public class Stumble : GoapAction {
         goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
     }
     public void AfterStumbleSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.currentHP <= 0) {
+        if (!goapNode.actor.HasHealth()) {
             goapNode.actor.Death(deathFromAction: goapNode);
         }
     }

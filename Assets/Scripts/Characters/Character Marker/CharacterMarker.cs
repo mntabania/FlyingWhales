@@ -483,7 +483,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //if (!otherCharacter.limiterComponent.canPerform) {
             if (character.combatComponent.IsLethalCombatForTarget(otherCharacter) == false) {
                 if (otherCharacter.traitContainer.HasTrait("Unconscious", "Paralyzed", "Restrained")) {
-                    if (character.combatComponent.hostilesInRange.Contains(otherCharacter)) {
+                    if (character.combatComponent.IsHostileInRange(otherCharacter)) {
                         character.combatComponent.RemoveHostileInRange(otherCharacter);
                     }
                     character.combatComponent.RemoveAvoidInRange(otherCharacter);
@@ -1465,7 +1465,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Hosility Collision
     //public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true, bool gotHit = false) {
-    //    if (!hostilesInRange.Contains(poi)) {
+    //    if (!IsHostileInRange(poi)) {
     //        //&& !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
     //        if (this.character.traitContainer.GetNormalTrait<Trait>("Zapped") == null && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility, isLethal)) {
     //            string transferReason = string.Empty;
@@ -1623,7 +1623,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //        return AddAvoidInRange(poi as Character, processCombatBehavior, reason);
     //    } else {
     //        if (character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
-    //            if (!avoidInRange.Contains(poi)) {
+    //            if (!IsAvoidInRange(poi)) {
     //                avoidInRange.Add(poi);
     //                willProcessCombat = true;
     //                avoidReason = reason;
@@ -1635,7 +1635,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //}
     //private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true, string reason = "") {
     //    if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) { //, "Resting"
-    //        if (!avoidInRange.Contains(poi)) {
+    //        if (!IsAvoidInRange(poi)) {
     //            avoidInRange.Add(poi);
     //            //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
     //            //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
@@ -1660,7 +1660,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //                continue; //skip
     //            }
     //        }
-    //        if (!avoidInRange.Contains(poi)) {
+    //        if (!IsAvoidInRange(poi)) {
     //            avoidInRange.Add(poi);
     //            if (otherPOI == null) {
     //                otherPOI = poi;
@@ -1681,7 +1681,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //    for (int i = 0; i < pois.Count; i++) {
     //        Character poi = pois[i];
     //        if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && poi.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
-    //            if (!avoidInRange.Contains(poi)) {
+    //            if (!IsAvoidInRange(poi)) {
     //                avoidInRange.Add(poi);
     //                if (otherPOI == null) {
     //                    otherPOI = poi;
