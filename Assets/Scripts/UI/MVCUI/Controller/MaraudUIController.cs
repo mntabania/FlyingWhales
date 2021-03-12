@@ -143,6 +143,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			m_maraudUIView.SetTitle(p_title);
 		}
 		ProcessButtonAvailability();
+		GameManager.Instance.SetPausedState(true);
 	}
 
 	void HideDeployedItems() {
@@ -446,6 +447,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		HideAvailableItems();
 		HideUI();
 		m_maraudUIView.HideAllSubMenu();
+		GameManager.Instance.SetPausedState(false);
 	}
 
 	public void OnAddSummonClicked() { m_maraudUIView.ShowSummonSubContainer(); }

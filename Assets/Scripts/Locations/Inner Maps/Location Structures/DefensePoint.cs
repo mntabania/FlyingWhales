@@ -10,6 +10,12 @@ namespace Inner_Maps.Location_Structures {
             
         }
 
+        public override void RemoveCharacterOnList(Character p_removeSummon) {
+            deployedSummons.Remove(p_removeSummon);
+            p_removeSummon.SetDestroyMarkerOnDeath(true);
+            p_removeSummon.Death();
+        }
+
         public override void OnCharacterDied(Character p_deadMonster) {
             for (int x = 0; x < deployedSummons.Count; ++x) {
                 if (p_deadMonster == deployedSummons[x]) {

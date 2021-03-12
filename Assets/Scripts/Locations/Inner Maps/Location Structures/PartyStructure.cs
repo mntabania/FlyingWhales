@@ -84,7 +84,7 @@ namespace Inner_Maps.Location_Structures {
             }
         }
 
-        public void RemoveCharacterOnList(Character p_removeSummon) {
+        public virtual void RemoveCharacterOnList(Character p_removeSummon) {
             deployedSummons.Remove(p_removeSummon);
         }
 

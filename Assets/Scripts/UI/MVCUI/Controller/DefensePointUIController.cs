@@ -84,6 +84,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InitializeDeployedItems();
 		m_defensePointUIView.SetTitle("Defense Point");
 		ProcessDeployButtonDisplay();
+		GameManager.Instance.SetPausedState(true);
 	}
 
 	void HideDeployedItems() {
@@ -219,7 +220,6 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			}
 		});
 
-		Debug.LogError(displayedCount + " -- " + deployedCount);
 		if (displayedCount > 0) {
 			m_isAllItemDeployed = false;
 			m_defensePointUIView.SetButtonDeployText("Deploy");
@@ -239,6 +239,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		HideSummonItems();
 		HideUI();
 		m_defensePointUIView.HideAllSubMenu();
+		GameManager.Instance.SetPausedState(false);
 	}
 
 	public void OnAddSummonClicked() { m_defensePointUIView.ShowSummonSubContainer(); }
