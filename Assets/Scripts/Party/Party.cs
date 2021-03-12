@@ -9,7 +9,16 @@ using UtilityScripts;
 using Logs;
 using Object_Pools;
 using UnityEngine.Profiling;
+using System;
 public class Party : ILogFiller, ISavable, IJobOwner {
+
+    public Action onQuestEnd;
+    public Action onQuestDropped;
+
+    public interface PartyEventsIListener {
+        void OnQuestEnds();
+        void OnQuestDropped();
+    }
     public string persistentID { get; private set; }
     public string partyName { get; private set; }
     public PARTY_STATE partyState { get; private set; }
@@ -639,6 +648,8 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             //After a party drops quest, the party must not take quest for 12 hours, so that they can recupirate
             StartNoQuestCooldown();
         }
+
+        onQuestDropped?.Invoke();
     }
     private void StartNoQuestCooldown() {
         if (canAcceptQuests) {
@@ -1197,6 +1208,18 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         DatabaseManager.Instance.partyDatabase.RemoveParty(this);
     }
     #endregion
+
+    #region Subscribe/Unsubscribe
+    public void Subscribe(PartyEventsIListener p_iListener) {
+        onQuestDropped += p_iListener.OnQuestDropped;
+        onQuestEnd += p_iListener.OnQuestEnds;
+    }
+
+    public void Unsubscribe(PartyEventsIListener p_iListener) {
+        onQuestDropped -= p_iListener.OnQuestDropped;
+        onQuestEnd -= p_iListener.OnQuestEnds;
+    }
+    #endregion
 }
 
 
@@ -1318,4 +1341,5 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         return party;
     }
     #endregion
+
 }

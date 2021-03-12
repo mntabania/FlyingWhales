@@ -28,6 +28,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         Messenger.AddListener(Signals.TICK_ENDED, UpdateAllTextsAndIcon);
         if (character != null) {
             UpdateAllTextsAndIcon();
+            btnStoreTarget.UpdateInteractableState();
         }
     }
     private void OnDisable() {

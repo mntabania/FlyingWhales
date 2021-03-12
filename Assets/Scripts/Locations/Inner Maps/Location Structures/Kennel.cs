@@ -15,8 +15,12 @@ namespace Inner_Maps.Location_Structures {
         private MarkerDummy _markerDummy;
         private Summon _occupyingSummon;
 
-        public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){ }
-        public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) { }
+        public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
+        }
+        public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) {
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
+        }
 
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
@@ -104,7 +108,7 @@ namespace Inner_Maps.Location_Structures {
                 character.traitContainer.RemoveTrait(character, "Being Drained");
             }
         }
-        public void OnCharacterDied(Character p_character) {
+        public void OnCharacterSubscribedToDied(Character p_character) {
             Assert.IsTrue(p_character == occupyingSummon, $"{name} is subscribed to death event of non occupying summon {p_character?.name}! Occupying summon is {occupyingSummon?.name}");
             UnOccupyKennelAndCheckForNewOccupant();
         }

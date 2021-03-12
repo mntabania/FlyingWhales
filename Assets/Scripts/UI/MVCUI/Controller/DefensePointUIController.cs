@@ -84,6 +84,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InitializeDeployedItems();
 		m_defensePointUIView.SetTitle("Defense Point");
 		ProcessDeployButtonDisplay();
+		GameManager.Instance.SetPausedState(true);
 	}
 
 	void HideDeployedItems() {
@@ -97,6 +98,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		m_defensePointUIView.ProcessSummonDisplay();
 		m_targetPartyStructure.readyForDeployMinionCount = 0;
 		m_targetPartyStructure.readyForDeploySummonCount = 0;
+		m_targetPartyStructure.readyForDeployTargetCount = 0;
 	}
 
 	void DisplayDeployedItems() {
@@ -162,9 +164,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 						PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(m_summonList[x].summonType, 1);
 						m_targetPartyStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
 						p_itemUI.UndeployCharacter();
-						p_itemUI.ResetButton();
 						p_itemUI.ShowManaCost();
 					}
+					p_itemUI.ResetButton();
 					m_summonList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
 					p_itemUI.gameObject.SetActive(false);
 				}
@@ -237,10 +239,23 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		HideSummonItems();
 		HideUI();
 		m_defensePointUIView.HideAllSubMenu();
+		GameManager.Instance.SetPausedState(false);
 	}
 
 	public void OnAddSummonClicked() { m_defensePointUIView.ShowSummonSubContainer(); }
 	
 	public void OnCloseSummonSubContainer() { m_defensePointUIView.HideAllSubMenu(); }
+
+	public void OnHoverOver() {
+		if (m_isAllItemDeployed) {
+			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
+		} else {
+			Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
+		}
+	}
+
+	public void OnHoverOut() {
+		Tooltip.Instance.HideSmallInfo();
+	}
 	#endregion
 }

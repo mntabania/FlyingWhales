@@ -10,6 +10,8 @@ public class DefensePointUIView : MVCUIView {
 		void OnAddSummonClicked();
 		
 		void OnCloseSummonSubContainer();
+		void OnHoverOver();
+		void OnHoverOut();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -45,7 +47,13 @@ public class DefensePointUIView : MVCUIView {
 	public Transform GetAvailableSummonsParent() {
 		return UIModel.availableSummonsParent;
 	}
+		public void EnableDeployButton() {
+		UIModel.btnDeploy.interactable = true;
+	}
 
+	public void DisableDeployButton() {
+		UIModel.btnDeploy.interactable = false;
+	}
 	#region show/hide Container
 	public void ShowSummonSubContainer() {
 		HideAllSubMenu();
@@ -91,6 +99,8 @@ public class DefensePointUIView : MVCUIView {
 		UIModel.onCloseClicked += p_listener.OnCloseClicked;
 		UIModel.onAddSummonClicked += p_listener.OnAddSummonClicked;
 		UIModel.onCloseSummonSubContainer += p_listener.OnCloseSummonSubContainer;
+		UIModel.onHoverOver += p_listener.OnHoverOver;
+		UIModel.onHoverOut += p_listener.OnHoverOut;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -98,6 +108,8 @@ public class DefensePointUIView : MVCUIView {
 		UIModel.onCloseClicked -= p_listener.OnCloseClicked;
 		UIModel.onAddSummonClicked -= p_listener.OnAddSummonClicked;
 		UIModel.onCloseSummonSubContainer -= p_listener.OnCloseSummonSubContainer;
+		UIModel.onHoverOver -= p_listener.OnHoverOver;
+		UIModel.onHoverOut -= p_listener.OnHoverOut;
 	}
 	#endregion
 }

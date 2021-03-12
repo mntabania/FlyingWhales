@@ -13,15 +13,23 @@ public class DefensePointUIModel : MVCUIModel {
 	public Action onDeployClicked;
 	public Action onCloseClicked;
 	public Action onCloseSummonSubContainer;
-	
+	public Action onHoverOver;
+	public Action onHoverOut;
+
 	public List<DeployedMonsterItemUI> deployedItemSummonsUI = new List<DeployedMonsterItemUI>();
 
+	[Space]
+	[Header("Buttons")]
 	public Button btnDeploy;
 	public Button btnClose;
 	public Button btnAddSummon;
-	
+	[Space]
 	public Button btnCloseSummonSubContainer;
-	
+	[Space]
+	public HoverHandler btnDeployHover;
+
+	[Space]
+	[Header("Scrollviews and Contents")]
 	public Transform scrollViewDeployedSummons;
 	public Transform availableSummonsParent;
 
@@ -34,6 +42,8 @@ public class DefensePointUIModel : MVCUIModel {
 		btnClose.onClick.AddListener(ClickClose);
 		btnAddSummon.onClick.AddListener(ClickAddSummon);
 		btnCloseSummonSubContainer.onClick.AddListener(ClickCloseSummonSubContainer);
+		btnDeployHover.AddOnHoverOverAction(OnHoverOverDeployCursor);
+		btnDeployHover.AddOnHoverOutAction(OnHoverOutDeployCursor);
 	}
 
 	private void OnDisable() {
@@ -41,6 +51,8 @@ public class DefensePointUIModel : MVCUIModel {
 		btnClose.onClick.RemoveListener(ClickClose);
 		btnAddSummon.onClick.RemoveListener(ClickAddSummon);
 		btnCloseSummonSubContainer.onClick.RemoveListener(ClickCloseSummonSubContainer);
+		btnDeployHover.RemoveOnHoverOverAction(OnHoverOverDeployCursor);
+		btnDeployHover.RemoveOnHoverOutAction(OnHoverOutDeployCursor);
 	}
 
 	#region Buttons OnClick trigger
@@ -65,6 +77,14 @@ public class DefensePointUIModel : MVCUIModel {
 
 	void ClickCloseSummonSubContainer() {
 		onCloseSummonSubContainer?.Invoke();
+	}
+
+	void OnHoverOverDeployCursor() {
+		onHoverOver?.Invoke();
+	}
+
+	void OnHoverOutDeployCursor() {
+		onHoverOut?.Invoke();
 	}
 	#endregion
 }

@@ -48,6 +48,10 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI itemsLbl;
     [SerializeField] private EventLabel itemsEventLbl;
     
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
+    
     private Character _activeMonster;
 
     public Character activeMonster => _activeMonster;
@@ -127,6 +131,7 @@ public class MonsterInfoUI : InfoUIBase {
             }
             _activeMonster.marker.UpdateNameplateElementsState();
         }
+        btnStoreTarget.SetTarget(activeMonster);
         UpdateMonsterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
