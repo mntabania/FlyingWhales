@@ -163,9 +163,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 						PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(m_summonList[x].summonType, 1);
 						m_targetPartyStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
 						p_itemUI.UndeployCharacter();
-						p_itemUI.ResetButton();
 						p_itemUI.ShowManaCost();
 					}
+					p_itemUI.ResetButton();
 					m_summonList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
 					p_itemUI.gameObject.SetActive(false);
 				}
