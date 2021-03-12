@@ -33,12 +33,6 @@ public class UserReportingScript : MonoBehaviour
     #endregion
 
     #region Fields
-
-    /// <summary>
-    /// Gets or sets the category dropdown.
-    /// </summary>
-    [Tooltip("The category dropdown.")] public Dropdown CategoryDropdown;
-
     /// <summary>
     /// Gets or sets the description input on the user report form.
     /// </summary>
@@ -102,22 +96,8 @@ public class UserReportingScript : MonoBehaviour
     /// <summary>
     /// Gets or sets the thumbnail viewer on the user report form.
     /// </summary>
-    [Tooltip("The thumbnail viewer on the user report form.")]
-    public Image ThumbnailViewer;
 
     private UnityUserReportingUpdater unityUserReportingUpdater;
-
-    /// <summary>
-    /// Gets or sets the user report button used to create a user report.
-    /// </summary>
-    [Tooltip("The user report button used to create a user report.")]
-    public Button UserReportButton;
-
-    /// <summary>
-    /// Gets or sets the UI for the user report form. Shown after a user report is created.
-    /// </summary>
-    [Tooltip("The UI for the user report form. Shown after a user report is created.")]
-    public Canvas UserReportForm;
 
     /// <summary>
     /// Gets or sets the User Reporting platform. Different platforms have different features but may require certain Unity versions or target platforms. The Async platform adds async screenshotting and report creation, but requires Unity 2018.3 and above, the package manager version of Unity User Reporting, and a target platform that supports asynchronous GPU readback such as DirectX.
@@ -229,7 +209,6 @@ public class UserReportingScript : MonoBehaviour
             {
                 Debug.LogWarning("The user report's project identifier is not set. Please setup cloud services using the Services tab or manually specify a project identifier when calling UnityUserReporting.Configure().");
             }
-
             // Attachments
             //br.Attachments.Add(new UserReportAttachment("Sample Attachment.txt", "SampleAttachment.txt", "text/plain", System.Text.Encoding.UTF8.GetBytes("This is a sample attachment.")));
             SavePlayerManager save = new SavePlayerManager();
@@ -258,9 +237,6 @@ public class UserReportingScript : MonoBehaviour
             // Set Creating Flag
             this.isCreatingUserReport = false;
 
-            // Set Thumbnail
-            this.SetThumbnail(br);
-
             // Submit Immediately in Silent Mode
             if (this.IsInSilentMode)
             {
@@ -281,18 +257,6 @@ public class UserReportingScript : MonoBehaviour
     public bool IsSubmitting()
     {
         return this.isSubmitting;
-    }
-
-    private void SetThumbnail(UserReport userReport)
-    {
-        if (userReport != null && this.ThumbnailViewer != null)
-        {
-            byte[] data = Convert.FromBase64String(userReport.Thumbnail.DataBase64);
-            Texture2D texture = new Texture2D(1, 1);
-            texture.LoadImage(data);
-            this.ThumbnailViewer.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5F, 0.5F));
-            this.ThumbnailViewer.preserveAspect = true;
-        }
     }
 
     private void Start()
@@ -350,20 +314,14 @@ public class UserReportingScript : MonoBehaviour
 
         // Set Submitting Flag
         this.isSubmitting = true;
-
         // Set Summary
         if (this.SummaryInput != null)
         {
             this.CurrentUserReport.Summary = this.SummaryInput.text;
-        }
-
-        // Set Category
-        if (this.CategoryDropdown != null)
-        {
-            Dropdown.OptionData optionData = this.CategoryDropdown.options[this.CategoryDropdown.value];
-            string category = optionData.text;
-            this.CurrentUserReport.Dimensions.Add(new UserReportNamedValue("Category", category));
-            this.CurrentUserReport.Fields.Add(new UserReportNamedValue("Category", category));
+            UserReportNamedValue userReportField = new UserReportNamedValue();
+            userReportField.Name = "Email";
+            userReportField.Value = this.SummaryInput.text;
+            this.CurrentUserReport.Fields.Add(userReportField);
         }
 
         // Set Description
@@ -375,13 +333,11 @@ public class UserReportingScript : MonoBehaviour
             userReportField.Value = this.DescriptionInput.text;
             this.CurrentUserReport.Fields.Add(userReportField);
         }
-
         // Clear Form
         this.ClearForm();
 
         // Raise Event
         this.RaiseUserReportSubmitting();
-
         // Send Report
         UnityUserReporting.CurrentClient.SendUserReport(this.CurrentUserReport, (uploadProgress, downloadProgress) =>
         {
@@ -397,10 +353,10 @@ public class UserReportingScript : MonoBehaviour
                 this.isShowingError = true;
                 this.StartCoroutine(this.ClearError());
             }
-
             this.CurrentUserReport = null;
             this.isSubmitting = false;
         });
+        
     }
 
     private void Update()
@@ -422,16 +378,6 @@ public class UserReportingScript : MonoBehaviour
         UnityUserReporting.CurrentClient.SendEventsToAnalytics = this.SendEventsToAnalytics;
 
         // Update UI
-        if (this.UserReportButton != null)
-        {
-            this.UserReportButton.interactable = this.State == UserReportingState.Idle;
-        }
-
-        if (this.UserReportForm != null)
-        {
-            this.UserReportForm.enabled = this.State == UserReportingState.ShowingForm;
-        }
-
         if (this.SubmittingPopup != null)
         {
             this.SubmittingPopup.enabled = this.State == UserReportingState.SubmittingForm;
