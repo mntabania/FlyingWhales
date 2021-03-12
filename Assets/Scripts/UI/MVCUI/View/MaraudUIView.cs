@@ -14,6 +14,8 @@ public class MaraudUIView : MVCUIView {
 		void OnCloseSummonSubContainer();
 		void OnCloseMinionSubContainer();
 		void OnCloseTargetSubContainer();
+		void OnHoverOver();
+		void OnHoverOut();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -133,6 +135,14 @@ public class MaraudUIView : MVCUIView {
 	public Transform GetDeployedSummonsParent() {
 		return UIModel.deployedSummonsParent;
 	}
+
+	public void EnableDeployButton() {
+		UIModel.btnDeploy.interactable = true;
+	}
+
+	public void DisableDeployButton() {
+		UIModel.btnDeploy.interactable = false;
+	}
 	#endregion
 
 	#region Subscribe/Unsubscribe for IListener
@@ -145,6 +155,8 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseSummonSubContainer += p_listener.OnCloseSummonSubContainer;
 		UIModel.onCloseMinionSubContainer += p_listener.OnCloseMinionSubContainer;
 		UIModel.onCloseTargetSubContainer += p_listener.OnCloseTargetSubContainer;
+		UIModel.onHoverOver += p_listener.OnHoverOver;
+		UIModel.onHoverOut += p_listener.OnHoverOut;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -156,6 +168,8 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseSummonSubContainer -= p_listener.OnCloseSummonSubContainer;
 		UIModel.onCloseMinionSubContainer -= p_listener.OnCloseMinionSubContainer;
 		UIModel.onCloseTargetSubContainer -= p_listener.OnCloseTargetSubContainer;
+		UIModel.onHoverOver -= p_listener.OnHoverOver;
+		UIModel.onHoverOut -= p_listener.OnHoverOut;
 	}
 	#endregion
 }

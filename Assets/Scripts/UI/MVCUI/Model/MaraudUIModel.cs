@@ -15,21 +15,31 @@ public class MaraudUIModel : MVCUIModel {
 	public Action onCloseSummonSubContainer;
 	public Action onCloseMinionSubContainer;
 	public Action onCloseTargetSubContainer;
+	public Action onHoverOver;
+	public Action onHoverOut;
 
+	[Space]
+	[Header("Deployed Items")]
 	public List<DeployedMonsterItemUI> deployedItemSummonsUI = new List<DeployedMonsterItemUI>();
 	public List<DeployedMonsterItemUI> deployedItemMinionsUI = new List<DeployedMonsterItemUI>();
 	public List<DeployedTargetItemUI> deployedTargetItemUI = new List<DeployedTargetItemUI>();
 
-	public Button btnDeploy;
-	public Button btnClose;
-	public Button btnAddSummon;
-	public Button btnAddMinion;
-	public Button btnAddTarget;
+	[Space]
+	[Header("Buttons")]
+	public RuinarchButton btnDeploy;
+	public RuinarchButton btnClose;
+	public RuinarchButton btnAddSummon;
+	public RuinarchButton btnAddMinion;
+	public RuinarchButton btnAddTarget;
+	[Space]
+	public RuinarchButton btnCloseSummonSubContainer;
+	public RuinarchButton btnCloseMinionSubContainer;
+	public RuinarchButton btnCloseTargetSubContainer;
+	[Space]
+	public HoverHandler btnDeployHover;
 
-	public Button btnCloseSummonSubContainer;
-	public Button btnCloseMinionSubContainer;
-	public Button btnCloseTargetSubContainer;
-
+	[Space]
+	[Header("Scrollviews and Contents")]
 	public Transform scrollViewDeployedSummons;
 	public Transform scrollViewDeployedMinions;
 	public Transform scrollViewDeployedTargets;
@@ -55,6 +65,8 @@ public class MaraudUIModel : MVCUIModel {
 		btnCloseSummonSubContainer.onClick.AddListener(ClickCloseSummonSubContainer);
 		btnCloseMinionSubContainer.onClick.AddListener(ClickCloseMinionSubContainer);
 		btnCloseTargetSubContainer.onClick.AddListener(ClickCloseTargetSubContainer);
+		btnDeployHover.AddOnHoverOverAction(OnHoverOverDeployCursor);
+		btnDeployHover.AddOnHoverOutAction(OnHoverOutDeployCursor);
 	}
 
 	private void OnDisable() {
@@ -66,6 +78,8 @@ public class MaraudUIModel : MVCUIModel {
 		btnCloseSummonSubContainer.onClick.RemoveListener(ClickCloseSummonSubContainer);
 		btnCloseMinionSubContainer.onClick.RemoveListener(ClickCloseMinionSubContainer);
 		btnCloseTargetSubContainer.onClick.RemoveListener(ClickCloseTargetSubContainer);
+		btnDeployHover.RemoveOnHoverOverAction(OnHoverOverDeployCursor);
+		btnDeployHover.RemoveOnHoverOutAction(OnHoverOutDeployCursor);
 	}
 
 	#region Buttons OnClick trigger
@@ -98,6 +112,14 @@ public class MaraudUIModel : MVCUIModel {
 
 	void ClickCloseTargetSubContainer() {
 		onCloseTargetSubContainer?.Invoke();
+	}
+
+	void OnHoverOverDeployCursor() {
+		onHoverOver?.Invoke();
+	}
+
+	void OnHoverOutDeployCursor() {
+		onHoverOut?.Invoke();
 	}
 	#endregion
 }

@@ -219,6 +219,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			}
 		});
 
+		Debug.LogError(displayedCount + " -- " + deployedCount);
 		if (displayedCount > 0) {
 			m_isAllItemDeployed = false;
 			m_defensePointUIView.SetButtonDeployText("Deploy");
@@ -243,5 +244,17 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	public void OnAddSummonClicked() { m_defensePointUIView.ShowSummonSubContainer(); }
 	
 	public void OnCloseSummonSubContainer() { m_defensePointUIView.HideAllSubMenu(); }
+
+	public void OnHoverOver() {
+		if (m_isAllItemDeployed) {
+			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
+		} else {
+			Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
+		}
+	}
+
+	public void OnHoverOut() {
+		Tooltip.Instance.HideSmallInfo();
+	}
 	#endregion
 }

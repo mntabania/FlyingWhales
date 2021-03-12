@@ -10,8 +10,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	private MaraudUIModel m_maraudUIModel;
 	private MaraudUIView m_maraudUIView;
 
-	private bool m_isTeamDeployed;
-
 	//Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
 	[ContextMenu("Instantiate UI")]
 	public override void InstantiateUI() {
@@ -48,9 +46,11 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	private List<DeployedMonsterItemUI> m_deployedMinionsUI = new List<DeployedMonsterItemUI>();
 	[SerializeField]
 	private List<DeployedTargetItemUI> m_deployedTargetItemUI = new List<DeployedTargetItemUI>();
+		
+	public int manaCostToDeploySummon = 10;
 
 	private PartyStructure m_targetPartyStructure;
-	public int manaCostToDeploySummon = 10;
+	private bool m_isTeamDeployed;
 
 	private void Start() {
 		UIManager.Instance.onMaraudClicked += OnMaraudClicked;
@@ -142,6 +142,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (p_title != string.Empty) {
 			m_maraudUIView.SetTitle(p_title);
 		}
+		ProcessButtonAvailability();
 	}
 
 	void HideDeployedItems() {
@@ -173,7 +174,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
 			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.deployedCSummonlass[x], m_targetPartyStructure.deployedSummonSettings[x], m_targetPartyStructure.deployedSummonType[x], true, true);
 		}
-		Debug.LogError(m_targetPartyStructure.deployedMinionCount);
 		if (m_targetPartyStructure.deployedMinionCount > 0) {
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
 			m_deployedMinionsUI[0].InitializeItem(m_targetPartyStructure.deployedMinionClass[0], m_targetPartyStructure.deployedMinionsSkillType[0], true);
@@ -271,6 +271,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 						m_deployedTargetItemUI[x].InitializeItem(p_itemUI.target);
 						exitLoop = true;
 						m_maraudUIView.HideTargetButtonShowTargetContainer();
+						m_targetPartyStructure.readyForDeployTargetCount++;
 						break;
 					}
 				}
@@ -281,6 +282,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				break;
 			}
 		}
+		ProcessButtonAvailability();
 	}
 
 	void OnAvailableMonsterClicked(AvailableMonsterItemUI p_clickedItem) {
@@ -307,6 +309,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 							m_deployedMinionsUI[x].InitializeItem(p_clickedItem.characterClass, p_clickedItem.playerSkillType);
 							exitLoop = true;
 							m_maraudUIView.HideMinionButtonShowMinionContainer();
+							m_targetPartyStructure.readyForDeployMinionCount++;
 							break;
 						}
 					}
@@ -319,6 +322,19 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				}
 			}
 		}
+		ProcessButtonAvailability();
+	}
+
+	void ProcessButtonAvailability() {
+		if (!m_isTeamDeployed) {
+			if (m_targetPartyStructure.readyForDeployMinionCount > 0 && m_targetPartyStructure.readyForDeployTargetCount > 0) {
+				m_maraudUIView.EnableDeployButton();
+			} else {
+				m_maraudUIView.DisableDeployButton();
+			}
+		} else {
+			m_maraudUIView.EnableDeployButton();
+		}
 	}
 
 	void OnDeployedTargetClicked(DeployedTargetItemUI p_itemUI) {
@@ -328,8 +344,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		for (int x = 0; x < m_targetList.Count; ++x) {
 			if (m_targetList[x].target == p_itemUI.target && (p_itemUI.isReadyForDeploy)) {
 				m_maraudUIView.ShowTargetButtonHideTargetContainer();
+				m_targetPartyStructure.readyForDeployTargetCount--;
 			}
 		}
+		ProcessButtonAvailability();
 	}
 
 	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
@@ -357,10 +375,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				if (m_minionList[x].playerSkillType == p_itemUI.playerSkillType && (p_itemUI.isReadyForDeploy)) {
 					m_minionList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
 					m_maraudUIView.ShowMinionButtonHideMinionContainer();
+					m_targetPartyStructure.readyForDeployMinionCount--;
 				}
 			}
 		}
-    }
+		ProcessButtonAvailability();
+	}
 
 	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
 		m_targetPartyStructure.maxSummonLimitDeployCount++;
@@ -435,5 +455,22 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	public void OnCloseSummonSubContainer() { m_maraudUIView.HideAllSubMenu(); }
 	public void OnCloseMinionSubContainer() { m_maraudUIView.HideAllSubMenu(); }
 	public void OnCloseTargetSubContainer() { m_maraudUIView.HideAllSubMenu(); }
+
+	public void OnHoverOver() {
+		if (m_isTeamDeployed) {
+			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
+		} else {
+			if (m_targetPartyStructure.readyForDeployMinionCount > 0 && m_targetPartyStructure.readyForDeployTargetCount > 0) {
+				Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
+			} else {
+				Tooltip.Instance.ShowSmallInfo("Should atleast have 1 target and 1 leader", "Deploy team", autoReplaceText: false);
+			}
+		}
+		
+	}
+
+	public void OnHoverOut() {
+		Tooltip.Instance.HideSmallInfo();
+	}
 	#endregion
 }

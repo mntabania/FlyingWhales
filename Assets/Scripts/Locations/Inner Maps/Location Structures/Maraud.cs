@@ -21,7 +21,6 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public override void DeployParty() {
-            Debug.LogError(deployedMinions[0].name + " -- " + deployedMinions[0].homeSettlement);
             m_party = PartyManager.Instance.CreateNewParty(deployedMinions[0]);
             deployedSummons.ForEach((eachSummon) => m_party.AddMember(eachSummon));
             deployedMinions[0].faction.partyQuestBoard.CreateRaidPartyQuest(deployedMinions[0],
