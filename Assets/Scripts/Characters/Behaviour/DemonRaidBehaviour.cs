@@ -17,7 +17,7 @@ public class DemonRaidBehaviour : CharacterBehaviourComponent {
             log += $"\n-Party is working";
             if (party.targetDestination.IsAtTargetDestination(character)) {
                 log += $"\n-Character is at target destination, do work";
-                RaidPartyQuest quest = party.currentQuest as RaidPartyQuest;
+                DemonRaidPartyQuest quest = party.currentQuest as DemonRaidPartyQuest;
                 if (quest.target == null) {
                     party.GoBackHomeAndEndQuest();
                     return true;

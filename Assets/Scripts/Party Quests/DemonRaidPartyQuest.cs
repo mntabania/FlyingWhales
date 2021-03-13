@@ -109,7 +109,7 @@ public class DemonRaidPartyQuest : PartyQuest {
     #region Loading
     public override void LoadReferences(SaveDataPartyQuest data) {
         base.LoadReferences(data);
-        if (data is SaveDataRaidPartyQuest subData) {
+        if (data is SaveDataDemonRaidPartyQuest subData) {
             if (!string.IsNullOrEmpty(subData.targetSettlement)) {
                 targetSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.targetSettlement);
             }
