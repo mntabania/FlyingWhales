@@ -28,7 +28,7 @@ public class AvailableMonsterItemUI : MonoBehaviour
 
     public GameObject disabler;
 
-    public void InitializeItem(CharacterClass p_class, SummonSettings p_settings, SUMMON_TYPE p_summonType, int p_manaCost, int p_chargeCount, int p_maxChargeCount) {
+    public void InitializeItem(CharacterClass p_class, SummonSettings p_settings, SUMMON_TYPE p_summonType, int p_manaCost, int p_chargeCount, int p_maxChargeCount, bool p_notAvailable = false) {
         summonType = p_summonType;
         summonSettings = p_settings;
         characterClass = p_class;
@@ -42,7 +42,7 @@ public class AvailableMonsterItemUI : MonoBehaviour
         txtChargeCount.text = currentCharges.ToString() + "/" + maxCharges.ToString();
         imgIcon.sprite = p_settings.summonPortrait;
         isMinion = false;
-        if (currentCharges  <= 0) {
+        if (currentCharges  <= 0 || p_notAvailable) {
             DisableButton(); 
         } else {
             EnableButton();

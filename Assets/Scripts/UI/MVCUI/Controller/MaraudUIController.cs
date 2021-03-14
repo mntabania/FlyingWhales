@@ -210,12 +210,13 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		foreach (KeyValuePair<SUMMON_TYPE, MonsterUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
 			SummonSettings settings = CharacterManager.Instance.GetSummonSettings(entry.Key);
 			CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
+			CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(cClass.className);
 			if (ctr < m_summonList.Count) {
 				m_summonList[ctr].gameObject.SetActive(true);
-				m_summonList[ctr++].InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges, entry.Value.maxCharges);
+				m_summonList[ctr++].InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges, entry.Value.maxCharges, cData.combatBehaviourType == CHARACTER_COMBAT_BEHAVIOUR.Tower);
 			} else {
 				AvailableMonsterItemUI summonItem = Instantiate(m_availableMonsterItemUI);
-				summonItem.InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges, entry.Value.maxCharges);
+				summonItem.InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges, entry.Value.maxCharges, cData.combatBehaviourType == CHARACTER_COMBAT_BEHAVIOUR.Tower);
 				summonItem.transform.SetParent(m_maraudUIView.GetAvailableSummonsParent());
 				m_summonList.Add(summonItem);
 				m_summonList[ctr++].onClicked += OnAvailableMonsterClicked;

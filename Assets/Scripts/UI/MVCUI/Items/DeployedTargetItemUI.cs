@@ -15,8 +15,10 @@ public class DeployedTargetItemUI : MonoBehaviour {
     public bool isDeployed;
     public bool isReadyForDeploy;
 
+    public Sprite[] icons;
+
     public void InitializeItem(IStoredTarget p_target, bool p_isDeployed = false) {
-        txtName.text = p_target.name;
+        txtName.text = $"{p_target.iconRichText} {p_target.name}";
         target = p_target;
         if (p_isDeployed) {
             Deploy();
