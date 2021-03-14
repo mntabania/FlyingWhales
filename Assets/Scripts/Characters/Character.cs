@@ -762,7 +762,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected void OnUpdateCharacterClass() {
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(_characterClass.className);
         if(classData != null) {
-            combatComponent.SetCombatBehaviour(classData.combatBehaviourType);
+            combatComponent.combatBehaviourParent.SetCombatBehaviour(classData.combatBehaviourType, this);
             combatComponent.specialSkillParent.SetSpecialSkill(classData.combatSpecialSkillType);
         }
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
@@ -2552,7 +2552,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             chanceToKnockout = GetChanceToBeKnockedOutBy(characterThatAttacked, ref attackSummary);
         }
-        if (characterThatAttacked.combatComponent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Snatcher)) {
+        if (characterThatAttacked.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Snatcher)) {
             //Temporary additional chance to knockout for snatcher combat behaviour
             chanceToKnockout += 20;
         }
