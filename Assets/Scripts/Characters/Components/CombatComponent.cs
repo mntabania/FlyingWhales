@@ -21,7 +21,7 @@ public class CombatComponent : CharacterComponent {
     public Dictionary<IPointOfInterest, CombatData> combatDataDictionary { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
 
-    public CharacterCombatBehaviour currentCombatBehaviour { get; private set; }
+    public CharacterCombatBehaviourParent combatBehaviourParent { get; private set; }
     public CombatSpecialSkillWrapper specialSkillParent { get; private set; }
     public bool willProcessCombat { get; private set; }
 
@@ -42,6 +42,7 @@ public class CombatComponent : CharacterComponent {
         bannedFromHostileList = new List<Character>();
         combatDataDictionary = new Dictionary<IPointOfInterest, CombatData>();
         specialSkillParent = new CombatSpecialSkillWrapper();
+        combatBehaviourParent = new CharacterCombatBehaviourParent();
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
         //UpdateBasicData(true);
@@ -62,6 +63,7 @@ public class CombatComponent : CharacterComponent {
         willProcessCombat = data.willProcessCombat;
         numOfKilledCharacters = data.numOfKilledCharacters;
         specialSkillParent = data.specialSkillParent.Load();
+        combatBehaviourParent = data.combatBehaviourParent.Load();
     }
 
     #region Signals
@@ -765,6 +767,17 @@ public class CombatComponent : CharacterComponent {
         }
         return false;
     }
+    public bool IsCurrentlyAttackingPartyMateOf(Character p_character) {
+        if (isInCombat) {
+            CombatState state = owner.stateComponent.currentState as CombatState;
+            if (state.currentClosestHostile != null && state.currentClosestHostile is Character currentHostileTarget) {
+                if (p_character.partyComponent.hasParty && currentHostileTarget.partyComponent.IsAMemberOfParty(p_character.partyComponent.currentParty)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public bool IsHostileInRange(IPointOfInterest p_poi) {
         return hostilesInRange.Contains(p_poi);
     }
@@ -1153,28 +1166,6 @@ public class CombatComponent : CharacterComponent {
     }
     #endregion
 
-    #region Combat Behaviour
-    private void SetCombatBehaviour(CharacterCombatBehaviour p_combatBehaviour) {
-        if(currentCombatBehaviour != p_combatBehaviour) {
-            CharacterCombatBehaviour prevBehaviour = currentCombatBehaviour;
-            currentCombatBehaviour = p_combatBehaviour;
-            if(prevBehaviour != null) {
-                prevBehaviour.UnsetAsCombatBehaviourOf(owner);
-            }
-            if(currentCombatBehaviour != null) {
-                currentCombatBehaviour.SetAsCombatBehaviourOf(owner);
-            }
-        }
-    }
-    public void SetCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR p_behaviourType) {
-        CharacterCombatBehaviour behaviour = CombatManager.Instance.GetCombatBehaviour(p_behaviourType);
-        SetCombatBehaviour(behaviour);
-    }
-    public bool IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR p_behaviourType) {
-        return currentCombatBehaviour?.behaviourType == p_behaviourType;
-    }
-    #endregion
-
     #region Loading
     public void LoadReferences(SaveDataCombatComponent data) {
         for (int i = 0; i < data.hostileCharactersInRange.Count; i++) {
@@ -1220,7 +1211,7 @@ public class CombatComponent : CharacterComponent {
                 bannedFromHostileList.Add(character);
             }
         }
-        currentCombatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.currentCombatBehaviour);
+        combatBehaviourParent.LoadReferences(data.combatBehaviourParent);
         specialSkillParent.LoadReferences();
     }
     #endregion
@@ -1319,7 +1310,7 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public Dictionary<string, SaveDataCombatData> tileObjectCombatData;
 
     public ELEMENTAL_TYPE elementalDamageType;
-    public CHARACTER_COMBAT_BEHAVIOUR currentCombatBehaviour;
+    public SaveDataCharacterCombatBehaviourParent combatBehaviourParent;
     public SaveDataCombatSpecialSkillWrapper specialSkillParent;
 
     public bool willProcessCombat;
@@ -1375,10 +1366,8 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
             bannedFromHostileList.Add(data.bannedFromHostileList[i].persistentID);
         }
 
-        currentCombatBehaviour = CHARACTER_COMBAT_BEHAVIOUR.None;
-        if(data.currentCombatBehaviour != null) {
-            currentCombatBehaviour = data.currentCombatBehaviour.behaviourType;
-        }
+        combatBehaviourParent = new SaveDataCharacterCombatBehaviourParent();
+        combatBehaviourParent.Save(data.combatBehaviourParent);
 
         specialSkillParent = new SaveDataCombatSpecialSkillWrapper(); 
         specialSkillParent.Save(data.specialSkillParent);
