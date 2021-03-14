@@ -196,10 +196,10 @@ public class UserReportingScript : MonoBehaviour
         this.isCreatingUserReport = true;
 
         // Take Main Screenshot
-        UnityUserReporting.CurrentClient.TakeScreenshot(2048, 2048, s => { });
+        //UnityUserReporting.CurrentClient.TakeScreenshot(2048, 2048, s => { });
 
         // Take Thumbnail Screenshot
-        UnityUserReporting.CurrentClient.TakeScreenshot(512, 512, s => { });
+        //UnityUserReporting.CurrentClient.TakeScreenshot(512, 512, s => { });
 
         // Create Report
         UnityUserReporting.CurrentClient.CreateUserReport((br) =>
