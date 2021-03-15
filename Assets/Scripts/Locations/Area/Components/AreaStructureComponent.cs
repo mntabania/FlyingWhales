@@ -112,7 +112,7 @@ public class AreaStructureComponent : AreaComponent {
         }
         if (structureType == STRUCTURE_TYPE.THE_PORTAL) {
             if (CanBuildDemonicStructureHere(out o_cannotBuildReason)) {
-                if (owner.settlementOnArea != null) {
+                if (owner.settlementOnArea != null && owner.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE) {
                     o_cannotBuildReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Areas", "invalid_build_portal_village");
                     return false;        
                 } else {

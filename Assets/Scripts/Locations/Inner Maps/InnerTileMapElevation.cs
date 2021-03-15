@@ -184,7 +184,9 @@ namespace Inner_Maps {
 		    if (locationGridTiles.Count > 200) { 
 			    fillPercent = 35;
             } else if (locationGridTiles.Count > 300) { 
-                fillPercent = 50;
+                fillPercent = 55;
+            } else if (locationGridTiles.Count > 500) { 
+                fillPercent = 75;
             }
 		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, smoothing, fillPercent);
 		    
@@ -221,10 +223,9 @@ namespace Inner_Maps {
                     }
                     return (directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) || (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
                            (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) || directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East;
-                } 
-                // else if (caveNeighbours.Count == 3) {
-                //     return true;
-                // }
+                } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
+                    return true;
+                }
                 // if (caveNeighbours == 2 || caveNeighbours == 4) {
                 //     return p_blockWall.gridTileLocation.FourNeighbours().Count(t => t.structure is Wilderness) >= 1;	
                 // }

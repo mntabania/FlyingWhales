@@ -150,7 +150,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Region region = GridMap.Instance.allRegions[i];
 			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
-				t.area.settlementOnArea == null && t.area.elevationType == ELEVATION.PLAIN).ToList();
+				t.area.settlementOnArea == null && t.elevationType == ELEVATION.PLAIN).ToList();
 			if (locationChoices.Count > 0) {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					if (i == 1) {

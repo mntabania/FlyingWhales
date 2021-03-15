@@ -36,6 +36,7 @@ public class BiomeDivision {
 
     #region Listeners
     private void OnDayStarted() {
+        if (tiles.Count <= 0) { return; }
         if (!WorldSettings.Instance.worldSettingsData.mapSettings.disableAllMonsterMigrations && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Affatt) {
             if(faunaList != null && faunaList.Length > 0) {
                 MonsterMigrationPerDay();
