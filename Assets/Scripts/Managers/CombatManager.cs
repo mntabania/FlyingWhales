@@ -20,7 +20,7 @@ public class CombatManager : BaseMonoBehaviour {
     public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action",
         Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill", Dig = "Dig",
         Avoiding_Witnesses = "Avoiding Witnesses", Encountered_Hostile = "Encountered Hostile", Clear_Demonic_Intrusion = "Clear_Demonic_Intrusion", Abduct = "Abduct", Apprehend = "Apprehend",
-        Monster_Scent = "Monster_Scent", Fullness_Recovery = "Fullness_Recovery", Taunted = "Taunted";
+        Monster_Scent = "Monster_Scent", Fullness_Recovery = "Fullness_Recovery", Taunted = "Taunted", Tanking = "Tanking";
 
     //Hostility reasons
     public const string Raid = "Raid", Warring_Factions = "Warring_Factions",

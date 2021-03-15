@@ -180,20 +180,30 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
 		if (!m_isAllItemDeployed) {
+			//Party party = null;
 			m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
 				if (eachSummonToBeDeployed.isReadyForDeploy) {
-					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement); ;
+					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.summonType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement);
 					CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
 					eachSummonToBeDeployed.HideManaCost();
 					eachSummonToBeDeployed.Deploy(summon, true);
 					m_targetPartyStructure.AddDeployedItem(eachSummonToBeDeployed);
 					PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachSummonToBeDeployed.summonType, -1);
+
+					//if (party == null) {
+					//	party = PartyManager.Instance.CreateNewParty(summon);
+					//	summon.faction.partyQuestBoard.CreateDemonDefendPartyQuest(summon, summon.homeSettlement, m_targetPartyStructure);
+					//	party.TryAcceptQuest();
+					//}
+					//party.AddMember(summon);
+					//party.AddMemberThatJoinedQuest(summon);
 				}
 			});
 		} else {
 			m_deployedSummonsUI.ForEach((eachSummonThatAreDployed) => {
 				if (eachSummonThatAreDployed.isDeployed) {
-					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonThatAreDployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement); ;
+					//Why create summon here?
+					//Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonThatAreDployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement);
 					eachSummonThatAreDployed.ShowManaCost();
 					eachSummonThatAreDployed.UndeployCharacter();
 					eachSummonThatAreDployed.ResetButton();

@@ -725,16 +725,16 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     }
     private void OnAddMemberThatJoinedQuest(Character character) {
         UpdatePartyWalkSpeed();
-        character.combatComponent.currentCombatBehaviour?.OnCharacterJoinedPartyQuest(character, currentQuest.partyQuestType);
+        character.combatComponent.combatBehaviourParent.currentCombatBehaviour?.OnCharacterJoinedPartyQuest(character, currentQuest.partyQuestType);
         character.behaviourComponent.AddBehaviourComponent(currentQuest.relatedBehaviour);
         Messenger.Broadcast(PartySignals.CHARACTER_JOINED_PARTY_QUEST, this, character);
     }
     private void OnRemoveMemberThatJoinedQuest(Character character, bool broadcastSignal) {
         character.movementComponent.UpdateSpeed();
         if (isActive) {
-            character.combatComponent.currentCombatBehaviour?.OnCharacterLeftPartyQuest(character, currentQuest.partyQuestType);
+            character.combatComponent.combatBehaviourParent.currentCombatBehaviour?.OnCharacterLeftPartyQuest(character, currentQuest.partyQuestType);
         } else {
-            character.combatComponent.currentCombatBehaviour?.OnCharacterLeftPartyQuest(character, prevQuestType);
+            character.combatComponent.combatBehaviourParent.currentCombatBehaviour?.OnCharacterLeftPartyQuest(character, prevQuestType);
         }
         if (character.traitContainer.HasTrait("Travelling")) {
             character.movementComponent.SetEnableDigging(false);
