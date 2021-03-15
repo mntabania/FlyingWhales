@@ -1077,6 +1077,8 @@
               <e p="DefaultOutsideHomeRegion.cs" t="Include" />
               <e p="DefaultWanderer.cs" t="Include" />
               <e p="DefendBehaviour.cs" t="Include" />
+              <e p="DemonDefendBehaviour.cs" t="Include" />
+              <e p="DemonRaidBehaviour.cs" t="Include" />
               <e p="DeMooderBehaviour.cs" t="Include" />
               <e p="DesiresIsolationBehaviour.cs" t="Include" />
               <e p="DisablerBehaviour.cs" t="Include" />
@@ -1185,9 +1187,23 @@
             <e p="CharacterVisuals.cs" t="Include" />
             <e p="Combat" t="Include">
               <e p="Behaviours" t="Include">
+                <e p="AttackerCombatBehaviour.cs" t="Include" />
                 <e p="CharacterCombatBehaviour.cs" t="Include" />
+                <e p="DefenderCombatBehaviour.cs" t="Include" />
+                <e p="EscortCombatBehaviour.cs" t="Include" />
+                <e p="GlassCannonCombatBehaviour.cs" t="Include" />
+                <e p="HealerCombatBehaviour.cs" t="Include" />
+                <e p="RazerCombatBehaviour.cs" t="Include" />
+                <e p="SnatcherCombatBehaviour.cs" t="Include" />
+                <e p="TankCombatBehaviour.cs" t="Include" />
+                <e p="TowerCombatBehaviour.cs" t="Include" />
               </e>
               <e p="Projectile.cs" t="Include" />
+              <e p="Special Skills" t="Include">
+                <e p="CombatSpecialSkill.cs" t="Include" />
+                <e p="HealSpecialSkill.cs" t="Include" />
+                <e p="TauntSpecialSkill.cs" t="Include" />
+              </e>
             </e>
             <e p="Components" t="Include">
               <e p="AssumptionComponent.cs" t="Include" />
@@ -1845,6 +1861,7 @@
             <e p="Stroke.cs" t="Include" />
             <e p="Stumble.cs" t="Include" />
             <e p="Surprised.cs" t="Include" />
+            <e p="Taunted.cs" t="Include" />
             <e p="TotalOrganFailure.cs" t="Include" />
             <e p="TransformToBat.cs" t="Include" />
             <e p="TransformToWerewolf.cs" t="Include" />
@@ -1990,6 +2007,7 @@
                 <e p="Ocean.cs" t="Include" />
                 <e p="Ostracizer.cs" t="Include" />
                 <e p="PartyStructure.cs" t="Include" />
+                <e p="PartyStructureData.cs" t="Include" />
                 <e p="Pond.cs" t="Include" />
                 <e p="Prison.cs" t="Include" />
                 <e p="Quarry.cs" t="Include" />
@@ -2390,6 +2408,9 @@
           </e>
           <e p="Party Quests" t="Include">
             <e p="CounterattackPartyQuest.cs" t="Include" />
+            <e p="DemonDefendPartyQuest.cs" t="Include" />
+            <e p="DemonRaidPartyQuest.cs" t="Include" />
+            <e p="DemonSnatchPartyQuest.cs" t="Include" />
             <e p="ExplorationPartyQuest.cs" t="Include" />
             <e p="ExterminationPartyQuest.cs" t="Include" />
             <e p="HeirloomHuntPartyQuest.cs" t="Include" />
@@ -3354,7 +3375,9 @@
               </e>
               <e p="Items" t="Include">
                 <e p="AvailableMonsterItemUI.cs" t="Include" />
+                <e p="AvailableTargetItemUI.cs" t="Include" />
                 <e p="DeployedMonsterItemUI.cs" t="Include" />
+                <e p="DeployedTargetItemUI.cs" t="Include" />
                 <e p="PurchaseSkillItemUI.cs" t="Include" />
                 <e p="SkillUpgradeItemUI.cs" t="Include" />
                 <e p="TimerItemUI.cs" t="Include" />

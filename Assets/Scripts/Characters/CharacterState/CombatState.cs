@@ -453,9 +453,15 @@ public class CombatState : CharacterState {
                 }
             }
         }
-        
-        DoCombatBehavior();
 
+        if(stateComponent.owner.combatComponent.combatBehaviourParent.TryDoCombatBehaviour(stateComponent.owner, this)) {
+            //Do not further process combat if the TryDoCombatBehaviour returns true because the aspects of the combat probably has changed
+            //Instead, process the combat again
+            stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+            return;
+        }
+
+        DoCombatBehavior();
         if (isAttacking) {
             actionIconString = stateComponent.owner.combatComponent.GetCombatStateIconString(currentClosestHostile);
             string reasonKey = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
@@ -524,7 +530,7 @@ public class CombatState : CharacterState {
     //    DoCombatBehavior();
     //}
     //Returns true if there is a hostile left, otherwise, returns false
-    private void DoCombatBehavior(Character newTarget = null) {
+    private void DoCombatBehavior() {
         if(stateComponent.currentState != this) {
             return;
         }

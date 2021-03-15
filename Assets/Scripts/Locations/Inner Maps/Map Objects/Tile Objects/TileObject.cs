@@ -593,7 +593,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return; //if hp is already 0, do not deal damage
         }
         int attackPower = characterThatAttacked.combatComponent.attack;
-        if (characterThatAttacked.combatComponent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Razer)) {
+        if (characterThatAttacked.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Razer)) {
             //Razer deals bonus damage to structures
             if (isDamageContributorToStructure) {
                 attackPower = Mathf.RoundToInt(attackPower * 1.5f);
