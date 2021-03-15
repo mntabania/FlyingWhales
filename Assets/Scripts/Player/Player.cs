@@ -34,6 +34,7 @@ public class Player : ILeader, IObjectManipulator {
     public PlayerUnderlingsComponent underlingsComponent { get; private set; }
     public PlayerTileObjectComponent tileObjectComponent { get; private set; }
     public StoredTargetsComponent storedTargetsComponent { get; }
+    public BookmarkComponent bookmarkComponent { get; }
 
     private ManaRegenComponent m_manaRegenComponent { get; set; }
 
@@ -63,6 +64,7 @@ public class Player : ILeader, IObjectManipulator {
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
         tileObjectComponent = new PlayerTileObjectComponent();
+        bookmarkComponent = new BookmarkComponent();
         SubscribeListeners();
         
     }
@@ -73,12 +75,14 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent = data.playerSkillComponent.Load();
         underlingsComponent = data.underlingsComponent.Load();
         tileObjectComponent = data.tileObjectComponent.Load();
+        // bookmarkComponent = data.bookmarkComponent.Load();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
+        bookmarkComponent = new BookmarkComponent();
         SubscribeListeners();
     }
 

@@ -55,13 +55,13 @@ public class PlayerSkillComponent {
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
-        timerUnlockSpell = new RuinarchTimer("Spell Unlock");
+        timerUnlockSpell = new RuinarchTimer("Spell Unlock", BOOKMARK_CATEGORY.Portal);
         cooldownReroll = new RuinarchCooldown("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
         currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
-        timerSummonDemon = new RuinarchTimer("Summon Demon");
+        timerSummonDemon = new RuinarchTimer("Summon Demon", BOOKMARK_CATEGORY.Portal);
         currentStructureBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
-        timerUnlockStructure = new RuinarchTimer("Obtain Blueprint");
+        timerUnlockStructure = new RuinarchTimer("Obtain Blueprint", BOOKMARK_CATEGORY.Portal);
     }
 
     #region Loading

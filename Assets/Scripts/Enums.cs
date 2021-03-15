@@ -1220,3 +1220,7 @@ public enum COMBAT_SPECIAL_SKILL {
 public enum COMBAT_SPECIAL_SKILL_TARGET {
     Single, Multiple,
 }
+
+public enum BOOKMARK_CATEGORY {
+    None, Portal, Player_Parties, Targets
+}

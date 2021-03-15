@@ -2456,7 +2456,10 @@
               <e p="Taunt.cs" t="Include" />
             </e>
             <e p="Components" t="Include">
+              <e p="BookmarkCategory.cs" t="Include" />
+              <e p="BookmarkComponent.cs" t="Include" />
               <e p="CurrenciesComponent.cs" t="Include" />
+              <e p="IBookmarkable.cs" t="Include" />
               <e p="PlagueComponent.cs" t="Include" />
               <e p="PlayerSkillComponent.cs" t="Include" />
               <e p="PlayerTileObjectComponent.cs" t="Include" />
@@ -3376,6 +3379,9 @@
               <e p="Items" t="Include">
                 <e p="AvailableMonsterItemUI.cs" t="Include" />
                 <e p="AvailableTargetItemUI.cs" t="Include" />
+                <e p="BookmarkCategoryItemUI.cs" t="Include" />
+                <e p="BookmarkProgressItemUI.cs" t="Include" />
+                <e p="BookmarkTextItemUI.cs" t="Include" />
                 <e p="DeployedMonsterItemUI.cs" t="Include" />
                 <e p="DeployedTargetItemUI.cs" t="Include" />
                 <e p="PurchaseSkillItemUI.cs" t="Include" />
@@ -3569,6 +3575,7 @@
             <e p="RendererExtensions.cs" t="Include" />
             <e p="RuinarchCooldown.cs" t="Include" />
             <e p="RuinarchListPool.cs" t="Include" />
+            <e p="RuinarchProgressable.cs" t="Include" />
             <e p="RuinarchTimer.cs" t="Include" />
             <e p="SerializableDictionary.cs" t="Include" />
             <e p="Signals" t="Include">

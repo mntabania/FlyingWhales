@@ -4,17 +4,23 @@ namespace UtilityScripts {
     /// Utility class for creating a timer that has an effect at the end.  
     /// </summary>
     [System.Serializable]
-    public class RuinarchTimer {
+    public class RuinarchTimer : RuinarchProgressable {
 
         public string timerName;
         public GameDate timerStart;
         public GameDate timerEnd;
-        public int totalTicksInTimer;
-        public int currentTimerProgress;
-
+        private BOOKMARK_CATEGORY _bookmarkCategory;        
+        
         private System.Action _onTimerEndAction;
 
-        public RuinarchTimer(string p_name) {
+        #region getters
+        public override string name => timerName;
+        public int totalTicksInTimer => totalValue;
+        public int currentTimerProgress => currentValue;
+        public override BOOKMARK_CATEGORY bookmarkCategory => _bookmarkCategory;
+        #endregion
+        
+        public RuinarchTimer(string p_name, BOOKMARK_CATEGORY p_category) {
             timerName = p_name;
         }
         public void LoadStart(System.Action p_endAction) {
@@ -24,15 +30,15 @@ namespace UtilityScripts {
         public void Start(GameDate p_start, GameDate p_end, System.Action p_endAction) {
             timerStart = p_start;
             timerEnd = p_end;
-            totalTicksInTimer = p_start.GetTickDifference(p_end);
-            currentTimerProgress = 0;
+            int totalTicks = p_start.GetTickDifference(p_end);
+            Setup(0, totalTicks);
             _onTimerEndAction = p_endAction;
             Messenger.AddListener(Signals.TICK_ENDED, TimerTick);
             Debug.Log($"Started {timerName}. ETA is {p_end.ToString()}");
         }
         private void TimerTick() {
-            currentTimerProgress++;
-            if (GameManager.Instance.Today().IsSameDate(timerEnd)) {
+            IncreaseProgress(1);
+            if (IsComplete()) {
                 TimerHasReachedEnd();
             }
         }
@@ -52,11 +58,10 @@ namespace UtilityScripts {
             return currentTimerProgressPercent;
         }
         public void Stop() {
+            Reset();
             timerStart = default;
             timerEnd = default;
             _onTimerEndAction = null;
-            currentTimerProgress = 0;
-            totalTicksInTimer = 0;
             Messenger.RemoveListener(Signals.TICK_ENDED, TimerTick);
             Debug.Log($"Stopped {timerName}");
         }

@@ -31,6 +31,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public SaveDataPlayerUnderlingsComponent underlingsComponent;
     public SaveDataPlayerTileObjectComponent tileObjectComponent;
     public SaveDataStoredTargetsComponent storedTargetsComponent;
+    public SaveDataBookmarkComponent bookmarkComponent;
 
     #region Overrides
     public override void Save() {
