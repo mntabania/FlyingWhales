@@ -181,7 +181,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
 		if (!m_isAllItemDeployed) {
-			
+			int newDeployedCount = 0;
 			m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
 				if (eachSummonToBeDeployed.isReadyForDeploy) {
 					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.summonType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement);
@@ -190,8 +190,13 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 					eachSummonToBeDeployed.Deploy(summon, true);
 					m_targetPartyStructure.AddDeployedItem(eachSummonToBeDeployed);
 					PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachSummonToBeDeployed.summonType, -1);
+					newDeployedCount++;
 				}
 			});
+			if (newDeployedCount > 0) {
+				m_targetPartyStructure.DeployParty();
+			}
+			
 		} else {
 			m_deployedSummonsUI.ForEach((eachSummonThatAreDployed) => {
 				if (eachSummonThatAreDployed.isDeployed) {
