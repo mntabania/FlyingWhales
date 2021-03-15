@@ -286,7 +286,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void OnAvailableMonsterClicked(AvailableMonsterItemUI p_clickedItem) {
-		if (!p_clickedItem.isMinion && m_targetPartyStructure.partyData.readyForDeploySummonCount + m_targetPartyStructure.partyData.deployedSummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
+		if (m_isTeamDeployed) {
+			return;
+		}
+		if (!p_clickedItem.isMinion && m_targetPartyStructure.partyData.readyForDeploySummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
 			p_clickedItem.DeductOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
 			m_targetPartyStructure.partyData.readyForDeploySummonCount++;
 			for (int x = 0; x < m_deployedSummonsUI.Count; ++x) {
@@ -363,8 +366,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 						PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(m_summonList[x].summonType, 1);
 						m_targetPartyStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
 						p_itemUI.UndeployCharacter();
-						p_itemUI.ResetButton();
 					}
+					p_itemUI.ResetButton();
 					m_summonList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
 					p_itemUI.gameObject.SetActive(false);
 				}
