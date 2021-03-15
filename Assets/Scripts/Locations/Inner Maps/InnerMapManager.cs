@@ -385,6 +385,8 @@ namespace Inner_Maps {
             // summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
             // summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>Area:</b>{(area.name ?? "None")}";
+            summary = $"{summary}<b>Biome:</b>{tile.biomeType.ToString()}";
+            summary = $"{summary}<b>Elevation:</b>{tile.elevationType.ToString()}";
             // summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
             // summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
             // summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";

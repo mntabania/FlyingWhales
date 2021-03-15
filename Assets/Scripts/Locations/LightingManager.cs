@@ -47,7 +47,7 @@ public class LightingManager : BaseMonoBehaviour {
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         ComputeLightingValues();
-        // SetGlobalLightIntensity(_brightestIntensity);
+        SetGlobalLightIntensity(_brightestIntensity);
         // UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
         GameDate date = GameManager.Instance.Today();
         if (_brightPeriodRange.IsInRange(GameManager.Instance.GetCeilingHoursBasedOnTicks(date.tick))) {

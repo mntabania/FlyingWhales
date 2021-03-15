@@ -4,21 +4,21 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
 
-public class RegionDivisionComponent {
+public class BiomeDivisionComponent {
     private const int MAX_FAUNA_LIST_CAPACITY = 5;
 
-    public List<RegionDivision> divisions { get; private set; }
+    public List<BiomeDivision> divisions { get; private set; }
 
-    public RegionDivisionComponent() {
-        divisions = new List<RegionDivision>();
+    public BiomeDivisionComponent() {
+        divisions = new List<BiomeDivision>();
     }
-    public RegionDivisionComponent(SaveDataRegionDivisionComponent data) {
-        divisions = new List<RegionDivision>();
+    public BiomeDivisionComponent(SaveDataRegionDivisionComponent data) {
+        divisions = new List<BiomeDivision>();
         for (int i = 0; i < data.divisions.Count; i++) {
             divisions.Add(data.divisions[i].Load());
         }
     }
-    public void AddRegionDivision(RegionDivision p_division) {
+    public void AddBiomeDivision(BiomeDivision p_division) {
         divisions.Add(p_division);
         if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
@@ -32,19 +32,36 @@ public class RegionDivisionComponent {
                     p_division.PopulateFaunaList(scenarioData.faunaList);
                 }    
             }
-            
         } else {
             p_division.PopulateFaunaList(MAX_FAUNA_LIST_CAPACITY);
         }
     }
+    public BiomeDivision GetBiomeDivisionThatTileBelongsTo(LocationGridTile p_tile) {
+        for (int i = 0; i < divisions.Count; i++) {
+            BiomeDivision biomeDivision = divisions[i];
+            if (biomeDivision.biome == p_tile.biomeType && biomeDivision.tiles.Contains(p_tile)) {
+                return biomeDivision;
+            }
+        }
+        return null;
+    }
+    public BiomeDivision GetBiomeDivision(BIOMES p_biome) {
+        for (int i = 0; i < divisions.Count; i++) {
+            BiomeDivision division = divisions[i];
+            if (division.biome == p_biome) {
+                return division;    
+            }
+        }
+        return null;
+    }
 }
 
 [System.Serializable]
-public class SaveDataRegionDivisionComponent : SaveData<RegionDivisionComponent> {
+public class SaveDataRegionDivisionComponent : SaveData<BiomeDivisionComponent> {
     public List<SaveDataRegionDivision> divisions { get; private set; }
 
     #region Overrides
-    public override void Save(RegionDivisionComponent data) {
+    public override void Save(BiomeDivisionComponent data) {
         divisions = new List<SaveDataRegionDivision>();
         for (int i = 0; i < data.divisions.Count; i++) {
             SaveDataRegionDivision save = new SaveDataRegionDivision();
@@ -53,8 +70,8 @@ public class SaveDataRegionDivisionComponent : SaveData<RegionDivisionComponent>
         }
     }
 
-    public override RegionDivisionComponent Load() {
-        RegionDivisionComponent component = new RegionDivisionComponent(this);
+    public override BiomeDivisionComponent Load() {
+        BiomeDivisionComponent component = new BiomeDivisionComponent(this);
         return component;
     }
     #endregion

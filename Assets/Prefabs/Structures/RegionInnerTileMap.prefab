@@ -799,6 +799,40 @@ MonoBehaviour:
     type: 3}
   _xSeed: 0
   _ySeed: 0
+  _biomePerlinSettings:
+    noiseScale: 40.4
+    octaves: 3
+    persistance: 0
+    lacunarity: 2
+    seed: 0
+    offset: {x: 13.09, y: 12}
+    regions:
+    - name: Desert
+      height: 0.3
+      color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    - name: Grassland
+      height: 0.65
+      color: {r: 0, g: 1, b: 0, a: 1}
+    - name: Snow
+      height: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+  _perlinElevationSettings:
+    noiseScale: 34.15
+    octaves: 4
+    persistance: 0.5
+    lacunarity: 2
+    seed: 0
+    offset: {x: 13.09, y: 12}
+    regions:
+    - name: Water
+      height: 0.25
+      color: {r: 0, g: 0, b: 1, a: 1}
+    - name: Plain
+      height: 0.65
+      color: {r: 0, g: 1, b: 0, a: 1}
+    - name: Cave
+      height: 1
+      color: {r: 0, g: 0, b: 0, a: 1}
   _biomeTransitionXSeed: 0
   _biomeTransitionYSeed: 0
   pathLineRenderer: {fileID: 120253341268342332}
@@ -47436,7 +47470,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9191582015189991135
 Transform:
   m_ObjectHideFlags: 0

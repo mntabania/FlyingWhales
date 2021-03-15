@@ -537,7 +537,11 @@ namespace Locations.Settlements {
         #region Tiles
         public void AddAreaToSettlement(Area p_area) {
             if (p_area.settlementOnArea != null) {
-                return;
+                //allow villages to overwrite settlement on area that is set to a cave or a special structure 
+                if (p_area.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE) {
+                    Debug.LogWarning($"Could not add {p_area} to settlement {name} because it is already part of {p_area.settlementOnArea.name}");
+                    return;    
+                }
             }
             if (areas.Contains(p_area) == false) {
                 areas.Add(p_area);

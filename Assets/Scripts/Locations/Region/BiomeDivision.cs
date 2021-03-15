@@ -5,31 +5,33 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
 
-public class RegionDivision {
+public class BiomeDivision {
     public BIOMES biome { get; private set; }
-    public List<Area> tiles { get; }
+    public List<LocationGridTile> tiles { get; }
     public MonsterMigrationBiomeAtomizedData[] faunaList { get; private set; }
     public int monsterMigrationChance { get; private set; }
 
     private WeightedDictionary<MonsterMigrationBiomeAtomizedData> _faunaListWeights;
 
-    public RegionDivision(BIOMES p_biome) {
+    public BiomeDivision(BIOMES p_biome) {
         biome = p_biome;
-        tiles = new List<Area>();
+        tiles = new List<LocationGridTile>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
     }
-    public RegionDivision(SaveDataRegionDivision p_data) {
+    public BiomeDivision(SaveDataRegionDivision p_data) {
         biome = p_data.biome;
         faunaList = p_data.faunaList;
         monsterMigrationChance = p_data.monsterMigrationChance;
-        tiles = new List<Area>();
+        tiles = new List<LocationGridTile>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
     }
-    public void AddTile(Area p_area) {
+    public void AddTile(LocationGridTile p_area) {
         tiles.Add(p_area);
-        p_area.SetRegionDivision(this);
+    }
+    public void RemoveTile(LocationGridTile p_area) {
+        tiles.Remove(p_area);
     }
 
     #region Listeners
@@ -72,11 +74,11 @@ public class RegionDivision {
     private void TrySpawnMonstersInFaunaList() {
         if (GameUtilities.RollChance(monsterMigrationChance)) {
             LocationStructure homeStructureOfNewMonsters = null;
-            Region region = tiles[0].region;
+            Region region = tiles[0].parentMap.region;
             for (int i = 0; i < region.allStructures.Count; i++) {
                 LocationStructure structure = region.allStructures[i];
                 if (structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR || structure.structureType == STRUCTURE_TYPE.CAVE) {
-                    if (structure.occupiedArea.regionDivision == this) {
+                    if (HasTilePartOfThisBiomeDivision(structure)) {
                         if (!structure.IsOccupied()) {
                             homeStructureOfNewMonsters = structure;
                             break;
@@ -93,6 +95,15 @@ public class RegionDivision {
         if (monsterMigrationChance == 0) {
             monsterMigrationChance = 5;
         }
+    }
+    private bool HasTilePartOfThisBiomeDivision(LocationStructure p_structure) {
+        for (int i = 0; i < p_structure.passableTiles.Count; i++) {
+            LocationGridTile tile = p_structure.passableTiles[i];
+            if (tiles.Contains(tile)) {
+                return true;
+            }
+        }
+        return false;
     }
     private void SpawnMonstersFaunaListProcessing(LocationStructure p_structure) {
         WeightedDictionary<MonsterMigrationBiomeAtomizedData> faunaWeights = TryGetFaunaListWeights();
@@ -142,21 +153,21 @@ public class RegionDivision {
     #endregion
 }
 
-public class SaveDataRegionDivision : SaveData<RegionDivision> {
+public class SaveDataRegionDivision : SaveData<BiomeDivision> {
     public BIOMES biome;
     public MonsterMigrationBiomeAtomizedData[] faunaList;
 
     public int monsterMigrationChance;
 
     #region Overrides
-    public override void Save(RegionDivision data) {
+    public override void Save(BiomeDivision data) {
         biome = data.biome;
         faunaList = data.faunaList;
         monsterMigrationChance = data.monsterMigrationChance;
     }
 
-    public override RegionDivision Load() {
-        RegionDivision data = new RegionDivision(this);
+    public override BiomeDivision Load() {
+        BiomeDivision data = new BiomeDivision(this);
         return data;
     }
     #endregion

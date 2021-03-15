@@ -209,9 +209,8 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		}
 	}
 	private void RandomRegionalItemGeneration(Region region, ref List<LocationGridTile> locationChoices) {
-		ItemGenerationSetting itemGenerationSetting =
-			WorldConfigManager.Instance.worldWideItemGenerationSetting;
-		List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
+		ItemGenerationSetting itemGenerationSetting = WorldConfigManager.Instance.worldWideItemGenerationSetting;
+		List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome();
 		if (itemChoices != null) {
 			ItemSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(itemChoices);
 			int randomAmount = Random.Range(1, 5);
@@ -233,7 +232,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			if (structure.structureType != STRUCTURE_TYPE.CAVE) {
 				StructureData landmarkData = LandmarkManager.Instance.GetStructureData(structure.structureType);
 				if (landmarkData.itemGenerationSetting != null) {
-					List<ItemSetting> itemChoices = landmarkData.itemGenerationSetting.GetItemChoicesForBiome(structure.occupiedArea.biomeType);
+					List<ItemSetting> itemChoices = landmarkData.itemGenerationSetting.GetItemChoicesForBiome();
 					if (itemChoices != null) {
 						int iterations = landmarkData.itemGenerationSetting.iterations.Random();
 						for (int j = 0; j < iterations; j++) {
@@ -257,7 +256,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Region region = GridMap.Instance.allRegions[i];
 			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
 				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
-				List<ItemSetting> itemChoices = caveData.itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
+				List<ItemSetting> itemChoices = caveData.itemGenerationSetting.GetItemChoicesForBiome();
 				for (int j = 0; j < caves.Count; j++) {
 					LocationStructure cave = caves[j];
 					int hexTileCount = GetHexTileCountOfCave(cave) - 1;

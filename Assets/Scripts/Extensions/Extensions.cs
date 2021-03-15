@@ -1358,4 +1358,17 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Elevation
+    public static STRUCTURE_TYPE GetStructureTypeForElevation(this ELEVATION p_elevation) {
+        switch (p_elevation) {
+            case ELEVATION.MOUNTAIN:
+                return STRUCTURE_TYPE.CAVE;
+            case ELEVATION.WATER:
+                return STRUCTURE_TYPE.OCEAN;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_elevation), p_elevation, null);
+        }
+    }
+    #endregion
 }

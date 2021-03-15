@@ -63,6 +63,6 @@ public class SaveDataRegion : SaveData<Region> {
         }
 
         //Components
-        regionDivisionComponent = new SaveDataRegionDivisionComponent(); regionDivisionComponent.Save(region.regionDivisionComponent);
+        regionDivisionComponent = new SaveDataRegionDivisionComponent(); regionDivisionComponent.Save(region.biomeDivisionComponent);
     }
 }

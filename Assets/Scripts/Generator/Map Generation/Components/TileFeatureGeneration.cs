@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Locations.Area_Features;
 using Scenario_Maps;
 using UnityEngine;
@@ -121,11 +123,13 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int y = 0; y < data.height; y++) {
 				Area area = GridMap.Instance.map[x, y];
 				int habitability = 0;
-				if (area.elevationType == ELEVATION.WATER || area.elevationType == ELEVATION.MOUNTAIN) {
+				if (area.elevationType == ELEVATION.WATER || area.elevationType == ELEVATION.MOUNTAIN || 
+				    area.gridTileComponent.gridTiles.Any(t => t.elevationType == ELEVATION.WATER || t.elevationType == ELEVATION.MOUNTAIN)) {
 					habitability = 0;
 				} else {
 					int adjacentWaterTiles = 0;
 					int adjacentFlatTiles = 0;
+					habitability += 1;
 					for (int i = 0; i < area.neighbourComponent.neighbours.Count; i++) {
 						Area neighbour = area.neighbourComponent.neighbours[i];
 						if (neighbour.region != area.region) {
@@ -137,26 +141,20 @@ public class TileFeatureGeneration : MapGenerationComponent {
 							adjacentWaterTiles += 1;
 						}
 
-						if (area.biomeType == BIOMES.FOREST || area.biomeType == BIOMES.SNOW) {
-							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature)) {
-								habitability += 3;
-							}	
-							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
-								habitability += 4;
-							}
-							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Fertile_Feature)) {
-								habitability += 5;
-							}
-						} else if (area.biomeType == BIOMES.GRASSLAND || area.biomeType == BIOMES.DESERT) {
-							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Stone_Source_Feature)) {
-								habitability += 3;
-							}
-							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
-								habitability += 4;
-							}
-							if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Game_Feature)) {
-								habitability += 5;
-							}
+						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature)) {
+							habitability += 3;
+						}	
+						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
+							habitability += 4;
+						}
+						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Fertile_Feature)) {
+							habitability += 5;
+						}
+						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Stone_Source_Feature)) {
+							habitability += 3;
+						}
+						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Game_Feature)) {
+							habitability += 5;
 						}
 					}
 					if (adjacentWaterTiles == 1) {
@@ -205,7 +203,6 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			//not enough village spots
 			return false;
 		}
-		List<Area> preferredTiles = new List<Area>();
 		for (int i = 0; i < WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates.Count; i++) {
 			FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates[i];
 			for (int j = 0; j < factionTemplate.villageSettings.Count; j++) {
@@ -214,18 +211,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				}
 				VillageSetting villageSetting = factionTemplate.villageSettings[j];
 				int tilesInRange = villageSetting.GetTileCountReservedForVillage();
-				preferredTiles.Clear();
 				Area chosenTile = null;
 				if (j == 0) {
-					//if first village, pick from preferred tiles first
-					// for (int k = 0; k < data.villageSpots.Count; k++) {
-					// 	HexTile tile = data.villageSpots[k];
-					// 	if (factionTemplate.IsTilePreferredByFaction(tile)) {
-					// 		preferredTiles.Add(tile);
-					// 	}
-					// }
 					//if no preferred tiles are available, then just choose at random from available village spots
-					chosenTile = CollectionUtilities.GetRandomElement(preferredTiles.Count > 0 ? preferredTiles : data.villageSpots);
+					chosenTile = CollectionUtilities.GetRandomElement(data.villageSpots);
 				} else {
 					//if not first village pick a spot nearest to First Village
 					float nearestDistance = Mathf.Infinity;
@@ -242,6 +231,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				}
 				Assert.IsNotNull(chosenTile, $"Could not find village spot for {factionTemplate.name}'s Village #{j.ToString()}");
 				data.AddDeterminedVillage(factionTemplate, chosenTile);
+				// for (int k = 0; k < chosenTile.gridTileComponent.gridTiles.Count; k++) {
+				// 	LocationGridTile tile = chosenTile.gridTileComponent.gridTiles[k];
+				// 	data.RemoveTileFromNonPlainElevationIslands(tile);
+				// }
 				chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 				//remove game feature from settlement tiles
 				chosenTile.featureComponent.RemoveFeature(AreaFeatureDB.Game_Feature, chosenTile);
@@ -252,59 +245,6 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				createdVillages++;
 			}
 		}
-		
-		
-		// for (int i = 0; i < villagesToCreate; i++) {
-		// 	if (data.villageSpots.Count == 0) {
-		// 		return false; //not enough village spots 
-		// 	}
-		// 	HexTile chosenTile = CollectionUtilities.GetRandomElement(data.villageSpots);
-		// 	chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
-		// 	//remove game feature from settlement tiles
-		// 	chosenTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, chosenTile);
-		//
-		// 	List<HexTile> neighbours = chosenTile.GetTilesInRange(tilesInBetween, false);
-		// 	data.RemoveVillageSpots(neighbours);
-		// 	createdVillages++;
-		// 	chosenTile.spriteRenderer.color = Color.blue;
-		// }
-		
-		
-		// int createdSettlements = 0;
-		// int chanceToCreateSettlement = 100;
-		// for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-		// 	Region region = GridMap.Instance.allRegions[i];
-		// 	if (IsSettlementPossibleOnRegion(region)) {
-		// 		HexTile highestHabitabilityTile = GetTileWithHighestHabitability(region, data);
-		// 		if (highestHabitabilityTile == null) {
-		// 			continue;
-		// 		}
-		// 		List<HexTile> habitableNeighbours = highestHabitabilityTile.neighbourComponent.neighbours.Where(t => t.region == region && data.GetHabitabilityValue(t) > 0).ToList();
-		// 		if (habitableNeighbours.Count >= 2) {
-		// 			if (GameUtilities.RollChance(chanceToCreateSettlement)) {
-		// 				List<HexTile> villageTiles = new List<HexTile>();
-		// 				for (int j = 0; j < 3; j++) {
-		// 					if (habitableNeighbours.Count == 0) { break; }
-		// 					HexTile habitableNeighbour = CollectionUtilities.GetRandomElement(habitableNeighbours);
-		// 					villageTiles.Add(habitableNeighbour);
-		// 					habitableNeighbours.Remove(habitableNeighbour);
-		// 				}
-		// 				villageTiles.Add(highestHabitabilityTile);
-		// 		
-		// 				for (int j = 0; j < villageTiles.Count; j++) {
-		// 					HexTile villageTile = villageTiles[j];
-		// 					villageTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, villageTile);
-		// 					//remove game feature from settlement tiles
-		// 					villageTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, villageTile);
-		// 					// LandmarkManager.Instance.CreateNewLandmarkOnTile(villageTile, LANDMARK_TYPE.VILLAGE);
-		// 				}
-		// 				createdSettlements++;
-		// 				//when a settlement is built, reduce chance by 10% for the next loop
-		// 				chanceToCreateSettlement -= 15;
-		// 			}
-		// 		}	
-		// 	}
-		// }
 		return createdVillages == villagesToCreate;
 	}
 	#endregion

@@ -13,7 +13,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
 
     public Region region { get; private set; }
     public BaseSettlement settlementOnArea { get; private set; }
-    public RegionDivision regionDivision { get; protected set; }
+    // public BiomeDivision biomeDivision { get; protected set; }
     public AreaItem areaItem { get; private set; }
 
     /// <summary>
@@ -34,6 +34,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public AreaTileObjectComponent tileObjectComponent { get; private set; }
     public AreaBiomeComponent biomeComponent { get; private set; }
     public AreaStructureComponent structureComponent { get; private set; }
+    public AreaElevationComponent elevationComponent { get; }
 
     #region getters
     public string name => locationName;
@@ -46,7 +47,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public float moistureNoise => areaData.moistureNoise;
     public float temperature => areaData.temperature;
     public BIOMES biomeType => areaData.biomeType;
-    public ELEVATION elevationType => areaData.elevationType;
+    public ELEVATION elevationType => elevationComponent.elevationType;  //areaData.elevationType;
     public bool hasBeenDestroyed => false;
     public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Area;
     public LocationStructure primaryStructureInArea => structureComponent.GetMostImportantStructureOnTile();
@@ -74,7 +75,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         tileObjectComponent = new AreaTileObjectComponent(); tileObjectComponent.SetOwner(this);
         biomeComponent = new AreaBiomeComponent(); biomeComponent.SetOwner(this);
         structureComponent = new AreaStructureComponent(); structureComponent.SetOwner(this);
-
+        elevationComponent = new AreaElevationComponent(); elevationComponent.SetOwner(this);
     }
 
     public Area (SaveDataArea data) {
@@ -96,12 +97,13 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         tileObjectComponent = new AreaTileObjectComponent(); tileObjectComponent.SetOwner(this);
         biomeComponent = new AreaBiomeComponent(); biomeComponent.SetOwner(this);
         structureComponent = new AreaStructureComponent(); structureComponent.SetOwner(this);
+        elevationComponent = new AreaElevationComponent(); elevationComponent.SetOwner(this);
         locationCharacterTracker = new LocationCharacterTracker();
         locationAwareness = new LocationAwareness();
         featureComponent = new AreaFeatureComponent();
     }
     public override string ToString() {
-        return $"{locationName} - {biomeType.ToString()} - {elevationType.ToString()} - {region?.name ?? "No Region"}";
+        return $"{locationName} - {elevationType.ToString()} - {region?.name ?? "No Region"}";
     }
 
     #region Elevation
@@ -157,12 +159,6 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     #region Region
     public void SetRegion(Region region) {
         this.region = region;
-    }
-    #endregion
-
-    #region Region Division
-    public void SetRegionDivision(RegionDivision p_regionDivision) {
-        regionDivision = p_regionDivision;
     }
     #endregion
 

@@ -20,5 +20,9 @@
         //         Selector.Instance.Select(occupiedArea);
         //     }
         // }
+        protected override void OnTileAddedToStructure(LocationGridTile tile) {
+            base.OnTileAddedToStructure(tile);
+            tile.SetElevation(ELEVATION.WATER);
+        }
     }
 }

@@ -89,6 +89,7 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void OnTileAddedToStructure(LocationGridTile tile) {
             base.OnTileAddedToStructure(tile);
+            tile.SetElevation(ELEVATION.MOUNTAIN);
             tile.tileObjectComponent.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.MINE);
             //if (!caveAreas.Contains(tile.area)) {
             //    caveAreas.Add(tile.area);

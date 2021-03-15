@@ -11,10 +11,10 @@ using UnityEngine.Tilemaps;
 
 public class RegionInnerMapGeneration : MapGenerationComponent {
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating inner maps...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating map...");
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this));
+            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this, data));
         }
     }
 
