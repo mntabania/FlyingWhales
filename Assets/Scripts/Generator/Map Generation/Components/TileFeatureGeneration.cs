@@ -179,17 +179,18 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				Area currentTile = GridMap.Instance.map[x, y];
 				int currentTileHabitability = p_data.GetHabitabilityValue(currentTile);
 				if (currentTileHabitability >= MapGenerationData.MinimumHabitabilityForVillage) {
-					int adjacentHabitable = 0;
-					for (int i = 0; i < currentTile.neighbourComponent.neighbours.Count; i++) {
-						Area neighbour = currentTile.neighbourComponent.neighbours[i];
-						int habitability = p_data.GetHabitabilityValue(neighbour);
-						if (habitability > 0) {
-							adjacentHabitable++;
-						}
-					}
-					if (adjacentHabitable >= 2) {
-						p_data.AddVillageSpot(currentTile);
-					}
+					p_data.AddVillageSpot(currentTile);
+					// int adjacentHabitable = 0;
+					// for (int i = 0; i < currentTile.neighbourComponent.neighbours.Count; i++) {
+					// 	Area neighbour = currentTile.neighbourComponent.neighbours[i];
+					// 	int habitability = p_data.GetHabitabilityValue(neighbour);
+					// 	if (habitability > 0) {
+					// 		adjacentHabitable++;
+					// 	}
+					// }
+					// if (adjacentHabitable >= 2) {
+					// 	p_data.AddVillageSpot(currentTile);
+					// }
 				}
 			}
 		}

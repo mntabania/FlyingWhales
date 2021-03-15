@@ -52,3 +52,25 @@ public static class ListExtension {
         }
     }
 }
+
+public static class ArrayExtensions {
+    public static string ComafyList<T>(this T[] p_list) {
+        string converted = string.Empty;
+        for (int i = 0; i < p_list.Length; i++) {
+            T element = p_list[i];
+            converted = $"{converted}{UtilityScripts.Utilities.NotNormalizedConversionEnumToString(element.ToString())}";
+            if (p_list.IsSecondToTheLastIndex(i)) {
+                converted = $"{converted} and ";
+            } else if (!p_list.IsLastIndex(i)) {
+                converted = $"{converted}, ";    
+            }
+        }
+        return converted;
+    }
+    public static bool IsSecondToTheLastIndex<T>(this T[] p_list, int p_index) {
+        return p_list.Length - 2 == p_index;
+    }
+    public static bool IsLastIndex<T>(this T[] p_list, int p_index) {
+        return p_list.Length - 1 == p_index;
+    }
+}

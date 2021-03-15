@@ -17,9 +17,9 @@ public struct VillageSetting {
     public int GetTileCountReservedForVillage() {
         switch (villageSize) {
             case VILLAGE_SIZE.Small:
-                return 3;
+                return 2;
             case VILLAGE_SIZE.Medium:
-                return 3;
+                return 2;
             case VILLAGE_SIZE.Large:
                 return 4;
             default:

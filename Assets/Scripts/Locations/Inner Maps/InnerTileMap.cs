@@ -124,6 +124,19 @@ namespace Inner_Maps {
         public GameObject centerGo { get; private set; }
         public NNConstraint onlyUnwalkableGraph { get; private set; }
         public NNConstraint onlyPathfindingGraph { get; private set; }
+
+        private struct BiomeOrder {
+            public BIOMES[] biomesInOrder;
+            public override string ToString() {
+                return biomesInOrder.ComafyList();
+            }
+        }
+        private readonly BiomeOrder[] _biomeOrders = new[] {
+            new BiomeOrder() {biomesInOrder = new[] {BIOMES.DESERT, BIOMES.GRASSLAND, BIOMES.FOREST}},
+            new BiomeOrder() {biomesInOrder = new[] {BIOMES.DESERT, BIOMES.FOREST, BIOMES.SNOW}},
+            new BiomeOrder() {biomesInOrder = new[] {BIOMES.DESERT, BIOMES.GRASSLAND, BIOMES.SNOW}},
+            new BiomeOrder() {biomesInOrder = new[] {BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.SNOW}},
+        };
         
         
         #region getters
@@ -135,22 +148,31 @@ namespace Inner_Maps {
         #endregion
 
         #region Generation
-        public virtual void Initialize(Region location, float xSeed, float ySeed, int biomeSeed, int elevationSeed, float biomeTransitionXSeed, float biomeTransitionYSeed) {
+        public void Initialize(Region location, float xSeed, float ySeed, int biomeSeed, int elevationSeed, float biomeTransitionXSeed, float biomeTransitionYSeed) {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
 
-            //randomize biomes
-            List<BIOMES> biomeChoices = new List<BIOMES>() {BIOMES.DESERT, BIOMES.GRASSLAND, BIOMES.SNOW, BIOMES.FOREST};
-            for (int i = 0; i < biomePerlinSettings.regions.Length; i++) {
-                if (biomeChoices.Count == 0) { break; }
-                BIOMES randomBiome = CollectionUtilities.GetRandomElement(biomeChoices);
-                biomeChoices.Remove(randomBiome);
+            BiomeOrder chosenOrder = CollectionUtilities.GetRandomElement(_biomeOrders);
+            Debug.Log($"Chosen biome order is {chosenOrder.ToString()}");
+            for (int i = 0; i < chosenOrder.biomesInOrder.Length; i++) {
+                BIOMES biomes = chosenOrder.biomesInOrder[i];
                 PerlinNoiseRegion perlinNoiseRegion = biomePerlinSettings.regions[i];
-                perlinNoiseRegion.name = randomBiome.ToString();
+                perlinNoiseRegion.name = biomes.ToString();
                 biomePerlinSettings.regions[i] = perlinNoiseRegion;
-                Debug.Log($"Randomized biome {randomBiome.ToString()} at {perlinNoiseRegion.height.ToString()}");
             }
+            
+            // //randomize biomes
+            // List<BIOMES> biomeChoices = new List<BIOMES>() {BIOMES.DESERT, BIOMES.GRASSLAND, BIOMES.SNOW, BIOMES.FOREST};
+            // for (int i = 0; i < biomePerlinSettings.regions.Length; i++) {
+            //     if (biomeChoices.Count == 0) { break; }
+            //     BIOMES randomBiome = CollectionUtilities.GetRandomElement(biomeChoices);
+            //     biomeChoices.Remove(randomBiome);
+            //     PerlinNoiseRegion perlinNoiseRegion = biomePerlinSettings.regions[i];
+            //     perlinNoiseRegion.name = randomBiome.ToString();
+            //     biomePerlinSettings.regions[i] = perlinNoiseRegion;
+            //     Debug.Log($"Randomized biome {randomBiome.ToString()} at {perlinNoiseRegion.height.ToString()}");
+            // }
             
             biomePerlinSettings.seed = biomeSeed;
             perlinElevationSettings.seed = elevationSeed;
