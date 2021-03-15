@@ -663,8 +663,10 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         }
 
         if (currentQuest.isSuccessful) {
+            Messenger.Broadcast(PartySignals.PARTY_QUEST_FINISHED_SUCCESSFULLY, this);
             onQuestSucceed?.Invoke();
         } else {
+            Messenger.Broadcast(PartySignals.PARTY_QUEST_FAILED, this);
             onQuestDropped?.Invoke();
         }
         

@@ -135,6 +135,7 @@ namespace Inner_Maps.Location_Structures {
             party.RemoveMemberThatJoinedQuest(partyData.deployedMinions[0]);
             partyData.deployedMinions[0].Death();
             partyData.ClearAllData();
+            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
         }
 
         public virtual void OnCharacterDied(Character p_deadMonster) {

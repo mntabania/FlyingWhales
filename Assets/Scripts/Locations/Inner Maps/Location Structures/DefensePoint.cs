@@ -41,6 +41,7 @@ namespace Inner_Maps.Location_Structures {
             partyData.deployedSummonSettings.Clear();
             partyData.deployedCSummonlass.Clear();
             partyData.readyForDeploySummonCount = 0;
+            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
         }
 
 		public override void DeployParty() {
