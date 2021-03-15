@@ -48,6 +48,9 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         public bool HasReachedKennelCapacity() {
+            if(preOccupiedBy != null) {
+                return true;
+            }
             int numOfSummons = GetNumberOfSummonsHere();
             return numOfSummons >= 1;
         }
@@ -75,6 +78,19 @@ namespace Inner_Maps.Location_Structures {
                 info = $"{info}\nOccupying Summon: {occupyingSummon.name}";
             }
             return info;
+        }
+        public override void DeployParty() {
+            party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0]);
+            partyData.deployedMinions[0].combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+            partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
+            partyData.deployedSummons.ForEach((eachSummon) => eachSummon.combatComponent.SetCombatMode(COMBAT_MODE.Defend));
+
+            partyData.deployedMinions[0].faction.partyQuestBoard.CreateDemonSnatchPartyQuest(partyData.deployedMinions[0],
+                    partyData.deployedMinions[0].homeSettlement, partyData.deployedTargets[0] as Character, this);
+            party.TryAcceptQuest();
+            party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
+            partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
+            ListenToParty();
         }
         #endregion
 

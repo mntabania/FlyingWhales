@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
-
+using Inner_Maps;
 public class PartyJobTriggerComponent : JobTriggerComponent {
     private readonly Party _owner;
 
@@ -39,6 +39,15 @@ public class PartyJobTriggerComponent : JobTriggerComponent {
                 _owner.jobBoard.AddToAvailableJobs(job);
             }
         }
+    }
+    public bool CreateSnatchJob(Character targetCharacter, LocationGridTile targetLocation, LocationStructure structure) {
+        if (_owner.jobBoard.HasJob(JOB_TYPE.SNATCH, targetCharacter) == false) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP_RESTRAINED, targetCharacter, _owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { structure, targetLocation });
+            _owner.jobBoard.AddToAvailableJobs(job);
+            return true;
+        }
+        return false;
     }
     #endregion
 }

@@ -394,7 +394,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                     }
                     member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
                 }
-                SetPartyState(PARTY_STATE.Moving);
+                if (currentQuest.waitingToWorkingStateImmediately) {
+                    SetPartyState(PARTY_STATE.Working);
+                } else {
+                    SetPartyState(PARTY_STATE.Moving);
+                }
             } else {
                 //Drop quest only instead of ending quest so that the quest can still be taken by other parties
                 currentQuest.EndQuest("Not enough members joined");
@@ -447,19 +451,19 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             //Reason: Raid party problem - when a character is being kidnap by a raid member, when the raid party quest timer runs out they will all switch to moving, so even the one doing to kidnap job will be stopped
             //CancelAllJobsOfMembersThatJoinedQuestThatAreStillActive();
 
-            if (targetDestination != null && !targetDestination.hasBeenDestroyed) {
-                for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
-                    Character member = membersThatJoinedQuest[i];
-                    if (IsMemberActive(member)) {
-                        if (!targetDestination.IsAtTargetDestination(member) && (member.currentJob == null || (member.currentJob.jobType != JOB_TYPE.KIDNAP_RAID && member.currentJob.jobType != JOB_TYPE.STEAL_RAID))) {
-                            LocationGridTile tile = targetDestination.GetRandomPassableTile();
-                            if (tile != null) {
-                                member.jobComponent.CreatePartyGoToJob(tile);
-                            }
-                        }
-                    }
-                }
-            }
+            //if (targetDestination != null && !targetDestination.hasBeenDestroyed) {
+            //    for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            //        Character member = membersThatJoinedQuest[i];
+            //        if (IsMemberActive(member)) {
+            //            if (!targetDestination.IsAtTargetDestination(member) && (member.currentJob == null || (member.currentJob.jobType != JOB_TYPE.KIDNAP_RAID && member.currentJob.jobType != JOB_TYPE.STEAL_RAID))) {
+            //                LocationGridTile tile = targetDestination.GetRandomPassableTile();
+            //                if (tile != null) {
+            //                    member.jobComponent.CreatePartyGoToJob(tile);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
     private void OnSwitchFromMovingState(PARTY_STATE prevState) {
@@ -569,6 +573,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
     #region Working State
     private void OnSwitchToWorkingState(PARTY_STATE prevState) {
+        if (prevState == PARTY_STATE.Waiting) {
+            CancelAllJobsOfMembersThatJoinedQuest();
+        }
         //When the party switches to Working state always switch off the changed target destination because this means that the party has already reached the destination and must not switch to Moving state at the start of Working state
         SetHasChangedTargetDestination(false);
     }
@@ -591,6 +598,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             LogPool.Release(log);
             
             OnAcceptQuest(quest);
+            quest.OnAcceptQuest(this);
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {
@@ -621,6 +629,8 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             targetCamp = null;
             targetDestination = null;
             SetHasChangedTargetDestination(false);
+
+            onQuestEnd?.Invoke();
         }
     }
     private void SetCurrentQuest(PartyQuest p_quest) {
@@ -662,7 +672,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             StartNoQuestCooldown();
         }
 
-        onQuestDropped?.Invoke();
+        //onQuestDropped?.Invoke();
     }
     private void StartNoQuestCooldown() {
         if (canAcceptQuests) {

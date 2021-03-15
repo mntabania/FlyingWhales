@@ -202,6 +202,14 @@ public class DropRestrained : GoapAction {
                 }
                 goapNode.actor.behaviourComponent.SetIsSnatching(false);
             }
+            if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
+                if (goapNode.actor.deployedAtStructure != null && !goapNode.actor.deployedAtStructure.hasBeenDestroyed) {
+                    LocationGridTile chosenTile = goapNode.actor.deployedAtStructure.GetRandomPassableTile();
+                    if (chosenTile != null) {
+                        CharacterManager.Instance.Teleport(targetCharacter, chosenTile);
+                    }
+                }
+            }
         }
 
         if (goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID) {

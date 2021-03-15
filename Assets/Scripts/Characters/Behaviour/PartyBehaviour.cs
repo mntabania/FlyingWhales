@@ -68,7 +68,18 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                 if (party.targetDestination != null && !party.targetDestination.hasBeenDestroyed) {
                                     if (party.targetDestination.IsAtTargetDestination(character)) {
                                         if (party.targetDestination == party.partySettlement) {
-                                            party.currentQuest.EndQuest("Finished quest");
+                                            if(party.currentQuest is DemonSnatchPartyQuest quest) {
+                                                if (party.jobBoard.HasJob(JOB_TYPE.SNATCH, quest.targetCharacter)) {
+                                                    LocationGridTile tile = character.areaLocation.gridTileComponent.GetRandomPassableTileThatIsNotPartOfAStructure();
+                                                    if (tile != null) {
+                                                        character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                                                    }
+                                                } else {
+                                                    party.currentQuest.EndQuest("Finished quest");
+                                                }
+                                            } else {
+                                                party.currentQuest.EndQuest("Finished quest");
+                                            }
                                         } else {
                                             party.SetPartyState(PARTY_STATE.Working);
                                         }

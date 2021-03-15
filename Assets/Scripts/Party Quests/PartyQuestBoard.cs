@@ -155,6 +155,17 @@ public class PartyQuestBoard {
         quest.SetTargetStructure(targetStructure);
         AddPartyQuest(quest, questCreator);
     }
+    public void CreateDemonSnatchPartyQuest(Character questCreator, BaseSettlement madeInLocation, Character targetCharacter, DemonicStructure dropStructure) {
+        if (!owner.isMajorFaction) {
+            //Cannot post quests on faction that are not major
+            return;
+        }
+        DemonSnatchPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Demon_Snatch) as DemonSnatchPartyQuest;
+        quest.SetMadeInLocation(madeInLocation);
+        quest.SetTargetCharacter(targetCharacter);
+        quest.SetDropStructure(dropStructure);
+        AddPartyQuest(quest, questCreator);
+    }
     //public void CreateMonsterInvadePartyQuest(BaseSettlement settlement, HexTile hexForJoining, LocationStructure targetStructure) {
     //    MonsterInvadePartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Monster_Invade) as MonsterInvadePartyQuest;
     //    quest.SetHexForJoining(hexForJoining);

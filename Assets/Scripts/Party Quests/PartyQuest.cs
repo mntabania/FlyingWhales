@@ -16,6 +16,7 @@ public class PartyQuest : ISavable {
     #region getters
     public virtual IPartyQuestTarget target => null;
     public virtual System.Type serializedData => typeof(SaveDataPartyQuest);
+    public virtual bool waitingToWorkingStateImmediately => false;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party_Quest;
     public bool isAssigned => assignedParty != null;
     #endregion
@@ -42,7 +43,6 @@ public class PartyQuest : ISavable {
     protected virtual void OnEndQuest() {
         if(madeInLocation != null && madeInLocation is NPCSettlement npcSettlement) {
             npcSettlement.OnFinishedQuest(this);
-            assignedParty.onQuestEnd?.Invoke();
         }
     }
     public virtual void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
