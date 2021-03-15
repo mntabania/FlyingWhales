@@ -8,9 +8,15 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class PartyStructure : DemonicStructure, Party.PartyEventsIListener {
-        public virtual Type serializedDataParty => typeof(SaveDataPartyStructure);
+        public override Type serializedData => typeof(SaveDataPartyStructure);
 
         public List<IStoredTarget> allPossibleTargets = new List<IStoredTarget>();
+
+        public bool IsAvailableForTargeting() {
+            bool isOccupied = charactersHere.Count > 0;
+            charactersHere.ForEach((eachCharacters) => isOccupied &= !eachCharacters.isDead);
+            return isOccupied;
+        }
 
         public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
@@ -22,20 +28,48 @@ namespace Inner_Maps.Location_Structures {
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
-            return;
             SaveDataPartyStructure saveData = saveDataLocationStructure as SaveDataPartyStructure;
-            Debug.LogError("LOADED ");
-            Debug.LogError("LOADED " + saveData);
-            Debug.LogError("LOADED " + saveData.partyID);
             if (!string.IsNullOrEmpty(saveData.partyID)) {
-                party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(saveData.partyID) as Party;
-                Debug.LogError(party.partyName);
+                party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(saveData.partyID);
+                ListenToParty();
             }
         }
         #endregion
 
         public Party party;
         public PartyStructureData partyData = new PartyStructureData();
+        private bool m_isInitialized = false;
+
+        public void InitializeTeam() {
+			if (!m_isInitialized) {
+                m_isInitialized = true;
+                if (party != null) {
+                    party.membersThatJoinedQuest.ForEach((eachMember) => {
+                        Debug.LogError(eachMember.name);
+                        if (eachMember is Summon) {
+                            partyData.deployedSummons.Add(eachMember);
+                            SummonSettings ss = CharacterManager.Instance.GetSummonSettings((eachMember as Summon).summonType);
+                            partyData.deployedSummonSettings.Add(ss);
+                            partyData.deployedCSummonlass.Add(CharacterManager.Instance.GetCharacterClass(ss.className));
+                        } else {
+                            foreach (PLAYER_SKILL_TYPE eachSkill in PlayerSkillManager.Instance.allMinionPlayerSkills) {
+                                if (eachMember.minion.minionPlayerSkillType == eachSkill) {
+                                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill);
+                                    MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
+                                    CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
+                                    partyData.deployedMinions.Add(eachMember);
+                                    partyData.deployedMinionsSkillType.Add(eachMember.minion.minionPlayerSkillType);
+                                    partyData.deployedMinionClass.Add(cClass);
+                                }
+                            }
+                        }
+                    });
+                    if (party.currentQuest != null && party.currentQuest.target != null) {
+                        partyData.deployedTargets.Add(party.currentQuest.target as IStoredTarget);
+                    }
+                }
+            }
+        }
 
         public void RemoveItemOnRight(DeployedMonsterItemUI p_itemUI) {
             if (!p_itemUI.isMinion) {
@@ -52,11 +86,12 @@ namespace Inner_Maps.Location_Structures {
                 partyData.deployedCSummonlass.Add(p_itemUI.characterClass);
                 partyData.deployedSummonSettings.Add(p_itemUI.summonSettings);
                 AddSummonOnCharacterList(p_itemUI.deployedCharacter);
-
+                p_itemUI.deployedCharacter.SetDestroyMarkerOnDeath(true);
             } else {
                 partyData.deployedMinionClass.Add(p_itemUI.characterClass);
                 partyData.deployedMinionsSkillType.Add(p_itemUI.playerSkillType);
                 AddMinionOnCharacterList(p_itemUI.deployedCharacter);
+                p_itemUI.deployedCharacter.SetDestroyMarkerOnDeath(true);
             }
         }
 
@@ -95,11 +130,9 @@ namespace Inner_Maps.Location_Structures {
                 party.RemoveMemberThatJoinedQuest(eachSummon);
             });
             for(int x = 0; x < partyData.deployedSummons.Count; ++x) {
-                partyData.deployedSummons[x].SetDestroyMarkerOnDeath(true);
                 partyData.deployedSummons[x].Death();
 			}
             party.RemoveMemberThatJoinedQuest(partyData.deployedMinions[0]);
-            partyData.deployedMinions[0].SetDestroyMarkerOnDeath(true);
             partyData.deployedMinions[0].Death();
             partyData.ClearAllData();
         }

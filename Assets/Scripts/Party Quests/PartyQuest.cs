@@ -42,7 +42,6 @@ public class PartyQuest : ISavable {
     protected virtual void OnEndQuest() {
         if(madeInLocation != null && madeInLocation is NPCSettlement npcSettlement) {
             npcSettlement.OnFinishedQuest(this);
-            assignedParty.onQuestEnd?.Invoke();
         }
     }
     public virtual void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {

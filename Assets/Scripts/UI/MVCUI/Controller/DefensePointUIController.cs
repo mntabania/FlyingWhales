@@ -78,6 +78,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		}
 	}
 	public void Init() {
+		m_targetPartyStructure.InitializeTeam();
 		InstantiateUI();
 		InitializeSummons();
 		InitializeDeployedItems();
@@ -180,7 +181,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
 		if (!m_isAllItemDeployed) {
-			//Party party = null;
+			
 			m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
 				if (eachSummonToBeDeployed.isReadyForDeploy) {
 					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.summonType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement);
@@ -189,14 +190,6 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 					eachSummonToBeDeployed.Deploy(summon, true);
 					m_targetPartyStructure.AddDeployedItem(eachSummonToBeDeployed);
 					PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachSummonToBeDeployed.summonType, -1);
-
-					//if (party == null) {
-					//	party = PartyManager.Instance.CreateNewParty(summon);
-					//	summon.faction.partyQuestBoard.CreateDemonDefendPartyQuest(summon, summon.homeSettlement, m_targetPartyStructure);
-					//	party.TryAcceptQuest();
-					//}
-					//party.AddMember(summon);
-					//party.AddMemberThatJoinedQuest(summon);
 				}
 			});
 		} else {

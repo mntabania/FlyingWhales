@@ -12,6 +12,10 @@ namespace Inner_Maps.Location_Structures {
 
         public override void RemoveCharacterOnList(Character p_removeSummon) {
             partyData.deployedSummons.Remove(p_removeSummon);
+            if (p_removeSummon.partyComponent.IsAMemberOfParty(party)) {
+                party.RemoveMember(p_removeSummon);
+                party.RemoveMemberThatJoinedQuest(p_removeSummon);
+            }
             p_removeSummon.SetDestroyMarkerOnDeath(true);
             p_removeSummon.Death();
         }
@@ -37,6 +41,22 @@ namespace Inner_Maps.Location_Structures {
             partyData.deployedSummonSettings.Clear();
             partyData.deployedCSummonlass.Clear();
             partyData.readyForDeploySummonCount = 0;
+        }
+
+		public override void DeployParty() {
+            if (party == null) {
+                party = PartyManager.Instance.CreateNewParty(partyData.deployedSummons[0]);
+                partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
+                partyData.deployedSummons[0].faction.partyQuestBoard.CreateDemonDefendPartyQuest(partyData.deployedSummons[0],
+                        partyData.deployedSummons[0].homeSettlement, this);
+                party.TryAcceptQuest();
+            }
+            partyData.deployedSummons.ForEach((eachSummon) => {
+                if (!eachSummon.partyComponent.IsAMemberOfParty(party)) {
+                    party.AddMember(eachSummon);
+                    party.AddMemberThatJoinedQuest(eachSummon);
+                }
+            });
         }
     }
 }

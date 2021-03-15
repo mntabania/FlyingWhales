@@ -129,6 +129,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	public void Init(string p_title = "") {
+		m_targetPartyStructure.InitializeTeam();
 		InstantiateUI();
 		InitializeSummons();
 		InitializeMinions();
@@ -329,6 +330,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void ProcessButtonAvailability() {
+		if (m_targetPartyStructure.IsAvailableForTargeting()) {
+			m_maraudUIView.DisableDeployButton();
+			return;
+		} 
 		if (!m_isTeamDeployed) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				m_maraudUIView.EnableDeployButton();
@@ -460,6 +465,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	public void OnCloseTargetSubContainer() { m_maraudUIView.HideAllSubMenu(); }
 
 	public void OnHoverOver() {
+		if(m_targetPartyStructure.IsAvailableForTargeting()) {
+			Tooltip.Instance.ShowSmallInfo("Can't build team, structure is occupied.", "Occupied Structure", autoReplaceText: false);
+			return;
+		}
 		if (m_isTeamDeployed) {
 			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
 		} else {

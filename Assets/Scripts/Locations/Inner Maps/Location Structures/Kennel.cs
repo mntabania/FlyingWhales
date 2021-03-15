@@ -116,7 +116,7 @@ namespace Inner_Maps.Location_Structures {
 }
 
 #region Save Data
-public class SaveDataKennel : SaveDataDemonicStructure {
+public class SaveDataKennel : SaveDataPartyStructure {
     public string occupyingSummonID;
 
     public override void Save(LocationStructure structure) {

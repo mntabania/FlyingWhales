@@ -28,6 +28,7 @@ namespace Inner_Maps.Location_Structures {
             party.TryAcceptQuest();
             party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
+            ListenToParty();
         }
     }
 }

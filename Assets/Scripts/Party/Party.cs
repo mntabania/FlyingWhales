@@ -12,7 +12,7 @@ using UnityEngine.Profiling;
 using System;
 public class Party : ILogFiller, ISavable, IJobOwner {
 
-    public Action onQuestEnd;
+    public Action onQuestSucceed;
     public Action onQuestDropped;
 
     public interface PartyEventsIListener {
@@ -662,7 +662,12 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             StartNoQuestCooldown();
         }
 
-        onQuestDropped?.Invoke();
+        if (currentQuest.isSuccessful) {
+            onQuestSucceed?.Invoke();
+        } else {
+            onQuestDropped?.Invoke();
+        }
+        
     }
     private void StartNoQuestCooldown() {
         if (canAcceptQuests) {
@@ -1232,12 +1237,12 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     #region Subscribe/Unsubscribe
     public void Subscribe(PartyEventsIListener p_iListener) {
         onQuestDropped += p_iListener.OnQuestDropped;
-        onQuestEnd += p_iListener.OnQuestEnds;
+        onQuestSucceed += p_iListener.OnQuestEnds;
     }
 
     public void Unsubscribe(PartyEventsIListener p_iListener) {
         onQuestDropped -= p_iListener.OnQuestDropped;
-        onQuestEnd -= p_iListener.OnQuestEnds;
+        onQuestSucceed -= p_iListener.OnQuestEnds;
     }
     #endregion
 }
