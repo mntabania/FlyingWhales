@@ -65,7 +65,7 @@ public class DemonRaidPartyQuest : PartyQuest {
     //}
     private void ProcessDisbandment() {
         if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
-            assignedParty.GoBackHomeAndEndQuest();
+            EndQuest("Finished quest");
         }
     }
     public void SetTargetSettlement(BaseSettlement settlement) {
