@@ -1274,6 +1274,7 @@ public class SaveDataCombatData : SaveData<CombatData> {
 
     #region Overrides
     public override void Save(CombatData data) {
+        base.Save(data);
         reasonForCombat = data.reasonForCombat;
         avoidReason = data.avoidReason;
         isLethal = data.isLethal;
