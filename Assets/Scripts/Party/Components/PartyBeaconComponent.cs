@@ -31,22 +31,20 @@ public class PartyBeaconComponent : PartyComponent {
     private void OnCharacterCannotMove(Character p_character) {
         if(currentBeaconCharacter == p_character) {
             UpdateBeaconCharacter();
-        } else {
-            if (p_character.partyComponent.IsAMemberOfParty(owner)) {
-                if (p_character.partyComponent.isMemberThatJoinedQuest) {
-                    p_character.partyComponent.UnfollowBeacon();
-                }
+        }
+        if (p_character.partyComponent.IsAMemberOfParty(owner)) {
+            if (p_character.partyComponent.isMemberThatJoinedQuest) {
+                p_character.partyComponent.UnfollowBeacon();
             }
         }
     }
     private void OnCharacterCannotPerform(Character p_character) {
         if (currentBeaconCharacter == p_character) {
             UpdateBeaconCharacter();
-        } else {
-            if (p_character.partyComponent.IsAMemberOfParty(owner)) {
-                if (p_character.partyComponent.isMemberThatJoinedQuest) {
-                    p_character.partyComponent.UnfollowBeacon();
-                }
+        }
+        if (p_character.partyComponent.IsAMemberOfParty(owner)) {
+            if (p_character.partyComponent.isMemberThatJoinedQuest) {
+                p_character.partyComponent.UnfollowBeacon();
             }
         }
     }
@@ -127,9 +125,8 @@ public class PartyBeaconComponent : PartyComponent {
     public void OnRemoveMemberThatJoinedQuest(Character p_member) {
         if(p_member == currentBeaconCharacter) {
             UpdateBeaconCharacter();
-        } else {
-            p_member.partyComponent.UnfollowBeacon();
         }
+        p_member.partyComponent.UnfollowBeacon();
     }
     #endregion
 

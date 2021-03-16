@@ -207,6 +207,9 @@ public class DropRestrained : GoapAction {
                     LocationGridTile chosenTile = goapNode.actor.deployedAtStructure.GetRandomPassableTile();
                     if (chosenTile != null) {
                         CharacterManager.Instance.Teleport(targetCharacter, chosenTile);
+                        if (targetCharacter.hasMarker) {
+                            targetCharacter.marker.UpdatePosition();
+                        }
                     }
                 }
             }

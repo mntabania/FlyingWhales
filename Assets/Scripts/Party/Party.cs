@@ -730,7 +730,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true, bool shouldDropQuest = true) {
         if (membersThatJoinedQuest.Remove(character)) {
             OnRemoveMemberThatJoinedQuest(character, broadcastSignal);
-            if((membersThatJoinedQuest.Count <= 0 || !HasActiveMemberThatJoinedQuest()) && shouldDropQuest){
+            if((membersThatJoinedQuest.Count <= 0 || (!HasActiveMemberThatJoinedQuest() && !isPlayerParty)) && shouldDropQuest){
                 //All members that joined the quest has left the quest, if there is still a quest, drop quest
                 if (isActive) {
                     currentQuest.EndQuest("Finished quest");

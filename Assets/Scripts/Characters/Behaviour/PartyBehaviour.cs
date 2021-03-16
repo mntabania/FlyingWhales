@@ -91,8 +91,8 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                             character.partyComponent.FollowBeacon();
                                         } else {
                                             LocationGridTile tile = null;
-                                            if (party.isPlayerParty) {
-                                                tile = party.targetDestination.GetRandomPassableTile();
+                                            if (party.isPlayerParty && party.targetDestination == party.partySettlement) {
+                                                tile = party.partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL).GetRandomPassableTile();
                                             } else {
                                                 tile = party.targetDestination.GetRandomPassableTile();
                                             }

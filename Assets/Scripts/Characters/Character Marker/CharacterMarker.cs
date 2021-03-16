@@ -1404,9 +1404,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                     if(poi is Character target) {
                         //After dropping a character, the carrier should not immediately react to the recently dropped character
-                        if(target.carryComponent.justGotCarriedBy != null && target.carryComponent.justGotCarriedBy == character) {
+                        if(target.carryComponent.prevCarriedBy != null && target.carryComponent.prevCarriedBy == character) {
                             // log = $"{log}\n-{poi.nameWithID} is just got dropped. Skipping...";
-                            target.carryComponent.SetJustGotCarriedBy(null);
+                            target.carryComponent.SetPrevCarriedBy(null);
                             continue;
                         }
                     }

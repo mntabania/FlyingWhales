@@ -20,7 +20,7 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
                 Prisoner prisoner = quest.targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
                 if (prisoner != null && prisoner.IsFactionPrisonerOf(character.faction)) {
                     party.GoBackHomeAndEndQuest();
-                    CreateSnatchJobFor(quest.targetCharacter, party, quest);
+                    quest.CreateSnatchJobFor(quest.targetCharacter, party);
                     return true;
                 } else {
                     if (quest.targetCharacter.isBeingSeized) {
@@ -35,19 +35,6 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
             producedJob.SetIsThisAPartyJob(true);
         }
         return hasJob;
-    }
-
-    private void CreateSnatchJobFor(Character p_target, Party p_party, DemonSnatchPartyQuest p_quest) {
-        //Area area = p_quest.dropStructure.occupiedArea;
-        //LocationGridTile dropTile = area.gridTileComponent.GetRandomPassableUnoccupiedTileThatIsNotPartOfAStructure();
-        //if(dropTile == null) {
-        //    dropTile = area.gridTileComponent.GetRandomPassableTile();
-        //    if (dropTile == null) {
-        //        dropTile = area.gridTileComponent.GetRandomTile();
-        //    }
-        //}
-        LocationGridTile dropTile = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL).GetRandomPassableTile();
-        p_party.jobComponent.CreateSnatchJob(p_target, dropTile, dropTile.structure);
     }
 
     private bool RoamAroundStructureOrHex(Character actor, IPartyQuestTarget target, out JobQueueItem producedJob) {

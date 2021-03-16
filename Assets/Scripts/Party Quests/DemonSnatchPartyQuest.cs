@@ -30,6 +30,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
         Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfSnatchJobIsFinished);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
         Messenger.AddListener<Prisoner>(TraitSignals.HAS_BECOME_PRISONER, OnHasBecomePrisoner);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
         dropStructure.SetPreOccupiedBy(targetCharacter);
     }
     protected override void OnEndQuest() {
@@ -37,6 +38,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
         Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfSnatchJobIsFinished);
         Messenger.RemoveListener<Prisoner>(TraitSignals.HAS_BECOME_PRISONER, OnHasBecomePrisoner);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
         dropStructure.SetPreOccupiedBy(null);
     }
     public override IPartyTargetDestination GetTargetDestination() {
@@ -76,6 +78,11 @@ public class DemonSnatchPartyQuest : PartyQuest {
     }
     private void OnUnseizePOI(IPointOfInterest poi) {
         if (poi == targetCharacter && assignedParty != null) {
+            //Bring back snatch job when unseizing target because the snatch job is removed when you seize him
+            //Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            //if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
+            //    CreateSnatchJobFor(targetCharacter, assignedParty);
+            //}
             for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
                 Character member = assignedParty.membersThatJoinedQuest[i];
                 if (member.currentJob != null && member.currentJob.isThisAPartyJob
@@ -95,6 +102,30 @@ public class DemonSnatchPartyQuest : PartyQuest {
                 }
             }
         }
+    }
+    private void OnSnatchJobRemoved(JobQueueItem job, Character character) {
+        if (job.jobType == JOB_TYPE.SNATCH && job is GoapPlanJob goapJob && goapJob.poiTarget == targetCharacter && assignedParty != null) {
+            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                Character member = assignedParty.membersThatJoinedQuest[i];
+                if (member.currentJob != null && member.currentJob.isThisAPartyJob
+                    && (member.currentJob.jobType == JOB_TYPE.GO_TO || member.currentJob.jobType == JOB_TYPE.PARTY_GO_TO)) {
+                    member.currentJob.CancelJob(false);
+                }
+            }
+        }
+    }
+
+    public void CreateSnatchJobFor(Character p_target, Party p_party) {
+        //Area area = p_quest.dropStructure.occupiedArea;
+        //LocationGridTile dropTile = area.gridTileComponent.GetRandomPassableUnoccupiedTileThatIsNotPartOfAStructure();
+        //if(dropTile == null) {
+        //    dropTile = area.gridTileComponent.GetRandomPassableTile();
+        //    if (dropTile == null) {
+        //        dropTile = area.gridTileComponent.GetRandomTile();
+        //    }
+        //}
+        LocationGridTile dropTile = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL).GetRandomPassableTile();
+        p_party.jobComponent.CreateSnatchJob(p_target, dropTile, dropTile.structure);
     }
     #endregion
 
