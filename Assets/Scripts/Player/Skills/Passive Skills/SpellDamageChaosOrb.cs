@@ -9,6 +9,9 @@ public class SpellDamageChaosOrb : PassiveSkill {
         Messenger.AddListener<Character, int>(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, OnSpellDamageDone);
     }
     private void OnSpellDamageDone(Character character, int p_damageDone) {
+        if (character == null) {
+            return;
+        }
         if (p_damageDone < 0) {
             p_damageDone = p_damageDone * -1;
         }
