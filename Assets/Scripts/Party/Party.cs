@@ -1207,10 +1207,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             }
         }
         for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
-            if (forcedCancelJobsOnTickEnded[i].ForceCancelJob(false)) {
-                i--;
-            }
+            forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
         }
+        forcedCancelJobsOnTickEnded.Clear();
     }
     #endregion
 
@@ -1245,7 +1244,6 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
         ForceCancelAllJobsImmediately();
-        forcedCancelJobsOnTickEnded.Clear();
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.RemoveListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);

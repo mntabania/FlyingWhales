@@ -47,16 +47,13 @@ namespace Inner_Maps.Location_Structures {
 		public override void DeployParty() {
             if (party == null) {
                 party = PartyManager.Instance.CreateNewParty(partyData.deployedSummons[0]);
-                partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
                 partyData.deployedSummons[0].faction.partyQuestBoard.CreateDemonDefendPartyQuest(partyData.deployedSummons[0],
                         partyData.deployedSummons[0].homeSettlement, this);
                 party.TryAcceptQuest();
             }
             partyData.deployedSummons.ForEach((eachSummon) => {
-                if (!eachSummon.partyComponent.IsAMemberOfParty(party)) {
-                    party.AddMember(eachSummon);
-                    party.AddMemberThatJoinedQuest(eachSummon);
-                }
+                party.AddMember(eachSummon);
+                party.AddMemberThatJoinedQuest(eachSummon);
             });
         }
     }
