@@ -71,7 +71,7 @@ public class DemonicStructurePlayerSkill : SkillData {
         PlayerManager.Instance.SetStructurePlacementVisualFollowMouseState(true);
     }
     private void BuildDemonicStructure(LocationGridTile p_tile) {
-        p_tile.PlaceSelfBuildingDemonicStructure(structureSetting, 1);
+        p_tile.PlaceSelfBuildingDemonicStructure(structureSetting, 20);
         Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
     }
     private bool CanBuildDemonicStructureOn(LocationStructureObject structureObj, LocationGridTile centerTile, out string o_cannotPlaceReason) {
