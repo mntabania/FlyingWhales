@@ -146,29 +146,3 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
         }
     }
 }
-
-public class SaveDataDemonicStructure : SaveDataLocationStructure {
-    
-    public string structureTemplateName;
-    public Vector3Save structureObjectWorldPosition;
-    // public int activeSnatchJobs;
-
-    public override void Save(LocationStructure locationStructure) {
-        base.Save(locationStructure);
-        DemonicStructure demonicStructure = locationStructure as DemonicStructure;
-        Assert.IsNotNull(demonicStructure);
-
-        if (demonicStructure.hasBeenDestroyed) {
-            structureTemplateName = string.Empty;
-            structureObjectWorldPosition = Vector3.zero;
-        } else {
-            //structure object
-            string templateName = demonicStructure.structureObj.name;
-            templateName = templateName.Replace("(Clone)", "");
-            structureTemplateName = templateName;
-            structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
-        }
-
-        // activeSnatchJobs = demonicStructure.activeSnatchJobs;
-    }
-}

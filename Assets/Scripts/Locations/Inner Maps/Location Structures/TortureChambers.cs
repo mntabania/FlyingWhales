@@ -31,8 +31,21 @@ namespace Inner_Maps.Location_Structures {
             StopDrainingCharactersHere();
             base.DestroyStructure();
         }
+        public override void DeployParty() {
+            party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0]);
+            partyData.deployedMinions[0].combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+            partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
+            partyData.deployedSummons.ForEach((eachSummon) => eachSummon.combatComponent.SetCombatMode(COMBAT_MODE.Defend));
+
+            partyData.deployedMinions[0].faction.partyQuestBoard.CreateDemonSnatchPartyQuest(partyData.deployedMinions[0],
+                    partyData.deployedMinions[0].homeSettlement, partyData.deployedTargets[0] as Character, this);
+            party.TryAcceptQuest();
+            party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
+            partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
+            ListenToParty();
+        }
         #endregion
-        
+
         protected override void AfterCharacterAddedToLocation(Character p_character) {
             base.AfterCharacterAddedToLocation(p_character);
             p_character.movementComponent.SetEnableDigging(false);

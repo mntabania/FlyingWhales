@@ -19,7 +19,6 @@ namespace Inner_Maps.Location_Structures {
                 }                
             });
         }
-
         public override void DeployParty() {
             party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0]);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));

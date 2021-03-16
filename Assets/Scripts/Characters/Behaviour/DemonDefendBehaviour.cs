@@ -24,6 +24,7 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
                 DemonDefendPartyQuest quest = party.currentQuest as DemonDefendPartyQuest;
                 LocationStructure targetStructure = quest.targetStructure;
                 Area targetArea = quest.targetArea;
+                quest.SetIsSuccessful(true);
                 if (targetStructure != null && !targetStructure.hasBeenDestroyed) {
                     Character target = GetFirstHostileIntruderOf(character, targetStructure);
                     if (target != null) {
