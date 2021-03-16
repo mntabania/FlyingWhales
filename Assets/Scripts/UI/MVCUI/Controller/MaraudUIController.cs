@@ -423,10 +423,14 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			Init();
 			return; // <----- we have a return here 
 		}
+		LocationStructure structureToBePlaced = m_targetPartyStructure;
+        if (!structureToBePlaced.structureType.IsOpenSpace()) {
+			structureToBePlaced = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
+        }
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.summonType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement, bypassIdeologyChecking: true);
-				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.occupiedArea.gridTileComponent.GetRandomPassableInOpenSpaceTile());
+				CharacterManager.Instance.PlaceSummonInitially(summon, structureToBePlaced.GetRandomPassableTile());
 				summon.SetDeployedAtStructure(m_targetPartyStructure);
 				eachMonsterToBeDeployed.Deploy(summon);
 				m_targetPartyStructure.AddDeployedItem(eachMonsterToBeDeployed);
@@ -436,7 +440,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (m_deployedMinionsUI[0].isReadyForDeploy && m_deployedMinionsUI[0].isMinion) {
 			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(m_deployedMinionsUI[0].playerSkillType);
 			Character minion = null;
-			skillData.ActivateAbility(m_targetPartyStructure.occupiedArea.gridTileComponent.GetRandomPassableInOpenSpaceTile(), ref minion);
+			skillData.ActivateAbility(structureToBePlaced.GetRandomPassableTile(), ref minion);
 			minion.SetDeployedAtStructure(m_targetPartyStructure);
 			m_deployedMinionsUI[0].Deploy(minion);
 			m_targetPartyStructure.AddDeployedItem(m_deployedMinionsUI[0]);
