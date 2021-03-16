@@ -79,10 +79,10 @@ public class DemonSnatchPartyQuest : PartyQuest {
     private void OnUnseizePOI(IPointOfInterest poi) {
         if (poi == targetCharacter && assignedParty != null) {
             //Bring back snatch job when unseizing target because the snatch job is removed when you seize him
-            //Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-            //if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
-            //    CreateSnatchJobFor(targetCharacter, assignedParty);
-            //}
+            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
+                CreateSnatchJobFor(targetCharacter, assignedParty);
+            }
             for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
                 Character member = assignedParty.membersThatJoinedQuest[i];
                 if (member.currentJob != null && member.currentJob.isThisAPartyJob

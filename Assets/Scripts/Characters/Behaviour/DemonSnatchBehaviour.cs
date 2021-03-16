@@ -17,6 +17,10 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
             log += $"\n-Party is working";
             DemonSnatchPartyQuest quest = party.currentQuest as DemonSnatchPartyQuest;
             if(quest.targetCharacter != null) {
+                if (quest.targetCharacter.isDead) {
+                    party.GoBackHomeAndEndQuest();
+                    return true;
+                }
                 Prisoner prisoner = quest.targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
                 if (prisoner != null && prisoner.IsFactionPrisonerOf(character.faction)) {
                     party.GoBackHomeAndEndQuest();
