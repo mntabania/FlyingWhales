@@ -24,7 +24,6 @@ public enum ELEVATION{
     MOUNTAIN,
 	WATER,
     TREES,
-    MIXED,
 }
 public enum RACE{
     NONE = 0,

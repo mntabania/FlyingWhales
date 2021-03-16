@@ -14,12 +14,14 @@ public class CultistBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.homeSettlement == null && !WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && 
             character.faction.factionType.type == FACTION_TYPE.Demon_Cult && character.characterClass.className == "Cult Leader") {
-            Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType == ELEVATION.PLAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
+            Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
             if (targetArea != null) {
                 StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, true);
                 List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                 GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                return character.jobComponent.TriggerFindNewVillage(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);
+                if (LandmarkManager.Instance.HasEnoughSpaceForStructure(chosenStructurePrefab.name, targetArea.gridTileComponent.centerGridTile)) {
+                    return character.jobComponent.TriggerFindNewVillage(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);    
+                }
             }    
         }
         
