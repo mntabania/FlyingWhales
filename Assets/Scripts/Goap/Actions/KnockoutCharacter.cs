@@ -171,9 +171,9 @@ public class KnockoutCharacter : GoapAction {
                 //Cannot knock out sturdy characters
                 return false;
             }
-            if (job != null && job.jobType == JOB_TYPE.SNATCH) { //&& actor.traitContainer.HasTrait("Cultist")
-                return true; //only allow cultists to use knock out if it is for snatching 
-            }
+            //if (job != null && job.jobType == JOB_TYPE.SNATCH) { //&& actor.traitContainer.HasTrait("Cultist")
+            //    return true; //only allow cultists to use knock out if it is for snatching 
+            //}
             if (actor.race == RACE.TRITON) {
                 return true;
             }

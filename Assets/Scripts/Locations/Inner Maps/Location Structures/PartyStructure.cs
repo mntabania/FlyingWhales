@@ -127,12 +127,11 @@ namespace Inner_Maps.Location_Structures {
             partyData.deployedSummons.ForEach((eachSummon) => {
                 party.RemoveMember(eachSummon);
                 PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
-                party.RemoveMemberThatJoinedQuest(eachSummon);
             });
             for(int x = 0; x < partyData.deployedSummons.Count; ++x) {
                 partyData.deployedSummons[x].Death();
 			}
-            party.RemoveMemberThatJoinedQuest(partyData.deployedMinions[0]);
+            party.RemoveMember(partyData.deployedMinions[0]);
             partyData.deployedMinions[0].Death();
             partyData.ClearAllData();
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
@@ -165,8 +164,8 @@ namespace Inner_Maps.Location_Structures {
         public virtual void DeployParty() { }
 
         #region Party.EventsIListener
-        public void OnQuestEnds() { UnDeployAll(); party.Unsubscribe(this); }
-        public void OnQuestDropped() { UnDeployAll(); party.Unsubscribe(this); }
+        public void OnQuestSucceed() { UnDeployAll(); party.Unsubscribe(this); }
+        public void OnQuestFailed() { UnDeployAll(); party.Unsubscribe(this); }
         #endregion
     }
 

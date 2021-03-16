@@ -356,7 +356,7 @@ public class GoapAction {
         // if (actor.currentNpcSettlement == null) {
         //     return 1;
         // }
-        if (job.jobType == JOB_TYPE.SNATCH || job.jobType == JOB_TYPE.DROP_ITEM_PARTY) {
+        if (job.jobType == JOB_TYPE.SNATCH || job.jobType == JOB_TYPE.SNATCH_RESTRAIN || job.jobType == JOB_TYPE.DROP_ITEM_PARTY) {
             return 1; //ignore distance cost if job is snatch, this is so that snatchers won't reach the maximum cost when trying to snatch someone from a different region. 
         }
         if(poiTarget == job.poiTarget) {

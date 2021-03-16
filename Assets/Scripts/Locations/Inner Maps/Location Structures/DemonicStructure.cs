@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using BayatGames.SaveGameFree.Types;
 using Debug = System.Diagnostics.Debug;
+
 namespace Inner_Maps.Location_Structures {
     public class DemonicStructure : LocationStructure {
         
         public LocationStructureObject structureObj {get; private set;}
         public HashSet<Character> currentAttackers { get; }
+        public Character preOccupiedBy { get; private set; }
         
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
@@ -51,6 +56,9 @@ namespace Inner_Maps.Location_Structures {
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
             SaveDataDemonicStructure demonicStructure = saveDataLocationStructure as SaveDataDemonicStructure;
+            if (!string.IsNullOrEmpty(demonicStructure.preOccupiedBy)) {
+                preOccupiedBy = CharacterManager.Instance.GetCharacterByPersistentID(demonicStructure.preOccupiedBy);
+            }
             // activeSnatchJobs = demonicStructure.activeSnatchJobs;
         }
         #endregion
@@ -130,6 +138,9 @@ namespace Inner_Maps.Location_Structures {
             }
             return count;
         }
+        public void SetPreOccupiedBy(Character p_character) {
+            preOccupiedBy = p_character;
+        }
         #endregion
 
         #region HP
@@ -178,5 +189,35 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         #endregion
+    }
+}
+public class SaveDataDemonicStructure : SaveDataLocationStructure
+{
+
+    public string structureTemplateName;
+    public Vector3Save structureObjectWorldPosition;
+    public string preOccupiedBy;
+    // public int activeSnatchJobs;
+
+    public override void Save(LocationStructure locationStructure) {
+        base.Save(locationStructure);
+        DemonicStructure demonicStructure = locationStructure as DemonicStructure;
+        Assert.IsNotNull(demonicStructure);
+
+        if (demonicStructure.preOccupiedBy != null) {
+            preOccupiedBy = demonicStructure.preOccupiedBy.persistentID;
+        }
+        if (demonicStructure.hasBeenDestroyed) {
+            structureTemplateName = string.Empty;
+            structureObjectWorldPosition = Vector3.zero;
+        } else {
+            //structure object
+            string templateName = demonicStructure.structureObj.name;
+            templateName = templateName.Replace("(Clone)", "");
+            structureTemplateName = templateName;
+            structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
+        }
+
+        // activeSnatchJobs = demonicStructure.activeSnatchJobs;
     }
 }
