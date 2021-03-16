@@ -90,7 +90,12 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                         if (character.partyComponent.CanFollowBeacon()) {
                                             character.partyComponent.FollowBeacon();
                                         } else {
-                                            LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
+                                            LocationGridTile tile = null;
+                                            if (party.isPlayerParty) {
+                                                tile = party.targetDestination.GetRandomPassableTile();
+                                            } else {
+                                                tile = party.targetDestination.GetRandomPassableTile();
+                                            }
                                             if (tile != null) {
                                                 hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
                                             }

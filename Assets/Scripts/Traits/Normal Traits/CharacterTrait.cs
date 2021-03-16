@@ -186,7 +186,9 @@ namespace Traits {
                         && resourcePile.gridTileLocation != null && resourcePile.gridTileLocation.IsPartOfSettlement(raidParty.targetSettlement)) {
                         if (UnityEngine.Random.Range(0, 100) < 35) {
                             if (!owner.jobQueue.HasJob(JOB_TYPE.KIDNAP_RAID)) {
-                                owner.jobComponent.TriggerStealRaidJob(resourcePile);
+                                if (owner.jobComponent.TriggerStealRaidJob(resourcePile)) {
+                                    raidParty.SetIsSuccessful(true);
+                                }
                             }
                         }
                     }
@@ -251,9 +253,11 @@ namespace Traits {
                                     && targetCharacter.homeSettlement == raidParty.targetSettlement
                                     && (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter.faction))) {
                                     //if (GameUtilities.RollChance(15)) {
-                                        if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
-                                            owner.jobComponent.TriggerKidnapRaidJob(targetCharacter);
+                                    if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
+                                        if (owner.jobComponent.TriggerKidnapRaidJob(targetCharacter)) {
+                                            raidParty.SetIsSuccessful(true);
                                         }
+                                    }
                                     //}
                                 }
                             }

@@ -611,6 +611,8 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     //}
     public void DropQuest(string reason) {
         if (isActive) {
+            PartyQuest prevQuest = currentQuest;
+
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "drop_quest", providedTags: LOG_TAG.Party);
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
@@ -631,7 +633,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             SetHasChangedTargetDestination(false);
 
 
-            if (currentQuest.isSuccessful) {
+            if (prevQuest.isSuccessful) {
                 Messenger.Broadcast(PartySignals.PARTY_QUEST_FINISHED_SUCCESSFULLY, this);
                 onQuestSucceed?.Invoke();
             } else {

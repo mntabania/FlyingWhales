@@ -38,14 +38,15 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
     }
 
     private void CreateSnatchJobFor(Character p_target, Party p_party, DemonSnatchPartyQuest p_quest) {
-        Area area = p_quest.dropStructure.occupiedArea;
-        LocationGridTile dropTile = area.gridTileComponent.GetRandomPassableUnoccupiedTileThatIsNotPartOfAStructure();
-        if(dropTile == null) {
-            dropTile = area.gridTileComponent.GetRandomPassableTile();
-            if (dropTile == null) {
-                dropTile = area.gridTileComponent.GetRandomTile();
-            }
-        }
+        //Area area = p_quest.dropStructure.occupiedArea;
+        //LocationGridTile dropTile = area.gridTileComponent.GetRandomPassableUnoccupiedTileThatIsNotPartOfAStructure();
+        //if(dropTile == null) {
+        //    dropTile = area.gridTileComponent.GetRandomPassableTile();
+        //    if (dropTile == null) {
+        //        dropTile = area.gridTileComponent.GetRandomTile();
+        //    }
+        //}
+        LocationGridTile dropTile = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL).GetRandomPassableTile();
         p_party.jobComponent.CreateSnatchJob(p_target, dropTile, dropTile.structure);
     }
 
