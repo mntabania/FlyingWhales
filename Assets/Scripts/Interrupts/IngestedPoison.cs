@@ -28,7 +28,7 @@ namespace Interrupts {
 							addedPoisoned.AddCharacterResponsibleForTrait(poisoned.responsibleCharacters[i]);
 						}
 					}
-					if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
+					//if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
 					overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Ingested Poison", "sick", null, logTags);
 					overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 				}

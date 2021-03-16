@@ -18,7 +18,7 @@ namespace Interrupts {
             Character actor = interruptHolder.actor;
             BaseSettlement homeSettlement = actor.homeSettlement;
             if (homeSettlement != null) {
-                if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
+                //if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
                 overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "left", null, LOG_TAG.Major);
                 overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);

@@ -19,7 +19,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
+            //if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break", null, logTags);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, "Loss of Control", LOG_IDENTIFIER.STRING_1);

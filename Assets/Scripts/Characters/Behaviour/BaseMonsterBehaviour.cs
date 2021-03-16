@@ -62,7 +62,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
 		if (p_character is Summon summon) {
 			p_log += $"\n-{summon.name} is monster";
 			if (summon.gridTileLocation != null) {
-                if((summon.homeStructure == null || summon.homeStructure.hasBeenDestroyed) && !summon.HasTerritory()) {
+                if((summon.homeStructure == null || summon.homeStructure.hasBeenDestroyed) && !summon.HasTerritory() && (summon.faction == null || !summon.faction.isPlayerFaction)) {
                     p_log += "\n-No home structure and territory";
                     p_log += "\n-Trigger Set Home interrupt";
                     summon.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);

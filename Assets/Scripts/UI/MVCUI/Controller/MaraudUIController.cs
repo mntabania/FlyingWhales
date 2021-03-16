@@ -431,7 +431,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.summonType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement, bypassIdeologyChecking: true);
 				CharacterManager.Instance.PlaceSummonInitially(summon, structureToBePlaced.GetRandomPassableTile());
-				summon.SetDeployedAtStructure(m_targetPartyStructure);
+                summon.OnSummonAsPlayerMonster();
+                summon.SetDeployedAtStructure(m_targetPartyStructure);
 				eachMonsterToBeDeployed.Deploy(summon);
 				m_targetPartyStructure.AddDeployedItem(eachMonsterToBeDeployed);
 				PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachMonsterToBeDeployed.summonType, -1);

@@ -53,7 +53,6 @@ namespace Interrupts {
                 }
             }
             Faction prevFaction = actor.faction;
-            if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
             if (GameUtilities.RollChance(chance)) {
                 //Leave faction
                 if (actor.ChangeFactionTo(FactionManager.Instance.vagrantFaction)) {

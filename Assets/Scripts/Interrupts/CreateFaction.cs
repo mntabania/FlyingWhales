@@ -50,7 +50,6 @@ namespace Interrupts {
             
             Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, faction);
 
-            if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction", null, LOG_TAG.Life_Changes);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
