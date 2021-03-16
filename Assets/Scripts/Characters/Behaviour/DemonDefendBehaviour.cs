@@ -19,13 +19,19 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
         Party party = character.partyComponent.currentParty;
         if (party.isActive && party.partyState == PARTY_STATE.Working) {
             log += $"\n-Party is working";
-            if (party.targetDestination.IsAtTargetDestination(character)) {
-                log += $"\n-Character is at target destination, do work";
-                DemonDefendPartyQuest quest = party.currentQuest as DemonDefendPartyQuest;
-                LocationStructure targetStructure = quest.targetStructure;
-                Area targetArea = quest.targetArea;
-                quest.SetIsSuccessful(true);
-                if (targetStructure != null && !targetStructure.hasBeenDestroyed) {
+            DemonDefendPartyQuest quest = party.currentQuest as DemonDefendPartyQuest;
+            LocationStructure targetStructure = quest.targetStructure;
+            Area targetArea = quest.targetArea;
+            if (targetStructure != null && !targetStructure.hasBeenDestroyed) {
+                if(character.currentStructure != targetStructure) {
+                    LocationGridTile tile = targetStructure.GetRandomPassableTile();
+                    if (tile != null) {
+                        hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                    } else {
+                        hasJob = character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                    }
+                } else {
+                    quest.SetIsSuccessful(true);
                     Character target = GetFirstHostileIntruderOf(character, targetStructure);
                     if (target != null) {
                         log += $"\n-Chosen target is {target.name}";
@@ -34,15 +40,15 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Roam around";
                         hasJob = character.jobComponent.TriggerRoamAroundTile(out producedJob);
                     }
-                } else if (targetArea != null) {
-                    Character target = GetFirstHostileIntruderOf(character, targetArea);
-                    if (target != null) {
-                        log += $"\n-Chosen target is {target.name}";
-                        character.combatComponent.Fight(target, CombatManager.Hostility);
-                    } else {
-                        log += $"\n-Roam around";
-                        hasJob = character.jobComponent.TriggerRoamAroundTile(out producedJob);
-                    }
+                }
+            } else if (targetArea != null) {
+                Character target = GetFirstHostileIntruderOf(character, targetArea);
+                if (target != null) {
+                    log += $"\n-Chosen target is {target.name}";
+                    character.combatComponent.Fight(target, CombatManager.Hostility);
+                } else {
+                    log += $"\n-Roam around";
+                    hasJob = character.jobComponent.TriggerRoamAroundTile(out producedJob);
                 }
             }
         }

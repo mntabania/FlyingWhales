@@ -130,6 +130,9 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public virtual void OnCharacterDied(Character p_deadMonster) {
+            if (m_isUndeployUserAction) {
+                return;
+            }
             for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
                 if (p_deadMonster == partyData.deployedSummons[x]) {
                     PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
@@ -153,13 +156,14 @@ namespace Inner_Maps.Location_Structures {
 			}
         }
 
-        public virtual void DeployParty() { }
+        public virtual void DeployParty() {
+            m_isUndeployUserAction = false;
+        }
 
         public virtual void UnDeployAll() {
             m_isUndeployUserAction = true;
             partyData.deployedSummons.ForEach((eachSummon) => {
                 party.RemoveMember(eachSummon);
-                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
             });
             List<Character> deployed = RuinarchListPool<Character>.Claim();
             if (partyData.deployedSummons.Count > 0) {
@@ -180,17 +184,17 @@ namespace Inner_Maps.Location_Structures {
         #region Party.EventsIListener
         public void OnQuestSucceed() {
             if (!m_isUndeployUserAction) {
+                Debug.LogError("Called here");
                 UnDeployAll();
                 party.Unsubscribe(this);
             }
-            m_isUndeployUserAction = false;
         }
         public void OnQuestFailed() {
             if (!m_isUndeployUserAction) {
+                Debug.LogError("Called here");
                 UnDeployAll();
                 party.Unsubscribe(this);
             }
-            m_isUndeployUserAction = false;
         }
         #endregion
     }

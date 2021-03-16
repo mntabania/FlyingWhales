@@ -20,7 +20,7 @@ public class PlayerUnderlingsComponent {
 
     #region Utilities
     public void OnCharacterAddedToPlayerFaction(Character p_character) {
-        if(p_character is Summon summon) {
+        if (p_character is Summon summon) {
             Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
         }
     }

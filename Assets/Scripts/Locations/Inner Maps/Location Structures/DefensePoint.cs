@@ -35,9 +35,6 @@ namespace Inner_Maps.Location_Structures {
         public override void UnDeployAll() {
             if (!m_isUndeployUserAction) {
                 m_isUndeployUserAction = true;
-                partyData.deployedSummons.ForEach((eachSummon) => {
-                    PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
-                });
                 List<Character> deployed = RuinarchListPool<Character>.Claim();
                 if (partyData.deployedSummons.Count > 0) {
                     deployed.AddRange(partyData.deployedSummons);

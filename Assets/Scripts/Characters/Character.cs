@@ -2560,7 +2560,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Temporary additional chance to knockout for snatcher combat behaviour
             chanceToKnockout += 20;
         }
-        chanceToKnockout = 70;
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower);
         attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";

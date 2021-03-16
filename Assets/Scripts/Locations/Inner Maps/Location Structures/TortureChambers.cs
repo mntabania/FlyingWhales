@@ -32,6 +32,7 @@ namespace Inner_Maps.Location_Structures {
             base.DestroyStructure();
         }
         public override void DeployParty() {
+            base.DeployParty();
             party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0]);
             partyData.deployedMinions[0].combatComponent.SetCombatMode(COMBAT_MODE.Defend);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
