@@ -217,6 +217,13 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                 meetingPlace = partySettlement.GetRandomStructureThatMeetCriteria(s => s.structureType == STRUCTURE_TYPE.TAVERN && CanAMemberGoTo(s));
                 if(meetingPlace == null){
                     meetingPlace = partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                    if(meetingPlace == null) {
+                        if (isPlayerParty) {
+                            meetingPlace = partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
+                        } else {
+                            meetingPlace = partySettlement.GetRandomStructure();
+                        }
+                    }
                 }
             }
         }
@@ -574,6 +581,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     #region Working State
     private void OnSwitchToWorkingState(PARTY_STATE prevState) {
         if (prevState == PARTY_STATE.Waiting) {
+            SetTargetDestination(currentQuest.GetTargetDestination());
             CancelAllJobsOfMembersThatJoinedQuest();
         }
         //When the party switches to Working state always switch off the changed target destination because this means that the party has already reached the destination and must not switch to Moving state at the start of Working state
