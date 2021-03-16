@@ -45741,6 +45741,7 @@ MonoBehaviour:
   tileObjectInfoUI: {fileID: 388044833}
   partyInfoUI: {fileID: 8312167725925528708}
   structureInfoUI: {fileID: 179873882}
+  _portalUIController: {fileID: 187911616}
   unbuiltStructureInfoUI: {fileID: 8516645416588250279}
   structureRoomInfoUI: {fileID: 6563973472908480672}
   settlementInfoUI: {fileID: 1972713623}
