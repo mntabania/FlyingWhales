@@ -161,12 +161,18 @@ namespace Inner_Maps.Location_Structures {
                 party.RemoveMember(eachSummon);
                 PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
             });
-            for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
-                partyData.deployedSummons[x].Death();
-                x--;
+            List<Character> deployed = RuinarchListPool<Character>.Claim();
+            if (partyData.deployedSummons.Count > 0) {
+                deployed.AddRange(partyData.deployedSummons);    
             }
-            party.RemoveMember(partyData.deployedMinions[0]);
-            partyData.deployedMinions[0].Death();
+            for (int x = 0; x < deployed.Count; x++) {
+                deployed[x].Death();
+            }
+            if (partyData.deployedMinions.Count > 0) {
+                party.RemoveMember(partyData.deployedMinions[0]);
+                partyData.deployedMinions[0].Death();    
+            }
+            RuinarchListPool<Character>.Release(deployed);
             partyData.ClearAllData();
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
         }
