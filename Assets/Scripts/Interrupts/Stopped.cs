@@ -16,9 +16,9 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog,
             ActualGoapNode node = null) {
-            bool executed = base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, node);
+            bool executed = base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, node);
             Character targetCharacter = interruptHolder.target as Character;
             if (node != null) {
                 node.action.OnStoppedInterrupt(node);

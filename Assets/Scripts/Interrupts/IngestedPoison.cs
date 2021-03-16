@@ -18,7 +18,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-	        Log overrideEffectLog, ActualGoapNode goapNode = null) {
+	        ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
 			if (UnityEngine.Random.Range(0, 2) == 0) {
 				if(interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Poisoned")) {
                     Poisoned addedPoisoned = interruptHolder.actor.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
@@ -36,7 +36,7 @@ namespace Interrupts {
                 interruptHolder.actor.Death("poisoned");
 			}
 
-			return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
+			return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
 		}
         public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);

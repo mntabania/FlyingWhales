@@ -14,7 +14,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character characterThatTaunt = interruptHolder.target as Character;
             Character taunted = interruptHolder.actor;
             bool isLethalCombat = taunted.combatComponent.GetCurrentTargetCombatLethality();

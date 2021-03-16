@@ -114,7 +114,7 @@ public class InterruptComponent : CharacterComponent {
         Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} is null!");
         Assert.IsNotNull(interruptHolder.interrupt, $"Interrupt in interrupt holder {interruptHolder} used by {owner.name} is null!");
         INTERRUPT interruptType = interruptHolder.interrupt.type;
-        interruptHolder.interrupt.ExecuteInterruptStartEffect(interruptHolder, effectLog, actionThatTriggered);
+        interruptHolder.interrupt.ExecuteInterruptStartEffect(interruptHolder, ref effectLog, actionThatTriggered);
         interruptHolder.SetCrimeType();
         
         Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} became null after executing start effect of {interruptType.ToString()}!");

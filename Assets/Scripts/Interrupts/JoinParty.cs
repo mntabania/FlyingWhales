@@ -14,7 +14,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(interruptHolder.target is Character targetCharacter) {
                 Party party = targetCharacter.partyComponent.currentParty;
                 if (party != null) {

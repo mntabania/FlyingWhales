@@ -15,7 +15,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
 
             FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForCharacter(interruptHolder.actor);
             Faction faction = FactionManager.Instance.CreateNewFaction(factionType, race: interruptHolder.actor.race);

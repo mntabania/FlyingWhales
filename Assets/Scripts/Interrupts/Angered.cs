@@ -14,7 +14,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Angry", interruptHolder.target as Character);
             return true;
         }

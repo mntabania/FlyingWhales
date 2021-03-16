@@ -12,7 +12,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Party party = interruptHolder.actor.partyComponent.currentParty;
             if (party != null) {
                 //if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
