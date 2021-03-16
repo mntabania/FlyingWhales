@@ -1079,6 +1079,7 @@
               <e p="DefendBehaviour.cs" t="Include" />
               <e p="DemonDefendBehaviour.cs" t="Include" />
               <e p="DemonRaidBehaviour.cs" t="Include" />
+              <e p="DemonSnatchBehaviour.cs" t="Include" />
               <e p="DeMooderBehaviour.cs" t="Include" />
               <e p="DesiresIsolationBehaviour.cs" t="Include" />
               <e p="DisablerBehaviour.cs" t="Include" />
@@ -2571,6 +2572,7 @@
                 <e p="PassiveManaRegen.cs" t="Include" />
                 <e p="PassiveSkill.cs" t="Include" />
                 <e p="PlagueChaosOrb.cs" t="Include" />
+                <e p="PlayerSuccessRaidChaosOrb.cs" t="Include" />
                 <e p="PrayerChaosOrb.cs" t="Include" />
                 <e p="SpellDamageChaosOrb.cs" t="Include" />
                 <e p="UndeadChaosOrb.cs" t="Include" />

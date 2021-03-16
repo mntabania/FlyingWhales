@@ -12,6 +12,8 @@ namespace Inner_Maps.Location_Structures {
 
         public List<IStoredTarget> allPossibleTargets = new List<IStoredTarget>();
 
+        bool m_isUndeployUserAction;
+
         public bool IsAvailableForTargeting() {
             bool isOccupied = charactersHere.Count > 0;
             charactersHere.ForEach((eachCharacters) => isOccupied &= !eachCharacters.isDead);
@@ -123,19 +125,8 @@ namespace Inner_Maps.Location_Structures {
             party.Subscribe(this);
         }
 
-        public virtual void UnDeployAll() {
-            partyData.deployedSummons.ForEach((eachSummon) => {
-                party.RemoveMember(eachSummon);
-                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
-            });
-            for(int x = 0; x < partyData.deployedSummons.Count; ++x) {
-                partyData.deployedSummons[x].Death();
-                x--;
-			}
-            party.RemoveMember(partyData.deployedMinions[0]);
-            partyData.deployedMinions[0].Death();
-            partyData.ClearAllData();
-            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+        public void OnQuestFinished() { //both succeed and failed
+        
         }
 
         public virtual void OnCharacterDied(Character p_deadMonster) {
@@ -164,9 +155,37 @@ namespace Inner_Maps.Location_Structures {
 
         public virtual void DeployParty() { }
 
+        public virtual void UnDeployAll() {
+            m_isUndeployUserAction = true;
+            partyData.deployedSummons.ForEach((eachSummon) => {
+                party.RemoveMember(eachSummon);
+                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
+            });
+            for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
+                partyData.deployedSummons[x].Death();
+                x--;
+            }
+            party.RemoveMember(partyData.deployedMinions[0]);
+            partyData.deployedMinions[0].Death();
+            partyData.ClearAllData();
+            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+        }
+
         #region Party.EventsIListener
-        public void OnQuestSucceed() { UnDeployAll(); party.Unsubscribe(this); }
-        public void OnQuestFailed() { UnDeployAll(); party.Unsubscribe(this); }
+        public void OnQuestSucceed() {
+            if (!m_isUndeployUserAction) {
+                UnDeployAll();
+                party.Unsubscribe(this);
+            }
+            m_isUndeployUserAction = false;
+        }
+        public void OnQuestFailed() {
+            if (!m_isUndeployUserAction) {
+                UnDeployAll();
+                party.Unsubscribe(this);
+            }
+            m_isUndeployUserAction = false;
+        }
         #endregion
     }
 
