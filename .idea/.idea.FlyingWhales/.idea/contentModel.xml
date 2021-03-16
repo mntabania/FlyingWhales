@@ -3358,6 +3358,7 @@
               <e p="Controller" t="Include">
                 <e p="BiolabUIController.cs" t="Include" />
                 <e p="BlackmailUIController.cs" t="Include" />
+                <e p="BookmarkUIController.cs" t="Include" />
                 <e p="ContextMenuUIController.cs" t="Include" />
                 <e p="DefensePointUIController.cs" t="Include" />
                 <e p="FactionSettingVillageEditorUIController.cs" t="Include" />
@@ -3393,6 +3394,7 @@
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
                 <e p="BlackmailUIModel.cs" t="Include" />
+                <e p="BookmarkUIModel.cs" t="Include" />
                 <e p="ContextMenuUIModel.cs" t="Include" />
                 <e p="DefensePointUIModel.cs" t="Include" />
                 <e p="FactionSettingVillageEditorUIModel.cs" t="Include" />
@@ -3414,6 +3416,7 @@
               <e p="View" t="Include">
                 <e p="BiolabUIView.cs" t="Include" />
                 <e p="BlackmailUIView.cs" t="Include" />
+                <e p="BookmarkUIView.cs" t="Include" />
                 <e p="ContextMenuUIView.cs" t="Include" />
                 <e p="DefensePointUIView.cs" t="Include" />
                 <e p="FactionSettingVillageEditorUIView.cs" t="Include" />

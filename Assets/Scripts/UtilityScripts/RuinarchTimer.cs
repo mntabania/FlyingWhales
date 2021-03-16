@@ -18,6 +18,7 @@ namespace UtilityScripts {
         public int totalTicksInTimer => totalValue;
         public int currentTimerProgress => currentValue;
         public override BOOKMARK_CATEGORY bookmarkCategory => _bookmarkCategory;
+        public override BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Progress_Bar;
         #endregion
         
         public RuinarchTimer(string p_name, BOOKMARK_CATEGORY p_category) {

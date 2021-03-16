@@ -22,10 +22,16 @@
         
         public abstract string name { get; }
         public abstract BOOKMARK_CATEGORY bookmarkCategory { get; }
+        public abstract BOOKMARK_TYPE bookmarkType { get; } 
+        public BookmarkableEventDispatcher eventDispatcher { get; }
 
         #region getters
         public string bookmarkName => name;
         #endregion
+
+        protected RuinarchProgressable() {
+            eventDispatcher = new BookmarkableEventDispatcher();
+        }
         
         protected void Setup(int p_minValue, int p_maxValue) {
             m_minValue = p_minValue;

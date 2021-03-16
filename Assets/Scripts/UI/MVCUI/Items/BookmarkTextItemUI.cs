@@ -12,6 +12,7 @@ public class BookmarkTextItemUI : PooledObject {
         lblName.text = p_bookmarkable.bookmarkName;
         btnMain.onClick.AddListener(p_bookmarkable.OnSelectBookmark);
         btnRemove.onClick.AddListener(p_bookmarkable.RemoveBookmark);
+        btnRemove.gameObject.SetActive(p_bookmarkable.bookmarkType == BOOKMARK_TYPE.Text_With_Cancel);
     }
     public override void Reset() {
         base.Reset();
