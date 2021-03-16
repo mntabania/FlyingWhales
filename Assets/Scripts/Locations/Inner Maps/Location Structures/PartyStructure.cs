@@ -12,7 +12,7 @@ namespace Inner_Maps.Location_Structures {
 
         public List<IStoredTarget> allPossibleTargets = new List<IStoredTarget>();
 
-        bool m_isUndeployUserAction;
+        protected bool m_isUndeployUserAction;
 
         public bool IsAvailableForTargeting() {
             bool isOccupied = charactersHere.Count > 0;

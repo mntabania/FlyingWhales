@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UtilityScripts;
 
 namespace Inner_Maps.Location_Structures {
     public class DefensePoint : PartyStructure {
@@ -32,16 +33,25 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public override void UnDeployAll() {
-            partyData.deployedSummons.ForEach((eachSummon) => {
-                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
-                eachSummon.SetDestroyMarkerOnDeath(true);
-                eachSummon.Death();
-            });
-            partyData.deployedSummons.Clear();
-            partyData.deployedSummonSettings.Clear();
-            partyData.deployedCSummonlass.Clear();
-            partyData.readyForDeploySummonCount = 0;
-            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+            if (!m_isUndeployUserAction) {
+                m_isUndeployUserAction = true;
+                partyData.deployedSummons.ForEach((eachSummon) => {
+                    PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
+                });
+                List<Character> deployed = RuinarchListPool<Character>.Claim();
+                if (partyData.deployedSummons.Count > 0) {
+                    deployed.AddRange(partyData.deployedSummons);
+                }
+                for (int x = 0; x < deployed.Count; x++) {
+                    deployed[x].Death();
+                }
+                partyData.deployedSummons.Clear();
+                partyData.deployedSummonSettings.Clear();
+                partyData.deployedCSummonlass.Clear();
+                partyData.readyForDeploySummonCount = 0;
+                Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+            }
+     
         }
 
 		public override void DeployParty() {
