@@ -18,6 +18,7 @@ public class BiomeDivision {
         tiles = new List<LocationGridTile>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        AddListenersBasedOnBiome();
     }
     public BiomeDivision(SaveDataRegionDivision p_data) {
         biome = p_data.biome;
@@ -26,6 +27,7 @@ public class BiomeDivision {
         tiles = new List<LocationGridTile>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        AddListenersBasedOnBiome();
     }
     public void AddTile(LocationGridTile p_area) {
         tiles.Add(p_area);
@@ -150,6 +152,39 @@ public class BiomeDivision {
         string info = $"Tiles: {tiles.Count.ToString()}. Biome: {biome.ToString()}";
         info = $"{info}" + _faunaListWeights.GetWeightsSummary("\nFauna List:");
         return info;
+    }
+    #endregion
+    
+    #region Listeners
+    private void AddListenersBasedOnBiome() {
+        switch (biome) {
+            case BIOMES.GRASSLAND:
+                break;
+            case BIOMES.SNOW:
+            case BIOMES.TUNDRA:
+                Messenger.AddListener(Signals.HOUR_STARTED, TryFreezeWetObjects);
+                break;
+            case BIOMES.DESERT:
+                Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, TryRemoveFreezing);
+                break;
+            case BIOMES.FOREST:
+                break;
+        }
+    }
+    #endregion
+
+    #region Snow
+    private void TryFreezeWetObjects() {
+        Messenger.Broadcast(AreaSignals.FREEZE_WET_OBJECTS);
+    }
+    #endregion
+    
+    #region Desert
+    private void TryRemoveFreezing(Character character, Area p_area) {
+        if (p_area.gridTileComponent.centerGridTile.biomeType == biome) {
+            character.traitContainer.RemoveTrait(character, "Freezing");
+            character.traitContainer.RemoveTrait(character, "Frozen");
+        }
     }
     #endregion
 }

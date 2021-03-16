@@ -34,6 +34,14 @@ public class AreaElevationComponent : AreaComponent {
         UpdateElevationBasedOnVotes();
     }
 
+    public bool IsFully(ELEVATION p_elevation) {
+        foreach (var kvp in elevationDictionary) {
+            if (kvp.Key != p_elevation && kvp.Value > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
     private void UpdateElevationBasedOnVotes() {
         int highestVotes = Int32.MinValue;
         ELEVATION majorityElevation = ELEVATION.PLAIN;

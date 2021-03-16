@@ -91,7 +91,7 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                             log += $"\n  -Character is inside settlement, go to adjacent plain hextile outside settlement";
                             Area chosenArea = character.currentSettlement.GetAPlainAdjacentArea();
                             if(chosenArea != null) {
-                                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(chosenArea.gridTileComponent.gridTiles);
+                                LocationGridTile targetTile = chosenArea.gridTileComponent.GetRandomPassableTile();
                                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                             } else {
                                 log += $"\n  -No adjacent plain hextile outside settlement, stroll";

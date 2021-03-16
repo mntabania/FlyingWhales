@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Inner_Maps;
+using Perlin_Noise;
 
 public class SaveDataInnerMap : SaveData<InnerTileMap> {
 
     public float xSeed;
     public float ySeed;
-    public int biomeSeed;
-    public int elevationSeed;
+    public PerlinNoiseSettings biomePerlinNoiseSettings;
+    public PerlinNoiseSettings elevationPerlinNoiseSettings;
     public float biomeTransitionXSeed;
     public float biomeTransitionYSeed;
     public Dictionary<Point, SaveDataLocationGridTile> tileSaves;
@@ -15,8 +16,8 @@ public class SaveDataInnerMap : SaveData<InnerTileMap> {
     public override void Save(InnerTileMap innerTileMap) {
         xSeed = innerTileMap.xSeed;
         ySeed = innerTileMap.ySeed;
-        biomeSeed = innerTileMap.biomePerlinSettings.seed;
-        elevationSeed = innerTileMap.perlinElevationSettings.seed;
+        biomePerlinNoiseSettings = innerTileMap.biomePerlinSettings;
+        elevationPerlinNoiseSettings = innerTileMap.elevationPerlinSettings;
         biomeTransitionXSeed = innerTileMap.biomeTransitionXSeed;
         biomeTransitionYSeed = innerTileMap.biomeTransitionYSeed;
         tileSaves = new Dictionary<Point, SaveDataLocationGridTile>();

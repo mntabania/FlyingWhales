@@ -80,7 +80,7 @@ namespace Inner_Maps {
                 },
             }
         };
-        [NonSerialized] public PerlinNoiseSettings perlinElevationSettings = new PerlinNoiseSettings() {
+        [NonSerialized] public PerlinNoiseSettings elevationPerlinSettings = new PerlinNoiseSettings() {
             noiseScale = 34.15f,
             octaves = 4,
             persistance = 0.5f,
@@ -148,6 +148,27 @@ namespace Inner_Maps {
         #endregion
 
         #region Generation
+        public void Initialize(Region location, float xSeed, float ySeed, PerlinNoiseSettings biomeSettings, PerlinNoiseSettings elevationSettings, float biomeTransitionXSeed, float biomeTransitionYSeed) {
+            region = location;
+            _xSeed = xSeed;
+            _ySeed = ySeed;
+
+            biomePerlinSettings = biomeSettings;
+            elevationPerlinSettings = elevationSettings;
+            _biomeTransitionXSeed = biomeTransitionXSeed;
+            _biomeTransitionYSeed = biomeTransitionYSeed;
+            
+            //set tile map sorting orders
+            groundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
+            detailsTilemapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
+            
+            northEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
+            southEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
+            westEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
+            eastEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
+            
+            upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
+        }
         public void Initialize(Region location, float xSeed, float ySeed, int biomeSeed, int elevationSeed, float biomeTransitionXSeed, float biomeTransitionYSeed) {
             region = location;
             _xSeed = xSeed;
@@ -161,21 +182,9 @@ namespace Inner_Maps {
                 perlinNoiseRegion.name = biomes.ToString();
                 biomePerlinSettings.regions[i] = perlinNoiseRegion;
             }
-            
-            // //randomize biomes
-            // List<BIOMES> biomeChoices = new List<BIOMES>() {BIOMES.DESERT, BIOMES.GRASSLAND, BIOMES.SNOW, BIOMES.FOREST};
-            // for (int i = 0; i < biomePerlinSettings.regions.Length; i++) {
-            //     if (biomeChoices.Count == 0) { break; }
-            //     BIOMES randomBiome = CollectionUtilities.GetRandomElement(biomeChoices);
-            //     biomeChoices.Remove(randomBiome);
-            //     PerlinNoiseRegion perlinNoiseRegion = biomePerlinSettings.regions[i];
-            //     perlinNoiseRegion.name = randomBiome.ToString();
-            //     biomePerlinSettings.regions[i] = perlinNoiseRegion;
-            //     Debug.Log($"Randomized biome {randomBiome.ToString()} at {perlinNoiseRegion.height.ToString()}");
-            // }
-            
+
             biomePerlinSettings.seed = biomeSeed;
-            perlinElevationSettings.seed = elevationSeed;
+            elevationPerlinSettings.seed = elevationSeed;
             _biomeTransitionXSeed = biomeTransitionXSeed;
             _biomeTransitionYSeed = biomeTransitionYSeed;
             

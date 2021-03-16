@@ -27,9 +27,9 @@ public class MapGenerator : BaseMonoBehaviour {
         MapGenerationComponent[] mapGenerationComponents = {
             new AreaGeneration(), new ElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), /*new WorldMapBiomeGeneration(),*/ new FamilyTreeGeneration(), new RegionInnerMapGeneration(), /*new ElevationStructureGeneration(),*/ 
-            new TileFeatureGeneration(), new RegionFeatureGeneration(),new SpecialStructureGeneration(), 
-            new VillageGeneration(), new FactionFinalization(), new CharacterFinalization(), 
-            new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), new MapGenerationFinalization(),
+            new TileFeatureGeneration(), new RegionFeatureGeneration(), new VillageGeneration(),  new SpecialStructureGeneration(),
+            new FactionFinalization(), new CharacterFinalization(), new SettlementFinalization(), new FeaturesActivation(), 
+            new MonsterGeneration(), new MapGenerationFinalization(),
         };
         yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }
@@ -93,7 +93,7 @@ public class MapGenerator : BaseMonoBehaviour {
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
             new AreaGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
-            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SpecialStructureGeneration(), new VillageGeneration(), new FactionFinalization(), 
+            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new VillageGeneration(), new SpecialStructureGeneration(), new FactionFinalization(), 
             new CharacterFinalization(), new ElevationStructureGeneration(), new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), 
             new MapGenerationFinalization(), 
             //new PlayerDataGeneration(),

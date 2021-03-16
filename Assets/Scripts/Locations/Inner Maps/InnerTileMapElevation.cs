@@ -14,7 +14,7 @@ namespace Inner_Maps {
         #region Main
         private ELEVATION GetElevationFromMap(int x, int y, float[,] noiseMap) {
             float currentHeight = noiseMap[x, y];
-            PerlinNoiseRegion noiseRegion = perlinElevationSettings.GetPerlinNoiseRegion(currentHeight);
+            PerlinNoiseRegion noiseRegion = elevationPerlinSettings.GetPerlinNoiseRegion(currentHeight);
             if (noiseRegion.name.Equals("Water", StringComparison.InvariantCultureIgnoreCase)) {
                 return ELEVATION.WATER;
             }
@@ -26,7 +26,7 @@ namespace Inner_Maps {
             }
         }
         protected IEnumerator GenerateElevationMap(MapGenerationComponent mapGenerationComponent, MapGenerationData data) {
-            float[,] noiseMap = Noise.GenerateNoiseMap(perlinElevationSettings, width, height);
+            float[,] noiseMap = Noise.GenerateNoiseMap(elevationPerlinSettings, width, height);
             ElevationIsland[][] elevationMap = new ElevationIsland[width][];
             for (int index = 0; index < width; index++) {
                 elevationMap[index] = new ElevationIsland[height];
@@ -143,7 +143,6 @@ namespace Inner_Maps {
 
         #region Caves
         private IEnumerator DrawCave(ElevationIsland p_island, LocationStructure p_caveStructure) {
-            yield return StartCoroutine(MountainCellAutomata(p_island.tiles.ToList(), p_caveStructure));
             int batchCount = 0;
             for (int i = 0; i < p_island.tiles.Count; i++) {
                 LocationGridTile tile = p_island.tiles.ElementAt(i);
@@ -159,12 +158,16 @@ namespace Inner_Maps {
                     yield return null;
                 }
             }
+            yield return StartCoroutine(MountainCellAutomata(p_island.tiles.ToList(), p_caveStructure));
         }
         private void SetAsMountainWall(LocationGridTile tile, LocationStructure structure) {
+            if (tile.tileObjectComponent.objHere is BlockWall) { return; }
             tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
             tile.SetTileType(LocationGridTile.Tile_Type.Wall);
             tile.SetTileState(LocationGridTile.Tile_State.Occupied);
-            tile.SetStructure(structure);
+            if (tile.structure != structure) {
+                tile.SetStructure(structure);    
+            }
 
             //create wall tile object
             BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
@@ -173,7 +176,12 @@ namespace Inner_Maps {
             tile.SetIsDefault(false);
         }
         private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure) {
-            tile.SetStructure(structure);
+            if (tile.structure != structure) {
+                tile.SetStructure(structure);    
+            }
+            if (tile.tileObjectComponent.objHere is BlockWall) {
+                tile.structure.RemovePOI(tile.tileObjectComponent.objHere);
+            }
             tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
             tile.SetIsDefault(false);
         }
@@ -224,7 +232,8 @@ namespace Inner_Maps {
                     return (directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) || (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
                            (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) || directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East;
                 } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
-                    return true;
+                    return p_blockWall.gridTileLocation.neighbourList.Count(t => t.tileObjectComponent.objHere is BlockWall) == 5 && 
+                           p_blockWall.gridTileLocation.neighbourList.Count(t => t.structure.structureType == STRUCTURE_TYPE.WILDERNESS) == 3;
                 }
                 // if (caveNeighbours == 2 || caveNeighbours == 4) {
                 //     return p_blockWall.gridTileLocation.FourNeighbours().Count(t => t.structure is Wilderness) >= 1;	

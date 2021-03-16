@@ -147,6 +147,7 @@ namespace Inner_Maps {
             corruptionComponent = data.corruptionComponent.Load(); corruptionComponent.SetOwner(this);
             mouseEventsComponent = data.mouseEventsComponent.Load(); mouseEventsComponent.SetOwner(this);
             tileObjectComponent = data.tileObjectComponent.Load(); tileObjectComponent.SetOwner(this);
+            elevationType = data.elevation;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
 

@@ -657,31 +657,6 @@ namespace Locations.Settlements {
             ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
             return chosenArea;
         }
-        public Area GetAPlainAdjacentAreaThatMeetCriteria(System.Func<Area, bool> checker) {
-            List<Area> choices = ObjectPoolManager.Instance.CreateNewAreaList();
-            Area chosenArea = null;
-            for (int i = 0; i < areas.Count; i++) {
-                Area area = areas[i];
-                for (int j = 0; j < area.neighbourComponent.neighbours.Count; j++) {
-                    Area neighbour = area.neighbourComponent.neighbours[j];
-                    if (neighbour.region != area.region) {
-                        continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
-                    }
-                    if (neighbour.elevationType != ELEVATION.MOUNTAIN && neighbour.elevationType != ELEVATION.WATER && neighbour.settlementOnArea == null) {
-                        if (!areas.Contains(neighbour)) {
-                            if (checker.Invoke(neighbour)) {
-                                choices.Add(neighbour);
-                            }
-                        }
-                    }
-                }
-            }
-            if (choices != null && choices.Count > 0) {
-                chosenArea = choices[UnityEngine.Random.Range(0, choices.Count)];
-            }
-            ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
-            return chosenArea;
-        }
         #endregion
 
         #region Fire

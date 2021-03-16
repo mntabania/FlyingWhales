@@ -45,12 +45,14 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		for (int x = 0; x < GridMap.Instance.width; x++) {
 			for (int y = 0; y < GridMap.Instance.height; y++) {
 				Area tile = GridMap.Instance.map[x, y];
-				if (tile.elevationType == ELEVATION.TREES) {
-					tile.featureComponent.AddFeature(AreaFeatureDB.Wood_Source_Feature, tile);
+				if (tile.elevationType == ELEVATION.PLAIN) {
+					if (GameUtilities.RollChance(30)) {
+						tile.featureComponent.AddFeature(AreaFeatureDB.Wood_Source_Feature, tile);	
+					} else if (tile.featureComponent.features.Count == 0) {
+						flatTilesWithNoFeatures.Add(tile);	
+					}
 				} else if (tile.elevationType == ELEVATION.MOUNTAIN) {
 					tile.featureComponent.AddFeature(AreaFeatureDB.Metal_Source_Feature, tile);	
-				} else if (tile.elevationType == ELEVATION.PLAIN && tile.featureComponent.features.Count == 0) {
-					flatTilesWithNoFeatures.Add(tile);	
 				}
 				batchCount++;
 				if (batchCount >= MapGenerationData.WorldMapFeatureGenerationBatches) {
@@ -105,8 +107,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			pigTile.featureComponent.AddFeature(pigGameFeature, pigTile);
 			pigTile.SetElevation(ELEVATION.PLAIN);
 		} else {
-			List<Area> gameChoices = GridMap.Instance.allAreas.Where(h =>
-				h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES).ToList();
+			List<Area> gameChoices = GridMap.Instance.allAreas.Where(h => h.elevationType == ELEVATION.PLAIN).ToList();
 			for (int i = 0; i < gameCount; i++) {
 				if (gameChoices.Count <= 0) { break; }
 				Area tile = CollectionUtilities.GetRandomElement(gameChoices);

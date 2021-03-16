@@ -22,7 +22,7 @@ public partial class LandmarkManager {
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
         float xSeed = saveDataInnerMap.xSeed;
         float ySeed = saveDataInnerMap.ySeed;
-        innerTileMap.Initialize(region, xSeed, ySeed, saveDataInnerMap.biomeSeed, saveDataInnerMap.elevationSeed, saveDataInnerMap.biomeTransitionXSeed, saveDataInnerMap.biomeTransitionYSeed);
+        innerTileMap.Initialize(region, xSeed, ySeed, saveDataInnerMap.biomePerlinNoiseSettings, saveDataInnerMap.elevationPerlinNoiseSettings, saveDataInnerMap.biomeTransitionXSeed, saveDataInnerMap.biomeTransitionYSeed);
         yield return StartCoroutine(innerTileMap.LoadMap(mapGenerationComponent, saveDataInnerMap, saveData));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }

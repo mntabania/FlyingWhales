@@ -90,18 +90,21 @@ namespace Generator.Map_Generation.Components {
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
             List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
             List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
-            
+
+            List<Faction> orderedFactions = RuinarchListPool<Faction>.Claim();
+            orderedFactions.AddRange(DatabaseManager.Instance.factionDatabase.allFactionsList.Where(f => f.isMajorNonPlayer));
+            int index = orderedFactions.IndexOf(character.faction);
             //Up to three traits
-            if (character.homeSettlement.cityCenter.occupiedArea.biomeType == BIOMES.SNOW) {
+            if (index == 0) {
                 //Snow villagers starts with Cold Blooded
                 character.traitContainer.AddTrait(character, "Cold Blooded");
-            } else if (character.homeSettlement.cityCenter.occupiedArea.biomeType == BIOMES.DESERT) {
+            } else if (index == 1) {
                 //Desert villagers starts with Fire Proof
                 character.traitContainer.AddTrait(character, "Fireproof");
-            } else if (character.homeSettlement.cityCenter.occupiedArea.biomeType == BIOMES.GRASSLAND) {
+            } else if (index == 2) {
                 //Grassland villagers starts with Electric
                 character.traitContainer.AddTrait(character, "Electric");
-            } else if (character.homeSettlement.cityCenter.occupiedArea.biomeType == BIOMES.FOREST) {
+            } else {
                 //Forest villagers starts with Venomous
                 character.traitContainer.AddTrait(character, "Venomous");
             }
