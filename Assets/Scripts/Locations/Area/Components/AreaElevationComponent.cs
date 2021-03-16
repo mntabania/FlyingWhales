@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Inner_Maps;
+using UtilityScripts;
 
 public class AreaElevationComponent : AreaComponent {
     public Dictionary<ELEVATION, int> elevationDictionary { get; }
@@ -34,21 +35,13 @@ public class AreaElevationComponent : AreaComponent {
     }
 
     private void UpdateElevationBasedOnVotes() {
-        // if (elevationDictionary.ContainsKey(ELEVATION.MOUNTAIN) && elevationDictionary[ELEVATION.MOUNTAIN] >= 50) {
-        //     elevationType = ELEVATION.MOUNTAIN; 
-        // } else if (elevationDictionary.ContainsKey(ELEVATION.WATER) && elevationDictionary[ELEVATION.WATER] >= 50) {
-        //     elevationType = ELEVATION.WATER; 
-        // } else {
-        //     elevationType = ELEVATION.PLAIN;
-        // }
-        int highestVotes = Int32.MinValue;
-        ELEVATION elevationWithHighestVotes = ELEVATION.PLAIN;
+        List<ELEVATION> presentElevations = RuinarchListPool<ELEVATION>.Claim();
         foreach (var kvp in elevationDictionary) {
-            if (kvp.Value > highestVotes) {
-                highestVotes = kvp.Value;
-                elevationWithHighestVotes = kvp.Key;
+            if (kvp.Value > 0) {
+                presentElevations.Add(kvp.Key);
             }
         }
-        elevationType = elevationWithHighestVotes;
+        elevationType = presentElevations.Count == 1 ? presentElevations[0] : ELEVATION.MIXED;
+        RuinarchListPool<ELEVATION>.Release(presentElevations);
     }
 }
