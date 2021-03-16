@@ -14,16 +14,16 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Faction prevFaction = interruptHolder.actor.faction;
             if (FactionManager.Instance.LeaveFaction(interruptHolder.actor)) {
-                if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
+                //if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
                 overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Leave Faction", interruptHolder.identifier, null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(prevFaction, prevFaction.name, LOG_IDENTIFIER.FACTION_1);
                 return true;
             }
-            return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         #endregion
     }

@@ -178,7 +178,7 @@ public class SaveDataPlayerUnderlingsComponent : SaveData<PlayerUnderlingsCompon
     }
 }
 
-
+[System.Serializable]
 public class MonsterUnderlingCharges {
     public SUMMON_TYPE monsterType;
     public int currentCharges;
