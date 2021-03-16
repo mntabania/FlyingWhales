@@ -54,4 +54,5 @@
     /// parameters (SpellData)
     /// </summary>
     public static string SPELL_UPGRADED = "OnSpellUpgraded";
+    public static string PLAYER_GAINED_DEMONIC_STRUCTURE = "OnPlayerGainedDemonicStructure";
 }

@@ -632,7 +632,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     public bool IsFriendlyWith(Faction faction) {
         if (faction == this) {
-            return false;
+            return true;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Friendly;

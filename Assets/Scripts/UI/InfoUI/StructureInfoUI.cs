@@ -30,6 +30,10 @@ public class StructureInfoUI : InfoUIBase {
     [Header("Characters")]
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
+    
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
 
     public LocationStructure activeStructure { get; private set; }
 
@@ -64,6 +68,7 @@ public class StructureInfoUI : InfoUIBase {
         activeStructure = _data as LocationStructure;
         base.OpenMenu();
         activeStructure.ShowSelectorOnStructure();
+        btnStoreTarget.SetTarget(activeStructure);
         UpdateStructureInfoUI();
         UpdateResidents();
         LoadActions(activeStructure);

@@ -124,6 +124,7 @@ public class GameManager : BaseMonoBehaviour {
         _gameHasStarted = true;
         UIManager.Instance.Pause();
         lastProgressionBeforePausing = "paused";
+        Messenger.Broadcast(Signals.GAME_STARTED);
         SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month

@@ -14,7 +14,7 @@ using Logs;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyQuestTarget, IGatheringTarget, ISavable {
+public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyQuestTarget, IGatheringTarget, ISavable, IStoredTarget {
     public string persistentID { get; protected set; }
     public string name { get; protected set; }
     public int id { get; private set; }
@@ -56,12 +56,20 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public ILocationAwareness currentLocationAwareness { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
+    public bool isDamageContributorToStructure { get; private set; }
     private bool hasSubscribedToListeners;
     public virtual StructureConnector structureConnector { get; protected set; }
+    
+    //Components
+    public LogComponent logComponent { get; protected set; }
+    public TileObjectHiddenComponent hiddenComponent { get; private set; }
+    public TileObjectEventDispatcher eventDispatcher { get; private set; }
 
     #region getters
     public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
+    public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Tile_Objects;
+    public string iconRichText => UtilityScripts.Utilities.ThreatIcon();
     public virtual Type serializedData => typeof(SaveDataTileObject);
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
     public virtual Vector3 worldPosition => mapVisual.transform.position;
@@ -93,10 +101,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     #endregion
 
-    //Components
-    public LogComponent logComponent { get; protected set; }
-    public TileObjectHiddenComponent hiddenComponent { get; private set; }
-
     public TileObject() { }
     public TileObject(SaveDataTileObject data) { }
 
@@ -121,6 +125,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         ConstructDefaultActions();
         logComponent = new LogComponent(); logComponent.SetOwner(this);
         hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
+        eventDispatcher = new TileObjectEventDispatcher();
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
@@ -136,6 +141,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
         currentHP = data.currentHP;
         isPreplaced = data.isPreplaced;
+        isDamageContributorToStructure = data.isDamageContributorToStructure;
         SetPOIState(data.poiState);
         CreateTraitContainer();
         LoadResources(data);
@@ -144,6 +150,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
         logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
         hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
+        eventDispatcher = new TileObjectEventDispatcher();
 
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
@@ -253,6 +260,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         UnsubscribeListeners();
+        eventDispatcher.ExecuteTileObjectDestroyed(this);
     }
     public void OnDiscardCarriedObject() {
         //DisableGameObject();
@@ -583,6 +591,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //GameManager.Instance.CreateHitEffectAt(this, elementalType);
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
+        }
+        int attackPower = characterThatAttacked.combatComponent.attack;
+        if (characterThatAttacked.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Razer)) {
+            //Razer deals bonus damage to structures
+            if (isDamageContributorToStructure) {
+                attackPower = Mathf.RoundToInt(attackPower * 1.5f);
+            }
         }
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.attack.ToString()}";
@@ -1051,7 +1066,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return charactersThatAlreadyAssumed.Contains(character);
     }
     public bool IsInHomeStructureOfCharacterWithOpinion(Character character, params string[] opinion) {
-        if(gridTileLocation != null && structureLocation != null) {
+        if (gridTileLocation != null && structureLocation != null) {
             for (int i = 0; i < structureLocation.residents.Count; i++) {
                 Character resident = structureLocation.residents[i];
                 string opinionLabel = character.relationshipContainer.GetOpinionLabel(resident);
@@ -1063,6 +1078,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         return false;
+    }
+    public void SetAsDamageContributorToStructure(bool p_state) {
+        isDamageContributorToStructure = p_state;
     }
     #endregion
 
@@ -1242,6 +1260,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// Called when this object has been added as a filler in a log.
     /// </summary>
     public virtual void OnReferencedInALog() { }
+    #endregion
+    
+    #region IStoredTarget
+    public bool CanBeStoredAsTarget() {
+        return mapVisual != null;
+    }
     #endregion
 }
 

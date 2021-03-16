@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using Inner_Maps;
-using Traits;
-using Archetype;
 using Locations.Settlements;
 using Ruinarch;
 using UtilityScripts;
-using Random = UnityEngine.Random;
-using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using Interrupts;
-using Logs;
 using Object_Pools;
 // ReSharper disable Unity.NoNullPropagation
 
@@ -40,6 +32,8 @@ public class Player : ILeader, IObjectManipulator {
     public PlayerSkillComponent playerSkillComponent { get; }
     public PlagueComponent plagueComponent { get; }
     public PlayerUnderlingsComponent underlingsComponent { get; private set; }
+    public PlayerTileObjectComponent tileObjectComponent { get; private set; }
+    public StoredTargetsComponent storedTargetsComponent { get; }
 
     private ManaRegenComponent m_manaRegenComponent { get; set; }
 
@@ -66,8 +60,10 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent = new PlayerSkillComponent();
         plagueComponent = new PlagueComponent();
         underlingsComponent = new PlayerUnderlingsComponent();
+        storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
-        AddListeners();
+        tileObjectComponent = new PlayerTileObjectComponent();
+        SubscribeListeners();
         
     }
     public Player(SaveDataPlayerGame data) {
@@ -76,13 +72,14 @@ public class Player : ILeader, IObjectManipulator {
         threatComponent = data.threatComponent.Load();
         playerSkillComponent = data.playerSkillComponent.Load();
         underlingsComponent = data.underlingsComponent.Load();
+        tileObjectComponent = data.tileObjectComponent.Load();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);
-        playerSkillComponent.SetPlayer(this);
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
-        AddListeners();
+        SubscribeListeners();
     }
 
     public void LoadPlayerData(SaveDataPlayer save) {
@@ -98,20 +95,13 @@ public class Player : ILeader, IObjectManipulator {
     }
 
     #region Listeners
-    private void AddListeners() {
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
-
+    private void SubscribeListeners() {
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         
-        underlingsComponent.AddListeners();
+        underlingsComponent.SubscribeListeners();
     }
-    #endregion
-
-    #region ILeader
-    //public void LevelUp() { }
     #endregion
 
     #region Settlement
@@ -131,16 +121,6 @@ public class Player : ILeader, IObjectManipulator {
     public void SetPlayerArea(PlayerSettlement npcSettlement) {
         playerSettlement = npcSettlement;
     }
-    private void OnInnerMapOpened(Region area) {
-        //for (int i = 0; i < minions.Count; i++) {
-        //    minions[i].ResetCombatAbilityCD();
-        //}
-        //ResetInterventionAbilitiesCD();
-        //currentTargetFaction = npcSettlement.owner;
-    }
-    private void OnInnerMapClosed(Region area) {
-        //currentTargetFaction = null;
-    }
     #endregion
 
     #region Faction
@@ -157,9 +137,6 @@ public class Player : ILeader, IObjectManipulator {
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
     }
-    //public void SetPlayerTargetFaction(Faction faction) {
-    //    currentTargetFaction = faction;
-    //}
     #endregion
 
     #region Role Actions
@@ -271,6 +248,9 @@ public class Player : ILeader, IObjectManipulator {
             SetCurrentlyActivePlayerSpell(null);
         }
         //Debug.Log(GameManager.Instance.TodayLogString() + summary);
+    }
+    public bool IsCurrentActiveSpell(PLAYER_SKILL_TYPE p_skillType) {
+        return currentActivePlayerSpell != null && currentActivePlayerSpell.type == p_skillType;
     }
     #endregion
 
@@ -752,57 +732,6 @@ public class Player : ILeader, IObjectManipulator {
     private void SaveExp() {
         SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
     }
-    //public void SaveSummons() {
-    //    List<LocationStructure> kennels = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
-    //    List<Summon> kennelSummons = null;
-    //    if(kennels != null) {
-    //        for (int i = 0; i < kennels.Count; i++) {
-    //            LocationStructure currKennel = kennels[i];
-    //            for (int j = 0; j < currKennel.charactersHere.Count; j++) {
-    //                Character character = currKennel.charactersHere[j];
-    //                if(character is Summon summon) {
-    //                    if(summon.gridTileLocation != null && summon.marker) {
-    //                        if(kennelSummons == null) {
-    //                            kennelSummons = new List<Summon>();
-    //                        }
-    //                        kennelSummons.Add(summon);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //    if(kennelSummons != null) {
-    //        SaveManager.Instance.currentSaveDataPlayer.SaveSummons(kennelSummons);
-    //    }
-    //}
-    // public void SaveTileObjects() {
-    //     List<LocationStructure> crypts = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.CRYPT);
-    //     List<TileObject> cryptTileObjects = null;
-    //     if (crypts != null) {
-    //         for (int i = 0; i < crypts.Count; i++) {
-    //             LocationStructure currCrypt = crypts[i];
-    //             foreach (TileObjectsAndCount tileObjectsAndCount in currCrypt.groupedTileObjects.Values) {
-    //                 if(tileObjectsAndCount.tileObjects != null && tileObjectsAndCount.tileObjects.Count > 0) {
-    //                     for (int j = 0; j < tileObjectsAndCount.tileObjects.Count; j++) {
-    //                         TileObject tileObject = tileObjectsAndCount.tileObjects[j];
-    //                         if(tileObject.gridTileLocation != null 
-    //                             && tileObject.tileObjectType != TILE_OBJECT_TYPE.BLOCK_WALL
-    //                             && tileObject.preplacedLocationStructure != currCrypt
-    //                             && !tileObject.isSaved) {
-    //                             if (cryptTileObjects == null) {
-    //                                 cryptTileObjects = new List<TileObject>();
-    //                             }
-    //                             cryptTileObjects.Add(tileObject);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     if (cryptTileObjects != null) {
-    //         SaveManager.Instance.currentSaveDataPlayer.SaveTileObjects(cryptTileObjects);
-    //     }
-    // }
     #endregion
 
     #region Loading
@@ -842,6 +771,8 @@ public class Player : ILeader, IObjectManipulator {
         for (int i = 0; i < data.allChaosOrbs.Count; i++) {
             data.allChaosOrbs[i].Load();
         }
+        playerSkillComponent.LoadReferences(data.playerSkillComponent);
+        storedTargetsComponent.LoadReferences(data.storedTargetsComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion

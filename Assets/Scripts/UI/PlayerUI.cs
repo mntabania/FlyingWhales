@@ -19,10 +19,10 @@ using Random = UnityEngine.Random;
 public class PlayerUI : BaseMonoBehaviour {
     public static PlayerUI Instance;
 
-    [Header("Top Menu")]
-    public GameObject regionNameTopMenuGO;
-    public TextMeshProUGUI regionNameTopMenuText;
-    public HoverHandler regionNameHoverHandler;
+    //[Header("Top Menu")]
+    //public GameObject regionNameTopMenuGO;
+    //public TextMeshProUGUI regionNameTopMenuText;
+    //public HoverHandler regionNameHoverHandler;
 
     [Header("Spirit Energy")]
     public TextMeshProUGUI spiritEnergyLabel;
@@ -75,7 +75,9 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private SpellListUI spellList;
     [SerializeField] private CustomDropdownList customDropdownList;
     [SerializeField] private CultistsListUI cultistsList;
+    [SerializeField] private TargetsListUI targetsList;
     public Toggle monsterToggle;
+    public Toggle targetsToggle;
     
     [Header("Minion List")]
     [SerializeField] private MinionListUI minionList;
@@ -143,7 +145,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
         minionList.Initialize();
         summonList.Initialize();
-        
+
         Messenger.AddListener(PlayerSignals.UPDATED_CURRENCIES, UpdateUI);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
@@ -151,8 +153,8 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener(UISignals.ON_CLOSE_CONVERSATION_MENU, OnCloseConversationMenu);
         
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
         Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
@@ -181,6 +183,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
         
+        targetsList.Initialize();
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
 #if UNITY_EDITOR
@@ -209,12 +212,12 @@ public class PlayerUI : BaseMonoBehaviour {
     }
 
     #region Listeners
-    private void OnInnerMapOpened(Region location) {
-        UpdateRegionNameState();
-    }
-    private void OnInnerMapClosed(Region location) {
-        UpdateRegionNameState();
-    }
+    //private void OnInnerMapOpened(Region location) {
+    //    UpdateRegionNameState();
+    //}
+    //private void OnInnerMapClosed(Region location) {
+    //    UpdateRegionNameState();
+    //}
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.F9) {
             UIManager.Instance.optionsMenu.QuickSave();
@@ -326,20 +329,20 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     #endregion
 
-    private void UpdateRegionNameState() {
-        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
-            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
-            regionNameTopMenuText.text = location.name;
-            regionNameTopMenuGO.SetActive(true);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
-            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
-#endif
-        } else {
-            regionNameTopMenuGO.SetActive(false);
-        }
-    }
+//    private void UpdateRegionNameState() {
+//        if (InnerMapManager.Instance.isAnInnerMapShowing) {
+//            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
+//            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
+//            regionNameTopMenuText.text = location.name;
+//            regionNameTopMenuGO.SetActive(true);
+//#if UNITY_EDITOR || DEVELOPMENT_BUILD
+//            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
+//            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
+//#endif
+//        } else {
+//            regionNameTopMenuGO.SetActive(false);
+//        }
+//    }
 
     #region SpiritEnergy
     private void OnSpiritEnergyAdjusted(int adjustedAmount, int spiritEnergy) {
@@ -484,30 +487,12 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void OnCloseConversationMenu() {
         intelToggle.interactable = true;
-        //for (int i = 0; i < roleSlots.Length; i++) {
-        //    RoleSlotItem rsi = roleSlots[i];
-        //    //rsi.UpdateActionButtons();
-        //    rsi.OverrideDraggableState(true);
-        //}
-        //assignBtn.interactable = true;
-        //if (UIManager.Instance.characterInfoUI.isShowing) {
-        //    ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
-        //}else if (UIManager.Instance.tileObjectInfoUI.isShowing) {
-        //    ShowActionButtonsFor(UIManager.Instance.tileObjectInfoUI.activeTileObject);
-        //}
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
         if (state) {
             Messenger.Broadcast(UISignals.INTEL_MENU_OPENED);    
         }
-        //RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
-        //Vector3 previousPos = rt.anchoredPosition;
-        //if (!state) {
-        //    rt.anchoredPosition = new Vector3(-640f, previousPos.y, previousPos.z);
-        //} else {
-        //    rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
-        //}
     }
     public IntelItem GetIntelItemWithIntel(IIntel intel) {
         for (int i = 0; i < intelItems.Length; i++) {
@@ -1067,6 +1052,22 @@ public class PlayerUI : BaseMonoBehaviour {
     public void OnClickPlaguePoints() {
         if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
             UIManager.Instance.ShowBiolabUI();    
+        }
+    }
+    #endregion
+
+    #region Targets
+    public void OnToggleTargetsTab(bool p_state) {
+        if (p_state) {
+            targetsList.Open();
+        } else {
+            targetsList.Close();
+        }
+    }
+    private Tweener _currentTargetPunchEffect;
+    public void DoTargetTabPunchEffect() {
+        if (_currentTargetPunchEffect == null) {
+            _currentTargetPunchEffect = targetsToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f).OnComplete(() => _currentTargetPunchEffect = null);
         }
     }
     #endregion

@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 9674685
+    totalSpriteSurfaceArea: 10159822
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -69,6 +69,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e8291ca0a293d7745a64f1a1823f669d, type: 3}
   - {fileID: 21300000, guid: 9ec882b08ff43914985bfa22b9a521d3, type: 3}
   - {fileID: 21300000, guid: 4c6a6eb03a95ec244bdc3a7ee4b661b3, type: 3}
+  - {fileID: 21300000, guid: 9029d8c06c37992479252bbcb1574fb3, type: 3}
   - {fileID: 21300000, guid: 8d587cc03c7e32d4aa2884c70b55e689, type: 3}
   - {fileID: 21300000, guid: 2ed6bfc080dfb3740848088e2c840c09, type: 3}
   - {fileID: 21300000, guid: 60ddcbd00e8141f4792d1f3a4278f707, type: 3}
@@ -85,6 +86,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: aa92f68120ce8f1479ddd6b278e5f982, type: 3}
   - {fileID: 21300000, guid: 7996c88142d9cb04abb3711e2dc646b8, type: 3}
   - {fileID: 21300000, guid: 1a05b6915f3a9214694630a4e097233b, type: 3}
+  - {fileID: 21300000, guid: aee89f91e27b7ea4fb6082333a3ed6ee, type: 3}
   - {fileID: 21300000, guid: 928068b129249a04f9badda171d03cfc, type: 3}
   - {fileID: 21300000, guid: 4be17fb16f3e2ae409dbf5c91d5a6b9b, type: 3}
   - {fileID: 21300000, guid: 3e32c1c1f8e1f4e4f9b73c1c29fc5b0b, type: 3}
@@ -445,6 +447,7 @@ SpriteAtlas:
   - thought_container_positive
   - button_arrow2_right_default
   - Arrow-Faction-Btn-Hover
+  - maraud_defense_point_container
   - button_skills_default
   - button_scroll
   - nameplate_clicked
@@ -461,6 +464,7 @@ SpriteAtlas:
   - button_close_hover
   - minion_scroll_button_up_invalid
   - traveller_default
+  - maraud_second_column
   - spell_slot_empty
   - spell_list_button_disabled
   - button_base_clicked

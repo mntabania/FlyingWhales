@@ -82,7 +82,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		GameManager.Instance.SetPausedState(true);
 	}
 	public override void HideUI() {
-		GameManager.Instance.SetPausedState(false);
+		UIManager.Instance.ResumeLastProgressionSpeed();
 		base.HideUI();
 		Messenger.RemoveListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}

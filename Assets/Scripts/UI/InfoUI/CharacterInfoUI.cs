@@ -81,6 +81,10 @@ public class CharacterInfoUI : InfoUIBase {
     [Header("Piercing And Resistances")]
     [SerializeField] private PiercingAndResistancesInfo piercingAndResistancesInfo;
 
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
+
     private Character _activeCharacter;
     private Character _previousCharacter;
 
@@ -225,6 +229,7 @@ public class CharacterInfoUI : InfoUIBase {
             }
             _activeCharacter.marker.UpdateNameplateElementsState();
         }
+        btnStoreTarget.SetTarget(_activeCharacter);
         UpdateCharacterInfo();
         UpdateTraits();
         UpdateRelationships();

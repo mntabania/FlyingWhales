@@ -14,7 +14,7 @@ namespace Characters.Components {
             void OnCharacterLeftStructure(Character p_character, LocationStructure p_leftStructure);
         }
         public interface IDeathListener {
-            void OnCharacterDied(Character p_character);
+            void OnCharacterSubscribedToDied(Character p_character);
         }
 
         private System.Action<Character, Trait> _characterGainedTrait;
@@ -73,10 +73,10 @@ namespace Characters.Components {
 
         #region Death
         public void SubscribeToCharacterDied(IDeathListener p_listener) {
-            _characterDied += p_listener.OnCharacterDied;
+            _characterDied += p_listener.OnCharacterSubscribedToDied;
         }
         public void UnsubscribeToCharacterDied(IDeathListener p_listener) {
-            _characterDied -= p_listener.OnCharacterDied;
+            _characterDied -= p_listener.OnCharacterSubscribedToDied;
         }
         public void ExecuteCharacterDied(Character p_character) {
             _characterDied?.Invoke(p_character);

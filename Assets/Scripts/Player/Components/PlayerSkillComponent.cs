@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class PlayerSkillComponent {
     //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
@@ -23,6 +24,21 @@ public class PlayerSkillComponent {
     
     //Blackmail
     public List<Character> blackmailedCharacters { get; private set; }
+    
+    //Skill Unlocking
+    public PLAYER_SKILL_TYPE currentSpellBeingUnlocked { get; private set; }
+    public int currentSpellUnlockCost { get; private set; }
+    public RuinarchTimer timerUnlockSpell { get; private set; }
+    public RuinarchCooldown cooldownReroll { get; private set; }
+    public List<PLAYER_SKILL_TYPE> currentSpellChoices { get; private set; }
+        
+    public PLAYER_SKILL_TYPE currentDemonBeingSummoned { get; private set; }
+    public int currentDemonUnlockCost { get; private set; }
+    public RuinarchTimer timerSummonDemon { get; private set; }
+        
+    public PLAYER_SKILL_TYPE currentStructureBeingUnlocked { get; private set; }
+    public int currentStructureUnlockCost { get; private set; }
+    public RuinarchTimer timerUnlockStructure { get; private set; }
 
     public PlayerSkillComponent() {
         //nodesData = new List<PlayerSkillTreeNodeData>();
@@ -38,23 +54,14 @@ public class PlayerSkillComponent {
         //summons = new List<Summon>();
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
-    }
-
-    public void SetPlayer(Player player) {
-        
-    }
-
-    public bool CheckIfSkillIsAvailable(PLAYER_SKILL_TYPE p_targetSkill) {
-        if (spells.Contains(p_targetSkill)) {
-            return true;
-        }
-        if (playerActions.Contains(p_targetSkill)) {
-            return true;
-        }
-        if (afflictions.Contains(p_targetSkill)) {
-            return true;
-        }
-        return false;
+        currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        timerUnlockSpell = new RuinarchTimer("Spell Unlock");
+        cooldownReroll = new RuinarchCooldown("Reroll");
+        currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
+        currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
+        timerSummonDemon = new RuinarchTimer("Summon Demon");
+        currentStructureBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        timerUnlockStructure = new RuinarchTimer("Obtain Blueprint");
     }
 
     #region Loading
@@ -65,6 +72,84 @@ public class PlayerSkillComponent {
                 CategorizePlayerSkill(spell);
             }
         }
+    }
+    #endregion
+
+    #region Unlocking
+    public void PlayerChoseSkillToUnlock(SkillData p_skillData, int p_unlockCost) {
+        currentSpellBeingUnlocked = p_skillData.type;
+        currentSpellUnlockCost = p_unlockCost;
+        timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteSpellUnlockTimer);
+        Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, p_skillData, p_unlockCost);
+    }
+    public void CancelCurrentPlayerSkillUnlock() {
+        //Refund player mana
+        PlayerManager.Instance.player.AdjustMana(currentSpellUnlockCost);
+        currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        currentSpellUnlockCost = 0;
+        timerUnlockSpell.Stop();
+        Messenger.Broadcast(PlayerSignals.PLAYER_SKILL_UNLOCK_CANCELLED);
+    }
+    private void OnCompleteSpellUnlockTimer() {
+        PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(currentSpellBeingUnlocked);
+        ResetPlayerSpellChoices();
+        Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);
+        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, currentSpellBeingUnlocked, currentSpellUnlockCost);
+        currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        currentSpellUnlockCost = 0;
+    }
+    public void OnRerollUsed() {
+        ResetPlayerSpellChoices();
+        cooldownReroll.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour));
+    }
+    public void PlayerChoseMinionToUnlock(PLAYER_SKILL_TYPE p_skillType, int p_unlockCost) {
+        currentDemonBeingSummoned = p_skillType;
+        currentDemonUnlockCost = p_unlockCost;
+        timerSummonDemon.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteMinionUnlock);
+        Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_DEMON_TO_UNLOCK, p_skillType, p_unlockCost);
+    }
+    public void CancelCurrentMinionUnlock() {
+        //Refund player mana
+        PlayerManager.Instance.player.AdjustMana(currentDemonUnlockCost);
+        currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
+        currentDemonUnlockCost = 0;
+        timerSummonDemon.Stop();
+        Messenger.Broadcast(PlayerSignals.PLAYER_DEMON_UNLOCK_CANCELLED);
+    }
+    private void OnCompleteMinionUnlock() {
+        PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(currentDemonBeingSummoned);
+        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_DEMON_UNLOCK, currentDemonBeingSummoned, currentDemonUnlockCost);
+        currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
+        currentDemonUnlockCost = 0;
+    }
+    public void PlayerChoseStructureToUnlock(PLAYER_SKILL_TYPE p_skillType, int p_unlockCost) {
+        currentStructureBeingUnlocked = p_skillType;
+        currentStructureUnlockCost = p_unlockCost;
+        timerUnlockStructure.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteStructureUnlock);
+        Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_STRUCTURE_TO_UNLOCK, p_skillType, p_unlockCost);
+    }
+    public void CancelCurrentStructureUnlock() {
+        //Refund player mana
+        PlayerManager.Instance.player.AdjustMana(currentStructureUnlockCost);
+        currentStructureBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        currentStructureUnlockCost = 0;
+        timerUnlockStructure.Stop();
+        Messenger.Broadcast(PlayerSignals.PLAYER_STRUCTURE_UNLOCK_CANCELLED);
+    }
+    private void OnCompleteStructureUnlock() {
+        PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(currentStructureBeingUnlocked);
+        Messenger.Broadcast(SpellSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, currentStructureBeingUnlocked);
+        Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
+        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_STRUCTURE_UNLOCK, currentStructureBeingUnlocked, currentStructureUnlockCost);
+        currentStructureBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
+        currentStructureUnlockCost = 0;
+    }
+    private void ResetPlayerSpellChoices() {
+        currentSpellChoices.Clear();
+        Debug.Log("Reset player spell choices.");
+    }
+    public void AddCurrentPlayerSpellChoice(PLAYER_SKILL_TYPE p_skillType) {
+        currentSpellChoices.Add(p_skillType);
     }
     #endregion
 
@@ -156,7 +241,6 @@ public class PlayerSkillComponent {
             break;
         }
     }
-
     public int GetLevelOfSkill(SkillData p_targetSkill) {
         int currentLevel = 0;
         switch (p_targetSkill.category) {
@@ -187,6 +271,18 @@ public class PlayerSkillComponent {
     }
 
     #region Utilities
+    public bool CheckIfSkillIsAvailable(PLAYER_SKILL_TYPE p_targetSkill) {
+        if (spells.Contains(p_targetSkill)) {
+            return true;
+        }
+        if (playerActions.Contains(p_targetSkill)) {
+            return true;
+        }
+        if (afflictions.Contains(p_targetSkill)) {
+            return true;
+        }
+        return false;
+    }
     public bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {
         return PlayerSkillManager.Instance.GetPlayerSkillData(type).isInUse;
     }
@@ -451,6 +547,29 @@ public class PlayerSkillComponent {
     }
     public void LoadReferences(SaveDataPlayerSkillComponent data) {
         blackmailedCharacters = SaveUtilities.ConvertIDListToCharacters(data.blackmailedCharacters);
+        currentSpellBeingUnlocked = data.currentSpellBeingUnlocked;
+        currentSpellUnlockCost = data.currentSpellUnlockCost;
+        timerUnlockSpell = data.timerUnlockSpell;
+        if (currentSpellBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
+            timerUnlockSpell.LoadStart(OnCompleteSpellUnlockTimer);
+        }
+        cooldownReroll = data.cooldownReroll;
+        if (!cooldownReroll.IsFinished()) {
+            cooldownReroll.LoadStart();
+        }
+        currentDemonBeingSummoned = data.currentDemonBeingSummoned;
+        currentDemonUnlockCost = data.currentDemonUnlockCost;
+        timerSummonDemon = data.timerSummonDemon;
+        if (currentDemonBeingSummoned != PLAYER_SKILL_TYPE.NONE) {
+            timerSummonDemon.LoadStart(OnCompleteMinionUnlock);
+        }
+        currentStructureBeingUnlocked = data.currentStructureBeingUnlocked;
+        currentStructureUnlockCost = data.currentStructureUnlockCost;
+        timerUnlockStructure = data.timerUnlockStructure;
+        if (currentSpellBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
+            timerUnlockStructure.LoadStart(OnCompleteStructureUnlock);
+        }
+        currentSpellChoices = data.currentSpellChoices;
     }
     #endregion
 }
@@ -460,6 +579,18 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
     public List<string> blackmailedCharacters;
     //public bool canTriggerFlaw;
     //public bool canRemoveTraits;
+    //Skill Unlocking
+    public PLAYER_SKILL_TYPE currentSpellBeingUnlocked;
+    public int currentSpellUnlockCost;
+    public RuinarchTimer timerUnlockSpell;
+    public RuinarchCooldown cooldownReroll;
+    public List<PLAYER_SKILL_TYPE> currentSpellChoices;
+    public PLAYER_SKILL_TYPE currentDemonBeingSummoned;
+    public int currentDemonUnlockCost;
+    public RuinarchTimer timerSummonDemon;
+    public PLAYER_SKILL_TYPE currentStructureBeingUnlocked;
+    public int currentStructureUnlockCost;
+    public RuinarchTimer timerUnlockStructure;
 
     public override void Save(PlayerSkillComponent component) {
         //canTriggerFlaw = player.playerSkillComponent.canTriggerFlaw;
@@ -510,6 +641,18 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
         }
 
         blackmailedCharacters = SaveUtilities.ConvertSavableListToIDs(component.blackmailedCharacters);
+        
+        currentSpellBeingUnlocked = component.currentSpellBeingUnlocked;
+        currentSpellUnlockCost = component.currentSpellUnlockCost;
+        timerUnlockSpell = component.timerUnlockSpell;
+        cooldownReroll = component.cooldownReroll;
+        currentSpellChoices = component.currentSpellChoices;
+        currentDemonBeingSummoned = component.currentDemonBeingSummoned;
+        currentDemonUnlockCost = component.currentDemonUnlockCost;
+        timerSummonDemon = component.timerSummonDemon;
+        currentStructureBeingUnlocked = component.currentStructureBeingUnlocked;
+        currentStructureUnlockCost = component.currentStructureUnlockCost;
+        timerUnlockStructure = component.timerUnlockStructure;
     }
     public override PlayerSkillComponent Load() {
         PlayerSkillComponent component = new PlayerSkillComponent();

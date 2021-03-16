@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Troll Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 2
+  combatSpecialSkillType: 0
+  summonCost: 0
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: c0f5569582b99334293e60f15c790983, type: 3}
     animationSprites:

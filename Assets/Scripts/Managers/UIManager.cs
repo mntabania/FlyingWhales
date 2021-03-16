@@ -29,6 +29,8 @@ public class UIManager : BaseMonoBehaviour {
     public Action onPortalClicked;
     public Action onSpireClicked;
     public Action<LocationStructure> onMaraudClicked;
+    public Action<LocationStructure> onKennelClicked;
+    public Action<LocationStructure> onTortureChamberClicked;
     public Action<LocationStructure> onDefensePointClicked;
 
     public static UIManager Instance = null;
@@ -136,7 +138,7 @@ public class UIManager : BaseMonoBehaviour {
     
     public bool tempDisableShowInfoUI { get; private set; }
 
-    public List<UnallowOverlaps> unallowOverlaps;
+    public List<UnallowOverlaps> unallowOverlaps = new List<UnallowOverlaps>();
     
     #region Monobehaviours
     private void Awake() {
@@ -161,7 +163,6 @@ public class UIManager : BaseMonoBehaviour {
     internal void InitializeUI() {
         _pointer = new PointerEventData(EventSystem.current);
         _raycastResults = new List<RaycastResult>();
-        unallowOverlaps = new List<UnallowOverlaps>();
         allMenus = transform.GetComponentsInChildren<InfoUIBase>(true);
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
@@ -1028,6 +1029,7 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Structure Info")]
     [SerializeField] public StructureInfoUI structureInfoUI;
+    [SerializeField] private PortalUIController _portalUIController;
     public void ShowStructureInfo(LocationStructure structure, bool centerOnStructure = true) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
@@ -1035,12 +1037,20 @@ public class UIManager : BaseMonoBehaviour {
         }
         if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
             onPortalClicked?.Invoke();
+        } else {
+            _portalUIController.HideUI();
         }
         if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
             onSpireClicked?.Invoke();
         }
         if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
             onMaraudClicked?.Invoke(structure);
+        }
+        if (structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+            onTortureChamberClicked?.Invoke(structure);
+        }
+        if (structure.structureType == STRUCTURE_TYPE.KENNEL) {
+            onKennelClicked?.Invoke(structure);
         }
         if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
             onDefensePointClicked?.Invoke(structure);

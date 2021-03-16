@@ -37,6 +37,8 @@ public class Initializer : MonoBehaviour {
         PlayerSkillManager.Instance.ResetSpellsInUse();
         yield return null;
         PlayerSkillManager.Instance.ResetSummonPlayerSkills();
+        yield return null;
+        CombatManager.Instance.Initialize();
     }
 
     public void InitializeDataAfterWorldCreation() {

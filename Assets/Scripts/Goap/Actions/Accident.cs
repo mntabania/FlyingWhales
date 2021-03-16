@@ -54,7 +54,7 @@ public class Accident : GoapAction {
         Debug.Log(
             $"Accident of {goapNode.actor.name} percent: {percentMaxHPToLose}, max hp: {goapNode.actor.maxHP}, lost hp: {actualHPToLose}");
         goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
-        if (goapNode.actor.currentHP <= 0) {
+        if (!goapNode.actor.HasHealth()) {
             goapNode.actor.Death(deathFromAction: goapNode);
         }
     }

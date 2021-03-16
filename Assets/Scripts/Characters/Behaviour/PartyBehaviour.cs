@@ -68,7 +68,18 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                 if (party.targetDestination != null && !party.targetDestination.hasBeenDestroyed) {
                                     if (party.targetDestination.IsAtTargetDestination(character)) {
                                         if (party.targetDestination == party.partySettlement) {
-                                            party.currentQuest.EndQuest("Finished quest");
+                                            if(party.currentQuest is DemonSnatchPartyQuest quest) {
+                                                if (party.jobBoard.HasJob(JOB_TYPE.SNATCH, quest.targetCharacter)) {
+                                                    LocationGridTile tile = character.areaLocation.gridTileComponent.GetRandomPassableTileThatIsNotPartOfAStructure();
+                                                    if (tile != null) {
+                                                        character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                                                    }
+                                                } else {
+                                                    party.currentQuest.EndQuest("Finished quest");
+                                                }
+                                            } else {
+                                                party.currentQuest.EndQuest("Finished quest");
+                                            }
                                         } else {
                                             party.SetPartyState(PARTY_STATE.Working);
                                         }
@@ -76,9 +87,18 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                         return hasJob;
                                         //hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                                     } else {
-                                        LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
-                                        if (tile != null) {
-                                            hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                                        if (character.partyComponent.CanFollowBeacon()) {
+                                            character.partyComponent.FollowBeacon();
+                                        } else {
+                                            LocationGridTile tile = null;
+                                            if (party.isPlayerParty && party.targetDestination == party.partySettlement) {
+                                                tile = party.partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL).GetRandomPassableTile();
+                                            } else {
+                                                tile = party.targetDestination.GetRandomPassableTile();
+                                            }
+                                            if (tile != null) {
+                                                hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                                            }
                                         }
                                     }
                                 }

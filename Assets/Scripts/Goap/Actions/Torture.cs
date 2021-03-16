@@ -31,7 +31,7 @@ public class Torture : GoapAction {
         Character actor = goapNode.actor;
         IPointOfInterest targetPOI = goapNode.poiTarget;
         if(targetPOI is Character targetCharacter) {
-            if(targetCharacter.currentHP <= 0) {
+            if(!targetCharacter.HasHealth()) {
                 targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
             } else {
                 string logKey = string.Empty;

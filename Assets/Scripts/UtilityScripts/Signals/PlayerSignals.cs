@@ -101,4 +101,43 @@
     /// Signals for MONSTER UNDERLINGS of PLAYER
     /// </summary>
     public static string UPDATED_MONSTER_UNDERLING = "UpdatedMonsterUnderling";
+
+    /// <summary>
+    /// Parameters: SkillData skill, int upgradeCost
+    /// </summary>
+    public static string PLAYER_CHOSE_SKILL_TO_UNLOCK = "OnPlayerChoseSkillToUnlock";
+    /// <summary>
+    /// Parameters: SkillData skill, int upgradeCost
+    /// </summary>
+    public static string PLAYER_FINISHED_SKILL_UNLOCK = "OnPlayerFinishedSkillUnlock";
+    public static string PLAYER_SKILL_UNLOCK_CANCELLED = "OnPlayerSkillUnlockCancelled";
+    
+    /// <summary>
+    /// Parameters: PLAYER_SKILL_TYPE, int upgradeCost
+    /// </summary>
+    public static string PLAYER_CHOSE_DEMON_TO_UNLOCK = "OnPlayerChoseDemonToUnlock";
+    /// <summary>
+    /// Parameters: PLAYER_SKILL_TYPE, int upgradeCost
+    /// </summary>
+    public static string PLAYER_FINISHED_DEMON_UNLOCK = "OnPlayerFinishedDemonUnlock";
+    public static string PLAYER_DEMON_UNLOCK_CANCELLED = "OnDemonUnlockCancelled";
+    
+    /// <summary>
+    /// Parameters: PLAYER_SKILL_TYPE, int upgradeCost
+    /// </summary>
+    public static string PLAYER_CHOSE_STRUCTURE_TO_UNLOCK = "OnPlayerChoseStructureToUnlock";
+    /// <summary>
+    /// Parameters: PLAYER_SKILL_TYPE, int upgradeCost
+    /// </summary>
+    public static string PLAYER_FINISHED_STRUCTURE_UNLOCK = "OnPlayerFinishedStructureUnlock";
+    public static string PLAYER_STRUCTURE_UNLOCK_CANCELLED = "OnStructureUnlockCancelled";
+    
+    /// <summary>
+    /// Parameters: IStoredTarget
+    /// </summary>
+    public static string PLAYER_STORED_TARGET = "OnPlayerStoredTarget";
+    /// <summary>
+    /// Parameters: IStoredTarget
+    /// </summary>
+    public static string PLAYER_REMOVED_STORED_TARGET = "OnPlayerRemovedStoredTarget";
 }

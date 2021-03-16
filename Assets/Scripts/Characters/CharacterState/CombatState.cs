@@ -362,7 +362,7 @@ public class CombatState : CharacterState {
     private void OnCharacterStartFleeing(Character characterThatFlee) {
         Character owner = stateComponent.owner;
         //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
-        if (stateComponent.currentState == this && !isPaused && !isDone && owner.combatComponent.hostilesInRange.Contains(characterThatFlee)) {
+        if (stateComponent.currentState == this && !isPaused && !isDone && owner.combatComponent.IsHostileInRange(characterThatFlee)) {
             if (!owner.movementComponent.CanStillPursueTarget(characterThatFlee)) {
                 if (owner.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
                     //if character is defending, always remove hostile that is already fleeing.
@@ -453,9 +453,15 @@ public class CombatState : CharacterState {
                 }
             }
         }
-        
-        DoCombatBehavior();
 
+        if(stateComponent.owner.combatComponent.combatBehaviourParent.TryDoCombatBehaviour(stateComponent.owner, this)) {
+            //Do not further process combat if the TryDoCombatBehaviour returns true because the aspects of the combat probably has changed
+            //Instead, process the combat again
+            stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+            return;
+        }
+
+        DoCombatBehavior();
         if (isAttacking) {
             actionIconString = stateComponent.owner.combatComponent.GetCombatStateIconString(currentClosestHostile);
             string reasonKey = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
@@ -524,7 +530,7 @@ public class CombatState : CharacterState {
     //    DoCombatBehavior();
     //}
     //Returns true if there is a hostile left, otherwise, returns false
-    private void DoCombatBehavior(Character newTarget = null) {
+    private void DoCombatBehavior() {
         if(stateComponent.currentState != this) {
             return;
         }
@@ -539,15 +545,11 @@ public class CombatState : CharacterState {
             } else if (!stateComponent.owner.marker) {
                 log = $"{log}\n-Has no marker!";
             }
-            Trait taunted = stateComponent.owner.traitContainer.GetTraitOrStatus<Trait>("Taunted");
             if (forcedTarget != null) {
                 log = $"{log}\n{stateComponent.owner.name} has a forced target. Setting {forcedTarget.name} as target.";
                 SetClosestHostile(forcedTarget);
                 SetForcedTarget(null);
-            } else if (taunted != null) {
-                log = $"{log}\n{stateComponent.owner.name} is taunted. Setting {taunted.responsibleCharacter.name} as target.";
-                SetClosestHostile(taunted.responsibleCharacter);
-            } else if (currentClosestHostile != null && !stateComponent.owner.combatComponent.hostilesInRange.Contains(currentClosestHostile)) {
+            } else if (currentClosestHostile != null && !stateComponent.owner.combatComponent.IsHostileInRange(currentClosestHostile)) {
                 log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
             } else if (currentClosestHostile != null && currentClosestHostile.isDead) {
@@ -720,8 +722,9 @@ public class CombatState : CharacterState {
         //timeElapsed += Time.deltaTime;
         //if (timeElapsed >= 0.3f) {
         //    timeElapsed = 0;
-            //Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
-        if (currentClosestHostile != null) {
+        //Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
+        bool specialSkillExecuted = ExecuteSpecialSkill();
+        if (!specialSkillExecuted && currentClosestHostile != null) {
             if (currentClosestHostile.isDead || currentClosestHostile.currentHP <= 0) {
                 stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
             } else if (currentClosestHostile.currentRegion != stateComponent.owner.currentRegion) {
@@ -760,6 +763,25 @@ public class CombatState : CharacterState {
         //}
     }
     
+    //Will be checked constantly
+    private bool ExecuteSpecialSkill() {
+        if (!stateComponent.owner.combatComponent.specialSkillParent.HasSpecialSkill()) {
+            return false;
+        }
+        if (!stateComponent.owner.marker.CanAttackByAttackSpeed()) {
+            return false;
+        }
+        if (stateComponent.owner.combatComponent.specialSkillParent.TryActivateSpecialSkill(stateComponent.owner)) {
+            if (stateComponent.owner.marker.isMoving) {
+                stateComponent.owner.marker.StopMovement();
+            }
+            InnerMapManager.Instance.FaceTarget(stateComponent.owner, currentClosestHostile);
+            stateComponent.owner.marker.ResetAttackSpeed();
+            return true;
+        }
+        return false;
+    }
+
     //Will be constantly checked every frame
     private void Attack() {
         string summary = $"{stateComponent.owner.name} will attack {currentClosestHostile?.name}";
@@ -811,7 +833,7 @@ public class CombatState : CharacterState {
                 attackSummary += $"\n{damageable.name} still has remaining hp {damageable.currentHP.ToString()}/{damageable.maxHP.ToString()}";
                 if (damageable is Character hitCharacter) {
                     //if the character that attacked is not in the hostile/avoid list of the character that was hit, this means that it is not a retaliation, so the character that was hit must reduce its opinion of the character that attacked
-                    if(!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.owner) && !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.owner)) {
+                    if(!hitCharacter.combatComponent.IsHostileInRange(stateComponent.owner) && !hitCharacter.combatComponent.IsAvoidInRange(stateComponent.owner)) {
                         if (!allCharactersThatDegradedRel.Contains(hitCharacter)) {
                             hitCharacter.relationshipContainer.AdjustOpinion(hitCharacter, stateComponent.owner, "Base", -15);
                             AddCharacterThatDegradedRel(hitCharacter);

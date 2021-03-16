@@ -21,12 +21,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     public int currentHP;
     public int doNotRecoverHP;
-    public int attackPowerMod;
-    public int speedMod;
-    public int maxHPMod;
-    public int attackPowerPercentMod;
-    public int speedPercentMod;
-    public int maxHPPercentMod;
 
     public Vector3 worldPos;
     public Quaternion rotation;
@@ -79,7 +73,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> forceCancelJobsOnTickEnded;
 
     public bool isInfoUnlocked;
-    
+    public string deployedAtStructure;
+
     public SaveDataTraitContainer saveDataTraitContainer;
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
 
@@ -100,7 +95,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataMovementComponent movementComponent;
     public SaveDataStateAwarenessComponent stateAwarenessComponent;
     public SaveDataCarryComponent carryComponent;
-    public SaveDataPartyComponent partyComponent;
+    public SaveDataCharacterPartyComponent partyComponent;
     public SaveDataGatheringComponent gatheringComponent;
     public SaveDataCharacterTileObjectComponent tileObjectComponent;
     public SaveDataCrimeComponent crimeComponent;
@@ -126,12 +121,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         //isAlliedWithPlayer = data.isAlliedWithPlayer;
         currentHP = data.currentHP;
         doNotRecoverHP = data.doNotRecoverHP;
-        attackPowerMod = data.attackPowerMod;
-        speedMod = data.speedMod;
-        maxHPMod = data.maxHPMod;
-        attackPowerPercentMod = data.attackPowerPercentMod;
-        speedPercentMod = data.speedPercentMod;
-        maxHPPercentMod = data.maxHPPercentMod;
         portraitSettings = data.visuals.portraitSettings;
         advertisedActions = data.advertisedActions;
         canCombat = data.canCombat;
@@ -177,7 +166,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         movementComponent = new SaveDataMovementComponent(); movementComponent.Save(data.movementComponent);
         stateAwarenessComponent = new SaveDataStateAwarenessComponent(); stateAwarenessComponent.Save(data.stateAwarenessComponent);
         carryComponent = new SaveDataCarryComponent(); carryComponent.Save(data.carryComponent);
-        partyComponent = new SaveDataPartyComponent(); partyComponent.Save(data.partyComponent);
+        partyComponent = new SaveDataCharacterPartyComponent(); partyComponent.Save(data.partyComponent);
         gatheringComponent = new SaveDataGatheringComponent(); gatheringComponent.Save(data.gatheringComponent);
         tileObjectComponent = new SaveDataCharacterTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
@@ -272,7 +261,11 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
                 SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(jobQueueItem);
             }
         }
-        
+
+        if (data.deployedAtStructure != null) {
+            deployedAtStructure = data.deployedAtStructure.persistentID;
+        }
+
         saveDataTraitContainer = new SaveDataTraitContainer();
         saveDataTraitContainer.Save(data.traitContainer);
         

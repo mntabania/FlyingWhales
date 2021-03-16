@@ -8,7 +8,8 @@ using Ruinarch.Custom_UI;
 public abstract class InfoUIBase : MonoBehaviour {
     public Button backButton;
     public bool isShowing;
-    private Action openMenuAction;
+    private Action _openMenuAction;
+    private Action _closeMenuAction;
 
     protected object _data;
 
@@ -53,9 +54,9 @@ public abstract class InfoUIBase : MonoBehaviour {
             }
         }
         
-        if (openMenuAction != null) {
-            openMenuAction();
-            openMenuAction = null;
+        if (_openMenuAction != null) {
+            _openMenuAction();
+            _openMenuAction = null;
         }
         Messenger.Broadcast(UISignals.MENU_OPENED, this);
         
@@ -74,6 +75,7 @@ public abstract class InfoUIBase : MonoBehaviour {
     public virtual void CloseMenu() {
         isShowing = false;
         this.gameObject.SetActive(false);
+        _closeMenuAction?.Invoke();
         Messenger.Broadcast(UISignals.MENU_CLOSED, this);
     }
     public virtual void SetData(object data) {
@@ -98,6 +100,15 @@ public abstract class InfoUIBase : MonoBehaviour {
         }
     }
 
+    #region Listeners
+    public void AddCloseMenuAction(System.Action p_action) {
+        _closeMenuAction += p_action;
+    }
+    public void AddOpenMenuAction(System.Action p_action) {
+        _openMenuAction += p_action;
+    }
+    #endregion
+    
     #region Actions
     protected List<ActionItem> activeActionItems = new List<ActionItem>();
     protected virtual void LoadActions(IPlayerActionTarget target) {
@@ -161,4 +172,8 @@ public abstract class InfoUIBase : MonoBehaviour {
         return null;
     }
     #endregion
+
+    private void OnDestroy() {
+        _closeMenuAction = null;
+    }
 }

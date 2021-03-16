@@ -1664,7 +1664,7 @@ public class ReactionComponent : CharacterComponent {
                             inCombatLog = $"{inCombatLog}\n-Character that is being attacked by reactor is currently fleeing";
                             inCombatLog = $"{inCombatLog}\n-Reactor will determine combat reaction";
                             reactor.combatComponent.SetWillProcessCombat(true);
-                            //if (reactor.combatComponent.hostilesInRange.Contains(attacker) || reactor.combatComponent.avoidInRange.Contains(attacker)) {
+                            //if (reactor.combatComponent.IsHostileInRange(attacker) || reactor.combatComponent.IsAvoidInRange(attacker)) {
                             //log = log +"\n-Attacker of reactor is in hostile/avoid list of the reactor, rector will determine combat reaction";
                             //}
                         }

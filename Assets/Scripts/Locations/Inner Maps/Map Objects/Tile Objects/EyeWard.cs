@@ -14,6 +14,7 @@ public class EyeWard : TileObject {
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Indestructible");
         hiddenComponent.SetIsHidden(true);
+        PlayerManager.Instance.player.tileObjectComponent.AddEyeWard(this);
     }
     public EyeWard(SaveDataTileObject data) {
         tilesInRadius = new List<LocationGridTile>();
@@ -25,14 +26,12 @@ public class EyeWard : TileObject {
     protected override void OnSetGridTileLocation() {
         base.OnSetGridTileLocation();
         if (gridTileLocation != null && previousTile != gridTileLocation) {
-            //Add Eye Ward Effect
             tilesInRadius.Clear();
             gridTileLocation.PopulateTilesInRadius(tilesInRadius, EYE_WARD_VISION_RANGE, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tilesInRadius.Count; i++) {
                 tilesInRadius[i].tileObjectComponent.SetIsSeenByEyeWard(true);
             }
         } else if (previousTile != null && gridTileLocation == null) {
-            //Remove eye ward effect
             for (int i = 0; i < tilesInRadius.Count; i++) {
                 tilesInRadius[i].tileObjectComponent.SetIsSeenByEyeWard(false);
             }
@@ -55,8 +54,15 @@ public class EyeWard : TileObject {
     #endregion
 
     #region Utilities
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        if (PlayerManager.Instance.player.IsCurrentActiveSpell(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD)) {
+            ShowEyeWardHighlight();
+        }
+    }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
+        PlayerManager.Instance.player.tileObjectComponent.RemoveEyeWard(this);
         if(_eyeWardHighlight != null) {
             ObjectPoolManager.Instance.DestroyObject(_eyeWardHighlight.gameObject);
             _eyeWardHighlight = null;
@@ -97,14 +103,23 @@ public class EyeWard : TileObject {
             }
         }
         if(_eyeWardHighlight != null) {
+            _eyeWardHighlight.HideHighlight();
             _eyeWardHighlight.SetupHighlight(EYE_WARD_VISION_RANGE);
-            _eyeWardHighlight.gameObject.SetActive(true);
+            _eyeWardHighlight.ShowHighlight();
         }
     }
     public void HideEyeWardHighlight() {
         if (_eyeWardHighlight != null) {
-            _eyeWardHighlight.gameObject.SetActive(false);
+            _eyeWardHighlight.HideHighlight();
+
         }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadSecondWave(SaveDataTileObject data) {
+        base.LoadSecondWave(data);
+        PlayerManager.Instance.player.tileObjectComponent.AddEyeWard(this);
     }
     #endregion
 }

@@ -260,6 +260,7 @@ MonoBehaviour:
   parentDisplay: {fileID: 1286504510752918995}
   btnClose: {fileID: 1286504510395304757}
   btnReroll: {fileID: 1286504511250164110}
+  hoverHandlerReroll: {fileID: 2416656888557827428}
   txtMessageDisplay: {fileID: 1286504510721529204}
   skillsParent: {fileID: 1286504509927965863}
 --- !u!1 &1286504509883640046
@@ -1263,6 +1264,7 @@ GameObject:
   - component: {fileID: 1286504511250164112}
   - component: {fileID: 1286504511250164113}
   - component: {fileID: 1286504511250164110}
+  - component: {fileID: 2416656888557827428}
   m_Layer: 5
   m_Name: BtnReroll
   m_TagString: Untagged
@@ -1371,6 +1373,28 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2416656888557827428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286504511250164108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 1
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &2172587018289966675
 GameObject:
   m_ObjectHideFlags: 0

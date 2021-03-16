@@ -2,57 +2,62 @@
 using System.Collections.Generic;
 
 namespace Inner_Maps.Location_Structures {
-    public class DefensePoint : DemonicStructure {
+    public class DefensePoint : PartyStructure {
         public DefensePoint(Region location) : base(STRUCTURE_TYPE.DEFENSE_POINT, location) {
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            
         }
         public DefensePoint(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            
         }
 
-        public int deployedCount => deployedClass.Count;
-
-        public int maxLimitDeployedCount = 3;
-        public int readyForDeployCount;
-
-        public void RemoveItemOnRight(DeployedMonsterItemUI p_itemUI) {
-            deployedClass.Remove(p_itemUI.characterClass);
-            deployedSettings.Remove(p_itemUI.summonSettings);
-            deployedSummonType.Remove(p_itemUI.summonType);
+        public override void RemoveCharacterOnList(Character p_removeSummon) {
+            partyData.deployedSummons.Remove(p_removeSummon);
+            if (p_removeSummon.partyComponent.IsAMemberOfParty(party)) {
+                party.RemoveMember(p_removeSummon);
+                party.RemoveMemberThatJoinedQuest(p_removeSummon);
+            }
+            p_removeSummon.SetDestroyMarkerOnDeath(true);
+            p_removeSummon.Death();
         }
 
-        public void AddDeployedItem(DeployedMonsterItemUI p_itemUI) {
-            deployedClass.Add(p_itemUI.characterClass);
-            deployedSettings.Add(p_itemUI.summonSettings);
-            deployedSummonType.Add(p_itemUI.summonType);
-        }
-
-        public void AddCharacterOnList(Character p_newSummon) {
-            deployedMonsters.Add(p_newSummon);
-        }
-
-        public void RemoveCharacterOnList(Character p_removeSummon) {
-            deployedMonsters.Remove(p_removeSummon);
-            p_removeSummon.DestroyMarker();
-            CharacterManager.Instance.RemoveCharacter(p_removeSummon, true);
-        }
-        //this list has different count to the set of lists above
-        public List<Character> deployedMonsters = new List<Character>();
-        public List<SummonSettings> deployedSettings = new List<SummonSettings>();
-        public List<CharacterClass> deployedClass = new List<CharacterClass>();
-        public List<SUMMON_TYPE> deployedSummonType = new List<SUMMON_TYPE>();
-
-        void OnCharacterDied(Character p_deadMonster) { 
-            for(int x = 0; x < deployedMonsters.Count; ++x) {
-                if (p_deadMonster == deployedMonsters[x]) {
-                    PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges[deployedSummonType[x]].currentCharges++;
-                    deployedMonsters.RemoveAt(x);
-                    deployedSettings.RemoveAt(x);
-                    deployedClass.RemoveAt(x);
-                    deployedSummonType.RemoveAt(x);
-                    break;
+        public override void OnCharacterDied(Character p_deadMonster) {
+            for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
+                if (p_deadMonster == partyData.deployedSummons[x]) {
+                    PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
+                    partyData.deployedSummons.RemoveAt(x);
+                    partyData.deployedSummonSettings.RemoveAt(x);
+                    partyData.deployedCSummonlass.RemoveAt(x);
                 }
-			}
+            }    
+        }
+
+        public override void UnDeployAll() {
+            partyData.deployedSummons.ForEach((eachSummon) => {
+                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
+                eachSummon.SetDestroyMarkerOnDeath(true);
+                eachSummon.Death();
+            });
+            partyData.deployedSummons.Clear();
+            partyData.deployedSummonSettings.Clear();
+            partyData.deployedCSummonlass.Clear();
+            partyData.readyForDeploySummonCount = 0;
+            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+        }
+
+		public override void DeployParty() {
+            if (party == null) {
+                party = PartyManager.Instance.CreateNewParty(partyData.deployedSummons[0]);
+                partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
+                partyData.deployedSummons[0].faction.partyQuestBoard.CreateDemonDefendPartyQuest(partyData.deployedSummons[0],
+                        partyData.deployedSummons[0].homeSettlement, this);
+                party.TryAcceptQuest();
+            }
+            partyData.deployedSummons.ForEach((eachSummon) => {
+                if (!eachSummon.partyComponent.IsAMemberOfParty(party)) {
+                    party.AddMember(eachSummon);
+                    party.AddMemberThatJoinedQuest(eachSummon);
+                }
+            });
         }
     }
 }

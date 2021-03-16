@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 
 public class SpawnEyeWardData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPAWN_EYE_WARD;
-    public override string name => "Spawn Ward";
+    public override string name => "Spawn Eye";
     public override string description => $"Spawn an eye ward that will monitor all actions within its radius.";
     public override bool shouldShowOnContextMenu => false;
     public SpawnEyeWardData() : base() {
@@ -42,6 +42,14 @@ public class SpawnEyeWardData : PlayerAction {
             return true;
         }
         return canPerform;
+    }
+    public override void OnSetAsCurrentActiveSpell() {
+        base.OnSetAsCurrentActiveSpell();
+        PlayerManager.Instance.player.tileObjectComponent.ShowAllEyeWardHighlights();
+    }
+    public override void OnNoLongerCurrentActiveSpell() {
+        base.OnNoLongerCurrentActiveSpell();
+        PlayerManager.Instance.player.tileObjectComponent.HideAllEyeWardHighlights();
     }
     #endregion
 }

@@ -15,6 +15,10 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     [SerializeField] private GameObject restrainedIcon;
     [SerializeField] private GameObject leaderIcon;
     [SerializeField] private Image raceIcon;
+    
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
 
     public bool isActive { get; private set; }
 
@@ -24,6 +28,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         Messenger.AddListener(Signals.TICK_ENDED, UpdateAllTextsAndIcon);
         if (character != null) {
             UpdateAllTextsAndIcon();
+            btnStoreTarget.UpdateInteractableState();
         }
     }
     private void OnDisable() {
@@ -35,6 +40,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         base.SetObject(character);
         this.character = character;
         portrait.GeneratePortrait(character);
+        btnStoreTarget.SetTarget(character);
         UpdateAllTextsAndIcon();
     }
     public override void UpdateObject(Character character) {

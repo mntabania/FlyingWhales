@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
-    public class Kennel : DemonicStructure, CharacterEventDispatcher.IDeathListener {
+    public class Kennel : PartyStructure, CharacterEventDispatcher.IDeathListener {
         public override string nameplateName => $"{name}";
         public Summon occupyingSummon => _occupyingSummon;
         public override Type serializedData => typeof(SaveDataKennel);
@@ -15,8 +15,12 @@ namespace Inner_Maps.Location_Structures {
         private MarkerDummy _markerDummy;
         private Summon _occupyingSummon;
 
-        public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){ }
-        public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) { }
+        public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
+        }
+        public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) {
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
+        }
 
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
@@ -44,6 +48,9 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         public bool HasReachedKennelCapacity() {
+            if(preOccupiedBy != null) {
+                return true;
+            }
             int numOfSummons = GetNumberOfSummonsHere();
             return numOfSummons >= 1;
         }
@@ -71,6 +78,19 @@ namespace Inner_Maps.Location_Structures {
                 info = $"{info}\nOccupying Summon: {occupyingSummon.name}";
             }
             return info;
+        }
+        public override void DeployParty() {
+            party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0]);
+            partyData.deployedMinions[0].combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+            partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
+            partyData.deployedSummons.ForEach((eachSummon) => eachSummon.combatComponent.SetCombatMode(COMBAT_MODE.Defend));
+
+            partyData.deployedMinions[0].faction.partyQuestBoard.CreateDemonSnatchPartyQuest(partyData.deployedMinions[0],
+                    partyData.deployedMinions[0].homeSettlement, partyData.deployedTargets[0] as Character, this);
+            party.TryAcceptQuest();
+            party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
+            partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
+            ListenToParty();
         }
         #endregion
 
@@ -104,7 +124,7 @@ namespace Inner_Maps.Location_Structures {
                 character.traitContainer.RemoveTrait(character, "Being Drained");
             }
         }
-        public void OnCharacterDied(Character p_character) {
+        public void OnCharacterSubscribedToDied(Character p_character) {
             Assert.IsTrue(p_character == occupyingSummon, $"{name} is subscribed to death event of non occupying summon {p_character?.name}! Occupying summon is {occupyingSummon?.name}");
             UnOccupyKennelAndCheckForNewOccupant();
         }
@@ -112,7 +132,7 @@ namespace Inner_Maps.Location_Structures {
 }
 
 #region Save Data
-public class SaveDataKennel : SaveDataDemonicStructure {
+public class SaveDataKennel : SaveDataPartyStructure {
     public string occupyingSummonID;
 
     public override void Save(LocationStructure structure) {

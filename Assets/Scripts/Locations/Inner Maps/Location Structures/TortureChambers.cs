@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 
 namespace Inner_Maps.Location_Structures {
-    public class TortureChambers : DemonicStructure {
+    public class TortureChambers : PartyStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
         public override string nameplateName => "Prison";
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             nameWithoutID = "Prison";
             name = $"{nameWithoutID} {id.ToString()}";
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         }
-        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) { }
+        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) {
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
+        }
 
         #region Overrides
         public override void OnCharacterUnSeizedHere(Character character) {
@@ -28,8 +31,21 @@ namespace Inner_Maps.Location_Structures {
             StopDrainingCharactersHere();
             base.DestroyStructure();
         }
+        public override void DeployParty() {
+            party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0]);
+            partyData.deployedMinions[0].combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+            partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
+            partyData.deployedSummons.ForEach((eachSummon) => eachSummon.combatComponent.SetCombatMode(COMBAT_MODE.Defend));
+
+            partyData.deployedMinions[0].faction.partyQuestBoard.CreateDemonSnatchPartyQuest(partyData.deployedMinions[0],
+                    partyData.deployedMinions[0].homeSettlement, partyData.deployedTargets[0] as Character, this);
+            party.TryAcceptQuest();
+            party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
+            partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
+            ListenToParty();
+        }
         #endregion
-        
+
         protected override void AfterCharacterAddedToLocation(Character p_character) {
             base.AfterCharacterAddedToLocation(p_character);
             p_character.movementComponent.SetEnableDigging(false);
