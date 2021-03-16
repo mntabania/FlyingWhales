@@ -84,7 +84,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InitializeDeployedItems();
 		m_defensePointUIView.SetTitle("Defense Point");
 		ProcessDeployButtonDisplay();
-		GameManager.Instance.SetPausedState(true);
+		UIManager.Instance.Pause();
 	}
 
 	void HideDeployedItems() {
@@ -244,7 +244,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		HideSummonItems();
 		HideUI();
 		m_defensePointUIView.HideAllSubMenu();
-		GameManager.Instance.SetPausedState(false);
+		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 
 	public void OnAddSummonClicked() { m_defensePointUIView.ShowSummonSubContainer(); }

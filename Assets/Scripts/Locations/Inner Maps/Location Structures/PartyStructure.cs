@@ -131,6 +131,7 @@ namespace Inner_Maps.Location_Structures {
             });
             for(int x = 0; x < partyData.deployedSummons.Count; ++x) {
                 partyData.deployedSummons[x].Death();
+                x--;
 			}
             party.RemoveMemberThatJoinedQuest(partyData.deployedMinions[0]);
             partyData.deployedMinions[0].Death();
