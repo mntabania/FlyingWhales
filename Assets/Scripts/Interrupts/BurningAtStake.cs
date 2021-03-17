@@ -19,13 +19,13 @@ namespace Interrupts {
         //And the way to do it is set that responsible character as the target
         //The reason why we need to pass the responsible character is for the Dead trait to know who's responsible for the death of the one being burned at stake
         //It might be confusing, hence, this note
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Burning At Stake");
-            return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         public override bool PerTickInterrupt(InterruptHolder interruptHolder) {
             interruptHolder.actor.AdjustHP(-500, ELEMENTAL_TYPE.Fire);
-            if(interruptHolder.actor.currentHP <= 0) {
+            if(!interruptHolder.actor.HasHealth()) {
                 interruptHolder.actor.Death(cause: "burn_at_stake", responsibleCharacter: interruptHolder.target as Character);
             }
             return true;
@@ -34,7 +34,7 @@ namespace Interrupts {
             interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Burning At Stake");
             if (!interruptHolder.actor.isDead) {
                 interruptHolder.actor.AdjustHP(-500, ELEMENTAL_TYPE.Fire);
-                if (interruptHolder.actor.currentHP <= 0) {
+                if (!interruptHolder.actor.HasHealth()) {
                     interruptHolder.actor.Death(cause: "burn_at_stake", responsibleCharacter: interruptHolder.target as Character);
                 }
             }

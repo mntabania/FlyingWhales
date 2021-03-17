@@ -7,6 +7,9 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Character Class Data", menuName = "Scriptable Objects/Character Class Data")]
 public class CharacterClassData : ScriptableObject {
+    [Header("Combat")]
+    public CHARACTER_COMBAT_BEHAVIOUR combatBehaviourType;
+    public COMBAT_SPECIAL_SKILL combatSpecialSkillType;
     [Header("Misc")] 
     public int summonCost;
     [Header("Visuals")]

@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Grass Ent Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 6
+  combatSpecialSkillType: 0
+  summonCost: 0
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: 1d646f1df8252504f8ffb2e61b37340e, type: 3}
     animationSprites:

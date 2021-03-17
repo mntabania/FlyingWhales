@@ -1681,7 +1681,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public void OnHPReduced() {
         if (!doNotDoRecoverHPJob) {
-            if (owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && owner.isNormalCharacter && owner.currentHP > 0 && owner.currentHP < Mathf.FloorToInt(owner.maxHP * 0.5f)) {
+            if (owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && owner.isNormalCharacter && owner.HasHealth() && owner.currentHP < Mathf.FloorToInt(owner.maxHP * 0.5f)) {
                 CreateHealSelfJob();
             }
         }
@@ -2701,9 +2701,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerRestrainJob(Character target, JOB_TYPE jobType) {
-        if (!owner.jobQueue.HasJob(jobType)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.RESTRAIN_CHARACTER, target, owner);
+        JobQueueItem job;
+        if(TriggerRestrainJob(target, jobType, out job)) {
             return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    public bool TriggerRestrainJob(Character target, JOB_TYPE jobType, out JobQueueItem producedJob) {
+        producedJob = null;
+        if (!owner.jobQueue.HasJob(jobType)) {
+            producedJob = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.RESTRAIN_CHARACTER, target, owner);
+            return true;
         }
         return false;
     }
@@ -2926,8 +2934,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool CreateSnatchJob(Character targetCharacter, LocationGridTile targetLocation, LocationStructure structure) {
 	    if (owner.jobQueue.HasJob(JOB_TYPE.SNATCH, targetCharacter) == false) {
 		    owner.behaviourComponent.SetIsSnatching(true);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP, targetCharacter, owner);
-		    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure, targetLocation });
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP_RESTRAINED, targetCharacter, owner);
+		    job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { structure, targetLocation });
 		    owner.logComponent.PrintLogIfActive($"{owner.name} will do snatch job towards {targetCharacter.name}. Will drop at {structure.name}, ({targetLocation.localPlace.ToString()})");
             return owner.jobQueue.AddJobInQueue(job);
         }

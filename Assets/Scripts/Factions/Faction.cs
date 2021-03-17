@@ -182,9 +182,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             characters.Add(character);
             character.SetFaction(this);
             factionType.ProcessNewMember(character);
-            if (isPlayerFaction && character is Summon summon) {
-                Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
-            }
+            //if (isPlayerFaction && character is Summon summon) {
+            //    Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
+            //}
             return true;
         }
         return false;
@@ -632,7 +632,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     public bool IsFriendlyWith(Faction faction) {
         if (faction == this) {
-            return false;
+            return true;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Friendly;

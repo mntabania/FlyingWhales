@@ -1316,7 +1316,7 @@ public class CharacterManager : BaseMonoBehaviour {
         CharacterClassData loadedData = GetOrCreateCharacterClassData(race == RACE.SKELETON ? "Skeleton" : characterClassName);
         return loadedData.GetAssets(race);
     }
-    private CharacterClassData GetOrCreateCharacterClassData(string p_className) {
+    public CharacterClassData GetOrCreateCharacterClassData(string p_className) {
         if (_loadedClassData.ContainsKey(p_className)) {
             return _loadedClassData[p_className];
         }

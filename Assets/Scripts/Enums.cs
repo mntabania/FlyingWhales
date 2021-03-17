@@ -601,6 +601,7 @@ public enum INTERRUPT {
     Leave_Village,
     Declare_War,
     Pulled_Down,
+    Taunted,
 }
 
 public enum TRAIT_TYPE {
@@ -925,7 +926,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE, REPORT_CRIME
         , PREACH, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY, GO_TO_WAITING, PRODUCE_FOOD_FOR_CAMP, KIDNAP_RAID, STEAL_RAID, BUILD_CAMP, CAPTURE_CHARACTER, BURY_IN_ACTIVE_PARTY, VAMPIRIC_EMBRACE, BUILD_VAMPIRE_CASTLE, FIND_NEW_VILLAGE
         , IMPRISON_BLOOD_SOURCE, OFFER_BLOOD, CURE_MAGICAL_AFFLICTION, LYCAN_HUNT_PREY, STEAL_CORPSE, SUMMON_BONE_GOLEM, CHANGE_CLASS, QUARANTINE, PLAGUE_CARE, TORTURE, MONSTER_EAT_CORPSE, TRITON_KIDNAP, RETURN_STOLEN_THING
-        , DISPOSE_FOOD_PILE
+        , DISPOSE_FOOD_PILE, SNATCH_RESTRAIN,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, PARTY }
@@ -1089,14 +1090,14 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Eye_Ward_Highlight, Heal, Ice_Blast, Earth_Spike, Water_Spike,
+    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Eye_Ward_Highlight, Heal, Ice_Blast, Earth_Spike, Water_Spike, Taunt,
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
-public enum PARTY_QUEST_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, }
+public enum PARTY_QUEST_TYPE { None, Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, Demon_Defend, Demon_Snatch, Demon_Raid, }
 public enum PARTY_STATE { None, Waiting, Moving, Resting, Working, }
 public enum GATHERING_TYPE { Social, Monster_Invade }
 public enum COMBAT_REACTION { None, Fight, Flight }
@@ -1109,7 +1110,7 @@ public enum OBJECT_TYPE {
     Reaction_Quest = 24, Plague_Disease = 25
 }
 public enum PASSIVE_SKILL {
-    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb,
+    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb,
 }
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
@@ -1208,5 +1209,14 @@ public enum MINION_TYPE {
 }
 
 public enum STORED_TARGET_TYPE {
-    Character, Tile_Objects, Structures
+    Character, Tile_Objects, Structures, Monster, Village
+}
+public enum CHARACTER_COMBAT_BEHAVIOUR {
+    None, Tower, Attacker, Snatcher, Razer, Healer, Tank, Escort, Glass_Cannon, Defender,
+}
+public enum COMBAT_SPECIAL_SKILL {
+    None, Heal, Taunt,
+}
+public enum COMBAT_SPECIAL_SKILL_TARGET {
+    Single, Multiple,
 }

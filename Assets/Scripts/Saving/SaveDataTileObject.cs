@@ -22,6 +22,7 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public List<string> jobsTargetingThis;
     public List<string> existingJobsTargetingThis;
     public MAP_OBJECT_STATE mapObjectState;
+    public bool isDamageContributorToStructure;
     
     //hp
     public int currentHP;
@@ -56,6 +57,7 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         }
         isPreplaced = data.isPreplaced;
         poiState = data.state;
+        isDamageContributorToStructure = data.isDamageContributorToStructure;
         
         advertisedActions = data.advertisedActions != null ? new List<INTERACTION_TYPE>(data.advertisedActions) : new List<INTERACTION_TYPE>();
 

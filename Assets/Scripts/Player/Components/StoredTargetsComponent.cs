@@ -6,20 +6,25 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
 
     public const int MaxCapacity = 8;
     public List<IStoredTarget> allStoredTargets { get; }
-    public List<Character> storedCharacters { get; }
-    public List<TileObject> storedTileObjects { get; }
-    public List<LocationStructure> storedStructures { get; }
+    public List<IStoredTarget> storedVillagers { get; }
+    public List<IStoredTarget> storedMonsters { get; }
+    public List<IStoredTarget> storedTileObjects { get; }
+    public List<IStoredTarget> storedStructures { get; }
 
     public StoredTargetsComponent() {
         allStoredTargets = new List<IStoredTarget>();
-        storedCharacters = new List<Character>();
-        storedTileObjects = new List<TileObject>();
-        storedStructures = new List<LocationStructure>();
+        storedVillagers = new List<IStoredTarget>();
+        storedMonsters = new List<IStoredTarget>();
+        storedTileObjects = new List<IStoredTarget>();
+        storedStructures = new List<IStoredTarget>();
     }
     
     public void Store(IStoredTarget p_target) {
         allStoredTargets.Add(p_target);
         switch (p_target.storedTargetType) {
+            case STORED_TARGET_TYPE.Monster:
+                Store(p_target as Summon);
+                break;
             case STORED_TARGET_TYPE.Character:
                 Store(p_target as Character);
                 break;
@@ -42,8 +47,12 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     public bool HasStoredMaxCapacity() {
         return allStoredTargets.Count >= MaxCapacity;
     }
+    private void Store(Summon p_monster) {
+        storedMonsters.Add(p_monster);
+        p_monster.eventDispatcher.SubscribeToCharacterDied(this);
+    }
     private void Store(Character p_character) {
-        storedCharacters.Add(p_character);
+        storedVillagers.Add(p_character);
         p_character.eventDispatcher.SubscribeToCharacterDied(this);
     }
     private void Store(TileObject p_tileObject) {
@@ -57,6 +66,9 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     public void Remove(IStoredTarget p_target) {
         allStoredTargets.Remove(p_target);
         switch (p_target.storedTargetType) {
+            case STORED_TARGET_TYPE.Monster:
+                Remove(p_target as Summon);
+                break;
             case STORED_TARGET_TYPE.Character:
                 Remove(p_target as Character);
                 break;
@@ -71,8 +83,12 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
         }
         Messenger.Broadcast(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, p_target);
     }
+    private void Remove(Summon p_monster) {
+        storedMonsters.Remove(p_monster);
+        p_monster.eventDispatcher.UnsubscribeToCharacterDied(this);
+    }
     private void Remove(Character p_character) {
-        storedCharacters.Remove(p_character);
+        storedVillagers.Remove(p_character);
         p_character.eventDispatcher.UnsubscribeToCharacterDied(this);
     }
     private void Remove(TileObject p_tileObject) {
@@ -85,6 +101,8 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     }
     public bool IsAlreadyStored(IStoredTarget p_target) {
         switch (p_target.storedTargetType) {
+            case STORED_TARGET_TYPE.Monster:
+                return IsAlreadyStored(p_target as Summon);
             case STORED_TARGET_TYPE.Character:
                 return IsAlreadyStored(p_target as Character);
             case STORED_TARGET_TYPE.Tile_Objects:
@@ -94,14 +112,17 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
             default:
                 throw new ArgumentOutOfRangeException();
         }
-    } 
-    public bool IsAlreadyStored(Character p_character) {
-        return storedCharacters.Contains(p_character);
     }
-    public bool IsAlreadyStored(TileObject p_tileObject) {
+    private bool IsAlreadyStored(Character p_character) {
+        return storedVillagers.Contains(p_character);
+    }
+    private bool IsAlreadyStored(Summon p_monster) {
+        return storedMonsters.Contains(p_monster);
+    }
+    private bool IsAlreadyStored(TileObject p_tileObject) {
         return storedTileObjects.Contains(p_tileObject);
     }
-    public bool IsAlreadyStored(LocationStructure p_structure) {
+    private bool IsAlreadyStored(LocationStructure p_structure) {
         return storedStructures.Contains(p_structure);
     }
 
@@ -113,6 +134,7 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
             IStoredTarget storedTarget;
             switch (type) {
                 case STORED_TARGET_TYPE.Character:
+                case STORED_TARGET_TYPE.Monster:
                     storedTarget = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(persistentID);
                     break;
                 case STORED_TARGET_TYPE.Tile_Objects:
@@ -129,7 +151,7 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     }
     #endregion
 
-    public void OnCharacterDied(Character p_character) {
+    public void OnCharacterSubscribedToDied(Character p_character) {
         Remove(p_character as IStoredTarget);
     }
     public void OnTileObjectDestroyed(TileObject p_tileObject) {
@@ -149,7 +171,7 @@ public interface IStoredTarget {
     bool CanBeStoredAsTarget();
 }
 
-[System.Serializable]
+[Serializable]
 public class SaveDataStoredTargetsComponent : SaveData<StoredTargetsComponent> {
     public List<string> allStoredTargets;
     public List<STORED_TARGET_TYPE> allStoredTargetTypes; //NOTE: Order of this and allStoredTargets should match!

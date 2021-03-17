@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Sludge Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 5
+  combatSpecialSkillType: 1
+  summonCost: 0
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: 1435f7e66b58e284d806d86ba999b36d, type: 3}
     animationSprites:

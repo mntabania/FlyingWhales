@@ -386,6 +386,8 @@ namespace Inner_Maps {
             summary = $"{summary}\n<b>Area:</b>{(area.name ?? "None")}";
             summary = $"{summary}<b>Area Elevation:</b>{(area.elevationType.ToString() ?? "None")}";
             summary = $"{summary}<b>Area Passable Tiles:</b>{area.gridTileComponent.passableTiles.Count.ToString()}";
+            summary = $"{summary}\n<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
+            
             summary = $"{summary}<b>Tile Biome:</b>{tile.biomeType.ToString()}";
             summary = $"{summary}<b>Tile Elevation:</b>{tile.elevationType.ToString()}";
             // summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";

@@ -1,117 +1,215 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using Characters.Components;
 using Inner_Maps.Location_Structures;
+using UnityEngine;
+using UnityEngine.Assertions;
+using UtilityScripts;
+namespace Inner_Maps.Location_Structures {
+    public class PartyStructure : DemonicStructure, Party.PartyEventsIListener {
+        public override Type serializedData => typeof(SaveDataPartyStructure);
 
-public class PartyStructure : DemonicStructure {
+        public List<IStoredTarget> allPossibleTargets = new List<IStoredTarget>();
 
-    public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-    }
-    public PartyStructure(Region location, SaveDataDemonicStructure data) : base(location, data) {
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-    }
+        protected bool m_isUndeployUserAction;
 
-    protected Party m_party;
-
-    //summon list
-    public List<Character> deployedSummons = new List<Character>();
-    public List<SummonSettings> deployedSummonSettings = new List<SummonSettings>();
-    public List<CharacterClass> deployedCSummonlass = new List<CharacterClass>();
-    public List<SUMMON_TYPE> deployedSummonType = new List<SUMMON_TYPE>();
-
-    //minion list
-    public List<Character> deployedMinions = new List<Character>();
-    public List<PLAYER_SKILL_TYPE> deployedMinionsSkillType = new List<PLAYER_SKILL_TYPE>();
-    public List<CharacterClass> deployedMinionClass = new List<CharacterClass>();
-
-    public int deployedSummonCount => deployedCSummonlass.Count;
-    public int deployedMinionCount => deployedMinionsSkillType.Count;
-
-    public int maxSummonLimitDeployCount = 5;
-    public int readyForDeploySummonCount;
-    public int readyForDeployMinionCount;
-
-    public void RemoveItemOnRight(DeployedMonsterItemUI p_itemUI) {
-        if (!p_itemUI.isMinion) {
-            deployedCSummonlass.Remove(p_itemUI.characterClass);
-            deployedSummonSettings.Remove(p_itemUI.summonSettings);
-            deployedSummonType.Remove(p_itemUI.summonType);
-        } else {
-            deployedMinionClass.Remove(p_itemUI.characterClass);
-            deployedMinionsSkillType.Remove(p_itemUI.playerSkillType);
+        public bool IsAvailableForTargeting() {
+            bool isOccupied = charactersHere.Count > 0;
+            charactersHere.ForEach((eachCharacters) => isOccupied &= !eachCharacters.isDead);
+            return isOccupied;
         }
-    }
 
-    public void AddDeployedItem(DeployedMonsterItemUI p_itemUI) {
-        if (!p_itemUI.isMinion) {
-            deployedCSummonlass.Add(p_itemUI.characterClass);
-            deployedSummonSettings.Add(p_itemUI.summonSettings);
-            deployedSummonType.Add(p_itemUI.summonType);
-            AddSummonOnCharacterList(p_itemUI.deployedCharacter);
-        } else {
-            deployedMinionClass.Add(p_itemUI.characterClass);
-            deployedMinionsSkillType.Add(p_itemUI.playerSkillType);
-            AddMinionOnCharacterList(p_itemUI.deployedCharacter);
+        public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
         }
-    }
+        public PartyStructure(Region location, SaveDataDemonicStructure data) : base(location, data) {
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
+        }
 
-    public void AddMinionOnCharacterList(Character p_newSummon) {
-        deployedMinions.Add(p_newSummon);
-    }
-
-    public void AddSummonOnCharacterList(Character p_newSummon) {
-        deployedSummons.Add(p_newSummon);
-    }
-
-    public void RemoveCharacterOnList(Character p_removeSummon) {
-        deployedSummons.Remove(p_removeSummon);
-        CharacterManager.Instance.RemoveCharacter(p_removeSummon, true);
-    }
-
-    public virtual void UnDeployAll() {
-        deployedSummons.ForEach((eachSummon) => {
-            m_party.RemoveMember(eachSummon);
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
-            m_party.RemoveMemberThatJoinedQuest(eachSummon);
-            CharacterManager.Instance.RemoveCharacter(eachSummon, true);
-        });
-        m_party.RemoveMemberThatJoinedQuest(deployedMinions[0]);
-        CharacterManager.Instance.RemoveCharacter(deployedMinions[0], true);
-        deployedSummons.Clear();
-        deployedSummonSettings.Clear();
-        deployedCSummonlass.Clear();
-        deployedSummonType.Clear();
-        deployedMinionClass.Clear();
-        deployedMinionsSkillType.Clear();
-        deployedMinions.Clear();
-        readyForDeployMinionCount = 0;
-        readyForDeploySummonCount = 0;
-    }
-
-    public virtual void OnCharacterDied(Character p_deadMonster) {
-        for (int x = 0; x < deployedSummons.Count; ++x) {
-            if (p_deadMonster == deployedSummons[x]) {
-                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
-                deployedSummons.RemoveAt(x);
-                deployedSummonSettings.RemoveAt(x);
-                deployedCSummonlass.RemoveAt(x);
-                deployedSummonType.RemoveAt(x);
-                m_party.RemoveMember(p_deadMonster);
+        #region Loading
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            SaveDataPartyStructure saveData = saveDataLocationStructure as SaveDataPartyStructure;
+            if (!string.IsNullOrEmpty(saveData.partyID)) {
+                party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(saveData.partyID);
+                ListenToParty();
             }
         }
-        for (int x = 0; x < deployedMinions.Count; ++x) {
-            if (p_deadMonster == deployedMinions[x]) {
-                deployedMinionClass.RemoveAt(x);
-                deployedMinions.RemoveAt(x);
-                deployedMinionsSkillType.RemoveAt(x);
-                m_party.RemoveMember(p_deadMonster);
-                break;
+        #endregion
+
+        public Party party;
+        public PartyStructureData partyData = new PartyStructureData();
+        private bool m_isInitialized = false;
+
+        public void InitializeTeam() {
+            m_isUndeployUserAction = false;
+            if (!m_isInitialized) {
+                m_isInitialized = true;
+                if (party != null) {
+                    party.membersThatJoinedQuest.ForEach((eachMember) => {
+                        Debug.LogError(eachMember.name);
+                        if (eachMember is Summon) {
+                            partyData.deployedSummons.Add(eachMember);
+                            SummonSettings ss = CharacterManager.Instance.GetSummonSettings((eachMember as Summon).summonType);
+                            partyData.deployedSummonSettings.Add(ss);
+                            partyData.deployedCSummonlass.Add(CharacterManager.Instance.GetCharacterClass(ss.className));
+                        } else {
+                            foreach (PLAYER_SKILL_TYPE eachSkill in PlayerSkillManager.Instance.allMinionPlayerSkills) {
+                                if (eachMember.minion.minionPlayerSkillType == eachSkill) {
+                                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill);
+                                    MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
+                                    CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
+                                    partyData.deployedMinions.Add(eachMember);
+                                    partyData.deployedMinionsSkillType.Add(eachMember.minion.minionPlayerSkillType);
+                                    partyData.deployedMinionClass.Add(cClass);
+                                }
+                            }
+                        }
+                    });
+                    if (party.currentQuest != null && party.currentQuest.target != null) {
+                        partyData.deployedTargets.Add(party.currentQuest.target as IStoredTarget);
+                    }
+                }
             }
         }
+
+        public void RemoveItemOnRight(DeployedMonsterItemUI p_itemUI) {
+            if (!p_itemUI.isMinion) {
+                partyData.deployedCSummonlass.Remove(p_itemUI.characterClass);
+                partyData.deployedSummonSettings.Remove(p_itemUI.summonSettings);
+            } else {
+                partyData.deployedMinionClass.Remove(p_itemUI.characterClass);
+                partyData.deployedMinionsSkillType.Remove(p_itemUI.playerSkillType);
+            }
+        }
+
+        public void AddDeployedItem(DeployedMonsterItemUI p_itemUI) {
+            if (!p_itemUI.isMinion) {
+                partyData.deployedCSummonlass.Add(p_itemUI.characterClass);
+                partyData.deployedSummonSettings.Add(p_itemUI.summonSettings);
+                AddSummonOnCharacterList(p_itemUI.deployedCharacter);
+                p_itemUI.deployedCharacter.SetDestroyMarkerOnDeath(true);
+            } else {
+                partyData.deployedMinionClass.Add(p_itemUI.characterClass);
+                partyData.deployedMinionsSkillType.Add(p_itemUI.playerSkillType);
+                AddMinionOnCharacterList(p_itemUI.deployedCharacter);
+                p_itemUI.deployedCharacter.SetDestroyMarkerOnDeath(true);
+            }
+        }
+
+        public void AddMinionOnCharacterList(Character p_newSummon) {
+            partyData.deployedMinions.Add(p_newSummon);
+        }
+
+        public void AddSummonOnCharacterList(Character p_newSummon) {
+            partyData.deployedSummons.Add(p_newSummon);
+        }
+
+        public void AddTargetOnCurrentList(IStoredTarget p_newTarget) {
+            if (!partyData.deployedTargets.Contains(p_newTarget)) {
+                partyData.deployedTargets.Add(p_newTarget);
+            }
+        }
+
+        public void RemoveTargetOnCurrentList(IStoredTarget p_newTarget) {
+            if (partyData.deployedTargets.Contains(p_newTarget)) {
+                partyData.deployedTargets.Remove(p_newTarget);
+            }
+        }
+
+        public virtual void RemoveCharacterOnList(Character p_removeSummon) {
+            partyData.deployedSummons.Remove(p_removeSummon);
+        }
+
+        protected void ListenToParty() {
+            party.Subscribe(this);
+        }
+
+        public void OnQuestFinished() { //both succeed and failed
+        
+        }
+
+        public virtual void OnCharacterDied(Character p_deadMonster) {
+            for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
+                if (p_deadMonster == partyData.deployedSummons[x]) {
+                    PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
+                    partyData.deployedSummons.RemoveAt(x);
+                    partyData.deployedSummonSettings.RemoveAt(x);
+                    partyData.deployedCSummonlass.RemoveAt(x);
+                    break;
+                }
+            }
+            for (int x = 0; x < partyData.deployedMinions.Count; ++x) {
+                if (p_deadMonster == partyData.deployedMinions[x]) {
+                    partyData.deployedMinionClass.RemoveAt(x);
+                    partyData.deployedMinions.RemoveAt(x);
+                    partyData.deployedMinionsSkillType.RemoveAt(x);
+                    break;
+                }
+            }
+
+            if(partyData.deployedSummonCount <= 0 && partyData.deployedMinionCount <= 0) {
+                partyData.deployedTargets.Clear();
+			}
+        }
+
+        void OnTargetRemoved(IStoredTarget p_removedTarget) {
+            partyData.deployedTargets.Remove(p_removedTarget);
+		}
+
+        public virtual void DeployParty() {
+            m_isUndeployUserAction = false;
+        }
+
+        public virtual void UnDeployAll() {
+            m_isUndeployUserAction = true;
+            partyData.deployedSummons.ForEach((eachSummon) => {
+                party.RemoveMember(eachSummon);
+            });
+            List<Character> deployed = RuinarchListPool<Character>.Claim();
+            if (partyData.deployedSummons.Count > 0) {
+                deployed.AddRange(partyData.deployedSummons);    
+            }
+            for (int x = 0; x < deployed.Count; x++) {
+                deployed[x].Death();
+            }
+            if (partyData.deployedMinions.Count > 0) {
+                party.RemoveMember(partyData.deployedMinions[0]);
+                partyData.deployedMinions[0].Death();    
+            }
+            RuinarchListPool<Character>.Release(deployed);
+            partyData.ClearAllData();
+            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+        }
+
+        #region Party.EventsIListener
+        public void OnQuestSucceed() {
+            if (!m_isUndeployUserAction) {
+                UnDeployAll();
+                party.Unsubscribe(this);
+            }
+        }
+        public void OnQuestFailed() {
+            if (!m_isUndeployUserAction) {
+                UnDeployAll();
+                party.Unsubscribe(this);
+            }
+        }
+        #endregion
     }
 
-    public virtual void DeployParty() {
+    public class SaveDataPartyStructure : SaveDataDemonicStructure {
+        public string partyID;
 
+        public override void Save(LocationStructure structure) {
+            base.Save(structure);
+            PartyStructure ps = structure as PartyStructure;
+            if (ps.party != null) {
+                partyID = ps.party.persistentID;
+            }
+        }
     }
 }

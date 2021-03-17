@@ -13,11 +13,11 @@ public class UnlockStructureItemUI : MonoBehaviour {
     [SerializeField] private GameObject goCover;
     
     private PLAYER_SKILL_TYPE _structureType;
-    private SkillData _skillData;
+    private PlayerSkillData _skillData;
     
     public void SetStructureType(PLAYER_SKILL_TYPE p_type) {
         _structureType = p_type;
-        _skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
+        _skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
         lblName.text = _skillData.name;
         lblCosts.text = $"{_skillData.unlockCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}";
         btn.onClick.AddListener(OnClickStructureItem);

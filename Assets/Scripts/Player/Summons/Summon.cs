@@ -70,6 +70,7 @@ public class Summon : Character {
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null,
         Interrupt interrupt = null) {
         if (!_isDead) {
+            deathTilePosition = gridTileLocation;
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;

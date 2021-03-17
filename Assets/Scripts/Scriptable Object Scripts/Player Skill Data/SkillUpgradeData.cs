@@ -208,7 +208,7 @@ public class SkillUpgradeData
     private string GetDescription(UPGRADE_BONUS p_upgradeBonus, int p_currentLevel) {
 		switch (p_upgradeBonus) {
             case UPGRADE_BONUS.Pierce:
-            if (additionalPiercePerLevel.Count < 0) {
+            if (additionalPiercePerLevel.Count <= 0) {
                 return "Pierce: No Data";
             }
             if (p_currentLevel >= additionalPiercePerLevel.Count) {
@@ -217,7 +217,7 @@ public class SkillUpgradeData
             return additionalPiercePerLevel[p_currentLevel] + "%";
 
             case UPGRADE_BONUS.Damage:
-            if (additionalDamagePerLevel.Count < 0) {
+            if (additionalDamagePerLevel.Count <= 0) {
                 return "Damage: No Data";
             }
             if (p_currentLevel >= additionalDamagePerLevel.Count) {
@@ -226,7 +226,7 @@ public class SkillUpgradeData
             return additionalDamagePerLevel[p_currentLevel].ToString();
 
             case UPGRADE_BONUS.Duration:
-            if (durationBonusPerLevel.Count < 0) {
+            if (durationBonusPerLevel.Count <= 0) {
                 return "Duration: No Data";
             }
             if (p_currentLevel >= durationBonusPerLevel.Count) {
@@ -235,7 +235,7 @@ public class SkillUpgradeData
             return durationBonusPerLevel[p_currentLevel].ToString();
 
             case UPGRADE_BONUS.Max_HP_Percentage:
-            if (additionalMaxHPPercentagePerLevel.Count < 0) {
+            if (additionalMaxHPPercentagePerLevel.Count <= 0) {
                 return "Max HP: No Data";
             }
             if (p_currentLevel >= additionalMaxHPPercentagePerLevel.Count) {
@@ -244,7 +244,7 @@ public class SkillUpgradeData
             return additionalMaxHPPercentagePerLevel[p_currentLevel] + "%";
 
             case UPGRADE_BONUS.Atk_Percentage:
-            if (additionalAttackPercentagePerLevel.Count < 0) {
+            if (additionalAttackPercentagePerLevel.Count <= 0) {
                 return "Atk: No Data";
             }
             if (p_currentLevel >= additionalAttackPercentagePerLevel.Count) {
@@ -253,7 +253,7 @@ public class SkillUpgradeData
             return additionalAttackPercentagePerLevel[p_currentLevel] + "%";
 
             case UPGRADE_BONUS.Amplify_Effect_By_Percentage:
-            if (statsIncreasedPercentagePerLevel.Count < 0) {
+            if (statsIncreasedPercentagePerLevel.Count <= 0) {
                 return "Effect: No Data";
             }
             if (p_currentLevel >= statsIncreasedPercentagePerLevel.Count) {
@@ -262,7 +262,7 @@ public class SkillUpgradeData
             return statsIncreasedPercentagePerLevel[p_currentLevel] + "%";
 
             case UPGRADE_BONUS.Tile_Range:
-            if (additionalTileRangeBonusPerLevel.Count < 0) {
+            if (additionalTileRangeBonusPerLevel.Count <= 0) {
                 return "Tiles: No Data";
             }
             if (p_currentLevel >= additionalTileRangeBonusPerLevel.Count) {
@@ -270,7 +270,7 @@ public class SkillUpgradeData
             }
             return additionalTileRangeBonusPerLevel[p_currentLevel] + "%";
             case UPGRADE_BONUS.Cooldown:
-            if (cooldownPerLevel.Count < 0) {
+            if (cooldownPerLevel.Count <= 0) {
                 return "Tiles: No Data";
             }
             if (p_currentLevel >= cooldownPerLevel.Count) {

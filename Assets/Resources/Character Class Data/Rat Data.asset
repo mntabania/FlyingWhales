@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Rat Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  summonCost: 0
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: f640a7c988f710a48a1f4e38af36e2d4, type: 3}
     animationSprites:

@@ -116,6 +116,36 @@ public class AreaGridTileComponent : AreaComponent {
         // return chosenTile;
         return CollectionUtilities.GetRandomElement(passableTiles);
     }
+    public LocationGridTile GetRandomPassableUnoccupiedTileThatIsNotPartOfAStructure() {
+        LocationGridTile chosenTile = null;
+        List<LocationGridTile> passableTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile tile = gridTiles[i];
+            if (tile.IsPassable() && tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS && !tile.isOccupied) {
+                passableTiles.Add(tile);
+            }
+        }
+        if (passableTiles != null && passableTiles.Count > 0) {
+            chosenTile = CollectionUtilities.GetRandomElement(passableTiles);
+        }
+        ObjectPoolManager.Instance.ReturnGridTileListToPool(passableTiles);
+        return chosenTile;
+    }
+    public LocationGridTile GetRandomPassableTileThatIsNotPartOfAStructure() {
+        LocationGridTile chosenTile = null;
+        List<LocationGridTile> passableTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile tile = gridTiles[i];
+            if (tile.IsPassable() && tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                passableTiles.Add(tile);
+            }
+        }
+        if (passableTiles != null && passableTiles.Count > 0) {
+            chosenTile = CollectionUtilities.GetRandomElement(passableTiles);
+        }
+        ObjectPoolManager.Instance.ReturnGridTileListToPool(passableTiles);
+        return chosenTile;
+    }
     public LocationGridTile GetRandomUnoccupiedTile() {
         List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
         for (int i = 0; i < gridTiles.Count; i++) {

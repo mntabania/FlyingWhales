@@ -6,6 +6,8 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
     public sealed override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character is Summon summon && summon.isTamed) {
             return TamedBehaviour(character, ref log, out producedJob);
+        } else if (character.faction != null && character.faction.isPlayerFaction) {
+            return MonsterUnderlingBehaviour(character, ref log, out producedJob);
         } else {
             return WildBehaviour(character, ref log, out producedJob);
         }
@@ -22,6 +24,9 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
         }
     }
     protected abstract bool WildBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob);
+    protected virtual bool MonsterUnderlingBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
+        return WildBehaviour(p_character, ref p_log, out p_producedJob);
+    }
 
     #region Utilities
     protected bool TryTakeSettlementJob(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
@@ -57,7 +62,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
 		if (p_character is Summon summon) {
 			p_log += $"\n-{summon.name} is monster";
 			if (summon.gridTileLocation != null) {
-                if((summon.homeStructure == null || summon.homeStructure.hasBeenDestroyed) && !summon.HasTerritory()) {
+                if((summon.homeStructure == null || summon.homeStructure.hasBeenDestroyed) && !summon.HasTerritory() && (summon.faction == null || !summon.faction.isPlayerFaction)) {
                     p_log += "\n-No home structure and territory";
                     p_log += "\n-Trigger Set Home interrupt";
                     summon.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);

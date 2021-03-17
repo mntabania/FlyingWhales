@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Ice Nymph Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 9
+  combatSpecialSkillType: 0
+  summonCost: 0
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: 79d46d8a0dae90e4d9d94a14b035a251, type: 3}
     animationSprites:

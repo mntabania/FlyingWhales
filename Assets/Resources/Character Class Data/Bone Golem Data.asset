@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Bone Golem Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 6
+  combatSpecialSkillType: 2
+  summonCost: 0
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: c4151fc2bb3c6d340bf0fa63154e2a10, type: 3}
     animationSprites:

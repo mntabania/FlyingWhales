@@ -25,7 +25,7 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
                     //Should not attack objects that the character cannot reach
                     continue;
                 }
-                if(!character.combatComponent.hostilesInRange.Contains(inVisionPOI) && !character.combatComponent.avoidInRange.Contains(inVisionPOI)) {
+                if(!character.combatComponent.IsHostileInRange(inVisionPOI) && !character.combatComponent.IsAvoidInRange(inVisionPOI)) {
                     if (inVisionPOI is Character targetCharacter) {
                         //Added checker for "Unconscious", "Paralyzed", "Restrained" because since berserk is no longer lethal.
                         //Because if we didn't limit this, it can cause berserked characters becoming stuck trying to attack a character that they can no longer attack because of the

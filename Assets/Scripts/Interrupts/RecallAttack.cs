@@ -14,7 +14,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             for (int i = 0; i < interruptHolder.actor.faction.characters.Count; i++) {
                 Character follower = interruptHolder.actor.faction.characters[i];
                 if (follower.race == RACE.SKELETON && !follower.isDead) {

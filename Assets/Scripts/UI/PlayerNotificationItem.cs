@@ -134,7 +134,7 @@ public class PlayerNotificationItem : PooledObject {
         }
     }
     private void OnCharacterChangedName(Character character) {
-        if (_involvedObjects.Contains(character.persistentID)) {
+        if (character != null && !string.IsNullOrEmpty(_involvedObjects) && _involvedObjects.Contains(character.persistentID)) {
             Log log = DatabaseManager.Instance.mainSQLDatabase.GetFullLogWithPersistentID(logPersistentID);
             if (log != null) {
                 log.TryUpdateLogAfterRename(character);

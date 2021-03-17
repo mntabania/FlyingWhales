@@ -56,6 +56,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public ILocationAwareness currentLocationAwareness { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
+    public bool isDamageContributorToStructure { get; private set; }
     private bool hasSubscribedToListeners;
     public virtual StructureConnector structureConnector { get; protected set; }
     
@@ -140,6 +141,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
         currentHP = data.currentHP;
         isPreplaced = data.isPreplaced;
+        isDamageContributorToStructure = data.isDamageContributorToStructure;
         SetPOIState(data.poiState);
         CreateTraitContainer();
         LoadResources(data);
@@ -589,6 +591,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //GameManager.Instance.CreateHitEffectAt(this, elementalType);
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
+        }
+        int attackPower = characterThatAttacked.combatComponent.attack;
+        if (characterThatAttacked.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Razer)) {
+            //Razer deals bonus damage to structures
+            if (isDamageContributorToStructure) {
+                attackPower = Mathf.RoundToInt(attackPower * 1.5f);
+            }
         }
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.attack.ToString()}";
@@ -1057,7 +1066,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return charactersThatAlreadyAssumed.Contains(character);
     }
     public bool IsInHomeStructureOfCharacterWithOpinion(Character character, params string[] opinion) {
-        if(gridTileLocation != null && structureLocation != null) {
+        if (gridTileLocation != null && structureLocation != null) {
             for (int i = 0; i < structureLocation.residents.Count; i++) {
                 Character resident = structureLocation.residents[i];
                 string opinionLabel = character.relationshipContainer.GetOpinionLabel(resident);
@@ -1069,6 +1078,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         return false;
+    }
+    public void SetAsDamageContributorToStructure(bool p_state) {
+        isDamageContributorToStructure = p_state;
     }
     #endregion
 

@@ -14,14 +14,15 @@ public class UnlockMinionItemUI : MonoBehaviour {
     [SerializeField] private GameObject goPortraitCover;
 
     private PLAYER_SKILL_TYPE _minionType;
-    private MinionPlayerSkill _skillData;
+    private PlayerSkillData _skillData;
     public void SetMinionType(PLAYER_SKILL_TYPE p_type) {
         _minionType = p_type;
         string trimmed = p_type.ToString().Remove(0, 6);
         lblName.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(trimmed);
-        _skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(p_type);
+        _skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
+        MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(p_type);
         lblCosts.text = $"{_skillData.unlockCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}";
-        _portrait.GeneratePortrait(CharacterManager.Instance.GeneratePortrait(RACE.DEMON, GENDER.MALE, _skillData.className, false));
+        _portrait.GeneratePortrait(CharacterManager.Instance.GeneratePortrait(RACE.DEMON, GENDER.MALE, minionPlayerSkill.className, false));
         _portrait.AddPointerClickAction(OnClickMinionItem);
     }
 

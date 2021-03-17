@@ -35,7 +35,7 @@ namespace Traits {
             if (sourceCharacter is Character character) {
                 //_sourceCharacter = character;
                 character.needsComponent.AdjustDoNotGetTired(1);
-                if (character.currentHP <= 0) {
+                if (!character.HasHealth()) {
                     character.SetHP(1);
                 }
                 //CheckToApplyRestrainJob();

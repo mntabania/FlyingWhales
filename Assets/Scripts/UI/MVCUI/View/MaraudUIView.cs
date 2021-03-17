@@ -14,6 +14,8 @@ public class MaraudUIView : MVCUIView {
 		void OnCloseSummonSubContainer();
 		void OnCloseMinionSubContainer();
 		void OnCloseTargetSubContainer();
+		void OnHoverOver();
+		void OnHoverOut();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -81,6 +83,16 @@ public class MaraudUIView : MVCUIView {
 		UIModel.scrollViewDeployedMinions.gameObject.SetActive(false);
 	}
 
+	public void HideTargetButtonShowTargetContainer() {
+		UIModel.btnAddTarget.gameObject.SetActive(false);
+		UIModel.scrollViewDeployedTargets.gameObject.SetActive(true);
+	}
+
+	public void ShowTargetButtonHideTargetContainer() {
+		UIModel.btnAddTarget.gameObject.SetActive(true);
+		UIModel.scrollViewDeployedTargets.gameObject.SetActive(false);
+	}
+
 	public void ProcessSummonDisplay() {
 		int count = 0;
 		for (int x = 0; x < UIModel.deployedItemSummonsUI.Count; ++x) {
@@ -94,16 +106,6 @@ public class MaraudUIView : MVCUIView {
 		} else {
 			UIModel.btnAddSummon.gameObject.SetActive(true);
 		}
-	}
-
-	public void HideTargetButtonShowTargetContainer() {
-		UIModel.btnAddMinion.gameObject.SetActive(false);
-		UIModel.scrollViewDeployedMinions.gameObject.SetActive(true);
-	}
-
-	public void ShowTargetButtonHideTargetContainer() {
-		UIModel.btnAddMinion.gameObject.SetActive(true);
-		UIModel.scrollViewDeployedMinions.gameObject.SetActive(false);
 	}
 
 	public void SetTitle(string p_title) {
@@ -120,6 +122,9 @@ public class MaraudUIView : MVCUIView {
 		UIModel.subTargetContainer.SetActive(false);
 	}
 	#endregion
+	public Transform GetAvailableTargetParent() {
+		return UIModel.availableTargetsParent;
+	}
 
 	public Transform GetAvailableMinionsParent() {
 		return UIModel.availableMinionsParent;
@@ -129,6 +134,14 @@ public class MaraudUIView : MVCUIView {
 	}
 	public Transform GetDeployedSummonsParent() {
 		return UIModel.deployedSummonsParent;
+	}
+
+	public void EnableDeployButton() {
+		UIModel.btnDeploy.interactable = true;
+	}
+
+	public void DisableDeployButton() {
+		UIModel.btnDeploy.interactable = false;
 	}
 	#endregion
 
@@ -142,6 +155,8 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseSummonSubContainer += p_listener.OnCloseSummonSubContainer;
 		UIModel.onCloseMinionSubContainer += p_listener.OnCloseMinionSubContainer;
 		UIModel.onCloseTargetSubContainer += p_listener.OnCloseTargetSubContainer;
+		UIModel.onHoverOver += p_listener.OnHoverOver;
+		UIModel.onHoverOut += p_listener.OnHoverOut;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -153,6 +168,8 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseSummonSubContainer -= p_listener.OnCloseSummonSubContainer;
 		UIModel.onCloseMinionSubContainer -= p_listener.OnCloseMinionSubContainer;
 		UIModel.onCloseTargetSubContainer -= p_listener.OnCloseTargetSubContainer;
+		UIModel.onHoverOver -= p_listener.OnHoverOver;
+		UIModel.onHoverOut -= p_listener.OnHoverOut;
 	}
 	#endregion
 }

@@ -14,7 +14,7 @@ public class BiolabData : DemonicStructurePlayerSkill {
     
     protected override string InvalidMessage(LocationGridTile tile) {
         if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
-            return "You can only have 1 Biolab built at a time.";
+            return "You can only have 1 Biolab structure at a time.";
         }
         return base.InvalidMessage(tile);
     }

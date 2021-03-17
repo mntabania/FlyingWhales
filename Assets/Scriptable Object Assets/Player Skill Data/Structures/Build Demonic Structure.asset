@@ -19,6 +19,48 @@ MonoBehaviour:
   threat: 0
   threatPerHour: 0
   expCost: 0
+  cheatedLevel: 0
+  pierce: 0
   buttonSprite: {fileID: 0}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 10
+  tier: 0
+  baseLoadoutWeight: 0
+  resistanceType: 0
+  archetypeWeightedBonus: 0
+  contextMenuIcon: {fileID: 0}
+  contextMenuColumn: 0
+  playerActionIcon: {fileID: 0}
+  requirementData:
+    requirements: 
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 
+    manacostPerLevel: 
+    chargesPerLevel: 
+    bonuses: 
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel: []
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 
+    skillMovementSpeed: 

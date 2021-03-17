@@ -11,7 +11,7 @@ using Logs;
 using Locations.Area_Features;
 
 namespace Locations.Settlements {
-    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, IPlayerActionTarget, ILocation {
+    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, IPlayerActionTarget, ILocation, IStoredTarget {
 
         public static Action onSettlementBuilt;
         
@@ -32,6 +32,8 @@ namespace Locations.Settlements {
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
+        public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Village;
+        public string iconRichText => UtilityScripts.Utilities.CooldownIcon();
         public virtual Type serializedData => typeof(SaveDataBaseSettlement);
         public virtual Region region => null;
         public string locationName => name;
@@ -883,6 +885,12 @@ namespace Locations.Settlements {
         }
         public void ClearPlayerActions() {
             actions.Clear();
+        }
+        #endregion
+
+        #region IStoredTarget
+        public bool CanBeStoredAsTarget() {
+            return true;
         }
         #endregion
 

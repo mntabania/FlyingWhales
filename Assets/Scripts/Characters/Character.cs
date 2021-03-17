@@ -29,6 +29,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Minion _minion;
     private LocationStructure _currentStructure; //what structure is this character currently in.
     private Region _currentRegion;
+    public LocationGridTile deathTilePosition { protected set; get; }
 
     public string persistentID { get; private set; }
     //visuals
@@ -36,12 +37,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int currentHP { get; protected set; }
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
-    public int attackPowerMod { get; protected set; }
-    public int speedMod { get; protected set; }
-    public int maxHPMod { get; protected set; }
-    public int attackPowerPercentMod { get; protected set; }
-    public int speedPercentMod { get; protected set; }
-    public int maxHPPercentMod { get; protected set; }
     public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public string deathStr { get; private set; }
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
@@ -86,6 +81,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ILocationAwareness currentLocationAwareness { get; private set; }
     public Vector2Int gridTilePosition { get; private set; }
     public bool hasMarker { get; private set; }
+    public LocationStructure deployedAtStructure { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
 
     //misc
@@ -126,7 +122,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
-    public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Character;
+    public STORED_TARGET_TYPE storedTargetType => this is Summon ? STORED_TARGET_TYPE.Monster : STORED_TARGET_TYPE.Character;
     public string iconRichText => visuals.GetCharacterStringIcon();
     public virtual Type serializedData => typeof(SaveDataCharacter);
     public virtual string name => _firstName;
@@ -350,12 +346,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         sexuality = data.sexuality;
         currentHP = data.currentHP;
         doNotRecoverHP = data.doNotRecoverHP;
-        attackPowerMod = data.attackPowerMod;
-        speedMod = data.speedMod;
-        maxHPMod = data.maxHPMod;
-        attackPowerPercentMod = data.attackPowerPercentMod;
-        speedPercentMod = data.speedPercentMod;
-        maxHPPercentMod = data.maxHPPercentMod;
         advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
         canCombat = data.canCombat;
         deathStr = data.deathStr;
@@ -772,6 +762,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     protected void OnUpdateCharacterClass() {
+        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(_characterClass.className);
+        if(classData != null) {
+            combatComponent.combatBehaviourParent.SetCombatBehaviour(classData.combatBehaviourType, this);
+            combatComponent.specialSkillParent.SetSpecialSkill(classData.combatSpecialSkillType);
+        }
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
@@ -1350,12 +1345,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return newFaction.JoinFaction(this, bypassIdeologyChecking: bypassIdeologyChecking);
     }
     protected virtual void OnChangeFaction(Faction prevFaction, Faction newFaction) {
-        if(prevFaction?.factionType.type == FACTION_TYPE.Undead) {
-            behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
+        if(prevFaction != null) {
+            if (prevFaction.factionType.type == FACTION_TYPE.Undead) {
+                behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
+            } 
+            //else if (prevFaction.factionType.type == FACTION_TYPE.Demons) {
+            //    //This is only temporary
+            //    //Right now combat behaviours are only applicable on characters in the Demon faction
+            //    combatComponent.SetCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.None);
+            //}
         }
-        if (newFaction?.factionType.type == FACTION_TYPE.Undead) {
-            behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
+        if (newFaction != null) {
+            if (newFaction.factionType.type == FACTION_TYPE.Undead) {
+                behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
+            } 
+            //else if (newFaction.factionType.type == FACTION_TYPE.Demons) {
+            //    //This is only temporary
+            //    //Right now combat behaviours are only applicable on characters in the Demon faction
+            //    CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(_characterClass.className);
+            //    combatComponent.SetCombatBehaviour(classData.combatBehaviourType);
+            //}
         }
+
         movementComponent.OnChangeFactionTo(newFaction);
         movementComponent.RedetermineFactionsToAvoid(this);
         // if (newFaction != null && newFaction.isMajorFaction) {
@@ -2177,6 +2188,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         logComponent.RegisterLog(log, true);    
     }
+    public void SetDeployedAtStructure(LocationStructure p_structure) {
+        deployedAtStructure = p_structure;
+    }
     #endregion    
 
     #region History/Logs
@@ -2529,7 +2543,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(characterThatAttacked == null) {
             return;
         }
-        if (currentHP <= 0) {
+        if (!HasHealth()) {
             return; //if hp is already 0, do not deal damage
         }
         //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
@@ -2543,13 +2557,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             chanceToKnockout = GetChanceToBeKnockedOutBy(characterThatAttacked, ref attackSummary);
         }
-
+        if (characterThatAttacked.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Snatcher)) {
+            //Temporary additional chance to knockout for snatcher combat behaviour
+            chanceToKnockout += 20;
+        }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower);
         attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
 
         //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
-        if (currentHP <= 0) {
+        if (!HasHealth()) {
             attackSummary += $"\n{name}'s hp has reached 0.";
             if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this) && !traitContainer.HasTrait("Sturdy")) {
                 //If combat is non lethal and target has no sturdy trait, knockout
@@ -2642,7 +2659,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (marker.hpBarGO.activeSelf) {
                     marker.UpdateHP(this);
                 } else {
-                    if (amount < 0 && currentHP > 0) {
+                    if (amount < 0 && HasHealth()) {
                         //only show hp bar if hp was reduced and hp is greater than 0
                         marker.QuickShowHPBar(this);
                     }
@@ -2662,7 +2679,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //hp was increased
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
-        if (currentHP <= 0) { //triggerDeath && 
+        if (!HasHealth()) { //triggerDeath && 
             if (triggerDeath) {
                 if (source != null && source != this) {
                     if (source is Character character) {
@@ -2692,17 +2709,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void HPRecovery(float maxHPPercentage) {
-        if (doNotRecoverHP <= 0 && currentHP < maxHP && currentHP > 0) {
+        if (doNotRecoverHP <= 0 && !IsHealthFull() && HasHealth()) {
             AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP), ELEMENTAL_TYPE.Normal);
         }
     }
     public void HPRecovery(int p_amount) {
-        if (doNotRecoverHP <= 0 && currentHP < maxHP && currentHP > 0) {
+        if (doNotRecoverHP <= 0 && !IsHealthFull() && HasHealth()) {
             AdjustHP(p_amount, ELEMENTAL_TYPE.Normal);
         }
     }
     public bool IsHealthFull() {
         return currentHP >= maxHP;
+    }
+    public bool HasHealth() {
+        return currentHP > 0;
     }
     public bool IsHealthCriticallyLow() {
         //chance based dependent on the character
@@ -4661,7 +4681,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetIsConversing(false);
         SetPOIState(POI_STATE.INACTIVE);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
-        if (marker) {
+
+        partyComponent.UnfollowBeacon();
+        if (hasMarker) {
             marker.StopMovement();
             //DestroyMarker();
             //marker.collisionTrigger.SetCollidersState(false);
@@ -4920,7 +4942,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //        //        && this.IsHostileOutsider(targetCharacter) && (RelationshipManager.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
     //        //        && distance <= Combat_Signalled_Distance) {
     //        //        if (combatComponent.AddHostileInRange(targetCharacter, false)) {
-    //        //            if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
+    //        //            if (!combatComponent.IsAvoidInRange(targetCharacter)) {
     //        //                Log joinLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
     //        //                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     //        //                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -5080,7 +5102,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 playerFaction = PlayerManager.Instance.player.playerFaction;
             }
             if(playerFaction != null) {
-                if (faction == playerFaction || faction.IsFriendlyWith(playerFaction)) {
+                if (faction.IsFriendlyWith(playerFaction)) {
                     return true;
                 }
             }
@@ -5420,6 +5442,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
+        deathTilePosition = gridTileLocation;
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
@@ -5660,7 +5683,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             if(responsibleCharacter != null) {
                 if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, marker.transform.position, 1, currentRegion.innerMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, currentRegion.innerMap);
                 }
 			}
 
@@ -5878,6 +5901,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (!string.IsNullOrEmpty(data.territory)) {
             territory = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.territory);
+        }
+        if (!string.IsNullOrEmpty(data.deployedAtStructure)) {
+            deployedAtStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.deployedAtStructure);
         }
         for (int i = 0; i < data.items.Count; i++) {
             TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);

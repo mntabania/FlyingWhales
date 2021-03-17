@@ -20,7 +20,7 @@ namespace Interrupts {
             Debug.Log(
                 $"Stumble of {interruptHolder.actor.name} percent: {percentMaxHPToLose}, max hp: {interruptHolder.actor.maxHP}, lost hp: {actualHPToLose}");
             interruptHolder.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
-            if (interruptHolder.actor.currentHP <= 0) {
+            if (!interruptHolder.actor.HasHealth()) {
                 interruptHolder.actor.Death("Stumble");
             }
             return true;

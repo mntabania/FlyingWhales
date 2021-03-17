@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterPartyComponent : CharacterComponent {
     public Party currentParty { get; private set; }
-    public bool isFollowingBeacon { get; private set; }
+    public bool isFollowingBeacon { get; private set; } //Do not save this because this will be set when character go to its behaviour
 
     #region getters
     public bool hasParty => currentParty != null;
@@ -47,7 +47,7 @@ public class CharacterPartyComponent : CharacterComponent {
                 if (beacon != null && owner.hasMarker) {
                     isFollowingBeacon = true;
                     owner.movementComponent.UpdateSpeed();
-                    owner.marker.GoToPOI(beacon, OnArriveFollowingBeacon);
+                    owner.marker.GoToPOI(beacon, p_arrivalActionBeforeDigging: OnArriveFollowingBeacon);
                 }
             }
         } else {
@@ -61,7 +61,7 @@ public class CharacterPartyComponent : CharacterComponent {
         if (hasParty) {
             Character beacon = currentParty.beaconComponent.currentBeaconCharacter;
             if (beacon != null && owner.hasMarker) {
-                owner.marker.GoToPOI(beacon, OnArriveFollowingBeacon);
+                owner.marker.GoToPOI(beacon, p_arrivalActionBeforeDigging: OnArriveFollowingBeacon);
             }
         }
     }
@@ -79,7 +79,7 @@ public class CharacterPartyComponent : CharacterComponent {
     public bool CanFollowBeacon() {
         Character beacon = currentParty.beaconComponent.currentBeaconCharacter;
         if (hasParty && beacon != null) {
-            if (owner != beacon) {
+            if (owner != beacon && owner.limiterComponent.canMove && owner.limiterComponent.canPerform && !owner.isDead) {
                 if (isFollowingBeacon) {
                     return true;
                 }

@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Revenant Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 6
+  combatSpecialSkillType: 2
+  summonCost: 0
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: a19b5f90bc6be7947b9de927b1dcc222, type: 3}
     animationSprites:

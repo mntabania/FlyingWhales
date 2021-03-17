@@ -1913,7 +1913,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &71507188
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18085,7 +18085,7 @@ MonoBehaviour:
   aoeParticlesAutoDestroyPrefab: {fileID: 1567879278629922, guid: dc7f162dba7b8db4a91545a576dc0867,
     type: 3}
   particleEffectsDictionary:
-    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e0000000c0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001b0000001a0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e0000002f000000300000003100000032000000330000003400000035000000360000003700000038000000390000003a000000
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e0000000c0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001b0000001a0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e0000002f000000300000003100000032000000330000003400000035000000360000003700000038000000390000003a0000003b000000
     m_values:
     - {fileID: 5106000538713877668, guid: 50d896df8d440474a97233e68f30bf8a, type: 3}
     - {fileID: 1979527227019656, guid: 46523c9c550ae58489dc81eb94b1053f, type: 3}
@@ -18145,6 +18145,7 @@ MonoBehaviour:
     - {fileID: 3004656286122032486, guid: 8ff9fbd72df32814ea40f4479806e002, type: 3}
     - {fileID: 3004656286122032486, guid: 95055545605e25044b831273ee1d0726, type: 3}
     - {fileID: 3004656286122032486, guid: b5aa5d148eafc5d489be160927d0da4c, type: 3}
+    - {fileID: 5666783110361518185, guid: 26022f6cd77fa59468149cdddb2dd831, type: 3}
   lastProgressionBeforePausing: 
 --- !u!1 &563361166
 GameObject:
@@ -41464,7 +41465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1476203694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -45740,6 +45741,7 @@ MonoBehaviour:
   tileObjectInfoUI: {fileID: 388044833}
   partyInfoUI: {fileID: 8312167725925528708}
   structureInfoUI: {fileID: 179873882}
+  _portalUIController: {fileID: 187911616}
   unbuiltStructureInfoUI: {fileID: 8516645416588250279}
   structureRoomInfoUI: {fileID: 6563973472908480672}
   settlementInfoUI: {fileID: 1972713623}
@@ -48687,7 +48689,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 445, y: 78}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1673042613
 MonoBehaviour:
@@ -48858,6 +48860,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 308965762}
     m_Modifications:
+    - target: {fileID: 648894024448412690, guid: 65a159b014602c143bbf2126de537ad7,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4523589963864561818, guid: 65a159b014602c143bbf2126de537ad7,
         type: 3}
       propertyPath: villagersToggle
@@ -50635,10 +50642,13 @@ MonoBehaviour:
     type: 3}
   m_availableMonsterItemUI: {fileID: 2771371547691879450, guid: adf0cb294c5a0624587d3614a0925c6c,
     type: 3}
+  m_availableTargetItemUI: {fileID: 4197504112873557005, guid: f95f0b3bb27942d42a1be4e39a2ad8c2,
+    type: 3}
   m_deployedMonsterItemUI: {fileID: 5273214898117788424, guid: 9a6ad23b2df0e5a4cb931e2cb4b11018,
     type: 3}
   m_deployedSummonsUI: []
   m_deployedMinionsUI: []
+  m_deployedTargetItemUI: []
   manaCostToDeploySummon: 10
 --- !u!1 &1726405995
 GameObject:
@@ -63634,11 +63644,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 224209645274579460, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 224579316077557694, guid: 806752206f775b240af4069999713824,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -63743,66 +63748,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1211473486914351715, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1211548298771840627, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1211605194988945507, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1211757594867487455, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1211825745150429281, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1211835027257583721, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1212118789096158691, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1212224202588862239, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1212246552783591605, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1212371654438415199, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1427164637507767115, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1427164638419959459, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 806752206f775b240af4069999713824, type: 3}
