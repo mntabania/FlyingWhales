@@ -1023,6 +1023,7 @@ MonoBehaviour:
   _predeterminedOccupiedCoordinates: []
   _connectors: []
   roomTemplates: []
+  _clickCollider: {fileID: 0}
   wallsContributeToDamage: 0
   wallTileMap: {fileID: 8195094280245978910}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
@@ -1059,7 +1060,7 @@ GameObject:
   - component: {fileID: 4669725143935526992}
   - component: {fileID: 456937215120738254}
   m_Layer: 14
-  m_Name: StructureTemplateObjectData (1)
+  m_Name: StructureTemplateObjectData
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

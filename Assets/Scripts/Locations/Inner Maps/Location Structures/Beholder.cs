@@ -21,6 +21,13 @@ namespace Inner_Maps.Location_Structures {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD);
         }
+        public override void SetStructureObject(LocationStructureObject structureObj) {
+            base.SetStructureObject(structureObj);
+            Vector3 position = structureObj.transform.position;
+            position.x += 0.5f;
+            position.y += 0.5f;
+            worldPosition = position;
+        }
         #endregion
     }
 }
