@@ -219,6 +219,9 @@ public class CharacterAIPath : AILerp {
         marker.ClearArrivalAction();
         interpolator.SetPath(null);
         marker.StopMovement();
+        if(marker.character != null) {
+            marker.character.partyComponent.UnfollowBeacon();
+        }
     }
     public void ResetThis() {
         ResetEndReachedDistance();
