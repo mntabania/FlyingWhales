@@ -4681,7 +4681,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetIsConversing(false);
         SetPOIState(POI_STATE.INACTIVE);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
-        if (marker) {
+
+        partyComponent.UnfollowBeacon();
+        if (hasMarker) {
             marker.StopMovement();
             //DestroyMarker();
             //marker.collisionTrigger.SetCollidersState(false);

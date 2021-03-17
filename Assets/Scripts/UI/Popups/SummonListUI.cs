@@ -73,6 +73,8 @@ public class SummonListUI : PopupMenuBase {
         // }
     }
     private SummonMinionPlayerSkillNameplateItem CreateNewReserveSummonItem(PLAYER_SKILL_TYPE summonPlayerSkillType) {
+        //Should no longer have reserve items
+        return null;
         SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summonPlayerSkillType);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(reserveSummonItemPrefab.name, Vector3.zero, Quaternion.identity, summonListScrollView.content);
         SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
@@ -118,8 +120,8 @@ public class SummonListUI : PopupMenuBase {
     }
 
     #region Listeners
-    private void OnGainPlayerSummonSkill(PLAYER_SKILL_TYPE minionPlayerSkillType) {
-        CreateNewReserveSummonItem(minionPlayerSkillType);
+    private void OnGainPlayerSummonSkill(PLAYER_SKILL_TYPE summonPlayerSkillType) {
+        CreateNewReserveSummonItem(summonPlayerSkillType);
     }
     private void OnGainSummon(Summon summon) {
         CreateNewActiveSummonItem(summon);

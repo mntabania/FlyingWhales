@@ -79,7 +79,7 @@ public class CharacterPartyComponent : CharacterComponent {
     public bool CanFollowBeacon() {
         Character beacon = currentParty.beaconComponent.currentBeaconCharacter;
         if (hasParty && beacon != null) {
-            if (owner != beacon) {
+            if (owner != beacon && owner.limiterComponent.canMove && owner.limiterComponent.canPerform && !owner.isDead) {
                 if (isFollowingBeacon) {
                     return true;
                 }
