@@ -1,39 +1,45 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
 
-public class RegionDivision {
+public class BiomeDivision {
     public BIOMES biome { get; private set; }
-    public List<Area> tiles { get; }
+    public List<LocationGridTile> tiles { get; }
     public MonsterMigrationBiomeAtomizedData[] faunaList { get; private set; }
     public int monsterMigrationChance { get; private set; }
 
     private WeightedDictionary<MonsterMigrationBiomeAtomizedData> _faunaListWeights;
 
-    public RegionDivision(BIOMES p_biome) {
+    public BiomeDivision(BIOMES p_biome) {
         biome = p_biome;
-        tiles = new List<Area>();
+        tiles = new List<LocationGridTile>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        AddListenersBasedOnBiome();
     }
-    public RegionDivision(SaveDataRegionDivision p_data) {
+    public BiomeDivision(SaveDataRegionDivision p_data) {
         biome = p_data.biome;
         faunaList = p_data.faunaList;
         monsterMigrationChance = p_data.monsterMigrationChance;
-        tiles = new List<Area>();
+        tiles = new List<LocationGridTile>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        AddListenersBasedOnBiome();
     }
-    public void AddTile(Area p_area) {
+    public void AddTile(LocationGridTile p_area) {
         tiles.Add(p_area);
-        p_area.SetRegionDivision(this);
+    }
+    public void RemoveTile(LocationGridTile p_area) {
+        tiles.Remove(p_area);
     }
 
     #region Listeners
     private void OnDayStarted() {
+        if (tiles.Count <= 0) { return; }
         if (!WorldSettings.Instance.worldSettingsData.mapSettings.disableAllMonsterMigrations && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Affatt) {
             if(faunaList != null && faunaList.Length > 0) {
                 MonsterMigrationPerDay();
@@ -59,6 +65,19 @@ public class RegionDivision {
             }
             if (_faunaListWeights.Count > 0) {
                 for (int i = 0; i < p_capacity; i++) {
+                    if (_faunaListWeights.GetTotalOfWeights() <= 0) {
+                        _faunaListWeights.Clear();
+                        for (int j = 0; j < migrationBiomeData.dataList.Length; j++) {
+                            MonsterMigrationBiomeAtomizedData atomizedData = migrationBiomeData.dataList[j];
+                            if (atomizedData.weight > 0 && !faunaList.Contains(atomizedData)) {
+                                _faunaListWeights.AddElement(atomizedData, atomizedData.weight);
+                            }
+                        }
+                        if (_faunaListWeights.GetTotalOfWeights() <= 0) {
+                            //could not find any more elements
+                            break;
+                        }
+                    }
                     faunaList[i] = _faunaListWeights.PickRandomElementGivenWeights();
                     _faunaListWeights.RemoveElement(faunaList[i]);
                 }
@@ -72,11 +91,11 @@ public class RegionDivision {
     private void TrySpawnMonstersInFaunaList() {
         if (GameUtilities.RollChance(monsterMigrationChance)) {
             LocationStructure homeStructureOfNewMonsters = null;
-            Region region = tiles[0].region;
+            Region region = tiles[0].parentMap.region;
             for (int i = 0; i < region.allStructures.Count; i++) {
                 LocationStructure structure = region.allStructures[i];
                 if (structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR || structure.structureType == STRUCTURE_TYPE.CAVE) {
-                    if (structure.occupiedArea.regionDivision == this) {
+                    if (HasTilePartOfThisBiomeDivision(structure)) {
                         if (!structure.IsOccupied()) {
                             homeStructureOfNewMonsters = structure;
                             break;
@@ -93,6 +112,15 @@ public class RegionDivision {
         if (monsterMigrationChance == 0) {
             monsterMigrationChance = 5;
         }
+    }
+    private bool HasTilePartOfThisBiomeDivision(LocationStructure p_structure) {
+        for (int i = 0; i < p_structure.passableTiles.Count; i++) {
+            LocationGridTile tile = p_structure.passableTiles[i];
+            if (tile.biomeType == biome) {
+                return true;
+            }
+        }
+        return false;
     }
     private void SpawnMonstersFaunaListProcessing(LocationStructure p_structure) {
         WeightedDictionary<MonsterMigrationBiomeAtomizedData> faunaWeights = TryGetFaunaListWeights();
@@ -140,23 +168,56 @@ public class RegionDivision {
         return info;
     }
     #endregion
+    
+    #region Listeners
+    private void AddListenersBasedOnBiome() {
+        switch (biome) {
+            case BIOMES.GRASSLAND:
+                break;
+            case BIOMES.SNOW:
+            case BIOMES.TUNDRA:
+                Messenger.AddListener(Signals.HOUR_STARTED, TryFreezeWetObjects);
+                break;
+            case BIOMES.DESERT:
+                Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, TryRemoveFreezing);
+                break;
+            case BIOMES.FOREST:
+                break;
+        }
+    }
+    #endregion
+
+    #region Snow
+    private void TryFreezeWetObjects() {
+        Messenger.Broadcast(AreaSignals.FREEZE_WET_OBJECTS);
+    }
+    #endregion
+    
+    #region Desert
+    private void TryRemoveFreezing(Character character, Area p_area) {
+        if (p_area.gridTileComponent.centerGridTile.biomeType == biome) {
+            character.traitContainer.RemoveTrait(character, "Freezing");
+            character.traitContainer.RemoveTrait(character, "Frozen");
+        }
+    }
+    #endregion
 }
 
-public class SaveDataRegionDivision : SaveData<RegionDivision> {
+public class SaveDataRegionDivision : SaveData<BiomeDivision> {
     public BIOMES biome;
     public MonsterMigrationBiomeAtomizedData[] faunaList;
 
     public int monsterMigrationChance;
 
     #region Overrides
-    public override void Save(RegionDivision data) {
+    public override void Save(BiomeDivision data) {
         biome = data.biome;
         faunaList = data.faunaList;
         monsterMigrationChance = data.monsterMigrationChance;
     }
 
-    public override RegionDivision Load() {
-        RegionDivision data = new RegionDivision(this);
+    public override BiomeDivision Load() {
+        BiomeDivision data = new BiomeDivision(this);
         return data;
     }
     #endregion

@@ -288,14 +288,14 @@ namespace Generator.Map_Generation.Components {
 						return new List<Area>() { GridMap.Instance.map[1, 4], GridMap.Instance.map[3, 7] };
 					} else {
 						return GridMap.Instance.allAreas.Where(x => 
-								x.elevationType == ELEVATION.PLAIN && //a random flat tile
+								x.elevationComponent.IsFully(ELEVATION.PLAIN) && //a random flat tile
 								x.featureComponent.features.Count == 0 && x.primaryStructureInArea is Wilderness && //with no Features yet
 								!IsInRangeOfSettlement(x, 3) && !IsAdjacentToNonCaveSpecialStructure(x) //and not adjacent to Settlement or other non-cave landmarks
 						).ToList();
 					}
 				case STRUCTURE_TYPE.ABANDONED_MINE:
 					return GridMap.Instance.allAreas.Where(x => 
-							x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && 
+							x.elevationComponent.IsFully(ELEVATION.PLAIN) && x.featureComponent.features.Count == 0 && 
 					        x.neighbourComponent.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.primaryStructureInArea is Wilderness &&  
 					        !IsAdjacentToVillage(x) && !IsAdjacentToNonCaveSpecialStructure(x)//and not adjacent to Settlement or other non-cave landmarks
 						).ToList();
@@ -304,13 +304,13 @@ namespace Generator.Map_Generation.Components {
 						return new List<Area>() { GridMap.Instance.map[6, 1] };	
 					} else {
 						return GridMap.Instance.allAreas.Where(x => 
-								x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.primaryStructureInArea is Wilderness && 
+								x.elevationComponent.IsFully(ELEVATION.PLAIN) && x.featureComponent.features.Count == 0 && x.primaryStructureInArea is Wilderness && 
 						        !IsAdjacentToVillage(x) && !IsAdjacentToNonCaveSpecialStructure(x)//and not adjacent to Settlement or other non-cave landmarks
 							).ToList();
 					}
 				case STRUCTURE_TYPE.MAGE_TOWER:
 					return GridMap.Instance.allAreas.Where(x => 
-							x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.primaryStructureInArea is Wilderness &&  
+							x.elevationComponent.IsFully(ELEVATION.PLAIN) && x.featureComponent.features.Count == 0 && x.primaryStructureInArea is Wilderness &&  
 					        !IsAdjacentToVillage(x) && !IsAdjacentToNonCaveSpecialStructure(x)//and not adjacent to Settlement or other non-cave landmarks
 						).ToList();
 				case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
@@ -318,7 +318,7 @@ namespace Generator.Map_Generation.Components {
 						return new List<Area>() {GridMap.Instance.map[2, 2]};
 					} else {
 						return GridMap.Instance.allAreas.Where(x => 
-								x.elevationType == ELEVATION.PLAIN && x.primaryStructureInArea is Wilderness &&
+								x.elevationComponent.IsFully(ELEVATION.PLAIN) && x.primaryStructureInArea is Wilderness &&
 							    !IsAdjacentToVillage(x) && !IsAdjacentToNonCaveSpecialStructure(x)//and not adjacent to Settlement or other non-cave landmarks
 							).ToList();
 					}
@@ -327,7 +327,7 @@ namespace Generator.Map_Generation.Components {
 						return new List<Area>() {GridMap.Instance.map[2, 3]};
 					} else {
 						return GridMap.Instance.allAreas.Where(x => 
-								x.elevationType == ELEVATION.PLAIN && x.primaryStructureInArea is Wilderness &&
+								x.elevationComponent.IsFully(ELEVATION.PLAIN) && x.primaryStructureInArea is Wilderness &&
 						        !IsAdjacentToVillage(x) && !IsAdjacentToNonCaveSpecialStructure(x)//and not adjacent to Settlement or other non-cave landmarks
 							).ToList();
 					}
@@ -336,7 +336,7 @@ namespace Generator.Map_Generation.Components {
 						return new List<Area>() {GridMap.Instance.map[3, 0]};
 					} else {
 						return GridMap.Instance.allAreas.Where(x => 
-								x.elevationType == ELEVATION.PLAIN && x.primaryStructureInArea is Wilderness &&
+								x.elevationComponent.IsFully(ELEVATION.PLAIN) && x.primaryStructureInArea is Wilderness &&
 						        !IsAdjacentToVillage(x) && !IsAdjacentToNonCaveSpecialStructure(x)//and not adjacent to Settlement or other non-cave landmarks
 							).ToList();
 					}

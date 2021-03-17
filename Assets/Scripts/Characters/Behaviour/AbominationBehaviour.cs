@@ -23,8 +23,7 @@ public class AbominationBehaviour : BaseMonsterBehaviour {
             //if still no target tile, then just roam around current one
             return character.jobComponent.TriggerRoamAroundTile(out producedJob);
         } else {
-            LocationGridTile targetTile =
-                CollectionUtilities.GetRandomElement(character.behaviourComponent.abominationTarget.gridTileComponent.gridTiles);
+            LocationGridTile targetTile = character.behaviourComponent.abominationTarget.gridTileComponent.GetRandomPassableTile();
             return character.jobComponent.TriggerRoamAroundTile(out producedJob, targetTile);
         }
     }

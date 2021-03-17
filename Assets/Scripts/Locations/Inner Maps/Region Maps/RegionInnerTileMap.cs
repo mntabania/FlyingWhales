@@ -15,7 +15,7 @@ namespace Inner_Maps {
         [SerializeField] private GameObject regionDirectionPrefab;
         private Bounds groundMapLocalBounds;
         
-        public IEnumerator GenerateMap(MapGenerationComponent mapGenerationComponent) {
+        public IEnumerator GenerateMap(MapGenerationComponent mapGenerationComponent, MapGenerationData data) {
             name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
             ClearAllTileMaps();
@@ -23,7 +23,17 @@ namespace Inner_Maps {
             Vector2Int innerMapSize = GetInnerMapSizeGivenRegionDimensions(regionDimensions);
             yield return StartCoroutine(GenerateGrid(innerMapSize.x, innerMapSize.y, mapGenerationComponent));
             PopulateNeededAreaDataAfterGridGeneration(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
-            yield return StartCoroutine(GenerateDetails(mapGenerationComponent));
+            
+            int minX = allTiles.Min(t => t.localPlace.x);
+            int maxX = allTiles.Max(t => t.localPlace.x);
+            int minY = allTiles.Min(t => t.localPlace.y);
+            int maxY = allTiles.Max(t => t.localPlace.y);
+            int xSize = maxX - minX;
+            int ySize = maxY - minY;
+            
+            yield return StartCoroutine(GroundPerlin(allTiles, xSize, ySize, xSeed, ySeed));
+            yield return StartCoroutine(GenerateElevationMap(mapGenerationComponent, data));
+            yield return StartCoroutine(GenerateDetails(mapGenerationComponent, xSize, ySize));
             groundMapLocalBounds = groundTilemap.localBounds;
         }
         public IEnumerator LoadMap(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, SaveDataCurrentProgress saveData) {

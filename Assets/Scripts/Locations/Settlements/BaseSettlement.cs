@@ -539,7 +539,11 @@ namespace Locations.Settlements {
         #region Tiles
         public void AddAreaToSettlement(Area p_area) {
             if (p_area.settlementOnArea != null) {
-                return;
+                //allow villages to overwrite settlement on area that is set to a cave or a special structure 
+                if (p_area.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE) {
+                    Debug.LogWarning($"Could not add {p_area} to settlement {name} because it is already part of {p_area.settlementOnArea.name}");
+                    return;    
+                }
             }
             if (areas.Contains(p_area) == false) {
                 areas.Add(p_area);
@@ -650,31 +654,6 @@ namespace Locations.Settlements {
                 }
             }
             if(choices != null && choices.Count > 0) {
-                chosenArea = choices[UnityEngine.Random.Range(0, choices.Count)];
-            }
-            ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
-            return chosenArea;
-        }
-        public Area GetAPlainAdjacentAreaThatMeetCriteria(System.Func<Area, bool> checker) {
-            List<Area> choices = ObjectPoolManager.Instance.CreateNewAreaList();
-            Area chosenArea = null;
-            for (int i = 0; i < areas.Count; i++) {
-                Area area = areas[i];
-                for (int j = 0; j < area.neighbourComponent.neighbours.Count; j++) {
-                    Area neighbour = area.neighbourComponent.neighbours[j];
-                    if (neighbour.region != area.region) {
-                        continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
-                    }
-                    if (neighbour.elevationType != ELEVATION.MOUNTAIN && neighbour.elevationType != ELEVATION.WATER && neighbour.settlementOnArea == null) {
-                        if (!areas.Contains(neighbour)) {
-                            if (checker.Invoke(neighbour)) {
-                                choices.Add(neighbour);
-                            }
-                        }
-                    }
-                }
-            }
-            if (choices != null && choices.Count > 0) {
                 chosenArea = choices[UnityEngine.Random.Range(0, choices.Count)];
             }
             ObjectPoolManager.Instance.ReturnAreaListToPool(choices);

@@ -29,7 +29,7 @@ public class Region : ISavable, ILogFiller {
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
-    public RegionDivisionComponent regionDivisionComponent { get; }
+    public BiomeDivisionComponent biomeDivisionComponent { get; }
     /// <summary>
     /// Number of tile objects in this region categorized by type.
     /// NOTE: This isn't saved/loaded since this is updated every time a new tile object is placed.
@@ -66,7 +66,7 @@ public class Region : ISavable, ILogFiller {
         areas = new List<Area>();
         AddTile(coreTile);
         regionColor = GenerateRandomRegionColor();
-        regionDivisionComponent = new RegionDivisionComponent();
+        biomeDivisionComponent = new BiomeDivisionComponent();
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
     }
     public Region(SaveDataRegion data) : this() {
@@ -79,7 +79,7 @@ public class Region : ISavable, ILogFiller {
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
 
         //Components
-        regionDivisionComponent = data.regionDivisionComponent.Load();
+        biomeDivisionComponent = data.regionDivisionComponent.Load();
     }
 
     #region Loading

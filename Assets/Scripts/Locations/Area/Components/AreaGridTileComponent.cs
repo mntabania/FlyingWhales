@@ -11,11 +11,13 @@ public class AreaGridTileComponent : AreaComponent {
     public LocationGridTile centerGridTile { get; private set; }
     public List<LocationGridTile> gridTiles { get; private set; }
     public List<LocationGridTile> borderTiles { get; private set; }
+    public List<LocationGridTile> passableTiles { get; }
     public bool isCorrupted => gridTiles.Any(t => t.corruptionComponent.isCorrupted);
 
     public AreaGridTileComponent() {
         gridTiles = new List<LocationGridTile>();
         borderTiles = new List<LocationGridTile>();
+        passableTiles = new List<LocationGridTile>();
     }
 
     #region Data Setting
@@ -24,6 +26,9 @@ public class AreaGridTileComponent : AreaComponent {
     }
     public void AddGridTile(LocationGridTile p_gridTile) {
         gridTiles.Add(p_gridTile);
+        if (p_gridTile.IsPassable()) {
+            AddPassableTile(p_gridTile);
+        }
     }
     public void PopulateBorderTiles(Area p_area) {
         borderTiles.Clear();
@@ -66,7 +71,14 @@ public class AreaGridTileComponent : AreaComponent {
         //B = (0, 7) to (6, 7)
         //C = (7, 0) to (7, 7)
         //D = (1, 0) to (6, 0)
-
+    }
+    public void AddPassableTile(LocationGridTile p_tile) {
+        if (!passableTiles.Contains(p_tile)) {
+            passableTiles.Add(p_tile);    
+        }
+    }
+    public void RemovePassableTile(LocationGridTile p_tile) {
+        passableTiles.Remove(p_tile);
     }
     #endregion
     
@@ -89,19 +101,20 @@ public class AreaGridTileComponent : AreaComponent {
         return null;
     }
     public LocationGridTile GetRandomPassableTile() {
-        LocationGridTile chosenTile = null;
-        List<LocationGridTile> passableTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
-        for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile tile = gridTiles[i];
-            if (tile.IsPassable()) {
-                passableTiles.Add(tile);
-            }
-        }
-        if (passableTiles != null && passableTiles.Count > 0) {
-            chosenTile = CollectionUtilities.GetRandomElement(passableTiles);
-        }
-        ObjectPoolManager.Instance.ReturnGridTileListToPool(passableTiles);
-        return chosenTile;
+        // LocationGridTile chosenTile = null;
+        // List<LocationGridTile> passableTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+        // for (int i = 0; i < gridTiles.Count; i++) {
+        //     LocationGridTile tile = gridTiles[i];
+        //     if (tile.IsPassable()) {
+        //         passableTiles.Add(tile);
+        //     }
+        // }
+        // if (passableTiles != null && passableTiles.Count > 0) {
+        //     chosenTile = CollectionUtilities.GetRandomElement(passableTiles);
+        // }
+        // ObjectPoolManager.Instance.ReturnGridTileListToPool(passableTiles);
+        // return chosenTile;
+        return CollectionUtilities.GetRandomElement(passableTiles);
     }
     public LocationGridTile GetRandomPassableUnoccupiedTileThatIsNotPartOfAStructure() {
         LocationGridTile chosenTile = null;
@@ -150,9 +163,9 @@ public class AreaGridTileComponent : AreaComponent {
     }
     public LocationGridTile GetRandomPassableInOpenSpaceTile() {
         List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
-        for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile tile = gridTiles[i];
-            if (tile.IsPassable() && tile.structure.structureType.IsOpenSpace()) {
+        for (int i = 0; i < passableTiles.Count; i++) {
+            LocationGridTile tile = passableTiles[i];
+            if (tile.structure.structureType.IsOpenSpace()) {
                 tiles.Add(tile);
             }
         }
@@ -180,9 +193,9 @@ public class AreaGridTileComponent : AreaComponent {
     }
     public LocationGridTile GetRandomPassableUnoccupiedNonWaterTile() {
         List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
-        for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile tile = gridTiles[i];
-            if (tile.tileObjectComponent.objHere == null && tile.groundType != LocationGridTile.Ground_Type.Water && tile.IsPassable()) {
+        for (int i = 0; i < passableTiles.Count; i++) {
+            LocationGridTile tile = passableTiles[i];
+            if (tile.tileObjectComponent.objHere == null && tile.elevationType != ELEVATION.WATER) {
                 tiles.Add(tile);
             }
         }

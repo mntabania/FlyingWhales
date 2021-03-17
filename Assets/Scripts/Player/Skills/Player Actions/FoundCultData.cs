@@ -29,7 +29,9 @@ public class FoundCultData : PlayerAction {
                         StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, character.faction.factionType.usesCorruptedStructures);
                         List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                        character.jobComponent.TriggerFindNewVillage(targetArea.gridTileComponent.centerGridTile, chosenStructurePrefab.name);
+                        if (LandmarkManager.Instance.HasEnoughSpaceForStructure(chosenStructurePrefab.name, targetArea.gridTileComponent.centerGridTile)) {
+                            character.jobComponent.TriggerFindNewVillage(targetArea.gridTileComponent.centerGridTile, chosenStructurePrefab.name);
+                        }
                     }    
                 } else {
                     PlayerUI.Instance.ShowGeneralConfirmation("Village Capacity Reached", 

@@ -53,8 +53,10 @@ namespace Inner_Maps {
                 owner.SetTileState(LocationGridTile.Tile_State.Occupied);
                 if (!owner.IsPassable()) {
                     owner.structure.RemovePassableTile(owner);
+                    owner.area.gridTileComponent.RemovePassableTile(owner);
                 } else if (owner.IsPassable() && !isPassablePreviously) {
                     owner.structure.AddPassableTile(owner);
+                    owner.area.gridTileComponent.AddPassableTile(owner);
                 }
                 Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, owner, poi);
             }

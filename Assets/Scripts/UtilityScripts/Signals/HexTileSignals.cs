@@ -7,5 +7,5 @@
     /// <summary>
     /// Parameters (Area)
     /// </summary>
-    public static string FREEZE_WET_OBJECTS_IN_AREA = "FreezeObjectsInArea";
+    public static string FREEZE_WET_OBJECTS = "FreezeObjects";
 }

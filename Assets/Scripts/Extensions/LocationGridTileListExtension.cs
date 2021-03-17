@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Locations.Settlements;
+using UtilityScripts;
 
 public static class LocationGridTileListExtension {
     public static List<LocationGridTile> GetTilesCharacterCanGoTo(this List<LocationGridTile> p_tiles, Character p_character) {
@@ -29,6 +30,18 @@ public static class LocationGridTileListExtension {
                 return tile;
             }
         }
+        return null;
+    }
+    public static LocationGridTile GetRandomPassableTile(this List<LocationGridTile> p_tiles) {
+        List<LocationGridTile> shuffled = CollectionUtilities.Shuffle(p_tiles);
+        for (int i = 0; i < shuffled.Count; i++) {
+            LocationGridTile tile = shuffled[i];
+            if (tile.IsPassable()) {
+                RuinarchListPool<LocationGridTile>.Release(shuffled);
+                return tile;
+            }
+        }
+        RuinarchListPool<LocationGridTile>.Release(shuffled);
         return null;
     }
 }

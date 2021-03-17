@@ -33,6 +33,94 @@
         }
       ]
     },
+    "xSeed": 98465.964,
+    "ySeed": 65447.31,
+    "biomePerlinNoiseSettings": {
+      "noiseScale": 40.4,
+      "octaves": 3,
+      "persistance": 0.0,
+      "lacunarity": 2.0,
+      "seed": 78123,
+      "offset": {
+        "x": 13.09,
+        "y": 12.0
+      },
+      "regions": [
+        {
+          "name": "DESERT",
+          "height": 0.3,
+          "color": {
+            "r": 1.0,
+            "g": 0.9215686,
+            "b": 0.01568628,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "GRASSLAND",
+          "height": 0.65,
+          "color": {
+            "r": 0.0,
+            "g": 1.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "SNOW",
+          "height": 1.0,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        }
+      ]
+    },
+    "elevationPerlinNoiseSettings": {
+      "noiseScale": 34.15,
+      "octaves": 4,
+      "persistance": 0.5,
+      "lacunarity": 2.0,
+      "seed": 34576,
+      "offset": {
+        "x": 13.09,
+        "y": 12.0
+      },
+      "regions": [
+        {
+          "name": "Water",
+          "height": 0.25,
+          "color": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "Plain",
+          "height": 0.65,
+          "color": {
+            "r": 0.0,
+            "g": 1.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "Cave",
+          "height": 1.0,
+          "color": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        }
+      ]
+    },
     "hextileSaves": null,
     "areaSaves": [
       {
@@ -6735,8 +6823,8 @@
     "specialStructureSaves": [
       {
         "location": {
-          "X": 1,
-          "Y": 11
+          "X": 5,
+          "Y": 7
         },
         "structureType": "MONSTER_LAIR"
       },
@@ -6749,7 +6837,7 @@
       },
       {
         "location": {
-          "X": 5,
+          "X": 4,
           "Y": 5
         },
         "structureType": "ABANDONED_MINE"
@@ -6763,15 +6851,15 @@
       },
       {
         "location": {
-          "X": 8,
-          "Y": 13
+          "X": 10,
+          "Y": 10
         },
         "structureType": "MONSTER_LAIR"
       },
       {
         "location": {
-          "X": 13,
-          "Y": 3
+          "X": 12,
+          "Y": 0
         },
         "structureType": "MAGE_TOWER"
       },
@@ -6788,20 +6876,8 @@
     {
       "areas": [
         {
-          "X": 1,
-          "Y": 2
-        },
-        {
-          "X": 2,
-          "Y": 2
-        },
-        {
-          "X": 2,
+          "X": 4,
           "Y": 3
-        },
-        {
-          "X": 3,
-          "Y": 2
         }
       ],
       "structureSettings": [
@@ -6857,8 +6933,8 @@
     {
       "areas": [
         {
-          "X": 11,
-          "Y": 2
+          "X": 9,
+          "Y": 5
         },
       ],
       "structureSettings": [
@@ -6914,8 +6990,8 @@
     {
       "areas": [
         {
-          "X": 5,
-          "Y": 10
+          "X": 3,
+          "Y": 11
         },
       ],
       "structureSettings": [
@@ -6971,8 +7047,8 @@
     {
       "areas": [
         {
-          "X": 11,
-          "Y": 10
+          "X": 12,
+          "Y": 11
         }
       ],
       "structureSettings": [

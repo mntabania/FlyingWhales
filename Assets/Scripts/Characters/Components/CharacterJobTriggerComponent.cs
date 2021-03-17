@@ -422,7 +422,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         bool hasChosenTile = false;
         Area chosenArea = owner.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.MOUNTAIN && a.elevationType != ELEVATION.WATER && a.neighbourComponent.IsNextToVillage() && a.settlementOnArea == null && owner.movementComponent.HasPathTo(a));
         if(chosenArea != null) {
-            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenArea.gridTileComponent.gridTiles.Where(t => owner.movementComponent.HasPathTo(t)));
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenArea.gridTileComponent.passableTiles.Where(t => owner.movementComponent.HasPathTo(t)));
             if(chosenTile != null) {
                 hasChosenTile = true;
                 job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { chosenTile.structure, chosenTile });
@@ -942,8 +942,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                 } else {
 				    Area chosenTerritory = owner.areaLocation;
-				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.gridTileComponent.gridTiles);
-			    }
+				    chosenTile = chosenTerritory.gridTileComponent.GetRandomPassableTile();
+                }
 		    }
 		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
 		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);

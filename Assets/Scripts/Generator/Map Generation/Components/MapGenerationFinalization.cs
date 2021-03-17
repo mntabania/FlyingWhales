@@ -150,7 +150,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Region region = GridMap.Instance.allRegions[i];
 			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
-				t.area.settlementOnArea == null && t.area.elevationType == ELEVATION.PLAIN).ToList();
+				t.area.settlementOnArea == null && t.elevationType == ELEVATION.PLAIN).ToList();
 			if (locationChoices.Count > 0) {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					if (i == 1) {
@@ -183,8 +183,11 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							locationChoices.Remove(chosenTile);
 						}
 						//spawn faction heirloom
-						LocationStructure barracks = region.GetRandomStructureOfType(STRUCTURE_TYPE.BARRACKS);
-						LocationGridTile heirloomTile = CollectionUtilities.GetRandomElement(barracks.unoccupiedTiles);
+						LocationStructure heirloomLocation = region.GetRandomStructureOfType(STRUCTURE_TYPE.BARRACKS);
+						if (heirloomLocation == null) {
+							heirloomLocation = region.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+						}
+						LocationGridTile heirloomTile = CollectionUtilities.GetRandomElement(heirloomLocation.unoccupiedTiles);
 						TileObject heirloom = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEIRLOOM);
 						heirloomTile.structure.AddPOI(heirloom, heirloomTile);
 						Faction faction = FactionManager.Instance.GetMajorFactionWithRace(RACE.HUMANS).First();
@@ -209,9 +212,8 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		}
 	}
 	private void RandomRegionalItemGeneration(Region region, ref List<LocationGridTile> locationChoices) {
-		ItemGenerationSetting itemGenerationSetting =
-			WorldConfigManager.Instance.worldWideItemGenerationSetting;
-		List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
+		ItemGenerationSetting itemGenerationSetting = WorldConfigManager.Instance.worldWideItemGenerationSetting;
+		List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome();
 		if (itemChoices != null) {
 			ItemSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(itemChoices);
 			int randomAmount = Random.Range(1, 5);
@@ -233,7 +235,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			if (structure.structureType != STRUCTURE_TYPE.CAVE) {
 				StructureData landmarkData = LandmarkManager.Instance.GetStructureData(structure.structureType);
 				if (landmarkData.itemGenerationSetting != null) {
-					List<ItemSetting> itemChoices = landmarkData.itemGenerationSetting.GetItemChoicesForBiome(structure.occupiedArea.biomeType);
+					List<ItemSetting> itemChoices = landmarkData.itemGenerationSetting.GetItemChoicesForBiome();
 					if (itemChoices != null) {
 						int iterations = landmarkData.itemGenerationSetting.iterations.Random();
 						for (int j = 0; j < iterations; j++) {
@@ -257,7 +259,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Region region = GridMap.Instance.allRegions[i];
 			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
 				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
-				List<ItemSetting> itemChoices = caveData.itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
+				List<ItemSetting> itemChoices = caveData.itemGenerationSetting.GetItemChoicesForBiome();
 				for (int j = 0; j < caves.Count; j++) {
 					LocationStructure cave = caves[j];
 					int hexTileCount = GetHexTileCountOfCave(cave) - 1;

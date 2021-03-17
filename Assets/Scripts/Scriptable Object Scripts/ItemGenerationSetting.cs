@@ -9,11 +9,8 @@ public class ItemGenerationSetting : ScriptableObject {
     public IntRange iterations => _iterations;
     #endregion
 
-    public List<ItemSetting> GetItemChoicesForBiome(BIOMES biome) {
+    public List<ItemSetting> GetItemChoicesForBiome() {
         List<ItemSetting> settings = new List<ItemSetting>();
-        if (_itemChoices.ContainsKey(biome)) {
-            settings.AddRange(_itemChoices[biome]);
-        }
         if (_itemChoices.ContainsKey(BIOMES.NONE)) {
             settings.AddRange(_itemChoices[BIOMES.NONE]);
         }

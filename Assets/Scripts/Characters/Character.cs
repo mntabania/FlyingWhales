@@ -1765,10 +1765,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return homeSettlement != null || (homeStructure != null && !homeStructure.hasBeenDestroyed) || HasTerritory();
     }
     public bool IsAtHome() {
-        if (homeSettlement != null) {
-            return IsInHomeSettlement();
-        } else if (homeStructure != null) {
+        if (homeStructure != null) {
             return isAtHomeStructure;
+        } else if (homeSettlement != null) {
+            return IsInHomeSettlement();
         } else if (territory != null) {
             return IsInTerritory();
         }

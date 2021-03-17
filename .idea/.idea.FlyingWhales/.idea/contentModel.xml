@@ -1900,6 +1900,7 @@
                 <e p="AreaBiomeComponent.cs" t="Include" />
                 <e p="AreaBiomeEffectTrigger.cs" t="Include" />
                 <e p="AreaComponent.cs" t="Include" />
+                <e p="AreaElevationComponent.cs" t="Include" />
                 <e p="AreaFeatureComponent.cs" t="Include" />
                 <e p="AreaGridTileComponent.cs" t="Include" />
                 <e p="AreaNeighbourComponent.cs" t="Include" />
@@ -1934,6 +1935,8 @@
                   <e p="StructureTemplateObjectData.cs" t="Include" />
                 </e>
               </e>
+              <e p="BaseIsland.cs" t="Include" />
+              <e p="BiomeIsland.cs" t="Include" />
               <e p="BiomeTileObjectTileSetting.cs" t="Include" />
               <e p="Building Spots" t="Include">
                 <e p="AreaItem.cs" t="Include" />
@@ -1952,10 +1955,12 @@
                 <e p="WallAsset.cs" t="Include" />
                 <e p="WallResouceAssets.cs" t="Include" />
               </e>
+              <e p="ElevationIsland.cs" t="Include" />
               <e p="InnerMapAssetManager.cs" t="Include" />
               <e p="InnerMapCenter.cs" t="Include" />
               <e p="InnerMapManager.cs" t="Include" />
               <e p="InnerTileMap.cs" t="Include" />
+              <e p="InnerTileMapElevation.cs" t="Include" />
               <e p="Lights" t="Include">
                 <e p="InnerMapLight.cs" t="Include" />
               </e>
@@ -2302,6 +2307,8 @@
             <e p="LocationClassManager.cs" t="Include" />
             <e p="LocationEventManager.cs" t="Include" />
             <e p="Region" t="Include">
+              <e p="BiomeDivision.cs" t="Include" />
+              <e p="BiomeDivisionComponent.cs" t="Include" />
               <e p="Landmarks" t="Include">
                 <e p="BaseLandmark.cs" t="Include" />
               </e>
@@ -2318,8 +2325,6 @@
                 <e p="VaporVentsFeature.cs" t="Include" />
               </e>
               <e p="Region.cs" t="Include" />
-              <e p="RegionDivision.cs" t="Include" />
-              <e p="RegionDivisionComponent.cs" t="Include" />
             </e>
             <e p="SettlementClassTracker.cs" t="Include" />
             <e p="Settlements" t="Include">
@@ -2432,6 +2437,10 @@
             <e p="PriorityQueue.cs" t="Include" />
             <e p="RuinarchGridGraph.cs" t="Include" />
             <e p="SpacialObject.cs" t="Include" />
+          </e>
+          <e p="Perlin Noise" t="Include">
+            <e p="Noise.cs" t="Include" />
+            <e p="PerlinNoiseSettings.cs" t="Include" />
           </e>
           <e p="Player" t="Include">
             <e p="Archetypes" t="Include">

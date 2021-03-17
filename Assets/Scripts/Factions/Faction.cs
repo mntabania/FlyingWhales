@@ -1139,7 +1139,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     private void DoneHeirloomSearch() {
         if(factionHeirloom != null) {
-            if(factionHeirloom.gridTileLocation != null && !factionHeirloom.IsInStructureSpot() && factionHeirloom.gridTileLocation.area.biomeType == BIOMES.DESERT && 
+            if(factionHeirloom.gridTileLocation != null && !factionHeirloom.IsInStructureSpot() && 
                !partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Heirloom_Hunt) && !HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
                 factionJobTriggerComponent.TriggerHeirloomHuntJob(factionHeirloom.gridTileLocation.structure.region);
             }

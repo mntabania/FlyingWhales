@@ -21,7 +21,7 @@ public class HeatWaveData : SkillData {
         bool canPerform = base.CanPerformAbilityTowards(targetArea);
         if (canPerform) {
             return targetArea != null
-                   && targetArea.biomeType != BIOMES.SNOW
+                   // && targetArea.biomeType != BIOMES.SNOW
                    && targetArea.featureComponent.HasFeature(AreaFeatureDB.Heat_Wave_Feature) == false;
         }
         return canPerform;
