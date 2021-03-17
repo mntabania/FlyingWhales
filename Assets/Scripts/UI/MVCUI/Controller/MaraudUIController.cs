@@ -208,7 +208,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void InitializeSummons() {
 		int ctr = 0;
-		foreach (KeyValuePair<SUMMON_TYPE, MonsterUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
+		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndMinionUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
 			SummonSettings settings = CharacterManager.Instance.GetSummonSettings(entry.Key);
 			CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 			CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(cClass.className);

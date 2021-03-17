@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterUnderlingCharges> {
+public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndMinionUnderlingCharges> {
 
     [Header("Attributes")]
     [SerializeField] private CharacterPortrait portrait;
 
 
-    private MonsterUnderlingCharges _monster;
-    public override MonsterUnderlingCharges obj => _monster;
+    private MonsterAndMinionUnderlingCharges _monsterOrMinion;
+    public override MonsterAndMinionUnderlingCharges obj => _monsterOrMinion;
 
-    public override void SetObject(MonsterUnderlingCharges o) {
+    public override void SetObject(MonsterAndMinionUnderlingCharges o) {
         base.SetObject(o);
-        _monster = o;
+        _monsterOrMinion = o;
         UpdateVisuals();
         UpdateMainText();
         UpdateBasicData();
@@ -25,13 +25,16 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterUnderl
         UpdateQuantityText();
     }
     private void UpdateVisuals() {
-        portrait.GeneratePortrait(_monster.monsterType);
+        if(_monsterOrMinion.minionType != PLAYER_SKILL_TYPE.NONE) {
+            portrait.GeneratePortrait(_monsterOrMinion.mi);
+        }
+        portrait.GeneratePortrait(_monsterOrMinion.monsterType);
     }
     private void UpdateMainText() {
-        mainLbl.text = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(_monster.monsterType.ToString());
+        mainLbl.text = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(_monsterOrMinion.monsterType.ToString());
     }
     private void UpdateQuantityText() {
-        int currentCharges = Math.Max(0, _monster.currentCharges);
-        subLbl.text = currentCharges + "/" + _monster.maxCharges;
+        int currentCharges = Math.Max(0, _monsterOrMinion.currentCharges);
+        subLbl.text = currentCharges + "/" + _monsterOrMinion.maxCharges;
     }
 }

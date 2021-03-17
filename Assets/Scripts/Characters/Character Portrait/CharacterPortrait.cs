@@ -67,6 +67,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         UpdatePortrait(makePixelPerfect);
         UpdateLeaderIcon();
     }
+    public void GeneratePortrait(Sprite p_sprite, bool makePixelPerfect = true) {
+        _portraitSprite = p_sprite;
+        UpdatePortrait(makePixelPerfect);
+        UpdateLeaderIcon();
+    }
 
     private void UpdatePortrait(bool makePixelPerfect) {
         isPixelPerfect = makePixelPerfect;

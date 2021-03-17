@@ -5,12 +5,12 @@ using UnityEngine;
 public class PlayerUnderlingsComponent {
     //public List<Minion> minions { get; private set; }
     //public List<Summon> summons { get; private set; }
-    public Dictionary<SUMMON_TYPE, MonsterUnderlingCharges> monsterUnderlingCharges { get; private set; }
+    public Dictionary<SUMMON_TYPE, MonsterAndMinionUnderlingCharges> monsterUnderlingCharges { get; private set; }
 
     public PlayerUnderlingsComponent() {
         //minions = new List<Minion>();
         //summons = new List<Summon>();
-        monsterUnderlingCharges = new Dictionary<SUMMON_TYPE, MonsterUnderlingCharges>();
+        monsterUnderlingCharges = new Dictionary<SUMMON_TYPE, MonsterAndMinionUnderlingCharges>();
     }
     public PlayerUnderlingsComponent(SaveDataPlayerUnderlingsComponent data) {
         //minions = new List<Minion>();
@@ -86,7 +86,7 @@ public class PlayerUnderlingsComponent {
     #region Monster Underlings
     public void AddMonsterUnderlingEntry(SUMMON_TYPE p_monsterType, int currentCharges, int maxCharges) {
         if (!HasMonsterUnderlingEntry(p_monsterType)) {
-            MonsterUnderlingCharges m_underlingCharges = new MonsterUnderlingCharges() { monsterType = p_monsterType, currentCharges = currentCharges, maxCharges = maxCharges };
+            MonsterAndMinionUnderlingCharges m_underlingCharges = new MonsterAndMinionUnderlingCharges() { monsterType = p_monsterType, currentCharges = currentCharges, maxCharges = maxCharges };
             monsterUnderlingCharges.Add(p_monsterType, m_underlingCharges);
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
@@ -103,7 +103,7 @@ public class PlayerUnderlingsComponent {
     }
     public void AdjustMonsterUnderlingCharge(SUMMON_TYPE p_monsterType, int amount) {
         if (HasMonsterUnderlingEntry(p_monsterType)) {
-            MonsterUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
+            MonsterAndMinionUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
             int charge = m_underlingCharges.currentCharges;
             charge += amount;
             if (charge > m_underlingCharges.maxCharges) {
@@ -117,7 +117,7 @@ public class PlayerUnderlingsComponent {
     }
     public void SetMonsterUnderlingCharge(SUMMON_TYPE p_monsterType, int amount) {
         if (HasMonsterUnderlingEntry(p_monsterType)) {
-            MonsterUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
+            MonsterAndMinionUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
             int charge = amount;
             if (charge > m_underlingCharges.maxCharges) {
                 charge = m_underlingCharges.maxCharges;
@@ -130,7 +130,7 @@ public class PlayerUnderlingsComponent {
     }
     public void AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE p_monsterType, int amount, bool adjustCurrentCharges = true) {
         if (HasMonsterUnderlingEntry(p_monsterType)) {
-            MonsterUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
+            MonsterAndMinionUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
             int charge = m_underlingCharges.maxCharges;
             charge += amount;
             if (charge < 0) {
@@ -148,7 +148,7 @@ public class PlayerUnderlingsComponent {
     }
     public void SetMonsterUnderlingMaxCharge(SUMMON_TYPE p_monsterType, int amount, bool includeCurrentCharges = true) {
         if (HasMonsterUnderlingEntry(p_monsterType)) {
-            MonsterUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
+            MonsterAndMinionUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
             int charge = amount;
             if (charge < 0) {
                 charge = 0;
@@ -166,7 +166,7 @@ public class PlayerUnderlingsComponent {
 }
 
 public class SaveDataPlayerUnderlingsComponent : SaveData<PlayerUnderlingsComponent> {
-    public Dictionary<SUMMON_TYPE, MonsterUnderlingCharges> monsterUnderlingCharges;
+    public Dictionary<SUMMON_TYPE, MonsterAndMinionUnderlingCharges> monsterUnderlingCharges;
 
     public override void Save(PlayerUnderlingsComponent data) {
         base.Save(data);
@@ -179,8 +179,9 @@ public class SaveDataPlayerUnderlingsComponent : SaveData<PlayerUnderlingsCompon
 }
 
 [System.Serializable]
-public class MonsterUnderlingCharges {
+public class MonsterAndMinionUnderlingCharges {
     public SUMMON_TYPE monsterType;
+    public PLAYER_SKILL_TYPE minionType;
     public int currentCharges;
     public int maxCharges;
 

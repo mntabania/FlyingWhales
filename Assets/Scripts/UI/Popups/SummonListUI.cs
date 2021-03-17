@@ -38,7 +38,7 @@ public class SummonListUI : PopupMenuBase {
         Messenger.AddListener<Summon>(PlayerSignals.PLAYER_LOST_SUMMON, OnLostSummon);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
         Messenger.AddListener<SkillData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
-        Messenger.AddListener<MonsterUnderlingCharges>(PlayerSignals.UPDATED_MONSTER_UNDERLING, OnUpdateMonsterUnderling);
+        Messenger.AddListener<MonsterAndMinionUnderlingCharges>(PlayerSignals.UPDATED_MONSTER_UNDERLING, OnUpdateMonsterUnderling);
     }
     public void UpdateList() {
         for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
@@ -145,7 +145,7 @@ public class SummonListUI : PopupMenuBase {
             }
         }
     }
-    private void OnUpdateMonsterUnderling(MonsterUnderlingCharges p_underlingCharges) {
+    private void OnUpdateMonsterUnderling(MonsterAndMinionUnderlingCharges p_underlingCharges) {
         MonsterUnderlingQuantityNameplateItem nameplateItem = GetMonsterUnderlingQuantityNameplateItem(p_underlingCharges);
         if (nameplateItem != null) {
             nameplateItem.UpdateBasicData();
@@ -157,7 +157,7 @@ public class SummonListUI : PopupMenuBase {
     #endregion
 
     #region Monster Underlings
-    private MonsterUnderlingQuantityNameplateItem CreateNewMonsterUnderlingQuantityItem(MonsterUnderlingCharges p_underlingCharges) {
+    private MonsterUnderlingQuantityNameplateItem CreateNewMonsterUnderlingQuantityItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(quantityMonsterItemPrefab.name, Vector3.zero, Quaternion.identity, quantityScrollView.content);
         MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
         item.SetObject(p_underlingCharges);
@@ -166,7 +166,7 @@ public class SummonListUI : PopupMenuBase {
         _monsterUnderlingQuantityNameplateItems.Add(item);
         return item;
     }
-    private MonsterUnderlingQuantityNameplateItem GetMonsterUnderlingQuantityNameplateItem(MonsterUnderlingCharges p_underlingCharges) {
+    private MonsterUnderlingQuantityNameplateItem GetMonsterUnderlingQuantityNameplateItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
         for (int i = 0; i < _monsterUnderlingQuantityNameplateItems.Count; i++) {
             MonsterUnderlingQuantityNameplateItem item = _monsterUnderlingQuantityNameplateItems[i];
             if (item.obj == p_underlingCharges) {
@@ -175,7 +175,7 @@ public class SummonListUI : PopupMenuBase {
         }
         return null;
     }
-    private void DeleteMonsterUnderlingItem(MonsterUnderlingCharges p_underlingCharges) {
+    private void DeleteMonsterUnderlingItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
         MonsterUnderlingQuantityNameplateItem item = GetMonsterUnderlingQuantityNameplateItem(p_underlingCharges);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item);
@@ -185,8 +185,8 @@ public class SummonListUI : PopupMenuBase {
     public void UpdateMonsterUnderlingQuantityList() {
         Player player = PlayerManager.Instance.player;
         if (player != null) {
-            Dictionary<SUMMON_TYPE, MonsterUnderlingCharges> kvp = player.underlingsComponent.monsterUnderlingCharges;
-            foreach (MonsterUnderlingCharges item in kvp.Values) {
+            Dictionary<SUMMON_TYPE, MonsterAndMinionUnderlingCharges> kvp = player.underlingsComponent.monsterUnderlingCharges;
+            foreach (MonsterAndMinionUnderlingCharges item in kvp.Values) {
                 CreateNewMonsterUnderlingQuantityItem(item);
             }
         }

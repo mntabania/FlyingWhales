@@ -253,10 +253,11 @@ public class Minion {
         Messenger.Broadcast(SpellSignals.SUMMON_MINION, this);
     }
     private void Unsummon() {
-        if(!character.HasHealth()) {
-            character.SetHP(0);
-        }
-        Messenger.AddListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
+        //if(!character.HasHealth()) {
+        //    character.SetHP(0);
+        //}
+        //Messenger.AddListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
+
         UnSubscribeListeners();
         SetIsSummoned(false);
 
@@ -272,15 +273,18 @@ public class Minion {
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
-        
-        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
-        
-        int missingHealth = character.maxHP - character.currentHP;
-        int cooldown = Mathf.CeilToInt((float)missingHealth / 7);
-        spellData.SetCooldown(cooldown);
-        spellData.SetCurrentCooldownTick(0);
 
-        Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, spellData);
+        //SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+
+        //int missingHealth = character.maxHP - character.currentHP;
+        //int cooldown = Mathf.CeilToInt((float)missingHealth / 7);
+        //spellData.SetCooldown(cooldown);
+        //spellData.SetCurrentCooldownTick(0);
+        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        spellData.SetCooldown(-1);
+        spellData.AdjustCharges(1);
+
+        //Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, spellData);
         Messenger.Broadcast(SpellSignals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {

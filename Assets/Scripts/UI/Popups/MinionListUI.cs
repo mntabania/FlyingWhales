@@ -15,7 +15,12 @@ public class MinionListUI : PopupMenuBase {
     [SerializeField] private RectTransform reserveHeader;
     [SerializeField] private UIHoverPosition _hoverPosition;
 
+    [Header("Monster Quantity Column")]
+    [SerializeField] private GameObject quantityMonsterItemPrefab;
+    [SerializeField] private ScrollRect quantityScrollView;
+
     private List<SummonMinionPlayerSkillNameplateItem> _minionItems;
+    private List<MonsterUnderlingQuantityNameplateItem> _monsterUnderlingQuantityNameplateItems;
 
     public override void Open() {
         base.Open();
@@ -27,6 +32,7 @@ public class MinionListUI : PopupMenuBase {
     }
     public void Initialize() {
         _minionItems = new List<SummonMinionPlayerSkillNameplateItem>();
+        _monsterUnderlingQuantityNameplateItems = new List<MonsterUnderlingQuantityNameplateItem>();
         Messenger.AddListener<Minion>(PlayerSignals.PLAYER_GAINED_MINION, OnGainMinion);
         Messenger.AddListener<Minion>(PlayerSignals.PLAYER_LOST_MINION, OnLostMinion);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
@@ -126,4 +132,41 @@ public class MinionListUI : PopupMenuBase {
             minionListToggle.isOn = false;
         }
     }
+
+    #region Monster Underlings
+    private MonsterUnderlingQuantityNameplateItem CreateNewMonsterUnderlingQuantityItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(quantityMonsterItemPrefab.name, Vector3.zero, Quaternion.identity, quantityScrollView.content);
+        MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
+        item.SetObject(p_underlingCharges);
+        item.SetAsDisplayOnly();
+        go.SetActive(p_underlingCharges.hasMaxCharge);
+        _monsterUnderlingQuantityNameplateItems.Add(item);
+        return item;
+    }
+    private MonsterUnderlingQuantityNameplateItem GetMonsterUnderlingQuantityNameplateItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
+        for (int i = 0; i < _monsterUnderlingQuantityNameplateItems.Count; i++) {
+            MonsterUnderlingQuantityNameplateItem item = _monsterUnderlingQuantityNameplateItems[i];
+            if (item.obj == p_underlingCharges) {
+                return item;
+            }
+        }
+        return null;
+    }
+    private void DeleteMonsterUnderlingItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
+        MonsterUnderlingQuantityNameplateItem item = GetMonsterUnderlingQuantityNameplateItem(p_underlingCharges);
+        if (item != null) {
+            ObjectPoolManager.Instance.DestroyObject(item);
+        }
+    }
+
+    public void UpdateMonsterUnderlingQuantityList() {
+        Player player = PlayerManager.Instance.player;
+        if (player != null) {
+            Dictionary<SUMMON_TYPE, MonsterAndMinionUnderlingCharges> kvp = player.underlingsComponent.monsterUnderlingCharges;
+            foreach (MonsterAndMinionUnderlingCharges item in kvp.Values) {
+                CreateNewMonsterUnderlingQuantityItem(item);
+            }
+        }
+    }
+    #endregion
 }

@@ -2993,11 +2993,11 @@ RectTransform:
   m_Children:
   - {fileID: 379918033}
   m_Father: {fileID: 129719386}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1561, y: -951}
+  m_AnchoredPosition: {x: 1561, y: -822}
   m_SizeDelta: {x: 359, y: 229}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &125983608
@@ -3189,8 +3189,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1503071565}
   - {fileID: 125983607}
+  - {fileID: 1503071565}
   - {fileID: 1442438553}
   m_Father: {fileID: 85761049}
   m_RootOrder: 0
@@ -42017,11 +42017,11 @@ RectTransform:
   m_Children:
   - {fileID: 688492911}
   m_Father: {fileID: 129719386}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1920, y: -822}
+  m_AnchoredPosition: {x: 1920, y: -951}
   m_SizeDelta: {x: 359, y: 229}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1503071566
@@ -55054,6 +55054,8 @@ MonoBehaviour:
   minionListToggle: {fileID: 197814391}
   reserveHeader: {fileID: 1389792245}
   _hoverPosition: {fileID: 316925297}
+  quantityMonsterItemPrefab: {fileID: 0}
+  quantityScrollView: {fileID: 0}
 --- !u!114 &1888326233
 MonoBehaviour:
   m_ObjectHideFlags: 0
