@@ -185,15 +185,25 @@ namespace Inner_Maps.Location_Structures {
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
         }
 
+        public void ResetExistingCharges() {
+            partyData.deployedMinions.ForEach((eachMinion) => {
+                PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMinion.minion.minionPlayerSkillType).AdjustCharges(1);
+            });
+            partyData.deployedSummons.ForEach((eachSummon) => {
+                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
+            });
+        }
         #region Party.EventsIListener
         public void OnQuestSucceed() {
             if (!m_isUndeployUserAction) {
+                ResetExistingCharges();
                 UnDeployAll();
                 party.Unsubscribe(this);
             }
         }
         public void OnQuestFailed() {
             if (!m_isUndeployUserAction) {
+                ResetExistingCharges();
                 UnDeployAll();
                 party.Unsubscribe(this);
             }
