@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Cellular_Automata;
@@ -34,6 +35,8 @@ namespace Inner_Maps {
             List<ElevationIsland> allElevationIslands = new List<ElevationIsland>();
             int batchCount = 0;
 
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     ELEVATION elevation = GetElevationFromMap(x, y, noiseMap);
@@ -67,8 +70,11 @@ namespace Inner_Maps {
                     }
                 }
             }
-
-
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} GenerateElevationMap part 1 took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            stopwatch.Reset();
+            
+            stopwatch.Start();
             //merge same elevation islands that are next to each other
             for (int k = 0; k < 2; k++) {
                 for (int i = 0; i < allElevationIslands.Count; i++) {
@@ -89,7 +95,11 @@ namespace Inner_Maps {
                     }
                 }
             }
-
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} GenerateElevationMap part 2 took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            stopwatch.Reset();
+            
+            stopwatch.Start();
             //check if each island meets the needed tile requirement. If it does not, then set that island to be part of an adjacent island
             for (int i = 0; i < allElevationIslands.Count; i++) {
                 ElevationIsland elevationIsland = allElevationIslands[i];
@@ -106,6 +116,9 @@ namespace Inner_Maps {
                     }
                 }
             }
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} GenerateElevationMap part 3 took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            stopwatch.Reset();
 
             //clean up all biome islands list, remove islands with no tiles.
             for (int i = 0; i < allElevationIslands.Count; i++) {
@@ -115,9 +128,9 @@ namespace Inner_Maps {
                     i--;
                 }
             }
-            yield return StartCoroutine(CreateAndDrawElevationStructures(allElevationIslands));
+            yield return StartCoroutine(CreateAndDrawElevationStructures(allElevationIslands, mapGenerationComponent));
         }
-        public IEnumerator CreateAndDrawElevationStructures(List<ElevationIsland> allElevationIslands) {
+        public IEnumerator CreateAndDrawElevationStructures(List<ElevationIsland> allElevationIslands, MapGenerationComponent mapGenerationComponent) {
             //Create structure instances
             for (int i = 0; i < allElevationIslands.Count; i++) {
                 ElevationIsland elevationIsland = allElevationIslands[i];
@@ -132,9 +145,9 @@ namespace Inner_Maps {
                 }
                 LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
                 if (structureType == STRUCTURE_TYPE.CAVE) {
-                    yield return StartCoroutine(DrawCave(elevationIsland, elevationStructure));
+                    yield return StartCoroutine(DrawCave(elevationIsland, elevationStructure, mapGenerationComponent));
                 } else if (structureType == STRUCTURE_TYPE.OCEAN) {
-                    yield return StartCoroutine(DrawOcean(elevationIsland, elevationStructure));
+                    yield return StartCoroutine(DrawOcean(elevationIsland, elevationStructure, mapGenerationComponent));
                 }
                 elevationStructure.SetOccupiedArea(elevationIsland.occupiedAreas.First());
             }
@@ -142,10 +155,14 @@ namespace Inner_Maps {
         #endregion
 
         #region Caves
-        private IEnumerator DrawCave(ElevationIsland p_island, LocationStructure p_caveStructure) {
+        private IEnumerator DrawCave(ElevationIsland p_island, LocationStructure p_caveStructure, MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
             int batchCount = 0;
-            for (int i = 0; i < p_island.tiles.Count; i++) {
-                LocationGridTile tile = p_island.tiles.ElementAt(i);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            tiles.AddRange(p_island.tiles);
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile tile = tiles[i];
                 if (p_island.borderTiles.Contains(tile)) {
                     //set as wall
                     SetAsMountainWall(tile, p_caveStructure);
@@ -158,7 +175,15 @@ namespace Inner_Maps {
                     yield return null;
                 }
             }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} Draw Cave took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            stopwatch.Reset();
+            
+            stopwatch.Start();
             yield return StartCoroutine(MountainCellAutomata(p_island.tiles.ToList(), p_caveStructure));
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} Draw Cave Cell Automata took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         private void SetAsMountainWall(LocationGridTile tile, LocationStructure structure) {
             if (tile.tileObjectComponent.objHere is BlockWall) { return; }
@@ -205,9 +230,6 @@ namespace Inner_Maps {
 			    (locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
 			    (locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure)));
             
-		    // Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
-		    // elevationStructure.SetOccupiedArea(occupiedArea);
-		    //
 		    List<BlockWall> validWallsForOreVeins = elevationStructure.GetTileObjectsOfType<BlockWall>(IsBlockWallValidForOreVein);
 		    
 		    var randomOreAmount = elevationStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
@@ -253,10 +275,14 @@ namespace Inner_Maps {
         #endregion
 
         #region Ocean
-        private IEnumerator DrawOcean(ElevationIsland p_island, LocationStructure p_oceanStructure) {
+        private IEnumerator DrawOcean(ElevationIsland p_island, LocationStructure p_oceanStructure, MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
             int batchCount = 0;
-            for (int i = 0; i < p_island.tiles.Count; i++) {
-                LocationGridTile tile = p_island.tiles.ElementAt(i);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            tiles.AddRange(p_island.tiles);
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile tile = tiles.ElementAt(i);
                 SetAsWater(tile, p_oceanStructure);
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapElevationBatches) {
@@ -264,6 +290,12 @@ namespace Inner_Maps {
                     yield return null;
                 }
             }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} Draw Ocean took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            stopwatch.Reset();
+            
+            stopwatch.Start();
             
             //create water wells
             int westMost = p_oceanStructure.tiles.Min(t => t.localPlace.x);
@@ -282,6 +314,10 @@ namespace Inner_Maps {
 		
             LocationGridTile eastTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.x == eastMost && t.tileObjectComponent.objHere == null));
             CreateFishingSpot(eastTile);
+            
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} Create Fishing Spots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            stopwatch.Reset();
         }
         private void CreateFishingSpot(LocationGridTile tile) {
             if (tile != null) {

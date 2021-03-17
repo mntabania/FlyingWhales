@@ -183,8 +183,11 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							locationChoices.Remove(chosenTile);
 						}
 						//spawn faction heirloom
-						LocationStructure barracks = region.GetRandomStructureOfType(STRUCTURE_TYPE.BARRACKS);
-						LocationGridTile heirloomTile = CollectionUtilities.GetRandomElement(barracks.unoccupiedTiles);
+						LocationStructure heirloomLocation = region.GetRandomStructureOfType(STRUCTURE_TYPE.BARRACKS);
+						if (heirloomLocation == null) {
+							heirloomLocation = region.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+						}
+						LocationGridTile heirloomTile = CollectionUtilities.GetRandomElement(heirloomLocation.unoccupiedTiles);
 						TileObject heirloom = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEIRLOOM);
 						heirloomTile.structure.AddPOI(heirloom, heirloomTile);
 						Faction faction = FactionManager.Instance.GetMajorFactionWithRace(RACE.HUMANS).First();

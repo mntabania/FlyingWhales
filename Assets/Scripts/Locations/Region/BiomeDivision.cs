@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -64,6 +65,19 @@ public class BiomeDivision {
             }
             if (_faunaListWeights.Count > 0) {
                 for (int i = 0; i < p_capacity; i++) {
+                    if (_faunaListWeights.GetTotalOfWeights() <= 0) {
+                        _faunaListWeights.Clear();
+                        for (int j = 0; j < migrationBiomeData.dataList.Length; j++) {
+                            MonsterMigrationBiomeAtomizedData atomizedData = migrationBiomeData.dataList[j];
+                            if (atomizedData.weight > 0 && !faunaList.Contains(atomizedData)) {
+                                _faunaListWeights.AddElement(atomizedData, atomizedData.weight);
+                            }
+                        }
+                        if (_faunaListWeights.GetTotalOfWeights() <= 0) {
+                            //could not find any more elements
+                            break;
+                        }
+                    }
                     faunaList[i] = _faunaListWeights.PickRandomElementGivenWeights();
                     _faunaListWeights.RemoveElement(faunaList[i]);
                 }
@@ -102,7 +116,7 @@ public class BiomeDivision {
     private bool HasTilePartOfThisBiomeDivision(LocationStructure p_structure) {
         for (int i = 0; i < p_structure.passableTiles.Count; i++) {
             LocationGridTile tile = p_structure.passableTiles[i];
-            if (tiles.Contains(tile)) {
+            if (tile.biomeType == biome) {
                 return true;
             }
         }

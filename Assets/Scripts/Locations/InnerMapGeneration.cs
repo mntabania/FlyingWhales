@@ -20,7 +20,7 @@ public partial class LandmarkManager {
     public IEnumerator GenerateScenarioMap(Region region, MapGenerationComponent mapGenerationComponent, MapGenerationData data, ScenarioMapData scenarioMapData) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
-        innerTileMap.Initialize(region, scenarioMapData.worldMapSave.innerMapXSeed, scenarioMapData.worldMapSave.innerMapYSeed, scenarioMapData.worldMapSave.biomeSettings, scenarioMapData.worldMapSave.elevationSettings);
+        innerTileMap.Initialize(region, scenarioMapData.worldMapSave.xSeed, scenarioMapData.worldMapSave.ySeed, scenarioMapData.worldMapSave.biomePerlinNoiseSettings, scenarioMapData.worldMapSave.elevationPerlinNoiseSettings);
         region.GenerateStructures();
         yield return StartCoroutine(innerTileMap.GenerateMap(mapGenerationComponent, data));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
