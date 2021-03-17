@@ -401,6 +401,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		if (m_isTeamDeployed) { //this if is the UNDEPLOY trigger
 			m_isTeamDeployed = false;
+			m_targetPartyStructure.ResetExistingCharges();
 			m_targetPartyStructure.UnDeployAll();
 			m_deployedSummonsUI.ForEach((eachSummon) => {
 				m_targetPartyStructure.RemoveItemOnRight(eachSummon);

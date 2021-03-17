@@ -209,6 +209,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 					eachSummonThatAreDployed.gameObject.SetActive(false);
 				}
 			});
+			m_targetPartyStructure.ResetExistingCharges();
 			m_targetPartyStructure.UnDeployAll();
 			Init();
 			m_defensePointUIView.ProcessSummonDisplay();

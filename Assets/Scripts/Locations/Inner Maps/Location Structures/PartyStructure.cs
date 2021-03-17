@@ -133,6 +133,9 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public virtual void OnCharacterDied(Character p_deadMonster) {
+            if (m_isUndeployUserAction) {
+                return;
+            }
             for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
                 if (p_deadMonster == partyData.deployedSummons[x]) {
                     PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
