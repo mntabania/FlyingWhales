@@ -13,7 +13,7 @@ public class MeddlerData : DemonicStructurePlayerSkill {
     }
     protected override string InvalidMessage(LocationGridTile tile) {
         if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {
-            return "You can only have 1 Meddler per world.";
+            return "You can only have 1 Meddler structure at a time.";
         }
         return base.InvalidMessage(tile);
     }

@@ -10,7 +10,7 @@ public class Skeleton : Summon {
 
     public override string bredBehaviour => "Snatcher";
     public override Faction defaultFaction => FactionManager.Instance.undeadFaction;
-    
+    public override string raceClassName => "Skeleton";
     public Skeleton() : base(SUMMON_TYPE.Skeleton, "Skeleton", RACE.SKELETON, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }

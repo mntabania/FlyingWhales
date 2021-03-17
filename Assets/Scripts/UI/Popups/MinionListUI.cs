@@ -59,6 +59,8 @@ public class MinionListUI : PopupMenuBase {
         }
     }
     private void CreateNewReserveMinionItem(PLAYER_SKILL_TYPE minionPlayerSkillType) {
+        //Should no longer have reserve items
+        return;
         MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         SummonMinionPlayerSkillNameplateItem spellItem = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();

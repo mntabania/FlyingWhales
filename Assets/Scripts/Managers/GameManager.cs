@@ -315,7 +315,7 @@ public class GameManager : BaseMonoBehaviour {
         //Example: AFTER MIDNIGHT is only up to 5:00 AM Sharp. If we use integer, tick 61 or 5:03 AM will still be AFTER MIDNIGHT instead of MORNING because the decimal places are truncated
         float currentHourInFloat = GetHoursBasedOnTicksInFloat(tick); 
         //MILITARY TIME
-        if ((currentHourInFloat > 10 && currentHourInFloat <= 24) || (currentHourInFloat >= 0 && currentHourInFloat <= 5)) {
+        if ((currentHourInFloat > 22 && currentHourInFloat <= 24) || (currentHourInFloat >= 0 && currentHourInFloat <= 5)) {
             return TIME_IN_WORDS.AFTER_MIDNIGHT;
         }
         if (currentHourInFloat > 5 && currentHourInFloat <= 11) {
@@ -330,7 +330,7 @@ public class GameManager : BaseMonoBehaviour {
         if (currentHourInFloat > 17 && currentHourInFloat <= 20) {
             return TIME_IN_WORDS.EARLY_NIGHT;
         }
-        if (currentHourInFloat > 20 && currentHourInFloat <= 10) {
+        if (currentHourInFloat > 20 && currentHourInFloat <= 22) {
             return TIME_IN_WORDS.LATE_NIGHT;
         }
         return TIME_IN_WORDS.NONE;

@@ -12,7 +12,7 @@ public class SpireData : DemonicStructurePlayerSkill {
     }
     protected override string InvalidMessage(LocationGridTile tile) {
         if (tile.parentMap.region.HasStructure(STRUCTURE_TYPE.SPIRE)) {
-            return "You can only have 1 Spire per region.";
+            return "You can only have 1 Spire structure at a time.";
         }
         return base.InvalidMessage(tile);
     }
