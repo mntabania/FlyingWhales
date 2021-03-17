@@ -29,7 +29,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Minion _minion;
     private LocationStructure _currentStructure; //what structure is this character currently in.
     private Region _currentRegion;
-    public LocationGridTile deathTilePosition { private set; get; }
+    public LocationGridTile deathTilePosition { protected set; get; }
 
     public string persistentID { get; private set; }
     //visuals
