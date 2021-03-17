@@ -104,9 +104,6 @@ namespace Inner_Maps {
                 },
             }
         };
-        
-        [SerializeField] private float _biomeTransitionXSeed;
-        [SerializeField] private float _biomeTransitionYSeed;
 
         [Header("For Testing")]
         [SerializeField] protected LineRenderer pathLineRenderer;
@@ -143,21 +140,17 @@ namespace Inner_Maps {
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
         public float xSeed => _xSeed;
         public float ySeed => _ySeed;
-        public float biomeTransitionXSeed => _biomeTransitionXSeed;
-        public float biomeTransitionYSeed => _biomeTransitionYSeed;
         #endregion
 
         #region Generation
-        public void Initialize(Region location, float xSeed, float ySeed, PerlinNoiseSettings biomeSettings, PerlinNoiseSettings elevationSettings, float biomeTransitionXSeed, float biomeTransitionYSeed) {
+        public void Initialize(Region location, float xSeed, float ySeed, PerlinNoiseSettings biomeSettings, PerlinNoiseSettings elevationSettings) {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
 
             biomePerlinSettings = biomeSettings;
             elevationPerlinSettings = elevationSettings;
-            _biomeTransitionXSeed = biomeTransitionXSeed;
-            _biomeTransitionYSeed = biomeTransitionYSeed;
-            
+
             //set tile map sorting orders
             groundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
             detailsTilemapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
@@ -169,7 +162,7 @@ namespace Inner_Maps {
             
             upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
         }
-        public void Initialize(Region location, float xSeed, float ySeed, int biomeSeed, int elevationSeed, float biomeTransitionXSeed, float biomeTransitionYSeed) {
+        public void Initialize(Region location, float xSeed, float ySeed, int biomeSeed, int elevationSeed) {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
@@ -185,9 +178,7 @@ namespace Inner_Maps {
 
             biomePerlinSettings.seed = biomeSeed;
             elevationPerlinSettings.seed = elevationSeed;
-            _biomeTransitionXSeed = biomeTransitionXSeed;
-            _biomeTransitionYSeed = biomeTransitionYSeed;
-            
+
             //set tile map sorting orders
             groundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
             detailsTilemapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;

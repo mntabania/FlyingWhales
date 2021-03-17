@@ -9,8 +9,6 @@ public class SaveDataInnerMap : SaveData<InnerTileMap> {
     public float ySeed;
     public PerlinNoiseSettings biomePerlinNoiseSettings;
     public PerlinNoiseSettings elevationPerlinNoiseSettings;
-    public float biomeTransitionXSeed;
-    public float biomeTransitionYSeed;
     public Dictionary<Point, SaveDataLocationGridTile> tileSaves;
     
     public override void Save(InnerTileMap innerTileMap) {
@@ -18,8 +16,6 @@ public class SaveDataInnerMap : SaveData<InnerTileMap> {
         ySeed = innerTileMap.ySeed;
         biomePerlinNoiseSettings = innerTileMap.biomePerlinSettings;
         elevationPerlinNoiseSettings = innerTileMap.elevationPerlinSettings;
-        biomeTransitionXSeed = innerTileMap.biomeTransitionXSeed;
-        biomeTransitionYSeed = innerTileMap.biomeTransitionYSeed;
         tileSaves = new Dictionary<Point, SaveDataLocationGridTile>();
         for (int x = 0; x < innerTileMap.width; x++) {
             for (int y = 0; y < innerTileMap.height; y++) {
