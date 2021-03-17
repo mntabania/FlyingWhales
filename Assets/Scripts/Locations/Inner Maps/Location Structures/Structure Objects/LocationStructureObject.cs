@@ -199,6 +199,21 @@ public class LocationStructureObject : PooledObject, ISelectable {
         newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
         newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
         newTileObject.RevalidateTileObjectSlots();
+        if (structureType == STRUCTURE_TYPE.IMP_HUT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.BEHOLDER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.BIOLAB && newTileObject.tileObjectType == TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.DEFENSE_POINT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.MANA_PIT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.MARAUD && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.SPIRE && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        }
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();

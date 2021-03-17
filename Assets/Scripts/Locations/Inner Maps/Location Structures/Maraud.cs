@@ -30,5 +30,14 @@ namespace Inner_Maps.Location_Structures {
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
             ListenToParty();
         }
+        
+        #region Structure Object
+        public override void SetStructureObject(LocationStructureObject structureObj) {
+            base.SetStructureObject(structureObj);
+            Vector3 position = structureObj.transform.position;
+            position.y -= 0.5f;
+            worldPosition = position;
+        }
+        #endregion
     }
 }
