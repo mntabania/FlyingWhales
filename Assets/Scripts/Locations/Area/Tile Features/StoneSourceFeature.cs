@@ -77,7 +77,7 @@ namespace Locations.Area_Features {
             }
         }
         private bool CreateNewRock() {
-            List<LocationGridTile> choices = owner.gridTileComponent.gridTiles.Where(x => x.tileObjectComponent.objHere == null && x.structure.structureType.IsOpenSpace()).ToList();
+            List<LocationGridTile> choices = owner.gridTileComponent.gridTiles.Where(x => x.tileObjectComponent.objHere == null && x.structure.structureType.IsOpenSpace() && x.IsPassable()).ToList();
             if (choices.Count > 0) {
                 LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
                 chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ROCK), chosenTile);
