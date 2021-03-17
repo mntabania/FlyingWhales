@@ -14,5 +14,15 @@ namespace Inner_Maps.Location_Structures {
             base.DestroyStructure();
             PlayerUI.Instance.LoseGameOver();
         }
+        
+        #region Structure Object
+        public override void SetStructureObject(LocationStructureObject structureObj) {
+            base.SetStructureObject(structureObj);
+            Vector3 position = structureObj.transform.position;
+            position.x -= 0.5f;
+            position.y += 0.1f;
+            worldPosition = position;
+        }
+        #endregion
     }
 }
