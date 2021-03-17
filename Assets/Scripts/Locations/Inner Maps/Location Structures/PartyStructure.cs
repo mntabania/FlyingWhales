@@ -22,9 +22,11 @@ namespace Inner_Maps.Location_Structures {
 
         public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
         }
         public PartyStructure(Region location, SaveDataDemonicStructure data) : base(location, data) {
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
         }
 
         #region Loading
@@ -154,6 +156,10 @@ namespace Inner_Maps.Location_Structures {
 			}
         }
 
+        void OnTargetRemoved(IStoredTarget p_removedTarget) {
+            partyData.deployedTargets.Remove(p_removedTarget);
+		}
+
         public virtual void DeployParty() {
             m_isUndeployUserAction = false;
         }
@@ -182,7 +188,6 @@ namespace Inner_Maps.Location_Structures {
         #region Party.EventsIListener
         public void OnQuestSucceed() {
             if (!m_isUndeployUserAction) {
-                Debug.LogError("Called here");
                 UnDeployAll();
                 party.Unsubscribe(this);
             }
