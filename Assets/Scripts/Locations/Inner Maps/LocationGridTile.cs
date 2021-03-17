@@ -88,7 +88,7 @@ namespace Inner_Maps {
         
         #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
-        public List<LocationGridTile> CaveInterconnectionTiles { get { return FourNeighbours().Where(o => o.structure == structure && !o.HasDifferentStructureNeighbour()).ToList() ; } } //
+        public List<LocationGridTile> CaveInterconnectionTiles { get { return FourNeighbours().Where(o => o.structure == structure).ToList() ; } } //&& !o.HasDifferentStructureNeighbour()
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbourList.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighboursWithinHex {
             get {
