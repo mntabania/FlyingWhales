@@ -106,7 +106,7 @@ public class WorldSettingsData {
     private void SetOonaWorldSettings() {
         Debug.Log("Set world settings as Second World");
         worldType = World_Type.Oona;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
+        victoryCondition = VICTORY_CONDITION.Summon_The_Demon;
         SetDefaultSpellSettings(victoryCondition);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
@@ -119,7 +119,7 @@ public class WorldSettingsData {
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
         worldType = World_Type.Icalawa;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
+        victoryCondition = VICTORY_CONDITION.Summon_The_Demon;
         SetDefaultSpellSettings(victoryCondition);
         mapSettings.BlockMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
@@ -160,7 +160,7 @@ public class WorldSettingsData {
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");
         worldType = World_Type.Zenko;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
+        victoryCondition = VICTORY_CONDITION.Summon_The_Demon;
         SetDefaultSpellSettings(victoryCondition);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();

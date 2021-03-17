@@ -1182,7 +1182,7 @@ public enum OMNIPOTENT_MODE {
     Disabled, Enabled 
 }
 public enum VICTORY_CONDITION {
-    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Sandbox
+    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Summon_The_Demon, Sandbox, 
 }
 public enum RESISTANCE {
     None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,

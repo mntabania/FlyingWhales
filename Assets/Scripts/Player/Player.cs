@@ -35,6 +35,8 @@ public class Player : ILeader, IObjectManipulator {
     public PlayerTileObjectComponent tileObjectComponent { get; private set; }
     public StoredTargetsComponent storedTargetsComponent { get; }
 
+    public SummonMeterComponent summonMeterComponent { get; private set; }
+
     private ManaRegenComponent m_manaRegenComponent { get; set; }
 
     #region getters/setters
@@ -63,6 +65,8 @@ public class Player : ILeader, IObjectManipulator {
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
         tileObjectComponent = new PlayerTileObjectComponent();
+        summonMeterComponent = new SummonMeterComponent();
+        summonMeterComponent.Initialize();
         SubscribeListeners();
         
     }
@@ -79,6 +83,8 @@ public class Player : ILeader, IObjectManipulator {
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
+        summonMeterComponent = new SummonMeterComponent();
+        summonMeterComponent.Initialize();
         SubscribeListeners();
     }
 
