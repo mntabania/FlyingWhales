@@ -1369,6 +1369,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         movementComponent.OnChangeFactionTo(newFaction);
         movementComponent.RedetermineFactionsToAvoid(this);
+
+        if(prevFaction != null && prevFaction.factionType.type == FACTION_TYPE.Demons) {
+            if(this is Summon summon) {
+                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(summon.summonType, 1);
+            }
+        }
         // if (newFaction != null && newFaction.isMajorFaction) {
         //     //if character is now part of a faction, then set its movement to not avoid that faction
         //     movementComponent.DoNotAvoidFaction(newFaction);    
