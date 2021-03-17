@@ -13,7 +13,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Party newParty = PartyManager.Instance.CreateNewParty(interruptHolder.actor);
             return true;
         }

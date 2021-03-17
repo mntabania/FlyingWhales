@@ -21,9 +21,9 @@ namespace Interrupts {
         //And the way to do it is set that responsible character as the target
         //The reason why we need to pass the responsible character is for the Dead trait to know who's responsible for the death of the one being pulled down
         //It might be confusing, hence, this note
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Pulled Down");
-            return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         public override bool PerTickInterrupt(InterruptHolder interruptHolder) {
             interruptHolder.actor.AdjustHP(-300, ELEMENTAL_TYPE.Poison);

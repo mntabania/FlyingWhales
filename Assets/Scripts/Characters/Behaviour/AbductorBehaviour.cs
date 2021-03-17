@@ -89,9 +89,10 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
         Character chosenTarget = null;
         for (int i = 0; i < abductor.currentRegion.charactersAtLocation.Count; i++) {
 			Character character = abductor.currentRegion.charactersAtLocation[i];
-			bool isValidTarget = character is Animal ||
+			bool isValidTarget = (character is Animal ||
 			                     (character.isNormalCharacter && character.isDead == false && 
-			                      character.traitContainer.HasTrait("Resting")) && character.currentStructure is Kennel == false;
+			                      character.traitContainer.HasTrait("Resting")) && character.currentStructure is Kennel == false)
+								  && !character.isAlliedWithPlayer; //Those who are allied with player should not be targeted by abductors
 			if (isValidTarget) {
 				validTargets.Add(character);
 			}
