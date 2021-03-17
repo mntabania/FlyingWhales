@@ -48,7 +48,7 @@ public class LightningData : SkillData {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, traitable as Character, processedDamage);
             if (traitable is Character character && traitable.currentHP <= 0) {
                 (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.LIGHTNING;
-                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }
         }
     }

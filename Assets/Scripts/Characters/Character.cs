@@ -29,6 +29,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Minion _minion;
     private LocationStructure _currentStructure; //what structure is this character currently in.
     private Region _currentRegion;
+    public LocationGridTile deathTilePosition { private set; get; }
 
     public string persistentID { get; private set; }
     //visuals
@@ -5439,6 +5440,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
+        deathTilePosition = gridTileLocation;
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;

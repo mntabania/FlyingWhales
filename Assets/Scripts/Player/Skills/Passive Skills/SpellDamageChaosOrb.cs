@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UtilityScripts;
+using Inner_Maps;
 
 public class SpellDamageChaosOrb : PassiveSkill {
     public override string name => "Mana Orbs upon spell damage";
@@ -17,7 +18,7 @@ public class SpellDamageChaosOrb : PassiveSkill {
         }
         int orbCount = (p_damageDone) / 300;
         if (orbCount > 0) {
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, orbCount, character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, orbCount, character.deathTilePosition.parentMap, CURRENCY.Chaotic_Energy);
         }
     }
 }

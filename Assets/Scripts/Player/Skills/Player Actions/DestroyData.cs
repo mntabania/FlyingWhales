@@ -41,7 +41,7 @@ public class DestroyData : PlayerAction {
                     Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, eachCharacters, processedDamage);
                     if (!eachCharacters.HasHealth()) {
                         eachCharacters.skillCauseOfDeath = PLAYER_SKILL_TYPE.DESTROY;
-                        Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, eachCharacters.marker.transform.position, 1, eachCharacters.currentRegion.innerMap);
+                        Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, eachCharacters.deathTilePosition.centeredLocalLocation, 1, eachCharacters.currentRegion.innerMap);
                     }
                 });
             }
