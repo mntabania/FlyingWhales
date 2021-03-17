@@ -78,7 +78,7 @@ public class OptionsMenu : PopupMenuBase {
         DOTween.Clear(true);
         LevelLoaderManager.Instance.SetLoadingState(true);
         AudioManager.Instance.TransitionToLoading();
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
         LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
         LevelLoaderManager.Instance.LoadLevel("Game");
     }

@@ -537,6 +537,7 @@ namespace Inner_Maps {
 
         #region Structures
         public void SetStructure(LocationStructure p_structure) {
+            Assert.IsNotNull(p_structure);
             Profiler.BeginSample("Remove Tile");
             LocationStructure previousStructure = structure;
             structure?.RemoveTile(this);

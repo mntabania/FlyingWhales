@@ -30,6 +30,9 @@ public class VillageGeneration : MapGenerationComponent {
 		yield return null;
 	}
 	private IEnumerator CreateSettlements(Region region, MapGenerationData data) {
+		List<NPCSettlement> createdSettlements = RuinarchListPool<NPCSettlement>.Claim();
+		List<VillageSetting> villageSettings = RuinarchListPool<VillageSetting>.Claim();
+		//Generate Settlements and Factions with city centers
 		foreach (var setting in data.determinedVillages) {
 			FactionTemplate factionTemplate = setting.Key;
 			RACE race;
@@ -47,6 +50,9 @@ public class VillageGeneration : MapGenerationComponent {
 				Area settlementTile = setting.Value[i];
 				VillageSetting villageSetting = factionTemplate.villageSettings[i];
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
+				createdSettlements.Add(npcSettlement);
+				villageSettings.Add(villageSetting);
+				
 				npcSettlement.SetName(villageSetting.villageName);
 				LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
 				SETTLEMENT_TYPE settlementType = LandmarkManager.Instance.GetSettlementTypeForFaction(faction);
@@ -57,22 +63,30 @@ public class VillageGeneration : MapGenerationComponent {
 				Assert.IsTrue(structureSettings.First().structureType == STRUCTURE_TYPE.CITY_CENTER);
 				Assert.IsTrue(npcSettlement.areas.Count > 0);
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
-				structureSettings = GenerateFacilities(npcSettlement, faction, villageSetting.GetRandomFacilityCount());
-				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
-				yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
-
-				if (npcSettlement.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-					int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
-					List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data);
-					List<TileObject> objectsInDwellings = npcSettlement.PopulateTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
-					for (int j = 0; j < objectsInDwellings.Count; j++) {
-						TileObject tileObject = objectsInDwellings[j];
-						tileObject.UpdateOwners();
-					}
-					CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);	
-				}
 			}
 		}
+		
+		//Generate facilities and residents
+		for (int i = 0; i < createdSettlements.Count; i++) {
+			NPCSettlement npcSettlement = createdSettlements[i];
+			VillageSetting villageSetting = villageSettings[i];
+			var structureSettings = GenerateFacilities(npcSettlement, npcSettlement.owner, villageSetting.GetRandomFacilityCount());
+			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
+			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
+
+			if (npcSettlement.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
+				List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, npcSettlement.owner, data);
+				List<TileObject> objectsInDwellings = npcSettlement.PopulateTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
+				for (int j = 0; j < objectsInDwellings.Count; j++) {
+					TileObject tileObject = objectsInDwellings[j];
+					tileObject.UpdateOwners();
+				}
+				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);	
+			}
+		}
+		RuinarchListPool<NPCSettlement>.Release(createdSettlements);
+		RuinarchListPool<VillageSetting>.Release(villageSettings);
 	}
 	private List<StructureSetting> GenerateCityCenterAndDwellings(Faction p_faction, VillageSetting p_villageSetting, NPCSettlement p_settlement) {
 		List<StructureSetting> structureSettings =  new List<StructureSetting> { new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, p_faction.factionType.mainResource, p_faction.factionType.usesCorruptedStructures) };

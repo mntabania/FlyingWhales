@@ -21,7 +21,7 @@ public struct VillageSetting {
             case VILLAGE_SIZE.Medium:
                 return 2;
             case VILLAGE_SIZE.Large:
-                return 4;
+                return 3;
             default:
                 throw new ArgumentOutOfRangeException();
         }

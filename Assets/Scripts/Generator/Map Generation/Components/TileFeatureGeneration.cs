@@ -124,10 +124,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int y = 0; y < data.height; y++) {
 				Area area = GridMap.Instance.map[x, y];
 				int habitability = 0;
-				if (area.elevationType == ELEVATION.WATER || area.elevationType == ELEVATION.MOUNTAIN || 
-				    area.gridTileComponent.gridTiles.Any(t => t.elevationType == ELEVATION.WATER || t.elevationType == ELEVATION.MOUNTAIN)) {
-					habitability = 0;
-				} else {
+				if (area.elevationComponent.IsFully(ELEVATION.PLAIN)) {
 					int adjacentWaterTiles = 0;
 					int adjacentFlatTiles = 0;
 					habitability += 1;

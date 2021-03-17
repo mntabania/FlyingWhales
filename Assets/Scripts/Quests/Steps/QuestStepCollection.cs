@@ -34,13 +34,13 @@ namespace Quests.Steps {
             _onCollectionActivatedAction?.Invoke();
         }
         public void Deactivate() {
+            _onCollectionDeactivatedAction?.Invoke();
             Messenger.RemoveListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_COMPLETED, OnTutorialStepCompleted);
             DeactivateTopMostIncompleteStep();
             for (int i = 0; i < steps.Count; i++) {
                 QuestStep step = steps[i];
                 step.Deactivate();
             }
-            _onCollectionDeactivatedAction?.Invoke();
         }
 
         #region Listeners
