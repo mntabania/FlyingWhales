@@ -64,9 +64,6 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.FIREPLACE:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("FireplaceGameObject", Vector3.zero, Quaternion.identity);
                 break;
-            case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
-                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("PortalGameObject", Vector3.zero, Quaternion.identity);
-                break;
             case TILE_OBJECT_TYPE.BLOCK_WALL:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BlockWallGameObject", Vector3.zero, Quaternion.identity);
                 break;
@@ -97,6 +94,30 @@ public class MapVisualFactory {
                 break;
             case TILE_OBJECT_TYPE.FISHING_SPOT:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("FishingSpotGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("PortalGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BeholderGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("ManaPitGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BiolabGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("MaraudGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("SpireGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("ImpHutGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("DefensePointGameObject", Vector3.zero, Quaternion.identity);
                 break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
