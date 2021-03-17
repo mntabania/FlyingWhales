@@ -36,7 +36,7 @@ namespace Inner_Maps.Location_Structures {
             
             //Create a path inside
             Area area = p_usedConnector.area;
-            List<LocationGridTile> choices = p_usedConnector.GetTilesInRadius(5, includeTilesInDifferentStructure: true).Where(t => t.IsPassable() && t.structure == connectedCave).ToList();
+            List<LocationGridTile> choices = p_usedConnector.GetTilesInRadius(10, includeTilesInDifferentStructure: true).Where(t => t.IsPassable() && t.structure == connectedCave).ToList();
             LocationGridTile randomPassableTile = CollectionUtilities.GetRandomElement(choices);
             List<LocationGridTile> path = PathGenerator.Instance.GetPath(p_usedConnector, randomPassableTile, GRID_PATHFINDING_MODE.UNCONSTRAINED, includeFirstTile: true);
             if (path != null) {
