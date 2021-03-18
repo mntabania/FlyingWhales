@@ -226,7 +226,7 @@ namespace Inner_Maps {
                     } else if (poi is Character character) {
                         character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-                        if (!character.HasHealth()) {
+                        if (character.isDead) {
                             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
                             Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                         }

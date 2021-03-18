@@ -44,7 +44,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
                 character.traitContainer.AddTrait(character, "Injured");
             }
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-            if (!character.HasHealth()) {
+            if (character.isDead) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.ICETEROIDS;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }

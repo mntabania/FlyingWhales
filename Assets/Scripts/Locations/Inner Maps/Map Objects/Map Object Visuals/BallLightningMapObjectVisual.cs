@@ -111,8 +111,17 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Ball Lightning Per Tick");
+        int processedDamage = -60 + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING));
         for (int i = 0; i < _objsInRange.Count; i++) {
-            _objsInRange[i].AdjustHP(-60, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            ITraitable traitable = _objsInRange[i];
+            traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            if(traitable is Character character) {
+                Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
+                if (character != null && character.isDead) {
+                    character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                }
+            }
         }
         Profiler.EndSample();
     }

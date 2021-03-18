@@ -9,6 +9,6 @@ public class AutoAbsorbChaosOrb : PassiveSkill {
     }
     private void OnChaosOrbExpired(ChaosOrb chaosOrb) {
         //https://trello.com/c/baCCZSMn/2162-chaos-orbs-are-auto-absorbed-when-expired-but-only-gives-minimal-mana
-        PlayerManager.Instance.player.AdjustMana(2);
+        PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(2);
     }
 }
