@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 10369500
+    totalSpriteSurfaceArea: 10369644
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -408,6 +408,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 01b1ed2fd2b7d0d4fabc61acffbe0bf7, type: 3}
   - {fileID: 21300000, guid: 3b52a23f8fb6d5e40b58461867258f91, type: 3}
   - {fileID: 21300000, guid: 3145af3f181558e47b5e936e34f9fc18, type: 3}
+  - {fileID: 21300000, guid: 5670fe4f91c0f044da15eb673b1692ca, type: 3}
   - {fileID: 21300000, guid: 10a1c45fa9617864ebe1dd6f16d2ac94, type: 3}
   - {fileID: 21300000, guid: f16eaf5f3ece5a442a66279536ef0123, type: 3}
   - {fileID: 21300000, guid: 2f02ff5fcb2857a449743957c3c493e1, type: 3}
@@ -788,6 +789,7 @@ SpriteAtlas:
   - button_back_disabled
   - thought_container_neutral
   - Icon_Informed
+  - icon_minus
   - spell_slot_clicked
   - tutorial_goal_checkbox_incomplete
   - 2x_button_disabled

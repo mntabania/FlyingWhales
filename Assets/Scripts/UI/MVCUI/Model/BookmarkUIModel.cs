@@ -14,6 +14,8 @@ public class BookmarkUIModel : MVCUIModel {
     
     public System.Action onClickHide;
     public System.Action onClickShow;
+
+    public GameObject goBookmarkCategoryPrefab;
     
     private void OnEnable() {
         btnHide.onClick.AddListener(ClickHide);

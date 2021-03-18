@@ -65,6 +65,7 @@ public class Player : ILeader, IObjectManipulator {
         m_manaRegenComponent = new ManaRegenComponent(this);
         tileObjectComponent = new PlayerTileObjectComponent();
         bookmarkComponent = new BookmarkComponent();
+
         SubscribeListeners();
         
     }

@@ -66,7 +66,7 @@ public class PortalUIView : MVCUIView {
     }
     
     public void ShowUnlockDemonTimerAndHideButton(SkillData p_skillToUnlock) {
-        UIModel.timerSummonDemon.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillToUnlock.name}");
+        UIModel.timerSummonDemon.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "summon_demon_active")} {p_skillToUnlock.name}");
         UIModel.goTimerSummonDemon.SetActive(true);
         UIModel.btnSummonDemon.gameObject.SetActive(false);
     }

@@ -23,6 +23,10 @@ namespace UtilityScripts {
         
         public RuinarchTimer(string p_name, BOOKMARK_CATEGORY p_category) {
             timerName = p_name;
+            _bookmarkCategory = p_category;
+        }
+        public void SetTimerName(string p_name) {
+            timerName = p_name;
         }
         public void LoadStart(System.Action p_endAction) {
             _onTimerEndAction = p_endAction;

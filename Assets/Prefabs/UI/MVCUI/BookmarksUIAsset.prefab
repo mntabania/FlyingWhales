@@ -525,7 +525,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 345, y: 0}
+  m_AnchoredPosition: {x: 345, y: 64.5}
   m_SizeDelta: {x: 345, y: 569}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &5252020835964320755
@@ -668,8 +668,10 @@ MonoBehaviour:
   btnShow: {fileID: 4505232145516825615}
   scrollRectBookmarks: {fileID: 4176722006363829968}
   rtWindow: {fileID: 385696090958955218}
-  posHidden: {x: 345, y: 0}
-  posShowing: {x: 0, y: 0}
+  posHidden: {x: 345, y: 64.5}
+  posShowing: {x: 0, y: 64.5}
+  goBookmarkCategoryPrefab: {fileID: 6313167480858826093, guid: c8831884703783848b47cc108a138167,
+    type: 3}
 --- !u!1 &8306899966422679751
 GameObject:
   m_ObjectHideFlags: 0

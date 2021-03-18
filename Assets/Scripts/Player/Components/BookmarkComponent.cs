@@ -11,7 +11,9 @@ public class BookmarkComponent {
 
     public void AddBookmark(IBookmarkable p_bookmarkable) {
         if (!bookmarkedObjects.ContainsKey(p_bookmarkable.bookmarkCategory)) {
-            bookmarkedObjects.Add(p_bookmarkable.bookmarkCategory, new BookmarkCategory(p_bookmarkable.bookmarkCategory));
+            var bookmarkCategory = new BookmarkCategory(p_bookmarkable.bookmarkCategory);
+            bookmarkedObjects.Add(p_bookmarkable.bookmarkCategory, bookmarkCategory);
+            Messenger.Broadcast(PlayerSignals.BOOKMARK_CATEGORY_ADDED, bookmarkCategory);
         }
         bookmarkedObjects[p_bookmarkable.bookmarkCategory].AddBookmark(p_bookmarkable);
     }

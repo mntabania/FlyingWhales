@@ -48,8 +48,6 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     private void Start() {
         UIManager.Instance.onPortalClicked += OnPortalClicked;
         UIManager.Instance.structureInfoUI.AddCloseMenuAction(HideUI);
-        InstantiateUI();
-        HideUI();
         Messenger.AddListener(Signals.GAME_LOADED, Initialize);
     }
     private void OnDestroy() {
@@ -63,6 +61,8 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         }
     }
     private void Initialize() {
+        InstantiateUI();
+        HideUI();
         int orderInHierarchy = UIManager.Instance.structureInfoUI.transform.GetSiblingIndex() + 1;
         m_portalUIView.UIModel.transform.SetSiblingIndex(orderInHierarchy);
         

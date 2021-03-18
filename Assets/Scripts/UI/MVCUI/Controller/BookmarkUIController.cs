@@ -19,6 +19,11 @@ public class BookmarkUIController : MVCUIController, BookmarkUIView.IListener {
     }
     private void Awake() {
         InstantiateUI();
+        m_bookmarkUIView.Hide();
+        Messenger.AddListener<BookmarkCategory>(PlayerSignals.BOOKMARK_CATEGORY_ADDED, OnBookmarkCategoryAdded);
+    }
+    private void OnBookmarkCategoryAdded(BookmarkCategory p_category) {
+        m_bookmarkUIView.CreateBookmarkCategoryItem(p_category);
     }
     public void OnClickHide() {
         m_bookmarkUIView.Hide();

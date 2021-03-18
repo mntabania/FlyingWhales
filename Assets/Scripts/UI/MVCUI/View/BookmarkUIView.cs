@@ -53,5 +53,10 @@ public class BookmarkUIView : MVCUIView{
         UIModel.btnHide.gameObject.SetActive(true);
         UIModel.btnShow.gameObject.SetActive(false);
     }
+    public void CreateBookmarkCategoryItem(BookmarkCategory p_category) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(UIModel.goBookmarkCategoryPrefab.name, Vector3.zero, Quaternion.identity, UIModel.scrollRectBookmarks.content);
+        BookmarkCategoryItemUI categoryItemUI = go.GetComponent<BookmarkCategoryItemUI>();
+        categoryItemUI.Initialize(p_category);
+    }
     #endregion
 }

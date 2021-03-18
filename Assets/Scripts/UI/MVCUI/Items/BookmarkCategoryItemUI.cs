@@ -11,7 +11,9 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
     [SerializeField] private Button btnHeader;
     [SerializeField] private GameObject goContent;
     [SerializeField] private Transform contentParent;
-    
+    [SerializeField] private GameObject goExpand;
+    [SerializeField] private GameObject goCollapse;
+
     private System.Action _onResetAction;
     private void Awake() {
         btnHeader.onClick.AddListener(ToggleContent);
@@ -20,11 +22,28 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
         lblHeaderName.text = p_category.displayName;
         p_category.SubscribeToEvents(this);
         _onResetAction += () => p_category.UnsubscribeToEvents(this);
+        for (int i = 0; i < p_category.bookmarked.Count; i++) {
+            IBookmarkable bookmarkable = p_category.bookmarked[i];
+            CreateNewBookmarkItem(bookmarkable);
+        }
+        UpdateExpandCollapseVisual();
     }
 
     #region Interaction
     private void ToggleContent() {
         goContent.SetActive(!goContent.activeSelf);
+        UpdateExpandCollapseVisual();
+    }
+    private void UpdateExpandCollapseVisual() {
+        bool isContentActive = goContent.activeSelf;
+        if (isContentActive) {
+            goExpand.SetActive(false);
+            goCollapse.SetActive(true);
+        }
+        else {
+            goExpand.SetActive(true);
+            goCollapse.SetActive(false);
+        }
     }
     #endregion
     
@@ -54,7 +73,13 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
         }
     }
     private string GetPrefabName(BOOKMARK_TYPE p_bookmarkType) {
-        return $"Bookmark_Item_{p_bookmarkType.ToString()}_Prefab";
+        switch (p_bookmarkType) {
+            case BOOKMARK_TYPE.Text:
+            case BOOKMARK_TYPE.Text_With_Cancel:
+                return $"Bookmark_Item_Text_Prefab";
+            default:
+                return $"Bookmark_Item_{p_bookmarkType.ToString()}_Prefab";        
+        }
     }
     #endregion
     

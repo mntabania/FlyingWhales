@@ -20,6 +20,7 @@
         private System.Action<RuinarchProgressable> _onCurrentProgressChanged;
         private System.Action _onSelectProgressable;
         
+        public string persistentID { get; }
         public abstract string name { get; }
         public abstract BOOKMARK_CATEGORY bookmarkCategory { get; }
         public abstract BOOKMARK_TYPE bookmarkType { get; } 
@@ -30,6 +31,7 @@
         #endregion
 
         protected RuinarchProgressable() {
+            persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             eventDispatcher = new BookmarkableEventDispatcher();
         }
         
@@ -73,8 +75,8 @@
         #endregion
 
         #region Interaction
-        public void AddOnSelectAction(System.Action p_action) {
-            _onSelectProgressable += p_action;
+        public void SetOnSelectAction(System.Action p_action) {
+            _onSelectProgressable = p_action;
         }
         public void OnSelect() {
             _onSelectProgressable?.Invoke();

@@ -4,7 +4,7 @@ using UnityEngine;
 using UtilityScripts;
 using UnityEngine.UI;
 
-public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListener {
+public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListener, BookmarkableEventDispatcher.IListener {
     [SerializeField] private TextMeshProUGUI lblName;
     [SerializeField] private Slider sliderProgress;
     [SerializeField] private Button btnMain;
@@ -17,6 +17,7 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
         _onResetAction += () => OnResetActions(p_progressable);
         lblName.text = p_progressable.name;
         UpdateProgressBar(p_progressable);
+        p_progressable.eventDispatcher.Subscribe(this);
         
     }
     public void OnCurrentProgressChanged(RuinarchProgressable p_progressable) {
@@ -29,7 +30,10 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
         btnMain.onClick.RemoveListener(p_progressable.OnSelect);
         p_progressable.StopListeningToProgress(this);
     }
-    
+    public void OnBookmarkRemoved(IBookmarkable p_bookmarkable) {
+        p_bookmarkable.eventDispatcher.Unsubscribe(this);
+        ObjectPoolManager.Instance.DestroyObject(this);
+    }
     public override void Reset() {
         base.Reset();
         _onResetAction?.Invoke();
