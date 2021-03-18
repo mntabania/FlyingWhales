@@ -35,7 +35,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     //private int lastIndex = 0;
 
     #region getters
-    public FactionItem currentSelectedFactionItem => factionItems[factionScrollSnap.CurrentPage];
+    public FactionItem currentSelectedFactionItem => GetCurrentFactionItem();;
     public bool isShowing => parentPanelGO.gameObject.activeInHierarchy;
     #endregion
 
@@ -157,6 +157,12 @@ public class FactionInfoHubUI : MonoBehaviour {
         yield return null;
         factionScrollSnap.GoToScreen(index);
     }
+    private FactionItem GetCurrentFactionItem() {
+        if(factionScrollSnap.CurrentPage >= 0 && factionScrollSnap.CurrentPage < factionItems.Count && factionItems.Count > 0) {
+            return factionItems[factionScrollSnap.CurrentPage];
+        }
+        return currentSelectedFactionItem;
+    }
     #endregion
 
     #region Listeners
@@ -269,7 +275,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     }
     public bool IsShowing(Faction faction) {
         if(factionItems.Count > 0) {
-            return currentSelectedFactionItem.faction == faction && factionInfoUI.activeFaction == faction;
+            return /*currentSelectedFactionItem.faction == faction && */factionInfoUI.activeFaction == faction;
         }
         return false;
     }
