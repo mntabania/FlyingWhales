@@ -135,9 +135,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.SetButtonDeployText("Deploy");
 		}
-		if (p_title != string.Empty) {
-			m_maraudUIView.SetTitle(p_title);
-		}
 		ProcessButtonAvailability();
 		UIManager.Instance.Pause();
 	}
@@ -219,8 +216,20 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			} else {
 				item.SetInteractableState(true);
 			}
+			item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
+			item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 		}
 		m_maraudUIView.ProcessSummonDisplay();
+	}
+
+	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
+		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
+			UIManager.Instance.ShowSmallInfo("You cant add a team member bacause the structure is occupied", "Structure Occupied", true);
+		}
+	}
+
+	void OnHoverExitItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
+		UIManager.Instance.HideSmallInfo();
 	}
 
 	void InitializeTargets() {
@@ -229,14 +238,24 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			if (ctr < m_targetList.Count) {
 				m_targetList[ctr].gameObject.SetActive(true);
 				m_targetList[ctr].InitializeItem(EachTarget);
+				SetTargetHoverText(m_targetList[ctr++]);
 			} else {
 				AvailableTargetItemUI availableTargetItemUI = Instantiate(m_availableTargetItemUI);
 				availableTargetItemUI.InitializeItem(EachTarget);
 				availableTargetItemUI.transform.SetParent(m_maraudUIView.GetAvailableTargetParent());
 				m_targetList.Add(availableTargetItemUI);
+				SetTargetHoverText(m_targetList[ctr]);
 				m_targetList[ctr++].onClicked += OnAvailableTargetClicked;
 			}
 		});
+	}
+
+	void SetTargetHoverText(AvailableTargetItemUI p_item) {
+		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
+			p_item.SetHoverText("You cant add a team member bacause the structure is occupied");
+		} else {
+			p_item.SetHoverText("Target already chased by another party");
+		}
 	}
 
 	void InitializeMinions() {
@@ -256,10 +275,15 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				} else {
 					item.SetInteractableState(true);
 				}
+				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
+				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}
 		}
 	}
 	void OnAvailableTargetClicked(AvailableTargetItemUI p_itemUI) {
+		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
+			return;
+		}
 		bool exitLoop = false;
 		for (int x = 0; x < m_deployedTargetItemUI.Count && !exitLoop; ++x) {
 			if (m_deployedTargetItemUI[x].isReadyForDeploy) {

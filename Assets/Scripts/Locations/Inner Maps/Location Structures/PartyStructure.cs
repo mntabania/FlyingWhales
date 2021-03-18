@@ -18,7 +18,15 @@ namespace Inner_Maps.Location_Structures {
 
         public bool IsAvailableForTargeting() {
             bool isOccupied = charactersHere.Count > 0;
-            charactersHere.ForEach((eachCharacters) => isOccupied &= !eachCharacters.isDead);
+            int deadCount = 0;
+            charactersHere.ForEach((eachCharacter) => {
+                if (eachCharacter.isDead) {
+                    deadCount++;
+                }
+            });
+            if (charactersHere.Count > deadCount) {
+                isOccupied = true;
+            }
             return !isOccupied;
         }
 

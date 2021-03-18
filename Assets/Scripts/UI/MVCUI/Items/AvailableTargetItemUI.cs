@@ -13,7 +13,16 @@ public class AvailableTargetItemUI : MonoBehaviour {
 
     public GameObject goCover;
 
-    public void InitializeItem(IStoredTarget p_target) {
+    public HoverText hoverText;
+
+	private void Awake() {
+        hoverText = goCover.GetComponent<HoverText>();
+
+    }
+	public void InitializeItem(IStoredTarget p_target, string p_hoverText = "") {
+        if (p_hoverText != string.Empty) {
+            hoverText.hoverDisplayText = p_hoverText;
+        }
         target = p_target;
         if (target.isTargetted) {
             ShowCover();
@@ -21,6 +30,10 @@ public class AvailableTargetItemUI : MonoBehaviour {
             HideCover();
         }
         txtName.text = $"{p_target.iconRichText} {p_target.name}";
+    }
+
+    public void SetHoverText(string p_text) {
+        hoverText.hoverDisplayText = p_text;
     }
 
     private void OnEnable() {
