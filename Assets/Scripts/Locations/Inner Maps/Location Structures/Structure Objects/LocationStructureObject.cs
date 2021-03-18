@@ -212,7 +212,9 @@ public class LocationStructureObject : PooledObject, ISelectable {
         } else if (structureType == STRUCTURE_TYPE.MARAUD && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);    
         } else if (structureType == STRUCTURE_TYPE.SPIRE && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
+            structure.AddObjectAsDamageContributor(newTileObject);
+        } else if (structureType == STRUCTURE_TYPE.MEDDLER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);
         }
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
