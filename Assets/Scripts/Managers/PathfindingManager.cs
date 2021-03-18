@@ -1,4 +1,5 @@
-﻿using Pathfinding;
+﻿using System;
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
@@ -59,6 +60,12 @@ public class PathfindingManager : BaseMonoBehaviour {
     public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile) {
         if (fromTile == null || toTile == null) { return false; }
         if (fromTile == toTile) { return true; }
+        if (fromTile.structure == null) {
+            throw new Exception($"Structure of {fromTile.ToString()} is null");
+        }
+        if (toTile.structure == null) {
+            throw new Exception($"Structure of {toTile.ToString()} is null");
+        }
         if(fromTile.structure.region == toTile.structure.region) {
             return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, fromTile.parentMap.onlyUnwalkableGraph).node,
                     AstarPath.active.GetNearest(toTile.centeredWorldLocation, toTile.parentMap.onlyUnwalkableGraph).node);

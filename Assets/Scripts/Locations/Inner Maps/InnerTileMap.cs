@@ -112,7 +112,7 @@ namespace Inner_Maps {
         public int width;
         public int height;
         public LocationGridTile[,] map { get; private set; }
-        protected List<LocationGridTile> allTiles { get; private set; }
+        public List<LocationGridTile> allTiles { get; private set; }
         public List<LocationGridTile> allEdgeTiles { get; private set; }
         public Region region { get; private set; }
         public GridGraph pathfindingGraph { get; set; }

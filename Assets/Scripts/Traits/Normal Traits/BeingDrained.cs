@@ -26,10 +26,14 @@ namespace Traits {
             }
         }
         private void DrainPerTick(Character p_character) {
-            var spiritEnergy = p_character is Summon ? 1 : 2;
-            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, p_character.deathTilePosition.centeredLocalLocation, spiritEnergy, GridMap.Instance.mainRegion.innerMap);
-            int hpReduction = Mathf.RoundToInt(p_character.maxHP * 0.02f);
-            p_character.AdjustHP(-hpReduction, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+            if (!p_character.isDead) {
+                int hpReduction = Mathf.RoundToInt(p_character.maxHP * 0.02f);
+                p_character.AdjustHP(-hpReduction, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+                if (p_character.isDead) {
+                    int spiritEnergy = p_character is Summon ? 1 : 2;
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, p_character.deathTilePosition.centeredWorldLocation, spiritEnergy, p_character.deathTilePosition.parentMap);
+                }
+            }
         }
     }
 }

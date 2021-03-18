@@ -71,7 +71,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
     private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }
         BurningSource burningSource = bs;
-        int processedDamage = m_baseDamage - PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.METEOR);
+        int processedDamage = m_baseDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.METEOR));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.METEOR));
         //if (traitable is TileObject obj) {
         //    if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
@@ -92,9 +92,8 @@ public class MeteorParticleEffect : BaseParticleEffect {
         if (character != null) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
         }
-
-        if (character != null && traitable.currentHP <= 0) {
-            (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.METEOR;
+        if (character != null && character.isDead) {
+            character.skillCauseOfDeath = PLAYER_SKILL_TYPE.METEOR;
             Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
         }
         bs = burningSource;

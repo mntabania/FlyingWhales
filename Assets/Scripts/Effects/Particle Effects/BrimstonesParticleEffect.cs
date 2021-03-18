@@ -52,8 +52,8 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
             bs = burningSource;
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-            if (!character.HasHealth()) {
-                character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
+            if (character.isDead) {
+                character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BRIMSTONES;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }
             if (Random.Range(0, 100) < 25) {

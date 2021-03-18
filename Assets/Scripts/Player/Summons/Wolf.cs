@@ -5,8 +5,8 @@ using UnityEngine;
 public class Wolf : Summon {
 	
 	public override bool defaultDigMode => true;
-
-	public Wolf() : base(SUMMON_TYPE.Wolf, "Ravager", RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) { }
+    public override string raceClassName => "Wolf";
+    public Wolf() : base(SUMMON_TYPE.Wolf, "Ravager", RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) { }
     public Wolf(string className) : base(SUMMON_TYPE.Wolf, className, RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) { }
     public Wolf(SaveDataSummon data) : base(data) { }
 
