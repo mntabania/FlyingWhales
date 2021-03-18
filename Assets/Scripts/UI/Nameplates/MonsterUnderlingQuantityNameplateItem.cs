@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndMinionUnderlingCharges> {
+public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDemonUnderlingCharges> {
 
     [Header("Attributes")]
     [SerializeField] private CharacterPortrait portrait;
 
 
-    private MonsterAndMinionUnderlingCharges _monsterOrMinion;
-    public override MonsterAndMinionUnderlingCharges obj => _monsterOrMinion;
+    private MonsterAndDemonUnderlingCharges _monsterOrMinion;
+    public override MonsterAndDemonUnderlingCharges obj => _monsterOrMinion;
 
-    public override void SetObject(MonsterAndMinionUnderlingCharges o) {
+    public override void SetObject(MonsterAndDemonUnderlingCharges o) {
         base.SetObject(o);
         _monsterOrMinion = o;
         UpdateVisuals();
@@ -25,16 +25,27 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndMin
         UpdateQuantityText();
     }
     private void UpdateVisuals() {
-        if(_monsterOrMinion.minionType != PLAYER_SKILL_TYPE.NONE) {
-            portrait.GeneratePortrait(_monsterOrMinion.mi);
+        if (_monsterOrMinion.isDemon) {
+            portrait.GeneratePortrait(_monsterOrMinion.minionType);
+        } else if (_monsterOrMinion.monsterType != SUMMON_TYPE.None) {
+            portrait.GeneratePortrait(_monsterOrMinion.monsterType);
         }
-        portrait.GeneratePortrait(_monsterOrMinion.monsterType);
     }
     private void UpdateMainText() {
-        mainLbl.text = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(_monsterOrMinion.monsterType.ToString());
+        if (_monsterOrMinion.isDemon) {
+            MinionSettings settings = CharacterManager.Instance.GetMinionSettings(_monsterOrMinion.minionType);
+            mainLbl.text = settings.className;
+        } else if (_monsterOrMinion.monsterType != SUMMON_TYPE.None) {
+            mainLbl.text = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(_monsterOrMinion.monsterType.ToString());
+        }
     }
     private void UpdateQuantityText() {
         int currentCharges = Math.Max(0, _monsterOrMinion.currentCharges);
         subLbl.text = currentCharges + "/" + _monsterOrMinion.maxCharges;
+    }
+
+    public override void Reset() {
+        base.Reset();
+        _monsterOrMinion = null;
     }
 }

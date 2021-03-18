@@ -60,7 +60,7 @@ namespace Inner_Maps.Location_Structures {
                             foreach (PLAYER_SKILL_TYPE eachSkill in PlayerSkillManager.Instance.allMinionPlayerSkills) {
                                 if (eachMember.minion.minionPlayerSkillType == eachSkill) {
                                     SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill);
-                                    MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
+                                    MinionSettings settings = CharacterManager.Instance.GetMinionSettings((skillData as MinionPlayerSkill).minionType);
                                     CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
                                     partyData.deployedMinions.Add(eachMember);
                                     partyData.deployedMinionsSkillType.Add(eachMember.minion.minionPlayerSkillType);

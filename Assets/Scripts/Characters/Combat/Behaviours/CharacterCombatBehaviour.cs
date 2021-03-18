@@ -6,6 +6,7 @@ using UtilityScripts;
 public class CharacterCombatBehaviour {
     public CHARACTER_COMBAT_BEHAVIOUR behaviourType { get; private set; }
     public string name { get; private set; }
+    public virtual string description => string.Empty;
 
     public CharacterCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR p_type) {
         behaviourType = p_type;

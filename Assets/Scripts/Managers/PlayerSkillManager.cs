@@ -302,6 +302,15 @@ public class PlayerSkillManager : MonoBehaviour {
         }
         return null;
     }
+    public MinionPlayerSkill GetMinionPlayerSkillDataByMinionType(MINION_TYPE type) {
+        for (int i = 0; i < allMinionPlayerSkills.Length; i++) {
+            MinionPlayerSkill skill = GetMinionPlayerSkillData(allMinionPlayerSkills[i]);
+            if(skill.minionType == type) {
+                return skill;
+            }
+        }
+        return null;
+    }
     public SummonPlayerSkill GetSummonPlayerSkillData(PLAYER_SKILL_TYPE type) {
         if (allSummonPlayerSkillsData.ContainsKey(type)) {
             return allSummonPlayerSkillsData[type];

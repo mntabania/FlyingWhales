@@ -208,7 +208,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void InitializeSummons() {
 		int ctr = 0;
-		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndMinionUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
+		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
 			SummonSettings settings = CharacterManager.Instance.GetSummonSettings(entry.Key);
 			CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 			CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(cClass.className);
@@ -247,13 +247,13 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		foreach (PLAYER_SKILL_TYPE eachSkill in PlayerSkillManager.Instance.allMinionPlayerSkills) {
 			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill);
 			if (ctr < m_minionList.Count) {
-				MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
+				MinionSettings settings = CharacterManager.Instance.GetMinionSettings((skillData as MinionPlayerSkill).minionType);
 				CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 				m_minionList[ctr].gameObject.SetActive(true);
 				m_minionList[ctr++].InitializeItem(cClass, eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);
 
 			} else {
-				MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
+				MinionSettings settings = CharacterManager.Instance.GetMinionSettings((skillData as MinionPlayerSkill).minionType);
 				CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 				AvailableMonsterItemUI minionItem = Instantiate(m_availableMonsterItemUI);
 				minionItem.InitializeItem(cClass, eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);

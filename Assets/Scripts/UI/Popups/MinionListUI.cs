@@ -35,7 +35,8 @@ public class MinionListUI : PopupMenuBase {
         _monsterUnderlingQuantityNameplateItems = new List<MonsterUnderlingQuantityNameplateItem>();
         Messenger.AddListener<Minion>(PlayerSignals.PLAYER_GAINED_MINION, OnGainMinion);
         Messenger.AddListener<Minion>(PlayerSignals.PLAYER_LOST_MINION, OnLostMinion);
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
+        //Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
+        Messenger.AddListener<MonsterAndDemonUnderlingCharges>(PlayerSignals.UPDATED_MONSTER_UNDERLING, OnUpdateMonsterUnderling);
     }
     public void UpdateList() {
         for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
@@ -43,6 +44,9 @@ public class MinionListUI : PopupMenuBase {
             if (character.minion != null && !character.isDead && !character.isPreplaced) {
                 CreateNewActiveMinionItem(character.minion);
             }
+        }
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count; i++) {
+            
         }
     }
     private void UpdateMinionPlayerSkillItems() {
@@ -75,8 +79,8 @@ public class MinionListUI : PopupMenuBase {
         spellItem.ClearAllHoverEnterActions();
         spellItem.ClearAllHoverExitActions();
         
-        spellItem.AddHoverEnterAction(OnHoverEnterReserveMinion);
-        spellItem.AddHoverExitAction(OnHoverExitReserveMinion);
+        //spellItem.AddHoverEnterAction(OnHoverEnterReserveMinion);
+        //spellItem.AddHoverExitAction(OnHoverExitReserveMinion);
         
         _minionItems.Add(spellItem);
     }
@@ -106,20 +110,6 @@ public class MinionListUI : PopupMenuBase {
     private void OnLostMinion(Minion minion) {
         DeleteMinionItem(minion);
     }
-    private void OnHoverEnterReserveMinion(SkillData spellData) {
-        if (spellData is MinionPlayerSkill minionPlayerSkill) {
-            CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(minionPlayerSkill.className);
-            if (TraitManager.Instance.allTraits.ContainsKey(characterClass.traitNameOnTamedByPlayer)) {
-                Trait trait = TraitManager.Instance.allTraits[characterClass.traitNameOnTamedByPlayer];
-                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name);
-            }
-        }
-        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData, PlayerUI.Instance.minionListHoverPosition);
-    }
-    private void OnHoverExitReserveMinion(SkillData spellData) {
-        UIManager.Instance.HideSmallInfo();
-        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
-    }
     public void ToggleMinionList(bool isOn) {
         if (isOn) {
             Open();
@@ -134,16 +124,18 @@ public class MinionListUI : PopupMenuBase {
     }
 
     #region Monster Underlings
-    private MonsterUnderlingQuantityNameplateItem CreateNewMonsterUnderlingQuantityItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
+    private MonsterUnderlingQuantityNameplateItem CreateNewMonsterUnderlingQuantityItem(MonsterAndDemonUnderlingCharges p_underlingCharges) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(quantityMonsterItemPrefab.name, Vector3.zero, Quaternion.identity, quantityScrollView.content);
         MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
         item.SetObject(p_underlingCharges);
         item.SetAsDisplayOnly();
+        item.AddHoverEnterAction(OnHoverEnterDemonUnderlingData);
+        item.AddHoverExitAction(OnHoverExitDemonUnderlingData);
         go.SetActive(p_underlingCharges.hasMaxCharge);
         _monsterUnderlingQuantityNameplateItems.Add(item);
         return item;
     }
-    private MonsterUnderlingQuantityNameplateItem GetMonsterUnderlingQuantityNameplateItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
+    private MonsterUnderlingQuantityNameplateItem GetMonsterUnderlingQuantityNameplateItem(MonsterAndDemonUnderlingCharges p_underlingCharges) {
         for (int i = 0; i < _monsterUnderlingQuantityNameplateItems.Count; i++) {
             MonsterUnderlingQuantityNameplateItem item = _monsterUnderlingQuantityNameplateItems[i];
             if (item.obj == p_underlingCharges) {
@@ -152,7 +144,7 @@ public class MinionListUI : PopupMenuBase {
         }
         return null;
     }
-    private void DeleteMonsterUnderlingItem(MonsterAndMinionUnderlingCharges p_underlingCharges) {
+    private void DeleteMonsterUnderlingItem(MonsterAndDemonUnderlingCharges p_underlingCharges) {
         MonsterUnderlingQuantityNameplateItem item = GetMonsterUnderlingQuantityNameplateItem(p_underlingCharges);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item);
@@ -162,11 +154,37 @@ public class MinionListUI : PopupMenuBase {
     public void UpdateMonsterUnderlingQuantityList() {
         Player player = PlayerManager.Instance.player;
         if (player != null) {
-            Dictionary<SUMMON_TYPE, MonsterAndMinionUnderlingCharges> kvp = player.underlingsComponent.monsterUnderlingCharges;
-            foreach (MonsterAndMinionUnderlingCharges item in kvp.Values) {
+            Dictionary<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> kvp = player.underlingsComponent.monsterUnderlingCharges;
+            foreach (MonsterAndDemonUnderlingCharges item in kvp.Values) {
                 CreateNewMonsterUnderlingQuantityItem(item);
             }
         }
+    }
+    private void OnUpdateMonsterUnderling(MonsterAndDemonUnderlingCharges p_underlingCharges) {
+        if (p_underlingCharges.isDemon) {
+            MonsterUnderlingQuantityNameplateItem nameplateItem = GetMonsterUnderlingQuantityNameplateItem(p_underlingCharges);
+            if (nameplateItem != null) {
+                nameplateItem.UpdateBasicData();
+                nameplateItem.gameObject.SetActive(p_underlingCharges.hasMaxCharge);
+            } else {
+                CreateNewMonsterUnderlingQuantityItem(p_underlingCharges);
+            }
+        }
+    }
+    private void OnHoverEnterDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_data.minionType);
+        if (minionPlayerSkill != null) {
+            CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(minionPlayerSkill.className);
+            if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
+                CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
+                UIManager.Instance.ShowSmallInfo(combatBehaviour.description, _hoverPosition, combatBehaviour.name);
+            }
+        }
+        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
+    }
+    private void OnHoverExitDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     #endregion
 }
