@@ -3594,6 +3594,7 @@
             <e p="RectDrawer.cs" t="Include" />
             <e p="ReflectiveEnumerator.cs" t="Include" />
             <e p="RendererExtensions.cs" t="Include" />
+            <e p="RuinarchBasicProgress.cs" t="Include" />
             <e p="RuinarchCooldown.cs" t="Include" />
             <e p="RuinarchListPool.cs" t="Include" />
             <e p="RuinarchProgressable.cs" t="Include" />
