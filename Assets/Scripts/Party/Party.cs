@@ -1070,9 +1070,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     #region Party Walk Speed
     private void UpdatePartyWalkSpeed() {
         if (!isPlayerParty) { return; } //Party Walk Speed applies only on demon parties for now
-        partyWalkSpeed = membersThatJoinedQuest.Min(c => c.movementComponent.walkSpeed);
-        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
-            membersThatJoinedQuest[i].movementComponent.UpdateSpeed();
+        if(membersThatJoinedQuest.Count > 0) {
+            partyWalkSpeed = membersThatJoinedQuest.Min(c => c.movementComponent.walkSpeed);
+            for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+                membersThatJoinedQuest[i].movementComponent.UpdateSpeed();
+            }
         }
     }
     #endregion

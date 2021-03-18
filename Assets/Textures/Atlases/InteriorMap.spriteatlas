@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3850389
+    totalSpriteSurfaceArea: 3948693
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -276,6 +276,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e04f9ca4f26d2aa4998b15509533c4c2, type: 3}
   - {fileID: 21300000, guid: 4c56eca481454084e84429c667d7b8d1, type: 3}
   - {fileID: 21300000, guid: 9a5e71c48adea0546b6041fd52a4ef5b, type: 3}
+  - {fileID: 21300000, guid: 017bc2c4195258b42aeb81838eff4d2f, type: 3}
   - {fileID: 21300000, guid: a0b503c47c2f8df42b43008c5cd7df2c, type: 3}
   - {fileID: 21300000, guid: 82d6f6c47a4db414599736d715179452, type: 3}
   - {fileID: 21300000, guid: f5a809c447efa534b9e9431fb172ef5b, type: 3}
@@ -1057,6 +1058,7 @@ SpriteAtlas:
   - demonWallA-11100000-00
   - BANDAGES
   - CORN_CROP#2
+  - meddler_256x384
   - TRASH#10
   - harpy_egg
   - CORN_CROP#1 Growing
