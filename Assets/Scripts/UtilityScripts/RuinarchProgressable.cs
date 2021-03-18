@@ -13,36 +13,37 @@
         }
         #endregion
         
-        private int m_minValue;
-        private int m_maxValue;
-        protected int currentValue;
-        protected int totalValue;
+        public int minValue;
+        public int maxValue;
+        public int currentValue;
+        public int totalValue;
         private System.Action<RuinarchProgressable> _onCurrentProgressChanged;
         private System.Action _onSelectProgressable;
         
-        public string persistentID { get; }
         public abstract string name { get; }
         public abstract BOOKMARK_TYPE bookmarkType { get; } 
-        public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
+        public BookmarkableEventDispatcher bookmarkEventDispatcher { get; private set; }
 
         #region getters
         public string bookmarkName => name;
         #endregion
 
         protected RuinarchProgressable() {
-            persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+            bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+        }
+        protected void Load() {
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         }
         
         protected void Setup(int p_minValue, int p_maxValue) {
-            m_minValue = p_minValue;
-            m_maxValue = p_maxValue;
+            minValue = p_minValue;
+            maxValue = p_maxValue;
             totalValue = p_maxValue - p_minValue;
-            currentValue = m_minValue;
+            currentValue = minValue;
         }
         protected void Reset() {
-            m_minValue = 0;
-            m_maxValue = 0;
+            minValue = 0;
+            maxValue = 0;
             currentValue = 0;
             totalValue = 0;
         }
@@ -58,7 +59,7 @@
             return currentTimerProgressPercent;
         }
         public bool IsComplete() {
-            return currentValue >= m_maxValue;
+            return currentValue >= maxValue;
         }
 
         #region Listeners

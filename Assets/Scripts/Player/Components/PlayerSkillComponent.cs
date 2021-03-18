@@ -80,7 +80,7 @@ public class PlayerSkillComponent {
         currentSpellBeingUnlocked = p_skillData.type;
         currentSpellUnlockCost = p_unlockCost;
         timerUnlockSpell.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillData.name}");
-        timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteSpellUnlockTimer);
+        timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteSpellUnlockTimer); //.AddDays(1)
         timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
         PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell, BOOKMARK_CATEGORY.Portal);
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, p_skillData, p_unlockCost);
@@ -569,6 +569,8 @@ public class PlayerSkillComponent {
         timerUnlockSpell = data.timerUnlockSpell;
         if (currentSpellBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
             timerUnlockSpell.LoadStart(OnCompleteSpellUnlockTimer);
+            timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell, BOOKMARK_CATEGORY.Portal);
         }
         cooldownReroll = data.cooldownReroll;
         if (!cooldownReroll.IsFinished()) {
@@ -579,12 +581,16 @@ public class PlayerSkillComponent {
         timerSummonDemon = data.timerSummonDemon;
         if (currentDemonBeingSummoned != PLAYER_SKILL_TYPE.NONE) {
             timerSummonDemon.LoadStart(OnCompleteMinionUnlock);
+            timerSummonDemon.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerSummonDemon, BOOKMARK_CATEGORY.Portal);
         }
         currentStructureBeingUnlocked = data.currentStructureBeingUnlocked;
         currentStructureUnlockCost = data.currentStructureUnlockCost;
         timerUnlockStructure = data.timerUnlockStructure;
         if (currentSpellBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
             timerUnlockStructure.LoadStart(OnCompleteStructureUnlock);
+            timerUnlockStructure.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockStructure, BOOKMARK_CATEGORY.Portal);
         }
         currentSpellChoices = data.currentSpellChoices;
     }

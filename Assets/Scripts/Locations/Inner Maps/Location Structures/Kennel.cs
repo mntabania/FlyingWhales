@@ -18,12 +18,11 @@ namespace Inner_Maps.Location_Structures {
         public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){
             allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
         }
-        public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
-        }
+        public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
             base.LoadReferences(saveDataLocationStructure);
             SaveDataKennel saveDataKennel = saveDataLocationStructure as SaveDataKennel;
             if (!string.IsNullOrEmpty(saveDataKennel.occupyingSummonID)) {

@@ -131,6 +131,10 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
     
+    [Space(10)]
+    [Header("Portal UI")]
+    public PortalUIController portalUIController;
+    
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
     private PointerEventData _pointer;
@@ -213,6 +217,9 @@ public class UIManager : BaseMonoBehaviour {
         contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
         
         UpdateUI();
+    }
+    public void InitializeAfterLoadOutPicked() {
+        portalUIController.InitializeAfterLoadoutSelected();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
@@ -1915,4 +1922,6 @@ public class UIManager : BaseMonoBehaviour {
         return false;
     }
     #endregion
+
+    
 }

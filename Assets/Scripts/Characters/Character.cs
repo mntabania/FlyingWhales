@@ -121,7 +121,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
     #region getters / setters
-    public string bookmarkName => name;
+    public string bookmarkName => visuals.GetCharacterNameWithIconAndColor();
     public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
     public STORED_TARGET_TYPE storedTargetType => this is Summon ? STORED_TARGET_TYPE.Monster : STORED_TARGET_TYPE.Character;
@@ -252,7 +252,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AssignRace(race, true);
         SetSexuality(sexuality);
         visuals = new CharacterVisuals(this);
-        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
@@ -267,7 +266,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AssignRace(race, true);
         GenerateSexuality();
         visuals = new CharacterVisuals(this);
-        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
@@ -320,6 +318,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         piercingAndResistancesComponent = new PiercingAndResistancesComponent(); piercingAndResistancesComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         previousCharacterDataComponent = new PreviousCharacterDataComponent(); previousCharacterDataComponent.SetOwner(this);
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
 
         needsComponent.ResetSleepTicks();
     }
@@ -392,6 +391,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         piercingAndResistancesComponent = data.piercingAndResistancesComponent.Load(); piercingAndResistancesComponent.SetOwner(this);
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
 
         if (data.hasMinion) {
             _minion = data.minion.Load(this);

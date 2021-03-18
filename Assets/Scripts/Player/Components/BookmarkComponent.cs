@@ -61,5 +61,10 @@ public class BookmarkComponent {
 }
 
 public class SaveDataBookmarkComponent : SaveData<BookmarkComponent>{
-    //TODO:
+    public override void Save(BookmarkComponent data) {
+        base.Save(data);
+    }
+    public override BookmarkComponent Load() {
+        return new BookmarkComponent();
+    }
 }

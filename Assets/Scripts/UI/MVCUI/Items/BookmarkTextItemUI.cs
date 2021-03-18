@@ -27,7 +27,19 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
         }
     }
     public void OnBookmarkRemoved(IBookmarkable p_bookmarkable) {
+        RectTransform rect = null;
+        RectTransform parentOfParent = null;
+        if (transform.parent is RectTransform rectTransform) {
+            rect = rectTransform;
+            parentOfParent = transform.parent.parent.parent as RectTransform;
+        }
         p_bookmarkable.bookmarkEventDispatcher.Unsubscribe(this);
         ObjectPoolManager.Instance.DestroyObject(this);
+        if (rect) {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rect);    
+        }
+        if (parentOfParent) {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(parentOfParent);
+        }
     }
 }

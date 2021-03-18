@@ -55,7 +55,7 @@ namespace Inner_Maps.Location_Structures {
         public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
         #region getters
-        public string bookmarkName => name;
+        public string bookmarkName => $"{iconRichText} {name}";
         public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
         public virtual string nameplateName => name;
         public string locationName => ToString();

@@ -76,14 +76,13 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent = data.playerSkillComponent.Load();
         underlingsComponent = data.underlingsComponent.Load();
         tileObjectComponent = data.tileObjectComponent.Load();
-        bookmarkComponent = data.bookmarkComponent.Load();
+        bookmarkComponent = new BookmarkComponent();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
-        bookmarkComponent = new BookmarkComponent();
         SubscribeListeners();
     }
 

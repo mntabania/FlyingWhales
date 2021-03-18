@@ -1218,10 +1218,21 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
 
     #region IBookmarkable
     public void OnSelectBookmark() {
+        CenterOnParty();
         UIManager.Instance.ShowPartyInfo(this);
     }
     public void RemoveBookmark() {
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
+    }
+    #endregion
+
+    #region Utilities
+    public void CenterOnParty() {
+        if (activeMembers.Count > 0) {
+            activeMembers[0].CenterOnCharacter();
+        } else if (members.Count > 0) {
+            members[0].CenterOnCharacter();
+        }
     }
     #endregion
 
@@ -1252,6 +1263,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         hasChangedTargetDestination = false;
         canAcceptQuests = false;
         perHourElapsedInWaiting = 0;
+        bookmarkEventDispatcher.ClearAll();
         members.Clear();
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();

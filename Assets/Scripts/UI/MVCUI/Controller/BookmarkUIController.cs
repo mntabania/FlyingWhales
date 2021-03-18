@@ -15,6 +15,7 @@ public class BookmarkUIController : MVCUIController, BookmarkUIView.IListener {
             m_bookmarkUIView.Subscribe(this);
             InitUI(p_ui.UIModel, p_ui);
             m_bookmarkUIView.Show();
+            p_ui.UIModel.transform.SetSiblingIndex(siblingIndex);
         });
     }
     private void Awake() {

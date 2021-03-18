@@ -45834,6 +45834,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: d9a7d8c892a22b94c91ae6fc45a4e4b4, type: 3}
     - {fileID: 21300000, guid: b9f5f2ede50974a49ac1e41cfa208d94, type: 3}
     - {fileID: 21300000, guid: fb10f4935a328d1419578994df66cbc5, type: 3}
+  portalUIController: {fileID: 187911616}
   unallowOverlaps: []
   _optionsMenu: {fileID: 1720977191}
   factionInfoUI: {fileID: 1485930123}

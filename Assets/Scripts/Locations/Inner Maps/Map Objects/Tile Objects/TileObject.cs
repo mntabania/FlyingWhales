@@ -69,7 +69,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; private set; }
 
     #region getters
-    public string bookmarkName => name;
+    public string bookmarkName => $"{iconRichText} {name}";
     public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
     public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;

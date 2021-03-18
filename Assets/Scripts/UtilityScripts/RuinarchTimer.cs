@@ -19,13 +19,14 @@ namespace UtilityScripts {
         public override BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Progress_Bar;
         #endregion
         
-        public RuinarchTimer(string p_name) {
+        public RuinarchTimer(string p_name) : base() {
             timerName = p_name;
         }
         public void SetTimerName(string p_name) {
             timerName = p_name;
         }
         public void LoadStart(System.Action p_endAction) {
+            Load();
             _onTimerEndAction = p_endAction;
             Messenger.AddListener(Signals.TICK_ENDED, TimerTick);
         }

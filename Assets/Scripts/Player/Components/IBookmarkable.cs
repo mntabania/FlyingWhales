@@ -1,5 +1,4 @@
 ﻿public interface IBookmarkable {
-    string persistentID { get; }
     string bookmarkName { get; }
     BOOKMARK_TYPE bookmarkType { get; }
     BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
@@ -26,5 +25,9 @@ public class BookmarkableEventDispatcher {
     }
     public void ExecuteBookmarkRemovedEvent(IBookmarkable p_bookmarkable) {
         _onBookmarkRemoved?.Invoke(p_bookmarkable);
+    }
+
+    public void ClearAll() {
+        _onBookmarkRemoved = null;
     }
 }

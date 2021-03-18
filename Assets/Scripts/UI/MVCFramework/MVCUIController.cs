@@ -13,7 +13,7 @@ namespace Ruinarch.MVCFramework
 		[SerializeField]
 		protected Canvas _canvas;
 
-		[SerializeField] private int siblingIndex = -1;
+		[SerializeField] protected int siblingIndex = -1;
 
 		public virtual void InstantiateUI()
 		{

@@ -110,6 +110,9 @@ public class SaveDataPlayerGame : SaveData<Player> {
         
         storedTargetsComponent = new SaveDataStoredTargetsComponent();
         storedTargetsComponent.Save(player.storedTargetsComponent);
+
+        bookmarkComponent = new SaveDataBookmarkComponent();
+        bookmarkComponent.Save(player.bookmarkComponent);
     }
     public override Player Load() {
         Player player = new Player(this);

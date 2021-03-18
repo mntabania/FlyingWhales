@@ -183,7 +183,6 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
         
-        targetsList.Initialize();
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
 #if UNITY_EDITOR
@@ -202,7 +201,8 @@ public class PlayerUI : BaseMonoBehaviour {
         CreateInitialSpells();
         _buildListUI.Initialize();
         cultistsList.Initialize();
-
+        targetsList.Initialize();
+        
         cultistsList.UpdateList();
         minionList.UpdateList();
         summonList.UpdateList();

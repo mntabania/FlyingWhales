@@ -10,11 +10,13 @@ namespace Inner_Maps.Location_Structures {
             name = $"{nameWithoutID} {id.ToString()}";
             allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         }
-        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
-        }
+        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 
         #region Overrides
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
+        }
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {
                 // character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);

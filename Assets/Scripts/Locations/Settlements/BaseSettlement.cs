@@ -30,7 +30,7 @@ namespace Locations.Settlements {
 
         public virtual SettlementResources SettlementResources { get; protected set; }
 
-        public string bookmarkName => name;
+        public string bookmarkName => $"{iconRichText} {name}";
         public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
         public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 

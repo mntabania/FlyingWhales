@@ -33,7 +33,7 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
     private void ToggleContent() {
         goContent.SetActive(!goContent.activeSelf);
         UpdateExpandCollapseVisual();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent as RectTransform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(transform.parent as RectTransform);
     }
     private void UpdateExpandCollapseVisual() {
         bool isContentActive = goContent.activeSelf;
@@ -76,6 +76,8 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent as RectTransform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(transform.parent as RectTransform);
     }
     private string GetPrefabName(BOOKMARK_TYPE p_bookmarkType) {
         switch (p_bookmarkType) {

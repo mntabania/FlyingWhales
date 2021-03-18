@@ -67,6 +67,8 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         m_portalUIView.UIModel.transform.SetSiblingIndex(orderInHierarchy);
         
         Messenger.RemoveListener(Signals.GAME_LOADED, Initialize);
+    }
+    public void InitializeAfterLoadoutSelected() {
         m_portalUIView.UIModel.timerReleaseAbility.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell);
         m_portalUIView.UIModel.timerSummonDemon.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerSummonDemon);
         m_portalUIView.UIModel.timerObtainBlueprint.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUnlockStructure);

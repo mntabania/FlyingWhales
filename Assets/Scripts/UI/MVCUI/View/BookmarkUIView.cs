@@ -57,6 +57,13 @@ public class BookmarkUIView : MVCUIView{
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(UIModel.goBookmarkCategoryPrefab.name, Vector3.zero, Quaternion.identity, UIModel.scrollRectBookmarks.content);
         BookmarkCategoryItemUI categoryItemUI = go.GetComponent<BookmarkCategoryItemUI>();
         categoryItemUI.Initialize(p_category);
+        if (p_category.bookmarkCategory == BOOKMARK_CATEGORY.Portal) {
+            categoryItemUI.transform.SetSiblingIndex(0);
+        } else if (p_category.bookmarkCategory == BOOKMARK_CATEGORY.Player_Parties) {
+            categoryItemUI.transform.SetSiblingIndex(1);
+        } else if (p_category.bookmarkCategory == BOOKMARK_CATEGORY.Targets) {
+            categoryItemUI.transform.SetSiblingIndex(2);
+        }
     }
     #endregion
 }
