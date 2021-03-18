@@ -14,6 +14,9 @@ namespace Inner_Maps.Location_Structures {
 
         protected bool m_isUndeployUserAction;
 
+        public virtual void InitTargets() {
+        }
+
         public bool IsAvailableForTargeting() {
             bool isOccupied = charactersHere.Count > 0;
             charactersHere.ForEach((eachCharacters) => isOccupied &= !eachCharacters.isDead);

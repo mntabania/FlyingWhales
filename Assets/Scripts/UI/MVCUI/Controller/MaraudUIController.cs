@@ -246,20 +246,22 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		int ctr = 0;
 		foreach (PLAYER_SKILL_TYPE eachSkill in PlayerSkillManager.Instance.allMinionPlayerSkills) {
 			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill);
-			if (ctr < m_minionList.Count) {
-				MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
-				CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
-				m_minionList[ctr].gameObject.SetActive(true);
-				m_minionList[ctr++].InitializeItem(cClass, eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);
+			if (skillData.isInUse) {
+				if (ctr < m_minionList.Count) {
+					MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
+					CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
+					m_minionList[ctr].gameObject.SetActive(true);
+					m_minionList[ctr++].InitializeItem(cClass, eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);
 
-			} else {
-				MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
-				CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
-				AvailableMonsterItemUI minionItem = Instantiate(m_availableMonsterItemUI);
-				minionItem.InitializeItem(cClass, eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);
-				minionItem.transform.SetParent(m_maraudUIView.GetAvailableMinionsParent());
-				m_minionList.Add(minionItem);
-				m_minionList[ctr++].onClicked += OnAvailableMonsterClicked;
+				} else {
+					MinionSettings settings = CharacterManager.Instance.GetMintionSettings((skillData as MinionPlayerSkill).minionType);
+					CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
+					AvailableMonsterItemUI minionItem = Instantiate(m_availableMonsterItemUI);
+					minionItem.InitializeItem(cClass, eachSkill, manaCostToDeploySummon, skillData.charges, skillData.baseMaxCharges);
+					minionItem.transform.SetParent(m_maraudUIView.GetAvailableMinionsParent());
+					m_minionList.Add(minionItem);
+					m_minionList[ctr++].onClicked += OnAvailableMonsterClicked;
+				}
 			}
 		}
 	}

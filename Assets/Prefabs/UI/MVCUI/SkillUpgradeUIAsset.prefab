@@ -2995,6 +2995,8 @@ GameObject:
   - component: {fileID: 6289355260563092740}
   - component: {fileID: 2365355031102765023}
   - component: {fileID: 8318819620614901353}
+  - component: {fileID: 4812486929986359271}
+  - component: {fileID: 4700948569428540006}
   m_Layer: 5
   m_Name: SkillUpgradeUIAsset
   m_TagString: Untagged
@@ -3055,6 +3057,32 @@ MonoBehaviour:
   txtChaoticEnergyAmount: {fileID: 7451365334728733666}
   tabPrent: {fileID: 2538341250214836402}
   skillParent: {fileID: 442261699}
+--- !u!114 &4812486929986359271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8318819620614901354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8803d62703eac8a44a3e9884c71009da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KeepWindowInCanvas: 10
+--- !u!114 &4700948569428540006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8318819620614901354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9fc4ac6f426f4459d80b127eece198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tag: 1
 --- !u!1 &8909979158192327658
 GameObject:
   m_ObjectHideFlags: 0
