@@ -17,7 +17,7 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
         _onResetAction += () => OnResetActions(p_progressable);
         lblName.text = p_progressable.name;
         UpdateProgressBar(p_progressable);
-        p_progressable.eventDispatcher.Subscribe(this);
+        p_progressable.bookmarkEventDispatcher.Subscribe(this);
         
     }
     public void OnCurrentProgressChanged(RuinarchProgressable p_progressable) {
@@ -31,7 +31,7 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
         p_progressable.StopListeningToProgress(this);
     }
     public void OnBookmarkRemoved(IBookmarkable p_bookmarkable) {
-        p_bookmarkable.eventDispatcher.Unsubscribe(this);
+        p_bookmarkable.bookmarkEventDispatcher.Unsubscribe(this);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
     public override void Reset() {

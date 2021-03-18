@@ -9,7 +9,6 @@ namespace UtilityScripts {
         public string timerName;
         public GameDate timerStart;
         public GameDate timerEnd;
-        private BOOKMARK_CATEGORY _bookmarkCategory;        
         
         private System.Action _onTimerEndAction;
 
@@ -17,13 +16,11 @@ namespace UtilityScripts {
         public override string name => timerName;
         public int totalTicksInTimer => totalValue;
         public int currentTimerProgress => currentValue;
-        public override BOOKMARK_CATEGORY bookmarkCategory => _bookmarkCategory;
         public override BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Progress_Bar;
         #endregion
         
-        public RuinarchTimer(string p_name, BOOKMARK_CATEGORY p_category) {
+        public RuinarchTimer(string p_name) {
             timerName = p_name;
-            _bookmarkCategory = p_category;
         }
         public void SetTimerName(string p_name) {
             timerName = p_name;

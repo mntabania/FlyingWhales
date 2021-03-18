@@ -1,9 +1,8 @@
 ﻿public interface IBookmarkable {
     string persistentID { get; }
     string bookmarkName { get; }
-    BOOKMARK_CATEGORY bookmarkCategory { get; }
     BOOKMARK_TYPE bookmarkType { get; }
-    BookmarkableEventDispatcher eventDispatcher { get; }
+    BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
     void OnSelectBookmark();
     void RemoveBookmark();

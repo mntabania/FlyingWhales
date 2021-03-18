@@ -10,7 +10,7 @@ using Logs;
 using Object_Pools;
 using UnityEngine.Profiling;
 using System;
-public class Party : ILogFiller, ISavable, IJobOwner {
+public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
 
     public Action onQuestSucceed;
     public Action onQuestFailed;
@@ -19,13 +19,10 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         void OnQuestSucceed();
         void OnQuestFailed();
     }
+    
     public string persistentID { get; private set; }
     public string partyName { get; private set; }
     public PARTY_STATE partyState { get; private set; }
-    //public int takeQuestSchedule { get; private set; }
-    //public int restSchedule { get; private set; }
-    //public int endRestSchedule { get; private set; }
-    //public bool hasRested { get; private set; }
     public bool startedTrueRestingState { get; private set; } //True resting state starts when party already has a campfire
     public bool isDisbanded { get; private set; }
     public bool hasChangedTargetDestination { get; private set; }
@@ -57,6 +54,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public JobBoard jobBoard { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
 
+    //IBookmarkable
+    public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
+    
     //Components
     public PartyBeaconComponent beaconComponent { get; private set; }
 
@@ -64,7 +64,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     private PartyJobTriggerComponent _jobComponent;
 
     #region getters
+    public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text;
     public string name => partyName;
+    public string bookmarkName => partyName;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party;
     public System.Type serializedData => typeof(SaveDataParty);
     public bool isActive => currentQuest != null;
@@ -83,6 +85,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         _jobComponent = new PartyJobTriggerComponent(this);
         jobBoard = new JobBoard();
         beaconComponent = new PartyBeaconComponent(); beaconComponent.SetOwner(this);
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
     }
 
     public void Initialize(Character partyCreator) { //In order to create a party, there must always be a party creator
@@ -1210,6 +1213,15 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
         }
         forcedCancelJobsOnTickEnded.Clear();
+    }
+    #endregion
+
+    #region IBookmarkable
+    public void OnSelectBookmark() {
+        UIManager.Instance.ShowPartyInfo(this);
+    }
+    public void RemoveBookmark() {
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
     }
     #endregion
 

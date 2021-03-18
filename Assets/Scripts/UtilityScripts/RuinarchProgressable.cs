@@ -22,9 +22,8 @@
         
         public string persistentID { get; }
         public abstract string name { get; }
-        public abstract BOOKMARK_CATEGORY bookmarkCategory { get; }
         public abstract BOOKMARK_TYPE bookmarkType { get; } 
-        public BookmarkableEventDispatcher eventDispatcher { get; }
+        public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
         #region getters
         public string bookmarkName => name;
@@ -32,7 +31,7 @@
 
         protected RuinarchProgressable() {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
-            eventDispatcher = new BookmarkableEventDispatcher();
+            bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         }
         
         protected void Setup(int p_minValue, int p_maxValue) {

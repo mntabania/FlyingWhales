@@ -2107,9 +2107,11 @@
                   <e p="BaseBed.cs" t="Include" />
                   <e p="Bed.cs" t="Include" />
                   <e p="BedClinic.cs" t="Include" />
+                  <e p="BeholderTileObject.cs" t="Include" />
                   <e p="BerryShrub.cs" t="Include" />
                   <e p="BigSpawningPit.cs" t="Include" />
                   <e p="BigTreeObject.cs" t="Include" />
+                  <e p="BiolabTileObject.cs" t="Include" />
                   <e p="BlockWall.cs" t="Include" />
                   <e p="BloodPool.cs" t="Include" />
                   <e p="BoneRows.cs" t="Include" />
@@ -2138,6 +2140,7 @@
                   <e p="CultCircle.cs" t="Include" />
                   <e p="CultCross.cs" t="Include" />
                   <e p="CultistKit.cs" t="Include" />
+                  <e p="DefensePointTileObject.cs" t="Include" />
                   <e p="DemonAltar.cs" t="Include" />
                   <e p="DemonCircle.cs" t="Include" />
                   <e p="DemonRack.cs" t="Include" />
@@ -2183,13 +2186,16 @@
                   <e p="HerbPlant.cs" t="Include" />
                   <e p="HumanMeat.cs" t="Include" />
                   <e p="Ice.cs" t="Include" />
+                  <e p="ImpHutTileObject.cs" t="Include" />
                   <e p="IronMaiden.cs" t="Include" />
                   <e p="Jars.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
                   <e p="LocustSwarm.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />
                   <e p="Manacles.cs" t="Include" />
+                  <e p="ManaPitTileObject.cs" t="Include" />
                   <e p="ManaRune.cs" t="Include" />
+                  <e p="MaraudTileObject.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
                   <e p="MonsterEgg.cs" t="Include" />
                   <e p="MovingTileObject.cs" t="Include" />
@@ -2233,6 +2239,7 @@
                   <e p="SnowMound.cs" t="Include" />
                   <e p="SpawningPit.cs" t="Include" />
                   <e p="SpiderEgg.cs" t="Include" />
+                  <e p="SpireTileObject.cs" t="Include" />
                   <e p="Statue.cs" t="Include" />
                   <e p="StonePile.cs" t="Include" />
                   <e p="StructureTileObject.cs" t="Include" />

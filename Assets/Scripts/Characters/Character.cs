@@ -116,11 +116,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public PiercingAndResistancesComponent piercingAndResistancesComponent { get; private set; }
     public CharacterEventDispatcher eventDispatcher { get; }
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
-
     public INTERACTION_TYPE causeOfDeath { set; get; }
     public PLAYER_SKILL_TYPE skillCauseOfDeath { set; get; }
+    public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
     #region getters / setters
+    public string bookmarkName => name;
+    public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
     public STORED_TARGET_TYPE storedTargetType => this is Summon ? STORED_TARGET_TYPE.Monster : STORED_TARGET_TYPE.Character;
     public string iconRichText => visuals.GetCharacterStringIcon();
@@ -250,6 +252,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AssignRace(race, true);
         SetSexuality(sexuality);
         visuals = new CharacterVisuals(this);
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
@@ -264,6 +267,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AssignRace(race, true);
         GenerateSexuality();
         visuals = new CharacterVisuals(this);
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
@@ -6047,6 +6051,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (traitContainer.HasTrait("Necromancer")) {
             necromancerTrait = traitContainer.GetTraitOrStatus<Necromancer>("Necromancer");
         }
+    }
+    #endregion
+
+    #region IBookmarkable
+    public void OnSelectBookmark() {
+        LeftSelectAction();
+    }
+    public void RemoveBookmark() {
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
     }
     #endregion
 

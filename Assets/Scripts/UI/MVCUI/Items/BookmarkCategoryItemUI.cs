@@ -33,6 +33,7 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
     private void ToggleContent() {
         goContent.SetActive(!goContent.activeSelf);
         UpdateExpandCollapseVisual();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent as RectTransform);
     }
     private void UpdateExpandCollapseVisual() {
         bool isContentActive = goContent.activeSelf;
@@ -49,7 +50,11 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
     
     #region Listeners
     public void OnBookmarkAdded(IBookmarkable p_bookmarkable) {
+        gameObject.SetActive(true);
         CreateNewBookmarkItem(p_bookmarkable);
+    }
+    public void OnBookmarkCategoryEmptiedOut(BookmarkCategory p_category) {
+        gameObject.SetActive(false);
     }
     #endregion
 

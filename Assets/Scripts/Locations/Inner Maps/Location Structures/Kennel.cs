@@ -92,6 +92,7 @@ namespace Inner_Maps.Location_Structures {
             party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
             ListenToParty();
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
         }
         #endregion
 

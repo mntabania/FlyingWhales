@@ -162,7 +162,7 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     }
 }
 
-public interface IStoredTarget {
+public interface IStoredTarget : IBookmarkable {
     string persistentID { get; }
     STORED_TARGET_TYPE storedTargetType { get; }
     string name { get; }

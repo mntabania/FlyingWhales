@@ -52,8 +52,11 @@ namespace Inner_Maps.Location_Structures {
         /// NOTE: This isn't saved because this is filled out anytime a tile is added to this structure, and since those tiles are saved, there is no need to save this.
         /// </summary>
         public List<Area> occupiedAreas { get; private set; }
-        
+        public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
+
         #region getters
+        public string bookmarkName => name;
+        public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
         public virtual string nameplateName => name;
         public string locationName => ToString();
         public virtual bool isDwelling => false;
@@ -93,6 +96,7 @@ namespace Inner_Maps.Location_Structures {
 
             locationAwareness = new LocationAwareness();
             eventDispatcher = new LocationStructureEventDispatcher();
+            bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
             persistentID = data.persistentID;
@@ -119,6 +123,7 @@ namespace Inner_Maps.Location_Structures {
             
             locationAwareness = new LocationAwareness();
             eventDispatcher = new LocationStructureEventDispatcher();
+            bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         }
 
         #region Loading
@@ -1331,6 +1336,15 @@ namespace Inner_Maps.Location_Structures {
         #region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return !hasBeenDestroyed;
+        }
+        #endregion
+
+        #region IBookmarkable
+        public void OnSelectBookmark() {
+            LeftSelectAction();
+        }
+        public void RemoveBookmark() {
+            PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
         }
         #endregion
     }

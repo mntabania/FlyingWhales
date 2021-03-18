@@ -55,13 +55,13 @@ public class PlayerSkillComponent {
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
-        timerUnlockSpell = new RuinarchTimer("Spell Unlock", BOOKMARK_CATEGORY.Portal);
+        timerUnlockSpell = new RuinarchTimer("Spell Unlock");
         cooldownReroll = new RuinarchCooldown("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
         currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
-        timerSummonDemon = new RuinarchTimer("Summon Demon", BOOKMARK_CATEGORY.Portal);
+        timerSummonDemon = new RuinarchTimer("Summon Demon");
         currentStructureBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
-        timerUnlockStructure = new RuinarchTimer("Obtain Blueprint", BOOKMARK_CATEGORY.Portal);
+        timerUnlockStructure = new RuinarchTimer("Obtain Blueprint");
     }
 
     #region Loading
@@ -82,7 +82,7 @@ public class PlayerSkillComponent {
         timerUnlockSpell.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillData.name}");
         timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteSpellUnlockTimer);
         timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
-        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell);
+        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell, BOOKMARK_CATEGORY.Portal);
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, p_skillData, p_unlockCost);
     }
     public void CancelCurrentPlayerSkillUnlock() {
@@ -114,7 +114,7 @@ public class PlayerSkillComponent {
         timerSummonDemon.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "summon_demon_active")} {skillData.name}");
         timerSummonDemon.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteMinionUnlock);
         timerSummonDemon.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
-        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerSummonDemon);
+        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerSummonDemon, BOOKMARK_CATEGORY.Portal);
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_DEMON_TO_UNLOCK, p_skillType, p_unlockCost);
     }
     public void CancelCurrentMinionUnlock() {
@@ -140,7 +140,7 @@ public class PlayerSkillComponent {
         timerUnlockStructure.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "obtain_blueprint_active")} {skillData.name}");
         timerUnlockStructure.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteStructureUnlock);
         timerUnlockStructure.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
-        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockStructure);
+        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockStructure, BOOKMARK_CATEGORY.Portal);
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_STRUCTURE_TO_UNLOCK, p_skillType, p_unlockCost);
     }
     public void CancelCurrentStructureUnlock() {

@@ -61,6 +61,7 @@ namespace Inner_Maps.Location_Structures {
                 partyData.deployedSummons[0].faction.partyQuestBoard.CreateDemonDefendPartyQuest(partyData.deployedSummons[0],
                         partyData.deployedSummons[0].homeSettlement, this);
                 party.TryAcceptQuest();
+                PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
             }
             partyData.deployedSummons.ForEach((eachSummon) => {
                 if (!eachSummon.partyComponent.IsAMemberOfParty(party)) {

@@ -106,6 +106,7 @@ public class Player : ILeader, IObjectManipulator {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         
         underlingsComponent.SubscribeListeners();
+        bookmarkComponent.SubscribeListeners();
     }
     #endregion
 
