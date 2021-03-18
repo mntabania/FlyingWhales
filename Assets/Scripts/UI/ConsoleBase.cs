@@ -99,6 +99,7 @@ public class ConsoleBase : InfoUIBase {
             {"/activate_settlement_event", ActivateSettlementEvent},
             {"/trigger_quarantine", TriggerQuarantine},
             {"/add_ideology", AddFactionIdeology},
+            {"/check_tiles", CheckTiles}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1491,7 +1492,14 @@ public class ConsoleBase : InfoUIBase {
         else {
             AddErrorMessage($"No tile with coordinates {x.ToString()},{y.ToString()} at {region.name} was found!");
         }
-        
+    }
+    private void CheckTiles(string[] parameters) {
+        for (int i = 0; i < GridMap.Instance.mainRegion.innerMap.allTiles.Count; i++) {
+            LocationGridTile tile = GridMap.Instance.mainRegion.innerMap.allTiles[i];
+            if (tile.structure == null) {
+                AddErrorMessage($"{tile.ToString()} has no structure!");
+            }
+        }
     }
     #endregion
 
