@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealSpecialSkill : CombatSpecialSkill {
-    public HealSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Heal, COMBAT_SPECIAL_SKILL_TARGET.Single, 20) {
+public class StrongHealSpecialSkill : CombatSpecialSkill {
+    public StrongHealSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Strong_Heal, COMBAT_SPECIAL_SKILL_TARGET.Single, 20) {
 
     }
 
@@ -11,7 +11,7 @@ public class HealSpecialSkill : CombatSpecialSkill {
     public override bool TryActivateSkill(Character p_character) {
         Character validTarget = GetValidTargetFor(p_character);
         if(validTarget != null) {
-            validTarget.AdjustHP(100, ELEMENTAL_TYPE.Normal);
+            validTarget.AdjustHP(500, ELEMENTAL_TYPE.Normal);
             GameManager.Instance.CreateParticleEffectAt(validTarget, PARTICLE_EFFECT.Heal, false);
             p_character.logComponent.PrintLogIfActive("HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + validTarget.name);
             return true;
