@@ -35,7 +35,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     //private int lastIndex = 0;
 
     #region getters
-    public FactionItem currentSelectedFactionItem => GetCurrentFactionItem();;
+    public FactionItem currentSelectedFactionItem => GetCurrentFactionItem();
     public bool isShowing => parentPanelGO.gameObject.activeInHierarchy;
     #endregion
 
