@@ -14,12 +14,15 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
     [SerializeField] private GameObject goExpand;
     [SerializeField] private GameObject goCollapse;
 
+    public BOOKMARK_CATEGORY category { get; private set; }
+    
     private System.Action _onResetAction;
     private void Awake() {
         btnHeader.onClick.AddListener(ToggleContent);
     }
     public void Initialize(BookmarkCategory p_category) {
         lblHeaderName.text = p_category.displayName;
+        category = p_category.bookmarkCategory;
         p_category.SubscribeToEvents(this);
         _onResetAction += () => p_category.UnsubscribeToEvents(this);
         for (int i = 0; i < p_category.bookmarked.Count; i++) {
@@ -94,5 +97,6 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
         base.Reset();
         _onResetAction?.Invoke();
         _onResetAction = null;
+        category = BOOKMARK_CATEGORY.None;
     }
 }

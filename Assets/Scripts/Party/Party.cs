@@ -1228,7 +1228,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
 
     #region Utilities
     public void CenterOnParty() {
-        if (activeMembers.Count > 0) {
+        if (beaconComponent.currentBeaconCharacter != null) {
+            beaconComponent.currentBeaconCharacter.CenterOnCharacter();
+        } else if (activeMembers.Count > 0) {
             activeMembers[0].CenterOnCharacter();
         } else if (members.Count > 0) {
             members[0].CenterOnCharacter();
