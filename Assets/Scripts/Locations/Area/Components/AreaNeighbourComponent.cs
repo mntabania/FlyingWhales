@@ -137,26 +137,18 @@ public class AreaNeighbourComponent : AreaComponent {
         //}
         return null;
     }
-    public void PopulatePlainNeighbours(List<Area> areas) {
+    private void PopulatePlainNeighboursWithinRegion(List<Area> areas) {
         for (int i = 0; i < neighbours.Count; i++) {
             Area area = neighbours[i];
-            if(area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
+            if (owner.region == area.region && area.elevationType == ELEVATION.PLAIN) {
                 areas.Add(area);
             }
         }
     }
-    public void PopulatePlainNeighboursWithinRegion(List<Area> areas) {
+    private void PopulatePlainNoSettlementNeighboursWithinRegion(List<Area> areas) {
         for (int i = 0; i < neighbours.Count; i++) {
             Area area = neighbours[i];
-            if (owner.region == area.region && area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
-                areas.Add(area);
-            }
-        }
-    }
-    public void PopulatePlainNoSettlementNeighboursWithinRegion(List<Area> areas) {
-        for (int i = 0; i < neighbours.Count; i++) {
-            Area area = neighbours[i];
-            if (owner.region == area.region && area.settlementOnArea == null && area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
+            if (owner.region == area.region && area.settlementOnArea == null && area.elevationType == ELEVATION.PLAIN) {
                 areas.Add(area);
             }
         }

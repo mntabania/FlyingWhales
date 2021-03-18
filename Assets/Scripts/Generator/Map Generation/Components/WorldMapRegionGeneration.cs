@@ -13,6 +13,16 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating regions...");
 		WorldMapTemplate chosenTemplate = data.chosenWorldMapTemplate;
 		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate, data));
+		CreateBiomeDivisions();
+		yield return null;
+	}
+	private void CreateBiomeDivisions() {
+		BIOMES[] biomes = UtilityScripts.CollectionUtilities.GetEnumValues<BIOMES>();
+		for (int i = 0; i < biomes.Length; i++) {
+			BIOMES biome = biomes[i];
+			BiomeDivision biomeDivision = new BiomeDivision(biome);
+			GridMap.Instance.mainRegion.biomeDivisionComponent.AddBiomeDivision(biomeDivision);
+		}
 	}
 	private IEnumerator DivideToRegions(WorldMapTemplate mapTemplate, MapGenerationData data) {
 		int centerX = mapTemplate.worldMapWidth / 2;
@@ -32,68 +42,69 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		GridMap.Instance.SetRegions(allRegions);
 		yield return null;
 	}
-	private RegionDivision CreateNewRegionDivisionFromTemplate(RegionTemplate template, int startingX, int startingY) {
-		int maxX = startingX + template.width;
-		int maxY = startingY + template.height;
-		
-		int centerX = startingX + (template.width / 2);
-		int centerY = startingY + (template.height / 2);
-		Area center = GridMap.Instance.map[centerX, centerY];
-
-		RegionDivision regionDivision = new RegionDivision(center.biomeType);
-		for (int x = startingX; x < maxX; x++) {
-			for (int y = startingY; y < maxY; y++) {
-				Area tile = GridMap.Instance.map[x, y];
-				regionDivision.AddTile(tile);
-			}
-		}
-
-		return regionDivision;
-	}
-    private void PopulateRegionDivisionHexTilesFromTemplate(RegionDivision regionDivision, RegionTemplate template, int startingX, int startingY) {
-        int maxX = startingX + template.width;
-        int maxY = startingY + template.height;
-
-        int centerX = startingX + (template.width / 2);
-        int centerY = startingY + (template.height / 2);
-
-        for (int x = startingX; x < maxX; x++) {
-            for (int y = startingY; y < maxY; y++) {
-	            Area tile = GridMap.Instance.map[x, y];
-                regionDivision.AddTile(tile);
-            }
-        }
-    }
+	// private BiomeDivision CreateNewRegionDivisionFromTemplate(RegionTemplate template, int startingX, int startingY) {
+	// 	int maxX = startingX + template.width;
+	// 	int maxY = startingY + template.height;
+	// 	
+	// 	int centerX = startingX + (template.width / 2);
+	// 	int centerY = startingY + (template.height / 2);
+	// 	Area center = GridMap.Instance.map[centerX, centerY];
+	//
+	// 	BiomeDivision biomeDivision = new BiomeDivision(center.biomeType);
+	// 	for (int x = startingX; x < maxX; x++) {
+	// 		for (int y = startingY; y < maxY; y++) {
+	// 			Area tile = GridMap.Instance.map[x, y];
+	// 			biomeDivision.AddTile(tile);
+	// 		}
+	// 	}
+	//
+	// 	return biomeDivision;
+	// }
+    // private void PopulateRegionDivisionHexTilesFromTemplate(BiomeDivision biomeDivision, RegionTemplate template, int startingX, int startingY) {
+    //     int maxX = startingX + template.width;
+    //     int maxY = startingY + template.height;
+    //
+    //     int centerX = startingX + (template.width / 2);
+    //     int centerY = startingY + (template.height / 2);
+    //
+    //     for (int x = startingX; x < maxX; x++) {
+    //         for (int y = startingY; y < maxY; y++) {
+	   //          Area tile = GridMap.Instance.map[x, y];
+    //             biomeDivision.AddTile(tile);
+    //         }
+    //     }
+    // }
     #endregion
 
     #region Scenario Maps
     public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
-		LoadScenarioRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
+		// LoadScenarioRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
 	}
-	private void LoadScenarioRegionDivisions(WorldMapTemplate p_template, Region p_region) {
-		int lastX = 0;
-		int lastY = 0;
-		foreach (var mapTemplateRegion in p_template.regions) {
-			for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
-				RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
-				RegionDivision division = CreateNewRegionDivisionFromTemplate(regionTemplate, lastX, lastY);
-				lastX += regionTemplate.width;
-				if (lastX == GridMap.Instance.width) {
-					lastX = 0;
-					lastY += regionTemplate.height;
-				}
-				p_region.regionDivisionComponent.AddRegionDivision(division);
-			}
-		}
-	}
+	// private void LoadScenarioRegionDivisions(WorldMapTemplate p_template, Region p_region) {
+	// 	int lastX = 0;
+	// 	int lastY = 0;
+	// 	foreach (var mapTemplateRegion in p_template.regions) {
+	// 		for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
+	// 			RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
+	// 			BiomeDivision division = CreateNewRegionDivisionFromTemplate(regionTemplate, lastX, lastY);
+	// 			lastX += regionTemplate.width;
+	// 			if (lastX == GridMap.Instance.width) {
+	// 				lastX = 0;
+	// 				lastY += regionTemplate.height;
+	// 			}
+	// 			p_region.biomeDivisionComponent.AddBiomeDivision(division);
+	// 		}
+	// 	}
+	// }
 	#endregion
 	
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading regions...");
 		yield return MapGenerator.Instance.StartCoroutine(LoadRegions(saveData));
-		LoadSavedRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
+		// LoadSavedRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
+		CreateBiomeDivisions();
 	}
 	private IEnumerator LoadRegions(SaveDataCurrentProgress saveData) {
 		int lastX = 0;
@@ -131,24 +142,24 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
 		return region;
 	}
-    private void LoadSavedRegionDivisions(WorldMapTemplate p_template, Region p_region) {
-        int lastX = 0;
-        int lastY = 0;
-        int regionIndex = 0;
-        foreach (var mapTemplateRegion in p_template.regions) {
-            for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
-                RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
-                RegionDivision division = p_region.regionDivisionComponent.divisions[regionIndex];
-                PopulateRegionDivisionHexTilesFromTemplate(division, regionTemplate, lastX, lastY);
-                lastX += regionTemplate.width;
-                if (lastX == GridMap.Instance.width) {
-                    lastX = 0;
-                    lastY += regionTemplate.height;
-                }
-                regionIndex++;
-            }
-        }
-    }
+    // private void LoadSavedRegionDivisions(WorldMapTemplate p_template, Region p_region) {
+    //     int lastX = 0;
+    //     int lastY = 0;
+    //     int regionIndex = 0;
+    //     foreach (var mapTemplateRegion in p_template.regions) {
+    //         for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
+    //             RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
+    //             BiomeDivision division = p_region.biomeDivisionComponent.divisions[regionIndex];
+    //             PopulateRegionDivisionHexTilesFromTemplate(division, regionTemplate, lastX, lastY);
+    //             lastX += regionTemplate.width;
+    //             if (lastX == GridMap.Instance.width) {
+    //                 lastX = 0;
+    //                 lastY += regionTemplate.height;
+    //             }
+    //             regionIndex++;
+    //         }
+    //     }
+    // }
     #endregion
 }
 

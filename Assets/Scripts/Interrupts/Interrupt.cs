@@ -33,7 +33,7 @@ namespace Interrupts {
 
         #region Virtuals
         public virtual bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) { return false; }
-        public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, Log overrideEffectLog, ActualGoapNode goapNode = null) { return false; }
+        public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) { return false; }
         public virtual bool OnForceEndInterrupt(InterruptHolder interruptHolder) { return false; }
 
         //PerTickInterrupt does not trigger on the last tick of the interrupt because ExecuteInterruptEndEffect is triggered

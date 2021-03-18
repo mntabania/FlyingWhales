@@ -19,6 +19,10 @@ public class TargetsListUI : PopupMenuBase {
     public void Initialize() {
         Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_STORED_TARGET, OnPlayerStoredTarget);
         Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnPlayerRemovedStoredTarget);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        UpdateItems();
+    }
+    private void OnCharacterChangedName(Character arg1) {
         UpdateItems();
     }
     private void OnPlayerRemovedStoredTarget(IStoredTarget p_target) {

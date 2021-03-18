@@ -7,8 +7,9 @@ using UtilityScripts;
 public class WorldMapBiomeGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating biomes...");
-		yield return MapGenerator.Instance.StartCoroutine(SetBiomePerRegion(data));
-		yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
+		// yield return MapGenerator.Instance.StartCoroutine(SetBiomePerRegion(data));
+		// yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
+		yield return null;
 	}
 	private IEnumerator SetBiomePerRegion(MapGenerationData data) {
 		var choices = new List<BIOMES>(WorldSettings.Instance.worldSettingsData.mapSettings.biomes);
@@ -33,56 +34,20 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 				regionIndex++;
 			}
 		}
-		// for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-		// 	Region region = GridMap.Instance.allRegions[i];
-		// 	BIOMES biome;
-		// 	if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-		// 		biome = BIOMES.GRASSLAND;
-		// 	} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-		// 		if (i == 0) {
-		// 			biome = BIOMES.FOREST;
-		// 		} else if (i == 1) {
-		// 			biome = BIOMES.DESERT;
-		// 		} else if (i == 2) {
-		// 			biome = BIOMES.SNOW;
-		// 		} else {
-		// 			biome = BIOMES.GRASSLAND;
-		// 		}
-		// 	} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-		// 		if (i == 0) {
-		// 			biome = BIOMES.GRASSLAND;
-		// 		} else {
-		// 			biome = BIOMES.DESERT;
-		// 		} 
-		// 	} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
-		// 		if (i == 0) {
-		// 			biome = BIOMES.FOREST;
-		// 		} else {
-		// 			biome = BIOMES.SNOW;
-		// 		}
-		// 	} else {
-		// 		biome = CollectionUtilities.GetRandomElement(choices);
-		// 	}
-		// 	
-		// 	for (int j = 0; j < region.tiles.Count; j++) {
-		// 		HexTile tile = region.tiles[j];
-		// 		Biomes.Instance.SetBiomeForTile(biome, tile);
-		// 	}	
-		// }
 		yield return null;
 	}
 	private void SetBiomeForRegionDivisionTemplate(RegionTemplate p_template, int startingX, int startingY, BIOMES p_biome, Region p_region) {
 		int maxX = startingX + p_template.width;
 		int maxY = startingY + p_template.height;
-		RegionDivision regionDivision = new RegionDivision(p_biome);
+		BiomeDivision biomeDivision = new BiomeDivision(p_biome);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {
 				Area area = GridMap.Instance.map[x, y];
 				area.biomeComponent.SetBiome(p_biome);
-				regionDivision.AddTile(area);
+				// biomeDivision.AddTile(area);
 			}
 		}
-		p_region.regionDivisionComponent.AddRegionDivision(regionDivision);
+		p_region.biomeDivisionComponent.AddBiomeDivision(biomeDivision);
 	}
 	private BIOMES GetBiomeForRegion(int p_regionIndex, List<BIOMES> p_biomeChoices) {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
@@ -121,30 +86,30 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 			return CollectionUtilities.GetRandomElement(p_biomeChoices);
 		}
 	}
-	private IEnumerator ElevationBiomeRefinement() {
-		int batchCount = 0;
-		for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
-			Area area = GridMap.Instance.allAreas[i];
-			if (area.biomeType == BIOMES.FOREST && area.elevationType == ELEVATION.PLAIN && GameUtilities.RollChance(75)) {
-				area.SetElevation(ELEVATION.TREES);
-			} else if (area.biomeType == BIOMES.DESERT) {
-				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-					if (area.elevationType == ELEVATION.WATER || area.elevationType == ELEVATION.MOUNTAIN) {
-						area.SetElevation(GameUtilities.RollChance(65) ? ELEVATION.PLAIN : ELEVATION.TREES);
-					}
-				} else {
-					if (area.elevationType == ELEVATION.WATER && GameUtilities.RollChance(75)) {
-						area.SetElevation(ELEVATION.PLAIN);	
-					} else if (area.elevationType == ELEVATION.TREES && GameUtilities.RollChance(50)) {
-						area.SetElevation(ELEVATION.PLAIN);	
-					}	
-				}
-			}
-			batchCount++;
-			if (batchCount >= MapGenerationData.WorldMapElevationRefinementBatches) {
-				batchCount = 0;
-				yield return null;
-			}
-		}
-	}
+	// private IEnumerator ElevationBiomeRefinement() {
+	// 	int batchCount = 0;
+	// 	for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
+	// 		Area area = GridMap.Instance.allAreas[i];
+	// 		if (area.biomeType == BIOMES.FOREST && area.elevationType == ELEVATION.PLAIN && GameUtilities.RollChance(75)) {
+	// 			area.SetElevation(ELEVATION.TREES);
+	// 		} else if (area.biomeType == BIOMES.DESERT) {
+	// 			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+	// 				if (area.elevationType == ELEVATION.WATER || area.elevationType == ELEVATION.MOUNTAIN) {
+	// 					area.SetElevation(GameUtilities.RollChance(65) ? ELEVATION.PLAIN : ELEVATION.TREES);
+	// 				}
+	// 			} else {
+	// 				if (area.elevationType == ELEVATION.WATER && GameUtilities.RollChance(75)) {
+	// 					area.SetElevation(ELEVATION.PLAIN);	
+	// 				} else if (area.elevationType == ELEVATION.TREES && GameUtilities.RollChance(50)) {
+	// 					area.SetElevation(ELEVATION.PLAIN);	
+	// 				}	
+	// 			}
+	// 		}
+	// 		batchCount++;
+	// 		if (batchCount >= MapGenerationData.WorldMapElevationRefinementBatches) {
+	// 			batchCount = 0;
+	// 			yield return null;
+	// 		}
+	// 	}
+	// }
 }

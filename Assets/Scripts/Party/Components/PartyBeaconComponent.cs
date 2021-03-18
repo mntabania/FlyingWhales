@@ -31,35 +31,39 @@ public class PartyBeaconComponent : PartyComponent {
     private void OnCharacterCannotMove(Character p_character) {
         if(currentBeaconCharacter == p_character) {
             UpdateBeaconCharacter();
-        } else {
-            if (p_character.partyComponent.IsAMemberOfParty(owner)) {
-                if (p_character.partyComponent.isMemberThatJoinedQuest) {
-                    p_character.partyComponent.UnfollowBeacon();
-                }
-            }
         }
+        //Moved to DecreaseCanMove
+        //if (p_character.partyComponent.IsAMemberOfParty(owner)) {
+        //    if (p_character.partyComponent.isMemberThatJoinedQuest) {
+        //        p_character.partyComponent.UnfollowBeacon();
+        //    }
+        //}
     }
     private void OnCharacterCannotPerform(Character p_character) {
         if (currentBeaconCharacter == p_character) {
             UpdateBeaconCharacter();
-        } else {
-            if (p_character.partyComponent.IsAMemberOfParty(owner)) {
-                if (p_character.partyComponent.isMemberThatJoinedQuest) {
-                    p_character.partyComponent.UnfollowBeacon();
-                }
-            }
         }
+
+        //Moved to DecreaseCanPerform
+        //if (p_character.partyComponent.IsAMemberOfParty(owner)) {
+        //    if (p_character.partyComponent.isMemberThatJoinedQuest) {
+        //        p_character.partyComponent.UnfollowBeacon();
+        //    }
+        //}
     }
     private void OnSeizePOI(IPointOfInterest p_poi) {
         if(currentBeaconCharacter == p_poi) {
             UpdateBeaconCharacter();
-        } else {
-            if (p_poi is Character p_character && p_character.partyComponent.IsAMemberOfParty(owner)) {
-                if (p_character.partyComponent.isMemberThatJoinedQuest) {
-                    p_character.partyComponent.UnfollowBeacon();
-                }
-            }
         }
+
+        //Moved to OnSeizePOI
+        //else {
+        //    if (p_poi is Character p_character && p_character.partyComponent.IsAMemberOfParty(owner)) {
+        //        if (p_character.partyComponent.isMemberThatJoinedQuest) {
+        //            p_character.partyComponent.UnfollowBeacon();
+        //        }
+        //    }
+        //}
     }
     private void OnCharacterRemovedFromVision(Character p_character, Character p_target) {
         if(p_target == currentBeaconCharacter && p_character.partyComponent.IsAMemberOfParty(owner) && owner.partyState == PARTY_STATE.Moving) {
@@ -127,9 +131,8 @@ public class PartyBeaconComponent : PartyComponent {
     public void OnRemoveMemberThatJoinedQuest(Character p_member) {
         if(p_member == currentBeaconCharacter) {
             UpdateBeaconCharacter();
-        } else {
-            p_member.partyComponent.UnfollowBeacon();
         }
+        p_member.partyComponent.UnfollowBeacon();
     }
     #endregion
 

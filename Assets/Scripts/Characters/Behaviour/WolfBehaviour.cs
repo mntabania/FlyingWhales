@@ -67,7 +67,7 @@ public class WolfBehaviour : BaseMonsterBehaviour {
 
             Area chosenArea = null;
             Area targetArea = character.areaLocation;
-            if(targetArea != null && targetArea.elevationType != ELEVATION.WATER && targetArea.elevationType != ELEVATION.MOUNTAIN && !targetArea.structureComponent.HasStructureInArea() && !targetArea.IsNextToOrPartOfVillage()) {
+            if(targetArea != null && targetArea.elevationComponent.IsFully(ELEVATION.PLAIN) && !targetArea.structureComponent.HasStructureInArea() && !targetArea.IsNextToOrPartOfVillage()) {
                 chosenArea = targetArea;
             }
             if (chosenArea == null) {
@@ -125,6 +125,6 @@ public class WolfBehaviour : BaseMonsterBehaviour {
         return chosenArea;
     }
     private Area GetNoStructurePlainAreaInRegion(Region region) {
-        return region.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
+        return region.GetRandomHexThatMeetCriteria(currArea => currArea.elevationComponent.IsFully(ELEVATION.PLAIN) && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
     }
 }

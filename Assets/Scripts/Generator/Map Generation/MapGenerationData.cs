@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 
@@ -31,7 +32,7 @@ public class MapGenerationData {
 	public const float XOffset = 2.56f;
 	public const float YOffset = 1.93f;
 	public const int TileSize = 1;
-	public const int MinimumHabitabilityForVillage = 6;
+	public const int MinimumHabitabilityForVillage = 1;
 	public int width => chosenWorldMapTemplate.worldMapWidth;
 	public int height => chosenWorldMapTemplate.worldMapHeight;
 	public int regionCount => chosenWorldMapTemplate.regionCount;

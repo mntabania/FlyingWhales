@@ -62,7 +62,7 @@ public class AreaBiomeEffectTrigger : AreaComponent {
 
     #region Snow
     private void TryFreezeWetObjects() {
-        Messenger.Broadcast(AreaSignals.FREEZE_WET_OBJECTS_IN_AREA, owner);
+        Messenger.Broadcast(AreaSignals.FREEZE_WET_OBJECTS, owner);
     }
     #endregion
     

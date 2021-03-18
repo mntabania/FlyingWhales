@@ -64,7 +64,7 @@ public class MainMenuManager : MonoBehaviour {
     public void StartGame() {
         LevelLoaderManager.Instance.SetLoadingState(true);
         AudioManager.Instance.TransitionToLoading();
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
         LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
         LoadMainGameScene();
     }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class MineShack : ManMadeStructure {
         
@@ -34,8 +36,9 @@ namespace Inner_Maps.Location_Structures {
             
             //Create a path inside
             Area area = p_usedConnector.area;
-            LocationGridTile centerTile = area.gridTileComponent.centerGridTile;
-            List<LocationGridTile> path = PathGenerator.Instance.GetPath(p_usedConnector, centerTile, GRID_PATHFINDING_MODE.UNCONSTRAINED, includeFirstTile: true);
+            List<LocationGridTile> choices = p_usedConnector.GetTilesInRadius(10, includeTilesInDifferentStructure: true).Where(t => t.IsPassable() && t.structure == connectedCave).ToList();
+            LocationGridTile randomPassableTile = CollectionUtilities.GetRandomElement(choices);
+            List<LocationGridTile> path = PathGenerator.Instance.GetPath(p_usedConnector, randomPassableTile, GRID_PATHFINDING_MODE.CAVE_INTERCONNECTION, includeFirstTile: true);
             if (path != null) {
                 for (int i = 0; i < path.Count; i++) {
                     LocationGridTile pathTile = path[i];

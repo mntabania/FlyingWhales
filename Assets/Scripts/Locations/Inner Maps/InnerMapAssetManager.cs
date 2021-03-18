@@ -192,7 +192,23 @@ namespace Inner_Maps {
             foreach (var file in allFiles) {
                 FileInfo fileInfo = new FileInfo(file);
                 string fullFilePath = fileInfo.FullName;
-                fullFilePath = fullFilePath.Replace(@"D:\Repositories\FlyingWhales\", "");
+                fullFilePath = fullFilePath.Replace(@"F:\Repositories\FlyingWhales\", "");
+                Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
+                if (loadedSprite != null) {
+                    Debug.Log($"Loaded {loadedSprite.name} sprite.");
+                    if (!allTileObjectSprites.ContainsKey(loadedSprite.name)) {
+                        allTileObjectSprites.Add(loadedSprite.name, loadedSprite);    
+                    }
+                }
+                Debug.Log("Loaded all tile object assets");
+            }
+            assetPath = "Assets/Textures/Interior Map/Demonic Structures/";
+            allFiles = Directory.GetFiles(assetPath, "*.png", SearchOption.AllDirectories);
+
+            foreach (var file in allFiles) {
+                FileInfo fileInfo = new FileInfo(file);
+                string fullFilePath = fileInfo.FullName;
+                fullFilePath = fullFilePath.Replace(@"F:\Repositories\FlyingWhales\", "");
                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
                 if (loadedSprite != null) {
                     Debug.Log($"Loaded {loadedSprite.name} sprite.");

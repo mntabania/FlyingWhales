@@ -230,8 +230,9 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             } else {
                 if(character.necromancerTrait.lairStructure == null) {
                     log += $"\n-Lair is not set, will spawn lair";
-                    Area chosenArea = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN
-                    && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && character.movementComponent.HasPathTo(a));
+                    Area chosenArea = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(a => a.elevationComponent.IsFully(ELEVATION.PLAIN) && 
+                                                                                                                    !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && 
+                                                                                                                    character.movementComponent.HasPathTo(a));
                     if (chosenArea == null) {
                         chosenArea = GetNoStructurePlainAreaInAllRegions();
                     }
@@ -262,6 +263,6 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
         return chosenArea;
     }
     private Area GetNoStructurePlainAreaInRegion(Region region) {
-        return region.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
+        return region.GetRandomHexThatMeetCriteria(a => a.elevationComponent.IsFully(ELEVATION.PLAIN) && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
     }
 }

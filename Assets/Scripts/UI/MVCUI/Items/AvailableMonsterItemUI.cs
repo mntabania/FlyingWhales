@@ -56,6 +56,7 @@ public class AvailableMonsterItemUI : MonoBehaviour
         isMinion = true;
         currentCharges = p_chargeCount;
         maxCharges = p_maxChargeCount;
+        currentCharges = Mathf.Clamp(currentCharges, 0, maxCharges);
         txtName.text = playerData.name;
         txtName.text = txtName.text.Replace("Demon ", "");
         txtHP.text = p_class.baseHP.ToString();

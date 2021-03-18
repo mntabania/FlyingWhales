@@ -10,4 +10,8 @@
     /// Parameters (List[Character], DemonicStructure)
     /// </summary>
     public static string CHARACTERS_ATTACKING_DEMONIC_STRUCTURE = "CharactersAttackingDemonicStructure";
+
+    public static string UNDEPLOY_PARTY = "UndeployParty";
+    public static string PARTY_QUEST_FINISHED_SUCCESSFULLY = "PartyQuestFinishedSuccessfully";
+    public static string PARTY_QUEST_FAILED = "PartyQuestFailed";
 }

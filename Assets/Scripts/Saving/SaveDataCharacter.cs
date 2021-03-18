@@ -73,7 +73,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> forceCancelJobsOnTickEnded;
 
     public bool isInfoUnlocked;
-    
+    public string deployedAtStructure;
+
     public SaveDataTraitContainer saveDataTraitContainer;
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
 
@@ -260,7 +261,11 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
                 SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(jobQueueItem);
             }
         }
-        
+
+        if (data.deployedAtStructure != null) {
+            deployedAtStructure = data.deployedAtStructure.persistentID;
+        }
+
         saveDataTraitContainer = new SaveDataTraitContainer();
         saveDataTraitContainer.Save(data.traitContainer);
         

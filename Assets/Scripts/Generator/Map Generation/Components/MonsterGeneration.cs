@@ -77,7 +77,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					continue; //do not spawn other monsters in ancient graveyard for Pangat Loo since there are already skeletons there.
 				}
 				Assert.IsNotNull(structure.occupiedArea, $"Occupied area of {structure.name} is null!");
-				RegionDivision regionDivision = structure.occupiedArea.regionDivision;
+				BiomeDivision biomeDivision = structure.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(structure.tiles.First());
 				if (structure is RuinedZoo) {
 					continue; //skip
 				}
@@ -85,7 +85,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					locationChoices.Clear();
 					locationChoices.AddRange(structure.passableTiles);
 					
-                    MonsterMigrationBiomeAtomizedData chosenMMonster = regionDivision.GetRandomMonsterFromFaunaList();
+                    MonsterMigrationBiomeAtomizedData chosenMMonster = biomeDivision.GetRandomMonsterFromFaunaList();
                     int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
                     for (int k = 0; k < randomAmount; k++) {
 	                    Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, structure, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
@@ -130,6 +130,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					for (int j = 0; j < caves.Count; j++) {
 						if (GameUtilities.RollChance(40)) {
 							LocationStructure cave = caves[j];
+							if (cave.unoccupiedTiles.Count == 0) { continue; }
 							if (GameUtilities.RollChance(50)) {
 								//spawn 2-4 ghosts
 								int ghosts = Random.Range(2, 5);
@@ -152,16 +153,16 @@ public class MonsterGeneration : MapGenerationComponent {
 					List<LocationGridTile> locationChoices = new List<LocationGridTile>();
 					for (int j = 0; j < caves.Count; j++) {
 						LocationStructure cave = caves[j];
-						if (cave.residents.Count > 0) {
+						if (cave.residents.Count > 0 || cave.passableTiles.Count == 0) {
 							//if cave already has occupants, then do not generate monsters for that cave
 							continue;
 						}
-						RegionDivision regionDivision = cave.occupiedArea.regionDivision;
+						BiomeDivision biomeDivision = cave.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(cave.tiles.First());
 						if (GameUtilities.RollChance(70)) {
 							locationChoices.Clear();
 							locationChoices.AddRange(cave.passableTiles);
 					
-							MonsterMigrationBiomeAtomizedData chosenMMonster = regionDivision.GetRandomMonsterFromFaunaList();
+							MonsterMigrationBiomeAtomizedData chosenMMonster = biomeDivision.GetRandomMonsterFromFaunaList();
 							int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
 							for (int k = 0; k < randomAmount; k++) {
 								Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, cave, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
@@ -169,6 +170,10 @@ public class MonsterGeneration : MapGenerationComponent {
 									summon.traitContainer.AddTrait(summon, "Mighty");
 								}
 								locationChoices.Remove(summon.gridTileLocation);
+								if (locationChoices.Count == 0) {
+									Debug.LogWarning($"Ran out of grid tiles to place monsters at structure {cave.name}");
+									break;
+								}
 							}
 							if (locationChoices.Count == 0) {
 								Debug.LogWarning($"Ran out of grid tiles to place monsters at structure {cave.name}");

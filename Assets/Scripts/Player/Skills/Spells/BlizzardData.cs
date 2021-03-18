@@ -22,7 +22,7 @@ public class BlizzardData : SkillData {
         bool canPerform = base.CanPerformAbilityTowards(targetArea);
         if (canPerform) {
             return targetArea != null
-                   && targetArea.biomeType != BIOMES.DESERT
+                   // && targetArea.biomeType != BIOMES.DESERT
                    && targetArea.featureComponent.HasFeature(AreaFeatureDB.Blizzard_Feature) == false;
         }
         return canPerform;

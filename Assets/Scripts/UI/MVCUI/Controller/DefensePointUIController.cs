@@ -78,12 +78,13 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		}
 	}
 	public void Init() {
+		m_targetPartyStructure.InitializeTeam();
 		InstantiateUI();
 		InitializeSummons();
 		InitializeDeployedItems();
 		m_defensePointUIView.SetTitle("Defense Point");
 		ProcessDeployButtonDisplay();
-		GameManager.Instance.SetPausedState(true);
+		UIManager.Instance.Pause();
 	}
 
 	void HideDeployedItems() {
@@ -180,25 +181,23 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
 		if (!m_isAllItemDeployed) {
-			//Party party = null;
+			int newDeployedCount = 0;
 			m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
 				if (eachSummonToBeDeployed.isReadyForDeploy) {
 					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.summonType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement);
 					CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
+					summon.OnSummonAsPlayerMonster();
 					eachSummonToBeDeployed.HideManaCost();
 					eachSummonToBeDeployed.Deploy(summon, true);
 					m_targetPartyStructure.AddDeployedItem(eachSummonToBeDeployed);
 					PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachSummonToBeDeployed.summonType, -1);
-
-					//if (party == null) {
-					//	party = PartyManager.Instance.CreateNewParty(summon);
-					//	summon.faction.partyQuestBoard.CreateDemonDefendPartyQuest(summon, summon.homeSettlement, m_targetPartyStructure);
-					//	party.TryAcceptQuest();
-					//}
-					//party.AddMember(summon);
-					//party.AddMemberThatJoinedQuest(summon);
+					newDeployedCount++;
 				}
 			});
+			if (newDeployedCount > 0) {
+				m_targetPartyStructure.DeployParty();
+			}
+			
 		} else {
 			m_deployedSummonsUI.ForEach((eachSummonThatAreDployed) => {
 				if (eachSummonThatAreDployed.isDeployed) {
@@ -210,6 +209,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 					eachSummonThatAreDployed.gameObject.SetActive(false);
 				}
 			});
+			m_targetPartyStructure.ResetExistingCharges();
 			m_targetPartyStructure.UnDeployAll();
 			Init();
 			m_defensePointUIView.ProcessSummonDisplay();
@@ -246,7 +246,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		HideSummonItems();
 		HideUI();
 		m_defensePointUIView.HideAllSubMenu();
-		GameManager.Instance.SetPausedState(false);
+		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 
 	public void OnAddSummonClicked() { m_defensePointUIView.ShowSummonSubContainer(); }

@@ -19,6 +19,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public LocationGridTile.Tile_State tileState;
     public int meteorCount;
     public int connectorsCount;
+    public ELEVATION elevation;
 
     //tilemap assets
     public string groundTileMapAssetName;
@@ -43,6 +44,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         tileState = gridTile.tileState;
         meteorCount = gridTile.meteorCount;
         connectorsCount = gridTile.connectorsOnTile;
+        elevation = gridTile.elevationType;
 
         //tilemap assets
         groundTileMapAssetName = gridTile.parentMap.groundTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;

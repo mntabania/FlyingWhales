@@ -19,7 +19,9 @@ public class CultistBehaviour : CharacterBehaviourComponent {
                 StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, true);
                 List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                 GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                return character.jobComponent.TriggerFindNewVillage(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);
+                if (LandmarkManager.Instance.HasEnoughSpaceForStructure(chosenStructurePrefab.name, targetArea.gridTileComponent.centerGridTile)) {
+                    return character.jobComponent.TriggerFindNewVillage(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);    
+                }
             }    
         }
         

@@ -15,12 +15,12 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(interruptHolder.target is Character targetCharacter) {
                 Faction factionToJoinTo = targetCharacter.faction;
                 bool bypassIdeology = interruptHolder.identifier == "join_faction_necro";
                 if (interruptHolder.actor.ChangeFactionTo(factionToJoinTo, bypassIdeology)) {
-                    if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
+                    //if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
                     overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Join Faction", interruptHolder.identifier, null, logTags);
                     overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     overrideEffectLog.AddToFillers(factionToJoinTo, factionToJoinTo.name, LOG_IDENTIFIER.FACTION_1);
@@ -28,7 +28,7 @@ namespace Interrupts {
                     return true;
                 }
             }
-            return base.ExecuteInterruptStartEffect(interruptHolder, overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         #endregion
     }

@@ -115,7 +115,7 @@ namespace Tutorial {
             Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
-            if (tileObject == _droppedObject) {
+            if (tileObject == _droppedObject && removedBy == null) {
                 FailQuest(); //the tile object was removed from where it was, fail this quest
             }
         }

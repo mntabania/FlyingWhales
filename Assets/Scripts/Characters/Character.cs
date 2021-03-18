@@ -29,6 +29,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Minion _minion;
     private LocationStructure _currentStructure; //what structure is this character currently in.
     private Region _currentRegion;
+    public LocationGridTile deathTilePosition { protected set; get; }
 
     public string persistentID { get; private set; }
     //visuals
@@ -80,6 +81,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ILocationAwareness currentLocationAwareness { get; private set; }
     public Vector2Int gridTilePosition { get; private set; }
     public bool hasMarker { get; private set; }
+    public LocationStructure deployedAtStructure { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
 
     //misc
@@ -1367,6 +1369,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         movementComponent.OnChangeFactionTo(newFaction);
         movementComponent.RedetermineFactionsToAvoid(this);
+
+        if(prevFaction != null && prevFaction.factionType.type == FACTION_TYPE.Demons) {
+            if(this is Summon summon) {
+                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(summon.summonType, 1);
+            }
+        }
         // if (newFaction != null && newFaction.isMajorFaction) {
         //     //if character is now part of a faction, then set its movement to not avoid that faction
         //     movementComponent.DoNotAvoidFaction(newFaction);    
@@ -1763,10 +1771,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return homeSettlement != null || (homeStructure != null && !homeStructure.hasBeenDestroyed) || HasTerritory();
     }
     public bool IsAtHome() {
-        if (homeSettlement != null) {
-            return IsInHomeSettlement();
-        } else if (homeStructure != null) {
+        if (homeStructure != null) {
             return isAtHomeStructure;
+        } else if (homeSettlement != null) {
+            return IsInHomeSettlement();
         } else if (territory != null) {
             return IsInTerritory();
         }
@@ -2186,6 +2194,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         logComponent.RegisterLog(log, true);    
     }
+    public void SetDeployedAtStructure(LocationStructure p_structure) {
+        deployedAtStructure = p_structure;
+    }
     #endregion    
 
     #region History/Logs
@@ -2556,7 +2567,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Temporary additional chance to knockout for snatcher combat behaviour
             chanceToKnockout += 20;
         }
-
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower);
         attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
@@ -4677,7 +4687,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetIsConversing(false);
         SetPOIState(POI_STATE.INACTIVE);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
-        if (marker) {
+
+        partyComponent.UnfollowBeacon();
+        if (hasMarker) {
             marker.StopMovement();
             //DestroyMarker();
             //marker.collisionTrigger.SetCollidersState(false);
@@ -5436,6 +5448,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
+        deathTilePosition = gridTileLocation;
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
@@ -5676,7 +5689,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             if(responsibleCharacter != null) {
                 if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, marker.transform.position, 1, currentRegion.innerMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, currentRegion.innerMap);
                 }
 			}
 
@@ -5894,6 +5907,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (!string.IsNullOrEmpty(data.territory)) {
             territory = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.territory);
+        }
+        if (!string.IsNullOrEmpty(data.deployedAtStructure)) {
+            deployedAtStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.deployedAtStructure);
         }
         for (int i = 0; i < data.items.Count; i++) {
             TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);

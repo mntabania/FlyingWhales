@@ -14,23 +14,25 @@ using Random = System.Random;
 
 public class ElevationStructureGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-			Region region = GridMap.Instance.allRegions[i];
-			List<ElevationIsland> islandsInRegion = GetElevationIslandsInRegion(region);
-			for (int j = 0; j < islandsInRegion.Count; j++) {
-				ElevationIsland currIsland = islandsInRegion[j];
-				STRUCTURE_TYPE structureType = GetStructureTypeFor(currIsland.elevation);
-				NPCSettlement settlement = null;
-				if (structureType == STRUCTURE_TYPE.CAVE) {
-					//only create settlement for caves
-					settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON, currIsland.tilesInIsland.ToArray());	
-				}
-				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
-				
-				yield return MapGenerator.Instance.StartCoroutine(GenerateElevationMap(currIsland, elevationStructure));
-				yield return MapGenerator.Instance.StartCoroutine(RefreshTilemapCollider(region.innerMap.structureTilemapCollider));
-			}
-		}
+		// for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+		// 	Region region = GridMap.Instance.allRegions[i];
+		// 	List<ElevationIsland> islandsInRegion = GetElevationIslandsInRegion(region);
+		// 	for (int j = 0; j < islandsInRegion.Count; j++) {
+		// 		ElevationIsland currIsland = islandsInRegion[j];
+		// 		STRUCTURE_TYPE structureType = GetStructureTypeFor(currIsland.elevation);
+		// 		NPCSettlement settlement = null;
+		// 		if (structureType == STRUCTURE_TYPE.CAVE) {
+		// 			//only create settlement for caves
+		// 			settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON, currIsland.tilesInIsland.ToArray());	
+		// 		}
+		// 		LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
+		// 		
+		// 		yield return MapGenerator.Instance.StartCoroutine(GenerateElevationMap(currIsland, elevationStructure));
+		// 		yield return MapGenerator.Instance.StartCoroutine(RefreshTilemapCollider(region.innerMap.structureTilemapCollider));
+		// 	}
+		// }
+		// GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.SetActive(true);
+		// yield return MapGenerator.Instance.StartCoroutine(GridMap.Instance.mainRegion.innerMap.DrawElevationIslands(data.elevationIslands));
 		yield return null;
 	}
 	private IEnumerator RefreshTilemapCollider(TilemapCollider2D tilemapCollider2D) {
@@ -48,14 +50,14 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 		throw new Exception($"There is no corresponding structure type for {elevation.ToString()}");
 	}
-	private List<ElevationIsland> GetElevationIslandsInRegion(Region region) {
-		List<ElevationIsland> islands = new List<ElevationIsland>();
+	private List<AreaElevationIsland> GetElevationIslandsInRegion(Region region) {
+		List<AreaElevationIsland> islands = new List<AreaElevationIsland>();
 		ELEVATION[] elevationsToCheck = new[] {ELEVATION.WATER, ELEVATION.MOUNTAIN};
 		for (int i = 0; i < elevationsToCheck.Length; i++) {
 			ELEVATION elevation = elevationsToCheck[i];
 			List<Area> tilesOfThatElevation = GetTilesWithElevationInRegion(region, elevation);
-			List<ElevationIsland> initialIslands = CreateInitialIslands(tilesOfThatElevation, elevation);
-			List<ElevationIsland> mergedIslands = MergeIslands(initialIslands);
+			List<AreaElevationIsland> initialIslands = CreateInitialIslands(tilesOfThatElevation, elevation);
+			List<AreaElevationIsland> mergedIslands = MergeIslands(initialIslands);
 			islands.AddRange(mergedIslands);
 		}
 		return islands;
@@ -70,21 +72,21 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 		return tiles;
 	}
-	private List<ElevationIsland> CreateInitialIslands(List<Area> tiles, ELEVATION elevation) {
-		List<ElevationIsland> islands = new List<ElevationIsland>();
+	private List<AreaElevationIsland> CreateInitialIslands(List<Area> tiles, ELEVATION elevation) {
+		List<AreaElevationIsland> islands = new List<AreaElevationIsland>();
 		for (int i = 0; i < tiles.Count; i++) {
 			Area tile = tiles[i];
-			ElevationIsland island = new ElevationIsland(elevation);
+			AreaElevationIsland island = new AreaElevationIsland(elevation);
 			island.AddTile(tile);
 			islands.Add(island);
 		}
 		return islands;
 	}
-	private List<ElevationIsland> MergeIslands(List<ElevationIsland> islands) {
+	private List<AreaElevationIsland> MergeIslands(List<AreaElevationIsland> islands) {
 		for (int i = 0; i < islands.Count; i++) {
-			ElevationIsland currIsland = islands[i];
+			AreaElevationIsland currIsland = islands[i];
 			for (int j = 0; j < islands.Count; j++) {
-				ElevationIsland otherIsland = islands[j];
+				AreaElevationIsland otherIsland = islands[j];
 				if (currIsland != otherIsland) {
 					if (currIsland.IsAdjacentToIsland(otherIsland)) {
 						currIsland.MergeWithIsland(otherIsland);
@@ -92,9 +94,9 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 				}
 			}
 		}
-		List<ElevationIsland> mergedIslands = new List<ElevationIsland>();
+		List<AreaElevationIsland> mergedIslands = new List<AreaElevationIsland>();
 		for (int i = 0; i < islands.Count; i++) {
-			ElevationIsland island = islands[i];
+			AreaElevationIsland island = islands[i];
 			if (island.tilesInIsland.Count > 0) {
 				mergedIslands.Add(island);
 			}
@@ -103,7 +105,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	}
 
 	#region Cellular Automata
-	private IEnumerator GenerateElevationMap(ElevationIsland island, LocationStructure elevationStructure) {
+	private IEnumerator GenerateElevationMap(AreaElevationIsland island, LocationStructure elevationStructure) {
 		List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
 		for (int i = 0; i < island.tilesInIsland.Count; i++) {
 			Area tileInIsland = island.tilesInIsland[i];
@@ -170,13 +172,13 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 		return true;
 	}
-	private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, ElevationIsland elevationIsland) {
+	private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, AreaElevationIsland areaElevationIsland) {
 		List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => ShouldTileBePartOfMountain(t, locationGridTiles)).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
 		int fillPercent = 12;
 		int smoothing = 2;
-		if (elevationIsland.tilesInIsland.Count > 1) { 
+		if (areaElevationIsland.tilesInIsland.Count > 1) { 
 			fillPercent = 30;
 			smoothing = 2;
 		}
@@ -189,12 +191,12 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			(locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
 			(locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure)));
 
-		for (int i = 0; i < elevationIsland.tilesInIsland.Count; i++) {
-			Area tile = elevationIsland.tilesInIsland[i];
+		for (int i = 0; i < areaElevationIsland.tilesInIsland.Count; i++) {
+			Area tile = areaElevationIsland.tilesInIsland[i];
 			LocationGridTile randomTile = tile.gridTileComponent.centerGridTile;
 			for (int j = 0; j < tile.neighbourComponent.neighbours.Count; j++) {
 				Area neighbour = tile.neighbourComponent.neighbours[j];
-				if (elevationIsland.tilesInIsland.Contains(neighbour)) {
+				if (areaElevationIsland.tilesInIsland.Contains(neighbour)) {
 					LocationGridTile targetTile = neighbour.gridTileComponent.centerGridTile;
 					bool hasPath = PathGenerator.Instance.GetPath(randomTile, targetTile, GRID_PATHFINDING_MODE.NORMAL) != null;
 					if (hasPath) {
@@ -219,31 +221,13 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 
 		List<BlockWall> validWallsForOreVeins = elevationStructure.GetTileObjectsOfType<BlockWall>(IsBlockWallValidForOreVein);
 
-		var randomOreAmount = elevationIsland.tilesInIsland.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
+		var randomOreAmount = areaElevationIsland.tilesInIsland.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
 		for (int i = 0; i < randomOreAmount; i++) {
 			if (validWallsForOreVeins.Count == 0) { break; }
 			BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
 			CreateOreVeinAt(blockWall.gridTileLocation);
 			validWallsForOreVeins.Remove(blockWall);
 		}
-		
-		// //create ore veins
-		// int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
-		// int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
-		// int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
-		// int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
-		//
-		// LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
-		// CreateOreVeinAt(northTile);
-		//
-		// LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
-		// CreateOreVeinAt(southTile);
-		//
-		// LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
-		// CreateOreVeinAt(westTile);
-		//
-		// LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
-		// CreateOreVeinAt(eastTile);
 	}
 	private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
 		if (p_blockWall.gridTileLocation != null) {
@@ -295,11 +279,11 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	#endregion
 }
 
-public class ElevationIsland {
+public class AreaElevationIsland {
 	public readonly ELEVATION elevation;
 	public readonly List<Area> tilesInIsland;
 
-	public ElevationIsland(ELEVATION elevation) {
+	public AreaElevationIsland(ELEVATION elevation) {
 		this.elevation = elevation;
 		tilesInIsland = new List<Area>();
 	}
@@ -313,7 +297,7 @@ public class ElevationIsland {
 		tilesInIsland.Clear();
 	}
 	
-	public void MergeWithIsland(ElevationIsland otherIsland) {
+	public void MergeWithIsland(AreaElevationIsland otherIsland) {
 		for (int i = 0; i < otherIsland.tilesInIsland.Count; i++) {
 			Area tileInOtherIsland = otherIsland.tilesInIsland[i];
 			AddTile(tileInOtherIsland);
@@ -321,7 +305,7 @@ public class ElevationIsland {
 		otherIsland.RemoveAllTiles();
 	}
 
-	public bool IsAdjacentToIsland(ElevationIsland otherIsland) {
+	public bool IsAdjacentToIsland(AreaElevationIsland otherIsland) {
 		for (int i = 0; i < tilesInIsland.Count; i++) {
 			Area tile = tilesInIsland[i];
 			for (int j = 0; j < tile.neighbourComponent.neighbours.Count; j++) {

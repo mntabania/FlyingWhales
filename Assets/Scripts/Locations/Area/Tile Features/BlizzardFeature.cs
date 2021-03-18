@@ -132,7 +132,7 @@ namespace Locations.Area_Features {
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, blizzardDamage);
                 if (!character.HasHealth()) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BLIZZARD;
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                 }
             }
             //reschedule 15 minutes after.

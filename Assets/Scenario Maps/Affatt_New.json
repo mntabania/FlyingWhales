@@ -25,6 +25,94 @@
         }
       ]
     },
+    "xSeed": 9841.546,
+    "ySeed": 1987.23,
+    "biomePerlinNoiseSettings": {
+      "noiseScale": 40.4,
+      "octaves": 3,
+      "persistance": 0.0,
+      "lacunarity": 2.0,
+      "seed": 98723,
+      "offset": {
+        "x": 13.09,
+        "y": 12.0
+      },
+      "regions": [
+        {
+          "name": "FOREST",
+          "height": 0.3,
+          "color": {
+            "r": 1.0,
+            "g": 0.9215686,
+            "b": 0.01568628,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "FOREST",
+          "height": 0.65,
+          "color": {
+            "r": 0.0,
+            "g": 1.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "SNOW",
+          "height": 1.0,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        }
+      ]
+    },
+    "elevationPerlinNoiseSettings": {
+      "noiseScale": 34.15,
+      "octaves": 4,
+      "persistance": 0.5,
+      "lacunarity": 2.0,
+      "seed": 61651,
+      "offset": {
+        "x": 13.09,
+        "y": 12.0
+      },
+      "regions": [
+        {
+          "name": "Water",
+          "height": 0.25,
+          "color": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "Plain",
+          "height": 0.65,
+          "color": {
+            "r": 0.0,
+            "g": 1.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "Cave",
+          "height": 1.0,
+          "color": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        }
+      ]
+    },
     "hextileSaves": null,
     "areaSaves": [
       {
@@ -3678,52 +3766,45 @@
       },
       {
         "location": {
-          "X": 1,
+          "X": 0,
           "Y": 8
-        },
-        "structureType": "TEMPLE"
-      },
-      {
-        "location": {
-          "X": 1,
-          "Y": 11
         },
         "structureType": "TEMPLE"
       },
       {
         "location": {
           "X": 3,
-          "Y": 5
-        },
-        "structureType": "MAGE_TOWER"
-      },
-      {
-        "location": {
-          "X": 5,
-          "Y": 0
-        },
-        "structureType": "ABANDONED_MINE"
-      },
-      {
-        "location": {
-          "X": 5,
-          "Y": 7
+          "Y": 11
         },
         "structureType": "TEMPLE"
       },
       {
         "location": {
-          "X": 7,
+          "X": 5,
+          "Y": 4
+        },
+        "structureType": "MAGE_TOWER"
+      },
+      {
+        "location": {
+          "X": 8,
+          "Y": 6
+        },
+        "structureType": "TEMPLE"
+      },
+      {
+        "location": {
+          "X": 6,
           "Y": 10
         },
         "structureType": "ABANDONED_MINE"
       },
       {
         "location": {
-          "X": 8,
+          "X": 9,
           "Y": 8
         },
-        "structureType": "TEMPLE"
+        "structureType": "ABANDONED_MINE"
       },
       {
         "location": {
@@ -3745,16 +3826,8 @@
     {
       "areas": [
         {
-          "X": 1,
+          "X": 2,
           "Y": 2
-        },
-        {
-          "X": 0,
-          "Y": 3
-        },
-        {
-          "X": 1,
-          "Y": 3
         }
       ],
       "structureSettings": [
@@ -3819,15 +3892,7 @@
       "areas": [
         {
           "X": 3,
-          "Y": 8
-        },
-        {
-          "X": 2,
-          "Y": 8
-        },
-        {
-          "X": 3,
-          "Y": 9
+          "Y": 7
         }
       ],
       "structureSettings": [
@@ -3887,24 +3952,8 @@
     {
       "areas": [
         {
-          "X": 8,
-          "Y": 3
-        },
-        {
-          "X": 8,
-          "Y": 2
-        },
-        {
-          "X": 9,
-          "Y": 4
-        },
-        {
-          "X": 9,
-          "Y": 3
-        },
-        {
-          "X": 8,
-          "Y": 4
+          "X": 7,
+          "Y": 0
         }
       ],
       "structureSettings": [

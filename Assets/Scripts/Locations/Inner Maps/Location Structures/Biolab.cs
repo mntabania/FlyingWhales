@@ -19,11 +19,11 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Overrides
-        public override void OnBuiltNewStructure() {
-            base.OnBuiltNewStructure();
-            ReplenishPlaguedRatChargeWith3MaxCharges();
-            ScheduleReplenishOfPlaguedRatCharge();
-        }
+        //public override void OnBuiltNewStructure() {
+        //    base.OnBuiltNewStructure();
+        //    ReplenishPlaguedRatChargeWith3MaxCharges();
+        //    ScheduleReplenishOfPlaguedRatCharge();
+        //}
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.UPGRADE);

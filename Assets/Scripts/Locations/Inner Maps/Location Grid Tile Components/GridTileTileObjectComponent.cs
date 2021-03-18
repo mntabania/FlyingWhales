@@ -53,8 +53,10 @@ namespace Inner_Maps {
                 owner.SetTileState(LocationGridTile.Tile_State.Occupied);
                 if (!owner.IsPassable()) {
                     owner.structure.RemovePassableTile(owner);
+                    owner.area.gridTileComponent.RemovePassableTile(owner);
                 } else if (owner.IsPassable() && !isPassablePreviously) {
                     owner.structure.AddPassableTile(owner);
+                    owner.area.gridTileComponent.AddPassableTile(owner);
                 }
                 Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, owner, poi);
             }
@@ -226,7 +228,7 @@ namespace Inner_Maps {
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                         if (!character.HasHealth()) {
                             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
-                            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.marker.transform.position, 1, character.currentRegion.innerMap);
+                            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                         }
                     } else {
                         poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);

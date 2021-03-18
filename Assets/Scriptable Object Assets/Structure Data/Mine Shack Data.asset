@@ -26,10 +26,8 @@ MonoBehaviour:
       isCorrupted: 0
     m_values:
     - data:
-      - {fileID: 334954033198625523, guid: 0d3c7326ab3f60c4b950be5bac572e13, type: 3}
       - {fileID: 4975527039402339271, guid: 33a4edcf2ab2d5947abdf454f85ae72f, type: 3}
       - {fileID: 1318641501492832096, guid: 8366f3b2df4d9fb43bd85b75561350c9, type: 3}
     - data:
-      - {fileID: 8305651066923425098, guid: ec6bba2afe79685408bf71fe306dc701, type: 3}
       - {fileID: 1488659619888436793, guid: 953bce2abf434df429ae25c5c7ca0b87, type: 3}
       - {fileID: 4850251799321415751, guid: 634c01c526c991d409d4b677dcbfbe1c, type: 3}

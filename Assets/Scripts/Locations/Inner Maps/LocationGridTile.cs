@@ -40,6 +40,8 @@ namespace Inner_Maps {
         public Tile_Type tileType { get; private set; }
         public Tile_State tileState { get; private set; }
         public Ground_Type groundType { get; private set; }
+        public BIOMES individualBiomeType { get; private set; }
+        public ELEVATION elevationType { get; private set; }
         public LocationStructure structure { get; private set; }
         public List<LocationGridTile> neighbourList { get; private set; }
         public List<Character> charactersHere { get; private set; }
@@ -81,12 +83,12 @@ namespace Inner_Maps {
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
         public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
-        public BIOMES biomeType => area.biomeType;
+        public BIOMES biomeType => individualBiomeType;//area.biomeType;
         #endregion
         
         #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
-        public List<LocationGridTile> CaveInterconnectionTiles { get { return FourNeighbours().Where(o => o.structure == structure && !o.HasDifferentStructureNeighbour()).ToList() ; } } //
+        public List<LocationGridTile> CaveInterconnectionTiles { get { return FourNeighbours().Where(o => o.structure == structure).ToList() ; } } //&& !o.HasDifferentStructureNeighbour()
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbourList.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighboursWithinHex {
             get {
@@ -116,6 +118,8 @@ namespace Inner_Maps {
             neighbourList = new List<LocationGridTile>();
             isDefault = true;
             connectorsOnTile = 0;
+            individualBiomeType = BIOMES.NONE;
+            elevationType = ELEVATION.PLAIN;
             //Components
             corruptionComponent = new GridTileCorruptionComponent(); corruptionComponent.SetOwner(this);
             mouseEventsComponent = new GridTileMouseEventsComponent(); mouseEventsComponent.SetOwner(this);
@@ -143,6 +147,7 @@ namespace Inner_Maps {
             corruptionComponent = data.corruptionComponent.Load(); corruptionComponent.SetOwner(this);
             mouseEventsComponent = data.mouseEventsComponent.Load(); mouseEventsComponent.SetOwner(this);
             tileObjectComponent = data.tileObjectComponent.Load(); tileObjectComponent.SetOwner(this);
+            elevationType = data.elevation;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
 
@@ -532,6 +537,7 @@ namespace Inner_Maps {
 
         #region Structures
         public void SetStructure(LocationStructure p_structure) {
+            Assert.IsNotNull(p_structure);
             Profiler.BeginSample("Remove Tile");
             LocationStructure previousStructure = structure;
             structure?.RemoveTile(this);
@@ -1640,6 +1646,24 @@ namespace Inner_Maps {
         }
         public void RemoveMeteor() {
             meteorCount--;
+        }
+        #endregion
+
+        #region Biomes
+        public void SetIndividualBiomeType(BIOMES p_biome) {
+            BiomeDivision previousBiomeDivision =  parentMap.region.biomeDivisionComponent.GetBiomeDivision(p_biome);
+            previousBiomeDivision?.RemoveTile(this);
+            individualBiomeType = p_biome;
+            BiomeDivision biomeDivision =  parentMap.region.biomeDivisionComponent.GetBiomeDivision(p_biome);
+            biomeDivision?.AddTile(this);
+        }
+        #endregion
+
+        #region Elevation
+        public void SetElevation(ELEVATION p_elevation) {
+            ELEVATION previousElevation = elevationType;
+            elevationType = p_elevation;
+            area.elevationComponent.OnTileInAreaChangedElevation(this, previousElevation);
         }
         #endregion
 

@@ -963,13 +963,15 @@ public class CombatComponent : CharacterComponent {
                 case JOB_TYPE.MONSTER_ABDUCT:
                 case JOB_TYPE.CAPTURE_CHARACTER:
                     return CombatManager.Abduct;
-                    break;
                 case JOB_TYPE.KIDNAP_RAID:
                     return CombatManager.Raid;
                 case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
                 case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
                 case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
                     return CombatManager.Fullness_Recovery;
+                case JOB_TYPE.SNATCH:
+                case JOB_TYPE.SNATCH_RESTRAIN:
+                    return CombatManager.Snatch;
             }
        }
        return string.Empty;
@@ -1272,6 +1274,7 @@ public class SaveDataCombatData : SaveData<CombatData> {
 
     #region Overrides
     public override void Save(CombatData data) {
+        base.Save(data);
         reasonForCombat = data.reasonForCombat;
         avoidReason = data.avoidReason;
         isLethal = data.isLethal;

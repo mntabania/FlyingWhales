@@ -284,6 +284,34 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.EYE_WARD, new TileObjectData() {
             maxHP = 48,
         } },
+        { TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(4, 3)
+        } },
+        { TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(4, 4)
+        } },
+        { TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 2)
+        } },
+        { TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 2)
+        } },
+        { TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(3, 4)
+        } },
+        { TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 6)
+        } },
+        { TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(3, 4)
+        } },
     };
 
     public static bool HasTileObjectData(TILE_OBJECT_TYPE objType) {

@@ -129,6 +129,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	public void Init(string p_title = "") {
+		m_targetPartyStructure.InitializeTeam();
 		InstantiateUI();
 		InitializeSummons();
 		InitializeMinions();
@@ -143,7 +144,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			m_maraudUIView.SetTitle(p_title);
 		}
 		ProcessButtonAvailability();
-		GameManager.Instance.SetPausedState(true);
+		UIManager.Instance.Pause();
 	}
 
 	void HideDeployedItems() {
@@ -329,6 +330,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void ProcessButtonAvailability() {
+		if (m_targetPartyStructure.IsAvailableForTargeting()) {
+			m_maraudUIView.DisableDeployButton();
+			return;
+		} 
 		if (!m_isTeamDeployed) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				m_maraudUIView.EnableDeployButton();
@@ -396,6 +401,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		if (m_isTeamDeployed) { //this if is the UNDEPLOY trigger
 			m_isTeamDeployed = false;
+			m_targetPartyStructure.ResetExistingCharges();
 			m_targetPartyStructure.UnDeployAll();
 			m_deployedSummonsUI.ForEach((eachSummon) => {
 				m_targetPartyStructure.RemoveItemOnRight(eachSummon);
@@ -418,10 +424,16 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			Init();
 			return; // <----- we have a return here 
 		}
+		LocationStructure structureToBePlaced = m_targetPartyStructure;
+		if (!structureToBePlaced.structureType.IsOpenSpace()) {
+			structureToBePlaced = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
+		}
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.summonType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement, bypassIdeologyChecking: true);
-				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
+				CharacterManager.Instance.PlaceSummonInitially(summon, structureToBePlaced.GetRandomPassableTile());
+                summon.OnSummonAsPlayerMonster();
+                summon.SetDeployedAtStructure(m_targetPartyStructure);
 				eachMonsterToBeDeployed.Deploy(summon);
 				m_targetPartyStructure.AddDeployedItem(eachMonsterToBeDeployed);
 				PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachMonsterToBeDeployed.summonType, -1);
@@ -430,7 +442,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (m_deployedMinionsUI[0].isReadyForDeploy && m_deployedMinionsUI[0].isMinion) {
 			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(m_deployedMinionsUI[0].playerSkillType);
 			Character minion = null;
-			skillData.ActivateAbility(m_targetPartyStructure.GetRandomTile(), ref minion);
+			skillData.ActivateAbility(structureToBePlaced.GetRandomPassableTile(), ref minion);
+			minion.SetDeployedAtStructure(m_targetPartyStructure);
 			m_deployedMinionsUI[0].Deploy(minion);
 			m_targetPartyStructure.AddDeployedItem(m_deployedMinionsUI[0]);
 		}
@@ -448,7 +461,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		HideAvailableItems();
 		HideUI();
 		m_maraudUIView.HideAllSubMenu();
-		GameManager.Instance.SetPausedState(false);
+		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 
 	public void OnAddSummonClicked() { m_maraudUIView.ShowSummonSubContainer(); }
@@ -460,6 +473,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	public void OnCloseTargetSubContainer() { m_maraudUIView.HideAllSubMenu(); }
 
 	public void OnHoverOver() {
+		if(m_targetPartyStructure.IsAvailableForTargeting()) {
+			Tooltip.Instance.ShowSmallInfo("Can't build team, structure is occupied.", "Occupied Structure", autoReplaceText: false);
+			return;
+		}
 		if (m_isTeamDeployed) {
 			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
 		} else {

@@ -20,6 +20,94 @@
         }
       ]
     },
+    "xSeed": 6219,
+    "ySeed": 3498,
+    "biomePerlinNoiseSettings": {
+      "noiseScale": 40.4,
+      "octaves": 3,
+      "persistance": 0.0,
+      "lacunarity": 2.0,
+      "seed": 94163,
+      "offset": {
+        "x": 13.09,
+        "y": 12.0
+      },
+      "regions": [
+        {
+          "name": "DESERT",
+          "height": 0.3,
+          "color": {
+            "r": 1.0,
+            "g": 0.9215686,
+            "b": 0.01568628,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "FOREST",
+          "height": 0.65,
+          "color": {
+            "r": 0.0,
+            "g": 1.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "DESERT",
+          "height": 1.0,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        }
+      ]
+    },
+    "elevationPerlinNoiseSettings": {
+      "noiseScale": 34.15,
+      "octaves": 4,
+      "persistance": 0.5,
+      "lacunarity": 2.0,
+      "seed": 48949,
+      "offset": {
+        "x": 13.09,
+        "y": 12.0
+      },
+      "regions": [
+        {
+          "name": "Water",
+          "height": 0.25,
+          "color": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "Plain",
+          "height": 0.65,
+          "color": {
+            "r": 0.0,
+            "g": 1.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        },
+        {
+          "name": "Cave",
+          "height": 1.0,
+          "color": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0,
+            "a": 1.0
+          }
+        }
+      ]
+    },
     "hextileSaves": null,
     "areaSaves": [
       {
@@ -2330,57 +2418,50 @@
     "specialStructureSaves": [
       {
         "location": {
-          "X": 6,
+          "X": 0,
           "Y": 3
         },
         "structureType": "MAGE_TOWER"
       },
       {
         "location": {
-          "X": 8,
-          "Y": 2
+          "X": 1,
+          "Y": 5
         },
         "structureType": "TEMPLE"
       },
       {
         "location": {
-          "X": 8,
+          "X": 6,
+          "Y": 1
+        },
+        "structureType": "ANCIENT_GRAVEYARD"
+      },
+      {
+        "location": {
+          "X": 3,
+          "Y": 3
+        },
+        "structureType": "ANCIENT_GRAVEYARD"
+      },
+      {
+        "location": {
+          "X": 3,
           "Y": 5
         },
         "structureType": "ANCIENT_GRAVEYARD"
       },
       {
         "location": {
-          "X": 9,
-          "Y": 2
+          "X": 6,
+          "Y": 5
         },
         "structureType": "ANCIENT_GRAVEYARD"
       },
       {
         "location": {
-          "X": 10,
-          "Y": 0
-        },
-        "structureType": "ANCIENT_GRAVEYARD"
-      },
-      {
-        "location": {
-          "X": 11,
-          "Y": 2
-        },
-        "structureType": "ANCIENT_GRAVEYARD"
-      },
-      {
-        "location": {
-          "X": 11,
+          "X": 1,
           "Y": 4
-        },
-        "structureType": "TEMPLE"
-      },
-      {
-        "location": {
-          "X": 12,
-          "Y": 3
         },
         "structureType": "ANCIENT_GRAVEYARD"
       }
@@ -2390,28 +2471,8 @@
     {
       "areas": [
         {
-          "X": 2,
-          "Y": 3
-        },
-        {
-          "X": 3,
-          "Y": 3
-        },
-        {
-          "X": 3,
-          "Y": 2
-        },
-        {
-          "X": 4,
+          "X": 9,
           "Y": 4
-        },
-        {
-          "X": 4,
-          "Y": 2
-        },
-        {
-          "X": 5,
-          "Y": 2
         }
       ],
       "structureSettings": [

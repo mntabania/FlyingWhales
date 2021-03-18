@@ -376,7 +376,6 @@ namespace Inner_Maps {
 
             //|| DEVELOPMENT_BUILD
 #if UNITY_EDITOR
-            Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             Area area = tile.area;
             string summary = tile.localPlace.ToString();
             // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
@@ -385,6 +384,12 @@ namespace Inner_Maps {
             // summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
             // summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>Area:</b>{(area.name ?? "None")}";
+            summary = $"{summary}<b>Area Elevation:</b>{(area.elevationType.ToString() ?? "None")}";
+            summary = $"{summary}<b>Area Passable Tiles:</b>{area.gridTileComponent.passableTiles.Count.ToString()}";
+            summary = $"{summary}\n<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
+            
+            summary = $"{summary}<b>Tile Biome:</b>{tile.biomeType.ToString()}";
+            summary = $"{summary}<b>Tile Elevation:</b>{tile.elevationType.ToString()}";
             // summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
             // summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
             // summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";

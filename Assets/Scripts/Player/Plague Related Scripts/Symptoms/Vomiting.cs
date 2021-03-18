@@ -8,7 +8,7 @@ namespace Plague.Symptom {
         public override PLAGUE_SYMPTOM symptomType => PLAGUE_SYMPTOM.Vomiting;
 
         protected override void ActivateSymptom(Character p_character) {
-            p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, p_character, "Plague");
+            p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, p_character, "Plagued");
             if (PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, p_character);
             }

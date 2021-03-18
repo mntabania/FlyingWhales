@@ -134,7 +134,7 @@ public class Log {
     public void Copy(Log p_log) {
         persistentID = p_log.persistentID;
         category = p_log.category;
-        file = p_log.category;
+        file = p_log.file;
         key = p_log.key;
         gameDate = p_log.gameDate;
         tags.Clear();

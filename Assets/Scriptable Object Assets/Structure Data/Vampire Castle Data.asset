@@ -16,7 +16,7 @@ MonoBehaviour:
   _itemGenerationSetting: {fileID: 0}
   structurePrefabs:
     m_keys:
-    - resource: 4
+    - resource: 2
       structureType: 45
       hasValue: 1
       isCorrupted: 0

@@ -183,7 +183,7 @@ public class RestrainCharacter : GoapAction {
                || (goapNode.actor.faction?.factionType.type == FACTION_TYPE.Ratmen && goapNode.associatedJobType == JOB_TYPE.MONSTER_ABDUCT)
                || goapNode.associatedJobType == JOB_TYPE.RESTRAIN) {
             factionThatImprisoned = goapNode.actor.faction;
-        } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
+        } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH || goapNode.associatedJobType == JOB_TYPE.SNATCH_RESTRAIN) {
             factionThatImprisoned = PlayerManager.Instance.player.playerFaction;
         } else {
             characterThatImprisoned = goapNode.actor;

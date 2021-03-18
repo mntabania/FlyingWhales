@@ -10,10 +10,4 @@ public class MaraudData : DemonicStructurePlayerSkill {
     public MaraudData() {
         structureType = STRUCTURE_TYPE.MARAUD;
     }
-    protected override string InvalidMessage(LocationGridTile tile) {
-        if (tile.parentMap.region.HasStructure(STRUCTURE_TYPE.MARAUD)) {
-            return "You can only have 1 Maraud per region.";
-        }
-        return base.InvalidMessage(tile);
-    }
 }

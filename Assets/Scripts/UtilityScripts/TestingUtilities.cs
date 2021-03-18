@@ -8,8 +8,8 @@ namespace UtilityScripts {
         public static void ShowLocationInfo(Region region) {
             string summary = $"{region.name} Info:";
             summary += "\nDivisions:";
-            for (int i = 0; i < region.regionDivisionComponent.divisions.Count; i++) {
-                RegionDivision division = region.regionDivisionComponent.divisions[i];
+            for (int i = 0; i < region.biomeDivisionComponent.divisions.Count; i++) {
+                BiomeDivision division = region.biomeDivisionComponent.divisions[i];
                 summary += $"\n- {division.biome.ToString()} - {division.tiles.Count.ToString()}";
             }
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
@@ -145,7 +145,7 @@ namespace UtilityScripts {
         summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
         summary = $"{summary}{"\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs()}";
         summary = $"{summary}{"\nAdditional Priority Jobs: " + activeCharacter.jobComponent.GetAdditionalPriorityJobs()}";
-        summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count + ", Beacon: " + activeCharacter.partyComponent.currentParty?.beaconComponent.currentBeaconCharacter?.name)}";
+        summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count + ", Beacon: " + activeCharacter.partyComponent.currentParty?.beaconComponent.currentBeaconCharacter?.name + ", Is Following: " + activeCharacter.partyComponent.isFollowingBeacon)}";
         summary = $"{summary}{"\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None")}";
         summary = $"{summary}{"\nEnable Digging: " + activeCharacter.movementComponent.enableDigging.ToString()}";
         summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";

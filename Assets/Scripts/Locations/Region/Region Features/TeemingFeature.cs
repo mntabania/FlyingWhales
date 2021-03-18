@@ -14,8 +14,8 @@ namespace Locations.Region_Features {
                 List<Area> choices = ObjectPoolManager.Instance.CreateNewAreaList();
                 for (int i = 0; i < region.areas.Count; i++) {
                     Area currArea = region.areas[i];
-                    if((currArea.elevationType == ELEVATION.PLAIN || currArea.elevationType == ELEVATION.TREES) &&
-                                currArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) == false && currArea.structureComponent.HasStructureInArea() == false) {
+                    if(currArea.elevationType == ELEVATION.PLAIN && 
+                       currArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) == false && currArea.structureComponent.HasStructureInArea() == false) {
                         choices.Add(currArea);
                     }
                 }

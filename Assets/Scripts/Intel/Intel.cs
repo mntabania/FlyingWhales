@@ -113,7 +113,11 @@ public class ActionIntel : IIntel, IDisposable {
         List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
         if (witness1 != null) {
             emotions.Clear();
-            node.PopulateReactionsToActor(emotions, actor, target, witness1, REACTION_STATUS.INFORMED);
+            if(witness1 == target) {
+                node.PopulateReactionsOfTarget(emotions, actor, target, REACTION_STATUS.INFORMED);
+            } else {
+                node.PopulateReactionsToActor(emotions, actor, target, witness1, REACTION_STATUS.INFORMED);
+            }
             string response = GetFeelingTextInIntelInfoRelationshipText(emotions, witness1, actor);
             if (!string.IsNullOrEmpty(response)) {
                 if (!string.IsNullOrEmpty(text)) {
@@ -124,7 +128,11 @@ public class ActionIntel : IIntel, IDisposable {
         }
         if (witness2 != null) {
             emotions.Clear();
-            node.PopulateReactionsToActor(emotions, actor, target, witness2, REACTION_STATUS.INFORMED);
+            if (witness2 == target) {
+                node.PopulateReactionsOfTarget(emotions, actor, target, REACTION_STATUS.INFORMED);
+            } else {
+                node.PopulateReactionsToActor(emotions, actor, target, witness2, REACTION_STATUS.INFORMED);
+            }
             string response = GetFeelingTextInIntelInfoRelationshipText(emotions, witness2, actor);
             if (!string.IsNullOrEmpty(response)) {
                 if (!string.IsNullOrEmpty(text)) {
@@ -135,7 +143,11 @@ public class ActionIntel : IIntel, IDisposable {
         }
         if (witness3 != null) {
             emotions.Clear();
-            node.PopulateReactionsToActor(emotions, actor, target, witness3, REACTION_STATUS.INFORMED);
+            if (witness3 == target) {
+                node.PopulateReactionsOfTarget(emotions, actor, target, REACTION_STATUS.INFORMED);
+            } else {
+                node.PopulateReactionsToActor(emotions, actor, target, witness3, REACTION_STATUS.INFORMED);
+            }
             string response = GetFeelingTextInIntelInfoRelationshipText(emotions, witness3, actor);
             if (!string.IsNullOrEmpty(response)) {
                 if (!string.IsNullOrEmpty(text)) {

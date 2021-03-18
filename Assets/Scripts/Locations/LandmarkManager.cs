@@ -289,7 +289,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public IEnumerator PlaceBuiltLandmark(BaseSettlement settlement, InnerTileMap innerTileMap, RESOURCE structureResource, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
         for (int i = 0; i < structureTypes.Length; i++) {
             STRUCTURE_TYPE structureType = structureTypes[i];
-            Area chosenTile = settlement.areas[0];
+            Area chosenTile = settlement.areas.ElementAtOrDefault(0);
             Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureType.ToString()} for settlement {settlement.name}");
             PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType, structureResource);
             yield return null;

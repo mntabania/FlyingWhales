@@ -12,12 +12,12 @@ using UnityEngine.Profiling;
 using System;
 public class Party : ILogFiller, ISavable, IJobOwner {
 
-    public Action onQuestEnd;
-    public Action onQuestDropped;
+    public Action onQuestSucceed;
+    public Action onQuestFailed;
 
     public interface PartyEventsIListener {
-        void OnQuestEnds();
-        void OnQuestDropped();
+        void OnQuestSucceed();
+        void OnQuestFailed();
     }
     public string persistentID { get; private set; }
     public string partyName { get; private set; }
@@ -217,6 +217,13 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                 meetingPlace = partySettlement.GetRandomStructureThatMeetCriteria(s => s.structureType == STRUCTURE_TYPE.TAVERN && CanAMemberGoTo(s));
                 if(meetingPlace == null){
                     meetingPlace = partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                    if(meetingPlace == null) {
+                        if (isPlayerParty) {
+                            meetingPlace = partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
+                        } else {
+                            meetingPlace = partySettlement.GetRandomStructure();
+                        }
+                    }
                 }
             }
         }
@@ -394,7 +401,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                     }
                     member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
                 }
-                SetPartyState(PARTY_STATE.Moving);
+                if (currentQuest.waitingToWorkingStateImmediately) {
+                    SetPartyState(PARTY_STATE.Working);
+                } else {
+                    SetPartyState(PARTY_STATE.Moving);
+                }
             } else {
                 //Drop quest only instead of ending quest so that the quest can still be taken by other parties
                 currentQuest.EndQuest("Not enough members joined");
@@ -447,19 +458,19 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             //Reason: Raid party problem - when a character is being kidnap by a raid member, when the raid party quest timer runs out they will all switch to moving, so even the one doing to kidnap job will be stopped
             //CancelAllJobsOfMembersThatJoinedQuestThatAreStillActive();
 
-            if (targetDestination != null && !targetDestination.hasBeenDestroyed) {
-                for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
-                    Character member = membersThatJoinedQuest[i];
-                    if (IsMemberActive(member)) {
-                        if (!targetDestination.IsAtTargetDestination(member) && (member.currentJob == null || (member.currentJob.jobType != JOB_TYPE.KIDNAP_RAID && member.currentJob.jobType != JOB_TYPE.STEAL_RAID))) {
-                            LocationGridTile tile = targetDestination.GetRandomPassableTile();
-                            if (tile != null) {
-                                member.jobComponent.CreatePartyGoToJob(tile);
-                            }
-                        }
-                    }
-                }
-            }
+            //if (targetDestination != null && !targetDestination.hasBeenDestroyed) {
+            //    for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            //        Character member = membersThatJoinedQuest[i];
+            //        if (IsMemberActive(member)) {
+            //            if (!targetDestination.IsAtTargetDestination(member) && (member.currentJob == null || (member.currentJob.jobType != JOB_TYPE.KIDNAP_RAID && member.currentJob.jobType != JOB_TYPE.STEAL_RAID))) {
+            //                LocationGridTile tile = targetDestination.GetRandomPassableTile();
+            //                if (tile != null) {
+            //                    member.jobComponent.CreatePartyGoToJob(tile);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
     private void OnSwitchFromMovingState(PARTY_STATE prevState) {
@@ -569,6 +580,10 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
     #region Working State
     private void OnSwitchToWorkingState(PARTY_STATE prevState) {
+        if (prevState == PARTY_STATE.Waiting) {
+            SetTargetDestination(currentQuest.GetTargetDestination());
+            CancelAllJobsOfMembersThatJoinedQuest();
+        }
         //When the party switches to Working state always switch off the changed target destination because this means that the party has already reached the destination and must not switch to Moving state at the start of Working state
         SetHasChangedTargetDestination(false);
     }
@@ -591,6 +606,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             LogPool.Release(log);
             
             OnAcceptQuest(quest);
+            quest.OnAcceptQuest(this);
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {
@@ -603,6 +619,8 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     //}
     public void DropQuest(string reason) {
         if (isActive) {
+            PartyQuest prevQuest = currentQuest;
+
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "drop_quest", providedTags: LOG_TAG.Party);
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
@@ -621,6 +639,15 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             targetCamp = null;
             targetDestination = null;
             SetHasChangedTargetDestination(false);
+
+
+            if (prevQuest.isSuccessful) {
+                Messenger.Broadcast(PartySignals.PARTY_QUEST_FINISHED_SUCCESSFULLY, this);
+                onQuestSucceed?.Invoke();
+            } else {
+                Messenger.Broadcast(PartySignals.PARTY_QUEST_FAILED, this);
+                onQuestFailed?.Invoke();
+            }
         }
     }
     private void SetCurrentQuest(PartyQuest p_quest) {
@@ -661,8 +688,6 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             //After a party drops quest, the party must not take quest for 12 hours, so that they can recupirate
             StartNoQuestCooldown();
         }
-
-        onQuestDropped?.Invoke();
     }
     private void StartNoQuestCooldown() {
         if (canAcceptQuests) {
@@ -713,7 +738,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true, bool shouldDropQuest = true) {
         if (membersThatJoinedQuest.Remove(character)) {
             OnRemoveMemberThatJoinedQuest(character, broadcastSignal);
-            if((membersThatJoinedQuest.Count <= 0 || !HasActiveMemberThatJoinedQuest()) && shouldDropQuest){
+            if((membersThatJoinedQuest.Count <= 0 || (!HasActiveMemberThatJoinedQuest() && !isPlayerParty)) && shouldDropQuest){
                 //All members that joined the quest has left the quest, if there is still a quest, drop quest
                 if (isActive) {
                     currentQuest.EndQuest("Finished quest");
@@ -1182,10 +1207,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             }
         }
         for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
-            if (forcedCancelJobsOnTickEnded[i].ForceCancelJob(false)) {
-                i--;
-            }
+            forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
         }
+        forcedCancelJobsOnTickEnded.Clear();
     }
     #endregion
 
@@ -1220,7 +1244,6 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
         ForceCancelAllJobsImmediately();
-        forcedCancelJobsOnTickEnded.Clear();
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.RemoveListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);
@@ -1231,13 +1254,13 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
     #region Subscribe/Unsubscribe
     public void Subscribe(PartyEventsIListener p_iListener) {
-        onQuestDropped += p_iListener.OnQuestDropped;
-        onQuestEnd += p_iListener.OnQuestEnds;
+        onQuestFailed += p_iListener.OnQuestFailed;
+        onQuestSucceed += p_iListener.OnQuestSucceed;
     }
 
     public void Unsubscribe(PartyEventsIListener p_iListener) {
-        onQuestDropped -= p_iListener.OnQuestDropped;
-        onQuestEnd -= p_iListener.OnQuestEnds;
+        onQuestFailed -= p_iListener.OnQuestFailed;
+        onQuestSucceed -= p_iListener.OnQuestSucceed;
     }
     #endregion
 }

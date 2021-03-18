@@ -257,6 +257,7 @@ public class CharacterInfoUI : InfoUIBase {
             OnToggleInfo(false);
             OnToggleMood(false);
             OnToggleRelations(false);
+            OnToggleInfo(true);
             break;
         }
 	}
@@ -1018,10 +1019,10 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region Tabs
     public void OnRevealInfoclicked() {
-        if (PlayerManager.Instance.player.plagueComponent.plaguePoints >= 1) {
+        if (GameManager.Instance.gameHasStarted && PlayerManager.Instance.player.mana >= 50) {
             if (!activeCharacter.isInfoUnlocked) {
                 activeCharacter.isInfoUnlocked = true;
-                PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1);
+                PlayerManager.Instance.player.AdjustMana(50);
                 ProcessDisplay();
                 Messenger.Broadcast(CharacterSignals.CHARACTER_INFO_REVEALED);
             }
@@ -1058,14 +1059,26 @@ public class CharacterInfoUI : InfoUIBase {
         relationshipContent.SetActive(false);
     }
 
+    void HideAllInfo() {
+        ShowRevealButtonHideInfo();
+        ShowRevealButtonHideMood();
+        ShowRevealButtonHideRelationship();
+    }
+
+    void ShowAllInfo() {
+        ShowInfoHideRevealButton();
+        ShowMoodHideRevealButton();
+        ShowRelationshipHideRevealButton();
+    }
+
     public void OnToggleInfo(bool isOn) {
         if (isOn) {
             m_currentViewMode = VIEW_MODE.Info;
             if (activeCharacter.race.IsSapient()) {
                 if (activeCharacter.isInfoUnlocked) {
-                    ShowInfoHideRevealButton();
+                    ShowAllInfo();
                 } else {
-                    ShowRevealButtonHideInfo();
+                    HideAllInfo();
                 }
             } else {
                 ShowInfoHideRevealButton();
@@ -1077,9 +1090,9 @@ public class CharacterInfoUI : InfoUIBase {
             m_currentViewMode = VIEW_MODE.Mood;
             if (activeCharacter.race.IsSapient()) {
                 if (activeCharacter.isInfoUnlocked) {
-                    ShowMoodHideRevealButton();
+                    ShowAllInfo();
                 } else {
-                    ShowRevealButtonHideMood();
+                    HideAllInfo();
                 }
             } else {
                 ShowMoodHideRevealButton();
@@ -1091,9 +1104,9 @@ public class CharacterInfoUI : InfoUIBase {
             m_currentViewMode = VIEW_MODE.Relationship;
             if (activeCharacter.race.IsSapient()) {
                 if (activeCharacter.isInfoUnlocked) {
-                    ShowRelationshipHideRevealButton();
+                    ShowAllInfo();
                 } else {
-                    ShowRevealButtonHideRelationship();
+                    HideAllInfo();
                 }
             } else {
                 ShowRelationshipHideRevealButton();

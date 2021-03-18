@@ -199,6 +199,21 @@ public class LocationStructureObject : PooledObject, ISelectable {
         newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
         newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
         newTileObject.RevalidateTileObjectSlots();
+        if (structureType == STRUCTURE_TYPE.IMP_HUT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.BEHOLDER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.BIOLAB && newTileObject.tileObjectType == TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.DEFENSE_POINT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.MANA_PIT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.MARAUD && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        } else if (structureType == STRUCTURE_TYPE.SPIRE && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);    
+        }
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
@@ -855,7 +870,10 @@ public class LocationStructureObject : PooledObject, ISelectable {
             o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_wilderness");
             return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
         }
-
+        if (tile.elevationType == ELEVATION.WATER || tile.elevationType == ELEVATION.MOUNTAIN) {
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_neighbour_not_wilderness");
+            return false;
+        }
         if (tile.hasBlueprint) {
             Debug.Log($"Could not place {structureType} because {tile} has blueprint!");
             o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
