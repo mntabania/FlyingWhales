@@ -43,7 +43,7 @@ public class LightningData : SkillData {
     }
     private void LightningDamage(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            int processedDamage = m_lightningBaseDamage - PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LIGHTNING);
+            int processedDamage = m_lightningBaseDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LIGHTNING));
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, traitable as Character, processedDamage);
             if (traitable is Character character && traitable.currentHP <= 0) {

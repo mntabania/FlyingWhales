@@ -35,7 +35,7 @@ public class IceBlastData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void ApplyIceDamage(ITraitable traitable) {
-        int processedDamage = m_baseIceDamage - (m_baseIceDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICE_BLAST));
+        int processedDamage = m_baseIceDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICE_BLAST));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
 
         if (traitable is Character character) {

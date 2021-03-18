@@ -216,7 +216,7 @@ namespace Inner_Maps {
                     if (poi.gridTileLocation == null) {
                         continue; //skip
                     }
-                    int processedDamage = baseDamage + PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE);
+                    int processedDamage = baseDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE));
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                             obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
