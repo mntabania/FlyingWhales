@@ -978,7 +978,7 @@ public class CharacterManager : BaseMonoBehaviour {
         return summonSettings[type];
     }
 
-    public MinionSettings GetMintionSettings(MINION_TYPE type) {
+    public MinionSettings GetMinionSettings(MINION_TYPE type) {
         return minionSettings[type];
     }
     public ArtifactSettings GetArtifactSettings(ARTIFACT_TYPE type) {

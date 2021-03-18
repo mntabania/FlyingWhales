@@ -29,11 +29,12 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public bool isReadyForDeploy;
     public bool isDeployed;
     public bool isMinion;
-    public CharacterClass characterClass;
-    public SummonSettings summonSettings;
-    public SUMMON_TYPE summonType;
-    public PLAYER_SKILL_TYPE playerSkillType;
+
+    private MonsterAndDemonUnderlingCharges _monsterOrMinion;
+    public MonsterAndDemonUnderlingCharges obj => _monsterOrMinion;
     public Character deployedCharacter;
+
+    public MonsterAndDemonUnderlingCharges monsterUnderlingCharges;
 
     public GameObject manaIconAndPrice;
     private void OnEnable() {
@@ -46,17 +47,21 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         btnUnlock.onClick.RemoveListener(OnUnlocked);
     }
 
-	public void InitializeItem(CharacterClass p_class, SummonSettings p_settings, SUMMON_TYPE p_summonType, bool p_isDeployed = false, bool p_hideRemoveButton = false) {
-        summonType = p_summonType;
-        summonSettings = p_settings;
-        characterClass = p_class;
+	public void InitializeItem(MonsterAndDemonUnderlingCharges p_underling, bool p_isDeployed = false, bool p_hideRemoveButton = false) {
+        _monsterOrMinion = p_underling;
         txtUnlockPrice.text = unlockPrice.ToString();
-        txtName.text = p_class.className;
-        txtHP.text = p_class.baseHP.ToString();
-        txtAtk.text = p_class.baseAttackPower.ToString();
-        txtAtkSpd.text = p_class.baseAttackSpeed.ToString();
-
-        imgPortrait.sprite = p_settings.summonPortrait;
+        txtName.text = p_underling.characterClass.className;
+        txtHP.text = p_underling.characterClass.baseHP.ToString();
+        txtAtk.text = p_underling.characterClass.baseAttackPower.ToString();
+        txtAtkSpd.text = p_underling.characterClass.baseAttackSpeed.ToString();
+        if (p_underling.isDemon) {
+            isMinion = true;
+            imgPortrait.sprite = CharacterManager.Instance.GetMinionSettings(p_underling.minionType).minionPortrait;
+        } else {
+            isMinion = false;
+            imgPortrait.sprite = CharacterManager.Instance.GetSummonSettings(p_underling.monsterType).summonPortrait;
+        }
+        
         if (!p_isDeployed) {
             isReadyForDeploy = true;
             isDeployed = false;
@@ -71,32 +76,6 @@ public class DeployedMonsterItemUI : MonoBehaviour {
             HideRemoveButton();
         } else {
             ShowRemoveButton();
-        }
-        lockCover.SetActive(false);
-        emptyCover.SetActive(false);
-    }
-
-    public void InitializeItem(CharacterClass p_class, PLAYER_SKILL_TYPE p_skillType, bool p_isDeployed = false) {
-        characterClass = p_class;
-        playerSkillType = p_skillType;
-        PlayerSkillData playerData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        txtUnlockPrice.text = unlockPrice.ToString();
-        txtName.text = playerData.name;
-        txtName.text = txtName.text.Replace("Demon ", "");
-        txtHP.text = p_class.baseHP.ToString();
-        txtAtk.text = p_class.baseAttackPower.ToString();
-        txtAtkSpd.text = p_class.baseAttackSpeed.ToString();
-        isMinion = true;
-        imgPortrait.sprite = playerData.contextMenuIcon;
-        if (!p_isDeployed) {
-            isReadyForDeploy = true;
-            isDeployed = false;
-            txtStatus.text = "Ready";
-        } else {
-            txtStatus.text = "Deployed";
-            isReadyForDeploy = false;
-            isDeployed = true;
-            HideRemoveButton();
         }
         lockCover.SetActive(false);
         emptyCover.SetActive(false);

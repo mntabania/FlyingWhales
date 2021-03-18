@@ -29,8 +29,7 @@ namespace Inner_Maps.Location_Structures {
                 if (p_deadMonster == partyData.deployedSummons[x]) {
                     PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
                     partyData.deployedSummons.RemoveAt(x);
-                    partyData.deployedSummonSettings.RemoveAt(x);
-                    partyData.deployedCSummonlass.RemoveAt(x);
+                    partyData.deployedSummonUnderlings.RemoveAt(x);
                 }
             }    
         }
@@ -46,8 +45,7 @@ namespace Inner_Maps.Location_Structures {
                     deployed[x].Death();
                 }
                 partyData.deployedSummons.Clear();
-                partyData.deployedSummonSettings.Clear();
-                partyData.deployedCSummonlass.Clear();
+                partyData.deployedSummonUnderlings.Clear();
                 partyData.readyForDeploySummonCount = 0;
                 Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
             }

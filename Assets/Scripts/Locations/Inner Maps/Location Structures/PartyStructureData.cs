@@ -7,13 +7,11 @@ public class PartyStructureData
 {
     //summon list
     public List<Character> deployedSummons = new List<Character>();
-    public List<SummonSettings> deployedSummonSettings = new List<SummonSettings>();
-    public List<CharacterClass> deployedCSummonlass = new List<CharacterClass>();
+    public List<MonsterAndDemonUnderlingCharges> deployedSummonUnderlings = new List<MonsterAndDemonUnderlingCharges>();
 
     //minion list
     public List<Character> deployedMinions = new List<Character>();
-    public List<PLAYER_SKILL_TYPE> deployedMinionsSkillType = new List<PLAYER_SKILL_TYPE>();
-    public List<CharacterClass> deployedMinionClass = new List<CharacterClass>();
+    public List<MonsterAndDemonUnderlingCharges> deployedMinionUnderlings = new List<MonsterAndDemonUnderlingCharges>();
 
     //targets
     public List<IStoredTarget> deployedTargets = new List<IStoredTarget>();
@@ -30,10 +28,8 @@ public class PartyStructureData
 
     public void ClearAllData() {
         deployedSummons.Clear();
-        deployedSummonSettings.Clear();
-        deployedCSummonlass.Clear();
-        deployedMinionClass.Clear();
-        deployedMinionsSkillType.Clear();
+        deployedSummonUnderlings.Clear();
+        deployedMinionUnderlings.Clear();
         deployedMinions.Clear();
         deployedTargets.Clear();
         readyForDeployMinionCount = 0;

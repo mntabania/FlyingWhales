@@ -28,7 +28,10 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     [SerializeField] protected Toggle _toggle;
 
     [Header("Cover")]
-    [SerializeField] protected GameObject coverGO;   
+    [SerializeField] protected GameObject coverGO;
+
+    protected int m_displayRemainingChargeText;
+    protected int m_displayMaxChrageText;
 
     //Hover Delegates
     public delegate void OnHoverEnterNameplate(T obj);
@@ -98,6 +101,17 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     /// </summary>
     public virtual void OnHoverEnter() {
         onHoverEnterNameplate?.Invoke(obj);
+    }
+    #endregion
+
+    #region UI Player Update
+    public virtual void IncreaseOneChargeForDisplayPurpose() {
+        m_displayRemainingChargeText = Mathf.Clamp(m_displayRemainingChargeText + 1, 0, m_displayMaxChrageText);
+        subLbl.text = m_displayRemainingChargeText.ToString() + "/" + m_displayMaxChrageText.ToString();
+    }
+    public virtual void DeductOneChargeForDisplayPurpose() {
+        m_displayRemainingChargeText = Mathf.Clamp(m_displayRemainingChargeText - 1, 0, m_displayMaxChrageText);
+        subLbl.text = m_displayRemainingChargeText.ToString() + "/" + m_displayMaxChrageText.ToString();
     }
     #endregion
 
@@ -206,8 +220,6 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
                 //toggle.onValueChanged.Invoke(toggle.isOn);
             }
         }
-        
-        
     }
     #endregion
 
