@@ -10,7 +10,7 @@ namespace Inner_Maps.Location_Structures {
             name = $"{nameWithoutID} {id.ToString()}";
             allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         }
-        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) {
+        public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) {
             allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         }
 

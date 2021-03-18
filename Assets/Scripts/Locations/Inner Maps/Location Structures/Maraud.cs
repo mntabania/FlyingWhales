@@ -11,7 +11,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             });
         }
-        public Maraud(Region location, SaveDataDemonicStructure data) : base(location, data) {
+        public Maraud(Region location, SaveDataPartyStructure data) : base(location, data) {
             allPossibleTargets.Clear();
             LandmarkManager.Instance.allNonPlayerSettlements.ForEach((eachVillage) => {
                 if (eachVillage.locationType == LOCATION_TYPE.VILLAGE) {
