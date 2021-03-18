@@ -90,23 +90,23 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         int charges =  SpellUtilities.GetModifiedSpellCost(skillData.charges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
         int manaCost = SpellUtilities.GetModifiedSpellCost(skillData.manaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
         int cooldown = SpellUtilities.GetModifiedSpellCost(skillData.cooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
-        int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
+        //int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
 
         string currencyStr = string.Empty; 
         
         if (manaCost > 0) {
-            currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
+            currencyStr += $"{manaCost} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
         if (charges > 0) {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
-            currencyStr += $"{charges.ToString()}/{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+            currencyStr += $"{charges}/{charges} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
         if (cooldown > 0) {
-            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
+            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown)} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
-        if (threat > 0) {
-            currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
-        }
+        //if (threat > 0) {
+        //    currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
+        //}
         
         currenciesText.text = currencyStr;
         additionalText.text = string.Empty;
@@ -129,9 +129,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (cooldown > 0) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
-        if (spellData.threat > 0) {
-            currencyStr += $"{spellData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
-        }
+        //if (spellData.threat > 0) {
+        //    currencyStr += $"{spellData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
+        //}
         currenciesText.text = currencyStr;
 
         additionalText.text = string.Empty;
@@ -202,9 +202,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (cooldown > 0) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
-        if (threat > 0) {
-            currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
-        }
+        //if (threat > 0) {
+        //    currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
+        //}
         currenciesText.text = currencyStr;
         additionalText.text = additionalTextStr;
 
