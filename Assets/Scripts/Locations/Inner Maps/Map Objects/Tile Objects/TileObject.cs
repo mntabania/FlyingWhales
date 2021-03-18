@@ -594,10 +594,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         int attackPower = characterThatAttacked.combatComponent.attack;
         if (characterThatAttacked.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Razer)) {
-            //Razer deals bonus damage to structures
-            if (isDamageContributorToStructure) {
+            //Razer deals bonus damage to structures and objects
+            //if (isDamageContributorToStructure) {
                 attackPower = Mathf.RoundToInt(attackPower * 1.5f);
-            }
+            //}
         }
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.attack.ToString()}";

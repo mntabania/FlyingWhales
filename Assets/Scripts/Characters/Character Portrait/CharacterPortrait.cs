@@ -67,6 +67,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         UpdatePortrait(makePixelPerfect);
         UpdateLeaderIcon();
     }
+    public void GeneratePortrait(MINION_TYPE p_demonType, bool makePixelPerfect = true) {
+        _portraitSprite = CharacterManager.Instance.GetMinionSettings(p_demonType).minionPortrait;
+        UpdatePortrait(makePixelPerfect);
+        UpdateLeaderIcon();
+    }
 
     private void UpdatePortrait(bool makePixelPerfect) {
         isPixelPerfect = makePixelPerfect;

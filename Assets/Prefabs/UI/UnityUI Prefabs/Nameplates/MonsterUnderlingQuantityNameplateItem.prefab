@@ -843,6 +843,7 @@ GameObject:
   - component: {fileID: 563755390489565689}
   - component: {fileID: 383223817730939423}
   - component: {fileID: 665403774012342323}
+  - component: {fileID: 6363768869752094109}
   m_Layer: 5
   m_Name: MonsterUnderlingQuantityNameplateItem
   m_TagString: Untagged
@@ -933,6 +934,50 @@ MonoBehaviour:
   _toggle: {fileID: 383451779310951033}
   coverGO: {fileID: 343107559171467137}
   portrait: {fileID: 3217712398302608856}
+--- !u!114 &6363768869752094109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 343188954478627491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 665403774012342323}
+        m_MethodName: OnHoverEnter
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 665403774012342323}
+        m_MethodName: OnHoverExit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  executeHoverEnterActionPerFrame: 0
 --- !u!1 &343256635267328645
 GameObject:
   m_ObjectHideFlags: 0

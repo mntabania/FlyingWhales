@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DefenderCombatBehaviour : CharacterCombatBehaviour {
+    public override string description => "Gains bonus stats when used for defense.";
     public DefenderCombatBehaviour() : base(CHARACTER_COMBAT_BEHAVIOUR.Defender) {
 
     }
