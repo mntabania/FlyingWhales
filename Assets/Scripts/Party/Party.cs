@@ -598,12 +598,14 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             currentQuest.SetAssignedParty(this);
             SetPartyState(PARTY_STATE.Waiting);
 
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", null, LogUtilities.Party_Quest_Tags);
-            log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
-            log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
-            log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-            LogPool.Release(log);
+            if (!partyFaction.isPlayerFaction) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", null, LogUtilities.Party_Quest_Tags);
+                log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
+                log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                LogPool.Release(log);
+            }
             
             OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);
@@ -620,13 +622,14 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public void DropQuest(string reason) {
         if (isActive) {
             PartyQuest prevQuest = currentQuest;
-
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "drop_quest", providedTags: LOG_TAG.Party);
-            log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
-            log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
-            log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
-            log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+            if (!partyFaction.isPlayerFaction) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "drop_quest", providedTags: LOG_TAG.Party);
+                log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
+                log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+            }
 
             OnDropQuest(currentQuest);
             ClearMembersThatJoinedQuest(shouldDropQuest: false);
@@ -1220,7 +1223,6 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     }
     public void Reset() {
         partySettlement.RemoveParty(this);
-        DatabaseManager.Instance.partyDatabase.RemoveParty(this);
         partyName = string.Empty;
         partyState = PARTY_STATE.None;
         //takeQuestSchedule = -1;
@@ -1326,7 +1328,29 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         //cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
         perHourElapsedInWaiting = data.perHourElapsedInWaiting;
-        partySettlement = data.partySettlement.persistentID;
+        if(data.partySettlement == null) {
+            string log = "Saving Party Error, No Party Settlement!";
+            log += "\nName: " + data.partyName;
+            log += "\nFaction: " + data.partyFaction?.name;
+            log += "\nState: " + data.partyState.ToString();
+            log += "\nDisbanded: " + data.isDisbanded;
+            log += "\nMembers:";
+            for (int i = 0; i < data.members.Count; i++) {
+                log += " " + data.members[i].name;
+            }
+            log += "\nMembers With Quest:";
+            for (int i = 0; i < data.membersThatJoinedQuest.Count; i++) {
+                log += " " + data.membersThatJoinedQuest[i].name;
+            }
+            log += "\nQuest: " + data.currentQuest?.partyQuestType.ToString();
+            log += "\nTarget Destination: " + data.targetDestination?.name;
+            log += "\nMeeting Place: " + data.meetingPlace?.name;
+            log += "\nResting Tavern: " + data.targetRestingTavern?.name;
+            log += "\nCamp: " + data.targetCamp?.name;
+            Debug.LogError(log);
+        } else {
+            partySettlement = data.partySettlement.persistentID;
+        }
         partyFaction = data.partyFaction.persistentID;
 
         //hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
@@ -1353,7 +1377,6 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
                 SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(job);
             }
         }
-
         if (data.meetingPlace != null) {
             meetingPlace = data.meetingPlace.persistentID;
         }

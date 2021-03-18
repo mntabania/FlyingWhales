@@ -562,15 +562,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemoveListeners();
         HideHPBar();
         HideAdditionalEffect();
-        //PooledObject[] pooledObjects = GameUtilities.GetComponentsInDirectChildren<PooledObject>(particleEffectParent.gameObject);
-        //for (int i = 0; i < pooledObjects.Length; i++) {
-        //    PooledObject pooledObject = pooledObjects[i];
-        //    ObjectPoolManager.Instance.DestroyObject(pooledObject);
-        //}
-
-        //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
-        DestroyAllParticles();
-
         Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_AREA, character, _previousAreaLocation);
         visionCollider.Reset();
         GameObject.Destroy(visionTrigger.gameObject);
@@ -590,7 +581,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character = null;
         base.OnDestroy();
     }
-    private void DestroyAllParticles() {
+    protected override void DestroyAllParticleEffects() {
         Transform[] particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParent.gameObject);
         if (particleGOs != null) {
             for (int i = 0; i < particleGOs.Length; i++) {

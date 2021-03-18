@@ -57,13 +57,13 @@ public class FireBall : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            amount += -PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL);
+            //amount += -PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL);
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
-            Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, responsibleCharacter, amount);
-            if (responsibleCharacter != null && !responsibleCharacter.HasHealth()) {
-                responsibleCharacter.skillCauseOfDeath = PLAYER_SKILL_TYPE.FIRE_BALL;
-                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, responsibleCharacter.deathTilePosition.centeredLocalLocation, 1, responsibleCharacter.currentRegion.innerMap);
-            }
+            //Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, responsibleCharacter, amount);
+            //if (responsibleCharacter != null && !responsibleCharacter.HasHealth()) {
+            //    responsibleCharacter.skillCauseOfDeath = PLAYER_SKILL_TYPE.FIRE_BALL;
+            //    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, responsibleCharacter.deathTilePosition.centeredLocalLocation, 1, responsibleCharacter.currentRegion.innerMap);
+            //}
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Water) {
             //2 Vapors
