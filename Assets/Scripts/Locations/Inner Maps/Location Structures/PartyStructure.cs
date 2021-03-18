@@ -23,12 +23,18 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
+            Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
         }
         public PartyStructure(Region location, SaveDataDemonicStructure data) : base(location, data) {
+            Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
+        }
+
+        private void OnGameLoaded() {
+            InitializeTeam();
         }
 
         #region Loading
@@ -52,7 +58,6 @@ namespace Inner_Maps.Location_Structures {
                 m_isInitialized = true;
                 if (party != null) {
                     party.membersThatJoinedQuest.ForEach((eachMember) => {
-                        Debug.LogError(eachMember.name);
                         if (eachMember is Summon) {
                             partyData.deployedSummons.Add(eachMember);
                             SummonSettings ss = CharacterManager.Instance.GetSummonSettings((eachMember as Summon).summonType);

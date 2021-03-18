@@ -170,7 +170,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		if (m_targetPartyStructure.partyData.deployedMinionCount > 0) {
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
-			m_deployedMinionsUI[0].InitializeItem(m_targetPartyStructure.partyData.deployedMinionUnderlings[0], true);
+			m_deployedMinionsUI[0].InitializeItem(m_targetPartyStructure.partyData.deployedMinionUnderlings[0], true, true);
 		} else {
 			m_maraudUIView.ShowMinionButtonHideMinionContainer();
 		}
@@ -319,13 +319,11 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void ProcessButtonAvailability() {
-		if (m_targetPartyStructure.IsAvailableForTargeting()) {
-			m_maraudUIView.DisableDeployButton();
-			return;
-		} 
 		if (!m_isTeamDeployed) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				m_maraudUIView.EnableDeployButton();
+			} else if (m_targetPartyStructure.IsAvailableForTargeting()) {
+				m_maraudUIView.DisableDeployButton();
 			} else {
 				m_maraudUIView.DisableDeployButton();
 			}
@@ -447,19 +445,19 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	public void OnCloseTargetSubContainer() { m_maraudUIView.HideAllSubMenu(); }
 
 	public void OnHoverOver() {
-		if(m_targetPartyStructure.IsAvailableForTargeting()) {
-			Tooltip.Instance.ShowSmallInfo("Can't build team, structure is occupied.", "Occupied Structure", autoReplaceText: false);
-			return;
-		}
 		if (m_isTeamDeployed) {
 			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
 		} else {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
+			} else if (m_targetPartyStructure.IsAvailableForTargeting()) {
+				Tooltip.Instance.ShowSmallInfo("Can't build team, structure is occupied.", "Occupied Structure", autoReplaceText: false);
 			} else {
 				Tooltip.Instance.ShowSmallInfo("Should atleast have 1 target and 1 leader", "Deploy team", autoReplaceText: false);
 			}
 		}
+		
+		
 	}
 
 	public void OnHoverOut() {

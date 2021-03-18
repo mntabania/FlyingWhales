@@ -105,12 +105,23 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     #endregion
 
     #region UI Player Update
+    void ProcessButtonBaseOnChargeDisplay() {
+        if (m_displayRemainingChargeText <= 0) {
+            SetAsDisplayOnly();
+            SetInteractableState(false);
+        } else {
+            SetAsButton();
+            SetInteractableState(true);
+        }
+    }
     public virtual void IncreaseOneChargeForDisplayPurpose() {
         m_displayRemainingChargeText = Mathf.Clamp(m_displayRemainingChargeText + 1, 0, m_displayMaxChrageText);
+        ProcessButtonBaseOnChargeDisplay();
         subLbl.text = m_displayRemainingChargeText.ToString() + "/" + m_displayMaxChrageText.ToString();
     }
     public virtual void DeductOneChargeForDisplayPurpose() {
         m_displayRemainingChargeText = Mathf.Clamp(m_displayRemainingChargeText - 1, 0, m_displayMaxChrageText);
+        ProcessButtonBaseOnChargeDisplay();
         subLbl.text = m_displayRemainingChargeText.ToString() + "/" + m_displayMaxChrageText.ToString();
     }
     #endregion

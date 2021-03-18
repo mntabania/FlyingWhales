@@ -13,9 +13,11 @@ namespace Inner_Maps.Location_Structures {
 
         public override void RemoveCharacterOnList(Character p_removeSummon) {
             partyData.deployedSummons.Remove(p_removeSummon);
+            partyData.deployedSummonUnderlings.Remove(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((p_removeSummon as Summon).summonType));
             if (p_removeSummon.partyComponent.IsAMemberOfParty(party)) {
                 party.RemoveMember(p_removeSummon);
                 party.RemoveMemberThatJoinedQuest(p_removeSummon);
+                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_removeSummon as Summon).summonType, 1);
             }
             p_removeSummon.SetDestroyMarkerOnDeath(true);
             p_removeSummon.Death();
@@ -32,24 +34,6 @@ namespace Inner_Maps.Location_Structures {
                     partyData.deployedSummonUnderlings.RemoveAt(x);
                 }
             }    
-        }
-
-        public override void UnDeployAll() {
-            if (!m_isUndeployUserAction) {
-                m_isUndeployUserAction = true;
-                List<Character> deployed = RuinarchListPool<Character>.Claim();
-                if (partyData.deployedSummons.Count > 0) {
-                    deployed.AddRange(partyData.deployedSummons);
-                }
-                for (int x = 0; x < deployed.Count; x++) {
-                    deployed[x].Death();
-                }
-                partyData.deployedSummons.Clear();
-                partyData.deployedSummonUnderlings.Clear();
-                partyData.readyForDeploySummonCount = 0;
-                Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
-            }
-     
         }
 
 		public override void DeployParty() {

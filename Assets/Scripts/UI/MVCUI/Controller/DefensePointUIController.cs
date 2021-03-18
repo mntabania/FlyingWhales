@@ -108,7 +108,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		for (int x = 0; x < m_targetPartyStructure.partyData.deployedSummonUnderlings.Count; ++x) {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
 			m_deployedSummonsUI[x].HideManaCost();
+			m_targetPartyStructure.partyData.readyForDeploySummonCount++;
 			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedSummonUnderlings[x], true, false);
+			m_deployedSummonsUI[x].Deploy(m_targetPartyStructure.partyData.deployedSummons[x], true);
 		}
 		m_defensePointUIView.ProcessSummonDisplay();
 	}
@@ -147,9 +149,11 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	void ProcessDeployedItemFromClickingAvailableItem(List<DeployedMonsterItemUI> deployedItemList, MonsterAndDemonUnderlingCharges p_monsterClicked) {
 		for (int x = 0; x < deployedItemList.Count; ++x) {
-			if (!deployedItemList[x].isReadyForDeploy) {
+			if (!deployedItemList[x].isReadyForDeploy && !deployedItemList[x].isDeployed) {
 				deployedItemList[x].gameObject.SetActive(true);
 				deployedItemList[x].InitializeItem(p_monsterClicked);
+				deployedItemList[x].ShowManaCost();
+				deployedItemList[x].ShowRemoveButton();
 				m_targetPartyStructure.partyData.readyForDeploySummonCount++;
 				break;
 			}
@@ -160,6 +164,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		availItems.ForEach((availableSummons) => {
 			if (availableSummons.obj.characterClass == p_itemUI.obj.characterClass) {
 				availableSummons.IncreaseOneChargeForDisplayPurpose();
+				if (p_itemUI.isDeployed) {
+					m_targetPartyStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
+				}
 				p_itemUI.ResetButton();
 				p_itemUI.gameObject.SetActive(false);
 				m_targetPartyStructure.partyData.readyForDeploySummonCount--;
