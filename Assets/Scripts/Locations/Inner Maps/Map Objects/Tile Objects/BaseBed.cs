@@ -94,6 +94,13 @@ public abstract class BaseBed : TileObject {
                     character.marker.UpdateAnimation();
                 }
                 Messenger.Broadcast(TileObjectSignals.REMOVE_TILE_OBJECT_USER, GetBase(), character);
+                if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == character) {
+                    //https://trello.com/c/A2IPtNEN/3907-unity-v034290318-camera-follow-bug
+                    if (character.hasMarker) {
+                        Selector.Instance.Select(character, character.marker.transform);
+                        character.CenterOnCharacter();
+                    }
+                }
                 return true;
             }
         }
