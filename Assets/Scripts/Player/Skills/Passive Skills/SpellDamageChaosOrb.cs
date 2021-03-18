@@ -18,7 +18,13 @@ public class SpellDamageChaosOrb : PassiveSkill {
         }
         int orbCount = (p_damageDone) / 300;
         if (orbCount > 0) {
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, orbCount, character.deathTilePosition.parentMap, CURRENCY.Chaotic_Energy);
+            LocationGridTile tileLocation = character.gridTileLocation;
+            if (character.isDead) {
+                tileLocation = character.deathTilePosition;
+            }
+            if (tileLocation != null) {
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, tileLocation.centeredWorldLocation, orbCount, tileLocation.parentMap, CURRENCY.Chaotic_Energy);
+            }
         }
     }
 }
