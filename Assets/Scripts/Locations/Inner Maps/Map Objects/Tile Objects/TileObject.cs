@@ -69,6 +69,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
     public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Tile_Objects;
+
+    public bool isTargetted { set; get; }
     public string iconRichText => UtilityScripts.Utilities.ThreatIcon();
     public virtual Type serializedData => typeof(SaveDataTileObject);
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;

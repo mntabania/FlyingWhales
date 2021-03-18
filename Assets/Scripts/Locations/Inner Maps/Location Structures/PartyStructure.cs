@@ -19,7 +19,7 @@ namespace Inner_Maps.Location_Structures {
         public bool IsAvailableForTargeting() {
             bool isOccupied = charactersHere.Count > 0;
             charactersHere.ForEach((eachCharacters) => isOccupied &= !eachCharacters.isDead);
-            return isOccupied;
+            return !isOccupied;
         }
 
         public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
@@ -181,6 +181,9 @@ namespace Inner_Maps.Location_Structures {
                 partyData.deployedMinions[0].Death();    
             }
             RuinarchListPool<Character>.Release(deployed);
+            if (partyData.deployedTargets.Count > 0) {
+                partyData.deployedTargets[0].isTargetted = false;
+            }
             partyData.ClearAllData();
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
         }

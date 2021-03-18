@@ -168,6 +168,8 @@ public interface IStoredTarget {
     string name { get; }
     string iconRichText { get; }
 
+    bool isTargetted { get; set; }
+
     bool CanBeStoredAsTarget();
 }
 

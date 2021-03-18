@@ -228,7 +228,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_targetPartyStructure.allPossibleTargets.ForEach((EachTarget) => {
 			if (ctr < m_targetList.Count) {
 				m_targetList[ctr].gameObject.SetActive(true);
-				m_targetList[ctr++].InitializeItem(EachTarget);
+				m_targetList[ctr].InitializeItem(EachTarget);
 			} else {
 				AvailableTargetItemUI availableTargetItemUI = Instantiate(m_availableTargetItemUI);
 				availableTargetItemUI.InitializeItem(EachTarget);
@@ -340,7 +340,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (!m_isTeamDeployed) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				m_maraudUIView.EnableDeployButton();
-			} else if (m_targetPartyStructure.IsAvailableForTargeting()) {
+			} else if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 				m_maraudUIView.DisableDeployButton();
 			} else if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
 				m_maraudUIView.DisableDeployButton();
@@ -481,7 +481,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
-			} else if (m_targetPartyStructure.IsAvailableForTargeting()) {
+			} else if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 				Tooltip.Instance.ShowSmallInfo("Can't build team, structure is occupied.", "Occupied Structure", autoReplaceText: false);
 			} else if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
 				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana", "Not enough Mana", autoReplaceText: false);

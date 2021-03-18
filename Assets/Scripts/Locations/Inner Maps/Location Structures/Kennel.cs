@@ -88,6 +88,7 @@ namespace Inner_Maps.Location_Structures {
 
             partyData.deployedMinions[0].faction.partyQuestBoard.CreateDemonSnatchPartyQuest(partyData.deployedMinions[0],
                     partyData.deployedMinions[0].homeSettlement, partyData.deployedTargets[0] as Character, this);
+            partyData.deployedTargets[0].isTargetted = true;
             party.TryAcceptQuest();
             party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));

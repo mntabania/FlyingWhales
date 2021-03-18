@@ -65,6 +65,9 @@ namespace Inner_Maps.Location_Structures {
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Structure;
         public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Structures;
+
+        public bool isTargetted { set; get; }
+
         public string iconRichText => UtilityScripts.Utilities.ChargesIcon();
         public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
         #endregion
