@@ -110,6 +110,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			m_deployedSummonsUI[x].HideManaCost();
 			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedSummonUnderlings[x], true, false);
 		}
+		m_defensePointUIView.ProcessSummonDisplay();
 	}
 
 	void InitializeDeployedItems() {

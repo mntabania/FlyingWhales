@@ -8,21 +8,10 @@ namespace Inner_Maps.Location_Structures {
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             nameWithoutID = "Prison";
             name = $"{nameWithoutID} {id.ToString()}";
-            InitTargets();
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         }
-        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            InitTargets();
-        }
-
-        public override void InitTargets() {
-            allPossibleTargets.Clear();
-            PlayerManager.Instance.player.storedTargetsComponent.storedVillagers.ForEach((eachVillager) => {
-                if ((eachVillager as Character).faction.factionType != PlayerManager.Instance.player.playerFaction.factionType) {
-                    if (!(eachVillager as Character).IsInPrison()) {
-                        allPossibleTargets.Add(eachVillager);
-                    }
-                }
-            });
+        public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) {
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         }
 
         #region Overrides

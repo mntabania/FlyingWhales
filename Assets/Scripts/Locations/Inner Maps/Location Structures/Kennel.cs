@@ -16,21 +16,10 @@ namespace Inner_Maps.Location_Structures {
         private Summon _occupyingSummon;
 
         public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){
-            InitTargets();
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
         }
-        public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            InitTargets();
-        }
-
-        public override void InitTargets() {
-            allPossibleTargets.Clear();
-            PlayerManager.Instance.player.storedTargetsComponent.storedMonsters.ForEach((eachMonster) => {
-                if ((eachMonster as Character).faction.factionType != PlayerManager.Instance.player.playerFaction.factionType) {
-                    if (!(eachMonster as Character).IsInPrison()) {
-                        allPossibleTargets.Add(eachMonster);
-                    }
-                }
-            });
+        public Kennel(Region location, SaveDataPartyStructure data) : base(location, data) {
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
         }
 
         #region Loading
