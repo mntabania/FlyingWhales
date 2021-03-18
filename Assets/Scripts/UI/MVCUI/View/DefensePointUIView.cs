@@ -47,7 +47,7 @@ public class DefensePointUIView : MVCUIView {
 	public Transform GetAvailableSummonsParent() {
 		return UIModel.availableSummonsParent;
 	}
-		public void EnableDeployButton() {
+	public void EnableDeployButton() {
 		UIModel.btnDeploy.interactable = true;
 	}
 

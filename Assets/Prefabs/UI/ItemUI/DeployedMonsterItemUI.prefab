@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 1470638808147157545}
   - component: {fileID: 5273214898117788424}
   m_Layer: 5
-  m_Name: DeployedMonsterItem
+  m_Name: DeployedMonsterItemUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -225,19 +225,21 @@ MonoBehaviour:
   txtAtk: {fileID: 4466783188122750757}
   txtAtkSpd: {fileID: 4466783188938873877}
   txtStatus: {fileID: 4449593102381822404}
+  txtSummonCost: {fileID: 6961702307180993065}
   imgPortrait: {fileID: 8544361641900263050}
   txtUnlockPrice: {fileID: 2808513025898863061}
   lockCover: {fileID: 121399475564825553}
   emptyCover: {fileID: 1999051997429105607}
-  unlockPrice: 0
   isReadyForDeploy: 0
   isDeployed: 0
   isMinion: 0
-  summonSettings:
-    className: 
-    summonPortrait: {fileID: 0}
-  summonType: 0
-  playerSkillType: 0
+  summonCost: 0
+  monsterUnderlingCharges:
+    monsterType: 0
+    minionType: 0
+    currentCharges: 0
+    maxCharges: 0
+    isDemon: 0
   manaIconAndPrice: {fileID: 4979527502256935085}
 --- !u!1 &1485519852463924173
 GameObject:

@@ -18,17 +18,18 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public RuinarchText txtAtk;
     public RuinarchText txtAtkSpd;
     public RuinarchText txtStatus;
+    public RuinarchText txtSummonCost;
     public Image imgPortrait;
 
     public RuinarchText txtUnlockPrice;
     public GameObject lockCover;
     public GameObject emptyCover;
 
-    public int unlockPrice;
-
     public bool isReadyForDeploy;
     public bool isDeployed;
     public bool isMinion;
+
+    public int summonCost;
 
     private MonsterAndDemonUnderlingCharges _monsterOrMinion;
     public MonsterAndDemonUnderlingCharges obj => _monsterOrMinion;
@@ -49,11 +50,12 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 
 	public void InitializeItem(MonsterAndDemonUnderlingCharges p_underling, bool p_isDeployed = false, bool p_hideRemoveButton = false) {
         _monsterOrMinion = p_underling;
-        txtUnlockPrice.text = unlockPrice.ToString();
         txtName.text = p_underling.characterClass.className;
         txtHP.text = p_underling.characterClass.baseHP.ToString();
         txtAtk.text = p_underling.characterClass.baseAttackPower.ToString();
         txtAtkSpd.text = p_underling.characterClass.baseAttackSpeed.ToString();
+        summonCost = CharacterManager.Instance.GetOrCreateCharacterClassData(_monsterOrMinion.characterClass.className).summonCost;
+        txtSummonCost.text = summonCost.ToString();
         if (p_underling.isDemon) {
             isMinion = true;
             imgPortrait.sprite = CharacterManager.Instance.GetMinionSettings(p_underling.minionType).minionPortrait;
@@ -110,11 +112,6 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     }
 
     void OnUnlocked() {
-        if (PlayerManager.Instance.player.mana >= unlockPrice) {
-            PlayerManager.Instance.player.AdjustMana(-unlockPrice);
-            EnableButton();
-            MakeSlotEmpty();
-        }
         onUnlocked?.Invoke(this);
     }
 

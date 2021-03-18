@@ -16,6 +16,7 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDem
 
     private MonsterAndDemonUnderlingCharges _monsterOrMinion;
     public override MonsterAndDemonUnderlingCharges obj => _monsterOrMinion;
+    public int summonCost { get; private set; }
 
     public override void SetObject(MonsterAndDemonUnderlingCharges o) {
         base.SetObject(o);
@@ -36,11 +37,13 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDem
         }
     }
     private void UpdateMainText() {
+        txtHp.text = obj.characterClass.baseHP.ToString();
+        txtAttack.text = obj.characterClass.baseAttackPower.ToString();
+        txtAttackSpeed.text = obj.characterClass.baseAttackSpeed.ToString();
+        summonCost = CharacterManager.Instance.GetOrCreateCharacterClassData(obj.characterClass.className).summonCost;
+        txtManaCost.text = summonCost.ToString();
         if (_monsterOrMinion.isDemon) {
             mainLbl.text = obj.characterClass.className;
-            txtHp.text = obj.characterClass.baseHP.ToString();
-            txtAttack.text = obj.characterClass.baseAttackPower.ToString();
-            txtAttackSpeed.text = obj.characterClass.baseAttackSpeed.ToString();
         } else if (_monsterOrMinion.monsterType != SUMMON_TYPE.None) {
             mainLbl.text = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(_monsterOrMinion.monsterType.ToString());
         }
