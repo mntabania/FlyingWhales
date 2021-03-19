@@ -11,7 +11,7 @@ public class SummonMeterComponent {
     public RuinarchBasicProgress progress { get; private set; }
 
     public SummonMeterComponent() {
-        progress = new RuinarchBasicProgress("Ruinarch's Awakening");
+        progress = new RuinarchBasicProgress("The Ruinarch's Awakening");
         progress.Initialize(0, MAX_TARGET_POINT);
     }
     public SummonMeterComponent(SaveDataSummonMeterComponent data) {
