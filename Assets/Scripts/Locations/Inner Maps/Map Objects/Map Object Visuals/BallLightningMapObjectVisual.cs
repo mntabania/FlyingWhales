@@ -67,7 +67,7 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region Movement
     private void MoveToRandomDirection() {
-        float baseSpeed = 50f + PlayerSkillManager.Instance.GetSkillMovementSpeedDownPerLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
+        float baseSpeed = PlayerSkillManager.Instance.GetSkillMovementSpeedDownPerLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
         Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * baseSpeed;
         direction += transform.position;
         _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
@@ -111,7 +111,7 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Ball Lightning Per Tick");
-        int processedDamage = -60 + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING));
+        int processedDamage = -PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
             traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
