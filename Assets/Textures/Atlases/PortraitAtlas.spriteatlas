@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3539958
+    totalSpriteSurfaceArea: 3561622
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -194,6 +194,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 10016f4795fb3014ab06f390beeb256d, type: 3}
   - {fileID: 21300000, guid: 31817397d853d484fb120d4203a6bb6e, type: 3}
   - {fileID: 21300000, guid: e75228975f41e16418cd32f509cf4709, type: 3}
+  - {fileID: 21300000, guid: 2a3c3d971c3ff414ea5ae74e61590bca, type: 3}
   - {fileID: 21300000, guid: bbd953a7e3b51a548aa006c6b78b2576, type: 3}
   - {fileID: 21300000, guid: fa0619b7cb438ad43bd60489182d2aa1, type: 3}
   - {fileID: 21300000, guid: 7125bdb76b847cc448836f1605675c42, type: 3}
@@ -267,6 +268,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 979f19abab120f448b94e1eba0687db2, type: 3}
   - {fileID: 21300000, guid: 376548bb6b8c7b349800d9704e5ce1ca, type: 3}
   - {fileID: 21300000, guid: 8e9489bba9fe18c4da79a39f7369761c, type: 3}
+  - {fileID: 21300000, guid: bb58f0cba68d3d3499d67e0a70634246, type: 3}
   - {fileID: 21300000, guid: 61e9aeeb643a72d408839d250914c3ef, type: 3}
   - {fileID: 21300000, guid: feb3d3fb40f06214ca9b4d4e383a29af, type: 3}
   - {fileID: 21300000, guid: b96224fb6da78634094b169ea4cce888, type: 3}
@@ -380,15 +382,15 @@ SpriteAtlas:
   - female_human_nose4
   - demon_sloth_portrait
   - female_human_nose3
-  - ImpHut
+  - TheImpHut
   - mail_human_head5
   - female_elf_nose3
   - mail_human_nose3
   - male_elf_ears2
-  - TheProfane
+  - TheMaraud
   - mail_human_nose1
   - Head
-  - TheForge
+  - TheBiolab
   - king
   - M-BoomerZombie
   - demon_envy_portrait
@@ -477,12 +479,13 @@ SpriteAtlas:
   - queen
   - mail_human_brows1
   - male_elf_eyes3
-  - location_portal_portrait
+  - ThePortal
   - female_human_eyes6
   - male_elf_hair9
   - location_triangle_portrait
   - human_farm
   - female_human_hair9
+  - TheDefensePoint
   - TheCrypt
   - female_elf_hair2
   - Head
@@ -494,7 +497,7 @@ SpriteAtlas:
   - witch
   - female_elf_eyes2
   - portrait_bg_explorer
-  - TheFingers
+  - TheMeddler
   - female_elf_ears2
   - mail_human_head2
   - demon_gluttony_portrait
@@ -512,7 +515,7 @@ SpriteAtlas:
   - mail_human_hair7
   - M-FireWisp
   - mail_human_beard3
-  - ThePit
+  - TheManaPit
   - Imp
   - mail_human_mouth3
   - male_elf_hair5
@@ -557,6 +560,7 @@ SpriteAtlas:
   - workshop
   - female_human_hair4
   - female_elf_hair10
+  - ThePrison
   - mail_human_eyes4
   - female_human_hair10
   - female_elf_nose2
@@ -575,7 +579,7 @@ SpriteAtlas:
   - female_elf_brows2
   - female_human_mouth3
   - M-Triton
-  - TheEye
+  - TheBeholder
   - mage_tower
   - mail_human_nose5
   - female_human_mouth4
