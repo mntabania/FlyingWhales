@@ -72,29 +72,25 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void ListenToDeployedItems() {
 		m_deployedMinionsUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked += OnDeployedMonsterClicked;
-			eachDeployedItem.onUnlocked += OnUnlockClicked;
+			eachDeployedItem.onDelete += OnDeployedMonsterClicked;
 		});
 		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked += OnDeployedMonsterClicked;
-			eachDeployedItem.onUnlocked += OnUnlockClicked;
+			eachDeployedItem.onDelete += OnDeployedMonsterClicked;
 		});
 		m_deployedTargetItemUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked += OnDeployedTargetClicked;
+			eachDeployedItem.onDeleteClick += OnDeployedTargetClicked;
 		});
 	}
 
 	void UnlistenToDeployedItems() {
 		m_deployedMinionsUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked -= OnDeployedMonsterClicked;
-			eachDeployedItem.onUnlocked -= OnUnlockClicked;
+			eachDeployedItem.onDelete -= OnDeployedMonsterClicked;
 		});
 		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked -= OnDeployedMonsterClicked;
-			eachDeployedItem.onUnlocked -= OnUnlockClicked;
+			eachDeployedItem.onDelete -= OnDeployedMonsterClicked;
 		});
 		m_deployedTargetItemUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked -= OnDeployedTargetClicked;
+			eachDeployedItem.onDeleteClick -= OnDeployedTargetClicked;
 		});
 		m_targetList.ForEach((eachItem) => {
 			eachItem.onClicked -= OnAvailableTargetClicked;
@@ -403,10 +399,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			}
 		}
 		ProcessButtonAvailability();
-	}
-
-	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
-		m_targetPartyStructure.partyData.maxSummonLimitDeployCount++;
 	}
 
 	#region MaraudUIView implementation

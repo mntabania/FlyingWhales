@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class DeployedTargetItemUI : MonoBehaviour {
-    public Action<DeployedTargetItemUI> onClicked;
-    public Button myButton;
-
+    public Action<DeployedTargetItemUI> onDeleteClick;
+    public Button btnDelete;
+    public Button btnItem;
     public RuinarchText txtName;
 
     public Image imgIcon;
@@ -39,19 +39,21 @@ public class DeployedTargetItemUI : MonoBehaviour {
     }
 
     private void OnEnable() {
-        myButton.onClick.AddListener(Click);
+        btnDelete.onClick.AddListener(OnDeleteClick);
+        btnItem.onClick.AddListener(OnItemClicked);
     }
 
     private void OnDisable() {
-        myButton.onClick.RemoveListener(Click);
+        btnDelete.onClick.RemoveListener(OnDeleteClick);
+        btnItem.onClick.RemoveListener(OnItemClicked);
     }
 
     public void HideRemoveButton() {
-        myButton.gameObject.SetActive(false);
+        btnDelete.gameObject.SetActive(false);
     }
 
     public void ShowRemoveButton() {
-        myButton.gameObject.SetActive(true);
+        btnDelete.gameObject.SetActive(true);
     }
 
     public void ResetButton() {
@@ -59,7 +61,11 @@ public class DeployedTargetItemUI : MonoBehaviour {
         isReadyForDeploy = false;
     }
 
-    void Click() {
-        onClicked?.Invoke(this);
+    void OnDeleteClick() {
+        onDeleteClick?.Invoke(this);
+    }
+
+    void OnItemClicked() {
+        UIManager.Instance.OpenObjectUI(target);
     }
 }

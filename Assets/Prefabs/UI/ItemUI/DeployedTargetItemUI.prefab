@@ -340,7 +340,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4c101db8d1e92d4a8bc42ec2f330b5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myButton: {fileID: 539143530012025219}
+  btnDelete: {fileID: 539143530012025219}
+  btnItem: {fileID: 1421593464392814353}
   txtName: {fileID: 7543609333080091523}
   imgIcon: {fileID: 7415958835927423282}
   isDeployed: 0

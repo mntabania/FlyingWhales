@@ -218,8 +218,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8849dba061113e4d81f410b73202de4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  btnMonster: {fileID: 4757667976607353287}
-  btnUnlock: {fileID: 8281223769099497727}
+  btnDelete: {fileID: 4757667976607353287}
+  btnItemClick: {fileID: 1470638808147157545}
   txtName: {fileID: 4226114229462105889}
   txtHP: {fileID: 7631408080068101559}
   txtAtk: {fileID: 4466783188122750757}

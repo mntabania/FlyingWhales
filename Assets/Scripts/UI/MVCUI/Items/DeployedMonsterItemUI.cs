@@ -7,11 +7,10 @@ using System;
 [System.Serializable]
 public class DeployedMonsterItemUI : MonoBehaviour {
 
-    public Action<DeployedMonsterItemUI> onClicked;
-    public Action<DeployedMonsterItemUI> onUnlocked;
+    public Action<DeployedMonsterItemUI> onDelete;
 
-    public Button btnMonster;
-    public Button btnUnlock;
+    public Button btnDelete;
+    public Button btnItemClick;
 
     public RuinarchText txtName;
     public RuinarchText txtHP;
@@ -39,13 +38,13 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 
     public GameObject manaIconAndPrice;
     private void OnEnable() {
-        btnMonster.onClick.AddListener(OnClicked);
-        btnUnlock.onClick.AddListener(OnUnlocked);
+        btnDelete.onClick.AddListener(OnDeleteClicked);
+        btnItemClick.onClick.AddListener(OnItemClicked);
 	}
 
 	private void OnDisable() {
-        btnMonster.onClick.RemoveListener(OnClicked);
-        btnUnlock.onClick.RemoveListener(OnUnlocked);
+        btnDelete.onClick.RemoveListener(OnDeleteClicked);
+        btnItemClick.onClick.RemoveListener(OnItemClicked);
     }
 
 	public void InitializeItem(MonsterAndDemonUnderlingCharges p_underling, bool p_isDeployed = false, bool p_hideRemoveButton = false) {
@@ -103,16 +102,16 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     }
 
     public void EnableButton() {
-        btnMonster.interactable = true;
+        btnDelete.interactable = true;
         lockCover.SetActive(false);
     }
 
-    void OnClicked() {
-        onClicked?.Invoke(this);
+    void OnDeleteClicked() {
+        onDelete?.Invoke(this);
     }
-
-    void OnUnlocked() {
-        onUnlocked?.Invoke(this);
+    
+    void OnItemClicked() {
+        UIManager.Instance.OpenObjectUI(deployedCharacter);
     }
 
     public void UndeployCharacter() {
@@ -141,10 +140,10 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     }
 
     public void HideRemoveButton() {
-        btnMonster.gameObject.SetActive(false);
+        btnDelete.gameObject.SetActive(false);
     }
 
     public void ShowRemoveButton() {
-        btnMonster.gameObject.SetActive(true);
+        btnDelete.gameObject.SetActive(true);
     }
 }

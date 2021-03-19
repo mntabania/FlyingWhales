@@ -64,15 +64,13 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	void ListenToDeployedItems() {
 		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked += OnDeployedMonsterClicked;
-			eachDeployedItem.onUnlocked += OnUnlockClicked;
+			eachDeployedItem.onDelete += OnDeployedMonsterClicked;
 		});
 	}
 
 	void UnlistenToDeployedItems() {
 		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked -= OnDeployedMonsterClicked;
-			eachDeployedItem.onUnlocked -= OnUnlockClicked;
+			eachDeployedItem.onDelete -= OnDeployedMonsterClicked;
 		});
 	}
 	private void OnDefensePointClicked(LocationStructure p_clickedDefensePoint) {
@@ -189,10 +187,6 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			m_defensePointUIView.ProcessSummonDisplay();
 		} 
 		ProcessDeployButtonDisplay();
-	}
-
-	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
-		m_targetPartyStructure.partyData.maxSummonLimitDeployCount++;
 	}
 
 	#region MaraudUIView implementation
