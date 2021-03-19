@@ -131,6 +131,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.SetButtonDeployText("Deploy");
 		}
+		if (p_title != string.Empty) {
+			m_maraudUIView.SetTitle(p_title);
+		}
+		
 		ProcessButtonAvailability();
 		UIManager.Instance.Pause();
 	}
