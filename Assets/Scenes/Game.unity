@@ -27550,7 +27550,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
+  m_sendNavigationEvents: 0
   m_DragThreshold: 5
 --- !u!4 &886860827
 Transform:
@@ -31457,7 +31457,6 @@ MonoBehaviour:
   m_deployedMonsterItemUI: {fileID: 5273214898117788424, guid: 9a6ad23b2df0e5a4cb931e2cb4b11018,
     type: 3}
   m_deployedSummonsUI: []
-  manaCostToDeploySummon: 10
 --- !u!1 &1066969039
 GameObject:
   m_ObjectHideFlags: 0
@@ -51152,7 +51151,6 @@ MonoBehaviour:
   m_deployedSummonsUI: []
   m_deployedMinionsUI: []
   m_deployedTargetItemUI: []
-  manaCostToDeploySummon: 10
 --- !u!1 &1726405995
 GameObject:
   m_ObjectHideFlags: 0
