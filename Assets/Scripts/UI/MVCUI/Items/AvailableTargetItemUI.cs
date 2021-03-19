@@ -24,7 +24,12 @@ public class AvailableTargetItemUI : MonoBehaviour {
             hoverText.hoverDisplayText = p_hoverText;
         }
         target = p_target;
-        if (target.isTargetted) {
+        bool isCharacter = target is Character;
+        Character targetCharacter = null;
+        if (isCharacter) {
+            targetCharacter = target as Character;
+        }
+        if (isCharacter && (target.isTargetted || (targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.KENNEL || targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS))) {
             ShowCover();
         } else {
             HideCover();
