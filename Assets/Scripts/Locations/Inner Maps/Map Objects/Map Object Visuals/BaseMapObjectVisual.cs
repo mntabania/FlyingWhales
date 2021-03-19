@@ -176,17 +176,30 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (visionTrigger) {
             visionTrigger.Reset();    
         }
-
+        DestroyAllStatusIcons();
+        DestroyAllParticleEffects();
+        SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
+    }
+    private void DestroyAllStatusIcons() {
+        if (statusIconsParent != null) {
+            Transform[] gos = GameUtilities.GetComponentsInDirectChildren<Transform>(statusIconsParent.gameObject);
+            if (gos != null) {
+                for (int i = 0; i < gos.Length; i++) {
+                    ObjectPoolManager.Instance.DestroyObject(gos[i].gameObject);
+                }
+            }
+        }
+    }
+    protected virtual void DestroyAllParticleEffects() {
         if (particleEffectParent != null) {
             //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
             Transform[] particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParent.gameObject);
-            if(particleGOs != null) {
+            if (particleGOs != null) {
                 for (int i = 0; i < particleGOs.Length; i++) {
                     ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
                 }
-            }    
+            }
         }
-        SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
     }
     // void OnEnable() {
     //     Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);

@@ -599,7 +599,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2342380638043181050
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1603,8 +1603,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Choose your Archetype and then fill out the extra slots with skills of
-    your choice.
+  m_text: Choose your Archetype.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -5771,8 +5770,8 @@ PrefabInstance:
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_text
-      value: Pull the strings from behind the curtain and let the world devolve into
-        chaos without lifting a finger.
+      value: "Pull the strings from behind the curtain and let the world devolve
+        into chaos without \nlifting a finger."
       objectReference: {fileID: 0}
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}

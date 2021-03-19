@@ -35,12 +35,12 @@ public class WaterSpikeData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void ApplyEarthDamage(ITraitable traitable) {
-        int processedDamage = m_baseWaterDamage - (m_baseWaterDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.WATER_SPIKE));
+        int processedDamage = m_baseWaterDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.WATER_SPIKE));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-            if (!character.HasHealth()) {
+            if (character.isDead) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.WATER_SPIKE;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }

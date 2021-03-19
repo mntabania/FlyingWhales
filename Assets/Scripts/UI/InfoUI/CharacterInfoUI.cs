@@ -1022,7 +1022,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (GameManager.Instance.gameHasStarted && PlayerManager.Instance.player.mana >= 50) {
             if (!activeCharacter.isInfoUnlocked) {
                 activeCharacter.isInfoUnlocked = true;
-                PlayerManager.Instance.player.AdjustMana(50);
+                PlayerManager.Instance.player.AdjustMana(-50);
                 ProcessDisplay();
                 Messenger.Broadcast(CharacterSignals.CHARACTER_INFO_REVEALED);
             }

@@ -45,7 +45,7 @@ public class BallLightning : MovingTileObject {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
-        amount += PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
+        //amount += -PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
         LocationGridTile tileLocation = gridTileLocation;
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         currentHP += amount;
@@ -56,11 +56,11 @@ public class BallLightning : MovingTileObject {
                 responsibleCharacter = character;
             }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
-            Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, responsibleCharacter, amount);
-            if (responsibleCharacter != null && !responsibleCharacter.HasHealth()) {
-                responsibleCharacter.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
-                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, responsibleCharacter.deathTilePosition.centeredLocalLocation, 1, responsibleCharacter.currentRegion.innerMap);
-            }
+            //Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, responsibleCharacter, amount);
+            //if (responsibleCharacter != null && !responsibleCharacter.HasHealth()) {
+            //    responsibleCharacter.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
+            //    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, responsibleCharacter.deathTilePosition.centeredLocalLocation, 1, responsibleCharacter.currentRegion.innerMap);
+            //}
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Ice) {
             //Electric Storm

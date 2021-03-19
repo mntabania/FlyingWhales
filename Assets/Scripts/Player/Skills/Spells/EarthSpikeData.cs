@@ -35,12 +35,12 @@ public class EarthSpikeData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void ApplyEarthDamage(ITraitable traitable) {
-        int processedDamage = m_baseIceDamage - (m_baseIceDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE));
+        int processedDamage = m_baseIceDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Earth, true, showHPBar: true);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-            if (!character.HasHealth()) {
+            if (character.isDead) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.EARTH_SPIKE;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }

@@ -253,7 +253,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Tornado Per Tick");
-        int processedDamage = -50 - (PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
+        int processedDamage = -50 + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
         List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
@@ -285,8 +285,8 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 int processedDamage = -120;
                 damageable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-                if (damageable.currentHP <= 0) {
-                    (character).skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
+                if (character.isDead) {
+                    character.skillCauseOfDeath = PLAYER_SKILL_TYPE.TORNADO;
                     Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                 }
             } else {

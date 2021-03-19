@@ -68,6 +68,9 @@ namespace Inner_Maps.Location_Structures {
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Structure;
         public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Structures;
+
+        public bool isTargetted { set; get; }
+
         public string iconRichText => UtilityScripts.Utilities.ChargesIcon();
         public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
         #endregion
@@ -198,17 +201,17 @@ namespace Inner_Maps.Location_Structures {
                 case STRUCTURE_TYPE.TAVERN:
                     return "the tavern";
                 case STRUCTURE_TYPE.WAREHOUSE:
-                    return $"the {region.name} warehouse";
+                    return $"the {settlementLocation.name} warehouse";
                 case STRUCTURE_TYPE.PRISON:
-                    return $"the {region.name} prison";
+                    return $"the {settlementLocation.name} prison";
                 case STRUCTURE_TYPE.WILDERNESS:
                     return $"the outskirts of {region.name}";
                 case STRUCTURE_TYPE.CEMETERY:
-                    return $"the cemetery of {region.name}";
+                    return $"the cemetery of {settlementLocation.name}";
                 case STRUCTURE_TYPE.POND:
                     return region.name;
                 case STRUCTURE_TYPE.CITY_CENTER:
-                    return $"the {region.name} city center";
+                    return $"{settlementLocation.name}";
                 default:
                     // string normalizedStructure =
                     //     UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());

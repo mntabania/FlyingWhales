@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
   m_Name: Torture Chambers Data
   m_EditorClassIdentifier: 
-  _structureSprite: {fileID: 21300000, guid: 6bacb8bd4f3ec954a940598485382ad0, type: 3}
+  _structureSprite: {fileID: 21300000, guid: bb58f0cba68d3d3499d67e0a70634246, type: 3}
   _itemGenerationSetting: {fileID: 0}
   structurePrefabs:
     m_keys:

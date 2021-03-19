@@ -30,8 +30,8 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	#endregion
 
 	[SerializeField]
-	private AvailableMonsterItemUI m_availableMonsterItemUI; //item to instantiate
-	private List<AvailableMonsterItemUI> m_summonList = new List<AvailableMonsterItemUI>();
+	private MonsterUnderlingQuantityNameplateItem m_availableMonsterItemUI; //item to instantiate
+	private List<MonsterUnderlingQuantityNameplateItem> m_summonList = new List<MonsterUnderlingQuantityNameplateItem>();
 	
 	[SerializeField]
 	private DeployedMonsterItemUI m_deployedMonsterItemUI; //item to instantiate
@@ -39,7 +39,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	private List<DeployedMonsterItemUI> m_deployedSummonsUI = new List<DeployedMonsterItemUI>();
 	
 	private PartyStructure m_targetPartyStructure;
-	public int manaCostToDeploySummon = 10;
+	private int m_totalDeployCost = 0;
 
 	private void Start() {
 		UIManager.Instance.onDefensePointClicked += OnDefensePointClicked;
@@ -55,20 +55,22 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		UnlistenToDeployedItems();
 	}
 
+	void ReturnAllItemToPool() {
+		for (int x = 0; x < m_summonList.Count; ++x) {
+			ObjectPoolManager.Instance.DestroyObject(m_summonList[x]);
+		};
+		m_summonList.Clear();
+	}
+
 	void ListenToDeployedItems() {
 		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked += OnDeployedMonsterClicked;
-			eachDeployedItem.onUnlocked += OnUnlockClicked;
+			eachDeployedItem.onDelete += OnDeployedMonsterClicked;
 		});
 	}
 
 	void UnlistenToDeployedItems() {
 		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
-			eachDeployedItem.onClicked -= OnDeployedMonsterClicked;
-			eachDeployedItem.onUnlocked -= OnUnlockClicked;
-		});
-		m_summonList.ForEach((eachItem) => {
-			eachItem.onClicked -= OnAvailableMonsterClicked;
+			eachDeployedItem.onDelete -= OnDeployedMonsterClicked;
 		});
 	}
 	private void OnDefensePointClicked(LocationStructure p_clickedDefensePoint) {
@@ -78,7 +80,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		}
 	}
 	public void Init() {
+		m_totalDeployCost = 0;
 		m_targetPartyStructure.InitializeTeam();
+		ReturnAllItemToPool();
 		InstantiateUI();
 		InitializeSummons();
 		InitializeDeployedItems();
@@ -100,11 +104,14 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	}
 
 	void DisplayDeployedItems() {
-		for (int x = 0; x < m_targetPartyStructure.partyData.deployedCSummonlass.Count; ++x) {
+		for (int x = 0; x < m_targetPartyStructure.partyData.deployedSummonUnderlings.Count; ++x) {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
 			m_deployedSummonsUI[x].HideManaCost();
-			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedCSummonlass[x], m_targetPartyStructure.partyData.deployedSummonSettings[x], (m_targetPartyStructure.partyData.deployedSummons[x] as Summon).summonType, true, false);
+			m_targetPartyStructure.partyData.readyForDeploySummonCount++;
+			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedSummonUnderlings[x], true, false);
+			m_deployedSummonsUI[x].Deploy(m_targetPartyStructure.partyData.deployedSummons[x], true);
 		}
+		m_defensePointUIView.ProcessSummonDisplay();
 	}
 
 	void InitializeDeployedItems() {
@@ -119,101 +126,114 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	}
 
 	void InitializeSummons() {
-		int ctr = 0;
 		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
-			SummonSettings settings = CharacterManager.Instance.GetSummonSettings(entry.Key);
-			CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
-			if (ctr < m_summonList.Count) {
-				m_summonList[ctr].gameObject.SetActive(true);
-				m_summonList[ctr++].InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges, entry.Value.maxCharges);
-			} else {
-				AvailableMonsterItemUI summonItem = Instantiate(m_availableMonsterItemUI);
-				summonItem.InitializeItem(cClass, settings, entry.Key, manaCostToDeploySummon, entry.Value.currentCharges, entry.Value.maxCharges);
-				summonItem.transform.SetParent(m_defensePointUIView.GetAvailableSummonsParent());
-				m_summonList.Add(summonItem);
-				m_summonList[ctr++].onClicked += OnAvailableMonsterClicked;
+            if (entry.Value.hasMaxCharge) {
+				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_defensePointUIView.GetAvailableSummonsParent());
+				MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
+				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
+				item.SetObject(entry.Value);
+				item.SetAsButton();
+				item.SetInteractableState(PlayerManager.Instance.player.mana < item.summonCost);
+				m_summonList.Add(item);
 			}
 		}
+		m_defensePointUIView.ProcessSummonDisplay();
 	}
 
-	void OnAvailableMonsterClicked(AvailableMonsterItemUI p_clickedItem) {
-		if (!p_clickedItem.isMinion && m_targetPartyStructure.partyData.readyForDeploySummonCount + m_targetPartyStructure.partyData.deployedSummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
-			p_clickedItem.DeductOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
-			m_targetPartyStructure.partyData.readyForDeploySummonCount++;
-			for (int x = 0; x < m_deployedSummonsUI.Count; ++x) {
-				if (!m_deployedSummonsUI[x].isReadyForDeploy && !m_deployedSummonsUI[x].isDeployed) {
-					m_deployedSummonsUI[x].gameObject.SetActive(true);
-					m_deployedSummonsUI[x].InitializeItem(p_clickedItem.characterClass, p_clickedItem.summonSettings, p_clickedItem.summonType);
-					break;
-				}
-			}
+	void OnAvailableMonsterClicked(MonsterAndDemonUnderlingCharges p_clickedMonster, MonsterUnderlingQuantityNameplateItem p_item) {
+		if (!p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeploySummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
+			p_item.DeductOneChargeForDisplayPurpose();
+			ProcessDeployedItemFromClickingAvailableItem(m_deployedSummonsUI, p_clickedMonster);
 			m_defensePointUIView.ProcessSummonDisplay();
 		}
 		ProcessDeployButtonDisplay();
 	}
 
-	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
-		if (!p_itemUI.isMinion) {
-			for (int x = 0; x < m_summonList.Count; ++x) {
-				if (m_summonList[x].characterClass == p_itemUI.characterClass && (p_itemUI.isDeployed || p_itemUI.isReadyForDeploy)) {
-					m_targetPartyStructure.partyData.readyForDeploySummonCount--;
-					m_targetPartyStructure.RemoveItemOnRight(p_itemUI);
-					if (p_itemUI.isDeployed) {
-						PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(m_summonList[x].summonType, 1);
-						m_targetPartyStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
-						p_itemUI.UndeployCharacter();
-						p_itemUI.ShowManaCost();
-					}
-					p_itemUI.ResetButton();
-					m_summonList[x].AddOneCharge(PlayerManager.Instance.player.mana < manaCostToDeploySummon);
-					p_itemUI.gameObject.SetActive(false);
-				}
-				m_defensePointUIView.ProcessSummonDisplay();
+	void ProcessDeployedItemFromClickingAvailableItem(List<DeployedMonsterItemUI> deployedItemList, MonsterAndDemonUnderlingCharges p_monsterClicked) {
+		for (int x = 0; x < deployedItemList.Count; ++x) {
+			if (!deployedItemList[x].isReadyForDeploy && !deployedItemList[x].isDeployed) {
+				deployedItemList[x].gameObject.SetActive(true);
+				deployedItemList[x].InitializeItem(p_monsterClicked);
+				m_totalDeployCost += deployedItemList[x].summonCost;
+				deployedItemList[x].ShowManaCost();
+				deployedItemList[x].ShowRemoveButton();
+				m_targetPartyStructure.partyData.readyForDeploySummonCount++;
+				break;
 			}
 		}
-		ProcessDeployButtonDisplay();
 	}
 
-	void OnUnlockClicked(DeployedMonsterItemUI p_itemUI) {
-		m_targetPartyStructure.partyData.maxSummonLimitDeployCount++;
+	void ProcessAvailableItemFromClickingDeployedItem(List<MonsterUnderlingQuantityNameplateItem> availItems, DeployedMonsterItemUI p_itemUI) {
+		availItems.ForEach((availableSummons) => {
+			if (availableSummons.obj.characterClass == p_itemUI.obj.characterClass) {
+				availableSummons.IncreaseOneChargeForDisplayPurpose();
+				if (p_itemUI.isDeployed) {
+					m_targetPartyStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
+				} else {
+					m_totalDeployCost -= p_itemUI.summonCost;
+				}
+				p_itemUI.ResetButton();
+				p_itemUI.gameObject.SetActive(false);
+				m_targetPartyStructure.partyData.readyForDeploySummonCount--;
+			}
+		});
+	}
+
+	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
+		if (!p_itemUI.isMinion) {
+			ProcessAvailableItemFromClickingDeployedItem(m_summonList, p_itemUI);
+			m_defensePointUIView.ProcessSummonDisplay();
+		} 
+		ProcessDeployButtonDisplay();
 	}
 
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
 		if (!m_isAllItemDeployed) {
-			int newDeployedCount = 0;
-			m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
-				if (eachSummonToBeDeployed.isReadyForDeploy) {
-					Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.summonType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement);
-					CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
-					summon.OnSummonAsPlayerMonster();
-					eachSummonToBeDeployed.HideManaCost();
-					eachSummonToBeDeployed.Deploy(summon, true);
-					m_targetPartyStructure.AddDeployedItem(eachSummonToBeDeployed);
-					PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachSummonToBeDeployed.summonType, -1);
-					newDeployedCount++;
-				}
-			});
-			if (newDeployedCount > 0) {
-				m_targetPartyStructure.DeployParty();
-			}
-			
+			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Deploy Party.", $"Are you sure you want to use {m_totalDeployCost.ToString()} mana and deploy the party?", OnYesDeploy, showCover: true, layer: 150);
 		} else {
-			m_deployedSummonsUI.ForEach((eachSummonThatAreDployed) => {
-				if (eachSummonThatAreDployed.isDeployed) {
-					//Why create summon here?
-					//Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonThatAreDployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement);
-					eachSummonThatAreDployed.ShowManaCost();
-					eachSummonThatAreDployed.UndeployCharacter();
-					eachSummonThatAreDployed.ResetButton();
-					eachSummonThatAreDployed.gameObject.SetActive(false);
-				}
-			});
-			m_targetPartyStructure.ResetExistingCharges();
-			m_targetPartyStructure.UnDeployAll();
-			Init();
-			m_defensePointUIView.ProcessSummonDisplay();
+			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Disband Party.", $"Are you sure you want to disband the party?", OnYesUndeploy, showCover: true, layer: 150);
 		}
+	}
+
+	void OnYesDeploy() {
+		int newDeployedCount = 0;
+		m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
+			if (eachSummonToBeDeployed.isReadyForDeploy) {
+				Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.obj.monsterType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement);
+				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
+				summon.OnSummonAsPlayerMonster();
+				eachSummonToBeDeployed.HideManaCost();
+				eachSummonToBeDeployed.Deploy(summon, true);
+				m_targetPartyStructure.AddDeployedItem(eachSummonToBeDeployed);
+				PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachSummonToBeDeployed.obj.monsterType, -1);
+				newDeployedCount++;
+			}
+		});
+		if (newDeployedCount > 0) {
+			m_targetPartyStructure.DeployParty();
+		}
+		ProcessDeployButtonDisplay();
+		PlayerManager.Instance.player.AdjustMana(m_totalDeployCost);
+		m_totalDeployCost = 0;
+		OnCloseClicked();
+	}
+
+	void OnYesUndeploy() {
+		m_deployedSummonsUI.ForEach((eachSummonThatAreDployed) => {
+			if (eachSummonThatAreDployed.isDeployed) {
+				//Why create summon here?
+				//Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonThatAreDployed.summonType, FactionManager.Instance.GetFactionBasedOnName("Demon"), m_targetPartyStructure.currentSettlement);
+				eachSummonThatAreDployed.ShowManaCost();
+				eachSummonThatAreDployed.UndeployCharacter();
+				eachSummonThatAreDployed.ResetButton();
+				eachSummonThatAreDployed.gameObject.SetActive(false);
+			}
+		});
+		m_targetPartyStructure.ResetExistingCharges();
+		m_targetPartyStructure.UnDeployAll();
+		Init();
+		m_defensePointUIView.ProcessSummonDisplay();
 		ProcessDeployButtonDisplay();
 	}
 	
@@ -240,10 +260,17 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			m_isAllItemDeployed = false;
 			m_defensePointUIView.SetButtonDeployText("Deploy");
 		}
+
+		if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
+			m_defensePointUIView.DisableDeployButton();
+		} else {
+			m_defensePointUIView.EnableDeployButton();
+		}
 	}
 
 	public void OnCloseClicked() {
 		HideSummonItems();
+		ReturnAllItemToPool();
 		HideUI();
 		m_defensePointUIView.HideAllSubMenu();
 		UIManager.Instance.ResumeLastProgressionSpeed();
@@ -257,7 +284,11 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		if (m_isAllItemDeployed) {
 			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
 		} else {
-			Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
+			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
+				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana", "Not enough Mana", autoReplaceText: false);
+			} else {
+				Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
+			}
 		}
 	}
 

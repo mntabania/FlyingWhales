@@ -125,6 +125,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
     public STORED_TARGET_TYPE storedTargetType => this is Summon ? STORED_TARGET_TYPE.Monster : STORED_TARGET_TYPE.Character;
+
+    public bool isTargetted { set; get; }
     public string iconRichText => visuals.GetCharacterStringIcon();
     public virtual Type serializedData => typeof(SaveDataCharacter);
     public virtual string name => _firstName;
@@ -5693,7 +5695,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             if(responsibleCharacter != null) {
                 if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, currentRegion.innerMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, deathTile.parentMap);
                 }
 			}
 

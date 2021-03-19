@@ -1036,7 +1036,6 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Structure Info")]
     [SerializeField] public StructureInfoUI structureInfoUI;
-    [SerializeField] private PortalUIController _portalUIController;
     public void ShowStructureInfo(LocationStructure structure, bool centerOnStructure = true) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
@@ -1045,7 +1044,7 @@ public class UIManager : BaseMonoBehaviour {
         if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
             onPortalClicked?.Invoke();
         } else {
-            _portalUIController.HideUI();
+            portalUIController.HideUI();
         }
         if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
             onSpireClicked?.Invoke();

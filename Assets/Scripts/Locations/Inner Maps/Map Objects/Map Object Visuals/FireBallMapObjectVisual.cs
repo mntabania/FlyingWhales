@@ -115,16 +115,25 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Poison Cloud Per Tick");
+        int processedDamage = -30 + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
         BurningSource bs = null;
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
-            traitable.AdjustHP(-30, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
+            traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
             Burning burningTrait = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
                     bs = new BurningSource();
                 }
                 burningTrait.SetSourceOfBurning(bs, traitable);
+            }
+
+            if (traitable is Character character) {
+                Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
+                if (character != null && character.isDead) {
+                    character.skillCauseOfDeath = PLAYER_SKILL_TYPE.FIRE_BALL;
+                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                }
             }
         }
         Profiler.EndSample();

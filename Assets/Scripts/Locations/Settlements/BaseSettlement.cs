@@ -37,6 +37,9 @@ namespace Locations.Settlements {
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
         public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Village;
+
+        public bool isTargetted { set; get; }
+
         public string iconRichText => UtilityScripts.Utilities.CooldownIcon();
         public virtual Type serializedData => typeof(SaveDataBaseSettlement);
         public virtual Region region => null;

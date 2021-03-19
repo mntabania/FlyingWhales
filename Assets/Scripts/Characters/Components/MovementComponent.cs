@@ -41,7 +41,6 @@ public class MovementComponent : CharacterComponent {
         tagPenalties = new int[32];
         traversableTags = InnerMapManager.All_Tags; //enable all tags for now
         SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag); //by default all units cannot traverse obstacle tag
-        SetEnableDigging(true);
     }
     public MovementComponent(SaveDataMovementComponent data) {
         structuresToAvoid = new List<LocationStructure>();

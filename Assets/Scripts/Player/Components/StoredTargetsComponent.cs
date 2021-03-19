@@ -168,6 +168,8 @@ public interface IStoredTarget : IBookmarkable {
     string name { get; }
     string iconRichText { get; }
 
+    bool isTargetted { get; set; }
+
     bool CanBeStoredAsTarget();
 }
 
