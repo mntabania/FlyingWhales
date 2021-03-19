@@ -5,8 +5,6 @@ using Traits;
 using UtilityScripts;
 
 public class EarthSpikeData : SkillData {
-
-    private int m_baseTilerange = 1;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EARTH_SPIKE;
     public override string name => "Earth Spike";
     public override string description => "This Spell spike a powerful wave of earth outward from a target spot, dealing earth damage to anything it hits.";
@@ -23,7 +21,7 @@ public class EarthSpikeData : SkillData {
         );
 
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Earth_Spike);
-        int processedTileRange = m_baseTilerange + PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE);
+        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE);
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];

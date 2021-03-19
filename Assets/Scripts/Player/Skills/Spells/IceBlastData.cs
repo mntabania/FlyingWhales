@@ -6,7 +6,6 @@ using UtilityScripts;
 
 public class IceBlastData : SkillData {
 
-    private int m_baseTilerange = 1;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ICE_BLAST;
     public override string name => "Ice Blast";
     public override string description => "This Spell blasts a powerful wave of icicles outward from a target spot, dealing Ice damage to anything it hits.";
@@ -23,7 +22,7 @@ public class IceBlastData : SkillData {
         );
 
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Ice_Blast);
-        int processedTileRange = m_baseTilerange + PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.ICE_BLAST);
+        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.ICE_BLAST);
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
