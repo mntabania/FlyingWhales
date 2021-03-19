@@ -115,7 +115,7 @@ namespace Locations.Area_Features {
             string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
             int baseChance = (int)PlayerSkillManager.Instance.GetChanceBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
-            int blizzardDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
+            int blizzardDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
                 //int roll = UnityEngine.Random.Range(0, 100);

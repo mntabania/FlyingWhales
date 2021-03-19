@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 01000000
     requiredArchetype: 0
@@ -60,7 +61,7 @@ MonoBehaviour:
     - 40
     - 80
     - 120
-    durationBonusPerLevel: 
+    durationBonusPerLevel: 28000000000000000000000000000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []

@@ -12,8 +12,6 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     [Header("Particles")]
     [SerializeField] private ParticleSystem[] particles;
     
-    [Header("Movement")]
-    [SerializeField] private float baseSpeed = 1.0F; // Movement speed in units per second.
     private float _startTime;  // Time when the movement started.
     private float _journeyLength; // Total distance between the markers.
     private Vector3 _startPosition;
@@ -120,7 +118,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _journeyLength = Vector3.Distance(position, destinationTile.centeredWorldLocation);
     }
     private void UpdateSpeed() {
-        _speed = (baseSpeed + (baseSpeed * PlayerSkillManager.Instance.GetSkillMovementSpeedDownPerLevel(PLAYER_SKILL_TYPE.TORNADO)));
+        _speed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.TORNADO);
         if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
             _speed *= 1.5f;
         } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
@@ -253,7 +251,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Tornado Per Tick");
-        int processedDamage = -50 + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
+        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
         List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];

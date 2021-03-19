@@ -26,7 +26,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables((traitable) => BrimstoneEffect(traitable, ref bs));
     }
     private void BrimstoneEffect(ITraitable traitable, ref BurningSource bs) {
-        int additionalDamage = -PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
+        int additionalDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
         
         int processedDamage = additionalDamage;
         if (traitable is TileObject obj) {

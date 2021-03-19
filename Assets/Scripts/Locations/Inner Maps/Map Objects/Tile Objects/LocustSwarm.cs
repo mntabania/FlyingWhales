@@ -12,7 +12,7 @@ public class LocustSwarm : MovingTileObject {
     public override System.Type serializedData => typeof(SaveDataLocustSwarm);
     
     public LocustSwarm() {
-        int processedTick = GameManager.Instance.GetTicksBasedOnHour(6) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.LOCUST_SWARM);
+        int processedTick = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.LOCUST_SWARM);
         Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);

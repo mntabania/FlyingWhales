@@ -4,7 +4,6 @@ using Traits;
 
 public class WallData : SkillData {
 
-    private int m_baseExpiryTick = 5;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WALL;
     public override string name => "Wall";
     public override string description => "This Spell spawns a single tile of durable wall. Can be chained together to block someone's path. Wall degrades and disappears after 5 hours.";
@@ -22,8 +21,8 @@ public class WallData : SkillData {
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
         wall.SetWallType(WALL_TYPE.Demon_Stone);
         GameDate expiryDate = GameManager.Instance.Today();
-        int processedTick = m_baseExpiryTick + (PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.WALL));
-        expiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(processedTick));
+        int processedTick = (PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.WALL));
+        expiryDate.AddTicks(processedTick);
         wall.SetExpiry(expiryDate);
         targetTile.structure.AddPOI(wall, targetTile);
         //IncreaseThreatThatSeesTile(targetTile, 10);

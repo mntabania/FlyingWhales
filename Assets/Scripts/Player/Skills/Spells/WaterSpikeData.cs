@@ -6,7 +6,6 @@ using UtilityScripts;
 
 public class WaterSpikeData : SkillData {
 
-    private int m_baseWaterDamage = -500;
     private int m_baseTilerange = 1;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WATER_SPIKE;
     public override string name => "Water Spike";
@@ -35,7 +34,7 @@ public class WaterSpikeData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void ApplyEarthDamage(ITraitable traitable) {
-        int processedDamage = m_baseWaterDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.WATER_SPIKE));
+        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.WATER_SPIKE));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
 
         if (traitable is Character character) {

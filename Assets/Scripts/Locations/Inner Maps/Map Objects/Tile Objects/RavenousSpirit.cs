@@ -15,7 +15,6 @@ public class RavenousSpirit : TileObject {
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
-    private int _baseFullness = -35;
     #region getters
     public int currentDuration => _currentDuration;
     public override System.Type serializedData => typeof(SaveDataRavenousSpirit);
@@ -132,7 +131,7 @@ public class RavenousSpirit : TileObject {
     }
 
     private void RavenousEffect() {
-        int processedEffect = _baseFullness - (int)(_baseFullness * PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT));
+        int processedEffect = (-(int)(PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT)));
         possessionTarget.needsComponent.AdjustFullness(processedEffect);
     }
 

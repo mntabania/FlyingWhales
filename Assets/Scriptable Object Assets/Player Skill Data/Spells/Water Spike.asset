@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 
     requiredArchetype: 0
@@ -48,7 +49,7 @@ MonoBehaviour:
     manacostPerLevel: 14000000190000001e00000023000000
     chargesPerLevel: 01000000010000000200000003000000
     bonuses: 00000000010000000e000000
-    additionalDamagePerLevel: 64000000c80000002c01000090010000
+    additionalDamagePerLevel: f4010000000000000000000000000000
     additionalPiercePerLevel:
     - 0
     - 50

@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 01000000
     requiredArchetype: 0
@@ -70,5 +71,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 40010000000100000001000000010000
+    cooldownPerLevel: 28000000000000000000000000000000
     skillMovementSpeed: 

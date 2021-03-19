@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 00000000
     requiredArchetype: 1
@@ -48,7 +49,7 @@ MonoBehaviour:
     manacostPerLevel: 190000001e0000002300000028000000
     chargesPerLevel: 01000000010000000200000003000000
     bonuses: 000000000100000009000000
-    additionalDamagePerLevel: 10270000102700001027000010270000
+    additionalDamagePerLevel: f4010000000000000000000000000000
     additionalPiercePerLevel:
     - 0
     - 50
@@ -72,7 +73,6 @@ MonoBehaviour:
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: f0000000c0000000c0000000c0000000
     skillMovementSpeed: 
-    isNonUpgradeable: 0
   impactSounds:
   - {fileID: 8300000, guid: 584d7df54b0e6ba468199f66277304e0, type: 3}
   - {fileID: 8300000, guid: e85cc59650fe25a4d96062d7b5e9b010, type: 3}

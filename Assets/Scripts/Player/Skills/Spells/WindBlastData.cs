@@ -6,8 +6,6 @@ using UtilityScripts;
 
 public class WindBlastData : SkillData {
 
-    private int m_baseWindDamage = -500;
-    private int m_baseTilerange = 1;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WIND_BLAST;
     public override string name => "Wind Blast";
     public override string description => "This Spell blasts a powerful wave of air outward from a target spot, dealing Wind damage to anything it hits.";
@@ -24,7 +22,7 @@ public class WindBlastData : SkillData {
         );
 
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Wind_Blast);
-        int processedTileRange = m_baseTilerange + PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.WIND_BLAST);
+        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.WIND_BLAST);
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
@@ -35,7 +33,7 @@ public class WindBlastData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void ApplyWindDamage(ITraitable traitable) {
-        int processedDamage = m_baseWindDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.WIND_BLAST));
+        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.WIND_BLAST));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, showHPBar: true);
 
         if (traitable is Character character) {

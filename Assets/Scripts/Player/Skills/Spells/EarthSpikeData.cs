@@ -6,7 +6,6 @@ using UtilityScripts;
 
 public class EarthSpikeData : SkillData {
 
-    private int m_baseIceDamage = -500;
     private int m_baseTilerange = 1;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EARTH_SPIKE;
     public override string name => "Earth Spike";
@@ -35,7 +34,7 @@ public class EarthSpikeData : SkillData {
         base.ActivateAbility(targetTile);
     }
     private void ApplyEarthDamage(ITraitable traitable) {
-        int processedDamage = m_baseIceDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE));
+        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE));
         traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Earth, true, showHPBar: true);
 
         if (traitable is Character character) {

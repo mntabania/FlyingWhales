@@ -385,7 +385,7 @@ public class PlayerSkillManager : MonoBehaviour {
     #endregion
 
     #region utility
-    public int GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(skillData.currentLevel);
@@ -439,10 +439,10 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel);
     }
 
-    public int GetSkillMovementSpeedDownPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public int GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetSkillMovementSpeedDownPerLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetSkillMovementSpeedPerLevel(skillData.currentLevel);
     }
     #endregion
 }

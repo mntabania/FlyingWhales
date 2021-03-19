@@ -204,7 +204,6 @@ namespace Inner_Maps {
         public IEnumerator TriggerLandmine(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Landmine_Explosion);
             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
-            int baseDamage = -500;
             yield return new WaitForSeconds(0.5f);
             SetHasLandmine(false);
             List<LocationGridTile> tiles = owner.GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
@@ -216,7 +215,7 @@ namespace Inner_Maps {
                     if (poi.gridTileLocation == null) {
                         continue; //skip
                     }
-                    int processedDamage = baseDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE));
+                    int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE));
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                             obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
@@ -289,7 +288,8 @@ namespace Inner_Maps {
         public void TriggerSnareTrap(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
             SetHasSnareTrap(false);
-            int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
+            //int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
+            int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
         }
         #endregion
