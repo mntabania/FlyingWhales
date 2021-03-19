@@ -24,7 +24,7 @@ public class AvailableTargetItemUI : MonoBehaviour {
             hoverText.hoverDisplayText = p_hoverText;
         }
         target = p_target;
-        if (target.isTargetted) {
+        if (target.isTargetted || (p_target as Character).IsInPrison()) {
             ShowCover();
         } else {
             HideCover();
