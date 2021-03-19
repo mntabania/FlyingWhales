@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TankCombatBehaviour : CharacterCombatBehaviour {
+    public override string description => "High HP. Taunts hostiles.";
+
     public TankCombatBehaviour() : base(CHARACTER_COMBAT_BEHAVIOUR.Tank) {
 
     }

@@ -140,6 +140,8 @@
     /// Parameters: IStoredTarget
     /// </summary>
     public static string PLAYER_REMOVED_STORED_TARGET = "OnPlayerRemovedStoredTarget";
+
+    public static string PLAYER_SUMMON_METER_UPDATE = "OnPlayerSummonMeterUpdate";
     /// <summary>
     /// Parameters: BookmarkCategory
     /// </summary>

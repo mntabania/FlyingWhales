@@ -11,7 +11,7 @@ public class HealSpecialSkill : CombatSpecialSkill {
     public override bool TryActivateSkill(Character p_character) {
         Character validTarget = GetValidTargetFor(p_character);
         if(validTarget != null) {
-            validTarget.ResetToFullHP();
+            validTarget.AdjustHP(100, ELEMENTAL_TYPE.Normal);
             GameManager.Instance.CreateParticleEffectAt(validTarget, PARTICLE_EFFECT.Heal, false);
             p_character.logComponent.PrintLogIfActive("HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + validTarget.name);
             return true;
