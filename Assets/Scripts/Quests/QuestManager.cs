@@ -77,7 +77,7 @@ namespace Quests {
                     winConditionTracker = new PittoWinConditionTracker();
                     break;
                 default:
-                    winConditionTracker = new OonaWinConditionTracker();
+                    winConditionTracker = new TutorialWinConditionTracker();
                     break;
             }
         }
@@ -243,6 +243,9 @@ namespace Quests {
                 case VICTORY_CONDITION.Create_Demon_Cult:
                 CreateDemonCult();
                 break;
+                case VICTORY_CONDITION.Summon_The_Demon:
+                CreateSummonTheDemon();
+                break;
                 case VICTORY_CONDITION.Sandbox:
                 //no win condition quest
                 break;
@@ -296,6 +299,13 @@ namespace Quests {
             if (!IsQuestActive<CreateDemonCultFaction>()) {
                 CreateDemonCultFaction killVillagersByPsychopath = new CreateDemonCultFaction();
                 ActivateQuest(killVillagersByPsychopath);
+            }
+        }
+
+        private void CreateSummonTheDemon() {
+            if (!IsQuestActive<SummonTheDemon>()) {
+                SummonTheDemon SummonTheDemon = new SummonTheDemon();
+                ActivateQuest(SummonTheDemon);
             }
         }
         #endregion
