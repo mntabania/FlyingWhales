@@ -12,7 +12,6 @@ public class FeebleSpirit : TileObject {
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
-    private int _baseEdergyDrainAmount = -35;
 
     #region getters
     public int currentDuration => _currentDuration;
@@ -127,7 +126,7 @@ public class FeebleSpirit : TileObject {
         }
     }
     private void FeebleEffect() {
-        float processedEnergyDrain = _baseEdergyDrainAmount - (_baseEdergyDrainAmount * PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.FEEBLE_SPIRIT));
+        float processedEnergyDrain = (-PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.FEEBLE_SPIRIT));
         possessionTarget.needsComponent.AdjustTiredness(processedEnergyDrain);
     }
     private void DonePossession() {

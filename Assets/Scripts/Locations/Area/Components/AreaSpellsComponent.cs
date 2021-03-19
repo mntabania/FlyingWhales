@@ -486,7 +486,7 @@ public class AreaSpellsComponent : AreaComponent {
     private void PerTickIceteroids() {
         Profiler.BeginSample($"Per Tick Iceteroids");
         currentIceteroidsDuration++;
-        if (currentIceteroidsDuration >= GameManager.ticksPerHour + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ICETEROIDS)) {
+        if (currentIceteroidsDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ICETEROIDS)) {
             SetHasIceteroids(false);
         }
         Profiler.EndSample();

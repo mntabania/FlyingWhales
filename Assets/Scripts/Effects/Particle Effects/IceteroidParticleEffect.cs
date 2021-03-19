@@ -27,13 +27,9 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {
-        int baseDamage = -400;
         int additionalDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS);
-        if (additionalDamage > 0) {
-            additionalDamage *= -1;
-        }
-        int processedDamage = baseDamage + additionalDamage;
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true,
+        int processedDamage = additionalDamage;
+        traitable.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true,
                     piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
         //traitable.AdjustHP(-400, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
         if (traitable is Character character && character.isDead == false) {

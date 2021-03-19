@@ -16,7 +16,7 @@ public class FireBall : MovingTileObject {
         Initialize(TILE_OBJECT_TYPE.FIRE_BALL, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2) + (int)PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
+        expiryDate = GameManager.Instance.Today().AddTicks((int)PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
     }
     public FireBall(SaveDataFireBall data) {
         //SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;

@@ -133,7 +133,7 @@ namespace Locations.Area_Features {
         private void CheckForOverheating(Area p_area) {
             RESISTANCE resistanceType = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.HEAT_WAVE).resistanceType;
             float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.HEAT_WAVE);
-            int baseChance = Mathf.RoundToInt(15 + PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.HEAT_WAVE));
+            int baseChance = Mathf.RoundToInt(PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.HEAT_WAVE));
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
                 float resistanceValue = character.piercingAndResistancesComponent.GetResistanceValue(resistanceType);

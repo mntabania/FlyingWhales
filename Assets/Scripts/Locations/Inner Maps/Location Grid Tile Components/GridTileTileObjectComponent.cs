@@ -265,7 +265,8 @@ namespace Inner_Maps {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {
                     break;
                 } else {
-                    int duration = TraitManager.Instance.allTraits["Freezing"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+                    //int duration = TraitManager.Instance.allTraits["Freezing"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+                    int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP); 
                     triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: duration);
                 }
             }
