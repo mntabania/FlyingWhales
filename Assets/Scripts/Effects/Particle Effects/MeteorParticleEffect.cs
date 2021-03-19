@@ -92,7 +92,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         if (character != null) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
         }
-        if (character != null && character.isDead) {
+        if (character != null && character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.METEOR;
             Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
         }
