@@ -2860,7 +2860,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1712332734}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -17151,7 +17151,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -296, y: 96.82}
+  m_AnchoredPosition: {x: 6996, y: 96.82}
   m_SizeDelta: {x: 592.6833, y: 495.04865}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &509764151
@@ -46294,7 +46294,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: d9a7d8c892a22b94c91ae6fc45a4e4b4, type: 3}
     - {fileID: 21300000, guid: b9f5f2ede50974a49ac1e41cfa208d94, type: 3}
     - {fileID: 21300000, guid: fb10f4935a328d1419578994df66cbc5, type: 3}
-  portalUIController: {fileID: 0}
+  portalUIController: {fileID: 187911616}
   unallowOverlaps: []
   _optionsMenu: {fileID: 1720977191}
   factionInfoUI: {fileID: 1485930123}
@@ -46303,7 +46303,6 @@ MonoBehaviour:
   tileObjectInfoUI: {fileID: 388044833}
   partyInfoUI: {fileID: 8312167725925528708}
   structureInfoUI: {fileID: 179873882}
-  _portalUIController: {fileID: 187911616}
   unbuiltStructureInfoUI: {fileID: 8516645416588250279}
   structureRoomInfoUI: {fileID: 6563973472908480672}
   settlementInfoUI: {fileID: 1972713623}
