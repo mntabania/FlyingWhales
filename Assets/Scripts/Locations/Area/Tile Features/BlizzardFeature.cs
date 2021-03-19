@@ -125,10 +125,10 @@ namespace Locations.Area_Features {
                     summary =
                         $"{summary}\n\tChance met for {character.name}. Adding Freezing trait...";
                     character.traitContainer.AddTrait(character, "Freezing", bypassElementalChance: true);
-                    character.AdjustHP(-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), ELEMENTAL_TYPE.Ice,
+                    character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice,
                         piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), showHPBar: true);
                 }
-                character.AdjustHP(blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing);
+                character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing);
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, blizzardDamage);
                 if (character.isDead) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BLIZZARD;
