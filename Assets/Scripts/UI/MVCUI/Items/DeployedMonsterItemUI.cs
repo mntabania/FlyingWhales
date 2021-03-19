@@ -111,7 +111,9 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     }
     
     void OnItemClicked() {
-        UIManager.Instance.OpenObjectUI(deployedCharacter);
+        if (deployedCharacter != null) {
+            UIManager.Instance.OpenObjectUI(deployedCharacter);
+        }
     }
 
     public void UndeployCharacter() {
