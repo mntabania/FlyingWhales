@@ -201,19 +201,17 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void InitializeSummons() {
 		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
-			GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableSummonsParent());
-			MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
-			item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
-			item.SetObject(entry.Value);
-			item.SetAsButton();
-			m_summonList.Add(item);
-			if (PlayerManager.Instance.player.mana < item.summonCost) {
-				item.SetInteractableState(false);
-			} else {
-				item.SetInteractableState(true);
+            if (entry.Value.hasMaxCharge) {
+				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableSummonsParent());
+				MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
+				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
+				item.SetObject(entry.Value);
+				item.SetAsButton();
+				m_summonList.Add(item);
+				item.SetInteractableState(PlayerManager.Instance.player.mana < item.summonCost);
+				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
+				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}
-			item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
-			item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 		}
 		m_maraudUIView.ProcessSummonDisplay();
 	}
@@ -256,21 +254,18 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void InitializeMinions() {
 		foreach (KeyValuePair<MINION_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.demonUnderlingCharges) {
-			MinionSettings settings = CharacterManager.Instance.GetMinionSettings(entry.Value.minionType);
-			CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className); 
 			SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(entry.Value.minionType);
 			if (skillData.isInUse) {
+				MinionSettings settings = CharacterManager.Instance.GetMinionSettings(entry.Value.minionType);
+				CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableMinionsParent());
 				MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
 				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_minionList.Add(item);
-				if (PlayerManager.Instance.player.mana < item.summonCost) {
-					item.SetInteractableState(false);
-				} else {
-					item.SetInteractableState(true);
-				}
+				bool canDoAbility = skillData.CanPerformAbility();
+				item.SetInteractableState(canDoAbility);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}

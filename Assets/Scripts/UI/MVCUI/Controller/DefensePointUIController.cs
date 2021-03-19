@@ -127,17 +127,15 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	void InitializeSummons() {
 		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
-			GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_defensePointUIView.GetAvailableSummonsParent());
-			MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
-			item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
-			item.SetObject(entry.Value);
-			item.SetAsButton();
-			if (PlayerManager.Instance.player.mana < item.summonCost) {
-				item.SetInteractableState(false);
-			} else {
-				item.SetInteractableState(true);
+            if (entry.Value.hasMaxCharge) {
+				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_defensePointUIView.GetAvailableSummonsParent());
+				MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
+				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
+				item.SetObject(entry.Value);
+				item.SetAsButton();
+				item.SetInteractableState(PlayerManager.Instance.player.mana < item.summonCost);
+				m_summonList.Add(item);
 			}
-			m_summonList.Add(item);
 		}
 		m_defensePointUIView.ProcessSummonDisplay();
 	}

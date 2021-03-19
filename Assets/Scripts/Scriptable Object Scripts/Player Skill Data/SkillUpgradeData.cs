@@ -53,15 +53,6 @@ public class SkillUpgradeData
         }
         return upgradeCosts[p_currentLevel];
     }
-    public int GetChargesBaseOnLevel(int p_currentLevel) {
-        if (chargesPerLevel == null || chargesPerLevel.Count <= 0) {
-            return 1;
-        }
-        if (p_currentLevel >= chargesPerLevel.Count) {
-            return chargesPerLevel[upgradeCosts.Count - 1];
-        }
-        return chargesPerLevel[p_currentLevel];
-    }
     public int GetAdditionalDamageBaseOnLevel(int p_currentLevel) {
         if (additionalDamagePerLevel == null || additionalDamagePerLevel.Count <= 0) {
             return 0;
@@ -134,15 +125,6 @@ public class SkillUpgradeData
         }
         return additionalAttackValuePerLevel[p_currentLevel];
     }
-    public int GetManaCostPerLevel(int p_currentLevel) {
-        if (manacostPerLevel == null || manacostPerLevel.Count <= 0) {
-            return 0;
-        }
-        if (p_currentLevel >= manacostPerLevel.Count) {
-            return manacostPerLevel[upgradeCosts.Count - 1];
-        }
-        return manacostPerLevel[p_currentLevel];
-    }
     public float GetIncreaseStatsPercentagePerLevel(int p_currentLevel) {
         if (statsIncreasedPercentagePerLevel == null || statsIncreasedPercentagePerLevel.Count <= 0) {
             return 0;
@@ -179,14 +161,32 @@ public class SkillUpgradeData
         }
         return additionalChanceBonusPercentagePerLevel[p_currentLevel];
     }
+    public int GetManaCostPerLevel(int p_currentLevel) {
+        if (manacostPerLevel == null || manacostPerLevel.Count <= 0) {
+            return -1;
+        }
+        if (p_currentLevel >= manacostPerLevel.Count) {
+            return manacostPerLevel[upgradeCosts.Count - 1];
+        }
+        return manacostPerLevel[p_currentLevel];
+    }
     public int GetCoolDownPerLevel(int p_currentLevel) {
         if (cooldownPerLevel == null || cooldownPerLevel.Count <= 0) {
-            return 0;
+            return -1;
         }
         if (p_currentLevel >= cooldownPerLevel.Count) {
             return cooldownPerLevel[upgradeCosts.Count - 1];
         }
         return cooldownPerLevel[p_currentLevel];
+    }
+    public int GetChargesBaseOnLevel(int p_currentLevel) {
+        if (chargesPerLevel == null || chargesPerLevel.Count <= 0) {
+            return -1;
+        }
+        if (p_currentLevel >= chargesPerLevel.Count) {
+            return chargesPerLevel[upgradeCosts.Count - 1];
+        }
+        return chargesPerLevel[p_currentLevel];
     }
     public int GetSkillMovementSpeedDownPerLevel(int p_currentLevel) {
         if (skillMovementSpeed == null || skillMovementSpeed.Count <= 0) {

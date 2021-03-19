@@ -197,9 +197,10 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public void ResetExistingCharges() {
-            partyData.deployedMinions.ForEach((eachMinion) => {
-                PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMinion.minion.minionPlayerSkillType).AdjustCharges(1);
-            });
+            //Do not add charge anymore because when a minion dies the charge is automatically added
+            //partyData.deployedMinions.ForEach((eachMinion) => {
+            //    PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMinion.minion.minionPlayerSkillType).AdjustCharges(1);
+            //});
             partyData.deployedSummons.ForEach((eachSummon) => {
                 PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
             });
