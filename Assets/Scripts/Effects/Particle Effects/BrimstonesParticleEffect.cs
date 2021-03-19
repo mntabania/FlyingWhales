@@ -8,7 +8,6 @@ using Inner_Maps;
 
 public class BrimstonesParticleEffect : BaseParticleEffect {
 
-    private int m_brimstoneBaseDamage = -400;
     protected override void PlayParticle() {
         base.PlayParticle();
         StartCoroutine(BrimstoneEffect());
@@ -27,11 +26,9 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables((traitable) => BrimstoneEffect(traitable, ref bs));
     }
     private void BrimstoneEffect(ITraitable traitable, ref BurningSource bs) {
-        int additionalDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
-        if(additionalDamage > 0) {
-            additionalDamage *= -1;
-        }
-        int processedDamage = m_brimstoneBaseDamage + additionalDamage;
+        int additionalDamage = -PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
+        
+        int processedDamage = additionalDamage;
         if (traitable is TileObject obj) {
             //int processedDamage = m_brimstoneBaseDamage - (m_brimstoneBaseDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));
             if (obj.tileObjectType == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
