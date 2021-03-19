@@ -403,6 +403,12 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(skillData.currentLevel);
     }
 
+    public float GetChanceBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetChanceBonusPerLevel(skillData.currentLevel);
+    }
+
     public float GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);

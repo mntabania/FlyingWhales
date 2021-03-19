@@ -113,7 +113,7 @@ namespace Locations.Area_Features {
         #region Effects
         private void BlizzardDamageAndFreezingProcess(Area hex) {
             string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
-            int baseChance = 35;
+            int baseChance = (int)PlayerSkillManager.Instance.GetChanceBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             int blizzardDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             for (int i = 0; i < _charactersOutside.Count; i++) {
@@ -161,7 +161,7 @@ namespace Locations.Area_Features {
             base.Save(tileFeature);
             BlizzardFeature blizzardFeature = tileFeature as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {tileFeature?.ToString() ?? "Null"}");
-            expiryInTicks = GameManager.Instance.Today().GetTickDifference(blizzardFeature.expiryDate) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
+            expiryInTicks = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
         }
         public override AreaFeature Load() {
             BlizzardFeature blizzardFeature = base.Load() as BlizzardFeature;
