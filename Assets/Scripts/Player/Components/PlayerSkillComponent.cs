@@ -93,7 +93,10 @@ public class PlayerSkillComponent {
     private void OnCompleteSpellUnlockTimer() {
         PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(currentSpellBeingUnlocked);
         ResetPlayerSpellChoices();
-        Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(currentSpellBeingUnlocked);
+        if (skillData.category == PLAYER_SKILL_CATEGORY.SPELL) {
+            Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);    
+        }
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, currentSpellBeingUnlocked, currentSpellUnlockCost);
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         currentSpellUnlockCost = 0;
