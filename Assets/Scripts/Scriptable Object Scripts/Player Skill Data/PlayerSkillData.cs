@@ -31,6 +31,8 @@ public class PlayerSkillData : ScriptableObject {
     [Header("Player Action Icon")]
     public Sprite playerActionIcon;
 
+    public bool isNonUpgradeable;
+
     [Space]
     [Header("--------------Upgrade Related---------------")]
     public RequirementData requirementData;
