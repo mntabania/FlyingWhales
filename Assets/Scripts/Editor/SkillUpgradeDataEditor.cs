@@ -33,7 +33,7 @@ public class SkillUpgradeDataEditor : Editor {
     }
 
 	private void OnDisable() {
-        AssetDatabase.SaveAssets();
+        //AssetDatabase.SaveAssets();
     }
 
 	void DisplayUpgradeBonus() {
