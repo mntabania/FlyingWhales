@@ -13,7 +13,7 @@ namespace UtilityScripts {
         private System.Action _onTimerEndAction;
 
         #region getters
-        public override string name => timerName;
+        public override string progressableName => timerName;
         public int totalTicksInTimer => totalValue;
         public int currentTimerProgress => currentValue;
         public override BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Progress_Bar;

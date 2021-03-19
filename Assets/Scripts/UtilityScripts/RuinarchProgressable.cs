@@ -1,4 +1,5 @@
-﻿namespace UtilityScripts {
+﻿using UnityEngine;
+namespace UtilityScripts {
     
     /// <summary>
     /// Base class for anything that can be interpreted into a progress bar.
@@ -20,18 +21,18 @@
         private System.Action<RuinarchProgressable> _onCurrentProgressChanged;
         private System.Action _onSelectProgressable;
         
-        public abstract string name { get; }
+        public abstract string progressableName { get; }
         public abstract BOOKMARK_TYPE bookmarkType { get; } 
         public BookmarkableEventDispatcher bookmarkEventDispatcher { get; private set; }
 
         #region getters
-        public string bookmarkName => name;
+        public string bookmarkName => progressableName;
         #endregion
 
         protected RuinarchProgressable() {
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         }
-        protected void Load() {
+        public void Load() {
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         }
         
@@ -47,8 +48,9 @@
             currentValue = 0;
             totalValue = 0;
         }
-        protected void IncreaseProgress(int p_amount) {
+        public void IncreaseProgress(int p_amount) {
             currentValue += p_amount;
+            currentValue = Mathf.Clamp(currentValue, 0, maxValue);
             ExecuteOnProgressChangedEvent();
         }
         public float GetCurrentProgressPercent() {

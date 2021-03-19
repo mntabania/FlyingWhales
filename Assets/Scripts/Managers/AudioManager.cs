@@ -207,13 +207,13 @@ public class AudioManager : MonoBehaviour {
         toggleClick.Play();
     }
     private void OnQuestShown(Quest quest) {
-        questNotificationSound.Play();
+        // questNotificationSound.Play();
     }
     private void OnQuestStepCompleted(QuestStep questStep) {
         // positiveNotificationSound.Play();
     }
     private void OnQuestStepFailed(QuestStep questStep) {
-        negativeNotificationSound.Play();
+        // negativeNotificationSound.Play();
     }
     private void OnObtainIntel(IIntel intel) {
         particleMagnet.Play();

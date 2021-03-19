@@ -15,7 +15,7 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
         p_progressable.ListenToProgress(this);
         btnMain.onClick.AddListener(p_progressable.OnSelect);
         _onResetAction += () => OnResetActions(p_progressable);
-        lblName.text = p_progressable.name;
+        lblName.text = p_progressable.progressableName;
         UpdateProgressBar(p_progressable);
         p_progressable.bookmarkEventDispatcher.Subscribe(this);
         

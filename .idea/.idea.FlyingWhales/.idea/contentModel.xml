@@ -1202,7 +1202,12 @@
               <e p="Projectile.cs" t="Include" />
               <e p="Special Skills" t="Include">
                 <e p="CombatSpecialSkill.cs" t="Include" />
+                <e p="FastHealSpecialSkill.cs" t="Include" />
+                <e p="GroupHealSpecialSkill.cs" t="Include" />
                 <e p="HealSpecialSkill.cs" t="Include" />
+                <e p="SelfHealSpecialSkill.cs" t="Include" />
+                <e p="SlowTauntSpecialSkill.cs" t="Include" />
+                <e p="StrongHealSpecialSkill.cs" t="Include" />
                 <e p="TauntSpecialSkill.cs" t="Include" />
               </e>
             </e>
@@ -2483,6 +2488,7 @@
               <e p="PlayerUnderlingsComponent.cs" t="Include" />
               <e p="SeizeComponent.cs" t="Include" />
               <e p="StoredTargetsComponent.cs" t="Include" />
+              <e p="SummonMeterComponent.cs" t="Include" />
               <e p="ThreatComponent.cs" t="Include" />
             </e>
             <e p="ManaRegenComponent.cs" t="Include" />
@@ -2765,6 +2771,7 @@
               <e p="EliminateAllVillagersOnGivenDate.cs" t="Include" />
               <e p="EliminateNumberOfVillagersUsingPlague.cs" t="Include" />
               <e p="KillVillagersByPsychopath.cs" t="Include" />
+              <e p="SummonTheDemon.cs" t="Include" />
               <e p="WipeElvenKingdomAndSurviveHuman.cs" t="Include" />
             </e>
             <e p="Quest Criteria" t="Include">
@@ -2887,6 +2894,7 @@
               <e p="ShowSpellMenuStep.cs" t="Include" />
               <e p="StoreIntelStep.cs" t="Include" />
               <e p="StructureBuiltStep.cs" t="Include" />
+              <e p="SummonTheDemonStep.cs" t="Include" />
               <e p="TemptationsPopupShown.cs" t="Include" />
               <e p="ToggleTurnedOnStep.cs" t="Include" />
               <e p="TriggerElectricChainStep.cs" t="Include" />
@@ -3643,6 +3651,7 @@
               <e p="OonaWinConditionTracker.cs" t="Include" />
               <e p="PangatlooWinConditionTracker.cs" t="Include" />
               <e p="PittoWinConditionTracker.cs" t="Include" />
+              <e p="TutorialWinConditionTracker.cs" t="Include" />
               <e p="WinconditionTracker.cs" t="Include" />
               <e p="ZenkoWinConditionTracker.cs" t="Include" />
             </e>

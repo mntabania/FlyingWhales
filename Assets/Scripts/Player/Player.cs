@@ -67,9 +67,12 @@ public class Player : ILeader, IObjectManipulator {
         m_manaRegenComponent = new ManaRegenComponent(this);
         tileObjectComponent = new PlayerTileObjectComponent();
         summonMeterComponent = new SummonMeterComponent();
-        summonMeterComponent.Initialize();
         bookmarkComponent = new BookmarkComponent();
+        summonMeterComponent.Initialize();
+        
 
+        bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        
         SubscribeListeners();
         
     }
@@ -80,6 +83,7 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent = data.playerSkillComponent.Load();
         underlingsComponent = data.underlingsComponent.Load();
         tileObjectComponent = data.tileObjectComponent.Load();
+        summonMeterComponent = data.summonMeterComponent.Load();
         bookmarkComponent = new BookmarkComponent();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);
@@ -87,8 +91,10 @@ public class Player : ILeader, IObjectManipulator {
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
-        summonMeterComponent = new SummonMeterComponent();
         summonMeterComponent.Initialize();
+        
+        bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        
         SubscribeListeners();
     }
 
@@ -784,6 +790,7 @@ public class Player : ILeader, IObjectManipulator {
         }
         playerSkillComponent.LoadReferences(data.playerSkillComponent);
         storedTargetsComponent.LoadReferences(data.storedTargetsComponent);
+        summonMeterComponent.LoadReferences(data.summonMeterComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion
