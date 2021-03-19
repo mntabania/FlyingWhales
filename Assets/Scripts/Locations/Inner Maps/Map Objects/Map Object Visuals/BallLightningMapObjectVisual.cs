@@ -114,8 +114,10 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
         int processedDamage = -PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
-            traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
-            if(traitable is Character character) {
+            if (owner != traitable) {
+                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            }
+            if (traitable is Character character) {
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                 if (character != null && character.isDead) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
