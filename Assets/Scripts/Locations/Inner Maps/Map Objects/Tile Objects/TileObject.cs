@@ -1239,17 +1239,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return UIManager.Instance.tileObjectInfoUI.isShowing &&
                UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
     }
-    public void LeftSelectAction() {
+    public virtual void LeftSelectAction() {
         if (mapObjectVisual != null) {
             mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);    
         } else {
             UIManager.Instance.ShowTileObjectInfo(this);    
         }
     }
-    public void RightSelectAction() {
+    public virtual void RightSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
     }
-    public void MiddleSelectAction() {
+    public virtual void MiddleSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Middle);
     }
     public virtual bool CanBeSelected() {

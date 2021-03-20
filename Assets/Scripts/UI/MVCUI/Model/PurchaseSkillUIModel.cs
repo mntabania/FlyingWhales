@@ -16,6 +16,8 @@ public class PurchaseSkillUIModel : MVCUIModel {
 	
 	public RuinarchText txtMessageDisplay;
 	public Transform skillsParent;
+	
+	public Image imgCooldown;
 
 	private void OnEnable() {
 		btnClose.onClick.AddListener(ClickClose);

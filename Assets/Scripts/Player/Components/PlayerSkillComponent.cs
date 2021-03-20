@@ -5,6 +5,9 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class PlayerSkillComponent {
+
+    public const int RerollCooldownInHours = 12;
+    
     //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
     public List<PLAYER_SKILL_TYPE> spells { get; protected set; }
     public List<PLAYER_SKILL_TYPE> afflictions { get; protected set; }
@@ -29,7 +32,7 @@ public class PlayerSkillComponent {
     public PLAYER_SKILL_TYPE currentSpellBeingUnlocked { get; private set; }
     public int currentSpellUnlockCost { get; private set; }
     public RuinarchTimer timerUnlockSpell { get; private set; }
-    public RuinarchCooldown cooldownReroll { get; private set; }
+    public RuinarchTimer cooldownReroll { get; private set; }
     public List<PLAYER_SKILL_TYPE> currentSpellChoices { get; private set; }
         
     public PLAYER_SKILL_TYPE currentDemonBeingSummoned { get; private set; }
@@ -56,7 +59,7 @@ public class PlayerSkillComponent {
         //canRemoveTraits = true;
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         timerUnlockSpell = new RuinarchTimer("Spell Unlock");
-        cooldownReroll = new RuinarchCooldown("Reroll");
+        cooldownReroll = new RuinarchTimer("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
         currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
         timerSummonDemon = new RuinarchTimer("Summon Demon");
@@ -103,7 +106,11 @@ public class PlayerSkillComponent {
     }
     public void OnRerollUsed() {
         ResetPlayerSpellChoices();
-        cooldownReroll.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour));
+        cooldownReroll.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(RerollCooldownInHours)), OnRerollCooldownFinished);
+    }
+    private void OnRerollCooldownFinished() {
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "UI", "PortalUI", "reroll_available", null, LOG_TAG.Major);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
     public void PlayerChoseMinionToUnlock(PLAYER_SKILL_TYPE p_skillType, int p_unlockCost) {
         currentDemonBeingSummoned = p_skillType;
@@ -586,7 +593,7 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
     public PLAYER_SKILL_TYPE currentSpellBeingUnlocked;
     public int currentSpellUnlockCost;
     public RuinarchTimer timerUnlockSpell;
-    public RuinarchCooldown cooldownReroll;
+    public RuinarchTimer cooldownReroll;
     public List<PLAYER_SKILL_TYPE> currentSpellChoices;
     public PLAYER_SKILL_TYPE currentDemonBeingSummoned;
     public int currentDemonUnlockCost;

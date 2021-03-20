@@ -20,6 +20,9 @@ public class PortalUIModel : MVCUIModel {
     public RuinarchButton btnCancelReleaseAbility;
     public RuinarchButton btnCancelSummonDemon;
     public RuinarchButton btnCancelObtainBlueprint;
+    public RuinarchButton btnClose;
+
+    public HoverHandler hoverHandlerBtnCancelReleaseAbility;
 
     public System.Action onReleaseAbilityClicked;
     public System.Action onSummonDemonClicked;
@@ -27,6 +30,9 @@ public class PortalUIModel : MVCUIModel {
     public System.Action onCancelReleaseAbilityClicked;
     public System.Action onCancelSummonDemonClicked;
     public System.Action onCancelObtainBlueprintClicked;
+    public System.Action onHoverOverCancelReleaseAbility;
+    public System.Action onHoverOutCancelReleaseAbility;
+    public System.Action onClickClose;
 
 
     void Awake() {
@@ -42,6 +48,9 @@ public class PortalUIModel : MVCUIModel {
         btnCancelReleaseAbility.onClick.AddListener(ClickCancelReleaseAbility);
         btnCancelSummonDemon.onClick.AddListener(ClickCancelSummonDemon);
         btnCancelObtainBlueprint.onClick.AddListener(ClickCancelObtainBlueprint);
+        hoverHandlerBtnCancelReleaseAbility.AddOnHoverOverAction(OnHoverOverCancelReleaseAbility);
+        hoverHandlerBtnCancelReleaseAbility.AddOnHoverOutAction(OnHoverOutCancelReleaseAbility);
+        btnClose.onClick.AddListener(OnClickClose);
     }
     private void OnDisable() {
         btnReleaseAbility.onClick.RemoveListener(ClickReleaseAbility);
@@ -50,6 +59,9 @@ public class PortalUIModel : MVCUIModel {
         btnCancelReleaseAbility.onClick.RemoveListener(ClickCancelReleaseAbility);
         btnCancelSummonDemon.onClick.RemoveListener(ClickCancelSummonDemon);
         btnCancelObtainBlueprint.onClick.RemoveListener(ClickCancelObtainBlueprint);
+        hoverHandlerBtnCancelReleaseAbility.RemoveOnHoverOverAction(OnHoverOverCancelReleaseAbility);
+        hoverHandlerBtnCancelReleaseAbility.RemoveOnHoverOutAction(OnHoverOutCancelReleaseAbility);
+        btnClose.onClick.RemoveListener(OnClickClose);
     }
     private void ClickReleaseAbility() {
         onReleaseAbilityClicked?.Invoke();
@@ -69,5 +81,14 @@ public class PortalUIModel : MVCUIModel {
     }
     private void ClickCancelObtainBlueprint() {
         onCancelObtainBlueprintClicked?.Invoke();
+    }
+    private void OnHoverOverCancelReleaseAbility() {
+        onHoverOverCancelReleaseAbility?.Invoke();
+    }
+    private void OnHoverOutCancelReleaseAbility() {
+        onHoverOutCancelReleaseAbility?.Invoke();
+    }
+    private void OnClickClose() {
+        onClickClose?.Invoke();
     }
 }

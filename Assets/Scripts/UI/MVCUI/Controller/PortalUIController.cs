@@ -1,6 +1,7 @@
 ﻿using System;
 using Ruinarch.MVCFramework;
 using UnityEngine;
+using UtilityScripts;
 
 public class PortalUIController : MVCUIController, PortalUIView.IListener {
     [SerializeField]
@@ -10,6 +11,9 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     public PurchaseSkillUIController purchaseSkillUIController;
     public UnlockMinionUIController unlockMinionUIController;
     public UnlockStructureUIController unlockStructureUIController;
+
+    private string m_tooltipCancelReleaseAbility;
+    
     
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
     [ContextMenu("Instantiate UI")]
@@ -45,29 +49,27 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
             m_portalUIView.ShowUnlockStructureButtonAndHideTimer();
         }
     }
+    public override void HideUI() {
+        base.HideUI();
+        UIManager.Instance.SetSpeedTogglesState(true);
+        UIManager.Instance.ResumeLastProgressionSpeed();
+    }
     private void Start() {
-        UIManager.Instance.onPortalClicked += OnPortalClicked;
         UIManager.Instance.structureInfoUI.AddCloseMenuAction(HideUI);
         InstantiateUI();
         HideUI();
         Messenger.AddListener(Signals.GAME_LOADED, Initialize);
     }
-    private void OnDestroy() {
-        if (UIManager.Instance != null) {
-            UIManager.Instance.onPortalClicked -= OnPortalClicked;    
-        }
-    }
-    private void OnPortalClicked() {
-        if (GameManager.Instance.gameHasStarted) {
-            ShowUI();
-        }
-    }
     private void Initialize() {
         int orderInHierarchy = UIManager.Instance.structureInfoUI.transform.GetSiblingIndex() + 1;
         m_portalUIView.UIModel.transform.SetSiblingIndex(orderInHierarchy);
+
+        m_tooltipCancelReleaseAbility = LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "cancel_release_ability");
         
         Messenger.RemoveListener(Signals.GAME_LOADED, Initialize);
         m_portalUIView.UIModel.timerReleaseAbility.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell);
+        m_portalUIView.UIModel.timerReleaseAbility.SetHoverOverAction(OnHoverOverReleaseAbilityTimer);
+        m_portalUIView.UIModel.timerReleaseAbility.SetHoverOutAction(OnHoverOutReleaseAbilityTimer);
         m_portalUIView.UIModel.timerSummonDemon.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerSummonDemon);
         m_portalUIView.UIModel.timerObtainBlueprint.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUnlockStructure);
     }
@@ -128,15 +130,42 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         unlockStructureUIController.ShowUI();
     }
     public void OnClickCancelReleaseAbility() {
+        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
+        UIManager.Instance.ShowYesNoConfirmation(
+            "Cancel Release Ability", $"Are you sure you want to cancel Releasing Ability: <b>{spellData.name}</b>? " + 
+                                      $"\n<i>{UtilityScripts.Utilities.InvalidColorize("Cancelling will reset all current release progress!")}</i>", OnConfirmCancelRelease, showCover: true, layer: 30);
+        // purchaseSkillUIController.Init(purchaseSkillUIController.skillCountPerDraw);
+    }
+    private void OnConfirmCancelRelease() {
         PlayerManager.Instance.player.playerSkillComponent.CancelCurrentPlayerSkillUnlock();
-        purchaseSkillUIController.Init(purchaseSkillUIController.skillCountPerDraw);
     }
     public void OnClickCancelSummonDemon() {
         PlayerManager.Instance.player.playerSkillComponent.CancelCurrentMinionUnlock();
-        unlockMinionUIController.ShowUI();
+        // unlockMinionUIController.ShowUI();
     }
     public void OnClickCancelObtainBlueprint() {
         PlayerManager.Instance.player.playerSkillComponent.CancelCurrentStructureUnlock();
-        unlockStructureUIController.ShowUI();
+        // unlockStructureUIController.ShowUI();
+    }
+    public void OnHoverOverCancelReleaseAbility() {
+        UIManager.Instance.ShowSmallInfo(m_tooltipCancelReleaseAbility);
+    }
+    public void OnHoverOutCancelReleaseAbility() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnClickClose() {
+        HideUI();
+    }
+    private void OnHoverOverReleaseAbilityTimer() {
+        string message = $"Remaining time: {PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell.GetRemainingTimeString()}";
+        if (PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.IsFinished()) {
+            message = $"{message}\nReroll Available!";  
+        } else {
+            message = $"{message}\nRemaining time until reroll: {PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.GetRemainingTimeString()}";
+        }
+        UIManager.Instance.ShowSmallInfo(message, autoReplaceText: false);
+    }
+    private void OnHoverOutReleaseAbilityTimer() {
+        UIManager.Instance.HideSmallInfo();
     }
 }

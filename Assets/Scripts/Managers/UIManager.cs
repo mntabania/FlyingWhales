@@ -26,7 +26,6 @@ using Prison = Tutorial.Prison;
 
 public class UIManager : BaseMonoBehaviour {
 
-    public Action onPortalClicked;
     public Action onSpireClicked;
     public Action<LocationStructure> onMaraudClicked;
     public Action<LocationStructure> onKennelClicked;
@@ -130,7 +129,7 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
-    
+
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
     private PointerEventData _pointer;
@@ -1029,16 +1028,10 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Structure Info")]
     [SerializeField] public StructureInfoUI structureInfoUI;
-    [SerializeField] private PortalUIController _portalUIController;
     public void ShowStructureInfo(LocationStructure structure, bool centerOnStructure = true) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
-        }
-        if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
-            onPortalClicked?.Invoke();
-        } else {
-            _portalUIController.HideUI();
         }
         if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
             onSpireClicked?.Invoke();
@@ -1913,6 +1906,17 @@ public class UIManager : BaseMonoBehaviour {
             return _raycastResults.Count > 0 && _raycastResults.Any(go => go.gameObject.CompareTag("Context Menu"));    
         }
         return false;
+    }
+    #endregion
+
+    #region Demonic Structures
+    [Space(10)]
+    [Header("Demonic Structures")]
+    [SerializeField] private PortalUIController _portalUIController;
+    public void ShowUnlockAbilitiesUI() {
+        _portalUIController.ShowUI();
+        SetSpeedTogglesState(false);
+        Pause();
     }
     #endregion
 }
