@@ -30,7 +30,7 @@ namespace Traits {
                 m_addedAtk = PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
                 character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk);
 
-                float m_addedMaxHP = character.maxHP * PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
+                float m_addedMaxHP = character.maxHP * (PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100);
                 character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
             }
         }
