@@ -36,6 +36,27 @@ public class PlayerSkillManager : MonoBehaviour {
     public Dictionary<PLAYER_SKILL_TYPE, SkillData> allPlayerSkillsData { get; private set; }
     public Dictionary<PASSIVE_SKILL, PassiveSkill> passiveSkillsData { get; private set; }
 
+    public Dictionary<string, PLAYER_SKILL_TYPE> afflictionsNameSkillTypeDictionary = new Dictionary<string, PLAYER_SKILL_TYPE>()
+    {
+        { "Agoraphobic", PLAYER_SKILL_TYPE.AGORAPHOBIA },
+            { "Alcoholic", PLAYER_SKILL_TYPE.ALCOHOLIC },
+            { "Cannibal", PLAYER_SKILL_TYPE.CANNIBALISM },
+            { "Coward", PLAYER_SKILL_TYPE.COWARDICE },
+            { "Glutton", PLAYER_SKILL_TYPE.GLUTTONY },
+            { "Hothead", PLAYER_SKILL_TYPE.HOTHEADED },
+            { "Kleptomaniac", PLAYER_SKILL_TYPE.KLEPTOMANIA },
+            { "Lazy", PLAYER_SKILL_TYPE.GLUTTONY },
+            { "Lycantrophe", PLAYER_SKILL_TYPE.LYCANTHROPY },
+            { "Music Hater", PLAYER_SKILL_TYPE.MUSIC_HATER },
+            { "Narcoleptic", PLAYER_SKILL_TYPE.NARCOLEPSY },
+            { "Paralyzed", PLAYER_SKILL_TYPE.PARALYSIS },
+            { "Plagued", PLAYER_SKILL_TYPE.PLAGUE },
+            { "Psychopath", PLAYER_SKILL_TYPE.PSYCHOPATHY },
+            { "Pyrophobic", PLAYER_SKILL_TYPE.PYROPHOBIA },
+            { "Unfaithful", PLAYER_SKILL_TYPE.UNFAITHFULNESS },
+            { "Vampire", PLAYER_SKILL_TYPE.VAMPIRISM },
+    };
+
     #region getters
     public PlayerSkillDataDictionary playerSkillDataDictionary => _playerSkillDataDictionary;
     #endregion

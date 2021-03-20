@@ -81,6 +81,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ILocationAwareness currentLocationAwareness { get; private set; }
     public Vector2Int gridTilePosition { get; private set; }
     public bool hasMarker { get; private set; }
+
+    public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer { get; set; }
     public LocationStructure deployedAtStructure { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
 
