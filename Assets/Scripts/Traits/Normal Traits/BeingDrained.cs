@@ -27,13 +27,10 @@ namespace Traits {
         }
         private void DrainPerTick(Character p_character) {
             if (!p_character.isDead) {
-                int hpReduction = Mathf.RoundToInt(p_character.maxHP * (PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.DRAIN_SPIRIT)));
+                int hpReduction = Mathf.RoundToInt(p_character.maxHP * ((PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.DRAIN_SPIRIT) / 100f)));
                 p_character.AdjustHP(-hpReduction, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
-                if (p_character.isDead && p_character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
-                    p_character.skillCauseOfDeath = PLAYER_SKILL_TYPE.DRAIN_SPIRIT;
-                    int spiritEnergy = p_character is Summon ? 1 : 2;
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, p_character.deathTilePosition.centeredWorldLocation, spiritEnergy, p_character.deathTilePosition.parentMap);
-                }
+                int spiritEnergy = p_character is Summon ? 1 : 2;
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, p_character.deathTilePosition.centeredWorldLocation, spiritEnergy, p_character.deathTilePosition.parentMap);
             }
         }
     }
