@@ -133,7 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Target already chased by another party
+  hoverDisplayText: Target already chased by another party or inside prison
 --- !u!114 &251793162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -626,3 +626,4 @@ MonoBehaviour:
   myButton: {fileID: 2179063453915245456}
   txtName: {fileID: 7293401113306238722}
   goCover: {fileID: 251793160}
+  hoverText: {fileID: 251793163}

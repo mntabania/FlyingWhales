@@ -2201,6 +2201,7 @@
                   <e p="ManaPitTileObject.cs" t="Include" />
                   <e p="ManaRune.cs" t="Include" />
                   <e p="MaraudTileObject.cs" t="Include" />
+                  <e p="MeddlerTileObject.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
                   <e p="MonsterEgg.cs" t="Include" />
                   <e p="MovingTileObject.cs" t="Include" />
@@ -2641,6 +2642,7 @@
                 <e p="SpreadRumorData.cs" t="Include" />
                 <e p="TortureData.cs" t="Include" />
                 <e p="TriggerFlawData.cs" t="Include" />
+                <e p="UnlockAbilitiesData.cs" t="Include" />
                 <e p="UnsummonData.cs" t="Include" />
                 <e p="UpgradeData.cs" t="Include" />
                 <e p="ZapData.cs" t="Include" />
@@ -3403,8 +3405,8 @@
                 <e p="UnlockStructureUIController.cs" t="Include" />
                 <e p="WorldGenOptionsUIController.cs" t="Include" />
               </e>
+              <e p="HoverText.cs" t="Include" />
               <e p="Items" t="Include">
-                <e p="AvailableMonsterItemUI.cs" t="Include" />
                 <e p="AvailableTargetItemUI.cs" t="Include" />
                 <e p="BookmarkCategoryItemUI.cs" t="Include" />
                 <e p="BookmarkProgressItemUI.cs" t="Include" />

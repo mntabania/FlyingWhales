@@ -72,6 +72,7 @@ MonoBehaviour:
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: f0000000c0000000c0000000c0000000
     skillMovementSpeed: 
+    isNonUpgradeable: 0
   impactSounds:
   - {fileID: 8300000, guid: 584d7df54b0e6ba468199f66277304e0, type: 3}
   - {fileID: 8300000, guid: e85cc59650fe25a4d96062d7b5e9b010, type: 3}

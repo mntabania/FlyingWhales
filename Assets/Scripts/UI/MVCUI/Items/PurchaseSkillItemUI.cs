@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System;
+using Coffee.UIExtensions;
 using UnityEngine;
 using Ruinarch.Custom_UI;
 using UnityEngine.UI;
 
-public class PurchaseSkillItemUI : MonoBehaviour
-{
+public class PurchaseSkillItemUI : MonoBehaviour {
     public Action<PLAYER_SKILL_TYPE> onButtonClick;
+    public Action<PlayerSkillData, PurchaseSkillItemUI> onHoverOver;
+    public Action<PlayerSkillData, PurchaseSkillItemUI> onHoverOut;
     public RuinarchButton btnSkill;
 	public RuinarchText txtSkillName;
 	public RuinarchText txtDescription;
@@ -23,16 +25,23 @@ public class PurchaseSkillItemUI : MonoBehaviour
 
 	public Image disabler;
 
+	public HoverHandler hoverHandler;
+	public UIShiny shineEffect;
+
 	private PLAYER_SKILL_TYPE m_skillType;
 
 	PlayerSkillData m_data;
-
+	
 	private void OnEnable() {
 		btnSkill.onClick.AddListener(SkillClicked);
+		hoverHandler.AddOnHoverOverAction(OnHoverOver);
+		hoverHandler.AddOnHoverOutAction(OnHoverOut);
 	}
 
 	private void OnDisable() {
 		btnSkill.onClick.RemoveListener(SkillClicked);
+		hoverHandler.RemoveOnHoverOverAction(OnHoverOver);
+		hoverHandler.RemoveOnHoverOutAction(OnHoverOut);
 	}
 
 	public void InitItem(PLAYER_SKILL_TYPE p_type, int p_currentMana) {
@@ -66,9 +75,12 @@ public class PurchaseSkillItemUI : MonoBehaviour
 		m_skillType = p_type;
 		if (m_data.unlockCost > p_currentMana) {
 			DisableButton();
+			hoverHandler.ExecuteHoverEnterActionPerFrame(true);
 		} else {
 			EnableButton();
+			hoverHandler.ExecuteHoverEnterActionPerFrame(false);
 		}
+		transform.localScale = Vector3.one;
 	}
 
 	public void UpdateItem(int p_currentMana) {
@@ -91,5 +103,11 @@ public class PurchaseSkillItemUI : MonoBehaviour
 
 	private void SkillClicked() {
 		onButtonClick?.Invoke(m_skillType);
+	}
+	private void OnHoverOver() {
+		onHoverOver?.Invoke(m_data, this);
+	}
+	private void OnHoverOut() {
+		onHoverOut?.Invoke(m_data, this);
 	}
 }

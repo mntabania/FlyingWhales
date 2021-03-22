@@ -145,7 +145,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 			skills = m_skillComponent.spells;
 			break;
 			case SKILL_VIEW.PLAYER_ACTION:
-			skills = m_skillComponent.playerActions;
+			skills = GetFilteredPlayerActions();
 			break;
 		}
 		m_skillUpgradeUIView.SetUnlockSkillCount(skills.Count.ToString());
@@ -204,7 +204,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 			DisplaySkills(m_skillComponent.spells);
 			break;
 			case SKILL_VIEW.PLAYER_ACTION:
-			DisplaySkills(m_skillComponent.playerActions);
+			DisplaySkills(GetFilteredPlayerActions());
 			break;
 		}
 		if (isTestScene) {
@@ -235,9 +235,19 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	public void OnPlayerActionTabClicked(bool isOn) {
 		if (isOn) {
 			m_currentView = SKILL_VIEW.PLAYER_ACTION;
-			DisplaySkills(m_skillComponent.playerActions);
+			DisplaySkills(GetFilteredPlayerActions());
 			UpdateTopMenuSummary();
 		}
+	}
+
+	public List<PLAYER_SKILL_TYPE> GetFilteredPlayerActions() {
+		List<PLAYER_SKILL_TYPE> skills = new List<PLAYER_SKILL_TYPE>();
+		m_skillComponent.playerActions.ForEach((eachSkill) => {
+			if (!PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).isNonUpgradeable) {
+				skills.Add(eachSkill);
+			}
+		});
+		return skills;
 	}
 	
 	public void OnCloseClicked() {

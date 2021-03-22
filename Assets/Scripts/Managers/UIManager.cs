@@ -26,7 +26,6 @@ using Prison = Tutorial.Prison;
 
 public class UIManager : BaseMonoBehaviour {
 
-    public Action onPortalClicked;
     public Action onSpireClicked;
     public Action<LocationStructure> onMaraudClicked;
     public Action<LocationStructure> onKennelClicked;
@@ -130,11 +129,7 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
-    
-    [Space(10)]
-    [Header("Portal UI")]
-    public PortalUIController portalUIController;
-    
+
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
     private PointerEventData _pointer;
@@ -219,7 +214,7 @@ public class UIManager : BaseMonoBehaviour {
         UpdateUI();
     }
     public void InitializeAfterLoadOutPicked() {
-        portalUIController.InitializeAfterLoadoutSelected();
+        _portalUIController.InitializeAfterLoadoutSelected();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
@@ -1040,11 +1035,6 @@ public class UIManager : BaseMonoBehaviour {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
-        }
-        if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
-            onPortalClicked?.Invoke();
-        } else {
-            portalUIController.HideUI();
         }
         if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
             onSpireClicked?.Invoke();
@@ -1919,6 +1909,17 @@ public class UIManager : BaseMonoBehaviour {
             return _raycastResults.Count > 0 && _raycastResults.Any(go => go.gameObject.CompareTag("Context Menu"));    
         }
         return false;
+    }
+    #endregion
+
+    #region Demonic Structures
+    [Space(10)]
+    [Header("Demonic Structures")]
+    [SerializeField] private PortalUIController _portalUIController;
+    public void ShowUnlockAbilitiesUI() {
+        _portalUIController.ShowUI();
+        SetSpeedTogglesState(false);
+        Pause();
     }
     #endregion
 

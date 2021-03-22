@@ -7,9 +7,20 @@ using System;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Ruinarch.Custom_UI;
 
 public class StructureInfoUI : InfoUIBase {
 
+    [Space(10)]
+    [Header("Tabs")]
+    [SerializeField] private RuinarchToggle prisonersTab;
+    [SerializeField] private RuinarchToggle residentsTab;
+    
+    [Space(10)]
+    [Header("Content")]
+    [SerializeField] private GameObject goPrisoners;
+    [SerializeField] private GameObject goResidents;
+    
     [Space(10)]
     [Header("Basic Info")]
     [SerializeField] private TextMeshProUGUI nameLbl;
@@ -30,6 +41,7 @@ public class StructureInfoUI : InfoUIBase {
     [Header("Characters")]
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
+    [SerializeField] private ScrollRect prisonersScrollView;
     
     [Space(10)]
     [Header("Store Target")] 
@@ -42,6 +54,9 @@ public class StructureInfoUI : InfoUIBase {
         base.Initialize();
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.ADDED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
+        Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, UpdatePrisonersFromSignal);
+        Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, UpdatePrisonersFromSignal);
+        
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
         ListenToPlayerActionSignals();
 
@@ -70,7 +85,15 @@ public class StructureInfoUI : InfoUIBase {
         activeStructure.ShowSelectorOnStructure();
         btnStoreTarget.SetTarget(activeStructure);
         UpdateStructureInfoUI();
-        UpdateResidents();
+        if (UsesResidentsTab()) {
+            UpdateContentToShow();
+            UpdateResidents();    
+        } else if (UsesPrisonersTab()) {
+            UpdateContentToShow();
+            UpdatePrisoners();
+        } else {
+            UpdateContentToShow();
+        }
         LoadActions(activeStructure);
     }
     protected override void LoadActions(IPlayerActionTarget target) {
@@ -88,13 +111,48 @@ public class StructureInfoUI : InfoUIBase {
     }
     #endregion
 
-    public void UpdateStructureInfoUI() {
-        if(activeStructure == null) {
-            return;
+    private bool UsesResidentsTab() {
+        if (activeStructure is DemonicStructure demonicStructure) {
+            if (demonicStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS || demonicStructure.structureType == STRUCTURE_TYPE.KENNEL) {
+                return false;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
         }
+    }
+    private bool UsesPrisonersTab() {
+        if (activeStructure is DemonicStructure demonicStructure) {
+            if (demonicStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS || demonicStructure.structureType == STRUCTURE_TYPE.KENNEL) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    private void UpdateContentToShow() {
+        if (UsesResidentsTab() && goPrisoners.activeSelf) {
+            prisonersTab.isOn = false;
+        } else if (UsesPrisonersTab() && goResidents.activeSelf) {
+            residentsTab.isOn = false;
+        } else {
+            prisonersTab.isOn = false;
+            residentsTab.isOn = false;
+        }
+    }
+    
+    private void UpdateTabs() {
+        residentsTab.gameObject.SetActive(UsesResidentsTab());
+        prisonersTab.gameObject.SetActive(UsesPrisonersTab());
+    }
+    public void UpdateStructureInfoUI() {
+        if(activeStructure == null) { return; }
+        UpdateTabs();
         UpdateBasicInfo();
         UpdateInfo();
-        //UpdateCharacters();
     }
     private void UpdateBasicInfo() {
         nameLbl.text = $"{activeStructure.nameplateName}";
@@ -140,11 +198,31 @@ public class StructureInfoUI : InfoUIBase {
             }
         }
     }
+    private void UpdatePrisoners() {
+        UtilityScripts.Utilities.DestroyChildren(prisonersScrollView.content);
+        List<Character> characters = activeStructure.charactersHere;
+        if (characters != null && characters.Count > 0) {
+            for (int i = 0; i < characters.Count; i++) {
+                Character character = characters[i];
+                if (character != null) {
+                    GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, prisonersScrollView.content);
+                    CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
+                    item.SetObject(character);
+                    item.SetAsDefaultBehaviour();
+                }
+            }
+        }
+    }
     
     #region Listeners
     private void UpdateResidentsFromSignal(Character resident, LocationStructure structure) {
-        if (isShowing && activeStructure == structure) {
+        if (isShowing && activeStructure == structure && UsesResidentsTab()) {
             UpdateResidents();
+        }
+    }
+    private void UpdatePrisonersFromSignal(Character character, LocationStructure structure) {
+        if (isShowing && activeStructure == structure && UsesPrisonersTab()) {
+            UpdatePrisoners();
         }
     }
     private void OnDemonicStructureRepaired(DemonicStructure p_demonicStructure) {

@@ -25,12 +25,12 @@ namespace UtilityScripts {
         public void SetTimerName(string p_name) {
             timerName = p_name;
         }
-        public void LoadStart(System.Action p_endAction) {
+        public void LoadStart(System.Action p_endAction = null) {
             Load();
             _onTimerEndAction = p_endAction;
             Messenger.AddListener(Signals.TICK_ENDED, TimerTick);
         }
-        public void Start(GameDate p_start, GameDate p_end, System.Action p_endAction) {
+        public void Start(GameDate p_start, GameDate p_end, System.Action p_endAction = null) {
             timerStart = p_start;
             timerEnd = p_end;
             int totalTicks = p_start.GetTickDifference(p_end);
@@ -38,6 +38,9 @@ namespace UtilityScripts {
             _onTimerEndAction = p_endAction;
             Messenger.AddListener(Signals.TICK_ENDED, TimerTick);
             Debug.Log($"Started {timerName}. ETA is {p_end.ToString()}");
+        }
+        public bool IsFinished() {
+            return currentTimerProgress == totalTicksInTimer;
         }
         private void TimerTick() {
             IncreaseProgress(1);
@@ -59,6 +62,13 @@ namespace UtilityScripts {
                 currentTimerProgressPercent = 0f;
             }
             return currentTimerProgressPercent;
+        }
+        public int GetRemainingTicks() {
+            return totalTicksInTimer - currentTimerProgress;
+        }
+        public string GetRemainingTimeString() {
+            int remainingTicks = GetRemainingTicks();
+            return $"{GameManager.GetTimeAsWholeDuration(remainingTicks).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(remainingTicks)}";
         }
         public void Stop() {
             Reset();
