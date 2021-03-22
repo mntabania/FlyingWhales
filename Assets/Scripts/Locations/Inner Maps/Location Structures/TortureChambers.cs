@@ -4,15 +4,13 @@ namespace Inner_Maps.Location_Structures {
     public class TortureChambers : PartyStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
+        public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         public override string nameplateName => "Prison";
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             nameWithoutID = "Prison";
             name = $"{nameWithoutID} {id.ToString()}";
-            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         }
-        public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) {
-            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
-        }
+        public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) { }
 
         #region Overrides
         public override void OnCharacterUnSeizedHere(Character character) {
