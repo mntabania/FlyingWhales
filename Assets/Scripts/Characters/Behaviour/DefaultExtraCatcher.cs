@@ -19,10 +19,10 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
         //    }
         //}
         producedJob = null;
-        if (character.isNormalCharacter && character.hasMarker && character.marker.inVisionCharacters.Count > 0 && HasCharacterNotConversedInMinutes(character, 10)) {
+        if (character.isNormalCharacter && character.hasMarker && character.marker.inVisionCharacters.Count > 0 && HasCharacterNotConversedInMinutes(character, 6)) {
             log += $"\n{character.name} has characters in vision and has not conversed in at least 10 minutes.";
             List<Character> validChoices =
-                character.marker.GetInVisionCharactersThatMeetCriteria((c) => HasCharacterNotConversedInMinutes(c, 10) && c.isNormalCharacter && !c.isDead);
+                character.marker.GetInVisionCharactersThatMeetCriteria((c) => HasCharacterNotConversedInMinutes(c, 6) && c.isNormalCharacter && !c.isDead);
             if (validChoices != null && validChoices.Count > 0) {
                 Character chosenTarget = CollectionUtilities.GetRandomElement(validChoices);
                 if (character.nonActionEventsComponent.CanInteract(chosenTarget)) {

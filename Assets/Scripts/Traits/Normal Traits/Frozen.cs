@@ -57,7 +57,7 @@ namespace Traits {
                 addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
                 addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
                 //Desert Biomes should immediately remove freezing and frozen status
-                ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(5);
+                ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(3);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
