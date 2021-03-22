@@ -195,6 +195,11 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
 		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
+		if (isTestScene) {
+			fakePlayer.currenciesComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
+		} else {
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
+		}
 		skillData.LevelUp();
 		switch (m_currentView) {
 			case SKILL_VIEW.AFFLICTIONS:
@@ -206,11 +211,6 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 			case SKILL_VIEW.PLAYER_ACTION:
 			DisplaySkills(GetFilteredPlayerActions());
 			break;
-		}
-		if (isTestScene) {
-			fakePlayer.currenciesComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
-		} else { 
-			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
 		}
 		UpdateTopMenuSummary();
 		//m_skillComponent.SetPlayerSkillData(p_type);
