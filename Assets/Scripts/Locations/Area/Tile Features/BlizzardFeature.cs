@@ -18,7 +18,7 @@ namespace Locations.Area_Features {
             name = "Blizzard";
             description = "There is a blizzard in this location.";
             _charactersOutside = new List<Character>();
-            expiryInTicks = GameManager.Instance.GetTicksBasedOnHour(6);
+            expiryInTicks = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
         }
 
         #region Override
@@ -161,7 +161,7 @@ namespace Locations.Area_Features {
             base.Save(tileFeature);
             BlizzardFeature blizzardFeature = tileFeature as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {tileFeature?.ToString() ?? "Null"}");
-            expiryInTicks = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
+            expiryInTicks = blizzardFeature.expiryInTicks;
         }
         public override AreaFeature Load() {
             BlizzardFeature blizzardFeature = base.Load() as BlizzardFeature;

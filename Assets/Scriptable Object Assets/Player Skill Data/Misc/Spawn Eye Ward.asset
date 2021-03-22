@@ -47,8 +47,8 @@ MonoBehaviour:
   skillUpgradeData:
     upgradeCosts: 
     manacostPerLevel: 0a000000
-    chargesPerLevel: 03000000
-    bonuses: 0e000000
+    chargesPerLevel: 
+    bonuses: 
     additionalDamagePerLevel: 
     additionalPiercePerLevel: []
     additionalHpPercentagePerLevel: []
