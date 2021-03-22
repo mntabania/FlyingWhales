@@ -349,11 +349,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #region Leader Icon
     private void UpdateLeaderIcon() {
         if (character != null) {
-            if (character.isInfoUnlocked) {
-                leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
-            } else {
-                leaderIcon.SetActive(false);
-            }
+            leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
         } else {
             leaderIcon.SetActive(false);
         }
