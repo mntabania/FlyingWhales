@@ -29,7 +29,7 @@ public class CharacterAIPath : AILerp {
     protected override void Start() {
         base.Start();
         //_originalRepathRate = repathRate;
-        Default_End_Reached_Distance = endReachDistance;
+        Default_End_Reached_Distance = marker.endReachedDistance;
         blockerTraversalProvider = new BlockerTraversalProvider(marker);
     }
     private void OnDestroy() {
