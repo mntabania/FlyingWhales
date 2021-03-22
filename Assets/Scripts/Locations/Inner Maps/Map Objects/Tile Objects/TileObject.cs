@@ -263,6 +263,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         UnsubscribeListeners();
         eventDispatcher.ExecuteTileObjectDestroyed(this);
+        Messenger.Broadcast(TileObjectSignals.DESTROY_TILE_OBJECT, this);
     }
     public void OnDiscardCarriedObject() {
         //DisableGameObject();

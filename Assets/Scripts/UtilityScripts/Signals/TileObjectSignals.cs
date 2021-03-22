@@ -26,4 +26,5 @@
     /// Parameters (TileObject repairedObj)
     /// </summary>
     public static string TILE_OBJECT_FULLY_REPAIRED = "OnTileObjectFullyRepaired";
+    public static string DESTROY_TILE_OBJECT = "OnDestroyTileObject";
 }

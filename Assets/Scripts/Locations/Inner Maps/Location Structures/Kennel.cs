@@ -16,7 +16,7 @@ namespace Inner_Maps.Location_Structures {
         private Summon _occupyingSummon;
 
         public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){ }
-        public Kennel(Region location, SaveDataPartyStructure data) : base(location, data) { }
+        public Kennel(Region location, SaveDataKennel data) : base(location, data) { }
 
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {

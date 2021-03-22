@@ -37,21 +37,21 @@ public class EyeWard : TileObject {
             }
         }
     }
-    protected override void SubscribeListeners() {
-        base.SubscribeListeners();
-        Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
-    }
-    protected override void UnsubscribeListeners() {
-        base.UnsubscribeListeners();
-        Messenger.RemoveListener(Signals.HOUR_STARTED, HourStarted);
-    }
+    //protected override void SubscribeListeners() {
+    //    base.SubscribeListeners();
+    //    Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
+    //}
+    //protected override void UnsubscribeListeners() {
+    //    base.UnsubscribeListeners();
+    //    Messenger.RemoveListener(Signals.HOUR_STARTED, HourStarted);
+    //}
     #endregion
 
-    #region Listeners
-    private void HourStarted() {
-        ReduceHPBypassEverything(1);
-    }
-    #endregion
+    //#region Listeners
+    //private void HourStarted() {
+    //    ReduceHPBypassEverything(1);
+    //}
+    //#endregion
 
     #region Utilities
     public override void OnPlacePOI() {
@@ -67,6 +67,7 @@ public class EyeWard : TileObject {
             ObjectPoolManager.Instance.DestroyObject(_eyeWardHighlight.gameObject);
             _eyeWardHighlight = null;
         }
+        PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD).AdjustCharges(1);
     }
     public void ReduceHPBypassEverything(int amount) {
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
