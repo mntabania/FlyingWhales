@@ -77,8 +77,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         } 
     }
-    public bool useCanTraverse;
-    
+
     private LocationGridTile _previousGridTile;
     private Area _previousAreaLocation;
     private CharacterMarkerNameplate _nameplate;
@@ -88,6 +87,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private List<Area> areasInWildernessForFlee;
     private List<Vector3> avoidThisPositions;
     private int _currentColliderSize;
+
+    public bool useCanTraverse;
+    public float endReachedDistance;
 
     #region Getters
     public GameDate destroyDate => _destroyDate;

@@ -252,7 +252,7 @@ SpriteRenderer:
   m_Size: {x: 3, y: 3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1197834569050784
@@ -407,7 +407,7 @@ SpriteRenderer:
   m_Size: {x: 3, y: 3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1261271052777572
@@ -684,6 +684,7 @@ MonoBehaviour:
   projectileParent: {fileID: 4968866154022664}
   colorHighlight: {fileID: 212374460377128016}
   useCanTraverse: 0
+  endReachedDistance: 0.4
 --- !u!114 &114578536136533292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -726,10 +727,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 2
   repathRate: 0.5
+  endReachDistance: 0.4
   canSearch: 1
   canMove: 1
   speed: 2
-  endReachDistance: 0.4
   orientation: 1
   enableRotation: 0
   rotationSpeed: 360
@@ -740,6 +741,7 @@ MonoBehaviour:
   searchLength: 1000
   spread: 5000
   aimStrength: 0.75
+  reachEndDistance: 0
 --- !u!114 &114167030245026914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -858,7 +860,7 @@ SpriteRenderer:
   m_Size: {x: 3, y: 3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1450551757339736

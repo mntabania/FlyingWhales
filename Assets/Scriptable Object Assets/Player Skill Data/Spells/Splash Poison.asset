@@ -65,13 +65,13 @@ MonoBehaviour:
     - 20
     - 40
     - 60
-    durationBonusPerLevel: e0010000000000000000000000000000
+    durationBonusPerLevel: 78000000a0000000c8000000f0000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: f0000000c0000000c0000000c0000000
+    cooldownPerLevel: f0000000dc000000dc000000dc000000
     skillMovementSpeed: 
   splashSounds:
   - {fileID: 8300000, guid: 3da986e9580db974995d1947e4d556b3, type: 3}
