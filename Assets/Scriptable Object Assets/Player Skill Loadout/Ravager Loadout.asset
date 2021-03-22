@@ -34,3 +34,11 @@ MonoBehaviour:
   availableMinions: 4e000000
   availableStructures: 9b0000004c00000047000000
   availableMiscs: 330000008c0000000800000006000000aa0000005c000000ac000000ae000000af00000034000000
+  portalUpgradeTiers:
+  - name: Level 1
+    skillTypesToUnlock: 54000000bf000000
+    passiveSkillsToUnlock: 00000000
+    upgradeCost:
+    - name: 10 Mana
+      currency: 0
+      amount: 10
