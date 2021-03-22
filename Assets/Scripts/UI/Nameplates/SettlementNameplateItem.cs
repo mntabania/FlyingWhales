@@ -23,7 +23,6 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
         base.SetObject(o);
         _settlement = o;
         UpdateVisuals();
-        
     }
     private void UpdateVisuals() {
         if (_settlement.areas.Count > 0) {
@@ -46,5 +45,9 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
 
     private void OnRightClickItem(BaseSettlement p_settlement) {
         UIManager.Instance.ShowPlayerActionContextMenu(p_settlement, Input.mousePosition, true);
+    }
+    public override void Reset() {
+        base.Reset();
+        _settlement = null;
     }
 }

@@ -906,19 +906,32 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!owner.jobQueue.HasJob(jobType)) {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
-                if (owner.IsInHomeSettlement()) {
+                if (owner.IsInHomeSettlement() && owner.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                     chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
                 } else if (owner.isAtHomeStructure) {
                     chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                 } else if (owner.IsInTerritory()) {
                     Area chosenTerritory = owner.territory;
                     chosenTile = chosenTerritory.GetRandomPassableTile();
-                } else {
-                    Area chosenTerritory = owner.areaLocation;
-                    chosenTile = chosenTerritory.GetRandomPassableTile();
                 }
+                //if (owner.IsInHomeSettlement()) {
+                //    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                //} else if (owner.isAtHomeStructure) {
+                //    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
+                //} else if (owner.IsInTerritory()) {
+                //    Area chosenTerritory = owner.territory;
+                //    chosenTile = chosenTerritory.GetRandomPassableTile();
+                //} else {
+                //    Area chosenTerritory = owner.areaLocation;
+                //    chosenTile = chosenTerritory.GetRandomPassableTile();
+                //}
             }
             if (chosenTile == null) {
+                Area chosenTerritory = owner.areaLocation;
+                chosenTile = chosenTerritory.gridTileComponent.GetRandomPassableTile();
+            }
+            if (chosenTile == null) {
+                producedJob = null;
                 return false;
             }
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
@@ -936,16 +949,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
-                if (owner.IsInHomeSettlement()) {
+                if (owner.IsInHomeSettlement() && owner.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                     chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
                 } else if (owner.isAtHomeStructure) {
                     chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
-                } else {
-				    Area chosenTerritory = owner.areaLocation;
-				    chosenTile = chosenTerritory.gridTileComponent.GetRandomPassableTile();
+                } else if (owner.IsInTerritory()) {
+                    Area chosenTerritory = owner.territory;
+                    chosenTile = chosenTerritory.GetRandomPassableTile();
                 }
 		    }
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            if (chosenTile == null) {
+                Area chosenTerritory = owner.areaLocation;
+                chosenTile = chosenTerritory.gridTileComponent.GetRandomPassableTile();
+            }
+            if (chosenTile == null) {
+                producedJob = null;
+                return false;
+            }
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
 		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TILE, INTERACTION_TYPE.ROAM, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);

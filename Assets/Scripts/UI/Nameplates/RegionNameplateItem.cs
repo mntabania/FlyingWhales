@@ -31,5 +31,9 @@ public class RegionNameplateItem : NameplateItem<Region> {
         mainLbl.text = region.name;
         subLbl.text = string.Empty;
     }
+    public override void Reset() {
+        base.Reset();
+        region = null;
+    }
 }
 
