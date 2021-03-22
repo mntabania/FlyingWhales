@@ -313,7 +313,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //only process hover tooltips if character is not the currently selected character
             ShowThoughtsAndNameplate();    
         }
-        if (PlayerManager.Instance.player.currentActiveIntel != null) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveIntel != null) {
             string message = string.Empty;
             if (PlayerManager.Instance.player.currentActiveIntel.actor != character) {
                 if (character.relationshipContainer.HasRelationshipWith(PlayerManager.Instance.player.currentActiveIntel.actor)) {
