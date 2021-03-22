@@ -258,6 +258,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
+        afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
     public Character(string className, RACE race, GENDER gender) : this() {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -272,6 +273,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
+        afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
     private Character() {
         SetIsDead(false);
