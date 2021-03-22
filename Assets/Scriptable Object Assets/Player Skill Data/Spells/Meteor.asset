@@ -48,8 +48,8 @@ MonoBehaviour:
     upgradeCosts: c80000002c01000090010000
     manacostPerLevel: 190000001e0000002300000028000000
     chargesPerLevel: 01000000010000000200000003000000
-    bonuses: 000000000100000009000000
-    additionalDamagePerLevel: f4010000000000000000000000000000
+    bonuses: 00000000010000000e000000
+    additionalDamagePerLevel: 52030000e80300007e04000014050000
     additionalPiercePerLevel:
     - 0
     - 50
@@ -71,7 +71,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: f0000000c0000000c0000000c0000000
+    cooldownPerLevel: f0000000dc000000dc000000dc000000
     skillMovementSpeed: 
   impactSounds:
   - {fileID: 8300000, guid: 584d7df54b0e6ba468199f66277304e0, type: 3}
