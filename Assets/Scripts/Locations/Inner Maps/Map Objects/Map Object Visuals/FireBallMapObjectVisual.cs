@@ -70,9 +70,10 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region Movement
     private void MoveToRandomDirection() {
+        float baseSpeed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.FIRE_BALL) / 100f;
         Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
         direction += transform.position;
-        _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
+        _movement = transform.DOMove(direction, baseSpeed).SetSpeedBased(true);
     }
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {

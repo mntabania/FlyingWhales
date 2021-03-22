@@ -85,11 +85,11 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     private void RandomizeDirection() {
-        int processedSpeed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.LOCUST_SWARM);
+        float processedSpeed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.LOCUST_SWARM) / 100f;
         Vector3 position = transform.position;
-        Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * processedSpeed;
+        Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
         direction += position;
-        _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
+        _movement = transform.DOMove(direction, processedSpeed).SetSpeedBased(true);
         OnGamePaused(GameManager.Instance.isPaused);
         //schedule change direction after 1 hour
         _movementKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour), RandomizeDirection, this);
