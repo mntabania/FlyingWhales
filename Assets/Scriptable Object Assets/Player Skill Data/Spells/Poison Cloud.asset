@@ -24,9 +24,9 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: 992919969a7c793459af04ed04633657, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
-  unlockCost: 0
-  tier: 0
-  baseLoadoutWeight: 0
+  unlockCost: 300
+  tier: 3
+  baseLoadoutWeight: 400
   resistanceType: 3
   archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 0}
@@ -65,11 +65,11 @@ MonoBehaviour:
     - 20
     - 40
     - 60
-    durationBonusPerLevel: 
+    durationBonusPerLevel: 280000003c0000005000000064000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 28000000000000000000000000000000
+    cooldownPerLevel: 400100002c0100001801000004010000
     skillMovementSpeed: 
