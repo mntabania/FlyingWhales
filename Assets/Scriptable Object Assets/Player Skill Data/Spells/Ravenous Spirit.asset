@@ -61,15 +61,15 @@ MonoBehaviour:
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel:
-    - 35
-    - 0
-    - 0
-    - 0
+    - 20
+    - 30
+    - 40
+    - 50
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: a0000000800000008000000080000000
+    cooldownPerLevel: a00000008c0000008c0000008c000000
     skillMovementSpeed: 
