@@ -49,7 +49,7 @@ MonoBehaviour:
     manacostPerLevel: 190000001e0000002300000028000000
     chargesPerLevel: 01000000010000000200000003000000
     bonuses: 00000000010000000e000000
-    additionalDamagePerLevel: f4010000000000000000000000000000
+    additionalDamagePerLevel: f4010000ee020000e8030000e2040000
     additionalPiercePerLevel:
     - 0
     - 50
@@ -71,5 +71,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: f0000000c0000000c0000000c0000000
+    cooldownPerLevel: f0000000dc000000c8000000b4000000
     skillMovementSpeed: 
