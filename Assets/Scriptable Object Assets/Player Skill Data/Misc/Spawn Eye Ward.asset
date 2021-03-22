@@ -46,7 +46,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 
+    manacostPerLevel: 0a000000
     chargesPerLevel: 03000000
     bonuses: 0e000000
     additionalDamagePerLevel: 
@@ -63,5 +63,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: e0010000
+    cooldownPerLevel: 
     skillMovementSpeed: 
