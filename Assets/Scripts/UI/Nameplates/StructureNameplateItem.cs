@@ -26,4 +26,8 @@ public class StructureNameplateItem : NameplateItem<LocationStructure> {
         subLbl.text = string.Empty;
         portrait.SetPortrait(_structure.structureType);
     }
+    public override void Reset() {
+        base.Reset();
+        _structure = null;
+    }
 }
