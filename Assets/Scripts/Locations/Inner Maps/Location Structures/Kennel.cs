@@ -20,7 +20,6 @@ namespace Inner_Maps.Location_Structures {
 
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
-            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
             base.LoadReferences(saveDataLocationStructure);
             SaveDataKennel saveDataKennel = saveDataLocationStructure as SaveDataKennel;
             if (!string.IsNullOrEmpty(saveDataKennel.occupyingSummonID)) {

@@ -15,7 +15,6 @@ namespace Inner_Maps.Location_Structures {
         #region Overrides
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
-            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         }
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {
