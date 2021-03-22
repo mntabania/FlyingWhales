@@ -1036,21 +1036,21 @@ public class UIManager : BaseMonoBehaviour {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
-            onSpireClicked?.Invoke();
-        }
-        if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
-            onMaraudClicked?.Invoke(structure);
-        }
-        if (structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
-            onTortureChamberClicked?.Invoke(structure);
-        }
-        if (structure.structureType == STRUCTURE_TYPE.KENNEL) {
-            onKennelClicked?.Invoke(structure);
-        }
-        if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
-            onDefensePointClicked?.Invoke(structure);
-        }
+        // if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
+        //     onSpireClicked?.Invoke();
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
+        //     onMaraudClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+        //     onTortureChamberClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.KENNEL) {
+        //     onKennelClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
+        //     onDefensePointClicked?.Invoke(structure);
+        // }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();
         if (centerOnStructure) {
@@ -1920,6 +1920,21 @@ public class UIManager : BaseMonoBehaviour {
         _portalUIController.ShowUI();
         SetSpeedTogglesState(false);
         Pause();
+    }
+    public void ShowUpgradeAbilitiesUI() {
+        onSpireClicked?.Invoke();
+    }
+    public void ShowRaidUI(LocationStructure structure) {
+        onMaraudClicked?.Invoke(structure);
+    }
+    public void ShowSnatchVillagerUI(LocationStructure structure) {
+        onTortureChamberClicked?.Invoke(structure);
+    }
+    public void ShowSnatchMonsterUI(LocationStructure structure) {
+        onKennelClicked?.Invoke(structure);
+    }
+    public void ShowDefendUI(LocationStructure structure) {
+        onDefensePointClicked?.Invoke(structure);
     }
     #endregion
 

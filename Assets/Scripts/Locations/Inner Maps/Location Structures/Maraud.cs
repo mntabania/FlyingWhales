@@ -31,6 +31,10 @@ namespace Inner_Maps.Location_Structures {
             ListenToParty();
             PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
         }
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(PLAYER_SKILL_TYPE.RAID);
+        }
         
         #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {

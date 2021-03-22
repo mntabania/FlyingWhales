@@ -70,6 +70,11 @@ namespace Inner_Maps.Location_Structures {
             p_character.RemovePlayerAction(PLAYER_SKILL_TYPE.CREATE_BLACKMAIL);
             PlayerManager.Instance.player.playerSkillComponent.RemoveCharacterFromBlackmailList(p_character);
         }
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH_VILLAGER);
+        }
+        
         #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);

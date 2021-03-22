@@ -2614,6 +2614,7 @@
                 <e p="CultistJoinFactionData.cs" t="Include" />
                 <e p="CultistPoisonData.cs" t="Include" />
                 <e p="CultistTransformData.cs" t="Include" />
+                <e p="DefendData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />
                 <e p="DestroyEyeWardData.cs" t="Include" />
                 <e p="DrainSpiritData.cs" t="Include" />
@@ -2627,6 +2628,7 @@
                 <e p="LetGoData.cs" t="Include" />
                 <e p="PlayerAction.cs" t="Include" />
                 <e p="PoisonData.cs" t="Include" />
+                <e p="RaidData.cs" t="Include" />
                 <e p="RaiseDeadData.cs" t="Include" />
                 <e p="ReleaseData.cs" t="Include" />
                 <e p="RemoveBuffData.cs" t="Include" />
@@ -2638,12 +2640,15 @@
                 <e p="SeizeMonsterData.cs" t="Include" />
                 <e p="SeizeObjectData.cs" t="Include" />
                 <e p="SnatchData.cs" t="Include" />
+                <e p="SnatchMonsterData.cs" t="Include" />
+                <e p="SnatchVillagerData.cs" t="Include" />
                 <e p="SpawnEyeWardData.cs" t="Include" />
                 <e p="SpreadRumorData.cs" t="Include" />
                 <e p="TortureData.cs" t="Include" />
                 <e p="TriggerFlawData.cs" t="Include" />
                 <e p="UnlockAbilitiesData.cs" t="Include" />
                 <e p="UnsummonData.cs" t="Include" />
+                <e p="UpgradeAbilitiesData.cs" t="Include" />
                 <e p="UpgradeData.cs" t="Include" />
                 <e p="ZapData.cs" t="Include" />
               </e>

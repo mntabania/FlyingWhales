@@ -126,6 +126,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		InitializeMinions();
 		InitializeTargets();
 		InitializeDeployedItems();
+		m_maraudUIView.SetTitle(p_title);
 		if (m_isTeamDeployed) {
 			m_maraudUIView.SetButtonDeployText("Undeploy");
 		} else {
