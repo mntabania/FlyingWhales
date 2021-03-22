@@ -53,6 +53,7 @@ public class Initializer : MonoBehaviour {
             //Do not load player data if save data is used because we will use the data of the saved one
             PlayerManager.Instance.player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
         }
+        UIManager.Instance.InitializeAfterLoadOutPicked();
         PlayerUI.Instance.InitializeAfterLoadOutPicked();
         if (SaveManager.Instance.useSaveData) {
             PlayerManager.Instance.player.playerSkillComponent.OnLoadSaveData();

@@ -134,7 +134,7 @@ namespace Inner_Maps {
         }
         private void OnClickMapObject() {
             //TODO: Create system that disables normal clicks.
-            if (!UIManager.Instance.IsMouseOnUI() && !ReferenceEquals(currentlyShowingMap, null) && !PlayerManager.Instance.player.IsPerformingPlayerAction()) {
+            if (!UIManager.Instance.IsMouseOnUI() && !ReferenceEquals(currentlyShowingMap, null) && (!GameManager.Instance.gameHasStarted || !PlayerManager.Instance.player.IsPerformingPlayerAction())) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
                 if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                     if (selectables.Count > 0) {

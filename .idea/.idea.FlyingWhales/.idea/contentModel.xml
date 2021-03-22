@@ -1202,7 +1202,12 @@
               <e p="Projectile.cs" t="Include" />
               <e p="Special Skills" t="Include">
                 <e p="CombatSpecialSkill.cs" t="Include" />
+                <e p="FastHealSpecialSkill.cs" t="Include" />
+                <e p="GroupHealSpecialSkill.cs" t="Include" />
                 <e p="HealSpecialSkill.cs" t="Include" />
+                <e p="SelfHealSpecialSkill.cs" t="Include" />
+                <e p="SlowTauntSpecialSkill.cs" t="Include" />
+                <e p="StrongHealSpecialSkill.cs" t="Include" />
                 <e p="TauntSpecialSkill.cs" t="Include" />
               </e>
             </e>
@@ -2474,13 +2479,17 @@
               <e p="Taunt.cs" t="Include" />
             </e>
             <e p="Components" t="Include">
+              <e p="BookmarkCategory.cs" t="Include" />
+              <e p="BookmarkComponent.cs" t="Include" />
               <e p="CurrenciesComponent.cs" t="Include" />
+              <e p="IBookmarkable.cs" t="Include" />
               <e p="PlagueComponent.cs" t="Include" />
               <e p="PlayerSkillComponent.cs" t="Include" />
               <e p="PlayerTileObjectComponent.cs" t="Include" />
               <e p="PlayerUnderlingsComponent.cs" t="Include" />
               <e p="SeizeComponent.cs" t="Include" />
               <e p="StoredTargetsComponent.cs" t="Include" />
+              <e p="SummonMeterComponent.cs" t="Include" />
               <e p="ThreatComponent.cs" t="Include" />
             </e>
             <e p="ManaRegenComponent.cs" t="Include" />
@@ -2605,6 +2614,7 @@
                 <e p="CultistJoinFactionData.cs" t="Include" />
                 <e p="CultistPoisonData.cs" t="Include" />
                 <e p="CultistTransformData.cs" t="Include" />
+                <e p="DefendData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />
                 <e p="DestroyEyeWardData.cs" t="Include" />
                 <e p="DrainSpiritData.cs" t="Include" />
@@ -2618,6 +2628,7 @@
                 <e p="LetGoData.cs" t="Include" />
                 <e p="PlayerAction.cs" t="Include" />
                 <e p="PoisonData.cs" t="Include" />
+                <e p="RaidData.cs" t="Include" />
                 <e p="RaiseDeadData.cs" t="Include" />
                 <e p="ReleaseData.cs" t="Include" />
                 <e p="RemoveBuffData.cs" t="Include" />
@@ -2629,11 +2640,15 @@
                 <e p="SeizeMonsterData.cs" t="Include" />
                 <e p="SeizeObjectData.cs" t="Include" />
                 <e p="SnatchData.cs" t="Include" />
+                <e p="SnatchMonsterData.cs" t="Include" />
+                <e p="SnatchVillagerData.cs" t="Include" />
                 <e p="SpawnEyeWardData.cs" t="Include" />
                 <e p="SpreadRumorData.cs" t="Include" />
                 <e p="TortureData.cs" t="Include" />
                 <e p="TriggerFlawData.cs" t="Include" />
+                <e p="UnlockAbilitiesData.cs" t="Include" />
                 <e p="UnsummonData.cs" t="Include" />
+                <e p="UpgradeAbilitiesData.cs" t="Include" />
                 <e p="UpgradeData.cs" t="Include" />
                 <e p="ZapData.cs" t="Include" />
               </e>
@@ -2763,6 +2778,7 @@
               <e p="EliminateAllVillagersOnGivenDate.cs" t="Include" />
               <e p="EliminateNumberOfVillagersUsingPlague.cs" t="Include" />
               <e p="KillVillagersByPsychopath.cs" t="Include" />
+              <e p="SummonTheDemon.cs" t="Include" />
               <e p="WipeElvenKingdomAndSurviveHuman.cs" t="Include" />
             </e>
             <e p="Quest Criteria" t="Include">
@@ -2885,6 +2901,7 @@
               <e p="ShowSpellMenuStep.cs" t="Include" />
               <e p="StoreIntelStep.cs" t="Include" />
               <e p="StructureBuiltStep.cs" t="Include" />
+              <e p="SummonTheDemonStep.cs" t="Include" />
               <e p="TemptationsPopupShown.cs" t="Include" />
               <e p="ToggleTurnedOnStep.cs" t="Include" />
               <e p="TriggerElectricChainStep.cs" t="Include" />
@@ -3374,6 +3391,7 @@
               <e p="Controller" t="Include">
                 <e p="BiolabUIController.cs" t="Include" />
                 <e p="BlackmailUIController.cs" t="Include" />
+                <e p="BookmarkUIController.cs" t="Include" />
                 <e p="ContextMenuUIController.cs" t="Include" />
                 <e p="DefensePointUIController.cs" t="Include" />
                 <e p="FactionSettingVillageEditorUIController.cs" t="Include" />
@@ -3395,6 +3413,9 @@
               <e p="HoverText.cs" t="Include" />
               <e p="Items" t="Include">
                 <e p="AvailableTargetItemUI.cs" t="Include" />
+                <e p="BookmarkCategoryItemUI.cs" t="Include" />
+                <e p="BookmarkProgressItemUI.cs" t="Include" />
+                <e p="BookmarkTextItemUI.cs" t="Include" />
                 <e p="DeployedMonsterItemUI.cs" t="Include" />
                 <e p="DeployedTargetItemUI.cs" t="Include" />
                 <e p="PurchaseSkillItemUI.cs" t="Include" />
@@ -3406,6 +3427,7 @@
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
                 <e p="BlackmailUIModel.cs" t="Include" />
+                <e p="BookmarkUIModel.cs" t="Include" />
                 <e p="ContextMenuUIModel.cs" t="Include" />
                 <e p="DefensePointUIModel.cs" t="Include" />
                 <e p="FactionSettingVillageEditorUIModel.cs" t="Include" />
@@ -3427,6 +3449,7 @@
               <e p="View" t="Include">
                 <e p="BiolabUIView.cs" t="Include" />
                 <e p="BlackmailUIView.cs" t="Include" />
+                <e p="BookmarkUIView.cs" t="Include" />
                 <e p="ContextMenuUIView.cs" t="Include" />
                 <e p="DefensePointUIView.cs" t="Include" />
                 <e p="FactionSettingVillageEditorUIView.cs" t="Include" />
@@ -3586,8 +3609,10 @@
             <e p="RectDrawer.cs" t="Include" />
             <e p="ReflectiveEnumerator.cs" t="Include" />
             <e p="RendererExtensions.cs" t="Include" />
+            <e p="RuinarchBasicProgress.cs" t="Include" />
             <e p="RuinarchCooldown.cs" t="Include" />
             <e p="RuinarchListPool.cs" t="Include" />
+            <e p="RuinarchProgressable.cs" t="Include" />
             <e p="RuinarchTimer.cs" t="Include" />
             <e p="SerializableDictionary.cs" t="Include" />
             <e p="Signals" t="Include">
@@ -3633,6 +3658,7 @@
               <e p="OonaWinConditionTracker.cs" t="Include" />
               <e p="PangatlooWinConditionTracker.cs" t="Include" />
               <e p="PittoWinConditionTracker.cs" t="Include" />
+              <e p="TutorialWinConditionTracker.cs" t="Include" />
               <e p="WinconditionTracker.cs" t="Include" />
               <e p="ZenkoWinConditionTracker.cs" t="Include" />
             </e>

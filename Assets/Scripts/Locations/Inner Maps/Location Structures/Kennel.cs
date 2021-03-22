@@ -20,6 +20,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
             base.LoadReferences(saveDataLocationStructure);
             SaveDataKennel saveDataKennel = saveDataLocationStructure as SaveDataKennel;
             if (!string.IsNullOrEmpty(saveDataKennel.occupyingSummonID)) {
@@ -89,6 +90,11 @@ namespace Inner_Maps.Location_Structures {
             party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
             ListenToParty();
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
+        }
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH_MONSTER);
         }
         #endregion
 

@@ -42,11 +42,16 @@ namespace Inner_Maps.Location_Structures {
                 partyData.deployedSummons[0].faction.partyQuestBoard.CreateDemonDefendPartyQuest(partyData.deployedSummons[0],
                         partyData.deployedSummons[0].homeSettlement, this);
                 party.TryAcceptQuest();
+                PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
             }
             partyData.deployedSummons.ForEach((eachSummon) => {
                 party.AddMember(eachSummon);
                 party.AddMemberThatJoinedQuest(eachSummon);
             });
+        }
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(PLAYER_SKILL_TYPE.DEFEND);
         }
     }
 }

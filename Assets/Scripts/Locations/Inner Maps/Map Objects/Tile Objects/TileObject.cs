@@ -64,8 +64,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public LogComponent logComponent { get; protected set; }
     public TileObjectHiddenComponent hiddenComponent { get; private set; }
     public TileObjectEventDispatcher eventDispatcher { get; private set; }
+    
+    //Bookmarks
+    public BookmarkableEventDispatcher bookmarkEventDispatcher { get; private set; }
 
     #region getters
+    public string bookmarkName => $"{iconRichText} {name}";
+    public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
     public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
     public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Tile_Objects;
@@ -128,6 +133,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         logComponent = new LogComponent(); logComponent.SetOwner(this);
         hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
         eventDispatcher = new TileObjectEventDispatcher();
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
@@ -153,6 +159,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
         hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
         eventDispatcher = new TileObjectEventDispatcher();
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
 
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
@@ -1240,17 +1247,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return UIManager.Instance.tileObjectInfoUI.isShowing &&
                UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
     }
-    public void LeftSelectAction() {
+    public virtual void LeftSelectAction() {
         if (mapObjectVisual != null) {
             mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);    
         } else {
             UIManager.Instance.ShowTileObjectInfo(this);    
         }
     }
-    public void RightSelectAction() {
+    public virtual void RightSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
     }
-    public void MiddleSelectAction() {
+    public virtual void MiddleSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Middle);
     }
     public virtual bool CanBeSelected() {
@@ -1268,6 +1275,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return mapVisual != null;
+    }
+    #endregion
+
+    #region IBookmarkable
+    public void OnSelectBookmark() {
+        LeftSelectAction();
+    }
+    public void RemoveBookmark() {
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this, BOOKMARK_CATEGORY.Targets);
     }
     #endregion
 }

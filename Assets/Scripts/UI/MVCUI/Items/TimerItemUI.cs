@@ -9,8 +9,11 @@ public class TimerItemUI : MonoBehaviour {
 
     [SerializeField] private TextMeshProUGUI lblTimerName;
     [SerializeField] private Slider barProgress;
+    [SerializeField] private HoverHandler hoverHandler;
 
     private RuinarchTimer _timer;
+    private System.Action _onHoverOverAction;
+    private System.Action _onHoverOutAction;
     
     private void OnEnable() {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
@@ -18,6 +21,10 @@ public class TimerItemUI : MonoBehaviour {
     }
     private void OnDisable() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+    }
+    private void Awake() {
+        hoverHandler.AddOnHoverOverAction(OnHoverOver);
+        hoverHandler.AddOnHoverOutAction(OnHoverOut);
     }
     private void OnTickEnded() {
         if (_timer == null) { return; }
@@ -39,4 +46,19 @@ public class TimerItemUI : MonoBehaviour {
     private void OnDestroy() {
         _timer = null;
     }
+
+    #region Interaction
+    public void SetHoverOverAction(System.Action p_action) {
+        _onHoverOverAction += p_action;
+    }
+    public void SetHoverOutAction(System.Action p_action) {
+        _onHoverOutAction += p_action;
+    }
+    private void OnHoverOver() {
+        _onHoverOverAction?.Invoke();
+    }
+    private void OnHoverOut() {
+        _onHoverOutAction?.Invoke();
+    }
+    #endregion
 }

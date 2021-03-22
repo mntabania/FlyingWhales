@@ -13,6 +13,10 @@ namespace Inner_Maps.Location_Structures {
         public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) { }
 
         #region Overrides
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
+        }
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {
                 // character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
@@ -43,6 +47,7 @@ namespace Inner_Maps.Location_Structures {
             party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
             ListenToParty();
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
         }
         #endregion
 
@@ -63,6 +68,11 @@ namespace Inner_Maps.Location_Structures {
             p_character.RemovePlayerAction(PLAYER_SKILL_TYPE.CREATE_BLACKMAIL);
             PlayerManager.Instance.player.playerSkillComponent.RemoveCharacterFromBlackmailList(p_character);
         }
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH_VILLAGER);
+        }
+        
         #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);

@@ -68,6 +68,9 @@
       <Path>Steamworks</Path>
       <Path>Temp</Path>
       <Path>UIElementsSchema</Path>
+      <Path>_site</Path>
+      <Path>api</Path>
+      <Path>articles</Path>
       <Path>bin</Path>
       <Path>node_modules</Path>
       <Path>obj</Path>
