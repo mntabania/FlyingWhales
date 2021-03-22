@@ -10,7 +10,7 @@ namespace Inner_Maps.Location_Structures {
     public class PartyStructure : DemonicStructure, Party.PartyEventsIListener {
         public override Type serializedData => typeof(SaveDataPartyStructure);
 
-        public List<IStoredTarget> allPossibleTargets = new List<IStoredTarget>();
+        public virtual List<IStoredTarget> allPossibleTargets { get; }
 
         protected bool m_isUndeployUserAction;
         public virtual void InitTargets() {
@@ -66,19 +66,15 @@ namespace Inner_Maps.Location_Structures {
             if (!m_isInitialized) {
                 m_isInitialized = true;
                 if (party != null) {
-                    party.membersThatJoinedQuest.ForEach((eachMember) => {
-                        if (eachMember is Summon) {
+                    party.members.ForEach((eachMember) => {
+                        if (eachMember is Summon summon) {
                             partyData.deployedSummons.Add(eachMember);
-                            SummonSettings ss = CharacterManager.Instance.GetSummonSettings((eachMember as Summon).summonType);
+                            SummonSettings ss = CharacterManager.Instance.GetSummonSettings(summon.summonType);
                             partyData.deployedSummonUnderlings.Add(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((eachMember as Summon).summonType));
-                        } else {
-                            foreach (PLAYER_SKILL_TYPE eachSkill in PlayerSkillManager.Instance.allMinionPlayerSkills) {
-                                if (eachMember.minion.minionPlayerSkillType == eachSkill) {
-                                    MinionPlayerSkill sd = PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachSkill);
-                                    partyData.deployedMinions.Add(eachMember);
-                                    partyData.deployedMinionUnderlings.Add(PlayerManager.Instance.player.underlingsComponent.GetMinionUnderlingChargesByMinionType(sd.minionType));
-                                }
-                            }
+                        } else if (eachMember.minion != null) {
+                            MinionPlayerSkill sd = PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMember.minion.minionPlayerSkillType);
+                            partyData.deployedMinions.Add(eachMember);
+                            partyData.deployedMinionUnderlings.Add(PlayerManager.Instance.player.underlingsComponent.GetMinionUnderlingChargesByMinionType(sd.minionType));
                         }
                     });
                     if (party.currentQuest != null && party.currentQuest.target != null) {

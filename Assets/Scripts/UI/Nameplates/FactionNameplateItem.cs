@@ -29,5 +29,9 @@ public class FactionNameplateItem : NameplateItem<Faction> {
     //    //UIManager.Instance.HideMinionCardTooltip();
     //    base.OnHoverExit();
     //}
+    public override void Reset() {
+        base.Reset();
+        factionData = null;
+    }
     #endregion
 }

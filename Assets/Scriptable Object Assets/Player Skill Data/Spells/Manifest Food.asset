@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 
     requiredArchetype: 0
@@ -56,15 +57,15 @@ MonoBehaviour:
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel:
-    - 0
-    - 50
-    - 75
-    - 100
+    - 30
+    - 60
+    - 90
+    - 120
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: a0000000800000008000000080000000
+    cooldownPerLevel: a00000008c0000008c0000008c000000
     skillMovementSpeed: 

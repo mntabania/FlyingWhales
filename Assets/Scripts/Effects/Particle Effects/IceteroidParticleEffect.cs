@@ -27,13 +27,9 @@ public class IceteroidParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables(DealDamage);
     }
     private void DealDamage(ITraitable traitable) {
-        int baseDamage = -400;
-        int additionalDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
-        if (additionalDamage > 0) {
-            additionalDamage *= -1;
-        }
-        int processedDamage = baseDamage + additionalDamage;
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true,
+        int additionalDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS);
+        int processedDamage = additionalDamage;
+        traitable.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true,
                     piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
         //traitable.AdjustHP(-400, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
         if (traitable is Character character && character.isDead == false) {
@@ -44,7 +40,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
                 character.traitContainer.AddTrait(character, "Injured");
             }
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-            if (character.isDead) {
+            if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.ICETEROIDS;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }

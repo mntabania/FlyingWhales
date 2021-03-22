@@ -11,16 +11,12 @@ namespace Inner_Maps.Location_Structures {
         public override string nameplateName => $"{name}";
         public Summon occupyingSummon => _occupyingSummon;
         public override Type serializedData => typeof(SaveDataKennel);
-        
+        public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
         private MarkerDummy _markerDummy;
         private Summon _occupyingSummon;
 
-        public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){
-            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
-        }
-        public Kennel(Region location, SaveDataPartyStructure data) : base(location, data) {
-            allPossibleTargets = PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
-        }
+        public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){ }
+        public Kennel(Region location, SaveDataKennel data) : base(location, data) { }
 
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {

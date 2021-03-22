@@ -30,5 +30,9 @@ public class ArtifactPickerItem : NameplateItem<Artifact> {
         mainLbl.text = artifact.name;
         subLbl.text = string.Empty;
     }
+    public override void Reset() {
+        base.Reset();
+        artifact = null;
+    }
 }
 

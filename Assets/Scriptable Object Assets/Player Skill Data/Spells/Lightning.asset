@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 01000000
     requiredArchetype: 0
@@ -47,8 +48,8 @@ MonoBehaviour:
     upgradeCosts: c80000002c01000090010000
     manacostPerLevel: 190000001e0000002300000028000000
     chargesPerLevel: 01000000010000000200000003000000
-    bonuses: 0e0000000100000009000000
-    additionalDamagePerLevel: 
+    bonuses: 0e0000000100000000000000
+    additionalDamagePerLevel: 5802000020030000e8030000b0040000
     additionalPiercePerLevel:
     - 0
     - 50
@@ -70,7 +71,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: f0000000c0000000c0000000c0000000
+    cooldownPerLevel: f0000000dc000000dc000000dc000000
     skillMovementSpeed: 
   thunderAudioClips:
   - {fileID: 8300000, guid: 613c9bbaa7fc8d447b629354111f388b, type: 3}

@@ -18,7 +18,7 @@ namespace Locations.Area_Features {
             name = "Blizzard";
             description = "There is a blizzard in this location.";
             _charactersOutside = new List<Character>();
-            expiryInTicks = GameManager.Instance.GetTicksBasedOnHour(6);
+            expiryInTicks = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
         }
 
         #region Override
@@ -37,6 +37,8 @@ namespace Locations.Area_Features {
             //schedule removal of this feature after x amount of ticks.
             expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
             SchedulingManager.Instance.AddEntry(expiryDate, () => p_area.featureComponent.RemoveFeature(this, p_area), this);
+
+            PopulateInitialCharactersOutside(p_area);
             
             if (GameManager.Instance.gameHasStarted) {
                 //only create blizzard effect if game has started when this is added.
@@ -59,6 +61,7 @@ namespace Locations.Area_Features {
                 SchedulingManager.Instance.RemoveSpecificEntry(_currentFreezingCheckSchedule); //this will stop the freezing check loop 
             }
             ObjectPoolManager.Instance.DestroyObject(_effect);
+            ClearCharactersOutside();
         }
         public override void GameStartActions(Area p_area) {
             base.GameStartActions(p_area);
@@ -98,6 +101,22 @@ namespace Locations.Area_Features {
         #endregion
 
         #region Characters Outisde
+        private void PopulateInitialCharactersOutside(Area p_area) {
+            List<Character> allCharactersInArea = ObjectPoolManager.Instance.CreateNewCharactersList();
+            p_area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(allCharactersInArea, null);
+            if (allCharactersInArea != null) {
+                for (int i = 0; i < allCharactersInArea.Count; i++) {
+                    Character character = allCharactersInArea[i];
+                    if (!character.currentStructure.isInterior) {
+                        AddCharacterOutside(character);
+                    }
+                }
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(allCharactersInArea);
+        }
+        private void ClearCharactersOutside() {
+            _charactersOutside.Clear();
+        }
         private void AddCharacterOutside(Character character) {
             Assert.IsTrue(character.currentStructure.isInterior == false, 
                 $"{character.name} is being added to characters outside, but isn't actually outside!");
@@ -113,11 +132,14 @@ namespace Locations.Area_Features {
         #region Effects
         private void BlizzardDamageAndFreezingProcess(Area hex) {
             string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
-            int baseChance = 35;
+            int baseChance = (int)PlayerSkillManager.Instance.GetChanceBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
-            int blizzardDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
+            int blizzardDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
+                if (character.isDead) {
+                    continue;
+                }
                 //int roll = UnityEngine.Random.Range(0, 100);
                 //summary =
                 //    $"{summary}\nRolling freezing check for {character.name}. Roll is {roll.ToString()}. Chance is {chance.ToString()}";
@@ -125,12 +147,12 @@ namespace Locations.Area_Features {
                     summary =
                         $"{summary}\n\tChance met for {character.name}. Adding Freezing trait...";
                     character.traitContainer.AddTrait(character, "Freezing", bypassElementalChance: true);
-                    character.AdjustHP(-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), ELEMENTAL_TYPE.Ice,
-                        piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), showHPBar: true);
+                    //character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice,
+                    //    piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), showHPBar: true);
                 }
-                character.AdjustHP(blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing);
+                character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing);
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, blizzardDamage);
-                if (character.isDead) {
+                if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BLIZZARD;
                     Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                 }
@@ -141,7 +163,7 @@ namespace Locations.Area_Features {
         }
         private void RescheduleBlizzardDamageAndFreezingProcess(Area p_area) {
             if (p_area.featureComponent.HasFeature(name) == false) { return; }
-            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(10));
+            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(6));
             _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => BlizzardDamageAndFreezingProcess(p_area), this);
         }
         #endregion
@@ -161,7 +183,7 @@ namespace Locations.Area_Features {
             base.Save(tileFeature);
             BlizzardFeature blizzardFeature = tileFeature as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {tileFeature?.ToString() ?? "Null"}");
-            expiryInTicks = GameManager.Instance.Today().GetTickDifference(blizzardFeature.expiryDate) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
+            expiryInTicks = blizzardFeature.expiryInTicks;
         }
         public override AreaFeature Load() {
             BlizzardFeature blizzardFeature = base.Load() as BlizzardFeature;

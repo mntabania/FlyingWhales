@@ -188,7 +188,7 @@ public class SkillUpgradeData
         }
         return chargesPerLevel[p_currentLevel];
     }
-    public int GetSkillMovementSpeedDownPerLevel(int p_currentLevel) {
+    public int GetSkillMovementSpeedPerLevel(int p_currentLevel) {
         if (skillMovementSpeed == null || skillMovementSpeed.Count <= 0) {
             return 0;
         }

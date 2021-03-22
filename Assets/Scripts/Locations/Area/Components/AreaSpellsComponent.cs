@@ -270,7 +270,7 @@ public class AreaSpellsComponent : AreaComponent {
                 i--;
                 continue;
             }
-            int processedDamage = -50 + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
+            int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
@@ -376,7 +376,7 @@ public class AreaSpellsComponent : AreaComponent {
     private void PerTickBrimstones() {
         Profiler.BeginSample($"Per Tick Brimstones");
         currentBrimstonesDuration++;
-        if (currentBrimstonesDuration >= GameManager.ticksPerHour) {
+        if (currentBrimstonesDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BRIMSTONES)) {
             SetHasBrimstones(false);
         }
         Profiler.EndSample();
@@ -424,14 +424,14 @@ public class AreaSpellsComponent : AreaComponent {
     }
     private void ElectricStormEffect(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            int processedDamage = -450 + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
+            int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
         }
     }
     private void PerTickElectricStorm() {
         Profiler.BeginSample($"Per Tick Electric Storm");
         currentElectricStormDuration++;
-        if (currentElectricStormDuration >= GameManager.ticksPerHour) {
+        if (currentElectricStormDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM)) {
             SetHasElectricStorm(false);
         }
         Profiler.EndSample();
@@ -486,7 +486,7 @@ public class AreaSpellsComponent : AreaComponent {
     private void PerTickIceteroids() {
         Profiler.BeginSample($"Per Tick Iceteroids");
         currentIceteroidsDuration++;
-        if (currentIceteroidsDuration >= GameManager.ticksPerHour + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ICETEROIDS)) {
+        if (currentIceteroidsDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ICETEROIDS)) {
             SetHasIceteroids(false);
         }
         Profiler.EndSample();

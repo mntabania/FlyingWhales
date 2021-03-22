@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 21300000, guid: 624d21fad2d73924cbb59610b3cff660, type: 3}
   contextMenuColumn: 1
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 
     requiredArchetype: 0
@@ -60,10 +61,10 @@ MonoBehaviour:
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel:
+    - 15
     - 0
-    - 50
-    - 75
-    - 100
+    - 0
+    - 0
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 

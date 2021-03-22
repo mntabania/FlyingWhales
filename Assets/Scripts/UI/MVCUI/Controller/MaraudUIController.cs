@@ -132,6 +132,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.SetButtonDeployText("Deploy");
 		}
+		if (p_title != string.Empty) {
+			m_maraudUIView.SetTitle(p_title);
+		}
+		
 		ProcessButtonAvailability();
 		UIManager.Instance.Pause();
 	}
@@ -209,7 +213,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana < item.summonCost);
+				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}

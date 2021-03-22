@@ -115,7 +115,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Poison Cloud Per Tick");
-        int processedDamage = -30 + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
+        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
         BurningSource bs = null;
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
@@ -130,7 +130,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
             if (traitable is Character character) {
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-                if (character != null && character.isDead) {
+                if (character != null && character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.FIRE_BALL;
                     Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                 }

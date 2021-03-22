@@ -58,8 +58,9 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         base.OnHoverExit();
     }
     public override void Reset() {
-        base.Reset();
+        base.Reset(); ;
         SetPortraitInteractableState(true);
+        character = null;
     }
     #endregion
 

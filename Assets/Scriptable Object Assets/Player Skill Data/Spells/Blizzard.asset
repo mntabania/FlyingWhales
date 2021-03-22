@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 01000000
     requiredArchetype: 0
@@ -47,8 +48,8 @@ MonoBehaviour:
     upgradeCosts: 5e010000f40100008a020000
     manacostPerLevel: 1e00000023000000280000002d000000
     chargesPerLevel: 01000000010000000200000003000000
-    bonuses: 0a000000010000000e0000000b000000
-    additionalDamagePerLevel: 
+    bonuses: 0a000000010000000e0000000b00000000000000
+    additionalDamagePerLevel: 0a0000000f0000001400000019000000
     additionalPiercePerLevel:
     - 0
     - 50
@@ -64,14 +65,14 @@ MonoBehaviour:
     - 20
     - 40
     - 60
-    durationBonusPerLevel: 
+    durationBonusPerLevel: 28000000320000003c00000046000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel:
-    - 0
-    - 50
-    - 100
-    - 150
+    - 10
+    - 15
+    - 20
+    - 25
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: 40010000000100000001000000010000

@@ -16,7 +16,7 @@ public class BallLightning : MovingTileObject {
         Initialize(TILE_OBJECT_TYPE.BALL_LIGHTNING, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING));
+        expiryDate = GameManager.Instance.Today().AddTicks(PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING));
     }
     public BallLightning(SaveDataBallLightning data) : base(data) {
         //SaveDataBallLightning saveDataBallLightning = data as SaveDataBallLightning;

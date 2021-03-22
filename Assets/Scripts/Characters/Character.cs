@@ -81,6 +81,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ILocationAwareness currentLocationAwareness { get; private set; }
     public Vector2Int gridTilePosition { get; private set; }
     public bool hasMarker { get; private set; }
+
+    public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer { get; set; }
     public LocationStructure deployedAtStructure { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
 
@@ -258,6 +260,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
+        afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
     public Character(string className, RACE race, GENDER gender) : this() {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -272,6 +275,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
+        afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
     private Character() {
         SetIsDead(false);
@@ -5856,7 +5860,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region IStoredTarget
     public bool CanBeStoredAsTarget() {
-        return !isDead;
+        return !isDead && faction != PlayerManager.Instance.player.playerFaction;
     }
     #endregion
 

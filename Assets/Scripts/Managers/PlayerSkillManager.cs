@@ -36,6 +36,27 @@ public class PlayerSkillManager : MonoBehaviour {
     public Dictionary<PLAYER_SKILL_TYPE, SkillData> allPlayerSkillsData { get; private set; }
     public Dictionary<PASSIVE_SKILL, PassiveSkill> passiveSkillsData { get; private set; }
 
+    public Dictionary<string, PLAYER_SKILL_TYPE> afflictionsNameSkillTypeDictionary = new Dictionary<string, PLAYER_SKILL_TYPE>()
+    {
+        { "Agoraphobic", PLAYER_SKILL_TYPE.AGORAPHOBIA },
+            { "Alcoholic", PLAYER_SKILL_TYPE.ALCOHOLIC },
+            { "Cannibal", PLAYER_SKILL_TYPE.CANNIBALISM },
+            { "Coward", PLAYER_SKILL_TYPE.COWARDICE },
+            { "Glutton", PLAYER_SKILL_TYPE.GLUTTONY },
+            { "Hothead", PLAYER_SKILL_TYPE.HOTHEADED },
+            { "Kleptomaniac", PLAYER_SKILL_TYPE.KLEPTOMANIA },
+            { "Lazy", PLAYER_SKILL_TYPE.GLUTTONY },
+            { "Lycantrophe", PLAYER_SKILL_TYPE.LYCANTHROPY },
+            { "Music Hater", PLAYER_SKILL_TYPE.MUSIC_HATER },
+            { "Narcoleptic", PLAYER_SKILL_TYPE.NARCOLEPSY },
+            { "Paralyzed", PLAYER_SKILL_TYPE.PARALYSIS },
+            { "Plagued", PLAYER_SKILL_TYPE.PLAGUE },
+            { "Psychopath", PLAYER_SKILL_TYPE.PSYCHOPATHY },
+            { "Pyrophobic", PLAYER_SKILL_TYPE.PYROPHOBIA },
+            { "Unfaithful", PLAYER_SKILL_TYPE.UNFAITHFULNESS },
+            { "Vampire", PLAYER_SKILL_TYPE.VAMPIRISM },
+    };
+
     #region getters
     public PlayerSkillDataDictionary playerSkillDataDictionary => _playerSkillDataDictionary;
     #endregion
@@ -387,7 +408,7 @@ public class PlayerSkillManager : MonoBehaviour {
     #endregion
 
     #region utility
-    public int GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(skillData.currentLevel);
@@ -403,6 +424,12 @@ public class PlayerSkillManager : MonoBehaviour {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(skillData.currentLevel);
+    }
+
+    public float GetChanceBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetChanceBonusPerLevel(skillData.currentLevel);
     }
 
     public float GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
@@ -435,10 +462,10 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel);
     }
 
-    public int GetSkillMovementSpeedDownPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public int GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetSkillMovementSpeedDownPerLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetSkillMovementSpeedPerLevel(skillData.currentLevel);
     }
     #endregion
 }

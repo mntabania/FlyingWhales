@@ -33,7 +33,7 @@ public class SkillUpgradeDataEditor : Editor {
     }
 
 	private void OnDisable() {
-        AssetDatabase.SaveAssets();
+        //AssetDatabase.SaveAssets();
     }
 
 	void DisplayUpgradeBonus() {
@@ -79,7 +79,7 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Amplify_Effect_By_Percentage)) {
-                DisplayFloatList(data.skillUpgradeData.statsIncreasedPercentagePerLevel, "Stats Bonus(%) per level");
+                DisplayFloatList(data.skillUpgradeData.statsIncreasedPercentagePerLevel, "Amplify effect per level");
                 EditorGUILayout.Space();
             }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Duration)) {

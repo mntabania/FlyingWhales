@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3004656286122031773}
   - component: {fileID: 5241749999225801789}
   m_Layer: 19
-  m_Name: Wind Blast
+  m_Name: Ice Blast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4643,7 +4643,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a9e0f6f4b3b5e1646b35d412446e2b94, type: 2}
+  - {fileID: 2100000, guid: 9b3cf1df62025d145a1ea0b7f675b5df, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

@@ -12,7 +12,7 @@ public class TornadoData : SkillData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         Tornado tornado = new Tornado();
-        tornado.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4) + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.TORNADO))));
+        tornado.SetExpiryDate(GameManager.Instance.Today().AddTicks(PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.TORNADO)));
         tornado.SetGridTileLocation(targetTile);
         tornado.OnPlacePOI();
         //IncreaseThreatThatSeesTile(targetTile, 10);

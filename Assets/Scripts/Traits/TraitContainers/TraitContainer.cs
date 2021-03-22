@@ -368,6 +368,11 @@ namespace Traits {
         }
         public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false) {
             if (HasTrait(traitName)) {
+                if (removeFrom is Character character) {
+                    if (PlayerSkillManager.Instance.afflictionsNameSkillTypeDictionary.ContainsKey(traitName)) {
+                        character.afflictionsSkillsInflictedByPlayer.Remove(PlayerSkillManager.Instance.afflictionsNameSkillTypeDictionary[traitName]);
+                    }
+                }
                 Trait trait = GetTraitOrStatus<Trait>(traitName);
                 return RemoveTrait(removeFrom, trait, removedBy, bySchedule);
             }

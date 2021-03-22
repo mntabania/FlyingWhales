@@ -32,6 +32,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 01000000
     requiredArchetype: 0
@@ -60,12 +61,12 @@ MonoBehaviour:
     - 40
     - 80
     - 120
-    durationBonusPerLevel: 
+    durationBonusPerLevel: 280000003c0000005000000064000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: f0000000c0000000c0000000c0000000
+    cooldownPerLevel: f0000000dc000000dc000000dc000000
     skillMovementSpeed: 
   rainSoundEffect: {fileID: 8300000, guid: a512f029a3def8646857bf320b125283, type: 3}

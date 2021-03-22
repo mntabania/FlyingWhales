@@ -14,8 +14,6 @@ public class LightningData : SkillData {
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 
-    private int m_lightningBaseDamage = -600;
-
     public LightningData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
@@ -43,10 +41,10 @@ public class LightningData : SkillData {
     }
     private void LightningDamage(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            int processedDamage = m_lightningBaseDamage + (-PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.LIGHTNING));
+            int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.LIGHTNING));
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, traitable as Character, processedDamage);
-            if (traitable is Character character && character.isDead) {
+            if (traitable is Character character && character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LIGHTNING;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }

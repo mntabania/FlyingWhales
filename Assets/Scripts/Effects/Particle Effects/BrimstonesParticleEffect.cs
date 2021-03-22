@@ -8,7 +8,6 @@ using Inner_Maps;
 
 public class BrimstonesParticleEffect : BaseParticleEffect {
 
-    private int m_brimstoneBaseDamage = -400;
     protected override void PlayParticle() {
         base.PlayParticle();
         StartCoroutine(BrimstoneEffect());
@@ -27,11 +26,9 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
         targetTile.PerformActionOnTraitables((traitable) => BrimstoneEffect(traitable, ref bs));
     }
     private void BrimstoneEffect(ITraitable traitable, ref BurningSource bs) {
-        int additionalDamage = PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
-        if(additionalDamage > 0) {
-            additionalDamage *= -1;
-        }
-        int processedDamage = m_brimstoneBaseDamage + additionalDamage;
+        int additionalDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
+        
+        int processedDamage = additionalDamage;
         if (traitable is TileObject obj) {
             //int processedDamage = m_brimstoneBaseDamage - (m_brimstoneBaseDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));
             if (obj.tileObjectType == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
@@ -52,7 +49,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
                 elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
             bs = burningSource;
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-            if (character.isDead) {
+            if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BRIMSTONES;
                 Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }

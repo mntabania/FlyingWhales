@@ -19,7 +19,8 @@ public class TerrifyingHowlCollisionListener : ParticleCollisionListener {
             //do not allow minions to be affected by terrifying howl.
             if (affectedCharacters.Contains(characterMarker.character) == false && characterMarker.character.minion == null) {
                 CombatManager.Instance.CreateHitEffectAt(characterMarker.character, ELEMENTAL_TYPE.Normal);
-                int duration = TraitManager.Instance.allTraits["Spooked"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.TERRIFYING_HOWL);
+                //int duration = TraitManager.Instance.allTraits["Spooked"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.TERRIFYING_HOWL);
+                int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.TERRIFYING_HOWL); 
                 characterMarker.character.traitContainer.AddTrait(characterMarker.character, "Spooked", overrideDuration: duration);
                 characterMarker.character.marker.AddPOIAsInVisionRange(_baseParticleEffect.targetTile.tileObjectComponent.genericTileObject);
                 characterMarker.character.combatComponent.Flight(_baseParticleEffect.targetTile.tileObjectComponent.genericTileObject, "heard a terrifying howl");
