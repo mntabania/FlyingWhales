@@ -6,7 +6,7 @@ using UtilityScripts;
 public class SummonMeterComponent {
     private bool m_isInitialized = false;
     // private int m_currentPoints;
-    public static int MAX_TARGET_POINT = 10000; //also the max points
+    public static int MAX_TARGET_POINT = 100000; //also the max points
 
     public RuinarchBasicProgress progress { get; private set; }
 
