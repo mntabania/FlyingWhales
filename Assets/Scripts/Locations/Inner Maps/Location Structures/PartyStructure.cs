@@ -10,7 +10,7 @@ namespace Inner_Maps.Location_Structures {
     public class PartyStructure : DemonicStructure, Party.PartyEventsIListener {
         public override Type serializedData => typeof(SaveDataPartyStructure);
 
-        public List<IStoredTarget> allPossibleTargets = new List<IStoredTarget>();
+        public virtual List<IStoredTarget> allPossibleTargets { get; }
 
         protected bool m_isUndeployUserAction;
         public virtual void InitTargets() {

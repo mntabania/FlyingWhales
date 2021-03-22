@@ -5856,7 +5856,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region IStoredTarget
     public bool CanBeStoredAsTarget() {
-        return !isDead;
+        return !isDead && faction != PlayerManager.Instance.player.playerFaction;
     }
     #endregion
 

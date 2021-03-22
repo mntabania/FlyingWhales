@@ -73,7 +73,6 @@ public class Summon : Character {
             deathTilePosition = gridTileLocation;
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
-            LocationGridTile deathTile = gridTileLocation;
 
             if (isLycanthrope) {
                 //Added this so that human and lycan form can share the same death log and prevent duplicates
@@ -99,7 +98,7 @@ public class Summon : Character {
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             jobQueue.CancelAllJobs();
-            DropAllItems(deathTile);
+            DropAllItems(deathTilePosition);
             UnownOrTransferOwnershipOfAllItems();
 
             reactionComponent.SetIsHidden(false);
@@ -150,7 +149,7 @@ public class Summon : Character {
             eventDispatcher.ExecuteCharacterDied(this);
             
             if (hasMarker) {
-                marker.OnDeath(deathTile);    
+                marker.OnDeath(deathTilePosition);    
             }
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
@@ -178,7 +177,7 @@ public class Summon : Character {
                 SetDeathLog(_deathLog);
             }
             
-            AfterDeath(deathTile);
+            AfterDeath(deathTilePosition);
         }
     }
     protected override void OnTickStarted() {

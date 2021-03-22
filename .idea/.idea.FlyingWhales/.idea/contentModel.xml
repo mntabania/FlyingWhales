@@ -2196,6 +2196,7 @@
                   <e p="ManaPitTileObject.cs" t="Include" />
                   <e p="ManaRune.cs" t="Include" />
                   <e p="MaraudTileObject.cs" t="Include" />
+                  <e p="MeddlerTileObject.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
                   <e p="MonsterEgg.cs" t="Include" />
                   <e p="MovingTileObject.cs" t="Include" />
@@ -3391,8 +3392,8 @@
                 <e p="UnlockStructureUIController.cs" t="Include" />
                 <e p="WorldGenOptionsUIController.cs" t="Include" />
               </e>
+              <e p="HoverText.cs" t="Include" />
               <e p="Items" t="Include">
-                <e p="AvailableMonsterItemUI.cs" t="Include" />
                 <e p="AvailableTargetItemUI.cs" t="Include" />
                 <e p="DeployedMonsterItemUI.cs" t="Include" />
                 <e p="DeployedTargetItemUI.cs" t="Include" />
