@@ -86,7 +86,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         _regionFilterItems = new List<FactionRegionFilterItem>();
         filteredTraits = new List<string>();
         filteredRegions = new List<Region>();
-
+        
         searchTraitFilterField.onValueChanged.AddListener(OnSearchTraitFilterValueChanged);
         searchRegionFilterField.onValueChanged.AddListener(OnSearchRegionFilterValueChanged);
 
@@ -403,7 +403,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     public void FilterCharacters() {
         for (int i = 0; i < _characterItems.Count; i++) {
             CharacterNameplateItem nameplate = _characterItems[i];
-            if(nameplate.character != null && nameplate.character.isInfoUnlocked) {
+            if(nameplate.character != null) {
                 nameplate.gameObject.SetActive(ShouldCharacterNameplateBeShown(nameplate.character));
             } else {
                 nameplate.gameObject.SetActive(false);
@@ -470,7 +470,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
             return true;
         }
         for (int i = 0; i < filteredTraits.Count; i++) {
-            if (character.traitContainer.HasTrait(filteredTraits[i])) {
+            if (character.traitContainer.HasTrait(filteredTraits[i]) && character.isInfoUnlocked) {
                 return true;
             }
         }
@@ -483,7 +483,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
             return true;
         }
         for (int i = 0; i < filteredRegions.Count; i++) {
-            if (character.homeRegion == filteredRegions[i]) {
+            if (character.homeRegion == filteredRegions[i] && character.isInfoUnlocked) {
                 return true;
             }
         }
