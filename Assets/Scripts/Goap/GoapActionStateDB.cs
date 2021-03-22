@@ -359,7 +359,7 @@ public static class GoapActionStateDB {
         //    new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         //} },
         {INTERACTION_TYPE.SCREAM_FOR_HELP, new[]{
-            new StateNameAndDuration(){ name = "Scream Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+            new StateNameAndDuration(){ name = "Scream Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(9) },
         } },
         {INTERACTION_TYPE.REACT_TO_SCREAM, new[]{
             new StateNameAndDuration(){ name = "React Success", status = InteractionManager.Goap_State_Success, duration = 0 },

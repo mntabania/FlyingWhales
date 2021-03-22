@@ -47,7 +47,7 @@ namespace Locations {
                 Character character = charactersAtLocation[i];
                 if (character.gridTileLocation == null) { continue; }
                 if (character.isBeingSeized) { continue; }
-                if (validityChecker.Invoke(character)) {
+                if (validityChecker == null || validityChecker.Invoke(character)) {
                     p_characterList.Add(character);
                 }
             }

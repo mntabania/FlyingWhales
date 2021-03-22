@@ -119,7 +119,7 @@ namespace Locations.Area_Features {
         }
         private void PopulateInitialCharactersOutside(Area p_area) {
             List<Character> allCharactersInArea = ObjectPoolManager.Instance.CreateNewCharactersList();
-            p_area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(allCharactersInArea, c => !c.isDead);
+            p_area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(allCharactersInArea, null);
             if (allCharactersInArea != null) {
                 for (int i = 0; i < allCharactersInArea.Count; i++) {
                     Character character = allCharactersInArea[i];
@@ -136,6 +136,9 @@ namespace Locations.Area_Features {
             int baseChance = Mathf.RoundToInt(PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.HEAT_WAVE));
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
+                if (character.isDead) {
+                    continue;
+                }
                 float resistanceValue = character.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
                 CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
                 if(GameUtilities.RollChance(baseChance)) {
@@ -146,7 +149,7 @@ namespace Locations.Area_Features {
         }
         private void RescheduleHeatWaveCheck(Area p_area) {
             if (p_area.featureComponent.HasFeature(name) == false) { return; }
-            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(10));
+            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(6));
             _currentRainCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForOverheating(p_area), this);
         }
         #endregion
