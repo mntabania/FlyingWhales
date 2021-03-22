@@ -65,7 +65,7 @@ MonoBehaviour:
     - 5
     - 10
     - 15
-    durationBonusPerLevel: 
+    durationBonusPerLevel: 14000000190000001e00000028000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
