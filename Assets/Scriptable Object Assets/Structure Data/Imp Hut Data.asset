@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
   m_Name: Imp Hut Data
   m_EditorClassIdentifier: 
-  _structureSprite: {fileID: 21300000, guid: 62010842570b65e439820a973fa02e8a, type: 3}
+  _structureSprite: {fileID: 21300000, guid: 715365519fb729c47a2db043ec416fac, type: 3}
   _itemGenerationSetting: {fileID: 0}
   structurePrefabs:
     m_keys:

@@ -9,9 +9,11 @@ public class UpgradePortalUIModel : MVCUIModel {
     public RuinarchButton btnUpgrade;
     public RuinarchButton btnClose;
     public ScrollRect scrollRectContent;
-
-    public System.Action onClickUpgrade;
-    public System.Action onClickClose;
+    public UpgradePortalItemUI[] items;
+    
+    public Action onClickUpgrade;
+    public Action onClickClose;
+    
     private void OnEnable() {
         btnUpgrade.onClick.AddListener(OnClickUpgrade);
         btnClose.onClick.AddListener(OnClickClose);
@@ -20,7 +22,6 @@ public class UpgradePortalUIModel : MVCUIModel {
         btnUpgrade.onClick.RemoveListener(OnClickUpgrade);
         btnClose.onClick.RemoveListener(OnClickClose);
     }
-    
     private void OnClickUpgrade() {
         onClickUpgrade?.Invoke();
     }

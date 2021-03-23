@@ -1373,4 +1373,19 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Currency
+    public static string GetCurrencyTextSprite(this CURRENCY p_currency) {
+        switch (p_currency) {
+            case CURRENCY.Mana:
+                return UtilityScripts.Utilities.ManaIcon();
+            case CURRENCY.Chaotic_Energy:
+                return UtilityScripts.Utilities.PlagueIcon();
+            case CURRENCY.Spirit_Energy:
+                return UtilityScripts.Utilities.SpiritEnergyIcon();
+            default:
+                return UtilityScripts.Utilities.ManaIcon();
+        }
+    }
+    #endregion
 }

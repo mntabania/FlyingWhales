@@ -24,15 +24,17 @@ public class PlayerSkillLoadout : ScriptableObject {
     public PortalUpgradeTier[] portalUpgradeTiers;
     
     private void OnValidate() {
-        for (int i = 0; i < portalUpgradeTiers.Length; i++) {
-            PortalUpgradeTier tier = portalUpgradeTiers[i];
-            tier.name = $"Level {(i + 1).ToString()}";
-            for (int j = 0; j < tier.upgradeCost.Length; j++) {
-                Cost cost = tier.upgradeCost[j];
-                cost.name = cost.ToString();
-                tier.upgradeCost[j] = cost;
-            }
-            portalUpgradeTiers[i] = tier;
+        if (portalUpgradeTiers != null) {
+            for (int i = 0; i < portalUpgradeTiers.Length; i++) {
+                PortalUpgradeTier tier = portalUpgradeTiers[i];
+                tier.name = $"Level {(i + 1).ToString()}";
+                for (int j = 0; j < tier.upgradeCost.Length; j++) {
+                    Cost cost = tier.upgradeCost[j];
+                    cost.name = cost.ToString();
+                    tier.upgradeCost[j] = cost;
+                }
+                portalUpgradeTiers[i] = tier;
+            }    
         }
     }
 }
@@ -48,6 +50,19 @@ public struct PortalUpgradeTier {
     public PLAYER_SKILL_TYPE[] skillTypesToUnlock;
     public PASSIVE_SKILL[] passiveSkillsToUnlock;
     public Cost[] upgradeCost;
+
+    public string GetUpgradeCostString() {
+        string combined = string.Empty;
+        for (int i = 0; i < upgradeCost.Length; i++) {
+            Cost cost = upgradeCost[i];
+            string costSprite = cost.currency.GetCurrencyTextSprite();
+            combined = $"{combined} {cost.amount.ToString()}{costSprite}";
+            if (!upgradeCost.IsLastIndex(i)) {
+                combined = $"{combined},";
+            }
+        }
+        return combined;
+    }
 }
 [System.Serializable]
 public struct Cost {

@@ -472,11 +472,14 @@ public class PlayerSkillComponent {
     private void PopulatePassiveSkills(PASSIVE_SKILL[] passiveSkills) {
         for (int i = 0; i < passiveSkills.Length; i++) {
             PASSIVE_SKILL passiveSkillType = passiveSkills[i];
-            PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(passiveSkillType);
-            passiveSkill.ActivateSkill();
-            this.passiveSkills.Add(passiveSkillType);
-            Debug.Log($"{GameManager.Instance.TodayLogString()}Activated passive skill {passiveSkillType.ToString()}.");
+            AddPassiveSkills(passiveSkillType);
         }
+    }
+    public void AddPassiveSkills(PASSIVE_SKILL passiveSkills) {
+        PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(passiveSkills);
+        passiveSkill.ActivateSkill();
+        this.passiveSkills.Add(passiveSkills);
+        Debug.Log($"{GameManager.Instance.TodayLogString()}Activated passive skill {passiveSkills.ToString()}.");
     }
     #endregion
 

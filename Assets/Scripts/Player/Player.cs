@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Locations.Settlements;
@@ -780,6 +781,27 @@ public class Player : ILeader, IObjectManipulator {
     #region Building
     public void SetIsCurrentlyBuildingDemonicStructure(bool state) {
         isCurrentlyBuildingDemonicStructure = state;
+    }
+    #endregion
+
+    #region Currencies
+    public void AdjustCurrency(CURRENCY p_currency, int p_amount) {
+        switch (p_currency) {
+            case CURRENCY.Mana:
+                AdjustMana(p_amount);
+                break;
+            case CURRENCY.Chaotic_Energy:
+                plagueComponent.AdjustPlaguePoints(p_amount);
+                break;
+            case CURRENCY.Spirit_Energy:
+                AdjustSpiritEnergy(p_amount);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_currency), p_currency, null);
+        }
+    }
+    public void AdjustCurrency(Cost p_cost) {
+        AdjustCurrency(p_cost.currency, -p_cost.amount);
     }
     #endregion
 }

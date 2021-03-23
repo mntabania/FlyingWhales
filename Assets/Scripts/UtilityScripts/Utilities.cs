@@ -1026,6 +1026,49 @@ namespace UtilityScripts {
         public static string PlagueIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Plague_Icon\">";
         }
+        public static string SpiritEnergyIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"spirit_energy_icon\">";
+        }
+        public static string AttackIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"stats_attack_icon\">";
+        }
+        public static string EarthIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_earth_icon\">";
+        }
+        public static string NormalIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_normal_icon\">";
+        }
+        public static string HealthIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"stats_health_icon\">";
+        }
+        public static string SpeedIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"stats_speed_icon\">";
+        }
+        public static string WaterIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_water_icon\">";
+        }
+        public static string PoisonIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_poison_icon\">";
+        }
+        public static string IceIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_ice_icon\">";
+        }
+        public static string ResistanceIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"resistance_icon\">";
+        }
+        public static string PiercingIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"piercing_icon\">";
+        }
+        public static string WindIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_wind_icon\">";
+        }
+        public static string FireIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_fire_icon\">";
+        }
+        public static string ElectricIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_electric_icon\">";
+        }
+        
         public static string RatmanIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\">";
         }

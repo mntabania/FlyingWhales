@@ -566,6 +566,11 @@
             </e>
           </e>
         </e>
+        <e p="Ignore" t="Include">
+          <e p="Test Scripts" t="Include">
+            <e p="UpgradePortalUITester.cs" t="Include" />
+          </e>
+        </e>
         <e p="JsonDotNet" t="Include">
           <e p="link.xml" t="Include" />
         </e>
@@ -2636,6 +2641,7 @@
                 <e p="TriggerFlawData.cs" t="Include" />
                 <e p="UnsummonData.cs" t="Include" />
                 <e p="UpgradeData.cs" t="Include" />
+                <e p="UpgradePortalData.cs" t="Include" />
                 <e p="ZapData.cs" t="Include" />
               </e>
               <e p="Schemes" t="Include">
@@ -3341,8 +3347,11 @@
             <e p="LandmarkCharacterItem.cs" t="Include" />
             <e p="LevelCollapseUI.cs" t="Include" />
             <e p="LoadWindow.cs" t="Include" />
+            <e p="Location Portrait" t="Include">
+              <e p="BaseLocationPortrait.cs" t="Include" />
+              <e p="LocationPortrait.cs" t="Include" />
+            </e>
             <e p="LocationGridTileMouseEvents.cs" t="Include" />
-            <e p="LocationPortrait.cs" t="Include" />
             <e p="LocationSmallInfo.cs" t="Include" />
             <e p="LogFilterItem.cs" t="Include" />
             <e p="LogHistoryItem.cs" t="Include" />
@@ -3404,6 +3413,7 @@
                 <e p="TimerItemUI.cs" t="Include" />
                 <e p="UnlockMinionItemUI.cs" t="Include" />
                 <e p="UnlockStructureItemUI.cs" t="Include" />
+                <e p="UpgradePortalItemUI.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />

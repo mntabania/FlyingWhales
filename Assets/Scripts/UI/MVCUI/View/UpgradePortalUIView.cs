@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 
@@ -39,6 +40,27 @@ public class UpgradePortalUIView : MVCUIView {
     public void Unsubscribe(IListener p_listener) {
         UIModel.onClickClose -= p_listener.OnClickClose;
         UIModel.onClickUpgrade -= p_listener.OnClickUpgrade;
+    }
+    #endregion
+
+    #region User defined functions
+    public void UpdateItems(PortalUpgradeTier p_upgradeTier) {
+        for (int i = 0; i < UIModel.items.Length; i++) {
+            UpgradePortalItemUI itemUI = UIModel.items[i];
+            PLAYER_SKILL_TYPE skillType = p_upgradeTier.skillTypesToUnlock.ElementAtOrDefault(i);
+            if (skillType != PLAYER_SKILL_TYPE.NONE) {
+                itemUI.SetData(skillType);
+                itemUI.gameObject.SetActive(true);
+            } else {
+                itemUI.gameObject.SetActive(false);
+            }
+        }
+    }
+    public void SetHeader(string p_value) {
+        UIModel.lblTitle.text = p_value;
+    }
+    public void SetUpgradeText(string p_value) {
+        UIModel.btnUpgrade.SetButtonLabelName(p_value);
     }
     #endregion
 }

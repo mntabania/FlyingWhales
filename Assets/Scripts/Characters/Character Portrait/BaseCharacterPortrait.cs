@@ -18,15 +18,15 @@ public class BaseCharacterPortrait : PooledObject, IPointerClickHandler {
     private System.Action _onClickAction;
     
     
-    public void GeneratePortrait(PortraitSettings portraitSettings, bool makePixelPerfect = true) {
+    public void GeneratePortrait(PortraitSettings portraitSettings) {
         Sprite sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(portraitSettings.wholeImage);
         UpdatePortrait(sprite);
     }
-    public void GeneratePortrait(SUMMON_TYPE p_monsterType, bool makePixelPerfect = true) {
+    public void GeneratePortrait(SUMMON_TYPE p_monsterType) {
         Sprite sprite = CharacterManager.Instance.GetSummonSettings(p_monsterType).summonPortrait;
         UpdatePortrait(sprite);
     }
-    public void GeneratePortrait(MINION_TYPE p_demonType, bool makePixelPerfect = true) {
+    public void GeneratePortrait(MINION_TYPE p_demonType) {
         Sprite sprite = CharacterManager.Instance.GetMinionSettings(p_demonType).minionPortrait;
         UpdatePortrait(sprite);
     }
@@ -41,7 +41,6 @@ public class BaseCharacterPortrait : PooledObject, IPointerClickHandler {
             SetWholeImageSprite(null);
             SetWholeImageState(false);
         }
-        wholeImage.rectTransform.SetSiblingIndex(0);
      }
      
      private void SetWholeImageState(bool state) {

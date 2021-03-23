@@ -42,3 +42,17 @@ MonoBehaviour:
     - name: 10 Mana
       currency: 0
       amount: 10
+  - name: Level 2
+    skillTypesToUnlock: 4f00000048000000
+    passiveSkillsToUnlock: 00000000
+    upgradeCost:
+    - name: 50 Mana
+      currency: 0
+      amount: 50
+  - name: Level 3
+    skillTypesToUnlock: 4e0000004c00000049000000be0000009b00000050000000
+    passiveSkillsToUnlock: 00000000
+    upgradeCost:
+    - name: 10 Mana
+      currency: 0
+      amount: 10
