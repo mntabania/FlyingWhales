@@ -1153,6 +1153,7 @@
               <e p="StatusIcon.cs" t="Include" />
             </e>
             <e p="Character Portrait" t="Include">
+              <e p="BaseCharacterPortrait.cs" t="Include" />
               <e p="CharacterPortrait.cs" t="Include" />
               <e p="PortraitSettings.cs" t="Include" />
             </e>
