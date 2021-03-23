@@ -255,11 +255,18 @@ namespace Inner_Maps {
             }
         }
         public void TriggerFreezingTrap(Character triggeredBy) {
+            int duration = 0;
+            if (triggeredBy is Summon summon) {
+                if (summon.summonType == SUMMON_TYPE.Kobold) {
+                    duration = 40; //2 hrs
+                }
+            } else {
+                duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+            }
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
             AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, owner, 1, false);
-            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FREEZING_TRAP);
             SetHasFreezingTrap(false);
-            int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+            
             triggeredBy.traitContainer.RemoveStatusAndStacks(triggeredBy, "Freezing");
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Frozen", bypassElementalChance: true, overrideDuration: duration);
         }
