@@ -280,8 +280,8 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
             if (damageable is Character character) {
-                int processedDamage = -120;
-                damageable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
+                int processedDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO);
+                damageable.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                 if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.TORNADO;
