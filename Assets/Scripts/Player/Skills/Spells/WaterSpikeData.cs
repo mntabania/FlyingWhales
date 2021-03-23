@@ -51,6 +51,6 @@ public class WaterSpikeData : SkillData {
         return canPerform;
     }
     public override void ShowValidHighlight(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(1, tile);
+        TileHighlighter.Instance.PositionHighlight(PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.WATER_SPIKE), tile);
     }
 }
