@@ -26,12 +26,13 @@ MonoBehaviour:
   tooltipImage: {fileID: 0}
   unlockCost: 300
   tier: 3
-  baseLoadoutWeight: 0
+  baseLoadoutWeight: 400
   resistanceType: 9
   archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 21300000, guid: 70a9302eac8b89042a5b9b01b68c601b, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 0400000001000000
     requiredArchetype: 0
@@ -45,7 +46,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 5e010000f40100008a020000
-    manacostPerLevel: 1e00000023000000280000002d000000
+    manacostPerLevel: 1e0000001e0000001e0000001e000000
     chargesPerLevel: 01000000010000000100000001000000
     bonuses: 0e00000001000000
     additionalDamagePerLevel: 
@@ -66,5 +67,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 400100002001000000010000e0000000
+    cooldownPerLevel: 400100002c0100001801000004010000
     skillMovementSpeed: 

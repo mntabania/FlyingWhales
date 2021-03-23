@@ -27,11 +27,12 @@ MonoBehaviour:
   unlockCost: 300
   tier: 3
   baseLoadoutWeight: 400
-  resistanceType: 0
+  resistanceType: 10
   archetypeWeightedBonus: 2
   contextMenuIcon: {fileID: 21300000, guid: 183bc8179a8da544da6cb0d1e8081285, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 425077bbaa6443144a6a7bc4c13caccd, type: 3}
+  isNonUpgradeable: 0
   requirementData:
     requirements: 
     requiredArchetype: 0
@@ -77,5 +78,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 400100000001000000010000e0000000
+    cooldownPerLevel: 400100002c0100002c01000018010000
     skillMovementSpeed: 
