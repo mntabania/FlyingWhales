@@ -53,7 +53,8 @@ public class SplashPoisonData : SkillData {
                 genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone ||
                 genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
                 //Reduce duration of poison when put on desert tiles
-                baseTick = GameManager.Instance.GetTicksBasedOnHour(40);
+
+                baseTick = GameManager.Instance.GetTicksBasedOnHour(2);
             }
         }
         return baseTick;
