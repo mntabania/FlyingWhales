@@ -3390,6 +3390,7 @@
                 <e p="TransmissionUIController.cs" t="Include" />
                 <e p="UnlockMinionUIController.cs" t="Include" />
                 <e p="UnlockStructureUIController.cs" t="Include" />
+                <e p="UpgradePortalUIController.cs" t="Include" />
                 <e p="WorldGenOptionsUIController.cs" t="Include" />
               </e>
               <e p="HoverText.cs" t="Include" />
@@ -3422,6 +3423,7 @@
                 <e p="TransmissionUIModel.cs" t="Include" />
                 <e p="UnlockMinionUIModel.cs" t="Include" />
                 <e p="UnlockStructureUIModel.cs" t="Include" />
+                <e p="UpgradePortalUIModel.cs" t="Include" />
                 <e p="WorldGenOptionsUIModel.cs" t="Include" />
               </e>
               <e p="View" t="Include">
@@ -3443,6 +3445,7 @@
                 <e p="TransmissionUIView.cs" t="Include" />
                 <e p="UnlockMinionUIView.cs" t="Include" />
                 <e p="UnlockStructureUIView.cs" t="Include" />
+                <e p="UpgradePortalUIView.cs" t="Include" />
                 <e p="WorldGenOptionsUIView.cs" t="Include" />
               </e>
             </e>
