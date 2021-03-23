@@ -26,7 +26,7 @@ MonoBehaviour:
   tooltipImage: {fileID: 0}
   unlockCost: 300
   tier: 3
-  baseLoadoutWeight: 0
+  baseLoadoutWeight: 300
   resistanceType: 7
   archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 0}
@@ -47,9 +47,9 @@ MonoBehaviour:
   skillUpgradeData:
     upgradeCosts: 5e010000f40100008a020000
     manacostPerLevel: 1e00000023000000280000002d000000
-    chargesPerLevel: 01000000010000000200000003000000
+    chargesPerLevel: 01000000010000000200000002000000
     bonuses: 01000000000000000e000000
-    additionalDamagePerLevel: 32000000000000000000000000000000
+    additionalDamagePerLevel: 140000001e0000002800000032000000
     additionalPiercePerLevel:
     - 0
     - 50
@@ -61,11 +61,11 @@ MonoBehaviour:
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
-    durationBonusPerLevel: 
+    durationBonusPerLevel: 00000000000000000000000000000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 40010000000100000001000000010000
+    cooldownPerLevel: 400100002c0100001801000004010000
     skillMovementSpeed: 
