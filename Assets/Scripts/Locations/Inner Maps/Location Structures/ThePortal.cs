@@ -20,6 +20,10 @@ namespace Inner_Maps.Location_Structures {
         }
         
         #region Structure Object
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(PLAYER_SKILL_TYPE.UNLOCK_ABILITIES);
+        }
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             Vector3 position = structureObj.transform.position;

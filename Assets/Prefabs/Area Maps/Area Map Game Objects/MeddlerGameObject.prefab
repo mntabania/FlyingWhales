@@ -7,17 +7,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1097581491230862, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1340829586555444, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
       propertyPath: m_Name
       value: MeddlerGameObject
       objectReference: {fileID: 0}
     - target: {fileID: 4140458485716480, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.5
+      value: -0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4140458485716480, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.5
+      value: -0.35
       objectReference: {fileID: 0}
     - target: {fileID: 4932280101310078, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -99,6 +103,12 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 212487511842338434, guid: d9d549510a4f590468f27e4140b34e5e,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 017bc2c4195258b42aeb81838eff4d2f,
+        type: 3}
+    - target: {fileID: 212489938902139980, guid: d9d549510a4f590468f27e4140b34e5e,
         type: 3}
       propertyPath: m_Sprite
       value: 

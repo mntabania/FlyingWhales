@@ -35,6 +35,9 @@ public class Player : ILeader, IObjectManipulator {
     public PlayerUnderlingsComponent underlingsComponent { get; private set; }
     public PlayerTileObjectComponent tileObjectComponent { get; private set; }
     public StoredTargetsComponent storedTargetsComponent { get; }
+    public BookmarkComponent bookmarkComponent { get; }
+
+    public SummonMeterComponent summonMeterComponent { get; private set; }
 
     private ManaRegenComponent m_manaRegenComponent { get; set; }
 
@@ -64,6 +67,13 @@ public class Player : ILeader, IObjectManipulator {
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
         tileObjectComponent = new PlayerTileObjectComponent();
+        summonMeterComponent = new SummonMeterComponent();
+        bookmarkComponent = new BookmarkComponent();
+        summonMeterComponent.Initialize();
+        
+
+        bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        
         SubscribeListeners();
         
     }
@@ -74,12 +84,18 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent = data.playerSkillComponent.Load();
         underlingsComponent = data.underlingsComponent.Load();
         tileObjectComponent = data.tileObjectComponent.Load();
+        summonMeterComponent = data.summonMeterComponent.Load();
+        bookmarkComponent = new BookmarkComponent();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
+        summonMeterComponent.Initialize();
+        
+        bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        
         SubscribeListeners();
     }
 
@@ -102,6 +118,7 @@ public class Player : ILeader, IObjectManipulator {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         
         underlingsComponent.SubscribeListeners();
+        bookmarkComponent.SubscribeListeners();
     }
     #endregion
 
@@ -774,6 +791,7 @@ public class Player : ILeader, IObjectManipulator {
         }
         playerSkillComponent.LoadReferences(data.playerSkillComponent);
         storedTargetsComponent.LoadReferences(data.storedTargetsComponent);
+        summonMeterComponent.LoadReferences(data.summonMeterComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion

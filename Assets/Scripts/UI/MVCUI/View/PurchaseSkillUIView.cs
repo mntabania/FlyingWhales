@@ -60,6 +60,9 @@ public class PurchaseSkillUIView : MVCUIView {
 	public void SetMessage(string p_message) {
 		UIModel.txtMessageDisplay.text = p_message;
 	}
+	public void SetRerollCooldownFill(float p_fill) {
+		UIModel.imgCooldown.fillAmount = p_fill;
+	}
 	#endregion
 
 	#region Subscribe/Unsubscribe for IListener

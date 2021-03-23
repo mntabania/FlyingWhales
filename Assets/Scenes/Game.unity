@@ -468,6 +468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_onDeathUIModel: {fileID: 3128301160763569192, guid: ef48cd3a08efbd1458c0e52d02782fa1,
     type: 3}
 --- !u!1 &16455707
@@ -1579,6 +1580,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_temptUIModel: {fileID: 2259275288588962824, guid: 2734df1d40f94ed419cc98894b99a96e,
     type: 3}
 --- !u!1 &61644417
@@ -2858,7 +2860,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1712332734}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3740,6 +3742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_contextMenuUIModel: {fileID: 1831149024571254713, guid: bc38887c486cb4645b83efe66047b3c0,
     type: 3}
   m_camera: {fileID: 1713567858}
@@ -4686,6 +4689,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_portalUIModel: {fileID: 1512673083917566497, guid: f0b5284c8e371374bbb8c5c6edf76861,
     type: 3}
   purchaseSkillUIController: {fileID: 1333819176}
@@ -5481,52 +5485,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 218621389}
   m_CullTransparentMesh: 0
---- !u!1 &220090884
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 220090885}
-  - component: {fileID: 220090886}
-  m_Layer: 0
-  m_Name: UpgradePortalUIController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &220090885
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220090884}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 960, y: 540, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 615060822}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &220090886
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220090884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cd0be13e73142baba345df83abdb367, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _canvas: {fileID: 1538653388}
-  m_upgradePortalUIModel: {fileID: 5374879763674441798, guid: 141dd779357457841b4ccc58f312f34d,
-    type: 3}
 --- !u!1001 &221742731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7385,6 +7343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_blackmailUIModel: {fileID: 8010841679354213904, guid: 0c36f60a7f4ff5449a34295571502f9b,
     type: 3}
 --- !u!1 &308965761
@@ -17192,7 +17151,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -296, y: 96.82}
+  m_AnchoredPosition: {x: 6996, y: 96.82}
   m_SizeDelta: {x: 592.6833, y: 495.04865}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &509764151
@@ -19776,7 +19735,7 @@ Transform:
   - {fileID: 1726233549}
   - {fileID: 1063994933}
   - {fileID: 187911615}
-  - {fileID: 220090885}
+  - {fileID: 684515730}
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -21562,6 +21521,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 682104552}
   m_CullTransparentMesh: 0
+--- !u!1 &684515729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 684515730}
+  - component: {fileID: 684515731}
+  m_Layer: 0
+  m_Name: BookmarkUIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &684515730
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684515729}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 615060822}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &684515731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684515729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f8d9aa37af4f889e3f49303c34ed72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _canvas: {fileID: 1538653388}
+  siblingIndex: 10
+  m_bookmarkUIModel: {fileID: 1815384250985584240, guid: 5537c6a8d13eae246a2250cee6d20eca,
+    type: 3}
 --- !u!1 &688492910
 GameObject:
   m_ObjectHideFlags: 0
@@ -23839,6 +23845,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_unlockMinionUIModel: {fileID: 8568382380626177692, guid: 2be6a082f2fdd634ea8c970d5f3a1bf2,
     type: 3}
 --- !u!1 &764745787
@@ -31497,6 +31504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_defensePointUIModel: {fileID: 2753937090414460560, guid: 1a567448215f38941be3b6358180ff7e,
     type: 3}
   m_availableMonsterItemUI: {fileID: 665403774012342323, guid: 6db8cc161da26994bbc5321069ecba0c,
@@ -32954,6 +32962,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_transmissionUIModel: {fileID: 1344588799406453271, guid: 94f1f2cc6d546554a868a060ae9a0849,
     type: 3}
 --- !u!1 &1152113523
@@ -33382,6 +33391,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_lifeSpanUIModel: {fileID: 875053804911184671, guid: 2ec5d56598eba0346ac56813e5fe9ea8,
     type: 3}
 --- !u!1 &1158430138
@@ -37458,6 +37468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   isTestScene: 0
   skillCountPerDraw: 3
   m_purchaseSkillUIModel: {fileID: 1286504509807257227, guid: 39583120551adb142b3601b16eb7144f,
@@ -42261,6 +42272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_schemeUIModel: {fileID: 2500776707621525991, guid: 45f2175a4ec5c9a4fbee9c6691a7d9e6,
     type: 3}
   blackmailUIController: {fileID: 301721565}
@@ -46290,7 +46302,6 @@ MonoBehaviour:
   tileObjectInfoUI: {fileID: 388044833}
   partyInfoUI: {fileID: 8312167725925528708}
   structureInfoUI: {fileID: 179873882}
-  _portalUIController: {fileID: 187911616}
   unbuiltStructureInfoUI: {fileID: 8516645416588250279}
   structureRoomInfoUI: {fileID: 6563973472908480672}
   settlementInfoUI: {fileID: 1972713623}
@@ -46344,6 +46355,7 @@ MonoBehaviour:
   _biolabUIController: {fileID: 1658988109}
   _schemeUIController: {fileID: 1496807649}
   contextMenuUIController: {fileID: 142246406}
+  _portalUIController: {fileID: 187911616}
 --- !u!114 &1538653386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47198,6 +47210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_fatalityUIModel: {fileID: 8522847927897079455, guid: cfdc122bc73f38143ba7cd82e19164d9,
     type: 3}
 --- !u!1 &1592777523
@@ -48752,6 +48765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_biolabUIModel: {fileID: 553379665, guid: a456ca25af3e8d5428146eebcc43023e, type: 3}
   transmissionUIController: {fileID: 1151944371}
   lifeSpanUIController: {fileID: 1153526156}
@@ -51187,6 +51201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_maraudUIModel: {fileID: 2060806865198195864, guid: f896c18de75dce946a8d03895f40303a,
     type: 3}
   m_availableMonsterItemUI: {fileID: 665403774012342323, guid: 6db8cc161da26994bbc5321069ecba0c,
@@ -54640,6 +54655,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_skillUpgradeUIModel: {fileID: 8318819620614901353, guid: 69a4de3a11f2157428c9d980e99628d3,
     type: 3}
   m_purchaseSkillItemUI: {fileID: 7736772295938071549, guid: f8d33198767f970418c2c82d505a287c,
@@ -56304,6 +56320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_unlockStructureUIModel: {fileID: 5921747844733223386, guid: b7c83e22a4df4d442bc4ed6b60412a75,
     type: 3}
 --- !u!1 &1941348440
@@ -60332,6 +60349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canvas: {fileID: 1538653388}
+  siblingIndex: -1
   m_symptomsUIModel: {fileID: 1247176694872482334, guid: 48bedad558268404abe2206c3d387bc7,
     type: 3}
 --- !u!1 &2053567685

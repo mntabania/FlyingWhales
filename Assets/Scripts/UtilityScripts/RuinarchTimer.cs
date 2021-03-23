@@ -4,35 +4,47 @@ namespace UtilityScripts {
     /// Utility class for creating a timer that has an effect at the end.  
     /// </summary>
     [System.Serializable]
-    public class RuinarchTimer {
+    public class RuinarchTimer : RuinarchProgressable {
 
         public string timerName;
         public GameDate timerStart;
         public GameDate timerEnd;
-        public int totalTicksInTimer;
-        public int currentTimerProgress;
-
+        
         private System.Action _onTimerEndAction;
 
-        public RuinarchTimer(string p_name) {
+        #region getters
+        public override string progressableName => timerName;
+        public int totalTicksInTimer => totalValue;
+        public int currentTimerProgress => currentValue;
+        public override BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Progress_Bar;
+        #endregion
+        
+        public RuinarchTimer(string p_name) : base() {
             timerName = p_name;
         }
-        public void LoadStart(System.Action p_endAction) {
+        public void SetTimerName(string p_name) {
+            timerName = p_name;
+        }
+        public void LoadStart(System.Action p_endAction = null) {
+            Load();
             _onTimerEndAction = p_endAction;
             Messenger.AddListener(Signals.TICK_ENDED, TimerTick);
         }
-        public void Start(GameDate p_start, GameDate p_end, System.Action p_endAction) {
+        public void Start(GameDate p_start, GameDate p_end, System.Action p_endAction = null) {
             timerStart = p_start;
             timerEnd = p_end;
-            totalTicksInTimer = p_start.GetTickDifference(p_end);
-            currentTimerProgress = 0;
+            int totalTicks = p_start.GetTickDifference(p_end);
+            Setup(0, totalTicks);
             _onTimerEndAction = p_endAction;
             Messenger.AddListener(Signals.TICK_ENDED, TimerTick);
             Debug.Log($"Started {timerName}. ETA is {p_end.ToString()}");
         }
+        public bool IsFinished() {
+            return currentTimerProgress == totalTicksInTimer;
+        }
         private void TimerTick() {
-            currentTimerProgress++;
-            if (GameManager.Instance.Today().IsSameDate(timerEnd)) {
+            IncreaseProgress(1);
+            if (IsComplete()) {
                 TimerHasReachedEnd();
             }
         }
@@ -51,12 +63,18 @@ namespace UtilityScripts {
             }
             return currentTimerProgressPercent;
         }
+        public int GetRemainingTicks() {
+            return totalTicksInTimer - currentTimerProgress;
+        }
+        public string GetRemainingTimeString() {
+            int remainingTicks = GetRemainingTicks();
+            return $"{GameManager.GetTimeAsWholeDuration(remainingTicks).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(remainingTicks)}";
+        }
         public void Stop() {
+            Reset();
             timerStart = default;
             timerEnd = default;
             _onTimerEndAction = null;
-            currentTimerProgress = 0;
-            totalTicksInTimer = 0;
             Messenger.RemoveListener(Signals.TICK_ENDED, TimerTick);
             Debug.Log($"Stopped {timerName}");
         }

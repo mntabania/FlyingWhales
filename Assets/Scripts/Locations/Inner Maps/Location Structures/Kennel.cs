@@ -16,7 +16,7 @@ namespace Inner_Maps.Location_Structures {
         private Summon _occupyingSummon;
 
         public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){ }
-        public Kennel(Region location, SaveDataPartyStructure data) : base(location, data) { }
+        public Kennel(Region location, SaveDataKennel data) : base(location, data) { }
 
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
@@ -89,6 +89,11 @@ namespace Inner_Maps.Location_Structures {
             party.AddMemberThatJoinedQuest(partyData.deployedMinions[0]);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMemberThatJoinedQuest(eachSummon));
             ListenToParty();
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
+        }
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH_MONSTER);
         }
         #endregion
 

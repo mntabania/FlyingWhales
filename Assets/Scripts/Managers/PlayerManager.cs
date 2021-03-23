@@ -64,9 +64,12 @@ public class PlayerManager : BaseMonoBehaviour {
         pickPortalInputModule = new PickPortalInputModule();
         InputManager.AddOnUpdateEvent(ProcessPlayerInputModules);
         _structurePlacementVisual.Initialize(InnerMapCameraMove.Instance.camera);
-        player = new Player();
+        // if (!SaveManager.Instance.useSaveData) {
+        //     player = new Player();   
+        // }
     }
     public void InitializePlayer(Area portal) {
+        player = new Player();   
         player.CreatePlayerFaction();
         player.SetPortalTile(portal);
         PlayerSettlement existingPlayerNpcSettlement = portal.settlementOnArea as PlayerSettlement;

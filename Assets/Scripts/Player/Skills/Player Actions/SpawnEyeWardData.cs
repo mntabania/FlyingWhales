@@ -26,6 +26,13 @@ public class SpawnEyeWardData : PlayerAction {
         }
         EyeWard ward = InnerMapManager.Instance.CreateNewTileObject<EyeWard>(TILE_OBJECT_TYPE.EYE_WARD);
         p_targetTile.structure.AddPOI(ward, p_targetTile);
+
+        if (UIManager.Instance.structureInfoUI.isShowing) {
+            if (UIManager.Instance.structureInfoUI.activeStructure is Beholder beholder) {
+                beholder.SetEyeWard(ward);
+            }
+        }
+
         base.ActivateAbility(p_targetTile);
         Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this as PlayerAction);
     }

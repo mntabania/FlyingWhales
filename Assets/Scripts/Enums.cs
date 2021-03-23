@@ -1001,6 +1001,7 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
     CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, SPAWN_EYE_WARD = 182, DESTROY_EYE_WARD = 183, MANA_PIT = 184, MARAUD = 185,
     DRAIN_SPIRIT = 186, LET_GO = 187, FULL_HEAL = 188, CREATE_BLACKMAIL = 189, DEFENSE_POINT = 190, IMP_HUT = 191, ICE_BLAST = 192, EARTH_SPIKE = 193, WATER_SPIKE = 194,
+    UNLOCK_ABILITIES = 195, SNATCH_VILLAGER = 196, SNATCH_MONSTER = 197, RAID = 198, UPGRADE_ABILITIES = 199, DEFEND = 200
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1186,7 +1187,7 @@ public enum OMNIPOTENT_MODE {
     Disabled, Enabled 
 }
 public enum VICTORY_CONDITION {
-    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Sandbox
+    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Summon_The_Demon, Sandbox, 
 }
 public enum RESISTANCE {
     None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
@@ -1219,8 +1220,16 @@ public enum CHARACTER_COMBAT_BEHAVIOUR {
     None, Tower, Attacker, Snatcher, Razer, Healer, Tank, Escort, Glass_Cannon, Defender,
 }
 public enum COMBAT_SPECIAL_SKILL {
-    None, Heal, Taunt,
+    None, Heal, Taunt, Fast_Heal, Strong_Heal, Group_Heal, Self_Heal, Slow_Taunt,
 }
 public enum COMBAT_SPECIAL_SKILL_TARGET {
     Single, Multiple,
+}
+
+public enum BOOKMARK_CATEGORY {
+    None, Portal, Player_Parties, Targets
+}
+
+public enum BOOKMARK_TYPE {
+    Progress_Bar, Text, Text_With_Cancel
 }

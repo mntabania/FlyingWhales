@@ -67,10 +67,10 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region Movement
     private void MoveToRandomDirection() {
-        float baseSpeed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
-        Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * baseSpeed;
+        float baseSpeed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING) / 100f;
+        Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
         direction += transform.position;
-        _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
+        _movement = transform.DOMove(direction, baseSpeed).SetSpeedBased(true);
     }
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {

@@ -30,6 +30,10 @@ namespace Locations.Settlements {
 
         public virtual SettlementResources SettlementResources { get; protected set; }
 
+        public string bookmarkName => $"{iconRichText} {name}";
+        public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
+        public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
+
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
         public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Village;
@@ -56,6 +60,7 @@ namespace Locations.Settlements {
             firesInSettlement = new List<IPointOfInterest>();
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
+            bookmarkEventDispatcher = new BookmarkableEventDispatcher();
             SetLocationType(locationType);
             StartListeningForFires();
             ConstructDefaultActions();
@@ -70,6 +75,7 @@ namespace Locations.Settlements {
             firesInSettlement = new List<IPointOfInterest>();
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
+            bookmarkEventDispatcher = new BookmarkableEventDispatcher();
             SetLocationType(saveDataBaseSettlement.locationType);
             StartListeningForFires();
             ConstructDefaultActions();
@@ -894,6 +900,15 @@ namespace Locations.Settlements {
         #region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return true;
+        }
+        #endregion
+
+        #region IBookmarkable
+        public void OnSelectBookmark() {
+            UIManager.Instance.ShowSettlementInfo(this);
+        }
+        public void RemoveBookmark() {
+            PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
         }
         #endregion
 

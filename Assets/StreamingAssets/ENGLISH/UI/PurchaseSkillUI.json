@@ -1,1 +1,1 @@
-{"items":[{"key":"reroll_tooltip","value":"Reroll Abilities will be available after %111%."}]}
+{"items":[{"key":"reroll_tooltip_cooldown","value":"Reroll Abilities will be available after %111%."}, {"key":"reroll_tooltip_default","value":"Replace all three options with new ones. %111% hour cooldown."}]}

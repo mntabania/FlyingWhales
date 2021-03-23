@@ -26,7 +26,6 @@ using Prison = Tutorial.Prison;
 
 public class UIManager : BaseMonoBehaviour {
 
-    public Action onPortalClicked;
     public Action onSpireClicked;
     public Action<LocationStructure> onMaraudClicked;
     public Action<LocationStructure> onKennelClicked;
@@ -130,7 +129,7 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
-    
+
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
     private PointerEventData _pointer;
@@ -213,6 +212,9 @@ public class UIManager : BaseMonoBehaviour {
         contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
         
         UpdateUI();
+    }
+    public void InitializeAfterLoadOutPicked() {
+        _portalUIController.InitializeAfterLoadoutSelected();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
@@ -1029,32 +1031,26 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Structure Info")]
     [SerializeField] public StructureInfoUI structureInfoUI;
-    [SerializeField] private PortalUIController _portalUIController;
     public void ShowStructureInfo(LocationStructure structure, bool centerOnStructure = true) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
-            onPortalClicked?.Invoke();
-        } else {
-            _portalUIController.HideUI();
-        }
-        if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
-            onSpireClicked?.Invoke();
-        }
-        if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
-            onMaraudClicked?.Invoke(structure);
-        }
-        if (structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
-            onTortureChamberClicked?.Invoke(structure);
-        }
-        if (structure.structureType == STRUCTURE_TYPE.KENNEL) {
-            onKennelClicked?.Invoke(structure);
-        }
-        if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
-            onDefensePointClicked?.Invoke(structure);
-        }
+        // if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
+        //     onSpireClicked?.Invoke();
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
+        //     onMaraudClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+        //     onTortureChamberClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.KENNEL) {
+        //     onKennelClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
+        //     onDefensePointClicked?.Invoke(structure);
+        // }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();
         if (centerOnStructure) {
@@ -1915,4 +1911,32 @@ public class UIManager : BaseMonoBehaviour {
         return false;
     }
     #endregion
+
+    #region Demonic Structures
+    [Space(10)]
+    [Header("Demonic Structures")]
+    [SerializeField] private PortalUIController _portalUIController;
+    public void ShowUnlockAbilitiesUI() {
+        _portalUIController.ShowUI();
+        SetSpeedTogglesState(false);
+        Pause();
+    }
+    public void ShowUpgradeAbilitiesUI() {
+        onSpireClicked?.Invoke();
+    }
+    public void ShowRaidUI(LocationStructure structure) {
+        onMaraudClicked?.Invoke(structure);
+    }
+    public void ShowSnatchVillagerUI(LocationStructure structure) {
+        onTortureChamberClicked?.Invoke(structure);
+    }
+    public void ShowSnatchMonsterUI(LocationStructure structure) {
+        onKennelClicked?.Invoke(structure);
+    }
+    public void ShowDefendUI(LocationStructure structure) {
+        onDefensePointClicked?.Invoke(structure);
+    }
+    #endregion
+
+    
 }

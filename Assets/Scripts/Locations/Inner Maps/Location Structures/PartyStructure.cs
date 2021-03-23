@@ -51,6 +51,7 @@ namespace Inner_Maps.Location_Structures {
             SaveDataPartyStructure saveData = saveDataLocationStructure as SaveDataPartyStructure;
             if (!string.IsNullOrEmpty(saveData.partyID)) {
                 party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(saveData.partyID);
+                PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
                 ListenToParty();
             }
         }

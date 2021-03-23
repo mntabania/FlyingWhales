@@ -12,6 +12,9 @@ public class PortalUIView : MVCUIView {
         void OnClickCancelReleaseAbility();
         void OnClickCancelSummonDemon();
         void OnClickCancelObtainBlueprint();
+        void OnHoverOverCancelReleaseAbility();
+        void OnHoverOutCancelReleaseAbility();
+        void OnClickClose();
     }
     #endregion
     
@@ -44,6 +47,9 @@ public class PortalUIView : MVCUIView {
         UIModel.onCancelReleaseAbilityClicked += p_listener.OnClickCancelReleaseAbility;
         UIModel.onCancelSummonDemonClicked += p_listener.OnClickCancelSummonDemon;
         UIModel.onCancelObtainBlueprintClicked += p_listener.OnClickCancelObtainBlueprint;
+        UIModel.onHoverOverCancelReleaseAbility += p_listener.OnHoverOverCancelReleaseAbility;
+        UIModel.onHoverOutCancelReleaseAbility += p_listener.OnHoverOutCancelReleaseAbility;
+        UIModel.onClickClose += p_listener.OnClickClose;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onReleaseAbilityClicked -= p_listener.OnClickReleaseAbility;
@@ -52,6 +58,9 @@ public class PortalUIView : MVCUIView {
         UIModel.onCancelReleaseAbilityClicked -= p_listener.OnClickCancelReleaseAbility;
         UIModel.onCancelSummonDemonClicked -= p_listener.OnClickCancelSummonDemon;
         UIModel.onCancelObtainBlueprintClicked -= p_listener.OnClickCancelObtainBlueprint;
+        UIModel.onHoverOverCancelReleaseAbility -= p_listener.OnHoverOverCancelReleaseAbility;
+        UIModel.onHoverOutCancelReleaseAbility -= p_listener.OnHoverOutCancelReleaseAbility;
+        UIModel.onClickClose -= p_listener.OnClickClose;
     }
     #endregion
 
@@ -66,7 +75,7 @@ public class PortalUIView : MVCUIView {
     }
     
     public void ShowUnlockDemonTimerAndHideButton(SkillData p_skillToUnlock) {
-        UIModel.timerSummonDemon.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillToUnlock.name}");
+        UIModel.timerSummonDemon.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "summon_demon_active")} {p_skillToUnlock.name}");
         UIModel.goTimerSummonDemon.SetActive(true);
         UIModel.btnSummonDemon.gameObject.SetActive(false);
     }
