@@ -18,7 +18,7 @@ namespace Locations.Area_Features {
             name = "Heat Wave";
             description = "There is a heat wave in this location.";
             _charactersOutside = new List<Character>();
-            expiryInTicks = GameManager.Instance.GetTicksBasedOnHour(6);
+            expiryInTicks = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.HEAT_WAVE);
         }
 
         #region Override
