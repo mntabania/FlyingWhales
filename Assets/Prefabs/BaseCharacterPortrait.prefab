@@ -249,6 +249,7 @@ MonoBehaviour:
   wholeImage: {fileID: 2114327336969677273}
   hoverObj: {fileID: 2073292384221218247}
   ignoreInteractions: 0
+  hoverHandler: {fileID: 2113572301003556129}
 --- !u!1 &2073292384221218247
 GameObject:
   m_ObjectHideFlags: 0

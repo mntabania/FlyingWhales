@@ -21,26 +21,46 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     private void Start() {
         InstantiateUI();
         HideUI();
+        m_upgradePortalUIView.AddHoverOverActionToItems(OnHoverOverUpgradeItem);
+        m_upgradePortalUIView.AddHoverOutActionToItems(OnHoverOutUpgradeItem);
     }
     public void ShowPortalUpgradeTier(PortalUpgradeTier p_upgradeTier, int p_level) {
         ShowUI();
         m_upgradePortalUIView.UpdateItems(p_upgradeTier);
         m_upgradePortalUIView.SetHeader($"Upgrade to Level {(p_level + 1).ToString()}?");
         m_upgradePortalUIView.SetUpgradeText($"Upgrade - {p_upgradeTier.GetUpgradeCostString()}");
-        m_upgradePortalUIView.SetUpgradeBtnInteractable(PlayerManager.Instance.player.CanAfford(p_upgradeTier.upgradeCost));
+        if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
+            m_upgradePortalUIView.SetUpgradeBtnInteractable(PlayerManager.Instance.player.CanAfford(p_upgradeTier.upgradeCost));    
+        }
+        m_upgradePortalUIView.PlayShowAnimation();
+    }
+    public void AnimatedHideUI() {
+        m_upgradePortalUIView.PlayHideAnimation(HideUI);
     }
 
     #region UpgradePortalUIView.IListener
     public void OnClickClose() {
-        HideUI();
+        AnimatedHideUI();
     }
     public void OnClickUpgrade() {
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         PortalUpgradeTier nextTier = portal.nextTier;
         portal.PayForUpgrade(nextTier);
         PlayerManager.Instance.player.playerSkillComponent.PlayerStartedPortalUpgrade(nextTier.upgradeCost, nextTier);
-        HideUI();
+        AnimatedHideUI();
     }
     #endregion
+
+    private void OnHoverOverUpgradeItem(UpgradePortalItemUI p_item) {
+        if (PlayerUI.Instance != null) {
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_item.skill);
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, m_upgradePortalUIView.UIModel.tooltipHoverPos);    
+        }
+    }
+    private void OnHoverOutUpgradeItem(UpgradePortalItemUI p_item) {
+        if (PlayerUI.Instance != null) {
+            PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
+        }
+    }
     
 }

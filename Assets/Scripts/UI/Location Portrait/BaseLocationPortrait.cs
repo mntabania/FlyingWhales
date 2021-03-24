@@ -43,13 +43,25 @@ public class BaseLocationPortrait : PooledObject, IPointerClickHandler {
         if (!hoverObj.activeSelf) {
             hoverObj.gameObject.SetActive(true);    
         }
-        _onHoverOutAction?.Invoke();
+        _onHoverOverAction?.Invoke();
     }
     private void OnHoverOut() {
         if (hoverObj.activeSelf) {
             hoverObj.gameObject.SetActive(false);    
         }
         _onHoverOutAction?.Invoke();
+    }
+    public void AddHoverOverAction(System.Action p_action) {
+        _onHoverOverAction += p_action;
+    }
+    public void AddHoverOutAction(System.Action p_action) {
+        _onHoverOutAction += p_action;
+    }
+    public void RemoveHoverOverAction(System.Action p_action) {
+        _onHoverOverAction -= p_action;
+    }
+    public void RemoveHoverOutAction(System.Action p_action) {
+        _onHoverOutAction -= p_action;
     }
     #endregion
 

@@ -1,4 +1,5 @@
-﻿using EZObjectPools;
+﻿using System;
+using EZObjectPools;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,10 +15,15 @@ public class BaseCharacterPortrait : PooledObject, IPointerClickHandler {
     [Header("Other")]
     [SerializeField] private GameObject hoverObj;
     [SerializeField] private bool ignoreInteractions = false;
+    [SerializeField] private HoverHandler hoverHandler;
     
     private System.Action _onClickAction;
-    
-    
+    private System.Action _onHoverOverAction;
+    private System.Action _onHoverOutAction;
+    private void Awake() {
+        hoverHandler.AddOnHoverOverAction(OnHoverOver);
+        hoverHandler.AddOnHoverOutAction(OnHoverOut);
+    }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
         Sprite sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(portraitSettings.wholeImage);
         UpdatePortrait(sprite);
@@ -76,6 +82,24 @@ public class BaseCharacterPortrait : PooledObject, IPointerClickHandler {
     private void OnRightClick() { }
     public void SetHoverHighlightState(bool state) { 
         hoverObj.SetActive(state);
+    }
+    private void OnHoverOver() {
+        _onHoverOverAction?.Invoke();
+    }
+    private void OnHoverOut() {
+        _onHoverOutAction?.Invoke();
+    }
+    public void AddHoverOverAction(System.Action p_action) {
+        _onHoverOverAction += p_action;
+    }
+    public void AddHoverOutAction(System.Action p_action) {
+        _onHoverOutAction += p_action;
+    }
+    public void RemoveHoverOverAction(System.Action p_action) {
+        _onHoverOverAction -= p_action;
+    }
+    public void RemoveHoverOutAction(System.Action p_action) {
+        _onHoverOutAction -= p_action;
     }
     #endregion
 }
