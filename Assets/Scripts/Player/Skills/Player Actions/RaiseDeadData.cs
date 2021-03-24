@@ -21,7 +21,7 @@ public class RaiseDeadData : PlayerAction {
         } else if (targetPOI is Tombstone) {
             target = (targetPOI as Tombstone).character;
         }
-        CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, FactionManager.Instance.undeadFaction);
+        Summon summon = CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, FactionManager.Instance.undeadFaction);
         //target.RaiseFromDeath(1, faction: PlayerManager.Instance.player.playerFaction, className: target.characterClass.className);
 
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead", null, LogUtilities.Player_Life_Changes_Tags);
@@ -33,9 +33,9 @@ public class RaiseDeadData : PlayerAction {
             UIManager.Instance.characterInfoUI.CloseMenu();
         }
         base.ActivateAbility(targetPOI);
-        float m_addedMaxHP = target.maxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD) / 100f);
-        target.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
-        target.combatComponent.AddAttackBaseOnPercentage(PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD) / 100f);
+        float m_addedMaxHP = summon.maxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD) / 100f);
+        summon.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
+        summon.combatComponent.AddAttackBaseOnPercentage(PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD) / 100f);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (!targetCharacter.isDead || !targetCharacter.carryComponent.IsNotBeingCarried() || targetCharacter.marker == null || targetCharacter.characterClass.IsZombie()) {
