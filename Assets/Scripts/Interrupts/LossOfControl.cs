@@ -44,7 +44,7 @@ namespace Interrupts {
             } else if (interruptHolder.actor.characterClass.className.Equals("Mage")) { 
                 //Brimstones
                 if (area.spellsComponent.hasBrimstones) {
-                    //reset electric storm
+                    //reset brim stone
                     area.spellsComponent.ResetBrimstoneDuration();
                 } else {
                     area.spellsComponent.SetHasBrimstones(true);

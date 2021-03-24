@@ -408,10 +408,14 @@ public class PlayerSkillManager : MonoBehaviour {
     #endregion
 
     #region utility
-    public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(skillData.currentLevel);
+        if (p_forcedLevel == -1) {
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+            return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(skillData.currentLevel);
+        } else {
+            return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(p_forcedLevel);
+        }
     }
 
     public int GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
@@ -456,10 +460,14 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(skillData.currentLevel);
     }
 
-    public int GetDurationBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public int GetDurationBonusPerLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel);
+        if (p_forcedLevel == -1) {
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+            return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel);
+        } else {
+            return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(p_forcedLevel);
+        }
     }
 
     public int GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE p_skillType) {

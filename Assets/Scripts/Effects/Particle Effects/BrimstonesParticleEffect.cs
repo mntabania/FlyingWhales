@@ -8,6 +8,8 @@ using Inner_Maps;
 
 public class BrimstonesParticleEffect : BaseParticleEffect {
 
+    public bool IsCastedByPlayer { set; get; }
+
     protected override void PlayParticle() {
         base.PlayParticle();
         StartCoroutine(BrimstoneEffect());
@@ -27,7 +29,9 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
     }
     private void BrimstoneEffect(ITraitable traitable, ref BurningSource bs) {
         int additionalDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
-        
+        if (!IsCastedByPlayer) {
+            additionalDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES, 0);
+        }
         int processedDamage = additionalDamage;
         if (traitable is TileObject obj) {
             //int processedDamage = m_brimstoneBaseDamage - (m_brimstoneBaseDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));

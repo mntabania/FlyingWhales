@@ -258,7 +258,7 @@ namespace Inner_Maps {
             int duration = 0;
             if (triggeredBy is Summon summon) {
                 if (summon.summonType == SUMMON_TYPE.Kobold) {
-                    duration = 40; //2 hrs
+                    duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP, 0);
                 }
             } else {
                 duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
