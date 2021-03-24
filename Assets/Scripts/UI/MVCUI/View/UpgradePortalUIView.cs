@@ -45,10 +45,22 @@ public class UpgradePortalUIView : MVCUIView {
 
     #region User defined functions
     public void UpdateItems(PortalUpgradeTier p_upgradeTier) {
+        int lastIndex = 0;
         for (int i = 0; i < UIModel.items.Length; i++) {
             UpgradePortalItemUI itemUI = UIModel.items[i];
             PLAYER_SKILL_TYPE skillType = p_upgradeTier.skillTypesToUnlock.ElementAtOrDefault(i);
             if (skillType != PLAYER_SKILL_TYPE.NONE) {
+                itemUI.SetData(skillType);
+                itemUI.gameObject.SetActive(true);
+            } else {
+                lastIndex = i;
+                break;
+            }
+        }
+        for (int i = lastIndex; i < UIModel.items.Length; i++) {
+            UpgradePortalItemUI itemUI = UIModel.items[i];
+            PASSIVE_SKILL skillType = p_upgradeTier.passiveSkillsToUnlock.ElementAtOrDefault(i);
+            if (skillType != PASSIVE_SKILL.None) {
                 itemUI.SetData(skillType);
                 itemUI.gameObject.SetActive(true);
             } else {
@@ -61,6 +73,9 @@ public class UpgradePortalUIView : MVCUIView {
     }
     public void SetUpgradeText(string p_value) {
         UIModel.btnUpgrade.SetButtonLabelName(p_value);
+    }
+    public void SetUpgradeBtnInteractable(bool p_state) {
+        UIModel.btnUpgrade.interactable = p_state;
     }
     #endregion
 }

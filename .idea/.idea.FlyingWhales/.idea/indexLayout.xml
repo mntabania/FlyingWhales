@@ -66,6 +66,7 @@
       <Path>Logs</Path>
       <Path>MemoryCaptures</Path>
       <Path>Steamworks</Path>
+      <Path>Temp</Path>
       <Path>UIElementsSchema</Path>
       <Path>_site</Path>
       <Path>api</Path>

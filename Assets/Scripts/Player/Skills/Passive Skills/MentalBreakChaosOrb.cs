@@ -4,7 +4,8 @@ using Traits;
 using Interrupts;
 
 public class MentalBreakChaosOrb : PassiveSkill {
-    public override string name => "Mana Orbs upon mental break";
+    public override string name => "Gain Chaos Orbs from Mental Breaks";
+    public override string description => "Mana Orbs upon mental break";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Mental_Break_Chaos_Orb;
 
     public override void ActivateSkill() {

@@ -293,6 +293,9 @@ public class SkillData : IPlayerSkill {
     public void SetMaxCharges(int amount) {
         baseMaxCharges = amount;
     }
+    public void AdjustMaxCharges(int amount) {
+        baseMaxCharges += amount;
+    }
     public void SetCharges(int amount) {
         charges = amount;
     }

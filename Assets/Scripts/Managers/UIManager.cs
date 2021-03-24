@@ -1916,8 +1916,8 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Demonic Structures")]
     [SerializeField] private PortalUIController _portalUIController;
-    public void ShowUnlockAbilitiesUI() {
-        _portalUIController.ShowUI();
+    public void ShowUnlockAbilitiesUI(ThePortal portal) {
+        _portalUIController.ShowUI(portal);
         SetSpeedTogglesState(false);
         Pause();
     }

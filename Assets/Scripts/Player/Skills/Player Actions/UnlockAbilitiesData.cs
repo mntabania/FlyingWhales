@@ -10,7 +10,9 @@ public class UnlockAbilitiesData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        UIManager.Instance.ShowUnlockAbilitiesUI();
+        if (structure is ThePortal portal) {
+            UIManager.Instance.ShowUnlockAbilitiesUI(portal);    
+        }
         base.ActivateAbility(structure);
     }
     #endregion

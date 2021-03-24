@@ -6,6 +6,9 @@ using UnityEngine.UI.Extensions;
 
 [CreateAssetMenu(fileName = "New Player Skill Loadout", menuName = "Scriptable Objects/Player Skill Loadout")]
 public class PlayerSkillLoadout : ScriptableObject {
+
+    public const int MAX_SKILLS_PER_UPGRADE_TIER = 6;
+    
     public PLAYER_ARCHETYPE archetype;
     public PlayerSkillLoadoutData spells;
     public PlayerSkillLoadoutData afflictions;
@@ -34,6 +37,13 @@ public class PlayerSkillLoadout : ScriptableObject {
                     tier.upgradeCost[j] = cost;
                 }
                 portalUpgradeTiers[i] = tier;
+
+                int passiveSkillsLength = tier.passiveSkillsToUnlock?.Length ?? 0;
+                int skillTypesLength = tier.skillTypesToUnlock?.Length ?? 0;
+                int totalThingsToUnlockInTier = passiveSkillsLength + skillTypesLength;
+                if (totalThingsToUnlockInTier > MAX_SKILLS_PER_UPGRADE_TIER) {
+                    Debug.LogError($"{this.name} ({tier.name}) has {totalThingsToUnlockInTier.ToString()} upgrades but maximum amount should only be {MAX_SKILLS_PER_UPGRADE_TIER.ToString()}!");
+                }
             }    
         }
     }
@@ -50,6 +60,7 @@ public struct PortalUpgradeTier {
     public PLAYER_SKILL_TYPE[] skillTypesToUnlock;
     public PASSIVE_SKILL[] passiveSkillsToUnlock;
     public Cost[] upgradeCost;
+    public int upgradeTime;
 
     public string GetUpgradeCostString() {
         string combined = string.Empty;

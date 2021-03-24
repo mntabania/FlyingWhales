@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Scriptable_Object_Scripts;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class PlayerSkillManager : MonoBehaviour {
     public static PlayerSkillManager Instance;
@@ -134,7 +135,9 @@ public class PlayerSkillManager : MonoBehaviour {
     PLAYER_SKILL_TYPE.VENGEFUL_GHOST, PLAYER_SKILL_TYPE.WURM, PLAYER_SKILL_TYPE.TROLL, PLAYER_SKILL_TYPE.REVENANT, PLAYER_SKILL_TYPE.BONE_GOLEM, PLAYER_SKILL_TYPE.PLAGUED_RAT, PLAYER_SKILL_TYPE.SCORPION, PLAYER_SKILL_TYPE.HARPY };
 
     [NonSerialized]
-    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Prayer_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb, PASSIVE_SKILL.Spell_Damage_Chaos_Orb, PASSIVE_SKILL.Mental_Break_Chaos_Orb, PASSIVE_SKILL.Plague_Chaos_Orb, PASSIVE_SKILL.Player_Success_Raid_Chaos_Orb };
+    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Prayer_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb, PASSIVE_SKILL.Spell_Damage_Chaos_Orb, PASSIVE_SKILL.Mental_Break_Chaos_Orb, 
+        PASSIVE_SKILL.Plague_Chaos_Orb, PASSIVE_SKILL.Player_Success_Raid_Chaos_Orb 
+    };
     
     private void Awake() {
         if (Instance == null) {
@@ -318,6 +321,11 @@ public class PlayerSkillManager : MonoBehaviour {
             return allDemonicStructureSkillsData[type];
         }
         return null;
+    }
+    public DemonicStructurePlayerSkill GetDemonicStructureSkillData(STRUCTURE_TYPE type) {
+        Assert.IsTrue(type.IsPlayerStructure());
+        PLAYER_SKILL_TYPE skillType = (PLAYER_SKILL_TYPE)Enum.Parse(typeof(PLAYER_SKILL_TYPE), type.ToString());
+        return GetDemonicStructureSkillData(skillType);
     }
     public MinionPlayerSkill GetMinionPlayerSkillData(PLAYER_SKILL_TYPE type) {
         if (allMinionPlayerSkillsData.ContainsKey(type)) {

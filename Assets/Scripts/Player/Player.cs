@@ -818,8 +818,38 @@ public class Player : ILeader, IObjectManipulator {
                 throw new ArgumentOutOfRangeException(nameof(p_currency), p_currency, null);
         }
     }
-    public void AdjustCurrency(Cost p_cost) {
+    public void AddCurrency(Cost p_cost) {
+        AdjustCurrency(p_cost.currency, p_cost.amount);
+    }
+    public void ReduceCurrency(Cost p_cost) {
         AdjustCurrency(p_cost.currency, -p_cost.amount);
+    }
+    public bool CanAfford(CURRENCY p_currency, int p_amount) {
+        switch (p_currency) {
+            case CURRENCY.Mana:
+                return mana >= p_amount;
+            case CURRENCY.Chaotic_Energy:
+                return plagueComponent.plaguePoints >= p_amount;
+            case CURRENCY.Spirit_Energy:
+                return spiritEnergy >= p_amount;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_currency), p_currency, null);
+        }
+    }
+    public bool CanAfford(Cost p_cost) {
+        return CanAfford(p_cost.currency, p_cost.amount);
+    }
+    public bool CanAfford(Cost[] p_cost) {
+        bool canAfford = true;
+        for (int i = 0; i < p_cost.Length; i++) {
+            Cost cost = p_cost[i];
+            if (!CanAfford(cost)) {
+                canAfford = false;
+                break;
+            }
+        }
+        return canAfford;
     }
     #endregion
 }
