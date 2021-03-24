@@ -61,10 +61,10 @@ MonoBehaviour:
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel:
-    - 1
-    - 2
-    - 3
-    - 4
+    - 5
+    - 10
+    - 15
+    - 15
     durationBonusPerLevel: 280000003c0000005000000064000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
