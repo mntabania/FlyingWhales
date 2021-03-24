@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Repair
   m_EditorClassIdentifier: 
   skill: 150
-  manaCost: 15
-  charges: 2
-  cooldown: 144
+  manaCost: 20
+  charges: 1
+  cooldown: 240
   threat: 0
   threatPerHour: 0
   expCost: 0
@@ -46,9 +46,9 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 
-    chargesPerLevel: 
-    bonuses: 
+    manacostPerLevel: 14000000
+    chargesPerLevel: 01000000
+    bonuses: 0e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel: []
     additionalHpPercentagePerLevel: []
@@ -63,5 +63,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 
+    cooldownPerLevel: f0000000
     skillMovementSpeed: 
