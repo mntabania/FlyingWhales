@@ -46,13 +46,16 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder + 5);
         } else if (obj.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
             SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder + 10);
-        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.MAGIC_CIRCLE) {
+        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.MAGIC_CIRCLE || obj.tileObjectType == TILE_OBJECT_TYPE.RUG) {
             SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder - 1);
         } else if (obj.tileObjectType == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
             SetSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 2);
-        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT) {
-            SetSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 3);
-        } else {
+        }
+        //Removed because this is not needed anymore. The reason we put this is because there are tree objects in the portal template before
+        //else if (obj.tileObjectType == TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT) {
+        //    SetSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 3);
+        //} 
+        else {
             base.UpdateSortingOrders(obj);
         }
     }

@@ -31,14 +31,14 @@ public class StructureItemGenerator : MonoBehaviour {
 
     private ThinWallGameObject[] wallVisuals;
 
-    private void UpdateSortingOrders() {
-        _groundTileMapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 5;
-        _detailTileMapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
-        for (int i = 0; i < wallVisuals.Length; i++) {
-            ThinWallGameObject wallVisual = wallVisuals[i];
-            wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
-        }
-    }
+    //private void UpdateSortingOrders() {
+    //    _groundTileMapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 5;
+    //    _detailTileMapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
+    //    for (int i = 0; i < wallVisuals.Length; i++) {
+    //        ThinWallGameObject wallVisual = wallVisuals[i];
+    //        wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
+    //    }
+    //}
 
     [ContextMenu("Convert Walls")]
     public void ConvertWalls() {
