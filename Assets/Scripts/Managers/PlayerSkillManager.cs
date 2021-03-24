@@ -442,6 +442,12 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(skillData.currentLevel);
     }
 
+    public float GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        return playerSkillData.skillUpgradeData.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(skillData.currentLevel);
+    }
+
     public float GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);

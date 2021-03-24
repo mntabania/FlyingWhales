@@ -28,9 +28,9 @@ namespace Traits {
                     character.marker.BerserkedMarker();
                 }
                 m_addedAtk = PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
-                character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk);
+                character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk / 100f);
 
-                float m_addedMaxHP = character.maxHP * (PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100);
+                float m_addedMaxHP = character.maxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100);
                 character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
             }
         }
