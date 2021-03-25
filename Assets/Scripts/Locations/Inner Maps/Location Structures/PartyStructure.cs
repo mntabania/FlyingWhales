@@ -17,6 +17,9 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public bool IsAvailableForTargeting() {
+            if (this is Maraud || this is DefensePoint) {
+                return true;
+            }
             bool isOccupied = charactersHere.Count > 0;
             int deadCount = 0;
             charactersHere.ForEach((eachCharacter) => {
