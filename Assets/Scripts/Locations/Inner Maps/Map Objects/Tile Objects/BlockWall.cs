@@ -51,16 +51,18 @@ public class BlockWall : TileObject {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryScheduleKey);
         }
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
+        EvaluateAllBlockWallNeighboursForDiagonalImpassables(removedFrom, false);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-        Vector2 size = new Vector2(1f, 1f);
-        if (wallType == WALL_TYPE.Flesh) {
-            size = new Vector2(0.5f, 0.5f);
-        } else if (wallType == WALL_TYPE.Demon_Stone) {
-            size = new Vector2(1f, 1f);
-        }
+        //Vector2 size = new Vector2(1f, 1f);
+        //if (wallType == WALL_TYPE.Flesh) {
+        //    size = new Vector2(0.5f, 0.5f);
+        //} else if (wallType == WALL_TYPE.Demon_Stone) {
+        //    size = new Vector2(1f, 1f);
+        //}
+        Vector2 size = new Vector2(0.5f, 0.5f);
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
         ////Thin walls cannot co-exist with block walls, so if a block wall is placed, all thin walls must be destroyed
         //if(tile.tileObjectComponent.walls.Count > 0) {
@@ -70,6 +72,7 @@ public class BlockWall : TileObject {
         //    }
         //}
         base.OnPlaceTileObjectAtTile(tile);
+        EvaluateAllBlockWallNeighboursForDiagonalImpassables(tile, true);
     }
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
@@ -103,6 +106,24 @@ public class BlockWall : TileObject {
     
     public void UpdateVisual(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+    }
+    private void EvaluateAllBlockWallNeighboursForDiagonalImpassables(LocationGridTile p_centerTile, bool p_includeCenterTile) {
+        if (!GameManager.Instance.gameHasStarted) {
+            //Do not evaluate impassables if the game has not yet started because it is not needed in world generation
+            return;
+        }
+        if (p_includeCenterTile) {
+            (mapVisual as BlockWallGameObject).EvaluateImpassables();
+        }
+        for (int i = 0; i < p_centerTile.neighbourList.Count; i++) {
+            LocationGridTile neighbour = p_centerTile.neighbourList[i];
+            EvaluateBlockWallNeighbour(neighbour);
+        }
+    }
+    private void EvaluateBlockWallNeighbour(LocationGridTile p_neighbourTile) {
+        if(p_neighbourTile.tileObjectComponent.objHere is BlockWall blockWall) {
+            (blockWall.mapVisual as BlockWallGameObject).EvaluateImpassables();
+        }
     }
 }
 
