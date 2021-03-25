@@ -108,7 +108,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         _detailTileMapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
         for (int i = 0; i < wallVisuals.Length; i++) {
             ThinWallGameObject wallVisual = wallVisuals[i];
-            wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
+            wallVisual.UpdateSortingOrders(InnerMapManager.DetailsTilemapSortingOrder + 1);
         }
     }
     public void OverrideDefaultSortingOrder(int p_sortingOrder) {
@@ -907,11 +907,13 @@ public class LocationStructureObject : PooledObject, ISelectable {
         //    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
         //    return false;
         //}
-        
-        
+
+
         //limit so that structures will not be directly adjacent with each other
-        for (int j = 0; j < tile.neighbourList.Count; j++) {
-            LocationGridTile neighbour = tile.neighbourList[j];
+        List<LocationGridTile> tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
+        tile.PopulateTilesInRadius(tilesInRadius, 2, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        for (int j = 0; j < tilesInRadius.Count; j++) {
+            LocationGridTile neighbour = tilesInRadius[j];
             if (neighbour.hasBlueprint) {
                 Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
                 o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
@@ -950,6 +952,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 }    
             }
         }
+        ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesInRadius);
         o_cannotPlaceReason = string.Empty;
         return true;
     }

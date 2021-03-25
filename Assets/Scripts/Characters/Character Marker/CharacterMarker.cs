@@ -776,14 +776,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.gridTileLocation == destinationTile || character.gridTileLocation.IsNeighbour(destinationTile)) {
             attainedDestinationTile = destinationTile;
         } else {
-            List<Vector3> vectorPath = pathfindingAI.currentPath.vectorPath;
-            if (vectorPath != null && vectorPath.Count > 0) {
-                Vector3 lastPositionInPath = vectorPath.Last();
-                //lastPositionInPath = new Vector3(Mathf.Round(lastPositionInPath.x), Mathf.Round(lastPositionInPath.y), lastPositionInPath.z);
-                attainedDestinationTile = character.currentRegion.innerMap.GetTileFromWorldPos(lastPositionInPath);
-            } else {
-                attainedDestinationTile = character.gridTileLocation;
-            }
+            attainedDestinationTile = character.gridTileLocation;
+            //List<Vector3> vectorPath = pathfindingAI.currentPath.vectorPath;
+            //if (vectorPath != null && vectorPath.Count > 0) {
+            //    Vector3 lastPositionInPath = vectorPath.Last();
+            //    //lastPositionInPath = new Vector3(Mathf.Round(lastPositionInPath.x), Mathf.Round(lastPositionInPath.y), lastPositionInPath.z);
+            //    attainedDestinationTile = character.currentRegion.innerMap.GetTileFromWorldPos(lastPositionInPath);
+            //} else {
+            //    attainedDestinationTile = character.gridTileLocation;
+            //}
         }
     }
     public LocationGridTile GetDestinationTile() {

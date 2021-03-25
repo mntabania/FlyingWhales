@@ -107,7 +107,7 @@ public class PathfindingManager : BaseMonoBehaviour {
     public void CreatePathfindingGraphForLocation(InnerTileMap newMap) {
         var pathfindingGraph = CreatePathfindingGraph(newMap, typeof(RuinarchGridGraph), $"{newMap.region.name} Main Map");
         newMap.pathfindingGraph = pathfindingGraph;
-        
+
         var unwalkableGraph = CreatePathfindingGraph(newMap, typeof(GridGraph), $"{newMap.region.name} UnWalkable Map");
         newMap.unwalkableGraph = unwalkableGraph;
     }
@@ -129,7 +129,7 @@ public class PathfindingManager : BaseMonoBehaviour {
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        gg.collision.diameter = 0.8f;
+        gg.collision.diameter = 1f; //0.8f - Switched to 1f so that both sides of thin walls are unwalkable
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         return gg;
     }
