@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Join Faction
   m_EditorClassIdentifier: 
   skill: 165
-  manaCost: 20
-  charges: 1
-  cooldown: 480
+  manaCost: -1
+  charges: -1
+  cooldown: 240
   threat: 0
   threatPerHour: 0
   expCost: 300
@@ -46,8 +46,8 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 14000000
-    chargesPerLevel: 14000000
+    manacostPerLevel: ffffffff
+    chargesPerLevel: ffffffff
     bonuses: 0e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel: []
@@ -63,5 +63,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: e0010000
+    cooldownPerLevel: f0000000
     skillMovementSpeed: 
