@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 4106534
+    totalSpriteSurfaceArea: 4108749
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -274,6 +274,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 57cab979051b4324bbdd464668b27511, type: 3}
   - {fileID: 21300000, guid: 78b42a89f6925ca4caae504b7c91e78c, type: 3}
   - {fileID: 749631002031189387, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 4377157959891871483, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 5418670006307940872, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -48485338325469877, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -330086751256627328, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
@@ -380,6 +381,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bc9177cc450adb34ba90c2c2b1562a63, type: 3}
   - {fileID: 21300000, guid: 595b64dce6b185c44b2962644030bb50, type: 3}
   - {fileID: 21300000, guid: 1ec98cdc361ba1d48a3a88681f3dd93a, type: 3}
+  - {fileID: 21300000, guid: 0bd8dcfc9d323b5459c58271cdbc5db9, type: 3}
   - {fileID: 21300000, guid: 153f4dfcc2e11164e9a33cd5a1948247, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
   - {fileID: 21300000, guid: 9e6ac31dc22c6c74c87fa0351f9a63c3, type: 3}
@@ -683,6 +685,7 @@ SpriteAtlas:
   - element_earth_icon
   - nameplate_container
   - piercing_icon
+  - upgrade_arrow_icon
   - element_wind_icon
   - resistance_icon
   - stats_speed_icon
@@ -789,6 +792,7 @@ SpriteAtlas:
   - Transition-Arrow-Hover
   - MinusButton
   - minion_tab_items_hover
+  - upgrade_arrow_icon
   - tab_traits_default
   - WhiteCircle
   - traveller_clicked

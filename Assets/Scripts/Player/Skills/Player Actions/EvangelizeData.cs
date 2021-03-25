@@ -6,7 +6,7 @@ using UtilityScripts;
 public class EvangelizeData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EVANGELIZE;
     public override string name => "Preach";
-    public override string description => GetDescription();
+    public override string description => "This Ability instructs the character to preach about Demon Worship to someone they know. Only available on Cultists."; //GetDescription();
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     

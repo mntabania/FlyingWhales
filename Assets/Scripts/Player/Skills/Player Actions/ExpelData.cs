@@ -7,7 +7,7 @@ using Logs;
 public class ExpelData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EXPEL;
     public override string name => "Expel";
-    public override string description => "This Action kicks out a character from its current Village and Faction. Available because its Faction is allied to you.";
+    public override string description => "This Action kicks out a character from its current Village and Faction. Available only on characters whose Faction is allied with you.";
     public ExpelData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

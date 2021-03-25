@@ -7,7 +7,7 @@ using UtilityScripts;
 public class WaterSpikeData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WATER_SPIKE;
     public override string name => "Water Spike";
-    public override string description => "This Spell spike a powerful wave of water outward from a target spot, dealing water damage to anything it hits.";
+    public override string description => "This Spell causes blasts of water to shatter around a small area, dealing Water damage to those within range.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
     public WaterSpikeData() : base() {

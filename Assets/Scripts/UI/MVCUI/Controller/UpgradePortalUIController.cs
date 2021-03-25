@@ -53,7 +53,7 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
 
     private void OnHoverOverUpgradeItem(UpgradePortalItemUI p_item) {
         if (PlayerUI.Instance != null) {
-            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_item.skill);
+            PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_item.skill);
             PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, m_upgradePortalUIView.UIModel.tooltipHoverPos);    
         }
     }

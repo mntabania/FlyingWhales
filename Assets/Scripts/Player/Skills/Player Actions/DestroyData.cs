@@ -7,7 +7,7 @@ using Logs;
 public class DestroyData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DESTROY;
     public override string name => "Destroy";
-    public override string description => "This Action destroys an object.";
+    public override string description => "This Ability instantly destroys an object.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public DestroyData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };

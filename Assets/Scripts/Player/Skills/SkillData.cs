@@ -7,6 +7,9 @@ using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class SkillData : IPlayerSkill {
+
+    public const int MAX_SPELL_LEVEL = 3;
+    
     public virtual PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
@@ -32,13 +35,22 @@ public class SkillData : IPlayerSkill {
     public float basePierce { get; private set; }
     public int baseCooldown { get; private set; }
     public int baseThreat { get; private set; }
+    /// <summary>
+    /// Current level of this spell. This starts at 0.
+    /// 0 = Level 1, 1 = Level 2, etc.
+    /// </summary>
     public int currentLevel { get; set; }
-
+    /// <summary>
+    /// The level that should be displayed on UI. This getter is only for convenience.
+    /// </summary>
+    public int levelForDisplay => currentLevel + 1;
+    public bool isMaxLevel => currentLevel >= MAX_SPELL_LEVEL;
+    
     public int unlockCost { get; set; }
 
     public void LevelUp() {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
-        currentLevel = Mathf.Clamp(++currentLevel, 0, 3);
+        currentLevel = Mathf.Clamp(++currentLevel, 0, MAX_SPELL_LEVEL);
         SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
         SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
         SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
@@ -129,7 +141,6 @@ public class SkillData : IPlayerSkill {
         currentCooldownTick = cooldown;
         currentLevel = 0;
         isInUse = false;
-        currentLevel = 0;
     }
     public bool CanPerformAbilityTowards(IPointOfInterest poi) {
         if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {

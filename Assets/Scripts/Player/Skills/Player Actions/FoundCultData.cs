@@ -8,7 +8,7 @@ using UtilityScripts;
 public class FoundCultData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FOUND_CULT;
     public override string name => "Found Cult";
-    public override string description => "This Action forces the character to create a new Demon Cult faction.";
+    public override string description => "This Ability instructs the Cult Leader to start a new Demon Cult faction. Available only on Cult Leaders.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     

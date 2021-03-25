@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class SacrificeData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SACRIFICE;
     public override string name => "Sacrifice";
-    public override string description => "This Action allows you to sacrifice a kenneled Monster for 2 Mana Orbs.";
+    public override string description => "This Action allows you to sacrifice an imprisoned Monster for Chaotic Orbs.";
     public SacrificeData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

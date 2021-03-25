@@ -1726,7 +1726,12 @@ public class UIManager : BaseMonoBehaviour {
         }
     }
     private void OnHoverOutPlayerActionContextMenuItem(IContextMenuItem p_item) {
-        HideSmallInfo();
+        if (p_item is PlayerAction playerAction) {
+            PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
+        } else {
+            HideSmallInfo();    
+        }
+        
     }
     private void OnHoverEnterFlaw(string traitName, Character p_character, UIHoverPosition p_hoverPosition) {
         Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
@@ -1751,6 +1756,9 @@ public class UIManager : BaseMonoBehaviour {
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private void OnHoverPlayerAction(SkillData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
+        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData, p_hoverPosition);
+        return;
+        
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         string title = $"{spellData.name}";
         string fullDescription = spellData.description;

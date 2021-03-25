@@ -7,7 +7,7 @@ using UtilityScripts;
 public class EarthSpikeData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EARTH_SPIKE;
     public override string name => "Earth Spike";
-    public override string description => "This Spell spike a powerful wave of earth outward from a target spot, dealing earth damage to anything it hits.";
+    public override string description => "This Spell causes a small Earth Spike to erupt from the ground, dealing Earth damage to those within range.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
     public EarthSpikeData() : base() {

@@ -2,7 +2,7 @@
 
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.HEAL;
     public override string name => "Heal";
-    public override string description => "This Action partially replenishes a character's HP.";
+    public override string description => "This Ability replenishes a portion of the character's HP.";
     public HealData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

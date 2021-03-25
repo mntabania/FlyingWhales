@@ -7,7 +7,7 @@ using Locations.Area_Features;
 public class RainData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RAIN;
     public override string name => "Rain";
-    public override string description => "This Spell will generate rainfall on the target area, applying Wet to anything outside structures.";
+    public override string description => "This Spell will generate rainfall on the target area, applying Wet to anything outside structures and caves.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 

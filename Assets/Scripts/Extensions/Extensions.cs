@@ -1388,4 +1388,25 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Upgrades
+    public static int GetUpgradeOrderInTooltip(this UPGRADE_BONUS p_bonus) {
+        switch (p_bonus) {
+            case UPGRADE_BONUS.Damage:
+                return 0;
+            case UPGRADE_BONUS.Pierce:
+                return 1;
+            case UPGRADE_BONUS.Duration:
+                return 2;
+            case UPGRADE_BONUS.Tile_Range:
+                return 3;
+            case UPGRADE_BONUS.Skill_Movement_Speed:
+                return 4;
+            case UPGRADE_BONUS.Cooldown:
+                return 5;
+            default:
+                return Int32.MaxValue;
+        }
+    }
+    #endregion
 }

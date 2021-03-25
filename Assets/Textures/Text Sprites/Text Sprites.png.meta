@@ -95,6 +95,9 @@ TextureImporter:
   - first:
       213: -2149108924096473933
     second: spirit_energy_icon
+  - first:
+      213: 4377157959891871483
+    second: upgrade_arrow_icon
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -171,12 +174,12 @@ TextureImporter:
       name: element_earth_icon
       rect:
         serializedVersion: 2
-        x: 0
-        y: 159
+        x: 2
+        y: 36
         width: 32
-        height: 27
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5185185}
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -192,12 +195,12 @@ TextureImporter:
       name: element_electric_icon
       rect:
         serializedVersion: 2
-        x: 64
-        y: 160
-        width: 31
+        x: 38
+        y: 180
+        width: 32
         height: 32
-      alignment: 9
-      pivot: {x: 0.48387095, y: 0.5}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -213,12 +216,12 @@ TextureImporter:
       name: element_fire_icon
       rect:
         serializedVersion: 2
-        x: 63
-        y: 129
-        width: 29
-        height: 31
-      alignment: 9
-      pivot: {x: 0.4827586, y: 0.516129}
+        x: 44
+        y: 222
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -234,12 +237,12 @@ TextureImporter:
       name: element_ice_icon
       rect:
         serializedVersion: 2
-        x: 0
-        y: 98
-        width: 28
-        height: 31
-      alignment: 9
-      pivot: {x: 0.5, y: 0.516129}
+        x: 38
+        y: 144
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -255,12 +258,12 @@ TextureImporter:
       name: element_normal_icon
       rect:
         serializedVersion: 2
-        x: 32
-        y: 132
-        width: 31
-        height: 31
-      alignment: 9
-      pivot: {x: 0.516129, y: 0.516129}
+        x: 38
+        y: 108
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -276,12 +279,12 @@ TextureImporter:
       name: element_poison_icon
       rect:
         serializedVersion: 2
-        x: 0
-        y: 67
-        width: 23
-        height: 31
-      alignment: 9
-      pivot: {x: 0.47826087, y: 0.516129}
+        x: 38
+        y: 72
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -297,12 +300,12 @@ TextureImporter:
       name: element_water_icon
       rect:
         serializedVersion: 2
-        x: 88
-        y: 96
-        width: 27
-        height: 31
-      alignment: 9
-      pivot: {x: 0.44444445, y: 0.516129}
+        x: 38
+        y: 36
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -318,12 +321,12 @@ TextureImporter:
       name: element_wind_icon
       rect:
         serializedVersion: 2
-        x: 0
-        y: 129
-        width: 31
-        height: 30
-      alignment: 9
-      pivot: {x: 0.48387095, y: 0.53333336}
+        x: 102
+        y: 222
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -339,8 +342,8 @@ TextureImporter:
       name: icon_chargesB
       rect:
         serializedVersion: 2
-        x: 0
-        y: 12
+        x: 74
+        y: 131
         width: 21
         height: 31
       alignment: 0
@@ -360,8 +363,8 @@ TextureImporter:
       name: icon_cooldown
       rect:
         serializedVersion: 2
-        x: 23
-        y: 54
+        x: 102
+        y: 156
         width: 23
         height: 26
       alignment: 0
@@ -381,8 +384,8 @@ TextureImporter:
       name: icon_cultist
       rect:
         serializedVersion: 2
-        x: 102
-        y: 206
+        x: 74
+        y: 194
         width: 24
         height: 24
       alignment: 0
@@ -402,8 +405,8 @@ TextureImporter:
       name: icon_demon
       rect:
         serializedVersion: 2
-        x: 102
-        y: 182
+        x: 74
+        y: 166
         width: 24
         height: 24
       alignment: 0
@@ -423,8 +426,8 @@ TextureImporter:
       name: icon_ideology
       rect:
         serializedVersion: 2
-        x: 110
-        y: 82
+        x: 80
+        y: 240
         width: 17
         height: 14
       alignment: 0
@@ -444,8 +447,8 @@ TextureImporter:
       name: icon_leader
       rect:
         serializedVersion: 2
-        x: 28
-        y: 80
+        x: 138
+        y: 166
         width: 24
         height: 22
       alignment: 0
@@ -465,8 +468,8 @@ TextureImporter:
       name: icon_mana
       rect:
         serializedVersion: 2
-        x: 102
-        y: 230
+        x: 138
+        y: 192
         width: 26
         height: 26
       alignment: 0
@@ -486,9 +489,9 @@ TextureImporter:
       name: icon_monster
       rect:
         serializedVersion: 2
-        x: 23
-        y: 30
-        width: 22
+        x: 168
+        y: 194
+        width: 24
         height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -507,8 +510,8 @@ TextureImporter:
       name: icon_plague
       rect:
         serializedVersion: 2
-        x: 0
-        y: 218
+        x: 2
+        y: 216
         width: 38
         height: 38
       alignment: 0
@@ -528,12 +531,12 @@ TextureImporter:
       name: icon_ratvillager
       rect:
         serializedVersion: 2
-        x: 0
-        y: 43
-        width: 23
+        x: 196
+        y: 194
+        width: 24
         height: 24
-      alignment: 9
-      pivot: {x: 0.5217391, y: 0.5}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -549,8 +552,8 @@ TextureImporter:
       name: icon_threat
       rect:
         serializedVersion: 2
-        x: 60
-        y: 103
+        x: 70
+        y: 6
         width: 28
         height: 26
       alignment: 0
@@ -570,12 +573,12 @@ TextureImporter:
       name: icon_undead
       rect:
         serializedVersion: 2
-        x: 87
-        y: 72
-        width: 23
+        x: 224
+        y: 194
+        width: 24
         height: 24
-      alignment: 9
-      pivot: {x: 0.47826087, y: 0.5}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -591,12 +594,12 @@ TextureImporter:
       name: icon_villager
       rect:
         serializedVersion: 2
-        x: 46
-        y: 50
-        width: 23
+        x: 168
+        y: 166
+        width: 24
         height: 24
-      alignment: 9
-      pivot: {x: 0.5217391, y: 0.5}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -612,8 +615,8 @@ TextureImporter:
       name: Key_A
       rect:
         serializedVersion: 2
-        x: 38
-        y: 224
+        x: 2
+        y: 180
         width: 32
         height: 32
       alignment: 0
@@ -633,8 +636,8 @@ TextureImporter:
       name: Key_D
       rect:
         serializedVersion: 2
-        x: 70
-        y: 224
+        x: 2
+        y: 144
         width: 32
         height: 32
       alignment: 0
@@ -654,8 +657,8 @@ TextureImporter:
       name: Key_S
       rect:
         serializedVersion: 2
-        x: 38
-        y: 192
+        x: 2
+        y: 108
         width: 32
         height: 32
       alignment: 0
@@ -675,8 +678,8 @@ TextureImporter:
       name: Key_W
       rect:
         serializedVersion: 2
-        x: 70
-        y: 192
+        x: 2
+        y: 72
         width: 32
         height: 32
       alignment: 0
@@ -696,12 +699,12 @@ TextureImporter:
       name: piercing_icon
       rect:
         serializedVersion: 2
-        x: 60
-        y: 74
-        width: 27
-        height: 29
-      alignment: 9
-      pivot: {x: 0.44444445, y: 0.51724136}
+        x: 2
+        y: 2
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -717,12 +720,12 @@ TextureImporter:
       name: resistance_icon
       rect:
         serializedVersion: 2
-        x: 31
-        y: 102
-        width: 29
+        x: 36
+        y: 2
+        width: 30
         height: 30
-      alignment: 9
-      pivot: {x: 0.51724136, y: 0.5}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -738,8 +741,8 @@ TextureImporter:
       name: spirit_energy_icon
       rect:
         serializedVersion: 2
-        x: 0
-        y: 186
+        x: 138
+        y: 222
         width: 32
         height: 32
       alignment: 0
@@ -759,12 +762,12 @@ TextureImporter:
       name: stats_attack_icon
       rect:
         serializedVersion: 2
-        x: 32
-        y: 163
+        x: 174
+        y: 222
         width: 32
-        height: 29
-      alignment: 9
-      pivot: {x: 0.5, y: 0.51724136}
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -780,12 +783,12 @@ TextureImporter:
       name: stats_health_icon
       rect:
         serializedVersion: 2
-        x: 92
-        y: 127
-        width: 28
-        height: 27
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5185185}
+        x: 210
+        y: 222
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -801,12 +804,12 @@ TextureImporter:
       name: stats_speed_icon
       rect:
         serializedVersion: 2
-        x: 95
-        y: 154
-        width: 31
-        height: 28
-      alignment: 9
-      pivot: {x: 0.48387095, y: 0.5}
+        x: 102
+        y: 186
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -814,6 +817,27 @@ TextureImporter:
       bones: []
       spriteID: 087394e39db4b6bf0800000000000000
       internalID: -330086751256627328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: upgrade_arrow_icon
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 226
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf6e02d29f9cebc30800000000000000
+      internalID: 4377157959891871483
       vertices: []
       indices: 
       edges: []

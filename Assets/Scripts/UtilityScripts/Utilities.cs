@@ -1002,6 +1002,9 @@ namespace UtilityScripts {
         public static string ManaIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\">";
         }
+        public static string UpgradeArrowIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"upgrade_arrow_icon\">";
+        }
         public static string ChargesIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\">";
         }
@@ -1081,6 +1084,9 @@ namespace UtilityScripts {
         public static string ColorizeInvalidText(string p_text) {
             return $"<color=#FE3E83>{p_text}</color>";
         }
+        public static string ColorizeUpgradeText(string p_text) {
+            return $"<color=#81FF00>{p_text}</color>";
+        }
         public static string ColorizeName(string name) {
             return $"<color=#f8ed43>{name}</color>";
         }
@@ -1092,6 +1098,9 @@ namespace UtilityScripts {
         }
         public static string ColorizeAndBoldName(string name, string color) {
             return $"<b>{ColorizeName(name, color)}</b>";
+        }
+        public static string ColorizeSpellTitle(string name) {
+            return $"<color=#D7AE50>{name}</color>";
         }
         public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
             string[] emotions = emotionsStr.Split(' ');
