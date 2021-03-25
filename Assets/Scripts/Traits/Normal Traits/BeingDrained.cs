@@ -30,9 +30,7 @@ namespace Traits {
                 int hpReduction = Mathf.RoundToInt(p_character.maxHP * ((PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.DRAIN_SPIRIT) / 100f)));
                 p_character.AdjustHP(-hpReduction, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
                 int spiritEnergy = p_character is Summon ? 1 : 2;
-                if (p_character.isDead) {
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, p_character.deathTilePosition.centeredWorldLocation, spiritEnergy, p_character.deathTilePosition.parentMap);
-                }
+                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, p_character.gridTileLocation.centeredWorldLocation, spiritEnergy, p_character.gridTileLocation.parentMap);
             }
         }
     }
