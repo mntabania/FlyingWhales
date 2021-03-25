@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3948693
+    totalSpriteSurfaceArea: 3997845
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -533,6 +533,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2a30a1a97f1dfa947a9d78809407e79a, type: 3}
   - {fileID: 21300000, guid: 190bc7a952a5df04b9806c1ad69a4a35, type: 3}
   - {fileID: 21300000, guid: 9603dca974aa5874a869a94b9cf7d999, type: 3}
+  - {fileID: 21300000, guid: 1aa0f5b9c7de5ac49bbf0a62a344b74e, type: 3}
   - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
   - {fileID: 21300000, guid: c77799b9783c3b1419ac8bf68b07ec36, type: 3}
   - {fileID: 21300000, guid: 4f208db9e5ee54b4e9b58074d963d240, type: 3}
@@ -1315,6 +1316,7 @@ SpriteAtlas:
   - BRAZIER#1
   - table_armor
   - oreWall10
+  - crypt_256x192
   - supplies
   - desert_rose
   - CHAIN#2

@@ -43,21 +43,6 @@ public class Selector : MonoBehaviour {
                 //    position.y -= 0.5f;
                 //}
             }
-        } else if (selectable is DemonicStructure demonicStructure) {
-            if (!UtilityScripts.Utilities.IsEven(demonicStructure.structureObj.size.x)) {
-                if (position.x >= 0) {
-                    position.x += 0.5f;
-                } else {
-                    position.x -= 0.5f;
-                }
-            }
-            if (!UtilityScripts.Utilities.IsEven(demonicStructure.structureObj.size.y)) {
-                if (position.y >= 0) {
-                    position.y += 0.5f;
-                } else {
-                    position.y -= 0.5f;
-                }
-            }
         }
 
         transform.SetPositionAndRotation(position, Quaternion.Euler(0f,0f,0f));

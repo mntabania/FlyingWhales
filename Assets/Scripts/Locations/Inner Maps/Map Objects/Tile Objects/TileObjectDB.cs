@@ -315,6 +315,10 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
             occupiedSize = new Point(4, 6)
+        } }, 
+        { TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(4, 3)
         } },
     };
 

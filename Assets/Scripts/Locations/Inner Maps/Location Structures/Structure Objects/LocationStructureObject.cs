@@ -215,6 +215,8 @@ public class LocationStructureObject : PooledObject, ISelectable {
             structure.AddObjectAsDamageContributor(newTileObject);
         } else if (structureType == STRUCTURE_TYPE.MEDDLER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);
+        } else if (structureType == STRUCTURE_TYPE.CRYPT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);
         }
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
@@ -910,10 +912,18 @@ public class LocationStructureObject : PooledObject, ISelectable {
 
 
         //limit so that structures will not be directly adjacent with each other
-        List<LocationGridTile> tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
-        tile.PopulateTilesInRadius(tilesInRadius, 2, includeCenterTile: true, includeTilesInDifferentStructure: true);
-        for (int j = 0; j < tilesInRadius.Count; j++) {
-            LocationGridTile neighbour = tilesInRadius[j];
+        List<LocationGridTile> tilesInRadius = null;
+        List<LocationGridTile> tilesToCheck;
+        if (structureType.IsPlayerStructure()) {
+            tilesToCheck = tile.neighbourList;
+        } else {
+            tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
+            tile.PopulateTilesInRadius(tilesInRadius, 2, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            tilesToCheck = tilesInRadius;
+        }
+
+        for (int j = 0; j < tilesToCheck.Count; j++) {
+            LocationGridTile neighbour = tilesToCheck[j];
             if (neighbour.hasBlueprint) {
                 Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
                 o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
@@ -952,7 +962,9 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 }    
             }
         }
-        ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesInRadius);
+        if(tilesInRadius != null) {
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesInRadius);
+        }
         o_cannotPlaceReason = string.Empty;
         return true;
     }
