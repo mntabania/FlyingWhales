@@ -52,7 +52,7 @@ public class AfflictionUpgradeData
         return rateChance[p_currentLevel];
     }
 
-    public float GetCrowdNumberPerLevel(int p_currentLevel) {
+    public int GetCrowdNumberPerLevel(int p_currentLevel) {
         if (crowdNumber == null || crowdNumber.Count <= 0) {
             return -1;
         }
