@@ -3215,6 +3215,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (CanPlanGoap()) {
             PerStartTickActionPlanning();
         }
+        //Always set this to false here even if the character cannot do goap planning
+        //The reason is that there is a bug in Wurm that after combat, if the Wurm is restrained, it will not go through the behaviour, hence, the value of this is still true
+        //Now, once the Wurm is released, it will immediately teleport and leave a wurm hole which is weird since the Wurm does not satisfy the "just exited combat" rule already since it's been restrained for quite a while now
+        behaviourComponent.SetSubterraneanJustExitedCombat(false);
     }
     public bool CanPlanGoap() {
         //If there is no npcSettlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
