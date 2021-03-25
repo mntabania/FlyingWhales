@@ -1233,3 +1233,15 @@ public enum BOOKMARK_CATEGORY {
 public enum BOOKMARK_TYPE {
     Progress_Bar, Text, Text_With_Cancel
 }
+
+public enum AFFLICTION_UPGRADE_BONUS {
+    Pierce = 0, Crowd_Number, CoolDown, Hunger_Rate, Trigger_Rate, Trigger_Opinion, Naps_Percent, Added_Behaviour,
+}
+
+public enum AFFLICTION_SPECIFIC_BEHAVIOUR {
+    None, Make_Anxious, No_Longer_Join_Parties, Ignore_Urgent_Tasks, Angry_Upon_Hear_Music, Knockout_Singers_Guitar_Players, Murder_Singers_Guitar_Players, Active_Search_Affair, Multiple_Affair, Wild_Multiple_Affair, Pass_Out_From_Fright, Flees_From_Anyone, Do_Pick_Pocket, Rob_From_House, Rob_Any_Place,
+}
+
+public enum OPINIONS { 
+    NoOne = 0, Rival, Enemy, Acquaintance, Everyone,
+}

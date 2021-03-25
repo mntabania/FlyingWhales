@@ -33,17 +33,25 @@ public class PlayerSkillData : ScriptableObject {
 
     public bool isNonUpgradeable;
 
+    public bool isAffliction;
+
     [Space]
     [Header("--------------Upgrade Related---------------")]
     public RequirementData requirementData;
     public SkillUpgradeData skillUpgradeData;
+    public AfflictionUpgradeData afflictionUpgradeData;
 
     public int GetManaCostBaseOnLevel(int level) {
         return skillUpgradeData.GetManaCostPerLevel(level);
     }
 
     public int GetCoolDownBaseOnLevel(int level) {
-        return skillUpgradeData.GetCoolDownPerLevel(level);
+        if (isAffliction) {
+            return skillUpgradeData.GetCoolDownPerLevel(level);
+        } else {
+            return afflictionUpgradeData.GetCoolDownPerLevel(level);
+        }
+        
     }
 
     public int GetMaxChargesBaseOnLevel(int level) {
