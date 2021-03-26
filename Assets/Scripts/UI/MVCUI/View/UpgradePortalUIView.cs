@@ -11,6 +11,7 @@ public class UpgradePortalUIView : MVCUIView {
     public interface IListener {
         void OnClickClose();
         void OnClickUpgrade();
+        void OnClickCancelUpgrade();
     }
     #endregion
     
@@ -39,10 +40,12 @@ public class UpgradePortalUIView : MVCUIView {
     public void Subscribe(IListener p_listener) {
         UIModel.onClickClose += p_listener.OnClickClose;
         UIModel.onClickUpgrade += p_listener.OnClickUpgrade;
+        UIModel.onClickCancelUpgradePortal += p_listener.OnClickCancelUpgrade;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onClickClose -= p_listener.OnClickClose;
         UIModel.onClickUpgrade -= p_listener.OnClickUpgrade;
+        UIModel.onClickCancelUpgradePortal -= p_listener.OnClickCancelUpgrade;
     }
     #endregion
 
@@ -77,6 +80,9 @@ public class UpgradePortalUIView : MVCUIView {
     public void SetUpgradeText(string p_value) {
         UIModel.btnUpgrade.SetButtonLabelName(p_value);
     }
+    public void SetCostText(string p_value) {
+        UIModel.lblCost.text = p_value;
+    }
     public void SetUpgradeBtnInteractable(bool p_state) {
         UIModel.btnUpgrade.interactable = p_state;
         UIModel.goUpgradeBtnCover.SetActive(!p_state);
@@ -91,14 +97,21 @@ public class UpgradePortalUIView : MVCUIView {
             UIModel.items[i].AddHoverOutAction(p_action);
         }
     }
+    public void SetUpgradeBtnState(bool p_state) {
+        UIModel.btnUpgrade.gameObject.SetActive(p_state);
+    }
+    public void SetUpgradeTimerState(bool p_state) {
+        UIModel.goUpgradePortalTimer.SetActive(p_state);
+    }
     #endregion
 
     #region Animations
     public void PlayShowAnimation() {
         UIModel.canvasGroupWindow.alpha = 0f;
+        UIModel.canvasGroupCover.alpha = 0f;
         Vector2 targetPos = UIModel.rectWindow.anchoredPosition;
         UIModel.rectWindow.anchoredPosition = new Vector2(targetPos.x, targetPos.y - 100f);
-        UIModel.canvasGroupUpgradeBtn.alpha = 0f;
+        UIModel.canvasGroupUpgradeInteraction.alpha = 0f;
         UIModel.canvasGroupFrame.alpha = 1f;
         Vector2 defaultSize = UIModel.defaultFrameSize;
         UIModel.rectFrame.sizeDelta = new Vector2(defaultSize.x + 500f, defaultSize.y);
@@ -108,6 +121,7 @@ public class UpgradePortalUIView : MVCUIView {
         
         Sequence sequence = DOTween.Sequence();
         sequence.Append(UIModel.canvasGroupWindow.DOFade(1f, 0.5f));
+        sequence.Join(UIModel.canvasGroupCover.DOFade(1f, 0.5f));
         sequence.Join(UIModel.rectWindow.DOAnchorPos(targetPos, 0.5f));
         sequence.Join(UIModel.rectFrame.DOSizeDelta(defaultSize, 0.8f));
         sequence.AppendInterval(0.05f);
@@ -124,7 +138,7 @@ public class UpgradePortalUIView : MVCUIView {
                 sequence.Join(upgradePortalItemUI.canvasGroupContent.DOFade(1f, 0.4f));
             }
         }
-        sequence.Append(UIModel.canvasGroupUpgradeBtn.DOFade(1f, 0.3f));
+        sequence.Append(UIModel.canvasGroupUpgradeInteraction.DOFade(1f, 0.3f));
 
         sequence.Play();
     }
@@ -134,6 +148,7 @@ public class UpgradePortalUIView : MVCUIView {
         targetFrameSize.x += 1000f;
         
         sequence.Append(UIModel.canvasGroupWindow.DOFade(0f, 0.5f));
+        sequence.Join(UIModel.canvasGroupCover.DOFade(0f, 0.5f));
         sequence.Join(UIModel.rectFrame.DOSizeDelta(targetFrameSize, 0.7f));
         sequence.Join(UIModel.canvasGroupFrame.DOFade(0f, 0.6f));
         sequence.OnComplete(() => onComplete());

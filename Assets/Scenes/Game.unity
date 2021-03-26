@@ -4670,7 +4670,7 @@ Transform:
   m_LocalPosition: {x: 960, y: 540, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 187911615}
+  m_Father: {fileID: 615060822}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &186514806
@@ -4720,9 +4720,8 @@ Transform:
   - {fileID: 1333819175}
   - {fileID: 764045628}
   - {fileID: 1935152012}
-  - {fileID: 186514805}
   m_Father: {fileID: 615060822}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &187911616
 MonoBehaviour:
@@ -19783,6 +19782,7 @@ Transform:
   - {fileID: 1848850208}
   - {fileID: 1726233549}
   - {fileID: 1063994933}
+  - {fileID: 186514805}
   - {fileID: 187911615}
   - {fileID: 684515730}
   m_Father: {fileID: 0}
@@ -21599,7 +21599,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 615060822}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &684515731
 MonoBehaviour:
@@ -46405,6 +46405,7 @@ MonoBehaviour:
   _schemeUIController: {fileID: 1496807649}
   contextMenuUIController: {fileID: 142246406}
   _portalUIController: {fileID: 187911616}
+  upgradePortalUIController: {fileID: 186514806}
 --- !u!114 &1538653386
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -45,12 +45,13 @@ namespace Inner_Maps.Location_Structures {
             Messenger.RemoveListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, StartGameAfterLoadoutSelected);
             GainUpgradePowers(currentTier);
         }
-        
-        #region Structure Object
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.UNLOCK_ABILITIES);
+            AddPlayerAction(PLAYER_SKILL_TYPE.UPGRADE_PORTAL);
         }
+        
+        #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             Vector3 position = structureObj.transform.position;

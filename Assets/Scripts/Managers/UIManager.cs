@@ -215,6 +215,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void InitializeAfterLoadOutPicked() {
         _portalUIController.InitializeAfterLoadoutSelected();
+        upgradePortalUIController.InitializeAfterLoadoutSelected();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
@@ -1924,6 +1925,7 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Demonic Structures")]
     [SerializeField] private PortalUIController _portalUIController;
+    [SerializeField] private UpgradePortalUIController upgradePortalUIController;
     public void ShowUnlockAbilitiesUI(ThePortal portal) {
         _portalUIController.ShowUI(portal);
         SetSpeedTogglesState(false);
@@ -1943,6 +1945,9 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void ShowDefendUI(LocationStructure structure) {
         onDefensePointClicked?.Invoke(structure);
+    }
+    public void ShowUpgradePortalUI(ThePortal portal) {
+        upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level);
     }
     #endregion
 
