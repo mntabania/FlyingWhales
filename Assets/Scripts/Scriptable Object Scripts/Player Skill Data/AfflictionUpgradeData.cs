@@ -18,9 +18,13 @@ public class AfflictionUpgradeData
     [HideInInspector]
     public List<int> napsPercent = new List<int>();
     [HideInInspector]
+    public List<int> numberOfCriteria = new List<int>();
+    [HideInInspector]
     public List<OPINIONS> opinionTrigger = new List<OPINIONS>();
     [HideInInspector]
     public List<AFFLICTION_SPECIFIC_BEHAVIOUR> addedBehaviour = new List<AFFLICTION_SPECIFIC_BEHAVIOUR>();
+    [HideInInspector]
+    public List<LIST_OF_CRITERIA> listOfCriteria = new List<LIST_OF_CRITERIA>();
 
     public int GetCoolDownPerLevel(int p_currentLevel) {
         if (cooldown == null || cooldown.Count <= 0) {
@@ -52,7 +56,7 @@ public class AfflictionUpgradeData
         return rateChance[p_currentLevel];
     }
 
-    public float GetCrowdNumberPerLevel(int p_currentLevel) {
+    public int GetCrowdNumberPerLevel(int p_currentLevel) {
         if (crowdNumber == null || crowdNumber.Count <= 0) {
             return -1;
         }

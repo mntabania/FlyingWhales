@@ -18,7 +18,7 @@ public class SkillData : IPlayerSkill {
     public int charges { get; private set; }
     public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, 1f);
     public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, 1f);
-    public int threat => SpellUtilities.GetModifiedSpellCost(baseThreat, 1f);
+    public int threat => 0;// SpellUtilities.GetModifiedSpellCost(baseThreat, 1f); comment out for now so no threat will be passed
     public int threatPerHour { get; private set; }
     public bool isInUse { get; private set; }
     public int currentCooldownTick { get; private set; }

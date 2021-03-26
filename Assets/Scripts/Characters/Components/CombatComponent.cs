@@ -1002,34 +1002,22 @@ public class CombatComponent : CharacterComponent {
         Character targetCharacter = target as Character;
         if (owner.partyComponent.isMemberThatJoinedQuest) {
             PartyQuest quest = owner.partyComponent.currentParty.currentQuest;
-            if(quest is RaidPartyQuest raidQuest && raidQuest.targetSettlement != null) {
-                if(targetCharacter != null) {
-                    if(targetCharacter.homeSettlement == raidQuest.targetSettlement) {
+            BaseSettlement targetSettlement = null;
+            if (quest is RaidPartyQuest raidQuest) {
+                targetSettlement = raidQuest.targetSettlement;
+            } else if (quest is DemonRaidPartyQuest demonRaidQuest) {
+                targetSettlement = demonRaidQuest.targetSettlement;
+            }
+            if(targetSettlement != null) {
+                if (targetCharacter != null) {
+                    if (targetCharacter.homeSettlement == targetSettlement) {
                         return CombatManager.Raid;
                     }
                 } else if (target is TileObject) {
-                    if(target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(raidQuest.targetSettlement)) {
+                    if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
                         return CombatManager.Raid;
                     }
-                }
-            }
-        }
-        if (targetCharacter != null) {
-            if(owner.IsInHomeSettlement()) {
-                if(targetCharacter.homeSettlement != owner.homeSettlement && targetCharacter.currentSettlement == owner.homeSettlement) {
-                    return CombatManager.Defending_Home;
-                }
-            } else if (owner.IsInTerritory()) {
-                if (!targetCharacter.IsTerritory(owner.areaLocation) && targetCharacter.IsInTerritoryOf(owner)) {
-                    return CombatManager.Defending_Territory;
-                }
-            }
-        }
-        if(owner.faction != null) {
-            if(owner.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
-                return CombatManager.Feral_Monster;
-            } else if (owner.faction.factionType.type == FACTION_TYPE.Undead) {
-                return CombatManager.Hostile_Undead;
+                }    
             }
         }
 

@@ -17,19 +17,21 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
     [SerializeField] public GameObject regenerateWorldBtnGO;
     [SerializeField] public GameObject placePortalBtnGO;
     [SerializeField] public RectTransform pickPortalMessage;
-    public void Initialize() {
+
+	public void Initialize() {
         loadOutMenu.Initialize();
     }
     public void Show() {
         UIManager.Instance.SetSpeedTogglesState(false);
         regenerateWorldBtnGO.SetActive(WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom);
-        placePortalBtnGO.SetActive(true);
+        //placePortalBtnGO.SetActive(true); already disabled this on scene
         configureLoadoutBtnGO.gameObject.SetActive(false);
         
         InnerMapManager.Instance.ShowInnerMap(GridMap.Instance.mainRegion);
         gameObject.SetActive(true);
         UIManager.Instance.DisableContextMenuInteractions(); 
         PlayerUI.Instance.DisableTopMenuButtons();
+        OnClickPlacePortal();
     }
     public void OnClickPlacePortal() {
         //pick tile to place portal.

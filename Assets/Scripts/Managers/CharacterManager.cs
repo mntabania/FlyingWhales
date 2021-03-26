@@ -440,7 +440,7 @@ public class CharacterManager : BaseMonoBehaviour {
 
         classManager.Initialize();
         CreateDeadlySinsData();
-        defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
+        defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(6);
         CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
         CHARACTER_PRESUMED_DEAD_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
         summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };

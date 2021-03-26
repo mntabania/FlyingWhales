@@ -240,11 +240,19 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.CoolDown)) {
-                DisplayIntList(data.afflictionUpgradeData.rateChance, "Cooldown per level");
+                DisplayIntList(data.afflictionUpgradeData.cooldown, "Cooldown per level");
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Crowd_Number)) {
                 DisplayIntList(data.afflictionUpgradeData.crowdNumber, "No. of crowds");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Number_Criteria)) {
+                DisplayIntList(data.afflictionUpgradeData.crowdNumber, "No. of Criteria");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Criteria)) {
+                DisplayEnumListCriteria(data.afflictionUpgradeData.listOfCriteria, "Criterias");
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Naps_Percent)) {
@@ -252,7 +260,7 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Trigger_Opinion)) {
-                DisplayEnumListOpinions(data.afflictionUpgradeData.opinionTrigger, "Trigger Options");
+                DisplayEnumListOpinions(data.afflictionUpgradeData.opinionTrigger, "Trigger Opinion");
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Added_Behaviour)) {
@@ -285,6 +293,19 @@ public class SkillUpgradeDataEditor : Editor {
 
         for (int i = 0; i < list.Count; i++) {
             list[i] = (AFFLICTION_SPECIFIC_BEHAVIOUR)EditorGUILayout.EnumPopup((AFFLICTION_SPECIFIC_BEHAVIOUR)list[i]);
+        }
+    }
+
+    public void DisplayEnumListCriteria(List<LIST_OF_CRITERIA> listInt, string caption) {
+        var list = listInt;
+        int newCount = Mathf.Max(0, EditorGUILayout.IntField(caption, list.Count));
+        while (newCount < list.Count)
+            list.RemoveAt(list.Count - 1);
+        while (newCount > list.Count)
+            list.Add(0);
+
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = (LIST_OF_CRITERIA)EditorGUILayout.EnumPopup((LIST_OF_CRITERIA)list[i]);
         }
     }
 
