@@ -104,7 +104,7 @@ public class ChaosOrb : PooledObject {
 		if (targetCurrency == CURRENCY.Mana) {
 			PlayerManager.Instance.player.AdjustMana(1);
 		} else {
-			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(1);
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePointsFromChaosOrb(1);
 		}
 		
 		Destroy();
