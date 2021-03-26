@@ -36,50 +36,50 @@ MonoBehaviour:
   availableMiscs: 330000008c0000000800000006000000aa0000005c000000ac000000ae000000af00000034000000
   portalUpgradeTiers:
   - name: Level 1
-    skillTypesToUnlock: 54000000bf000000
-    passiveSkillsToUnlock: 06000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
-    upgradeTime: 20
-  - name: Level 2
-    skillTypesToUnlock: 4f00000048000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 480000004f000000
+    passiveSkillsToUnlock: 08000000
     upgradeCost:
     - name: 50 Mana
       currency: 0
       amount: 50
-    upgradeTime: 20
+    upgradeTime: 0
+  - name: Level 2
+    skillTypesToUnlock: 480000004f000000
+    passiveSkillsToUnlock: 08000000
+    upgradeCost:
+    - name: 50 Mana
+      currency: 0
+      amount: 50
+    upgradeTime: 0
   - name: Level 3
-    skillTypesToUnlock: 4e0000004c00000049000000be0000009b000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 480000004f000000
+    passiveSkillsToUnlock: 08000000
     upgradeCost:
-    - name: 10 Mana
+    - name: 50 Mana
       currency: 0
-      amount: 10
-    upgradeTime: 20
+      amount: 50
+    upgradeTime: 0
   - name: Level 4
-    skillTypesToUnlock: 4e0000004c00000049000000be0000009b000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 480000004f000000
+    passiveSkillsToUnlock: 08000000
     upgradeCost:
-    - name: 10 Mana
+    - name: 50 Mana
       currency: 0
-      amount: 10
-    upgradeTime: 20
+      amount: 50
+    upgradeTime: 0
   - name: Level 5
-    skillTypesToUnlock: 4e0000004c00000049000000be0000009b000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 480000004f000000
+    passiveSkillsToUnlock: 08000000
     upgradeCost:
-    - name: 10 Mana
+    - name: 50 Mana
       currency: 0
-      amount: 10
-    upgradeTime: 20
+      amount: 50
+    upgradeTime: 0
   - name: Level 6
-    skillTypesToUnlock: 4e0000004c00000049000000be0000009b000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 480000004f000000
+    passiveSkillsToUnlock: 08000000
     upgradeCost:
-    - name: 10 Mana
+    - name: 50 Mana
       currency: 0
-      amount: 10
-    upgradeTime: 20
+      amount: 50
+    upgradeTime: 0

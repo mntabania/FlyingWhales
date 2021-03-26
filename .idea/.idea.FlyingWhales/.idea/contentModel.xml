@@ -2636,6 +2636,7 @@
                 <e p="PoisonData.cs" t="Include" />
                 <e p="RaidData.cs" t="Include" />
                 <e p="RaiseDeadData.cs" t="Include" />
+                <e p="ReleaseAbilitiesData.cs" t="Include" />
                 <e p="ReleaseData.cs" t="Include" />
                 <e p="RemoveBuffData.cs" t="Include" />
                 <e p="RemoveFlawData.cs" t="Include" />
@@ -2652,7 +2653,6 @@
                 <e p="SpreadRumorData.cs" t="Include" />
                 <e p="TortureData.cs" t="Include" />
                 <e p="TriggerFlawData.cs" t="Include" />
-                <e p="UnlockAbilitiesData.cs" t="Include" />
                 <e p="UnsummonData.cs" t="Include" />
                 <e p="UpgradeAbilitiesData.cs" t="Include" />
                 <e p="UpgradeData.cs" t="Include" />

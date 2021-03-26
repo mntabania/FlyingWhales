@@ -48,6 +48,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		} else {
 			// UIManager.Instance.onPortalClicked += OnPortalClicked;
 		}
+		SubscribeListeners();
 	}
 
 	private void OnDestroy() {
@@ -63,6 +64,12 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	#endregion
 
+	private void SubscribeListeners() {
+		Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, OnPlayerFinishedSkillUnlock);
+	}
+	private void OnPlayerFinishedSkillUnlock(PLAYER_SKILL_TYPE p_skill, int p_unlockCost) {
+		OnFinishSkillUnlock();
+	}
 	public override void HideUI() {
 		base.HideUI();
 		UIManager.Instance.SetSpeedTogglesState(true);

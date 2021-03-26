@@ -37,7 +37,7 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
         m_upgradePortalUIView.UpdateItems(p_upgradeTier);
         m_upgradePortalUIView.SetHeader($"Upgrade to Level {(p_level + 1).ToString()}?");
         // m_upgradePortalUIView.SetUpgradeText($"Upgrade");
-        m_upgradePortalUIView.SetCostText(p_upgradeTier.GetUpgradeCostString());
+        m_upgradePortalUIView.SetUpgradeText(p_upgradeTier.GetUpgradeCostString());
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
             if (PlayerManager.Instance.player.playerSkillComponent.timerUpgradePortal.IsFinished()) {
                 m_upgradePortalUIView.SetUpgradeBtnState(true);

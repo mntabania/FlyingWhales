@@ -36,50 +36,50 @@ MonoBehaviour:
   availableMiscs: 3400000059000000080000000a000000aa0000005c000000ac000000ae000000af000000
   portalUpgradeTiers:
   - name: Level 1
-    skillTypesToUnlock: 50000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 4900000047000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 10 Mana
+    - name: 100 Mana
       currency: 0
-      amount: 10
-    upgradeTime: 20
+      amount: 100
+    upgradeTime: 30
   - name: Level 2
-    skillTypesToUnlock: 50000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 4900000047000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 10 Mana
+    - name: 100 Mana
       currency: 0
-      amount: 10
-    upgradeTime: 20
+      amount: 100
+    upgradeTime: 30
   - name: Level 3
-    skillTypesToUnlock: 52000000490000004a000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 4900000047000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 100 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 100
+    upgradeTime: 30
   - name: Level 4
-    skillTypesToUnlock: 52000000490000004a000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 4900000047000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 100 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 100
+    upgradeTime: 30
   - name: Level 5
-    skillTypesToUnlock: 52000000490000004a000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 4900000047000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 100 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 100
+    upgradeTime: 30
   - name: Level 6
-    skillTypesToUnlock: 52000000490000004a000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 4900000047000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 100 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 100
+    upgradeTime: 30

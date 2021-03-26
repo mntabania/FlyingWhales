@@ -47,7 +47,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(PLAYER_SKILL_TYPE.UNLOCK_ABILITIES);
+            AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE_ABILITIES);
             AddPlayerAction(PLAYER_SKILL_TYPE.UPGRADE_PORTAL);
         }
         

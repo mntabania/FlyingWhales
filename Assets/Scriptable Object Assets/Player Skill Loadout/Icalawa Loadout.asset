@@ -36,50 +36,50 @@ MonoBehaviour:
   availableMiscs: 
   portalUpgradeTiers:
   - name: Level 1
-    skillTypesToUnlock: 5300000048000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 4a0000004f000000
+    passiveSkillsToUnlock: 090000000a000000
     upgradeCost:
-    - name: 20 Mana
+    - name: 10 Mana
       currency: 0
-      amount: 20
-    upgradeTime: 20
+      amount: 10
+    upgradeTime: 0
   - name: Level 2
-    skillTypesToUnlock: 5300000048000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 4a0000004f000000
+    passiveSkillsToUnlock: 090000000a000000
     upgradeCost:
-    - name: 20 Mana
+    - name: 10 Mana
       currency: 0
-      amount: 20
-    upgradeTime: 20
+      amount: 10
+    upgradeTime: 0
   - name: Level 3
-    skillTypesToUnlock: 5300000048000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 4a0000004f000000
+    passiveSkillsToUnlock: 090000000a000000
     upgradeCost:
-    - name: 20 Mana
+    - name: 10 Mana
       currency: 0
-      amount: 20
-    upgradeTime: 20
+      amount: 10
+    upgradeTime: 0
   - name: Level 4
-    skillTypesToUnlock: 5300000048000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 4a0000004f000000
+    passiveSkillsToUnlock: 090000000a000000
     upgradeCost:
-    - name: 20 Mana
+    - name: 10 Mana
       currency: 0
-      amount: 20
-    upgradeTime: 20
+      amount: 10
+    upgradeTime: 0
   - name: Level 5
-    skillTypesToUnlock: 5300000048000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 4a0000004f000000
+    passiveSkillsToUnlock: 090000000a000000
     upgradeCost:
-    - name: 20 Mana
+    - name: 10 Mana
       currency: 0
-      amount: 20
-    upgradeTime: 20
+      amount: 10
+    upgradeTime: 0
   - name: Level 6
-    skillTypesToUnlock: 5300000048000000
-    passiveSkillsToUnlock: 06000000
+    skillTypesToUnlock: 4a0000004f000000
+    passiveSkillsToUnlock: 090000000a000000
     upgradeCost:
-    - name: 20 Mana
+    - name: 10 Mana
       currency: 0
-      amount: 20
-    upgradeTime: 20
+      amount: 10
+    upgradeTime: 0

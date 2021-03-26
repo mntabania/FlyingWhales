@@ -36,50 +36,50 @@ MonoBehaviour:
   availableMiscs: 0600000008000000070000000a00000021000000320000003300000034000000590000008c000000
   portalUpgradeTiers:
   - name: Level 1
-    skillTypesToUnlock: 4e000000
-    passiveSkillsToUnlock: 060000000a000000
+    skillTypesToUnlock: 4c00000050000000be000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 30 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 30
+    upgradeTime: 0
   - name: Level 2
-    skillTypesToUnlock: 4e000000
-    passiveSkillsToUnlock: 060000000a000000
+    skillTypesToUnlock: 4c00000050000000be000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 30 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 30
+    upgradeTime: 0
   - name: Level 3
-    skillTypesToUnlock: 4e000000
-    passiveSkillsToUnlock: 060000000a000000
+    skillTypesToUnlock: 4c00000050000000be000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 30 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 30
+    upgradeTime: 0
   - name: Level 4
-    skillTypesToUnlock: 4e000000
-    passiveSkillsToUnlock: 060000000a000000
+    skillTypesToUnlock: 4c00000050000000be000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 30 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 30
+    upgradeTime: 0
   - name: Level 5
-    skillTypesToUnlock: 4e000000
-    passiveSkillsToUnlock: 080000000a000000
+    skillTypesToUnlock: 4c00000050000000be000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 30 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 30
+    upgradeTime: 0
   - name: Level 6
-    skillTypesToUnlock: 4e000000
-    passiveSkillsToUnlock: 090000000a000000
+    skillTypesToUnlock: 4c00000050000000be000000
+    passiveSkillsToUnlock: 09000000
     upgradeCost:
-    - name: 50 Mana
+    - name: 30 Mana
       currency: 0
-      amount: 50
-    upgradeTime: 20
+      amount: 30
+    upgradeTime: 0

@@ -36,50 +36,50 @@ MonoBehaviour:
   availableMiscs: 32000000060000008c00000007000000aa0000005c000000ac000000ae000000af000000
   portalUpgradeTiers:
   - name: Level 1
-    skillTypesToUnlock: 4c000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 5400000048000000
+    passiveSkillsToUnlock: 080000000a000000
     upgradeCost:
-    - name: 10 Mana
+    - name: 20 Mana
       currency: 0
-      amount: 10
-    upgradeTime: 20
+      amount: 20
+    upgradeTime: 30
   - name: Level 2
-    skillTypesToUnlock: 4c00000054000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 5400000048000000
+    passiveSkillsToUnlock: 080000000a000000
     upgradeCost:
     - name: 20 Mana
       currency: 0
       amount: 20
-    upgradeTime: 20
+    upgradeTime: 30
   - name: Level 3
-    skillTypesToUnlock: 4c00000054000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 5400000048000000
+    passiveSkillsToUnlock: 080000000a000000
     upgradeCost:
     - name: 20 Mana
       currency: 0
       amount: 20
-    upgradeTime: 20
+    upgradeTime: 30
   - name: Level 4
-    skillTypesToUnlock: 4c00000054000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 5400000048000000
+    passiveSkillsToUnlock: 080000000a000000
     upgradeCost:
     - name: 20 Mana
       currency: 0
       amount: 20
-    upgradeTime: 20
+    upgradeTime: 30
   - name: Level 5
-    skillTypesToUnlock: 4c00000054000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 5400000048000000
+    passiveSkillsToUnlock: 080000000a000000
     upgradeCost:
     - name: 20 Mana
       currency: 0
       amount: 20
-    upgradeTime: 20
+    upgradeTime: 30
   - name: Level 6
-    skillTypesToUnlock: 4c00000054000000
-    passiveSkillsToUnlock: 
+    skillTypesToUnlock: 5400000048000000
+    passiveSkillsToUnlock: 080000000a000000
     upgradeCost:
     - name: 20 Mana
       currency: 0
       amount: 20
-    upgradeTime: 20
+    upgradeTime: 30

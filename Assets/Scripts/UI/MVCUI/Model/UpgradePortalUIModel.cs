@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class UpgradePortalUIModel : MVCUIModel {
     public TextMeshProUGUI lblTitle;
-    public TextMeshProUGUI lblCost;
     public RuinarchButton btnUpgrade;
     public RuinarchButton btnClose;
     public ScrollRect scrollRectContent;

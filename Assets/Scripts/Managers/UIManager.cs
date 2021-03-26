@@ -1926,6 +1926,7 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Demonic Structures")]
     [SerializeField] private PortalUIController _portalUIController;
     [SerializeField] private UpgradePortalUIController upgradePortalUIController;
+    [SerializeField] private PurchaseSkillUIController purchaseSkillUIController;
     public void ShowUnlockAbilitiesUI(ThePortal portal) {
         _portalUIController.ShowUI(portal);
         SetSpeedTogglesState(false);
@@ -1948,6 +1949,9 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void ShowUpgradePortalUI(ThePortal portal) {
         upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level);
+    }
+    public void ShowPurchaseSkillUI() {
+        purchaseSkillUIController.Init(3);
     }
     #endregion
 

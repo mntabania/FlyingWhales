@@ -80,9 +80,6 @@ public class UpgradePortalUIView : MVCUIView {
     public void SetUpgradeText(string p_value) {
         UIModel.btnUpgrade.SetButtonLabelName(p_value);
     }
-    public void SetCostText(string p_value) {
-        UIModel.lblCost.text = p_value;
-    }
     public void SetUpgradeBtnInteractable(bool p_state) {
         UIModel.btnUpgrade.interactable = p_state;
         UIModel.goUpgradeBtnCover.SetActive(!p_state);
