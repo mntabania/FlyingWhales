@@ -1,16 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
+using Traits;
+
 namespace Traits {
-    public class Wet : Status {
+    public class Wet : Status, IElementalTrait {
 
         private StatusIcon _statusIcon;
         public Character dryer { get; private set; }
+        public bool isPlayerSource { get; private set; }
+
         private ITraitable _owner;
-        
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataWet);
+        #endregion
+
         public Wet() {
             name = "Wet";
             description = "Soaked with water.";
@@ -26,6 +35,11 @@ namespace Traits {
         }
 
         #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataWet data = saveDataTrait as SaveDataWet;
+            isPlayerSource = data.isPlayerSource;
+        }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             _owner = addTo;
@@ -144,5 +158,22 @@ namespace Traits {
         }
         #endregion
 
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
+        #endregion
     }
 }
+
+#region Save Data
+public class SaveDataWet : SaveDataTrait {
+    public bool isPlayerSource;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Wet data = trait as Wet;
+        isPlayerSource = data.isPlayerSource;
+    }
+}
+#endregion

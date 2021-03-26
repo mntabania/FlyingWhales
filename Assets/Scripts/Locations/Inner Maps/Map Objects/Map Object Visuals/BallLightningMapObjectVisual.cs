@@ -115,7 +115,7 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
             if (owner != traitable) {
-                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, isPlayerSource: owner.isPlayerSource);
             }
             if (traitable is Character character) {
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);

@@ -122,7 +122,11 @@ public class PlayerUI : BaseMonoBehaviour {
     [Header("Plague Points")]
     [SerializeField] public TextMeshProUGUI plaguePointLbl;
     [SerializeField] private RectTransform plaguePointsContainer;
-    
+
+    [Header("Accumulated Damage")]
+    public TextMeshProUGUI accumulatedDamageLbl;
+    public GameObject accumulatedDamageGO;
+
     void Awake() {
         Instance = this;
     }
@@ -1069,6 +1073,12 @@ public class PlayerUI : BaseMonoBehaviour {
         if (_currentTargetPunchEffect == null) {
             _currentTargetPunchEffect = targetsToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f).OnComplete(() => _currentTargetPunchEffect = null);
         }
+    }
+    #endregion
+
+    #region Accumulated Damage
+    public void UpdateAccumulatedDamageText(int amount) {
+        accumulatedDamageLbl.text = amount.ToString();
     }
     #endregion
 }

@@ -70,7 +70,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         if (traitable.gridTileLocation == null) { return; }
         BurningSource burningSource = bs;
         int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.METEOR));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.METEOR));
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.METEOR), isPlayerSource: true);
         //if (traitable is TileObject obj) {
         //    if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
         //        obj.AdjustHP(-500, ELEMENTAL_TYPE.Fire, 

@@ -255,7 +255,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.tileObjectComponent.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
+            tile.tileObjectComponent.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO), isPlayerSource: _tornado.isPlayerSource);
         }
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
@@ -281,14 +281,14 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (damageable.CanBeDamaged()) {
             if (damageable is Character character) {
                 int processedDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO);
-                damageable.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
+                damageable.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, isPlayerSource: _tornado.isPlayerSource);
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                 if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.TORNADO;
                     Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                 }
             } else {
-                damageable.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);    
+                damageable.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, isPlayerSource: _tornado.isPlayerSource);    
             }
         }
     }
@@ -302,7 +302,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void OnDamagableReachedThis(IDamageable damageable) {
         damageable.mapObjectVisual?.OnReachTarget();
-        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
+        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, isPlayerSource: _tornado.isPlayerSource);
     }
     private bool CanBeSuckedIn(IDamageable damageable) {
         return damageable.CanBeDamaged() && (damageable is GenericTileObject) == false 

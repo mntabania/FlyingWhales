@@ -536,7 +536,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return null;
     }
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
 
@@ -568,7 +568,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
             //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
         LocationGridTile tile = gridTileLocation;

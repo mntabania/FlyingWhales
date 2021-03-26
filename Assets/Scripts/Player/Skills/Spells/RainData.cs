@@ -16,7 +16,7 @@ public class RainData : SkillData {
     }
 
     public override void ActivateAbility(Area targetArea) {
-        targetArea.featureComponent.AddFeature(AreaFeatureDB.Rain_Feature, targetArea);
+        AreaFeature feature = targetArea.featureComponent.AddFeature(AreaFeatureDB.Rain_Feature, targetArea);
         base.ActivateAbility(targetArea);
     }
     public override bool CanPerformAbilityTowards(Area targetArea) {

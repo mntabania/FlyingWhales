@@ -15,6 +15,7 @@ public class TornadoData : SkillData {
         tornado.SetExpiryDate(GameManager.Instance.Today().AddTicks(PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.TORNADO)));
         tornado.SetGridTileLocation(targetTile);
         tornado.OnPlacePOI();
+        tornado.SetIsPlayerSource(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

@@ -9,9 +9,10 @@ using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 namespace Traits {
-    public class Burning : Status {
+    public class Burning : Status, IElementalTrait {
         private ITraitable owner { get; set; }
         public BurningSource sourceOfBurning { get; private set; }
+        public bool isPlayerSource { get; private set; }
         public override bool isPersistent => true;
         public Character douser { get; private set; } //the character that is going to douse this fire.
         private GameObject burningEffect;
@@ -43,10 +44,11 @@ namespace Traits {
         #region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataBurning saveDataBurning = saveDataTrait as SaveDataBurning;
-            Assert.IsNotNull(saveDataBurning);
-            BurningSource burningSource = DatabaseManager.Instance.burningSourceDatabase.GetOrCreateBurningSourceWithID(saveDataBurning.persistentID);
+            SaveDataBurning data = saveDataTrait as SaveDataBurning;
+            Assert.IsNotNull(data);
+            BurningSource burningSource = DatabaseManager.Instance.burningSourceDatabase.GetOrCreateBurningSourceWithID(data.persistentID);
             LoadSourceOfBurning(burningSource);
+            isPlayerSource = data.isPlayerSource;
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
@@ -220,7 +222,7 @@ namespace Traits {
                 return;
             }
             Profiler.BeginSample($"Burning - Tick Ended Part 1");
-            owner.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+            owner.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true, isPlayerSource: isPlayerSource);
 
             //Sleeping characters in bed should also receive damage
             //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
@@ -228,7 +230,7 @@ namespace Traits {
                 if(bed.users != null && bed.users.Length > 0) {
                     for (int i = 0; i < bed.users.Length; i++) {
                         Character user = bed.users[i];
-                        user.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+                        user.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true, isPlayerSource: isPlayerSource);
                     }
                 }
             }
@@ -290,17 +292,25 @@ namespace Traits {
         }
         #endregion
 
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
+        #endregion
+
     }
 }
 
 #region Save Data
 public class SaveDataBurning : SaveDataTrait {
     public string burningSourceID;
+    public bool isPlayerSource;
     public override void Save(Trait trait) {
         base.Save(trait);
-        Burning burning = trait as Burning;
-        Assert.IsNotNull(burning);
-        burningSourceID = burning.persistentID;
+        Burning data = trait as Burning;
+        Assert.IsNotNull(data);
+        burningSourceID = data.persistentID;
+        isPlayerSource = data.isPlayerSource;
     }
 }
 #endregion

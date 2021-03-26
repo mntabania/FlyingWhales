@@ -86,6 +86,8 @@ public class TraitManager : BaseMonoBehaviour {
     //If isSingleton returns true, they are stored here, and will share only 1 instance of the trait class
     private Dictionary<string, Trait> instancedSingletonTraits;
 
+    //private Dictionary<string, Status> instancedStackingStatuses;
+
     #region getters/setters
     public Dictionary<string, Trait> allTraits => _allTraits;
     #endregion
@@ -97,6 +99,7 @@ public class TraitManager : BaseMonoBehaviour {
 
     public void Initialize() {
         instancedSingletonTraits = new Dictionary<string, Trait>();
+        //instancedStackingStatuses = new Dictionary<string, Status>();
         _allTraits = new Dictionary<string, Trait>();
         unhiddenTraitsNotStatuses = new List<string>();
 
@@ -205,9 +208,18 @@ public class TraitManager : BaseMonoBehaviour {
             if (trait.isSingleton) {
                 instancedSingletonTraits.Add(traitName, trait);
             }
+            //if(trait is Status status && status.isStacking && !instancedStackingStatuses.ContainsKey(traitName)) {
+            //    instancedStackingStatuses.Add(traitName, status);
+            //}
             trait.InitializeInstancedTrait();
             return trait;
         }
+    }
+    public Status GetInstancedStackingStatus(string p_statusName) {
+        //if(instancedStackingStatuses.ContainsKey(p_statusName)) {
+        //    return instancedStackingStatuses[p_statusName];
+        //}
+        return null;
     }
     public Trait LoadTrait(SaveDataTrait saveDataTrait) {
         string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(saveDataTrait.name);

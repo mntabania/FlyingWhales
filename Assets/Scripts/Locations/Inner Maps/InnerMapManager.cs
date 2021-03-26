@@ -930,18 +930,17 @@ namespace Inner_Maps {
         #endregion
 
         #region Moving Tile Objects
-        public void SpawnPoisonCloud(LocationGridTile gridTileLocation, int stacks) {
+        public PoisonCloud SpawnPoisonCloud(LocationGridTile gridTileLocation, int stacks) {
             PoisonCloud poisonCloud = new PoisonCloud();
             poisonCloud.SetGridTileLocation(gridTileLocation);
             poisonCloud.OnPlacePOI();
             poisonCloud.SetStacks(stacks);
+            return poisonCloud;
         }
-        public void SpawnPoisonCloud(LocationGridTile gridTileLocation, int stacks, GameDate expiryDate) {
-            PoisonCloud poisonCloud = new PoisonCloud();
+        public PoisonCloud SpawnPoisonCloud(LocationGridTile gridTileLocation, int stacks, GameDate expiryDate) {
+            PoisonCloud poisonCloud = SpawnPoisonCloud(gridTileLocation, stacks);
             poisonCloud.SetExpiryDate(expiryDate);
-            poisonCloud.SetGridTileLocation(gridTileLocation);
-            poisonCloud.OnPlacePOI();
-            poisonCloud.SetStacks(stacks);
+            return poisonCloud;
         }
         #endregion
 

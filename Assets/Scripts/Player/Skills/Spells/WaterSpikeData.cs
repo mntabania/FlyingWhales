@@ -33,7 +33,7 @@ public class WaterSpikeData : SkillData {
     }
     private void ApplyEarthDamage(ITraitable traitable) {
         int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.WATER_SPIKE));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Water, true, showHPBar: true, isPlayerSource: true);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);

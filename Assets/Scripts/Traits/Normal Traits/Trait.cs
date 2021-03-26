@@ -22,7 +22,6 @@ namespace Traits {
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
         public bool canBeTriggered;
         public ELEMENTAL_TYPE elementalType;
-
         /// <summary>
         /// Persistent ID of this trait. NOTE: Only instanced traits use this.
         /// </summary>
@@ -31,6 +30,7 @@ namespace Traits {
         public List<Character> responsibleCharacters { get; protected set; }
         public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
         public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
+        //public PlayerDamageAccumulator playerDamageAccumulator { get; private set; }
 
         #region Getters
         public virtual Type serializedData => typeof(SaveDataTrait);
@@ -44,6 +44,7 @@ namespace Traits {
         public string contextMenuName => name;
         public int contextMenuColumn => 1;
         public List<IContextMenuItem> subMenus => null;
+        //public bool isPlayerDamage => playerDamageAccumulator != null;
         #endregion
         
         #region Initialization

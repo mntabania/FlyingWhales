@@ -15,7 +15,8 @@ public class PoisonBloomData : SkillData {
     }
 
     public override void ActivateAbility(Area targetArea) {
-        targetArea.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, targetArea);
+        AreaFeature feature = targetArea.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, targetArea);
+        (feature as PoisonBloomFeature).SetIsPlayerSource(true);
         base.ActivateAbility(targetArea);
     }
     public override bool CanPerformAbilityTowards(Area targetArea) {

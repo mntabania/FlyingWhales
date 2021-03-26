@@ -121,7 +121,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
             if (owner != traitable) {
-                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
+                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, showHPBar: true, isPlayerSource: owner.isPlayerSource);
             }
             Burning burningTrait = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {

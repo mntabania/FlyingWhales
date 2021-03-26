@@ -443,7 +443,7 @@ public class AreaSpellsComponent : AreaComponent {
                 processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM, 0));
             }
             
-            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM), isPlayerSource: isElectricStormCastedByPlayer);
         }
     }
     private void PerTickElectricStorm() {

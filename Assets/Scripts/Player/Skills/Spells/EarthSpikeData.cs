@@ -34,7 +34,7 @@ public class EarthSpikeData : SkillData {
     }
     private void ApplyEarthDamage(ITraitable traitable) {
         int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Earth, true, showHPBar: true);
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Earth, true, showHPBar: true, isPlayerSource: true);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);

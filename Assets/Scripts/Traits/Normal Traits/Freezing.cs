@@ -7,12 +7,13 @@ using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine.Assertions;
 namespace Traits {
-    public class Freezing : Status {
+    public class Freezing : Status, IElementalTrait {
 
         public ITraitable traitable { get; private set; }
         private GameObject _freezingGO;
         public List<LocationStructure> excludedStructuresInSeekingShelter { get; private set; }
         public LocationStructure currentShelterStructure { get; private set; }
+        public bool isPlayerSource { get; private set; }
 
         #region getters
         public override Type serializedData => typeof(SaveDataFreezing);
@@ -37,12 +38,13 @@ namespace Traits {
         #region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataFreezing saveDataFreezing = saveDataTrait as SaveDataFreezing;
-            Assert.IsNotNull(saveDataFreezing);
-            excludedStructuresInSeekingShelter = SaveUtilities.ConvertIDListToStructures(saveDataFreezing.excludedStructuresInSeekingShelter);
-            if (!string.IsNullOrEmpty(saveDataFreezing.currentShelterStructure)) {
-                currentShelterStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFreezing.currentShelterStructure);    
+            SaveDataFreezing data = saveDataTrait as SaveDataFreezing;
+            Assert.IsNotNull(data);
+            excludedStructuresInSeekingShelter = SaveUtilities.ConvertIDListToStructures(data.excludedStructuresInSeekingShelter);
+            if (!string.IsNullOrEmpty(data.currentShelterStructure)) {
+                currentShelterStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentShelterStructure);    
             }
+            isPlayerSource = data.isPlayerSource;
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
@@ -159,6 +161,12 @@ namespace Traits {
             }
         }
         #endregion
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
+        #endregion
     }
 }
 
@@ -166,14 +174,17 @@ namespace Traits {
 public class SaveDataFreezing : SaveDataTrait {
     public List<string> excludedStructuresInSeekingShelter;
     public string currentShelterStructure;
+    public bool isPlayerSource;
+
     public override void Save(Trait trait) {
         base.Save(trait);
-        Freezing freezing = trait as Freezing;
-        Assert.IsNotNull(freezing);
-        excludedStructuresInSeekingShelter = SaveUtilities.ConvertSavableListToIDs(freezing.excludedStructuresInSeekingShelter);
-        if (freezing.currentShelterStructure != null) {
-            currentShelterStructure = freezing.currentShelterStructure.persistentID;    
+        Freezing data = trait as Freezing;
+        Assert.IsNotNull(data);
+        excludedStructuresInSeekingShelter = SaveUtilities.ConvertSavableListToIDs(data.excludedStructuresInSeekingShelter);
+        if (data.currentShelterStructure != null) {
+            currentShelterStructure = data.currentShelterStructure.persistentID;    
         }
+        isPlayerSource = data.isPlayerSource;
     }
 }
 #endregion

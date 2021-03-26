@@ -35,7 +35,7 @@ public class IceBlastData : SkillData {
     }
     private void ApplyIceDamage(ITraitable traitable) {
         int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICE_BLAST));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true, isPlayerSource: true);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);

@@ -9,6 +9,7 @@ namespace Locations.Area_Features {
         
         public int expiryInTicks { get; private set; }
         public GameDate expiryDate { get; private set; }
+        public bool isPlayerSource { get; private set; }
     
         public PoisonBloomFeature() {
             name = "Poison Emitting";
@@ -40,9 +41,13 @@ namespace Locations.Area_Features {
             Profiler.BeginSample($"Emit Poison Cloud Per Tick");
             if (UnityEngine.Random.Range(0, 100) < 60 && owner != null) {
                 LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(owner.gridTileComponent.gridTiles);
-                InnerMapManager.Instance.SpawnPoisonCloud(chosenTile, 3);
+                PoisonCloud cloud = InnerMapManager.Instance.SpawnPoisonCloud(chosenTile, 3);
+                cloud.SetIsPlayerSource(isPlayerSource);
             }
             Profiler.EndSample();
+        }
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
         }
         
         #region Expiry
@@ -56,16 +61,20 @@ namespace Locations.Area_Features {
     public class SaveDataPoisonBloomFeature : SaveDataAreaFeature {
 
         public int expiryInTicks;
+        public bool isPlayerSource;
+
         public override void Save(AreaFeature tileFeature) {
             base.Save(tileFeature);
             PoisonBloomFeature poisonBloomFeature = tileFeature as PoisonBloomFeature;
             Assert.IsNotNull(poisonBloomFeature, $"Passed feature is not Poison Bloom! {tileFeature?.ToString() ?? "Null"}");
             expiryInTicks = GameManager.Instance.Today().GetTickDifference(poisonBloomFeature.expiryDate);
+            isPlayerSource = poisonBloomFeature.isPlayerSource;
         }
         public override AreaFeature Load() {
             PoisonBloomFeature poisonBloomFeature = base.Load() as PoisonBloomFeature;
             Assert.IsNotNull(poisonBloomFeature, $"Passed feature is not Poison Bloom! {poisonBloomFeature?.ToString() ?? "Null"}");
             poisonBloomFeature.SetExpiryInTicks(expiryInTicks);
+            poisonBloomFeature.SetIsPlayerSource(isPlayerSource);
             return poisonBloomFeature;
         }
     } 

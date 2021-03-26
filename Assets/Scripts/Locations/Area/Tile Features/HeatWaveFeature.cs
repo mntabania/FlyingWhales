@@ -3,6 +3,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Traits;
 
 namespace Locations.Area_Features {
     public class HeatWaveFeature : AreaFeature {
@@ -13,7 +14,8 @@ namespace Locations.Area_Features {
 
         public int expiryInTicks { get; private set; }
         public GameDate expiryDate { get; private set; }
-        
+        public bool isPlayerSource { get; private set; }
+
         public HeatWaveFeature() {
             name = "Heat Wave";
             description = "There is a heat wave in this location.";
@@ -143,6 +145,10 @@ namespace Locations.Area_Features {
                 CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
                 if(GameUtilities.RollChance(baseChance)) {
                     character.traitContainer.AddTrait(character, "Overheating");
+                    Overheating overheating = character.traitContainer.GetTraitOrStatus<Overheating>("Overheating");
+                    if (overheating != null) {
+                        overheating.SetIsPlayerSource(isPlayerSource);
+                    }
                 }
             }
             RescheduleHeatWaveCheck(p_area);
@@ -159,22 +165,29 @@ namespace Locations.Area_Features {
             expiryInTicks = ticks;
         }
         #endregion
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
     }
     
     [System.Serializable]
     public class SaveDataHeatWaveFeature : SaveDataAreaFeature {
 
         public int expiryInTicks;
+        public bool isPlayerSource;
+
         public override void Save(AreaFeature tileFeature) {
             base.Save(tileFeature);
             HeatWaveFeature heatWaveFeature = tileFeature as HeatWaveFeature;
             Assert.IsNotNull(heatWaveFeature, $"Passed feature is not Heat Wave! {tileFeature?.ToString() ?? "Null"}");
             expiryInTicks = GameManager.Instance.Today().GetTickDifference(heatWaveFeature.expiryDate);
+            isPlayerSource = heatWaveFeature.isPlayerSource;
         }
         public override AreaFeature Load() {
             HeatWaveFeature heatWaveFeature = base.Load() as HeatWaveFeature;
             Assert.IsNotNull(heatWaveFeature, $"Passed feature is not Heat Wave! {heatWaveFeature?.ToString() ?? "Null"}");
             heatWaveFeature.SetExpiryInTicks(expiryInTicks);
+            heatWaveFeature.SetIsPlayerSource(isPlayerSource);
             return heatWaveFeature;
         }
     } 

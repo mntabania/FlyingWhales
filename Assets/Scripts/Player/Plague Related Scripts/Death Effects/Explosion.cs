@@ -53,8 +53,7 @@ namespace Plague.Death_Effect {
         private void Ignite(Character p_character) {
             if (p_character.marker) {
                 BurningSource bs = new BurningSource();
-                Burning burning = new Burning();
-                burning.InitializeInstancedTrait();
+                Burning burning = TraitManager.Instance.CreateNewInstancedTraitClass<Burning>("Burning");
                 burning.SetSourceOfBurning(bs, p_character);
                 p_character.traitContainer.AddTrait(p_character, burning, bypassElementalChance: true);
             }

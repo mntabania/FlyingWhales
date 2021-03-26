@@ -3,6 +3,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Traits;
 
 namespace Locations.Area_Features {
     public class BlizzardFeature : AreaFeature {
@@ -13,6 +14,7 @@ namespace Locations.Area_Features {
         
         public int expiryInTicks { get; private set; }
         public GameDate expiryDate { get; private set; }
+        public bool isPlayerSource { get; private set; }
 
         public BlizzardFeature() {
             name = "Blizzard";
@@ -147,10 +149,14 @@ namespace Locations.Area_Features {
                     summary =
                         $"{summary}\n\tChance met for {character.name}. Adding Freezing trait...";
                     character.traitContainer.AddTrait(character, "Freezing", bypassElementalChance: true);
+                    Freezing freezing = character.traitContainer.GetTraitOrStatus<Freezing>("Freezing");
+                    if (freezing != null) {
+                        freezing.SetIsPlayerSource(isPlayerSource);
+                    }
                     //character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice,
                     //    piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), showHPBar: true);
                 }
-                character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing);
+                character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing, isPlayerSource: isPlayerSource);
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, blizzardDamage);
                 if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BLIZZARD;
@@ -173,22 +179,29 @@ namespace Locations.Area_Features {
             expiryInTicks = ticks;
         }
         #endregion
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
     }
 
     [System.Serializable]
     public class SaveDataBlizzardFeature : SaveDataAreaFeature {
 
         public int expiryInTicks;
+        public bool isPlayerSource;
+
         public override void Save(AreaFeature tileFeature) {
             base.Save(tileFeature);
             BlizzardFeature blizzardFeature = tileFeature as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {tileFeature?.ToString() ?? "Null"}");
             expiryInTicks = blizzardFeature.expiryInTicks;
+            isPlayerSource = blizzardFeature.isPlayerSource;
         }
         public override AreaFeature Load() {
             BlizzardFeature blizzardFeature = base.Load() as BlizzardFeature;
             Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {blizzardFeature?.ToString() ?? "Null"}");
             blizzardFeature.SetExpiryInTicks(expiryInTicks);
+            blizzardFeature.SetIsPlayerSource(isPlayerSource);
             return blizzardFeature;
         }
     } 

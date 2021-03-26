@@ -1,11 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using Inner_Maps;
 using UnityEngine;
+using Traits;
 
 namespace Traits {
-    public class Frozen : Status {
+    public class Frozen : Status, IElementalTrait {
         private GameObject _frozenEffect;
+        public bool isPlayerSource { get; private set; }
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataFrozen);
+        #endregion
 
         public Frozen() {
             name = "Frozen";
@@ -26,6 +33,11 @@ namespace Traits {
         }
 
         #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataFrozen data = saveDataTrait as SaveDataFrozen;
+            isPlayerSource = data.isPlayerSource;
+        }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo.gridTileLocation == null) {
@@ -92,5 +104,22 @@ namespace Traits {
             }
         }
         #endregion
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
+        #endregion
     }
 }
+#region Save Data
+public class SaveDataFrozen : SaveDataTrait {
+    public bool isPlayerSource;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Frozen data = trait as Frozen;
+        isPlayerSource = data.isPlayerSource;
+    }
+}
+#endregion

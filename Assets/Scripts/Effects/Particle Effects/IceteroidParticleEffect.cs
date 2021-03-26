@@ -33,9 +33,12 @@ public class IceteroidParticleEffect : BaseParticleEffect {
                     piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
         //traitable.AdjustHP(-400, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
         if (traitable is Character character && character.isDead == false) {
-            traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
-            traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
-            traitable.traitContainer.AddTrait(traitable, "Freezing", null, null, true);
+            character.traitContainer.RemoveStatusAndStacks(character, "Freezing");
+            character.traitContainer.AddTrait(character, "Frozen", bypassElementalChance: true);
+            Frozen frozen = traitable.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
+            if (frozen != null) {
+                frozen.SetIsPlayerSource(true);
+            }
             if (Random.Range(0, 100) < 25) {
                 character.traitContainer.AddTrait(character, "Injured");
             }

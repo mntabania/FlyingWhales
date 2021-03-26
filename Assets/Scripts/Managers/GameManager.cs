@@ -34,7 +34,7 @@ public class GameManager : BaseMonoBehaviour {
     public bool displayFPS = true;
     public bool showFullDebug;
     public static bool showAllTilesTooltip = false;
-    
+
     [Header("Particle Effects")]
     [SerializeField] private GameObject aoeParticlesPrefab;
     [SerializeField] private GameObject aoeParticlesAutoDestroyPrefab;

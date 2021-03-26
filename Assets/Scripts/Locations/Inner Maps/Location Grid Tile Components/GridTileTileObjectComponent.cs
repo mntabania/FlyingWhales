@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 namespace Inner_Maps {
     public class GridTileTileObjectComponent : LocationGridTileComponent {
@@ -218,19 +219,19 @@ namespace Inner_Maps {
                     int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE));
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                         } else {
-                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj);
+                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj, setAsPlayerSource: true);
                         }
                     } else if (poi is Character character) {
-                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                         if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
                             Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                         }
                     } else {
-                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                     }
                 }
             }
@@ -269,6 +270,10 @@ namespace Inner_Maps {
             
             triggeredBy.traitContainer.RemoveStatusAndStacks(triggeredBy, "Freezing");
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Frozen", bypassElementalChance: true, overrideDuration: duration);
+            Frozen frozen = triggeredBy.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
+            if (frozen != null) {
+                frozen.SetIsPlayerSource(true);
+            }
         }
         #endregion
 

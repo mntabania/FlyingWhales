@@ -6,12 +6,13 @@ using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine.Assertions;
 namespace Traits {
-    public class Overheating : Status {
+    public class Overheating : Status, IElementalTrait {
         
         public ITraitable traitable { get; private set; }
         public List<LocationStructure> excludedStructuresInSeekingShelter { get; private set; }
         public LocationStructure currentShelterStructure { get; private set; }
-        
+        public bool isPlayerSource { get; private set; }
+
         private GameObject _overheatingEffectGO;
         private readonly WeightedDictionary<string> weights;
 
@@ -39,12 +40,13 @@ namespace Traits {
         #region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataOverheating saveDataOverheating = saveDataTrait as SaveDataOverheating;
-            Assert.IsNotNull(saveDataOverheating);
-            excludedStructuresInSeekingShelter = SaveUtilities.ConvertIDListToStructures(saveDataOverheating.excludedStructuresInSeekingShelter);
-            if (!string.IsNullOrEmpty(saveDataOverheating.currentShelterStructure)) {
-                currentShelterStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataOverheating.currentShelterStructure);    
+            SaveDataOverheating data = saveDataTrait as SaveDataOverheating;
+            Assert.IsNotNull(data);
+            excludedStructuresInSeekingShelter = SaveUtilities.ConvertIDListToStructures(data.excludedStructuresInSeekingShelter);
+            if (!string.IsNullOrEmpty(data.currentShelterStructure)) {
+                currentShelterStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentShelterStructure);    
             }
+            isPlayerSource = data.isPlayerSource;
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
@@ -166,20 +168,29 @@ namespace Traits {
             return false;
         }
         #endregion
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
+        #endregion
     }
 }
 #region Save Data
 public class SaveDataOverheating : SaveDataTrait {
     public List<string> excludedStructuresInSeekingShelter;
     public string currentShelterStructure;
+    public bool isPlayerSource;
+
     public override void Save(Trait trait) {
         base.Save(trait);
-        Overheating overheating = trait as Overheating;
-        Assert.IsNotNull(overheating);
-        excludedStructuresInSeekingShelter = SaveUtilities.ConvertSavableListToIDs(overheating.excludedStructuresInSeekingShelter);
-        if (overheating.currentShelterStructure != null) {
-            currentShelterStructure = overheating.currentShelterStructure.persistentID;    
+        Overheating data = trait as Overheating;
+        Assert.IsNotNull(data);
+        excludedStructuresInSeekingShelter = SaveUtilities.ConvertSavableListToIDs(data.excludedStructuresInSeekingShelter);
+        if (data.currentShelterStructure != null) {
+            currentShelterStructure = data.currentShelterStructure.persistentID;    
         }
+        isPlayerSource = data.isPlayerSource;
     }
 }
 #endregion

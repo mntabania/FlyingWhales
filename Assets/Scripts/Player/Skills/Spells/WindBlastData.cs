@@ -35,7 +35,7 @@ public class WindBlastData : SkillData {
     }
     private void ApplyWindDamage(ITraitable traitable) {
         int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.WIND_BLAST));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, showHPBar: true);
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, showHPBar: true, isPlayerSource: true);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);

@@ -32,8 +32,7 @@ public class FireElemental : Summon {
     }
     private void OnCharacterFinishedAction(ActualGoapNode goapNode) {
         if (goapNode.actor == this && goapNode.action.goapType == INTERACTION_TYPE.STAND) {
-            Burning burning = new Burning();
-            burning.InitializeInstancedTrait();
+            Burning burning = TraitManager.Instance.CreateNewInstancedTraitClass<Burning>("Burning");
             burning.SetSourceOfBurning(new BurningSource(), gridTileLocation.tileObjectComponent.genericTileObject);
             gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTileLocation.tileObjectComponent.genericTileObject, burning, this, bypassElementalChance: true);
         }

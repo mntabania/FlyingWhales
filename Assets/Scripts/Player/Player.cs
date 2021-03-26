@@ -35,10 +35,9 @@ public class Player : ILeader, IObjectManipulator {
     public PlayerTileObjectComponent tileObjectComponent { get; private set; }
     public StoredTargetsComponent storedTargetsComponent { get; }
     public BookmarkComponent bookmarkComponent { get; }
-
     public SummonMeterComponent summonMeterComponent { get; private set; }
-
     private ManaRegenComponent m_manaRegenComponent { get; set; }
+    public PlayerDamageAccumulator damageAccumulator { get; private set; }
 
     #region getters/setters
     public int id => -645;
@@ -68,6 +67,7 @@ public class Player : ILeader, IObjectManipulator {
         tileObjectComponent = new PlayerTileObjectComponent();
         summonMeterComponent = new SummonMeterComponent();
         bookmarkComponent = new BookmarkComponent();
+        damageAccumulator = new PlayerDamageAccumulator();
         summonMeterComponent.Initialize();
         
 

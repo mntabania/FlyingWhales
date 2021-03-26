@@ -145,6 +145,10 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         string summary = $"{GameManager.Instance.TodayLogString()}Per tick check of poison cloud.";
         ITraitable chosenTraitable = UtilityScripts.CollectionUtilities.GetRandomElement(choices);
         chosenTraitable.traitContainer.AddTrait(chosenTraitable, "Poisoned");
+        Poisoned poisoned = chosenTraitable.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+        if (poisoned != null) {
+            poisoned.SetIsPlayerSource(_poisonCloud.isPlayerSource);
+        }
         summary = $"{summary}\nChance met! Target is {chosenTraitable.ToString()}";
         Debug.Log(summary);
         Profiler.EndSample();
@@ -162,9 +166,13 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     private void ApplyExplosionEffect(ITraitable traitable) {
-        traitable.AdjustHP(-350, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
+        traitable.AdjustHP(-350, ELEMENTAL_TYPE.Fire, true, showHPBar: true, isPlayerSource : _poisonCloud.isPlayerSource);
         if (traitable.currentHP > 0 || traitable is GenericTileObject) {
             traitable.traitContainer.AddTrait(traitable, "Poisoned");
+            Poisoned poisoned = traitable.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+            if (poisoned != null) {
+                poisoned.SetIsPlayerSource(_poisonCloud.isPlayerSource);
+            }
         }
     }
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {

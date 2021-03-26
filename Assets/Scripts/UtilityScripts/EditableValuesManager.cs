@@ -33,6 +33,9 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _triggerFlawManaCost;
 	[SerializeField] private int _buildStructureManaCost;
 
+	[Header("Chaos Orb")]
+	[SerializeField] private int _chaosOrbExpulsionThreshold;
+
 	[Header("Visuals")]
 	[SerializeField] private int _sortingOrdersInBetweenHexTileRows = 20; //this is the number of sorting orders in between rows of the world map.
 
@@ -63,9 +66,11 @@ public class EditableValuesManager : MonoBehaviour {
 	public int corruptTileManaCost => _corruptTileManaCost;
 	public int triggerFlawManaCost => _triggerFlawManaCost;
 	public int buildStructureManaCost => _buildStructureManaCost;
-
 	//visuals
 	public int sortingOrdersInBetweenHexTileRows => _sortingOrdersInBetweenHexTileRows;
+	//chaos orb
+	public int chaosOrbExpulsionThreshold => _chaosOrbExpulsionThreshold;
+
 	private void Awake() {
 		Instance = this;
 	}

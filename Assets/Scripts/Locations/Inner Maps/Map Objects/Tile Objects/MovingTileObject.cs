@@ -12,10 +12,14 @@ public abstract class MovingTileObject : TileObject {
     public bool hasExpired { get; protected set; }
     protected virtual int affectedRange => 1;
 
+    public bool isPlayerSource { get; private set; }
+
     public override System.Type serializedData => typeof(SaveDataMovingTileObject);
 
     public MovingTileObject() : base() { }
-    public MovingTileObject(SaveDataMovingTileObject data) : base(data) { }
+    public MovingTileObject(SaveDataMovingTileObject data) : base(data) {
+        isPlayerSource = data.isPlayerSource;
+    }
     
     protected virtual bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_mapVisual != null) {
@@ -60,12 +64,17 @@ public abstract class MovingTileObject : TileObject {
         
     }
     #endregion
+
+    public void SetIsPlayerSource(bool p_state) {
+        isPlayerSource = p_state;
+    }
 }
 
 #region Save Data
 public class SaveDataMovingTileObject : SaveDataTileObject {
     public Vector3 mapVisualWorldPosition;
     public bool hasExpired;
+    public bool isPlayerSource;
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         MovingTileObject movingTileObject = tileObject as MovingTileObject;
@@ -74,6 +83,7 @@ public class SaveDataMovingTileObject : SaveDataTileObject {
             mapVisualWorldPosition = tileObject.mapObjectVisual.transform.position;
         }
         hasExpired = movingTileObject.hasExpired;
+        isPlayerSource = movingTileObject.isPlayerSource;
     }
 }
 #endregion

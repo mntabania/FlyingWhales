@@ -7,13 +7,14 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Debug = System.Diagnostics.Debug;
 namespace Traits {
-    public class Poisoned : Status {
+    public class Poisoned : Status, IElementalTrait {
 
         public List<Character> awareCharacters { get; } //characters that know about this trait
         private ITraitable traitable { get; set; } //poi that has the poison
         public Character cleanser { get; private set; }
         public bool isVenomous { get; private set; }
-        
+        public bool isPlayerSource { get; private set; }
+
         private Character characterOwner;
         private GameObject _poisonedEffect;
         
@@ -45,9 +46,10 @@ namespace Traits {
         #region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataPoisoned saveDataPoisoned = saveDataTrait as SaveDataPoisoned;
-            Debug.Assert(saveDataPoisoned != null, nameof(saveDataPoisoned) + " != null");
-            isVenomous = saveDataPoisoned.isVenomous;
+            SaveDataPoisoned data = saveDataTrait as SaveDataPoisoned;
+            Debug.Assert(data != null, nameof(data) + " != null");
+            isVenomous = data.isVenomous;
+            isPlayerSource = data.isPlayerSource;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
@@ -126,7 +128,7 @@ namespace Traits {
             base.OnTickStarted(traitable);
             if (!isVenomous) {
                 characterOwner?.AdjustHP(-Mathf.RoundToInt(1 * characterOwner.traitContainer.stacks[name]),
-                ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: isPlayerSource);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
@@ -234,7 +236,13 @@ namespace Traits {
             }
         }
         #endregion
-        
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
+        #endregion
+
     }
 }
 
@@ -242,13 +250,15 @@ namespace Traits {
 public class SaveDataPoisoned : SaveDataTrait {
     public List<string> awareCharacterIDs;
     public bool isVenomous;
+    public bool isPlayerSource;
 
     public override void Save(Trait trait) {
         base.Save(trait);
-        Poisoned poisoned = trait as Poisoned;
-        Assert.IsNotNull(poisoned);
-        awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(poisoned.awareCharacters);
-        isVenomous = poisoned.isVenomous;
+        Poisoned data = trait as Poisoned;
+        Assert.IsNotNull(data);
+        awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(data.awareCharacters);
+        isVenomous = data.isVenomous;
+        isPlayerSource = data.isPlayerSource;
     }
 }
 #endregion

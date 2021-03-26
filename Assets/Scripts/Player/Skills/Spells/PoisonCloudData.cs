@@ -18,7 +18,8 @@ public class PoisonCloudData : SkillData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        InnerMapManager.Instance.SpawnPoisonCloud(targetTile, 5, GameManager.Instance.Today().AddTicks(PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.POISON_CLOUD)));
+        PoisonCloud cloud = InnerMapManager.Instance.SpawnPoisonCloud(targetTile, 5, GameManager.Instance.Today().AddTicks(PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.POISON_CLOUD)));
+        cloud.SetIsPlayerSource(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
