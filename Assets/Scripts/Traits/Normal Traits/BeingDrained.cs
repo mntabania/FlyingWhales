@@ -14,6 +14,7 @@ namespace Traits {
             hindersPerform = true;
             hindersWitness = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Ended_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
         public override bool OnDeath(Character character) {
             character.traitContainer.RemoveTrait(character, this);
