@@ -115,7 +115,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     #endregion
     
     public void OnClickReleaseAbility() {
-        purchaseSkillUIController.Init(purchaseSkillUIController.skillCountPerDraw);
+        purchaseSkillUIController.Init(purchaseSkillUIController.skillCountPerDraw, true);
     }
     public void OnClickUpgradePortal() {
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;

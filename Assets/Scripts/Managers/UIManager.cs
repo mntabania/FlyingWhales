@@ -216,6 +216,7 @@ public class UIManager : BaseMonoBehaviour {
     public void InitializeAfterLoadOutPicked() {
         _portalUIController.InitializeAfterLoadoutSelected();
         upgradePortalUIController.InitializeAfterLoadoutSelected();
+        purchaseSkillUIController.InitializeAfterLoadoutSelected();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
@@ -1951,7 +1952,7 @@ public class UIManager : BaseMonoBehaviour {
         upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level);
     }
     public void ShowPurchaseSkillUI() {
-        purchaseSkillUIController.Init(3);
+        purchaseSkillUIController.Init(3, true);
     }
     #endregion
 

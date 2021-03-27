@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Ruinarch.MVCFramework;
 using System;
+using DG.Tweening;
 
 public class PurchaseSkillUIView : MVCUIView {
 	#region interface for listener
@@ -9,6 +10,7 @@ public class PurchaseSkillUIView : MVCUIView {
 		void OnCloseClicked();
 		void OnHoverOverReroll();
 		void OnHoverOutReroll();
+		void OnClickCancelReleaseAbility();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -43,7 +45,6 @@ public class PurchaseSkillUIView : MVCUIView {
 	public void EnableRerollButton() {
 		UIModel.btnReroll.interactable = true;
 	}
-
 	public void ShowSkills() {
 		UIModel.skillsParent.gameObject.SetActive(true);
 		UIModel.txtMessageDisplay.gameObject.SetActive(false);
@@ -52,16 +53,23 @@ public class PurchaseSkillUIView : MVCUIView {
 		UIModel.skillsParent.gameObject.SetActive(false);
 		UIModel.txtMessageDisplay.gameObject.SetActive(true);
 	}
-
 	public Transform GetSkillsParent() {
 		return UIModel.skillsParent;
 	}
-
 	public void SetMessage(string p_message) {
 		UIModel.txtMessageDisplay.text = p_message;
 	}
 	public void SetRerollCooldownFill(float p_fill) {
 		UIModel.imgCooldown.fillAmount = p_fill;
+	}
+	public void SetWindowCoverState(bool p_state) {
+		// UIModel.goCover.SetActive(p_state);
+	}
+	public void SetTimerState(bool p_state) {
+		UIModel.goReleaseAbilityTimer.SetActive(p_state);
+		if (p_state) {
+			UIModel.timerReleaseAbility.RefreshName();
+		}
 	}
 	#endregion
 
@@ -71,6 +79,7 @@ public class PurchaseSkillUIView : MVCUIView {
 		UIModel.onRerollClicked += p_listener.OnRerollClicked;
 		UIModel.onHoverOverReroll += p_listener.OnHoverOverReroll;
 		UIModel.onHoverOutReroll += p_listener.OnHoverOutReroll;
+		UIModel.onClickCancelReleaseAbility += p_listener.OnClickCancelReleaseAbility;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -78,6 +87,59 @@ public class PurchaseSkillUIView : MVCUIView {
 		UIModel.onRerollClicked -= p_listener.OnRerollClicked;
 		UIModel.onHoverOverReroll -= p_listener.OnHoverOverReroll;
 		UIModel.onHoverOutReroll -= p_listener.OnHoverOutReroll;
+		UIModel.onClickCancelReleaseAbility -= p_listener.OnClickCancelReleaseAbility;
 	}
 	#endregion
+	
+	#region Animations
+    public void PlayShowAnimation() {
+	    UIModel.canvasGroupCover.alpha = 0f;
+	    UIModel.canvasGroupMainWindow.alpha = 0f;
+	    UIModel.canvasGroupFrame.alpha = 1f;
+	    Vector2 targetPos = UIModel.rectTransformMainWindow.anchoredPosition;
+        UIModel.rectTransformMainWindow.anchoredPosition = new Vector2(targetPos.x, targetPos.y - 100f);
+        
+        Vector2 defaultSize = UIModel.defaultFrameSize;
+        UIModel.rectTransformFrame.sizeDelta = new Vector2(defaultSize.x + 500f, defaultSize.y);
+        
+        UIModel.canvasGroupFrameGlow.alpha = 0f;
+        UIModel.canvasGroupFrameGlow.DOKill();
+        UIModel.canvasGroupFrameGlow.DOFade(1f, 2f).SetEase(Ease.OutQuart).SetLoops(-1, LoopType.Yoyo);
+        
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(UIModel.canvasGroupMainWindow.DOFade(1f, 0.5f));
+        sequence.Join(UIModel.canvasGroupCover.DOFade(1f, 0.5f));
+        sequence.Join(UIModel.rectTransformMainWindow.DOAnchorPos(targetPos, 0.5f));
+        sequence.Join(UIModel.rectTransformFrame.DOSizeDelta(defaultSize, 0.8f));
+        sequence.AppendInterval(0.02f);
+        
+        for (int i = 0; i < UIModel.skillItems.Count; i++) {
+	        PurchaseSkillItemUI item = UIModel.skillItems[i];
+	        sequence.Join(item.PrepareAnimation().SetDelay(i/5f));
+        }
+
+        sequence.Play();
+    }
+    public void PlayItemsAnimation() {
+	    Sequence sequence = DOTween.Sequence();
+	    for (int i = 0; i < UIModel.skillItems.Count; i++) {
+		    PurchaseSkillItemUI item = UIModel.skillItems[i];
+		    sequence.Join(item.PrepareAnimation().SetDelay(i/5f));
+	    }
+
+	    sequence.Play();
+    }
+    public void PlayHideAnimation(System.Action onComplete) {
+        Sequence sequence = DOTween.Sequence();
+        Vector2 targetFrameSize = UIModel.defaultFrameSize;
+        targetFrameSize.x += 1000f;
+        
+        sequence.Append(UIModel.canvasGroupMainWindow.DOFade(0f, 0.5f));
+        sequence.Join(UIModel.canvasGroupCover.DOFade(0f, 0.5f));
+        sequence.Join(UIModel.rectTransformFrame.DOSizeDelta(targetFrameSize, 0.7f));
+        sequence.Join(UIModel.canvasGroupFrame.DOFade(0f, 0.6f));
+        sequence.OnComplete(() => onComplete());
+        sequence.Play();
+    }
+    #endregion
 }

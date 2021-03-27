@@ -44,7 +44,9 @@ public class TimerItemUI : MonoBehaviour {
         barProgress.value = _timer?.GetCurrentTimerProgressPercent() ?? 0f;
     }
     public void RefreshName() {
-        SetName(_timer.timerName);
+        if (_timer != null) {
+            SetName(_timer.timerName);    
+        }
     }
     private void OnDestroy() {
         _timer = null;

@@ -17,7 +17,6 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 
 	[SerializeField]
 	private PurchaseSkillItemUI m_purchaseSkillItemUI; //item to instantiate
-	private List<PurchaseSkillItemUI> m_skillItems = new List<PurchaseSkillItemUI>();
 
 	private WeightedDictionary<SkillData> m_weightedList;
 	private int m_numberOfSkills;
@@ -43,19 +42,11 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	
 	#region mono
 	private void Start() {
-		if (isTestScene) {
-			Init(skillCountPerDraw);
-		} else {
-			// UIManager.Instance.onPortalClicked += OnPortalClicked;
-		}
 		SubscribeListeners();
 	}
 
 	private void OnDestroy() {
-		// if (UIManager.Instance != null) {
-		// 	UIManager.Instance.onPortalClicked -= OnPortalClicked;
-		// }
-		m_skillItems.ForEach(CleanupItem);
+		m_purchaseSkillUIView.UIModel.skillItems.ForEach(CleanupItem);
 	}
 	private void CleanupItem(PurchaseSkillItemUI eachItem) {
 		eachItem.onButtonClick -= OnSkillClick;
@@ -63,12 +54,30 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		eachItem.onHoverOut -= OnHoverOutSkill;
 	}
 	#endregion
-
+	
+	public void InitializeAfterLoadoutSelected() {
+		Init(skillCountPerDraw, false);
+		HideUI();
+		m_purchaseSkillUIView.UIModel.timerReleaseAbility.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell);
+	}
 	private void SubscribeListeners() {
 		Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, OnPlayerFinishedSkillUnlock);
+		Messenger.AddListener<SkillData, int>(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, OnPlayerChoseSkillToUnlock);
+		Messenger.AddListener(PlayerSignals.PLAYER_SKILL_UNLOCK_CANCELLED, OnPlayerCancelledSkillUnlock);
 	}
 	private void OnPlayerFinishedSkillUnlock(PLAYER_SKILL_TYPE p_skill, int p_unlockCost) {
 		OnFinishSkillUnlock();
+	}
+	private void OnPlayerChoseSkillToUnlock(SkillData p_skill, int p_unlockCost) {
+		UpdateTimerState();
+		UpdateWindowCoverState();
+		m_purchaseSkillUIView.UIModel.timerReleaseAbility.RefreshName();
+	}
+	private void OnPlayerCancelledSkillUnlock() {
+		UpdateTimerState();
+		UpdateWindowCoverState();
+		UpdateRerollBtn();
+		UpdateItems();
 	}
 	public override void HideUI() {
 		base.HideUI();
@@ -82,7 +91,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		return GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased) <= 0;
 	}
 
-	public void Init(int numberOfSkills) {
+	public void Init(int numberOfSkills, bool playShowAnimation) {
 		m_numberOfSkills = numberOfSkills;
 		InstantiateUI();
 		if (PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.IsFinished()) {
@@ -90,21 +99,29 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		} else {
 			m_purchaseSkillUIView.SetRerollCooldownFill(1f - PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.GetCurrentTimerProgressPercent());	
 		}
-		
+		UpdateWindowCoverState();
+		UpdateTimerState();
+		if (playShowAnimation) {
+			m_purchaseSkillUIView.PlayShowAnimation();	
+		}
 	}
-
-	// private void OnPortalClicked() {
-	// 	if (GameManager.Instance.gameHasStarted) {
-	// 		Init(skillCountPerDraw);
-	// 	}
-	// }
+	private void UpdateWindowCoverState() {
+		if (PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell.IsFinished()) {
+			m_purchaseSkillUIView.SetWindowCoverState(false);
+		} else {
+			m_purchaseSkillUIView.SetWindowCoverState(true);
+		}
+	}
+	private void UpdateTimerState() {
+		m_purchaseSkillUIView.SetTimerState(!PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell.IsFinished());
+	}
 	private void SpawnItems() {
 		if (m_weightedList.Count <= 0) {
 			m_purchaseSkillUIView.HideSkills();
 			m_purchaseSkillUIView.DisableRerollButton();
 			m_purchaseSkillUIView.SetMessage("All Skills Unlocked");
 		} else {
-			m_skillItems.ForEach((eachSkill) => {
+			m_purchaseSkillUIView.UIModel.skillItems.ForEach((eachSkill) => {
 				eachSkill.gameObject.SetActive(false);
 			});
 			int count = m_numberOfSkills;
@@ -121,7 +138,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			}
 			
 			
-			if (m_skillItems.Count <= 0) {
+			if (m_purchaseSkillUIView.UIModel.skillItems.Count <= 0) {
 				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
 					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
 					SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
@@ -130,47 +147,23 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 					go.onButtonClick += OnSkillClick;
 					go.onHoverOver += OnHoverOverSkill;
 					go.onHoverOut += OnHoverOutSkill;
-					m_skillItems.Add(go);
+					m_purchaseSkillUIView.UIModel.skillItems.Add(go);
 				}
-				//AddTestSkill(PLAYER_SKILL_TYPE.PLAGUE);
-				// for (int x = 0; x < m_numberOfSkills; ++x) {
-				// 	PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_purchaseSkillUIView.GetSkillsParent(), true);
-				// 	SkillData data = m_weightedList.PickRandomElementGivenWeights();
-				// 	go.InitItem(data.type, PlayerManager.Instance.player.mana);
-				// 	go.onButtonClick += OnSkillClick;
-				// 	m_skillItems.Add(go);
-				// 	m_weightedList.RemoveElement(data);
-				// }
 			} else {
 				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
 					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
 					SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
-					PurchaseSkillItemUI skillItem = m_skillItems[i];
+					PurchaseSkillItemUI skillItem = m_purchaseSkillUIView.UIModel.skillItems[i];
 					skillItem.gameObject.SetActive(true);
 					skillItem.InitItem(data.type, PlayerManager.Instance.player.mana);
 				}
-				// for (int x = 0; x < count; ++x) {
-				// 	/* should remove if everything has a weight */
-				// 	if (m_weightedList.Count <= 0) {
-				// 		break;
-				// 	}
-				// 	SkillData data = m_weightedList.PickRandomElementGivenWeights();
-				// 	if (data == null) { /* should remove if everything has a weight */
-				// 		m_weightedList.RemoveElement(data);
-				// 		--x;
-				// 		continue;
-				// 	}
-				// 	m_skillItems[x].gameObject.SetActive(true);
-				// 	m_skillItems[x].InitItem(data.type, PlayerManager.Instance.player.mana);
-				// 	m_weightedList.RemoveElement(data);
-				// }
 			}
 			m_weightedList.Clear();
 		}
 	}
-	private void UpdateItem() {
-		if (m_skillItems.Count > 0) {
-			m_skillItems.ForEach((eachItems) => {
+	private void UpdateItems() {
+		if (m_purchaseSkillUIView.UIModel.skillItems.Count > 0) {
+			m_purchaseSkillUIView.UIModel.skillItems.ForEach((eachItems) => {
 				eachItems.UpdateItem(PlayerManager.Instance.player.mana);
 			});
 		}
@@ -208,7 +201,6 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	public override void InstantiateUI() {
 		if (GetIsAvailable() || m_firstRun) {
 			if (m_purchaseSkillUIView == null) { //first run
-				//PlayerSkillManager.Instance.Initialize();
 				MakeListForAvailableSkills();
 				DisplayMenuFirstTime();
 			} else {
@@ -244,12 +236,12 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 				MakeListForAvailableSkills();
 				SpawnItems();
 				m_purchaseSkillUIView.ShowSkills();
-				UpdateItem();
+				UpdateItems();
 			} else {
 				if (m_weightedList.Count > 0 || PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count > 0) {
 					UpdateRerollBtn();
 					m_purchaseSkillUIView.ShowSkills();
-					UpdateItem();	
+					UpdateItems();	
 				} else {
 					m_purchaseSkillUIView.HideSkills();
 					m_purchaseSkillUIView.DisableRerollButton();
@@ -267,7 +259,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 
 	#region Reroll
 	private void UpdateRerollBtn() {
-		if (skillComponentToUse.cooldownReroll.IsFinished()) {
+		if (skillComponentToUse.cooldownReroll.IsFinished() && skillComponentToUse.timerUnlockSpell.IsFinished()) {
 			m_purchaseSkillUIView.EnableRerollButton();	
 		} else {
 			m_purchaseSkillUIView.DisableRerollButton();
@@ -279,17 +271,14 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	public void OnRerollClicked() {
 		m_firstRun = false;
 		PlayerManager.Instance.player.playerSkillComponent.OnRerollUsed();
-		// m_nextPurchased = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
 		MakeListForAvailableSkills();
 		UpdateRerollBtn();
 		SpawnItems();
-		// m_isDrawn = false;
 		m_purchaseSkillUIView.ShowSkills();
-		// m_purchaseSkillUIView.HideSkills();
-		// m_purchaseSkillUIView.SetMessage("New Abilities will be available after " + (GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased)) + " ticks");
+		m_purchaseSkillUIView.PlayItemsAnimation();
 	}
 	public void OnCloseClicked() {
-		HideUI();
+		m_purchaseSkillUIView.PlayHideAnimation(HideUI);
 	}
 	public void OnHoverOverReroll() {
 		if (!m_purchaseSkillUIView.UIModel.btnReroll.IsInteractable()) {
@@ -313,18 +302,27 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	public void OnHoverOutReroll() {
 		UIManager.Instance.HideSmallInfo();
 	}
+	public void OnClickCancelReleaseAbility() {
+		SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
+		UIManager.Instance.ShowYesNoConfirmation(
+			"Cancel Release Ability", $"Are you sure you want to cancel Releasing Ability: <b>{spellData.name}</b>? " + 
+			                          $"\n<i>{UtilityScripts.Utilities.InvalidColorize("Cancelling will reset all current release progress!")}</i>", OnConfirmCancelRelease, showCover: true, layer: 30);
+	}
+	private void OnConfirmCancelRelease() {
+		PlayerManager.Instance.player.playerSkillComponent.CancelCurrentPlayerSkillUnlock();
+	}
 	private void OnHoverOverSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
 		if (PlayerManager.Instance.player.mana < p_skillData.unlockCost) {
 			UIManager.Instance.ShowSmallInfo("Not enough mana!");
 		} else {
-			p_item.shineEffect.Play();
+			p_item.borderShineEffect.Play();
 		}
 	}
 	private void OnHoverOutSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
 		if (PlayerManager.Instance.player.mana < p_skillData.unlockCost) {
 			UIManager.Instance.HideSmallInfo();
 		} else {
-			p_item.shineEffect.Stop(true);
+			p_item.borderShineEffect.Stop(true);
 		}
 	}
 	private void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
@@ -334,27 +332,10 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		if (result != -1) {
 			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
 			m_firstRun = false;
-			m_purchaseSkillUIView.HideSkills();
-			m_purchaseSkillUIView.DisableRerollButton();
-			
-			
 			PlayerManager.Instance.player.AdjustMana(-result);
 			PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToUnlock(skillData, result);
-			
-			HideUI();
-			return;
-			MakeListForAvailableSkills();
-			m_firstRun = false;
-			m_nextPurchased = GameManager.Instance.Today().AddDays(1);
-			PlayerManager.Instance.player.AdjustMana(-result);
-			// PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(p_type);
-			m_purchaseSkillUIView.HideSkills();
-			m_purchaseSkillUIView.DisableRerollButton();
-			// if (skillData.category == PLAYER_SKILL_CATEGORY.SPELL) {
-			// 	Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, p_type);
-			// }
-			m_isDrawn = false;
-			m_purchaseSkillUIView.SetMessage("New Abilities will be available after " + (GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased)) + " ticks");
+			UpdateRerollBtn();
+			UpdateItems();
 		}
 	}
 	public void OnFinishSkillUnlock() {
