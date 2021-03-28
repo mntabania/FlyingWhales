@@ -68,9 +68,9 @@ public class SleepOutside : GoapAction {
         if (needsComponent.currentSleepTicks == 1) { //If sleep ticks is down to 1 tick left, set current duration to end duration so that the action will end now, we need this because the character must only sleep the remaining hours of his sleep if ever that character is interrupted while sleeping
             goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
         }
-        needsComponent.AdjustTiredness(1f);
+        needsComponent.AdjustTiredness(0.25f);
         if (actor.race != RACE.RATMAN && !actor.partyComponent.isActiveMember) {
-            needsComponent.AdjustHappiness(-0.39f);    
+            needsComponent.AdjustHappiness(-0.2f);    
         }
         needsComponent.AdjustSleepTicks(-1);
         //needsComponent.AdjustStamina(0.2f);

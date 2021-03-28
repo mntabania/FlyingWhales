@@ -315,8 +315,8 @@ public class MakeLove : GoapAction {
     }
     public void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        goapNode.actor.needsComponent.AdjustHappiness(4.17f);
-        targetCharacter.needsComponent.AdjustHappiness(4.17f);
+        goapNode.actor.needsComponent.AdjustHappiness(6f);
+        targetCharacter.needsComponent.AdjustHappiness(6f);
         //goapNode.actor.needsComponent.AdjustStamina(1f);
         //targetCharacter.needsComponent.AdjustStamina(1f);
     }

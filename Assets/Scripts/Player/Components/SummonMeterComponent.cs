@@ -25,11 +25,11 @@ public class SummonMeterComponent {
     }
     private void InitializeOnGameStarted() {
         Messenger.RemoveListener(Signals.GAME_STARTED, InitializeOnGameStarted);
-        progress.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
+        // progress.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
     }
 
     public void LoadReferences(SaveDataSummonMeterComponent data) {
-        progress.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
+        // progress.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
     }
     
     void ListenToSignals() {

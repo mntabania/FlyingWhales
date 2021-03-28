@@ -82,7 +82,7 @@ public class Dance : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDanceSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(6.67f);
+        goapNode.actor.needsComponent.AdjustHappiness(6f);
     }
     //public void AfterDanceSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

@@ -102,7 +102,7 @@ public class HarvestPlant : GoapAction {
     }
     public void PerTickHarvestSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustHappiness(-2);
+            goapNode.actor.needsComponent.AdjustHappiness(-4);
         }
     }
     public void AfterHarvestSuccess(ActualGoapNode goapNode) {

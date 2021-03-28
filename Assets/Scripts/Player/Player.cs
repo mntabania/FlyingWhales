@@ -91,6 +91,7 @@ public class Player : ILeader, IObjectManipulator {
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         storedTargetsComponent = new StoredTargetsComponent();
         m_manaRegenComponent = new ManaRegenComponent(this);
+        damageAccumulator = new PlayerDamageAccumulator();
         summonMeterComponent.Initialize();
         
         bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);

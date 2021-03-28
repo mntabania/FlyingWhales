@@ -153,8 +153,8 @@ public class Nap : GoapAction {
         Character actor = goapNode.actor;
         CharacterNeedsComponent needsComponent = actor.needsComponent;
 
-        needsComponent.AdjustTiredness(1.1f);
-        needsComponent.AdjustHappiness(0.75f);
+        needsComponent.AdjustTiredness(1f);
+        needsComponent.AdjustHappiness(3f);
 
         //float staminaAdjustment = 0f;
         //if (actor.currentStructure == actor.homeStructure) {

@@ -114,7 +114,7 @@ public class Fish : GoapAction {
     }
     public void PerTickFishSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustHappiness(-2);
+            goapNode.actor.needsComponent.AdjustHappiness(-4);
         }
     }
     public void AfterFishSuccess(ActualGoapNode goapNode) {

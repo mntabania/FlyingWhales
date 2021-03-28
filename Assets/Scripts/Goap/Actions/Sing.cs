@@ -98,7 +98,7 @@ public class Sing : GoapAction {
         //currentState.SetIntelReaction(SingSuccessIntelReaction);
     }
     public void PerTickSingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(4.4f);
+        goapNode.actor.needsComponent.AdjustHappiness(6f);
     }
     //public void AfterSingSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

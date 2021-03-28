@@ -356,8 +356,8 @@ public class DrinkBlood : GoapAction {
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
 
-        actor.needsComponent.AdjustFullness(34f);
-        actor.needsComponent.AdjustHappiness(13.3f);
+        actor.needsComponent.AdjustFullness(7.5f);
+        actor.needsComponent.AdjustHappiness(20f);
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);

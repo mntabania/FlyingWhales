@@ -951,6 +951,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         for (int i = 0; i < overlappedTiles.Count; i++) {
             LocationGridTile currTile = overlappedTiles[i];
             currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+            currTile.tileObjectComponent.SetOccupyingObject(this);
         }
     }
     private void UnoccupyTiles(Point size, LocationGridTile tile) {
@@ -958,6 +959,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         for (int i = 0; i < overlappedTiles.Count; i++) {
             LocationGridTile currTile = overlappedTiles[i];
             currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+            currTile.tileObjectComponent.SetOccupyingObject(null);
         }
     }
     public bool IsOwnedBy(Character character) {
