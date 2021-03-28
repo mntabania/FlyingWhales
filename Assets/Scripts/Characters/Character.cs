@@ -5282,6 +5282,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
         AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
         AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
+        AddPlayerAction(PLAYER_SKILL_TYPE.CREATE_BLACKMAIL);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
