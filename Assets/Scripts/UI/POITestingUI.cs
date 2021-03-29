@@ -252,7 +252,8 @@ public class POITestingUI : MonoBehaviour {
         } else {
             //Debug.LogWarning(activeCharacter.movementComponent.HasPathToEvenIfDiffRegion(this.poi.gridTileLocation));
             //STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
-            activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
+            //activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
+            activeCharacter.jobComponent.CreateGoToSpecificTileJob(poi.gridTileLocation);
             HideUI();
         }
     }
