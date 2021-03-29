@@ -6,7 +6,7 @@ using Inner_Maps;
 public class FeebleSpiritData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FEEBLE_SPIRIT;
     public override string name => "Feeble Spirit";
-    public override string description => "This Spell summons a Feeble Spirit that will drain Energy from a nearby Resident.";
+    public override string description => "This Spell summons a Feeble Spirit that will drain Energy from a nearby Villager.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;

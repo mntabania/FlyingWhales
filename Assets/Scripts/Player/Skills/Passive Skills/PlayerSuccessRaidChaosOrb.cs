@@ -2,7 +2,8 @@
 using UtilityScripts;
 
 public class PlayerSuccessRaidChaosOrb : PassiveSkill {
-    public override string name => "Mana Orbs after successful raid/snatch";
+    public override string name => "Mana Orbs on Raid/Snatch";
+    public override string description => "Mana Orbs after successful raid/snatch";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Player_Success_Raid_Chaos_Orb;
 
     public override void ActivateSkill() {

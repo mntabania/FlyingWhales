@@ -33,12 +33,16 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		} else {
 			Init();
 		}
+		SkillUpgradeItemUI.onHoverOverUpgradeItem += OnHoverOverUpgradeItem;
+		SkillUpgradeItemUI.onHoverOutUpgradeItem += OnHoverOutUpgradeItem;
 	}
 
 	private void OnDestroy() {
 		if (UIManager.Instance != null) {
 			UIManager.Instance.onSpireClicked -= OnSpireClicked;
 		}
+		SkillUpgradeItemUI.onHoverOverUpgradeItem -= OnHoverOverUpgradeItem;
+		SkillUpgradeItemUI.onHoverOutUpgradeItem -= OnHoverOutUpgradeItem;
 	}
 
 	private void OnSpireClicked() {
@@ -217,7 +221,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		Messenger.Broadcast(SpellSignals.SPELL_UPGRADED, skillData);
 	}
 
-	#region BiolabUIView.IListener implementation
+	#region SkillUpgradeUIView.IListener implementation
 	public void OnAfflictionTabClicked(bool isOn) {
 		if (isOn) {
 			m_currentView = SKILL_VIEW.AFFLICTIONS;
@@ -266,6 +270,20 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		if (UIManager.Instance != null && PlayerManager.Instance != null) {
 			UIManager.Instance.HideSmallInfo();
 		}
+	}
+	#endregion
+
+	#region Tooltips
+	private void OnHoverOverUpgradeItem(PLAYER_SKILL_TYPE p_skillType) {
+		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+		if (skillData.isMaxLevel) {
+			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, m_skillUpgradeUIView.UIModel.tooltipPosition);
+		} else {
+			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillWithLevelUpDetails(skillData, m_skillUpgradeUIView.UIModel.tooltipPosition);	
+		}
+	}
+	private void OnHoverOutUpgradeItem(PLAYER_SKILL_TYPE p_skillType) {
+		PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
 	}
 	#endregion
 }

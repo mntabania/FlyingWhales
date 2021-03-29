@@ -3,7 +3,7 @@
 public class BrainwashData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.BRAINWASH;
     public override string name => "Brainwash";
-    public override string description => $"Brainwash a Villager.";
+    public override string description => $"This Ability will attempt to turn the target into a Cultist. The target's Mood as well as some of its Traits will affect the success rate. Leaders are also much more difficult to brainwash.";
     
     public BrainwashData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.ROOM, SPELL_TARGET.CHARACTER };

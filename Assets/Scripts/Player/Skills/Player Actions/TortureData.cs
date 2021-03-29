@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class TortureData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TORTURE;
     public override string name => "Torture";
-    public override string description => $"Torture a Villager to afflict it with a random negative Trait and a random negative Status.";
+    public override string description => $"This Ability will commit unspeakable suffering to the target. After the deed, the Villager will gain a negative Trait.";
     public override bool canBeCastOnBlessed => true;
     public TortureData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.ROOM, SPELL_TARGET.CHARACTER };

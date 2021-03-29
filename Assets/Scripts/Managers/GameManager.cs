@@ -466,6 +466,37 @@ public class GameManager : BaseMonoBehaviour {
     public int GetCeilingMinsBasedOnTicks(int ticks) {
         return ticks * minutesPerTick;
     }
+    public static string ConvertTicksToWholeTime(int ticks) {
+        string converted = string.Empty;
+        List<string> times = RuinarchListPool<string>.Claim();
+        int ticksRemaining = ticks;
+        if (ticksRemaining >= ticksPerDay) {
+            int days = Mathf.FloorToInt(ticksRemaining / (float) ticksPerDay);
+            // converted = $"{converted}{days.ToString()}";
+            string formatted = days == 1 ? $"{days.ToString()} day" : $"{days.ToString()} days";
+            times.Add(formatted);
+            // converted = formatted;
+            ticksRemaining -= days * ticksPerDay;
+        }
+        if (ticksRemaining >= ticksPerHour) {
+            int hours = Mathf.FloorToInt(ticksRemaining / (float) ticksPerHour);
+            // converted = $"{converted}{hours.ToString()}";
+            string formatted = hours == 1 ? $"{hours.ToString()} hour" : $"{hours.ToString()} hours";
+            times.Add(formatted);
+            // converted = formatted;
+            ticksRemaining -= hours * ticksPerHour;
+        }
+        if (ticksRemaining > 0) {
+            int minutes = ticksRemaining * minutesPerTick;
+            // converted = $"{converted}{minutes.ToString()}";
+            string formatted = minutes == 1 ? $"{minutes.ToString()} min" : $"{minutes.ToString()} mins";
+            times.Add(formatted);
+            // converted = formatted;
+        }
+        converted = times.ComafyList();
+        RuinarchListPool<string>.Release(times);
+        return converted;
+    }
     public static int GetTimeAsWholeDuration(int ticks) {
         //Returns duration not as ticks but as time
         //If ticks exceeds a day, returns time as day

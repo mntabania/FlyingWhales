@@ -6,6 +6,10 @@ using UnityEngine.UI;
 using TMPro;
 
 public class SkillUpgradeItemUI : MonoBehaviour {
+
+	public static System.Action<PLAYER_SKILL_TYPE> onHoverOverUpgradeItem;
+	public static System.Action<PLAYER_SKILL_TYPE> onHoverOutUpgradeItem;
+	
 	public Action<PLAYER_SKILL_TYPE> onButtonClick;
 	public RuinarchButton btnSkill;
 	public RuinarchText txtSkillName;
@@ -13,21 +17,25 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 	public RuinarchText txtCost;
 	public Image spiritIcon;
 	public RuinarchText txtPlus;
+	public HoverHandler hoverHandler;
 
 	private PLAYER_SKILL_TYPE m_skillType;
 
 	private void OnEnable() {
 		btnSkill.onClick.AddListener(SkillClicked);
+		hoverHandler.AddOnHoverOverAction(OnHoverOverItem);
+		hoverHandler.AddOnHoverOutAction(OnHoverOutItem);
 	}
-
 	private void OnDisable() {
 		btnSkill.onClick.RemoveListener(SkillClicked);
+		hoverHandler.RemoveOnHoverOverAction(OnHoverOverItem);
+		hoverHandler.RemoveOnHoverOutAction(OnHoverOutItem);
 	}
 
 	public void InitItem(PLAYER_SKILL_TYPE p_type, int p_spiritCount) {
 		PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
-		if (skillData.currentLevel >= 3) {
+		if (skillData.isMaxLevel) {
 			txtCost.text = "MAX";
 			spiritIcon.gameObject.SetActive(false);
 			btnSkill.gameObject.SetActive(false);
@@ -56,5 +64,11 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 
 	private void SkillClicked() {
 		onButtonClick?.Invoke(m_skillType);
+	}
+	private void OnHoverOverItem() {
+		onHoverOverUpgradeItem?.Invoke(m_skillType);
+	}
+	private void OnHoverOutItem() {
+		onHoverOutUpgradeItem?.Invoke(m_skillType);
 	}
 }

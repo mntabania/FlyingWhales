@@ -22,6 +22,8 @@ public class SkillUpgradeUIModel : MVCUIModel {
 	public Transform tabPrent;
 	public Transform skillParent;
 
+	public UIHoverPosition tooltipPosition;
+
 	private void OnEnable() {
 		btnAfflictionTab.onValueChanged.AddListener(ClickAfflictionTab);
 		btnSpellTab.onValueChanged.AddListener(ClickSpellTab);

@@ -36,9 +36,6 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
     public void SetPortrait(STRUCTURE_TYPE landmarkType) {
         portrait.sprite = LandmarkManager.Instance.GetStructureData(landmarkType).structureSprite;
     }
-    public void SetPortrait(Sprite sprite) {
-        portrait.sprite = sprite;
-    }
     public void SetHoverHighlightState(bool state) {
         if (!disableInteraction) {
             hoverObj.SetActive(state);

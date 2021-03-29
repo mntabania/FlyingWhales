@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class SeizeMonsterData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SEIZE_MONSTER;
     public override string name => "Seize Monster";
-    public override string description => $"This Action can be used to take a Monster and then transfer it to an unoccupied tile.";
+    public override string description => $"This Ability can be used to take a Monster and then transfer it to an unoccupied tile.";
     public SeizeMonsterData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

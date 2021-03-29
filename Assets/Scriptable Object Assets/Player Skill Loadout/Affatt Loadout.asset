@@ -28,9 +28,58 @@ MonoBehaviour:
   miscs:
     extraSlots: 0
     fixedSkills: 0600000033000000320000005c0000008c00000021000000
-  passiveSkills: 0500000006000000070000000800000003000000
+  passiveSkills: 0600000007000000080000000900000004000000
   availableSpells: 
   availableAfflictions: 
   availableMinions: 
   availableStructures: 
   availableMiscs: 
+  portalUpgradeTiers:
+  - name: Level 1
+    skillTypesToUnlock: 4c0000004e0000004a000000
+    passiveSkillsToUnlock: 0a000000
+    upgradeCost:
+    - name: 10 Mana
+      currency: 0
+      amount: 10
+    upgradeTime: 20
+  - name: Level 2
+    skillTypesToUnlock: 4c0000004e0000004a000000
+    passiveSkillsToUnlock: 0a000000
+    upgradeCost:
+    - name: 10 Mana
+      currency: 0
+      amount: 10
+    upgradeTime: 20
+  - name: Level 3
+    skillTypesToUnlock: 4c0000004e0000004a000000
+    passiveSkillsToUnlock: 0a000000
+    upgradeCost:
+    - name: 10 Mana
+      currency: 0
+      amount: 10
+    upgradeTime: 20
+  - name: Level 4
+    skillTypesToUnlock: 4c0000004e0000004a000000
+    passiveSkillsToUnlock: 0a000000
+    upgradeCost:
+    - name: 10 Mana
+      currency: 0
+      amount: 10
+    upgradeTime: 20
+  - name: Level 5
+    skillTypesToUnlock: 4c0000004e0000004a000000
+    passiveSkillsToUnlock: 0a000000
+    upgradeCost:
+    - name: 10 Mana
+      currency: 0
+      amount: 10
+    upgradeTime: 20
+  - name: Level 6
+    skillTypesToUnlock: 4c0000004e0000004a000000
+    passiveSkillsToUnlock: 0a000000
+    upgradeCost:
+    - name: 10 Mana
+      currency: 0
+      amount: 10
+    upgradeTime: 20

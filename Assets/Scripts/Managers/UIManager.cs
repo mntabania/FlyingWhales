@@ -215,6 +215,8 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void InitializeAfterLoadOutPicked() {
         _portalUIController.InitializeAfterLoadoutSelected();
+        upgradePortalUIController.InitializeAfterLoadoutSelected();
+        purchaseSkillUIController.InitializeAfterLoadoutSelected();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
@@ -1726,7 +1728,12 @@ public class UIManager : BaseMonoBehaviour {
         }
     }
     private void OnHoverOutPlayerActionContextMenuItem(IContextMenuItem p_item) {
-        HideSmallInfo();
+        if (p_item is PlayerAction playerAction) {
+            PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
+        } else {
+            HideSmallInfo();    
+        }
+        
     }
     private void OnHoverEnterFlaw(string traitName, Character p_character, UIHoverPosition p_hoverPosition) {
         Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
@@ -1751,6 +1758,9 @@ public class UIManager : BaseMonoBehaviour {
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private void OnHoverPlayerAction(SkillData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
+        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData, p_hoverPosition);
+        return;
+        
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
         string title = $"{spellData.name}";
         string fullDescription = spellData.description;
@@ -1916,8 +1926,10 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Demonic Structures")]
     [SerializeField] private PortalUIController _portalUIController;
-    public void ShowUnlockAbilitiesUI() {
-        _portalUIController.ShowUI();
+    [SerializeField] private UpgradePortalUIController upgradePortalUIController;
+    [SerializeField] private PurchaseSkillUIController purchaseSkillUIController;
+    public void ShowUnlockAbilitiesUI(ThePortal portal) {
+        _portalUIController.ShowUI(portal);
         SetSpeedTogglesState(false);
         Pause();
     }
@@ -1935,6 +1947,12 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void ShowDefendUI(LocationStructure structure) {
         onDefensePointClicked?.Invoke(structure);
+    }
+    public void ShowUpgradePortalUI(ThePortal portal) {
+        upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level);
+    }
+    public void ShowPurchaseSkillUI() {
+        purchaseSkillUIController.Init(3, true);
     }
     #endregion
 

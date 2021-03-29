@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -35,13 +36,8 @@ public class PlayerSkillComponent {
     public RuinarchTimer cooldownReroll { get; private set; }
     public List<PLAYER_SKILL_TYPE> currentSpellChoices { get; private set; }
         
-    public PLAYER_SKILL_TYPE currentDemonBeingSummoned { get; private set; }
-    public int currentDemonUnlockCost { get; private set; }
-    public RuinarchTimer timerSummonDemon { get; private set; }
-        
-    public PLAYER_SKILL_TYPE currentStructureBeingUnlocked { get; private set; }
-    public int currentStructureUnlockCost { get; private set; }
-    public RuinarchTimer timerUnlockStructure { get; private set; }
+    public Cost[] currentPortalUpgradeCost { get; private set; }
+    public RuinarchTimer timerUpgradePortal { get; private set; }
 
     public PlayerSkillComponent() {
         //nodesData = new List<PlayerSkillTreeNodeData>();
@@ -61,10 +57,7 @@ public class PlayerSkillComponent {
         timerUnlockSpell = new RuinarchTimer("Spell Unlock");
         cooldownReroll = new RuinarchTimer("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
-        currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
-        timerSummonDemon = new RuinarchTimer("Summon Demon");
-        currentStructureBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
-        timerUnlockStructure = new RuinarchTimer("Obtain Blueprint");
+        timerUpgradePortal = new RuinarchTimer("Summon Demon");
     }
 
     #region Loading
@@ -117,59 +110,32 @@ public class PlayerSkillComponent {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "UI", "PortalUI", "reroll_available", null, LOG_TAG.Major);
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
-    public void PlayerChoseMinionToUnlock(PLAYER_SKILL_TYPE p_skillType, int p_unlockCost) {
-        currentDemonBeingSummoned = p_skillType;
-        currentDemonUnlockCost = p_unlockCost;
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        timerSummonDemon.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "summon_demon_active")} {skillData.name}");
-        timerSummonDemon.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteMinionUnlock);
-        timerSummonDemon.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
-        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerSummonDemon, BOOKMARK_CATEGORY.Portal);
-        Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_DEMON_TO_UNLOCK, p_skillType, p_unlockCost);
+    public void PlayerStartedPortalUpgrade(Cost[] p_upgradeCost, PortalUpgradeTier p_upgradeTier) {
+        currentPortalUpgradeCost = p_upgradeCost;
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        timerUpgradePortal.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "upgrade_portal_active")} {(portal.level + 1).ToString()}:");
+        timerUpgradePortal.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(p_upgradeTier.upgradeTime), OnCompletePortalUpgrade);
+        timerUpgradePortal.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(portal));
+        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUpgradePortal, BOOKMARK_CATEGORY.Portal);
+        Messenger.Broadcast(PlayerSignals.PLAYER_STARTED_PORTAL_UPGRADE);
     }
-    public void CancelCurrentMinionUnlock() {
+    public void CancelPortalUpgrade() {
         //Refund player mana
-        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerSummonDemon);
-        PlayerManager.Instance.player.AdjustMana(currentDemonUnlockCost);
-        currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
-        currentDemonUnlockCost = 0;
-        timerSummonDemon.Stop();
-        Messenger.Broadcast(PlayerSignals.PLAYER_DEMON_UNLOCK_CANCELLED);
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUpgradePortal);
+        for (int i = 0; i < currentPortalUpgradeCost.Length; i++) {
+            PlayerManager.Instance.player.AddCurrency(currentPortalUpgradeCost[i]);    
+        }
+        currentPortalUpgradeCost = null;
+        timerUpgradePortal.Stop();
+        Messenger.Broadcast(PlayerSignals.PORTAL_UPGRADE_CANCELLED);
     }
-    private void OnCompleteMinionUnlock() {
-        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerSummonDemon);
-        PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(currentDemonBeingSummoned);
-        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_DEMON_UNLOCK, currentDemonBeingSummoned, currentDemonUnlockCost);
-        currentDemonBeingSummoned = PLAYER_SKILL_TYPE.NONE;
-        currentDemonUnlockCost = 0;
-    }
-    public void PlayerChoseStructureToUnlock(PLAYER_SKILL_TYPE p_skillType, int p_unlockCost) {
-        currentStructureBeingUnlocked = p_skillType;
-        currentStructureUnlockCost = p_unlockCost;
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        timerUnlockStructure.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "obtain_blueprint_active")} {skillData.name}");
-        timerUnlockStructure.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteStructureUnlock);
-        timerUnlockStructure.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
-        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockStructure, BOOKMARK_CATEGORY.Portal);
-        Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_STRUCTURE_TO_UNLOCK, p_skillType, p_unlockCost);
-    }
-    public void CancelCurrentStructureUnlock() {
-        //Refund player mana
-        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUnlockStructure);
-        PlayerManager.Instance.player.AdjustMana(currentStructureUnlockCost);
-        currentStructureBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
-        currentStructureUnlockCost = 0;
-        timerUnlockStructure.Stop();
-        Messenger.Broadcast(PlayerSignals.PLAYER_STRUCTURE_UNLOCK_CANCELLED);
-    }
-    private void OnCompleteStructureUnlock() {
-        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUnlockStructure);
-        PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(currentStructureBeingUnlocked);
-        Messenger.Broadcast(SpellSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, currentStructureBeingUnlocked);
-        Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
-        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_STRUCTURE_UNLOCK, currentStructureBeingUnlocked, currentStructureUnlockCost);
-        currentStructureBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
-        currentStructureUnlockCost = 0;
+    private void OnCompletePortalUpgrade() {
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUpgradePortal);
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        portal.GainUpgradePowers(portal.nextTier);
+        portal.IncreaseLevel();
+        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE);
+        currentPortalUpgradeCost = null;
     }
     private void ResetPlayerSpellChoices() {
         currentSpellChoices.Clear();
@@ -210,6 +176,19 @@ public class PlayerSkillComponent {
     public void AddCharges(PLAYER_SKILL_TYPE spellType, int amount) {
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
         if (spellData.isInUse) {
+            spellData.AdjustCharges(amount);
+        } else {
+            AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
+            var playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+            if (playerSkillData != null) {
+                UpdateTierCount(playerSkillData);    
+            }
+        }
+    }
+    public void AddMaxCharges(PLAYER_SKILL_TYPE spellType, int amount) {
+        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+        if (spellData.isInUse) {
+            spellData.AdjustMaxCharges(amount);
             spellData.AdjustCharges(amount);
         } else {
             AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
@@ -448,6 +427,7 @@ public class PlayerSkillComponent {
             schemes.Add(spellData.type);
         } else if (spellData.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
             demonicStructuresSkills.Add(spellData.type);
+            Messenger.Broadcast(SpellSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, spellData.type);
         } else if (spellData.category == PLAYER_SKILL_CATEGORY.MINION) {
             minionsSkills.Add(spellData.type);
             Messenger.Broadcast(SpellSignals.ADDED_PLAYER_MINION_SKILL, spellData.type);
@@ -496,11 +476,14 @@ public class PlayerSkillComponent {
     private void PopulatePassiveSkills(PASSIVE_SKILL[] passiveSkills) {
         for (int i = 0; i < passiveSkills.Length; i++) {
             PASSIVE_SKILL passiveSkillType = passiveSkills[i];
-            PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(passiveSkillType);
-            passiveSkill.ActivateSkill();
-            this.passiveSkills.Add(passiveSkillType);
-            Debug.Log($"{GameManager.Instance.TodayLogString()}Activated passive skill {passiveSkillType.ToString()}.");
+            AddPassiveSkills(passiveSkillType);
         }
+    }
+    public void AddPassiveSkills(PASSIVE_SKILL passiveSkills) {
+        PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(passiveSkills);
+        passiveSkill.ActivateSkill();
+        this.passiveSkills.Add(passiveSkills);
+        Debug.Log($"{GameManager.Instance.TodayLogString()}Activated passive skill {passiveSkills.ToString()}.");
     }
     #endregion
 
@@ -586,21 +569,12 @@ public class PlayerSkillComponent {
         if (!cooldownReroll.IsFinished()) {
             cooldownReroll.LoadStart();
         }
-        currentDemonBeingSummoned = data.currentDemonBeingSummoned;
-        currentDemonUnlockCost = data.currentDemonUnlockCost;
-        timerSummonDemon = data.timerSummonDemon;
-        if (currentDemonBeingSummoned != PLAYER_SKILL_TYPE.NONE) {
-            timerSummonDemon.LoadStart(OnCompleteMinionUnlock);
-            timerSummonDemon.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
-            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerSummonDemon, BOOKMARK_CATEGORY.Portal);
-        }
-        currentStructureBeingUnlocked = data.currentStructureBeingUnlocked;
-        currentStructureUnlockCost = data.currentStructureUnlockCost;
-        timerUnlockStructure = data.timerUnlockStructure;
-        if (currentSpellBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
-            timerUnlockStructure.LoadStart(OnCompleteStructureUnlock);
-            timerUnlockStructure.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
-            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockStructure, BOOKMARK_CATEGORY.Portal);
+        currentPortalUpgradeCost = data.currentPortalUpgradeCost;
+        timerUpgradePortal = data.timerUpgradePortal;
+        if (currentPortalUpgradeCost != null) {
+            timerUpgradePortal.LoadStart(OnCompletePortalUpgrade);
+            timerUpgradePortal.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUpgradePortal, BOOKMARK_CATEGORY.Portal);
         }
         currentSpellChoices = data.currentSpellChoices;
     }
@@ -618,12 +592,8 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
     public RuinarchTimer timerUnlockSpell;
     public RuinarchTimer cooldownReroll;
     public List<PLAYER_SKILL_TYPE> currentSpellChoices;
-    public PLAYER_SKILL_TYPE currentDemonBeingSummoned;
-    public int currentDemonUnlockCost;
-    public RuinarchTimer timerSummonDemon;
-    public PLAYER_SKILL_TYPE currentStructureBeingUnlocked;
-    public int currentStructureUnlockCost;
-    public RuinarchTimer timerUnlockStructure;
+    public Cost[] currentPortalUpgradeCost;
+    public RuinarchTimer timerUpgradePortal;
 
     public override void Save(PlayerSkillComponent component) {
         //canTriggerFlaw = player.playerSkillComponent.canTriggerFlaw;
@@ -680,12 +650,8 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
         timerUnlockSpell = component.timerUnlockSpell;
         cooldownReroll = component.cooldownReroll;
         currentSpellChoices = component.currentSpellChoices;
-        currentDemonBeingSummoned = component.currentDemonBeingSummoned;
-        currentDemonUnlockCost = component.currentDemonUnlockCost;
-        timerSummonDemon = component.timerSummonDemon;
-        currentStructureBeingUnlocked = component.currentStructureBeingUnlocked;
-        currentStructureUnlockCost = component.currentStructureUnlockCost;
-        timerUnlockStructure = component.timerUnlockStructure;
+        currentPortalUpgradeCost = component.currentPortalUpgradeCost;
+        timerUpgradePortal = component.timerUpgradePortal;
     }
     public override PlayerSkillComponent Load() {
         PlayerSkillComponent component = new PlayerSkillComponent();

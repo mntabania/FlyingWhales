@@ -948,7 +948,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
                     o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_demonic_adjacent");
                     return false;
                 }
-                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                     Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness!");
                     o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_neighbour_not_wilderness");
                     return false;

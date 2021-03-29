@@ -57,7 +57,7 @@ public class UnlockMinionUIController : MVCUIController, UnlockMinionUIView.ILis
     }
     private void OnChooseMinionToUnlock(PLAYER_SKILL_TYPE p_minionType, int p_unlockCost) {
         PlayerManager.Instance.player.AdjustMana(-p_unlockCost);
-        PlayerManager.Instance.player.playerSkillComponent.PlayerChoseMinionToUnlock(p_minionType, p_unlockCost);
+        // PlayerManager.Instance.player.playerSkillComponent.PlayerStartedPortalUpgrade(p_minionType, p_unlockCost);
         HideUI();
     }
 }

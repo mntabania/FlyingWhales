@@ -2,7 +2,8 @@
 using UtilityScripts;
 
 public class PrayerChaosOrb : PassiveSkill {
-    public override string name => "Mana Orbs on Praying Cultist";
+    public override string name => "Mana Orbs from Praying Cultists";
+    public override string description => "Mana Orbs on Praying Cultist";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Prayer_Chaos_Orb;
 
     public override void ActivateSkill() {

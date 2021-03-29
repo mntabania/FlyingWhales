@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System;
 using Coffee.UIExtensions;
+using DG.Tweening;
 using UnityEngine;
 using Ruinarch.Custom_UI;
 using UnityEngine.UI;
@@ -26,11 +27,20 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	public Image disabler;
 
 	public HoverHandler hoverHandler;
-	public UIShiny shineEffect;
+	public UIShiny borderShineEffect;
+
+	public RectTransform rectTransformContent;
+	public CanvasGroup canvasGroupContent;
+	public CanvasGroup canvasGroupPortrait;
+	public CanvasGroup canvasGroupSpellText;
+	public CanvasGroup canvasGroupCurrencies;
+	public UIShiny mainShineEffect;
 
 	private PLAYER_SKILL_TYPE m_skillType;
 
 	PlayerSkillData m_data;
+
+	[SerializeField] private AnimationCurve _animationCurve;
 	
 	private void OnEnable() {
 		btnSkill.onClick.AddListener(SkillClicked);
@@ -73,18 +83,20 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 		txtLevel.text = "Level 0";
 		txtCost.text = m_data.unlockCost.ToString();
 		m_skillType = p_type;
-		if (m_data.unlockCost > p_currentMana) {
-			DisableButton();
-			hoverHandler.ExecuteHoverEnterActionPerFrame(true);
-		} else {
-			EnableButton();
-			hoverHandler.ExecuteHoverEnterActionPerFrame(false);
-		}
+		UpdateItem(p_currentMana);
+		hoverHandler.ExecuteHoverEnterActionPerFrame(m_data.unlockCost > p_currentMana);
 		transform.localScale = Vector3.one;
 	}
 
 	public void UpdateItem(int p_currentMana) {
-		if (m_data.unlockCost > p_currentMana) {
+		if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
+			if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == m_skillType) {
+				btnSkill.interactable = false;
+				disabler.gameObject.SetActive(false);	
+			} else {
+				DisableButton();
+			}
+		} else if (m_data.unlockCost > p_currentMana) {
 			DisableButton();
 		} else {
 			EnableButton();
@@ -110,4 +122,24 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	private void OnHoverOut() {
 		onHoverOut?.Invoke(m_data, this);
 	}
+
+	#region Animation
+	public Sequence PrepareAnimation() {
+		Sequence sequence = DOTween.Sequence();
+		Vector2 targetSize = rectTransformContent.sizeDelta;
+		rectTransformContent.sizeDelta = new Vector2(targetSize.x - 30f, targetSize.y - 30f);
+		canvasGroupContent.alpha = 0f;
+		canvasGroupPortrait.alpha = 0f;
+		canvasGroupSpellText.alpha = 0f;
+		canvasGroupCurrencies.alpha = 0f;
+	        
+		sequence.Append(rectTransformContent.DOSizeDelta(targetSize, 0.3f).SetEase(_animationCurve).OnPlay(() => mainShineEffect.Play()));
+		sequence.Join(canvasGroupContent.DOFade(1f, 0.2f));
+		sequence.Join(canvasGroupPortrait.DOFade(1f, 0.2f).SetDelay(0.2f));
+		sequence.Join(canvasGroupSpellText.DOFade(1f, 0.2f).SetDelay(0.3f));
+		sequence.Join(canvasGroupCurrencies.DOFade(1f, 0.2f).SetDelay(0.4f));
+
+		return sequence;
+	} 
+	#endregion
 }

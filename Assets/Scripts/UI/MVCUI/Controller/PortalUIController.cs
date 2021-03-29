@@ -1,4 +1,5 @@
 ﻿using System;
+using Inner_Maps.Location_Structures;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 using UtilityScripts;
@@ -11,8 +12,12 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     public PurchaseSkillUIController purchaseSkillUIController;
     public UnlockMinionUIController unlockMinionUIController;
     public UnlockStructureUIController unlockStructureUIController;
+    public UpgradePortalUIController upgradePortalUIController;
 
     private string m_tooltipCancelReleaseAbility;
+    private string m_tooltipCancelUpgradePortal;
+
+    private ThePortal _portal;
     
     
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
@@ -27,9 +32,14 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
             unlockMinionUIController.InstantiateUI();
             unlockMinionUIController.HideUI();
             
-            unlockStructureUIController.InstantiateUI();
-            unlockStructureUIController.HideUI();
+            // unlockStructureUIController.InstantiateUI();
+            // unlockStructureUIController.HideUI();
         });
+    }
+    public void ShowUI(ThePortal p_portal) {
+        _portal = p_portal;
+        ShowUI();
+        m_portalUIView.SetUpgradePortalBtnInteractable(!p_portal.IsMaxLevel());
     }
     public override void ShowUI() {
         m_mvcUIView.ShowUI();
@@ -38,15 +48,10 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         } else {
             m_portalUIView.ShowUnlockAbilityButtonAndHideTimer();
         }
-        if (PlayerManager.Instance.player.playerSkillComponent.currentDemonBeingSummoned != PLAYER_SKILL_TYPE.NONE) {
-            m_portalUIView.ShowUnlockDemonTimerAndHideButton(PlayerSkillManager.Instance.GetPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.currentDemonBeingSummoned));
+        if (!PlayerManager.Instance.player.playerSkillComponent.timerUpgradePortal.IsFinished()) {
+            m_portalUIView.ShowUpgradePortalTimerAndHideButton();
         } else {
-            m_portalUIView.ShowUnlockDemonButtonAndHideTimer();
-        }
-        if (PlayerManager.Instance.player.playerSkillComponent.currentStructureBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
-            m_portalUIView.ShowUnlockStructureTimerAndHideButton(PlayerSkillManager.Instance.GetPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.currentStructureBeingUnlocked));
-        } else {
-            m_portalUIView.ShowUnlockStructureButtonAndHideTimer();
+            m_portalUIView.ShowUpgradePortalButtonAndHideTimer();
         }
     }
     public override void HideUI() {
@@ -64,15 +69,16 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         m_portalUIView.UIModel.transform.SetSiblingIndex(orderInHierarchy);
 
         m_tooltipCancelReleaseAbility = LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "cancel_release_ability");
-        
+        m_tooltipCancelUpgradePortal = LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "cancel_upgrade_portal");
         Messenger.RemoveListener(Signals.GAME_LOADED, Initialize);
     }
     public void InitializeAfterLoadoutSelected() {
         m_portalUIView.UIModel.timerReleaseAbility.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell);
         m_portalUIView.UIModel.timerReleaseAbility.SetHoverOverAction(OnHoverOverReleaseAbilityTimer);
         m_portalUIView.UIModel.timerReleaseAbility.SetHoverOutAction(OnHoverOutReleaseAbilityTimer);
-        m_portalUIView.UIModel.timerSummonDemon.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerSummonDemon);
-        m_portalUIView.UIModel.timerObtainBlueprint.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUnlockStructure);
+        m_portalUIView.UIModel.timerUpgradePortal.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUpgradePortal);
+        m_portalUIView.UIModel.timerUpgradePortal.SetHoverOverAction(OnHoverOverUpgradePortalTimer);
+        m_portalUIView.UIModel.timerUpgradePortal.SetHoverOutAction(OnHoverOutUpgradePortalTimer);
     }
 
     #region Listeners
@@ -81,13 +87,9 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, OnPlayerFinishedSkillUnlock);
         Messenger.AddListener(PlayerSignals.PLAYER_SKILL_UNLOCK_CANCELLED, OnPlayerCancelledSkillUnlock);
         
-        Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_CHOSE_DEMON_TO_UNLOCK, OnPlayerChoseDemonToUnlock);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_FINISHED_DEMON_UNLOCK, OnPlayerFinishedDemonUnlock);
-        Messenger.AddListener(PlayerSignals.PLAYER_DEMON_UNLOCK_CANCELLED, OnPlayerCancelledDemonUnlock);
-        
-        Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_CHOSE_STRUCTURE_TO_UNLOCK, OnPlayerChoseStructureToUnlock);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_FINISHED_STRUCTURE_UNLOCK, OnPlayerFinishedStructureUnlock);
-        Messenger.AddListener(PlayerSignals.PLAYER_STRUCTURE_UNLOCK_CANCELLED, OnPlayerCancelledStructureUnlock);
+        Messenger.AddListener(PlayerSignals.PLAYER_STARTED_PORTAL_UPGRADE, OnPlayerChosePortalUpgrade);
+        Messenger.AddListener(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPlayerFinishedPortalUpgrade);
+        Messenger.AddListener(PlayerSignals.PORTAL_UPGRADE_CANCELLED, OnPlayerCancelledPortalUpgrade);
     }
     private void OnPlayerChoseSkillToUnlock(SkillData p_skill, int p_unlockCost) {
         m_portalUIView.ShowUnlockAbilityTimerAndHideButton(p_skill);
@@ -100,35 +102,23 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         m_portalUIView.ShowUnlockAbilityButtonAndHideTimer();
     }
     
-    private void OnPlayerChoseDemonToUnlock(PLAYER_SKILL_TYPE p_minionType, int p_unlockCost) {
-        m_portalUIView.ShowUnlockDemonTimerAndHideButton(PlayerSkillManager.Instance.GetPlayerSkillData(p_minionType));
+    private void OnPlayerChosePortalUpgrade() {
+        m_portalUIView.ShowUpgradePortalTimerAndHideButton();
     }
-    private void OnPlayerFinishedDemonUnlock(PLAYER_SKILL_TYPE p_minionType, int p_unlockCost) {
-        m_portalUIView.ShowUnlockDemonButtonAndHideTimer();
+    private void OnPlayerFinishedPortalUpgrade() {
+        m_portalUIView.ShowUpgradePortalButtonAndHideTimer();
     }
-    private void OnPlayerCancelledDemonUnlock() {
-        m_portalUIView.ShowUnlockDemonButtonAndHideTimer();
-    }
-    
-    private void OnPlayerChoseStructureToUnlock(PLAYER_SKILL_TYPE p_structureType, int p_unlockCost) {
-        m_portalUIView.ShowUnlockStructureTimerAndHideButton(PlayerSkillManager.Instance.GetPlayerSkillData(p_structureType));
-    }
-    private void OnPlayerFinishedStructureUnlock(PLAYER_SKILL_TYPE p_structureType, int p_unlockCost) {
-        m_portalUIView.ShowUnlockStructureButtonAndHideTimer();
-    }
-    private void OnPlayerCancelledStructureUnlock() {
-        m_portalUIView.ShowUnlockStructureButtonAndHideTimer();
+    private void OnPlayerCancelledPortalUpgrade() {
+        m_portalUIView.ShowUpgradePortalButtonAndHideTimer();
     }
     #endregion
     
     public void OnClickReleaseAbility() {
-        purchaseSkillUIController.Init(purchaseSkillUIController.skillCountPerDraw);
+        purchaseSkillUIController.Init(purchaseSkillUIController.skillCountPerDraw, true);
     }
-    public void OnClickSummonDemon() {
-        unlockMinionUIController.ShowUI();
-    }
-    public void OnClickObtainBlueprint() {
-        unlockStructureUIController.ShowUI();
+    public void OnClickUpgradePortal() {
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level);
     }
     public void OnClickCancelReleaseAbility() {
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
@@ -140,19 +130,35 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     private void OnConfirmCancelRelease() {
         PlayerManager.Instance.player.playerSkillComponent.CancelCurrentPlayerSkillUnlock();
     }
-    public void OnClickCancelSummonDemon() {
-        PlayerManager.Instance.player.playerSkillComponent.CancelCurrentMinionUnlock();
-        // unlockMinionUIController.ShowUI();
+    public void OnClickCancelUpgradePortal() {
+        UIManager.Instance.ShowYesNoConfirmation(
+            "Cancel Portal Upgrade", $"Are you sure you want to cancel Portal Upgrade? " + 
+                                      $"\n<i>{UtilityScripts.Utilities.InvalidColorize("Cancelling will reset all current upgrade progress!")}</i>", OnConfirmCancelUpgradePortal, showCover: true, layer: 30);
     }
-    public void OnClickCancelObtainBlueprint() {
-        PlayerManager.Instance.player.playerSkillComponent.CancelCurrentStructureUnlock();
-        // unlockStructureUIController.ShowUI();
+    private void OnConfirmCancelUpgradePortal() {
+        PlayerManager.Instance.player.playerSkillComponent.CancelPortalUpgrade();
     }
     public void OnHoverOverCancelReleaseAbility() {
         UIManager.Instance.ShowSmallInfo(m_tooltipCancelReleaseAbility);
     }
     public void OnHoverOutCancelReleaseAbility() {
         UIManager.Instance.HideSmallInfo();
+    }
+    public void OnHoverOverCancelUpgradePortal() {
+        UIManager.Instance.ShowSmallInfo(m_tooltipCancelUpgradePortal);
+    }
+    public void OnHoverOutCancelUpgradePortal() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnHoverOverUpgradePortal() {
+        if (_portal != null && _portal.IsMaxLevel()) {
+            UIManager.Instance.ShowSmallInfo("Portal is already at Max Level!");
+        }
+    }
+    public void OnHoverOutUpgradePortal() {
+        if (_portal != null && _portal.IsMaxLevel()) {
+            UIManager.Instance.HideSmallInfo();
+        }
     }
     public void OnClickClose() {
         HideUI();
@@ -167,6 +173,13 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         UIManager.Instance.ShowSmallInfo(message, autoReplaceText: false);
     }
     private void OnHoverOutReleaseAbilityTimer() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private void OnHoverOverUpgradePortalTimer() {
+        string message = $"Remaining time: {PlayerManager.Instance.player.playerSkillComponent.timerUpgradePortal.GetRemainingTimeString()}";
+        UIManager.Instance.ShowSmallInfo(message, autoReplaceText: false);
+    }
+    private void OnHoverOutUpgradePortalTimer() {
         UIManager.Instance.HideSmallInfo();
     }
 }

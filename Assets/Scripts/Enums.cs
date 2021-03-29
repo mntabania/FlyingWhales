@@ -1002,7 +1002,8 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
     CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, SPAWN_EYE_WARD = 182, DESTROY_EYE_WARD = 183, MANA_PIT = 184, MARAUD = 185,
     DRAIN_SPIRIT = 186, LET_GO = 187, FULL_HEAL = 188, CREATE_BLACKMAIL = 189, DEFENSE_POINT = 190, IMP_HUT = 191, ICE_BLAST = 192, EARTH_SPIKE = 193, WATER_SPIKE = 194,
-    UNLOCK_ABILITIES = 195, SNATCH_VILLAGER = 196, SNATCH_MONSTER = 197, RAID = 198, UPGRADE_ABILITIES = 199, DEFEND = 200
+    RELEASE_ABILITIES = 195, SNATCH_VILLAGER = 196, SNATCH_MONSTER = 197, RAID = 198, UPGRADE_ABILITIES = 199, DEFEND = 200,
+    UPGRADE_PORTAL = 201,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1116,7 +1117,7 @@ public enum OBJECT_TYPE {
     Reaction_Quest = 24, Plague_Disease = 25
 }
 public enum PASSIVE_SKILL {
-    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb,
+    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb
 }
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important

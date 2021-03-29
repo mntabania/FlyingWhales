@@ -7,7 +7,7 @@ using UtilityScripts;
 public class SplashPoisonData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPLASH_POISON;
     public override string name => "Splash Poison";
-    public override string description => "This Spell applies Poisoned to a 3x3 tile floor.";
+    public override string description => "This Spell applies Poison on a small area.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 

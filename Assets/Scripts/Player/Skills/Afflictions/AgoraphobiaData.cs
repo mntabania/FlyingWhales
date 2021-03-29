@@ -5,7 +5,7 @@ using UnityEngine;
 public class AgoraphobiaData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AGORAPHOBIA;
     public override string name => "Agoraphobia";
-    public override string description => "This Affliction will make a Villager afraid of crowds. They will flee when there are too many other villagers nearby. They won't participate in parties and will be afraid of visiting the Tavern.";
+    public override string description => "This Affliction will make a Villager afraid of crowds.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
 
     public AgoraphobiaData() : base() {

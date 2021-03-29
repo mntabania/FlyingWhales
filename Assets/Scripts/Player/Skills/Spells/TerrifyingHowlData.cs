@@ -5,7 +5,7 @@ using Traits;
 public class TerrifyingHowlData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TERRIFYING_HOWL;
     public override string name => "Terrifying Howl";
-    public override string description => "This Spell releases a bunch of screaming skulls. Their spine-tingling wails will cause all nearby characters to flee.";
+    public override string description => "This Spell releases a bunch of screaming skulls. Their spine-tingling wails will cause all nearby Villager to flee.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 

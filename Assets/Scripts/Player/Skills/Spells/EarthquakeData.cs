@@ -5,8 +5,8 @@ using Inner_Maps;
 
 public class EarthquakeData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EARTHQUAKE;
-    public override string name { get { return "Earthquake"; } }
-    public override string description { get { return "Violently shakes the ground, dealing Normal damage to objects and randomly moving them around. Characters will become Disoriented."; } }
+    public override string name => "Earthquake";
+    public override string description => "This Spell will cause the ground to shake vigorously, dealing a small amount of Earth damage to everyone in range. Objects may get moved around.";
     public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.SPELL; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;

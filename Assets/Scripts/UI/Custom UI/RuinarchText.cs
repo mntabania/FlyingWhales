@@ -56,7 +56,29 @@ public class RuinarchText : TextMeshProUGUI {
             }
             if (text.Contains("undead")) {
                 text = text.Replace("undead", $"{UtilityScripts.Utilities.UndeadIcon()}undead");
-            }    
+            }
+            //Elements
+            if (text.Contains("Water")) {
+                text = text.Replace("Water", $"{UtilityScripts.Utilities.WaterIcon()}Water");
+            }
+            if (text.Contains("Fire")) {
+                text = text.Replace("Fire", $"{UtilityScripts.Utilities.FireIcon()}Fire");
+            }
+            if (text.Contains("Earth")) {
+                text = text.Replace("Earth", $"{UtilityScripts.Utilities.EarthIcon()}Earth");
+            }
+            if (text.Contains("Poison")) {
+                text = text.Replace("Poison", $"{UtilityScripts.Utilities.PoisonIcon()}Poison");
+            }
+            if (text.Contains("Ice")) {
+                text = text.Replace("Ice", $"{UtilityScripts.Utilities.IceIcon()}Ice");
+            }
+            if (text.Contains("Wind")) {
+                text = text.Replace("Wind", $"{UtilityScripts.Utilities.WindIcon()}Wind");
+            }
+            if (text.Contains("Electric")) {
+                text = text.Replace("Electric", $"{UtilityScripts.Utilities.ElectricIcon()}Electric");
+            }
         }
         
         base.SetText(text);

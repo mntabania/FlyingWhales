@@ -341,6 +341,7 @@ public class GenericTileObject : TileObject {
                 LocationGridTile tile = structure.tiles.ElementAt(j);
                 for (int k = 0; k < tile.neighbourList.Count; k++) {
                     LocationGridTile neighbour = tile.neighbourList[k];
+                    if (neighbour.structure is Cave || neighbour.structure is Ocean) { continue; } //do not corrupt cave tiles.
                     neighbour.corruptionComponent.CorruptTile();
                 }
             }

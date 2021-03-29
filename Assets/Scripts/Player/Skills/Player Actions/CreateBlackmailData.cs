@@ -7,7 +7,7 @@ using UnityEngine.Assertions;
 public class CreateBlackmailData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CREATE_BLACKMAIL;
     public override string name => "Create Blackmail";
-    public override string description => $"Create blackmail for use in Schemes.";
+    public override string description => $"This Ability produces an Intel regarding the state of a Player's Prisoner. It may be used as a blackmail material when shared with the Prisoner's acquaintances.";
     
     public CreateBlackmailData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
