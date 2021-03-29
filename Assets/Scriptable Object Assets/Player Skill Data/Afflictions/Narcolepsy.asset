@@ -32,6 +32,8 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 21300000, guid: aed08912ad482904f8fb50c3578510bd, type: 3}
   contextMenuColumn: 1
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
+  isAffliction: 1
   requirementData:
     requirements: 01000000
     requiredArchetype: 0
@@ -72,3 +74,16 @@ MonoBehaviour:
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: f0000000c0000000c0000000a8000000
     skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 0400000007000000
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 03000000040000000500000006000000
+    crowdNumber: 
+    napsPercent: 00000000000000000000000000000000
+    napsDuration: 050000000a0000000f00000014000000
+    numberOfCriteria: 
+    hungerRate: 
+    opinionTrigger: 
+    addedBehaviour: 00000000000000000000000000000000
+    listOfCriteria: 
