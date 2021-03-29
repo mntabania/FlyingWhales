@@ -12,6 +12,8 @@ public class UpgradePortalUIView : MVCUIView {
         void OnClickClose();
         void OnClickUpgrade();
         void OnClickCancelUpgrade();
+        void OnHoverOverCancelUpgrade();
+        void OnHoverOutCancelUpgrade();
     }
     #endregion
     
@@ -41,11 +43,15 @@ public class UpgradePortalUIView : MVCUIView {
         UIModel.onClickClose += p_listener.OnClickClose;
         UIModel.onClickUpgrade += p_listener.OnClickUpgrade;
         UIModel.onClickCancelUpgradePortal += p_listener.OnClickCancelUpgrade;
+        UIModel.onHoverOverCancelUpgradePortal += p_listener.OnHoverOverCancelUpgrade;
+        UIModel.onHoverOutCancelUpgradePortal += p_listener.OnHoverOutCancelUpgrade;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onClickClose -= p_listener.OnClickClose;
         UIModel.onClickUpgrade -= p_listener.OnClickUpgrade;
         UIModel.onClickCancelUpgradePortal -= p_listener.OnClickCancelUpgrade;
+        UIModel.onHoverOverCancelUpgradePortal -= p_listener.OnHoverOverCancelUpgrade;
+        UIModel.onHoverOutCancelUpgradePortal -= p_listener.OnHoverOutCancelUpgrade;
     }
     #endregion
 

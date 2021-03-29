@@ -27,6 +27,9 @@ public class UpgradePortalUIModel : MVCUIModel {
     public GameObject goUpgradePortalTimer;
     public TimerItemUI timerUpgradePortal;
     public RuinarchButton btnCancelUpgradePortal;
+    public HoverHandler hoverHandlerBtnCancelUpgradePortal;
+    public System.Action onHoverOverCancelUpgradePortal;
+    public System.Action onHoverOutCancelUpgradePortal;
     
     public Action onClickUpgrade;
     public Action onClickClose;
@@ -41,11 +44,15 @@ public class UpgradePortalUIModel : MVCUIModel {
         btnUpgrade.onClick.AddListener(OnClickUpgrade);
         btnClose.onClick.AddListener(OnClickClose);
         btnCancelUpgradePortal.onClick.AddListener(OnClickCancelUpgradePortal);
+        hoverHandlerBtnCancelUpgradePortal.AddOnHoverOverAction(OnHoverOverCancelUpgradePortal);
+        hoverHandlerBtnCancelUpgradePortal.AddOnHoverOutAction(OnHoverOutCancelUpgradePortal);
     }
     private void OnDisable() {
         btnUpgrade.onClick.RemoveListener(OnClickUpgrade);
         btnClose.onClick.RemoveListener(OnClickClose);
         btnCancelUpgradePortal.onClick.RemoveListener(OnClickCancelUpgradePortal);
+        hoverHandlerBtnCancelUpgradePortal.RemoveOnHoverOverAction(OnHoverOverCancelUpgradePortal);
+        hoverHandlerBtnCancelUpgradePortal.RemoveOnHoverOutAction(OnHoverOutCancelUpgradePortal);
     }
     private void OnClickUpgrade() {
         onClickUpgrade?.Invoke();
@@ -55,5 +62,11 @@ public class UpgradePortalUIModel : MVCUIModel {
     }
     private void OnClickCancelUpgradePortal() {
         onClickCancelUpgradePortal?.Invoke();
+    }
+    private void OnHoverOverCancelUpgradePortal() {
+        onHoverOverCancelUpgradePortal?.Invoke();
+    }
+    private void OnHoverOutCancelUpgradePortal() {
+        onHoverOutCancelUpgradePortal?.Invoke();
     }
 }

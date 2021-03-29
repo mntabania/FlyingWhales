@@ -301,6 +301,7 @@ MonoBehaviour:
   goReleaseAbilityTimer: {fileID: 6682049167745987740}
   timerReleaseAbility: {fileID: 3467758814872754917}
   btnCancelReleaseAbility: {fileID: 2604805399124105318}
+  hoverHandlerBtnCancelReleaseAbility: {fileID: 6550402352371574472}
   canvasGroupCover: {fileID: 255592326665314444}
   canvasGroupMainWindow: {fileID: 1418998232727629062}
   rectTransformMainWindow: {fileID: 3791232479219989899}

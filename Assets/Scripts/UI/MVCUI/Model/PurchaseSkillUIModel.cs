@@ -26,6 +26,9 @@ public class PurchaseSkillUIModel : MVCUIModel {
 	public GameObject goReleaseAbilityTimer;
 	public TimerItemUI timerReleaseAbility;
 	public RuinarchButton btnCancelReleaseAbility;
+	public HoverHandler hoverHandlerBtnCancelReleaseAbility;
+	public System.Action onHoverOverCancelReleaseAbility;
+	public System.Action onHoverOutCancelReleaseAbility;
 
 	[Header("Cover")] 
 	public CanvasGroup canvasGroupCover;
@@ -53,6 +56,8 @@ public class PurchaseSkillUIModel : MVCUIModel {
 		hoverHandlerReroll.AddOnHoverOverAction(OnHoverOverReroll);
 		hoverHandlerReroll.AddOnHoverOutAction(OnHoverOutReroll);
 		btnCancelReleaseAbility.onClick.AddListener(OnClickCancelReleaseAbility);
+		hoverHandlerBtnCancelReleaseAbility.AddOnHoverOverAction(OnHoverOverCancelReleaseAbility);
+		hoverHandlerBtnCancelReleaseAbility.AddOnHoverOutAction(OnHoverOutCancelReleaseAbility);
 	}
 
 	private void OnDisable() {
@@ -61,6 +66,8 @@ public class PurchaseSkillUIModel : MVCUIModel {
 		hoverHandlerReroll.RemoveOnHoverOverAction(OnHoverOverReroll);
 		hoverHandlerReroll.RemoveOnHoverOutAction(OnHoverOutReroll);
 		btnCancelReleaseAbility.onClick.RemoveListener(OnClickCancelReleaseAbility);
+		hoverHandlerBtnCancelReleaseAbility.RemoveOnHoverOverAction(OnHoverOverCancelReleaseAbility);
+		hoverHandlerBtnCancelReleaseAbility.RemoveOnHoverOutAction(OnHoverOutCancelReleaseAbility);
 	}
 
 	#region Buttons OnClick trigger
@@ -78,6 +85,15 @@ public class PurchaseSkillUIModel : MVCUIModel {
 	}
 	void OnClickCancelReleaseAbility() {
 		onClickCancelReleaseAbility?.Invoke();
+	}
+	#endregion
+
+	#region Hover Actions
+	private void OnHoverOverCancelReleaseAbility() {
+		onHoverOverCancelReleaseAbility?.Invoke();
+	}
+	private void OnHoverOutCancelReleaseAbility() {
+		onHoverOutCancelReleaseAbility?.Invoke();
 	}
 	#endregion
 }

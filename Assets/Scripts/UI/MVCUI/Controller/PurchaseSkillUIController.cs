@@ -28,6 +28,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	
 	private bool m_firstRun = true;
 	private bool m_isDrawn;
+	private string m_tooltipCancelReleaseAbility;
 	
 	#region getters
 	private PlayerSkillComponent skillComponentToUse {
@@ -56,9 +57,12 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	#endregion
 	
 	public void InitializeAfterLoadoutSelected() {
+		m_tooltipCancelReleaseAbility = LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "cancel_release_ability");
 		Init(skillCountPerDraw, false);
 		HideUI();
 		m_purchaseSkillUIView.UIModel.timerReleaseAbility.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell);
+		m_purchaseSkillUIView.UIModel.timerReleaseAbility.SetHoverOverAction(OnHoverOverReleaseAbilityTimer);
+		m_purchaseSkillUIView.UIModel.timerReleaseAbility.SetHoverOutAction(OnHoverOutReleaseAbilityTimer);
 	}
 	private void SubscribeListeners() {
 		Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, OnPlayerFinishedSkillUnlock);
@@ -312,17 +316,21 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		PlayerManager.Instance.player.playerSkillComponent.CancelCurrentPlayerSkillUnlock();
 	}
 	private void OnHoverOverSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
-		if (PlayerManager.Instance.player.mana < p_skillData.unlockCost) {
-			UIManager.Instance.ShowSmallInfo("Not enough mana!");
-		} else {
-			p_item.borderShineEffect.Play();
+		if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == PLAYER_SKILL_TYPE.NONE) {
+			if (PlayerManager.Instance.player.mana < p_skillData.unlockCost) {
+				UIManager.Instance.ShowSmallInfo("Not enough mana!");
+			} else {
+				p_item.borderShineEffect.Play();
+			}	
 		}
 	}
 	private void OnHoverOutSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
-		if (PlayerManager.Instance.player.mana < p_skillData.unlockCost) {
-			UIManager.Instance.HideSmallInfo();
-		} else {
-			p_item.borderShineEffect.Stop(true);
+		if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == PLAYER_SKILL_TYPE.NONE) {
+			if (PlayerManager.Instance.player.mana < p_skillData.unlockCost) {
+				UIManager.Instance.HideSmallInfo();
+			} else {
+				p_item.borderShineEffect.Stop(true);
+			}
 		}
 	}
 	private void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
@@ -341,6 +349,27 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	public void OnFinishSkillUnlock() {
 		MakeListForAvailableSkills();
 		m_isDrawn = false;
+	}
+	#endregion
+
+	#region Tooltips
+	private void OnHoverOverReleaseAbilityTimer() {
+		string message = $"Remaining time: {PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell.GetRemainingTimeString()}";
+		// if (PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.IsFinished()) {
+		// 	message = $"{message}\nReroll Available!";  
+		// } else {
+		// 	message = $"{message}\nRemaining time until reroll: {PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.GetRemainingTimeString()}";
+		// }
+		UIManager.Instance.ShowSmallInfo(message, autoReplaceText: false);
+	}
+	private void OnHoverOutReleaseAbilityTimer() {
+		UIManager.Instance.HideSmallInfo();
+	}
+	public void OnHoverOverCancelReleaseAbility() {
+		UIManager.Instance.ShowSmallInfo(m_tooltipCancelReleaseAbility);
+	}
+	public void OnHoverOutCancelReleaseAbility() {
+		UIManager.Instance.HideSmallInfo();
 	}
 	#endregion
 }

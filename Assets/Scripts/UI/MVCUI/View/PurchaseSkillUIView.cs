@@ -11,6 +11,8 @@ public class PurchaseSkillUIView : MVCUIView {
 		void OnHoverOverReroll();
 		void OnHoverOutReroll();
 		void OnClickCancelReleaseAbility();
+		void OnHoverOverCancelReleaseAbility();
+		void OnHoverOutCancelReleaseAbility();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -80,6 +82,8 @@ public class PurchaseSkillUIView : MVCUIView {
 		UIModel.onHoverOverReroll += p_listener.OnHoverOverReroll;
 		UIModel.onHoverOutReroll += p_listener.OnHoverOutReroll;
 		UIModel.onClickCancelReleaseAbility += p_listener.OnClickCancelReleaseAbility;
+		UIModel.onHoverOverCancelReleaseAbility += p_listener.OnHoverOverCancelReleaseAbility;
+		UIModel.onHoverOutCancelReleaseAbility += p_listener.OnHoverOutCancelReleaseAbility;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -88,6 +92,8 @@ public class PurchaseSkillUIView : MVCUIView {
 		UIModel.onHoverOverReroll -= p_listener.OnHoverOverReroll;
 		UIModel.onHoverOutReroll -= p_listener.OnHoverOutReroll;
 		UIModel.onClickCancelReleaseAbility -= p_listener.OnClickCancelReleaseAbility;
+		UIModel.onHoverOverCancelReleaseAbility -= p_listener.OnHoverOverCancelReleaseAbility;
+		UIModel.onHoverOutCancelReleaseAbility -= p_listener.OnHoverOutCancelReleaseAbility;
 	}
 	#endregion
 	

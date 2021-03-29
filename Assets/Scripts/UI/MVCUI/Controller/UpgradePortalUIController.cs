@@ -9,6 +9,8 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     private UpgradePortalUIModel m_upgradePortalUIModel;
     private UpgradePortalUIView m_upgradePortalUIView;
     
+    private string m_tooltipCancelUpgradePortal;
+    
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
     [ContextMenu("Instantiate UI")]
     public override void InstantiateUI() {
@@ -30,7 +32,10 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
         Messenger.AddListener(PlayerSignals.PORTAL_UPGRADE_CANCELLED, OnPlayerCancelledPortalUpgrade);
     }
     public void InitializeAfterLoadoutSelected() {
+        m_tooltipCancelUpgradePortal = LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "cancel_upgrade_portal");
         m_upgradePortalUIView.UIModel.timerUpgradePortal.SetTimer(PlayerManager.Instance.player.playerSkillComponent.timerUpgradePortal);
+        m_upgradePortalUIView.UIModel.timerUpgradePortal.SetHoverOverAction(OnHoverOverUpgradePortalTimer);
+        m_upgradePortalUIView.UIModel.timerUpgradePortal.SetHoverOutAction(OnHoverOutUpgradePortalTimer);
     }
     public void ShowPortalUpgradeTier(PortalUpgradeTier p_upgradeTier, int p_level) {
         ShowUI();
@@ -90,6 +95,12 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
             "Cancel Portal Upgrade", $"Are you sure you want to cancel Portal Upgrade? " + 
                                      $"\n<i>{UtilityScripts.Utilities.InvalidColorize("Cancelling will reset all current upgrade progress!")}</i>", OnConfirmCancelUpgradePortal, showCover: true, layer: 100);
     }
+    public void OnHoverOverCancelUpgrade() {
+        UIManager.Instance.ShowSmallInfo(m_tooltipCancelUpgradePortal);
+    }
+    public void OnHoverOutCancelUpgrade() {
+        UIManager.Instance.HideSmallInfo();
+    }
     private void OnConfirmCancelUpgradePortal() {
         PlayerManager.Instance.player.playerSkillComponent.CancelPortalUpgrade();
     }
@@ -106,5 +117,11 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
             PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
         }
     }
-    
+    private void OnHoverOverUpgradePortalTimer() {
+        string message = $"Remaining time: {PlayerManager.Instance.player.playerSkillComponent.timerUpgradePortal.GetRemainingTimeString()}";
+        UIManager.Instance.ShowSmallInfo(message, autoReplaceText: false);
+    }
+    private void OnHoverOutUpgradePortalTimer() {
+        UIManager.Instance.HideSmallInfo();
+    }
 }
