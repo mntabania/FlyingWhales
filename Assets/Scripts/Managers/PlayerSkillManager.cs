@@ -489,6 +489,11 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
+    public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GethungerratePerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
     public int GetAfflictionCrowdNumberPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetCrowdNumberPerLevel(GetSkillData(p_skillType).currentLevel);
