@@ -81,6 +81,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         }
         lockCover.SetActive(false);
         emptyCover.SetActive(false);
+        HideDeadIcon();
     }
 
     public void MakeSlotEmpty() {

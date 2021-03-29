@@ -180,6 +180,18 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.ShowTargetButtonHideTargetContainer();
 		}
+		if (m_isTeamDeployed) {
+			m_deployedSummonsUI.ForEach((eachSummon) => {
+				if (eachSummon.deployedCharacter == null || eachSummon.deployedCharacter.isDead) {
+					eachSummon.ShowDeadIcon();
+				}
+			});
+			m_deployedMinionsUI.ForEach((eachMinion) => {
+				if (eachMinion.deployedCharacter == null || eachMinion.deployedCharacter.isDead) {
+					eachMinion.ShowDeadIcon();
+				}
+			});
+		}
 	}
 
 	void InitializeDeployedItems() {
@@ -205,7 +217,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void InitializeSummons() {
-
 		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
             if (entry.Value.hasMaxCharge) {
 				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableSummonsParent());
