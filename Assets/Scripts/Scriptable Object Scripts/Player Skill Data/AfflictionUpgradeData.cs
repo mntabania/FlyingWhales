@@ -18,6 +18,8 @@ public class AfflictionUpgradeData
     [HideInInspector]
     public List<int> napsPercent = new List<int>();
     [HideInInspector]
+    public List<int> napsDuration = new List<int>();
+    [HideInInspector]
     public List<int> numberOfCriteria = new List<int>();
     [HideInInspector]
     public List<int> hungerRate = new List<int>();
@@ -38,7 +40,7 @@ public class AfflictionUpgradeData
         return cooldown[p_currentLevel];
     }
 
-    public int GethungerratePerLevel(int p_currentLevel) {
+    public int GethungerRatePerLevel(int p_currentLevel) {
         if (hungerRate == null || hungerRate.Count <= 0) {
             return -1;
         }
@@ -56,6 +58,16 @@ public class AfflictionUpgradeData
             return additionalPiercePerLevel[additionalPiercePerLevel.Count - 1];
         }
         return additionalPiercePerLevel[p_currentLevel];
+    }
+
+    public float GetNapsDurationPerLevel(int p_currentLevel) {
+        if (napsDuration == null || napsDuration.Count <= 0) {
+            return -1;
+        }
+        if (p_currentLevel >= napsDuration.Count) {
+            return napsDuration[napsDuration.Count - 1];
+        }
+        return napsDuration[p_currentLevel];
     }
 
     public float GetRateChancePerLevel(int p_currentLevel) {

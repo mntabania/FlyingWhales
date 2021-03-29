@@ -26,7 +26,8 @@ public class SkillUpgradeDataEditor : Editor {
         serializedObject.ApplyModifiedProperties();
         EditorGUILayout.Space();
         if (!(target as PlayerSkillData).isAffliction) {
-
+            EditorGUILayout.TextArea("UPGRADE Skill Bonus");
+            DisplayUpgradeBonus();
         } else if ((target as PlayerSkillData).isAffliction) {
             EditorGUILayout.TextArea("UPGRADE Afflictions");
             DisplayAfflictionBonus();
@@ -258,6 +259,10 @@ public class SkillUpgradeDataEditor : Editor {
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Naps_Percent)) {
                 DisplayIntList(data.afflictionUpgradeData.napsPercent, "Naps Percent");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Naps_Duration)) {
+                DisplayIntList(data.afflictionUpgradeData.napsDuration, "Naps Duration");
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Trigger_Opinion)) {
