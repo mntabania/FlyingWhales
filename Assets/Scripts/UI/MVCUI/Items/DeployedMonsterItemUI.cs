@@ -23,6 +23,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public RuinarchText txtUnlockPrice;
     public GameObject lockCover;
     public GameObject emptyCover;
+    public GameObject deadIcon;
 
     public bool isReadyForDeploy;
     public bool isDeployed;
@@ -147,5 +148,13 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 
     public void ShowRemoveButton() {
         btnDelete.gameObject.SetActive(true);
+    }
+
+    public void ShowDeadIcon() {
+        deadIcon.SetActive(true);
+    }
+
+    public void HideDeadIcon() {
+        deadIcon.SetActive(false);
     }
 }
