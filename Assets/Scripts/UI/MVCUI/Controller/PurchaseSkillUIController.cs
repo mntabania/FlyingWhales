@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
+using Ruinarch;
 using UtilityScripts;
 
 public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IListener {
@@ -89,6 +90,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		base.HideUI();
 		UIManager.Instance.SetSpeedTogglesState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
+		InputManager.Instance.AllowHotkeys(true);
+		InnerMapCameraMove.Instance.EnableMovement();
 	}
 	public override void ShowUI() {
 		m_mvcUIView.ShowUI();
@@ -232,6 +235,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			SpawnItems();
 			UIManager.Instance.Pause();
 			UIManager.Instance.SetSpeedTogglesState(false);
+			InputManager.Instance.AllowHotkeys(false);
+			InnerMapCameraMove.Instance.DisableMovement();
 		});
 	}
 
@@ -261,6 +266,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		}
 		UIManager.Instance.Pause();
 		UIManager.Instance.SetSpeedTogglesState(false);
+		InputManager.Instance.AllowHotkeys(false);
+		InnerMapCameraMove.Instance.DisableMovement();
 	}
 
 	#region Reroll

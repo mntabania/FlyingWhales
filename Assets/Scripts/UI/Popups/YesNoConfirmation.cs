@@ -32,9 +32,10 @@ public class YesNoConfirmation : PopupMenuBase{
     /// <param name="noBtnActive">Should the no button be visible?</param>
     /// <param name="yesBtnInactiveHoverAction">Action to execute when user hover over an un-clickable yes button</param>
     /// <param name="yesBtnInactiveHoverExitAction">Action to execute when user hover over an un-clickable no button</param>
+    /// <param name="onClickCloseAction">Action to execute when clicking on close btn. NOTE: Hide action is added by default</param>
     public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
         bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, 
-        bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {
+        bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null, System.Action onClickCloseAction = null) {
         
         yesNoHeaderLbl.text = header;
         yesNoDescriptionLbl.text = question;
@@ -72,6 +73,9 @@ public class YesNoConfirmation : PopupMenuBase{
         if (onClickNoAction != null) {
             noBtn.onClick.AddListener(onClickNoAction.Invoke);
             //closeBtn.onClick.AddListener(onClickNoAction.Invoke);
+        }
+        if (onClickCloseAction != null) {
+            closeBtn.onClick.AddListener(onClickCloseAction.Invoke);
         }
 
         yesBtnUnInteractableHoverHandler.gameObject.SetActive(!yesBtn.interactable);
