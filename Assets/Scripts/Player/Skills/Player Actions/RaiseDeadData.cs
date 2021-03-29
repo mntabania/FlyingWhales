@@ -8,7 +8,7 @@ using UtilityScripts;
 public class RaiseDeadData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RAISE_DEAD;
     public override string name => "Raise Dead";
-    public override string description => "This Action can be used on a corpse of a Villager to spawn a Skeleton.";
+    public override string description => "This Action can be used on a Villager corpse to spawn a Skeleton. The Skeleton will belong to the Undead Faction.";
     public RaiseDeadData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
     }

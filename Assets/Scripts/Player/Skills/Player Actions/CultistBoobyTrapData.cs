@@ -6,7 +6,7 @@ using UtilityScripts;
 public class CultistBoobyTrapData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP;
     public override string name => "Booby Trap";
-    public override string description => "This Action instructs the character to Booby Trap an object owned by someone they know.";
+    public override string description => "This Ability instructs the character to Booby Trap an object owned by someone they know. Only available on Cultists.";
     public override bool canBeCastOnBlessed => true;
     
     public CultistBoobyTrapData() : base() {

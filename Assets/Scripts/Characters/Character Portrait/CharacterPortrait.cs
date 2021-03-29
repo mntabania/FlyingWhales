@@ -41,6 +41,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private System.Action _onClickAction;
     private bool _isSubscribedToListeners;
+    
     #region getters/setters
     public Character character => _character;
     #endregion

@@ -6,7 +6,7 @@ using Inner_Maps;
 public class ForlornSpiritData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FORLORN_SPIRIT;
     public override string name => "Forlorn Spirit";
-    public override string description => "This Spell summons a Forlorn Spirit that will drain Happiness from a nearby Resident.";
+    public override string description => "This Spell summons a Forlorn Spirit that will drain Happiness from a nearby Villager.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;

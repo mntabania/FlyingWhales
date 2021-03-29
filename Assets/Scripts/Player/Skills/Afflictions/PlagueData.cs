@@ -48,7 +48,7 @@ public class PlagueData : AfflictData {
     #endregion
 
     private string GetDescription() {
-        string modifiedDescription = $"This Affliction will afflict a Villager with a virulent disease. The Plague may start spreading to others before eventually killing the Villager.";
+        string modifiedDescription = $"This Affliction will afflict a character with a virulent disease. The Plague may start spreading to others before eventually killing the character.";
         if (GameManager.Instance.gameHasStarted) {
             modifiedDescription = $"{modifiedDescription}\n\n{PlagueDisease.Instance.GetPlagueEffectsSummary()}";
         }

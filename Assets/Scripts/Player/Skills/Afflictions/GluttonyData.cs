@@ -7,7 +7,7 @@ using UnityEngine;
 public class GluttonyData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.GLUTTONY;
     public override string name => "Gluttony";
-    public override string description => "This Affliction will turn a Villager into a Gluttons. Gluttons get hungry faster.";
+    public override string description => "This Affliction will turn a Villager into a Glutton. Gluttons get hungry faster.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     public GluttonyData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };

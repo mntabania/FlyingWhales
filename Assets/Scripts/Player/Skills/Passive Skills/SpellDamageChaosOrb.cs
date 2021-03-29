@@ -3,7 +3,8 @@ using UtilityScripts;
 using Inner_Maps;
 
 public class SpellDamageChaosOrb : PassiveSkill {
-    public override string name => "Mana Orbs upon spell damage";
+    public override string name => "Mana Orbs from Spell Damage";
+    public override string description => "Mana Orbs upon spell damage";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Spell_Damage_Chaos_Orb;
 
     public override void ActivateSkill() {

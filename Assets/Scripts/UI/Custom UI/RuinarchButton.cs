@@ -122,7 +122,7 @@ namespace Ruinarch.Custom_UI {
         #region Label
         public void SetButtonLabelName(string p_name) {
             if (_lblBtnName != null) {
-                _lblBtnName.name = p_name;    
+                _lblBtnName.text = p_name;    
             }
         }
         #endregion

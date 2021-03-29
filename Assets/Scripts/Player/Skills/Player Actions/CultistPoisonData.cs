@@ -6,7 +6,7 @@ using UtilityScripts;
 public class CultistPoisonData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CULTIST_POISON;
     public override string name => "Poison Neighbor";
-    public override string description => "This Action instructs the character to Poison an object owned by someone they know.";
+    public override string description => "This Ability instructs the character to Poison an object owned by someone they know. Only available on Cultists.";
     public override bool canBeCastOnBlessed => true;
     
     public CultistPoisonData() : base() {

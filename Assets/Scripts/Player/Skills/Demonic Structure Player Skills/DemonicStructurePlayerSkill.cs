@@ -38,6 +38,7 @@ public class DemonicStructurePlayerSkill : SkillData {
         // }
         // UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => BuildDemonicStructure(targetTile), OnClickNoOnBuildStructureConfirmation, showCover: true, pauseAndResume: true, layer: 50);
         BuildDemonicStructure(targetTile);
+        base.ActivateAbility(targetTile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         if (base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason)) {

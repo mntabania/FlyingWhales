@@ -6,7 +6,7 @@ using UtilityScripts;
 public class SpreadRumorData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPREAD_RUMOR;
     public override string name => "Spread Rumor";
-    public override string description => "This Action instructs the character to Spread a Rumor about someone they know.";
+    public override string description => "This Action instructs the character to spread a negative rumor about someone they know. Only available on Cultists.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
 

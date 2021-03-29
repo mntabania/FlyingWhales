@@ -49,7 +49,7 @@ public class UnlockStructureUIController : MVCUIController, UnlockStructureUIVie
 
     private void OnChooseStructureToUnlock(PLAYER_SKILL_TYPE p_structureType, int p_unlockCost) {
         PlayerManager.Instance.player.AdjustMana(-p_unlockCost);
-        PlayerManager.Instance.player.playerSkillComponent.PlayerChoseStructureToUnlock(p_structureType, p_unlockCost);
+        // PlayerManager.Instance.player.playerSkillComponent.PlayerChoseStructureToUnlock(p_structureType, p_unlockCost);
         HideUI();
     }
 }

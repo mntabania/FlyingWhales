@@ -31,6 +31,9 @@ namespace Inner_Maps {
         }
 
         #region Object Here
+        public void SetOccupyingObject(TileObject p_object) {
+            objHere = p_object;
+        }
         public void SetObjectHere(TileObject poi) {
             if (poi.isHidden) {
                 hiddenObjHere = poi;
@@ -39,7 +42,7 @@ namespace Inner_Maps {
             } else {
                 bool isPassablePreviously = owner.IsPassable();
                 if (poi.OccupiesTile()) {
-                    objHere = poi;
+                    SetOccupyingObject(poi);
                 }
                 //if (poi is TileObject tileObject) {
                 //    if (tileObject.OccupiesTile()) {
@@ -71,10 +74,10 @@ namespace Inner_Maps {
                 bool isPassablePreviously = owner.IsPassable();
                 if (poi is TileObject tileObject) {
                     if (tileObject.OccupiesTile()) {
-                        objHere = poi;
+                        SetOccupyingObject(poi);
                     }
                 } else {
-                    objHere = poi;
+                    SetOccupyingObject(poi);
                 }
 
                 poi.SetGridTileLocation(owner);
@@ -91,7 +94,7 @@ namespace Inner_Maps {
         public TileObject RemoveObjectHere(Character removedBy) {
             if (objHere != null) {
                 TileObject removedObj = objHere;
-                objHere = null;
+                SetOccupyingObject(null);
                 removedObj.RemoveTileObject(removedBy);
                 //if (removedObj is TileObject tileObject) {
                 //    //if the object in this tile is a tile object and it was removed by a character, use tile object specific function
@@ -123,7 +126,7 @@ namespace Inner_Maps {
                 TileObject removedObj = objHere;
                 LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
-                objHere = null;
+                SetOccupyingObject(null);
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
                 removedObj.OnRemoveTileObject(null, gridTile, false, false);
                 //if (removedObj is TileObject tileObject) {
@@ -140,7 +143,7 @@ namespace Inner_Maps {
                 TileObject removedObj = objHere;
                 LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
-                objHere = null;
+                SetOccupyingObject(null);
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
                 removedObj.OnRemoveTileObject(null, gridTile, false, false);
                 removedObj.DestroyMapVisualGameObject();

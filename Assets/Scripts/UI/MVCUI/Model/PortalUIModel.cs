@@ -6,81 +6,82 @@ using UnityEngine;
 public class PortalUIModel : MVCUIModel {
 
     public RuinarchButton btnReleaseAbility;
-    public RuinarchButton btnSummonDemon;
-    public RuinarchButton btnObtainBlueprint;
+    public RuinarchButton btnUpgradePortal;
 
     public TimerItemUI timerReleaseAbility;
-    public TimerItemUI timerSummonDemon;
-    public TimerItemUI timerObtainBlueprint;
+    public TimerItemUI timerUpgradePortal;
     
     public GameObject goTimerReleaseAbility;
-    public GameObject goTimerSummonDemon;
-    public GameObject goTimerObtainBlueprint;
+    public GameObject goTimerUpgradePortal;
     
     public RuinarchButton btnCancelReleaseAbility;
-    public RuinarchButton btnCancelSummonDemon;
-    public RuinarchButton btnCancelObtainBlueprint;
+    public RuinarchButton btnCancelUpgradePortal;
     public RuinarchButton btnClose;
 
     public HoverHandler hoverHandlerBtnCancelReleaseAbility;
+    public HoverHandler hoverHandlerBtnCancelUpgradePortal;
+    
+    public HoverHandler hoverHandlerBtnUpgradePortal;
 
     public System.Action onReleaseAbilityClicked;
-    public System.Action onSummonDemonClicked;
-    public System.Action onObtainBlueprintClicked;
+    public System.Action onUpgradePortalClicked;
     public System.Action onCancelReleaseAbilityClicked;
-    public System.Action onCancelSummonDemonClicked;
-    public System.Action onCancelObtainBlueprintClicked;
+    public System.Action onCancelUpgradePortalClicked;
     public System.Action onHoverOverCancelReleaseAbility;
     public System.Action onHoverOutCancelReleaseAbility;
+    public System.Action onHoverOverCancelUpgradePortal;
+    public System.Action onHoverOutCancelUpgradePortal;
+    public System.Action onHoverOverUpgradePortal;
+    public System.Action onHoverOutUpgradePortal;
+    
     public System.Action onClickClose;
 
 
     void Awake() {
         btnReleaseAbility.SetButtonLabelName(LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability"));
-        btnSummonDemon.SetButtonLabelName(LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "summon_demon"));
-        btnObtainBlueprint.SetButtonLabelName(LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "obtain_blueprint"));
+        btnUpgradePortal.SetButtonLabelName(LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "upgrade_portal"));
     }
     
     private void OnEnable() {
         btnReleaseAbility.onClick.AddListener(ClickReleaseAbility);
-        btnSummonDemon.onClick.AddListener(ClickSummonDemon);
-        btnObtainBlueprint.onClick.AddListener(ClickObtainBlueprint);
+        btnUpgradePortal.onClick.AddListener(ClickUpgradePortal);
         btnCancelReleaseAbility.onClick.AddListener(ClickCancelReleaseAbility);
-        btnCancelSummonDemon.onClick.AddListener(ClickCancelSummonDemon);
-        btnCancelObtainBlueprint.onClick.AddListener(ClickCancelObtainBlueprint);
+        btnCancelUpgradePortal.onClick.AddListener(ClickCancelUpgradePortal);
         hoverHandlerBtnCancelReleaseAbility.AddOnHoverOverAction(OnHoverOverCancelReleaseAbility);
         hoverHandlerBtnCancelReleaseAbility.AddOnHoverOutAction(OnHoverOutCancelReleaseAbility);
+        hoverHandlerBtnCancelUpgradePortal.AddOnHoverOverAction(OnHoverOverCancelUpgradePortal);
+        hoverHandlerBtnCancelUpgradePortal.AddOnHoverOutAction(OnHoverOutCancelUpgradePortal);
+        
+        hoverHandlerBtnUpgradePortal.AddOnHoverOverAction(OnHoverOverUpgradePortal);
+        hoverHandlerBtnUpgradePortal.AddOnHoverOutAction(OnHoverOutUpgradePortal);
+        
         btnClose.onClick.AddListener(OnClickClose);
     }
     private void OnDisable() {
         btnReleaseAbility.onClick.RemoveListener(ClickReleaseAbility);
-        btnSummonDemon.onClick.RemoveListener(ClickSummonDemon);
-        btnObtainBlueprint.onClick.RemoveListener(ClickObtainBlueprint);
+        btnUpgradePortal.onClick.RemoveListener(ClickUpgradePortal);
         btnCancelReleaseAbility.onClick.RemoveListener(ClickCancelReleaseAbility);
-        btnCancelSummonDemon.onClick.RemoveListener(ClickCancelSummonDemon);
-        btnCancelObtainBlueprint.onClick.RemoveListener(ClickCancelObtainBlueprint);
+        btnCancelUpgradePortal.onClick.RemoveListener(ClickCancelUpgradePortal);
         hoverHandlerBtnCancelReleaseAbility.RemoveOnHoverOverAction(OnHoverOverCancelReleaseAbility);
         hoverHandlerBtnCancelReleaseAbility.RemoveOnHoverOutAction(OnHoverOutCancelReleaseAbility);
+        hoverHandlerBtnCancelUpgradePortal.RemoveOnHoverOverAction(OnHoverOverCancelUpgradePortal);
+        hoverHandlerBtnCancelUpgradePortal.RemoveOnHoverOutAction(OnHoverOutCancelUpgradePortal);
+        hoverHandlerBtnUpgradePortal.RemoveOnHoverOverAction(OnHoverOverUpgradePortal);
+        hoverHandlerBtnUpgradePortal.RemoveOnHoverOutAction(OnHoverOutUpgradePortal);
         btnClose.onClick.RemoveListener(OnClickClose);
     }
     private void ClickReleaseAbility() {
         onReleaseAbilityClicked?.Invoke();
     }
-    private void ClickSummonDemon() {
-        onSummonDemonClicked?.Invoke();
+    private void ClickUpgradePortal() {
+        onUpgradePortalClicked?.Invoke();
     }
-    private void ClickObtainBlueprint() {
-        onObtainBlueprintClicked?.Invoke();
-    }
-    
+
     private void ClickCancelReleaseAbility() {
         onCancelReleaseAbilityClicked?.Invoke();
     }
-    private void ClickCancelSummonDemon() {
-        onCancelSummonDemonClicked?.Invoke();
-    }
-    private void ClickCancelObtainBlueprint() {
-        onCancelObtainBlueprintClicked?.Invoke();
+    private void ClickCancelUpgradePortal() {
+        onCancelUpgradePortalClicked?.Invoke();
     }
     private void OnHoverOverCancelReleaseAbility() {
         onHoverOverCancelReleaseAbility?.Invoke();
@@ -88,6 +89,20 @@ public class PortalUIModel : MVCUIModel {
     private void OnHoverOutCancelReleaseAbility() {
         onHoverOutCancelReleaseAbility?.Invoke();
     }
+    private void OnHoverOverCancelUpgradePortal() {
+        onHoverOverCancelUpgradePortal?.Invoke();
+    }
+    private void OnHoverOutCancelUpgradePortal() {
+        onHoverOutCancelUpgradePortal?.Invoke();
+    }
+    
+    private void OnHoverOverUpgradePortal() {
+        onHoverOverUpgradePortal?.Invoke();
+    }
+    private void OnHoverOutUpgradePortal() {
+        onHoverOutUpgradePortal?.Invoke();
+    }
+    
     private void OnClickClose() {
         onClickClose?.Invoke();
     }

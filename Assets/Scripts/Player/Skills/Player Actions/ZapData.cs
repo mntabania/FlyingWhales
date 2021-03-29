@@ -7,7 +7,7 @@ using UnityEngine;
 public class ZapData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ZAP;
     public override string name => "Zap";
-    public override string description => "This Action can be used to apply Zapped on any living character.";
+    public override string description => "This Ability can be used to apply Zapped on a character - temporarily preventing movement.";
     public ZapData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
     }

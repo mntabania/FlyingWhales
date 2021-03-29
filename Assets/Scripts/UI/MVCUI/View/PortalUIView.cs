@@ -1,4 +1,5 @@
 ﻿using System;
+using Inner_Maps.Location_Structures;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 using UtilityScripts;
@@ -7,13 +8,15 @@ public class PortalUIView : MVCUIView {
     #region interface for listener
     public interface IListener {
         void OnClickReleaseAbility();
-        void OnClickSummonDemon();
-        void OnClickObtainBlueprint();
+        void OnClickUpgradePortal();
         void OnClickCancelReleaseAbility();
-        void OnClickCancelSummonDemon();
-        void OnClickCancelObtainBlueprint();
+        void OnClickCancelUpgradePortal();
         void OnHoverOverCancelReleaseAbility();
         void OnHoverOutCancelReleaseAbility();
+        void OnHoverOverCancelUpgradePortal();
+        void OnHoverOutCancelUpgradePortal();
+        void OnHoverOverUpgradePortal();
+        void OnHoverOutUpgradePortal();
         void OnClickClose();
     }
     #endregion
@@ -42,30 +45,34 @@ public class PortalUIView : MVCUIView {
     #region Subscribe/Unsubscribe for IListener
     public void Subscribe(IListener p_listener) {
         UIModel.onReleaseAbilityClicked += p_listener.OnClickReleaseAbility;
-        UIModel.onSummonDemonClicked += p_listener.OnClickSummonDemon;
-        UIModel.onObtainBlueprintClicked += p_listener.OnClickObtainBlueprint;
+        UIModel.onUpgradePortalClicked += p_listener.OnClickUpgradePortal;
         UIModel.onCancelReleaseAbilityClicked += p_listener.OnClickCancelReleaseAbility;
-        UIModel.onCancelSummonDemonClicked += p_listener.OnClickCancelSummonDemon;
-        UIModel.onCancelObtainBlueprintClicked += p_listener.OnClickCancelObtainBlueprint;
+        UIModel.onCancelUpgradePortalClicked += p_listener.OnClickCancelUpgradePortal;
         UIModel.onHoverOverCancelReleaseAbility += p_listener.OnHoverOverCancelReleaseAbility;
         UIModel.onHoverOutCancelReleaseAbility += p_listener.OnHoverOutCancelReleaseAbility;
+        UIModel.onHoverOverCancelUpgradePortal += p_listener.OnHoverOverCancelUpgradePortal;
+        UIModel.onHoverOutCancelUpgradePortal += p_listener.OnHoverOutCancelUpgradePortal;
+        UIModel.onHoverOverUpgradePortal += p_listener.OnHoverOverUpgradePortal;
+        UIModel.onHoverOutUpgradePortal += p_listener.OnHoverOutUpgradePortal;
         UIModel.onClickClose += p_listener.OnClickClose;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onReleaseAbilityClicked -= p_listener.OnClickReleaseAbility;
-        UIModel.onSummonDemonClicked -= p_listener.OnClickSummonDemon;
-        UIModel.onObtainBlueprintClicked -= p_listener.OnClickObtainBlueprint;
+        UIModel.onUpgradePortalClicked -= p_listener.OnClickUpgradePortal;
         UIModel.onCancelReleaseAbilityClicked -= p_listener.OnClickCancelReleaseAbility;
-        UIModel.onCancelSummonDemonClicked -= p_listener.OnClickCancelSummonDemon;
-        UIModel.onCancelObtainBlueprintClicked -= p_listener.OnClickCancelObtainBlueprint;
+        UIModel.onCancelUpgradePortalClicked -= p_listener.OnClickCancelUpgradePortal;
         UIModel.onHoverOverCancelReleaseAbility -= p_listener.OnHoverOverCancelReleaseAbility;
         UIModel.onHoverOutCancelReleaseAbility -= p_listener.OnHoverOutCancelReleaseAbility;
+        UIModel.onHoverOverCancelUpgradePortal -= p_listener.OnHoverOverCancelUpgradePortal;
+        UIModel.onHoverOutCancelUpgradePortal -= p_listener.OnHoverOutCancelUpgradePortal;
+        UIModel.onHoverOverUpgradePortal -= p_listener.OnHoverOverUpgradePortal;
+        UIModel.onHoverOutUpgradePortal -= p_listener.OnHoverOutUpgradePortal;
         UIModel.onClickClose -= p_listener.OnClickClose;
     }
     #endregion
 
     public void ShowUnlockAbilityTimerAndHideButton(SkillData p_skillToUnlock) {
-        UIModel.timerReleaseAbility.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillToUnlock.name}");
+        UIModel.timerReleaseAbility.RefreshName();
         UIModel.goTimerReleaseAbility.SetActive(true);
         UIModel.btnReleaseAbility.gameObject.SetActive(false);
     }
@@ -74,23 +81,16 @@ public class PortalUIView : MVCUIView {
         UIModel.btnReleaseAbility.gameObject.SetActive(true);
     }
     
-    public void ShowUnlockDemonTimerAndHideButton(SkillData p_skillToUnlock) {
-        UIModel.timerSummonDemon.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "summon_demon_active")} {p_skillToUnlock.name}");
-        UIModel.goTimerSummonDemon.SetActive(true);
-        UIModel.btnSummonDemon.gameObject.SetActive(false);
+    public void ShowUpgradePortalTimerAndHideButton() {
+        UIModel.timerUpgradePortal.RefreshName();
+        UIModel.goTimerUpgradePortal.SetActive(true);
+        UIModel.btnUpgradePortal.gameObject.SetActive(false);
     }
-    public void ShowUnlockDemonButtonAndHideTimer() {
-        UIModel.goTimerSummonDemon.SetActive(false);
-        UIModel.btnSummonDemon.gameObject.SetActive(true);
+    public void ShowUpgradePortalButtonAndHideTimer() {
+        UIModel.goTimerUpgradePortal.SetActive(false);
+        UIModel.btnUpgradePortal.gameObject.SetActive(true);
     }
-    
-    public void ShowUnlockStructureTimerAndHideButton(SkillData p_skillToUnlock) {
-        UIModel.timerObtainBlueprint.SetName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "obtain_blueprint_active")} {p_skillToUnlock.name}");
-        UIModel.goTimerObtainBlueprint.SetActive(true);
-        UIModel.btnObtainBlueprint.gameObject.SetActive(false);
-    }
-    public void ShowUnlockStructureButtonAndHideTimer() {
-        UIModel.goTimerObtainBlueprint.SetActive(false);
-        UIModel.btnObtainBlueprint.gameObject.SetActive(true);
+    public void SetUpgradePortalBtnInteractable(bool p_state) {
+        UIModel.btnUpgradePortal.interactable = p_state;
     }
 }

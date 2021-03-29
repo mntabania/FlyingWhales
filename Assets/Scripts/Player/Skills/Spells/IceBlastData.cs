@@ -8,7 +8,7 @@ public class IceBlastData : SkillData {
 
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ICE_BLAST;
     public override string name => "Ice Blast";
-    public override string description => "This Spell blasts a powerful wave of icicles outward from a target spot, dealing Ice damage to anything it hits.";
+    public override string description => "This Spell causes cold spikes to shatter around a small area, dealing Ice damage to those within range.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
     public IceBlastData() : base() {

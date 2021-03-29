@@ -566,6 +566,11 @@
             </e>
           </e>
         </e>
+        <e p="Ignore" t="Include">
+          <e p="Test Scripts" t="Include">
+            <e p="UpgradePortalUITester.cs" t="Include" />
+          </e>
+        </e>
         <e p="JsonDotNet" t="Include">
           <e p="link.xml" t="Include" />
         </e>
@@ -1153,6 +1158,7 @@
               <e p="StatusIcon.cs" t="Include" />
             </e>
             <e p="Character Portrait" t="Include">
+              <e p="BaseCharacterPortrait.cs" t="Include" />
               <e p="CharacterPortrait.cs" t="Include" />
               <e p="PortraitSettings.cs" t="Include" />
             </e>
@@ -1778,7 +1784,9 @@
           </e>
           <e p="Interfaces" t="Include">
             <e p="ICrimeable.cs" t="Include" />
+            <e p="IDamageable.cs" t="Include" />
             <e p="IDwelling.cs" t="Include" />
+            <e p="IElementalTrait.cs" t="Include" />
             <e p="IJobOwner.cs" t="Include" />
             <e p="ILeader.cs" t="Include" />
             <e p="ILocation.cs" t="Include" />
@@ -1955,7 +1963,6 @@
                 <e p="WallObjectVisionTrigger.cs" t="Include" />
               </e>
               <e p="Damageables" t="Include">
-                <e p="IDamageable.cs" t="Include" />
                 <e p="ThinWallGameObject.cs" t="Include" />
                 <e p="WallAsset.cs" t="Include" />
                 <e p="WallResouceAssets.cs" t="Include" />
@@ -2069,6 +2076,7 @@
                   <e p="BaseMapObject.cs" t="Include" />
                   <e p="BaseMapObjectVisual.cs" t="Include" />
                   <e p="BedObjectGameObject.cs" t="Include" />
+                  <e p="BlockWallGameObject.cs" t="Include" />
                   <e p="CornCropObjectVisual.cs" t="Include" />
                   <e p="CropObjectVisual.cs" t="Include" />
                   <e p="DoorGameObject.cs" t="Include" />
@@ -2141,6 +2149,7 @@
                   <e p="Crate.cs" t="Include" />
                   <e p="Crops.cs" t="Include" />
                   <e p="CryptChest.cs" t="Include" />
+                  <e p="CryptTileObject.cs" t="Include" />
                   <e p="CultAltar.cs" t="Include" />
                   <e p="CultCircle.cs" t="Include" />
                   <e p="CultCross.cs" t="Include" />
@@ -2541,6 +2550,7 @@
               <e p="SpellInputModule.cs" t="Include" />
             </e>
             <e p="Player.cs" t="Include" />
+            <e p="PlayerDamageAccumulator.cs" t="Include" />
             <e p="PlayerDB.cs" t="Include" />
             <e p="PlayerSkillTreeNode.cs" t="Include" />
             <e p="Skills" t="Include">
@@ -2630,6 +2640,7 @@
                 <e p="PoisonData.cs" t="Include" />
                 <e p="RaidData.cs" t="Include" />
                 <e p="RaiseDeadData.cs" t="Include" />
+                <e p="ReleaseAbilitiesData.cs" t="Include" />
                 <e p="ReleaseData.cs" t="Include" />
                 <e p="RemoveBuffData.cs" t="Include" />
                 <e p="RemoveFlawData.cs" t="Include" />
@@ -2646,10 +2657,10 @@
                 <e p="SpreadRumorData.cs" t="Include" />
                 <e p="TortureData.cs" t="Include" />
                 <e p="TriggerFlawData.cs" t="Include" />
-                <e p="UnlockAbilitiesData.cs" t="Include" />
                 <e p="UnsummonData.cs" t="Include" />
                 <e p="UpgradeAbilitiesData.cs" t="Include" />
                 <e p="UpgradeData.cs" t="Include" />
+                <e p="UpgradePortalData.cs" t="Include" />
                 <e p="ZapData.cs" t="Include" />
               </e>
               <e p="Schemes" t="Include">
@@ -3049,6 +3060,7 @@
               <e p="WindBlastSkillData.cs" t="Include" />
             </e>
             <e p="Player Skill Data" t="Include">
+              <e p="AfflictionUpgradeData.cs" t="Include" />
               <e p="PlayerSkillData.cs" t="Include" />
               <e p="RequirementData.cs" t="Include" />
               <e p="SkillUpgradeData.cs" t="Include" />
@@ -3357,8 +3369,11 @@
             <e p="LandmarkCharacterItem.cs" t="Include" />
             <e p="LevelCollapseUI.cs" t="Include" />
             <e p="LoadWindow.cs" t="Include" />
+            <e p="Location Portrait" t="Include">
+              <e p="BaseLocationPortrait.cs" t="Include" />
+              <e p="LocationPortrait.cs" t="Include" />
+            </e>
             <e p="LocationGridTileMouseEvents.cs" t="Include" />
-            <e p="LocationPortrait.cs" t="Include" />
             <e p="LocationSmallInfo.cs" t="Include" />
             <e p="LogFilterItem.cs" t="Include" />
             <e p="LogHistoryItem.cs" t="Include" />
@@ -3408,6 +3423,7 @@
                 <e p="TransmissionUIController.cs" t="Include" />
                 <e p="UnlockMinionUIController.cs" t="Include" />
                 <e p="UnlockStructureUIController.cs" t="Include" />
+                <e p="UpgradePortalUIController.cs" t="Include" />
                 <e p="WorldGenOptionsUIController.cs" t="Include" />
               </e>
               <e p="HoverText.cs" t="Include" />
@@ -3423,6 +3439,7 @@
                 <e p="TimerItemUI.cs" t="Include" />
                 <e p="UnlockMinionItemUI.cs" t="Include" />
                 <e p="UnlockStructureItemUI.cs" t="Include" />
+                <e p="UpgradePortalItemUI.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
@@ -3444,6 +3461,7 @@
                 <e p="TransmissionUIModel.cs" t="Include" />
                 <e p="UnlockMinionUIModel.cs" t="Include" />
                 <e p="UnlockStructureUIModel.cs" t="Include" />
+                <e p="UpgradePortalUIModel.cs" t="Include" />
                 <e p="WorldGenOptionsUIModel.cs" t="Include" />
               </e>
               <e p="View" t="Include">
@@ -3466,6 +3484,7 @@
                 <e p="TransmissionUIView.cs" t="Include" />
                 <e p="UnlockMinionUIView.cs" t="Include" />
                 <e p="UnlockStructureUIView.cs" t="Include" />
+                <e p="UpgradePortalUIView.cs" t="Include" />
                 <e p="WorldGenOptionsUIView.cs" t="Include" />
               </e>
             </e>

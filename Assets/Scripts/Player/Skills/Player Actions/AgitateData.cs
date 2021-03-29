@@ -9,7 +9,7 @@ using UtilityScripts;
 public class AgitateData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AGITATE;
     public override string name => "Agitate";
-    public override string description => "This Action can be used on a monster. The target will enter a state of frenzy and will terrorize nearby Residents.";
+    public override string description => "This Ability may be used on a wild monster to force it to enter a state of frenzy. It will terrorize nearby Villagers if possible.";
     public AgitateData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
