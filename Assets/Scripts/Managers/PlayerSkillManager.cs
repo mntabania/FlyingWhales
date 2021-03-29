@@ -416,64 +416,103 @@ public class PlayerSkillManager : MonoBehaviour {
     #endregion
 
     #region utility
-    public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(skillData.currentLevel);
+        if (p_forcedLevel == -1) {
+            return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(GetSkillData(p_skillType).currentLevel);
+        } else {
+            return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(p_forcedLevel);
+        }
     }
 
     public int GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetTileRangeBonusPerLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetTileRangeBonusPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetChanceBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetChanceBonusPerLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetChanceBonusPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public float GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.skillUpgradeData.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public int GetAdditionalAttackActualPerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetAdditionalAttackActualPerLevelBaseOnLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetAdditionalAttackActualPerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(skillData.currentLevel);
+        return playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
-    public int GetDurationBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public int GetDurationBonusPerLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(skillData.currentLevel);
+        if (p_forcedLevel == -1) {
+            return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(GetSkillData(p_skillType).currentLevel);
+        } else {
+            return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(p_forcedLevel);
+        }
     }
 
     public int GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.skillUpgradeData.GetSkillMovementSpeedPerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public float GetAfflictionPiercePerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetPiercePerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public float GetRateChancePerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public int GetAfflictionCrowdNumberPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetCrowdNumberPerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public int GetAfflictionNapsPercentagePerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetNapsPercentagePerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public List<OPINIONS> GetAfflictionOpinionTriggers(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetAllOpinionsTrigger();
+    }
+
+    public List<AFFLICTION_SPECIFIC_BEHAVIOUR> GetAfflictionAllAddedBehaviour(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetAllAddedBehaviour();
+    }
+
+    private SkillData GetSkillData(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
-        return playerSkillData.skillUpgradeData.GetSkillMovementSpeedPerLevel(skillData.currentLevel);
+        return skillData;
     }
     #endregion
 }

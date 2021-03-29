@@ -52,7 +52,7 @@ public class CombatManager : BaseMonoBehaviour {
         ConstructAllCombatSpecialSkills();
     }
 
-    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null, bool createHitEffect = true) {
+    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null, bool createHitEffect = true, bool setAsPlayerSource = false) {
         Profiler.BeginSample("Apply Elemental Damage - Get Data");
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
         Profiler.EndSample();
@@ -85,9 +85,13 @@ public class CombatManager : BaseMonoBehaviour {
                 out Trait trait, characterResponsible); //, out trait
             Profiler.EndSample();
             if (hasSuccessfullyAdded) {
+                Trait elementalTrait = target.traitContainer.GetTraitOrStatus<Trait>(elementalDamage.addedTraitName);
+                if(elementalTrait is IElementalTrait ielementalTrait && setAsPlayerSource) {
+                    ielementalTrait.SetIsPlayerSource(true);
+                }
                 Profiler.BeginSample("Apply Elemental Damage - Chain Electric");
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
-                    ChainElectricDamage(target, damage, characterResponsible, target);
+                    ChainElectricDamage(target, damage, characterResponsible, target, setAsPlayerSource);
                 }
                 Profiler.EndSample();
                 
@@ -237,13 +241,13 @@ public class CombatManager : BaseMonoBehaviour {
     }
     
     #region Explosion
-    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius) {
-        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible, radius));
+    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius, bool isPlayerSource) {
+        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible, radius, isPlayerSource));
         if (characterResponsible == null) {
             Messenger.Broadcast(PlayerSignals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, target);    
         }
     }
-    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius) {
+    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius, bool isPlayerSource) {
         while (GameManager.Instance.isPaused) {
             //Pause coroutine while game is paused
             //Might be performance heavy, needs testing
@@ -262,7 +266,7 @@ public class CombatManager : BaseMonoBehaviour {
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             // traitables.AddRange(tile.GetTraitablesOnTile());
-            tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, characterResponsible, ref bs));
+            tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, characterResponsible, ref bs, isPlayerSource));
         }
         // if(!(target is GenericTileObject)) {
         //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
@@ -271,9 +275,9 @@ public class CombatManager : BaseMonoBehaviour {
         //     log.AddLogToInvolvedObjects();
         // }
     }
-    private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, Character characterResponsible, ref BurningSource bs) {
+    private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, Character characterResponsible, ref BurningSource bs, bool isPlayerSource) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, characterResponsible, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, characterResponsible, showHPBar: true, isPlayerSource: isPlayerSource);
         if (traitable.traitContainer.HasTrait("Burning")) {
             Burning burningTrait = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
@@ -285,10 +289,10 @@ public class CombatManager : BaseMonoBehaviour {
             }
         }
     }
-    public void FrozenExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
-        StartCoroutine(FrozenExplosionCoroutine(target, targetTile, stacks));
+    public void FrozenExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, bool isPlayerSource) {
+        StartCoroutine(FrozenExplosionCoroutine(target, targetTile, stacks, isPlayerSource));
     }
-    private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+    private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, bool isPlayerSource) {
         while (GameManager.Instance.isPaused) {
             //Pause coroutine while game is paused
             //Might be performance heavy, needs testing
@@ -306,7 +310,7 @@ public class CombatManager : BaseMonoBehaviour {
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             // traitables.AddRange(tile.GetTraitablesOnTile());
-            tile.PerformActionOnTraitables((traitable) => FrozenExplosionEffect(traitable, damagePercentage));
+            tile.PerformActionOnTraitables((traitable) => FrozenExplosionEffect(traitable, damagePercentage, isPlayerSource));
         }
 
         // if (!(target is GenericTileObject)) {
@@ -316,20 +320,20 @@ public class CombatManager : BaseMonoBehaviour {
         //     log.AddLogToInvolvedObjects();
         // }
     }
-    private void FrozenExplosionEffect(ITraitable traitable, float damagePercentage) {
+    private void FrozenExplosionEffect(ITraitable traitable, float damagePercentage, bool isPlayerSource) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true, isPlayerSource: isPlayerSource);
     }
-    public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin) {
+    public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin, bool setAsPlayerSource = false) {
         if (characterResponsible == null) {
             Messenger.Broadcast(PlayerSignals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
         }
 
         if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
-            Trait trait = null;
-            traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric", out trait, characterResponsible: characterResponsible);
-            ChainedElectric chainedElectric = trait as ChainedElectric;
+            traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric", characterResponsible: characterResponsible);
+            ChainedElectric chainedElectric = traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<ChainedElectric>("Chained Electric");
             chainedElectric.SetDamage(damage);
+            chainedElectric.SetIsPlayerSource(setAsPlayerSource);
         }
 
         //if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {

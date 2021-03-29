@@ -33,6 +33,10 @@ public class SplashPoisonData : SkillData {
     }
     private void MakeTraitblePoisoned(ITraitable traitable) {
         traitable.traitContainer.AddTrait(traitable, "Poisoned", bypassElementalChance: true, overrideDuration: GetDurationBaseOnTileType(traitable));
+        Poisoned poisoned = traitable.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+        if (poisoned != null) {
+            poisoned.SetIsPlayerSource(true);
+        }
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
@@ -53,7 +57,8 @@ public class SplashPoisonData : SkillData {
                 genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone ||
                 genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
                 //Reduce duration of poison when put on desert tiles
-                baseTick = GameManager.Instance.GetTicksBasedOnHour(40);
+
+                baseTick = GameManager.Instance.GetTicksBasedOnHour(2);
             }
         }
         return baseTick;

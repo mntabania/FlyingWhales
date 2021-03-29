@@ -108,7 +108,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         _detailTileMapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
         for (int i = 0; i < wallVisuals.Length; i++) {
             ThinWallGameObject wallVisual = wallVisuals[i];
-            wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
+            wallVisual.UpdateSortingOrders(InnerMapManager.DetailsTilemapSortingOrder + 1);
         }
     }
     public void OverrideDefaultSortingOrder(int p_sortingOrder) {
@@ -214,6 +214,8 @@ public class LocationStructureObject : PooledObject, ISelectable {
         } else if (structureType == STRUCTURE_TYPE.SPIRE && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);
         } else if (structureType == STRUCTURE_TYPE.MEDDLER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);
+        } else if (structureType == STRUCTURE_TYPE.CRYPT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);
         }
     }
@@ -907,11 +909,21 @@ public class LocationStructureObject : PooledObject, ISelectable {
         //    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
         //    return false;
         //}
-        
-        
+
+
         //limit so that structures will not be directly adjacent with each other
-        for (int j = 0; j < tile.neighbourList.Count; j++) {
-            LocationGridTile neighbour = tile.neighbourList[j];
+        List<LocationGridTile> tilesInRadius = null;
+        List<LocationGridTile> tilesToCheck;
+        if (structureType.IsPlayerStructure()) {
+            tilesToCheck = tile.neighbourList;
+        } else {
+            tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
+            tile.PopulateTilesInRadius(tilesInRadius, 2, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            tilesToCheck = tilesInRadius;
+        }
+
+        for (int j = 0; j < tilesToCheck.Count; j++) {
+            LocationGridTile neighbour = tilesToCheck[j];
             if (neighbour.hasBlueprint) {
                 Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
                 o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
@@ -949,6 +961,9 @@ public class LocationStructureObject : PooledObject, ISelectable {
                     return false;
                 }    
             }
+        }
+        if(tilesInRadius != null) {
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesInRadius);
         }
         o_cannotPlaceReason = string.Empty;
         return true;

@@ -3,13 +3,14 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(PlayerSkillData), true)]
+[CustomEditor(typeof(PlayerSkillData), false)]
 public class SkillUpgradeDataEditor : Editor {
 
     PlayerSkillData data;
 
     bool foldUnlockingRequirements = true;
     bool foldUpgradeBonus = true;
+    bool foldAfflictionBonus = true;
 
     void OnEnable() {
         data = (PlayerSkillData)target;
@@ -24,8 +25,16 @@ public class SkillUpgradeDataEditor : Editor {
         DisplayUnlockingRequirementBonus();
         serializedObject.ApplyModifiedProperties();
         EditorGUILayout.Space();
-        EditorGUILayout.TextArea("UPGRADE BONUS STATS");
-        DisplayUpgradeBonus();
+        if (!(target as PlayerSkillData).isAffliction) {
+            EditorGUILayout.TextArea("UPGRADE BONUS STATS");
+            DisplayUpgradeBonus();
+            EditorGUILayout.Space();
+        }
+        if ((target as PlayerSkillData).isAffliction) {
+            EditorGUILayout.TextArea("UPGRADE Afflictions");
+            DisplayAfflictionBonus();
+        }
+        
         serializedObject.ApplyModifiedProperties();
         if (GUI.changed) {
             EditorUtility.SetDirty(target);
@@ -213,6 +222,103 @@ public class SkillUpgradeDataEditor : Editor {
 
         for (int i = 0; i < list.Count; i++) {
             list[i] = (int)EditorGUILayout.FloatField(list[i]);
+        }
+    }
+
+    void DisplayAfflictionBonus() {
+        foldAfflictionBonus = EditorGUILayout.InspectorTitlebar(foldAfflictionBonus, this);
+        if (foldAfflictionBonus) {
+            DisplayEnumList(data.afflictionUpgradeData.bonuses, "Affliction Bonuses");
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Pierce)) {
+                DisplayFloatList(data.afflictionUpgradeData.additionalPiercePerLevel, "Pierce(%) per level");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Trigger_Rate)) {
+                DisplayIntList(data.afflictionUpgradeData.rateChance, "Chance Bonus(%) per level");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.CoolDown)) {
+                DisplayIntList(data.afflictionUpgradeData.cooldown, "Cooldown per level");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Crowd_Number)) {
+                DisplayIntList(data.afflictionUpgradeData.crowdNumber, "No. of crowds");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Number_Criteria)) {
+                DisplayIntList(data.afflictionUpgradeData.crowdNumber, "No. of Criteria");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Criteria)) {
+                DisplayEnumListCriteria(data.afflictionUpgradeData.listOfCriteria, "Criterias");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Naps_Percent)) {
+                DisplayIntList(data.afflictionUpgradeData.napsPercent, "Naps Percent");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Trigger_Opinion)) {
+                DisplayEnumListOpinions(data.afflictionUpgradeData.opinionTrigger, "Trigger Opinion");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Added_Behaviour)) {
+                DisplayEnumListAddedBehaviour(data.afflictionUpgradeData.addedBehaviour, "Added Behaviour");
+                EditorGUILayout.Space();
+            }
+        }
+    }
+
+    public void DisplayEnumListOpinions(List<OPINIONS> listInt, string caption) {
+        var list = listInt;
+        int newCount = Mathf.Max(0, EditorGUILayout.IntField(caption, list.Count));
+        while (newCount < list.Count)
+            list.RemoveAt(list.Count - 1);
+        while (newCount > list.Count)
+            list.Add(0);
+
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = (OPINIONS)EditorGUILayout.EnumPopup((OPINIONS)list[i]);
+        }
+    }
+
+    public void DisplayEnumListAddedBehaviour(List<AFFLICTION_SPECIFIC_BEHAVIOUR> listInt, string caption) {
+        var list = listInt;
+        int newCount = Mathf.Max(0, EditorGUILayout.IntField(caption, list.Count));
+        while (newCount < list.Count)
+            list.RemoveAt(list.Count - 1);
+        while (newCount > list.Count)
+            list.Add(0);
+
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = (AFFLICTION_SPECIFIC_BEHAVIOUR)EditorGUILayout.EnumPopup((AFFLICTION_SPECIFIC_BEHAVIOUR)list[i]);
+        }
+    }
+
+    public void DisplayEnumListCriteria(List<LIST_OF_CRITERIA> listInt, string caption) {
+        var list = listInt;
+        int newCount = Mathf.Max(0, EditorGUILayout.IntField(caption, list.Count));
+        while (newCount < list.Count)
+            list.RemoveAt(list.Count - 1);
+        while (newCount > list.Count)
+            list.Add(0);
+
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = (LIST_OF_CRITERIA)EditorGUILayout.EnumPopup((LIST_OF_CRITERIA)list[i]);
+        }
+    }
+
+    public void DisplayEnumList(List<AFFLICTION_UPGRADE_BONUS> listInt, string caption) {
+        var list = listInt;
+        int newCount = Mathf.Max(0, EditorGUILayout.IntField(caption, list.Count));
+        while (newCount < list.Count)
+            list.RemoveAt(list.Count - 1);
+        while (newCount > list.Count)
+            list.Add(0);
+
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = (AFFLICTION_UPGRADE_BONUS)EditorGUILayout.EnumPopup((AFFLICTION_UPGRADE_BONUS)list[i]);
         }
     }
 }

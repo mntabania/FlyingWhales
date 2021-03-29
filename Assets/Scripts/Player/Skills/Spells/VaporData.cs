@@ -16,6 +16,7 @@ public class VaporData : SkillData {
         vapor.SetGridTileLocation(targetTile);
         vapor.OnPlacePOI();
         vapor.SetStacks(EditableValuesManager.Instance.vaporStacks);
+        vapor.SetIsPlayerSource(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

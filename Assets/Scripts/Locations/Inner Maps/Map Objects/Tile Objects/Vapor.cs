@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
-
+using Traits;
 public class Vapor : MovingTileObject {
 
     private VaporMapObjectVisual _vaporMapVisualObject;
@@ -54,7 +54,7 @@ public class Vapor : MovingTileObject {
         return "Vapor";
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
@@ -67,7 +67,7 @@ public class Vapor : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
         }
         if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
             _vaporMapVisualObject.Expire();
@@ -144,10 +144,18 @@ public class Vapor : MovingTileObject {
             //If the radius is less than or equal to zero this means we will only get the gridTileLocation itself
             if (radius <= 0) {
                 gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTileLocation.tileObjectComponent.genericTileObject, "Wet");
+                Wet wet = gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
+                if (wet != null) {
+                    wet.SetIsPlayerSource(isPlayerSource);
+                }
             } else {
                 List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < tiles.Count; i++) {
                     tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Wet");
+                    Wet wet = tiles[i].tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
+                    if (wet != null) {
+                        wet.SetIsPlayerSource(isPlayerSource);
+                    }
                 }
             }
         }

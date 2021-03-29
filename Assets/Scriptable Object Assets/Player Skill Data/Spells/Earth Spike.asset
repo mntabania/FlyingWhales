@@ -15,7 +15,7 @@ MonoBehaviour:
   skill: 193
   manaCost: 20
   charges: 1
-  cooldown: 160
+  cooldown: 240
   threat: 8
   threatPerHour: 0
   expCost: 300
@@ -24,8 +24,8 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 3a9d7052cb7ee0343b1da53d3b8d6639, type: 3}
   tooltipImage: {fileID: 0}
-  unlockCost: 100
-  tier: 1
+  unlockCost: 200
+  tier: 2
   baseLoadoutWeight: 200
   resistanceType: 7
   archetypeWeightedBonus: 1
@@ -34,9 +34,9 @@ MonoBehaviour:
   playerActionIcon: {fileID: 0}
   isNonUpgradeable: 0
   requirementData:
-    requirements: 
+    requirements: 01000000
     requiredArchetype: 0
-    requiredSkills: 
+    requiredSkills: 2b000000
     actionCount: 0
     afflictionCount: 0
     spellsCount: 0
@@ -45,16 +45,16 @@ MonoBehaviour:
     tier3Count: 0
     isOR: 0
   skillUpgradeData:
-    upgradeCosts: 6400000096000000c8000000
-    manacostPerLevel: 14000000190000001e00000023000000
+    upgradeCosts: c80000002c01000090010000
+    manacostPerLevel: 190000001e0000002300000028000000
     chargesPerLevel: 01000000010000000200000003000000
     bonuses: 000000000e000000010000000c000000
-    additionalDamagePerLevel: f4010000000000000000000000000000
+    additionalDamagePerLevel: ee020000e8030000e2040000dc050000
     additionalPiercePerLevel:
     - 0
     - 50
-    - 75
     - 100
+    - 150
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
@@ -67,6 +67,6 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 01000000010000000100000001000000
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: a0000000f000000040010000e0010000
+    cooldownPerLevel: f0000000dc000000c8000000b4000000
     skillMovementSpeed: 
   blastSound: {fileID: 8300000, guid: e85cc59650fe25a4d96062d7b5e9b010, type: 3}

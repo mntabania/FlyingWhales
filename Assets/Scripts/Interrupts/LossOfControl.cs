@@ -31,7 +31,7 @@ namespace Interrupts {
                     //reset electric storm
                     area.spellsComponent.ResetElectricStormDuration();
                 } else {
-                    area.spellsComponent.SetHasElectricStorm(true);
+                    area.spellsComponent.SetHasElectricStorm(true, false);
                 }
             } else if (interruptHolder.actor.characterClass.className.Equals("Shaman")) {
                 //Poison Bloom
@@ -44,10 +44,10 @@ namespace Interrupts {
             } else if (interruptHolder.actor.characterClass.className.Equals("Mage")) { 
                 //Brimstones
                 if (area.spellsComponent.hasBrimstones) {
-                    //reset electric storm
+                    //reset brim stone
                     area.spellsComponent.ResetBrimstoneDuration();
                 } else {
-                    area.spellsComponent.SetHasBrimstones(true);
+                    area.spellsComponent.SetHasBrimstones(true, false);
                 }
             }
             else {

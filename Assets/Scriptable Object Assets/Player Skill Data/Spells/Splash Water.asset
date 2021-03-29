@@ -47,7 +47,7 @@ MonoBehaviour:
   skillUpgradeData:
     upgradeCosts: 6400000096000000c8000000
     manacostPerLevel: 14000000140000001400000014000000
-    chargesPerLevel: 01000000010000000200000003000000
+    chargesPerLevel: 01000000020000000300000003000000
     bonuses: 0c0000000e000000010000000a000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
@@ -69,7 +69,7 @@ MonoBehaviour:
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
-    additionalTileRangeBonusPerLevel: 00000000010000000200000003000000
+    additionalTileRangeBonusPerLevel: 01000000010000000200000003000000
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: a00000008c0000008c0000008c000000
     skillMovementSpeed: 

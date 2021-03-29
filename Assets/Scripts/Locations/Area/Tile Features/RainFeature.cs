@@ -3,6 +3,8 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Traits;
+
 namespace Locations.Area_Features {
     public class RainFeature : AreaFeature {
 
@@ -13,7 +15,8 @@ namespace Locations.Area_Features {
 
         public int expiryInTicks { get; private set; }
         public GameDate expiryDate { get; private set; }
-        
+        public bool isPlayerSource { get; private set; }
+
         public RainFeature() {
             name = "Rain";
             description = "Rain is pouring down in this location.";
@@ -151,13 +154,25 @@ namespace Locations.Area_Features {
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
                 character.traitContainer.AddTrait(character, "Wet");
+                Wet wet = character.traitContainer.GetTraitOrStatus<Wet>("Wet");
+                if(wet != null) {
+                    wet.SetIsPlayerSource(isPlayerSource);
+                }
             }
             for (int i = 0; i < p_area.gridTileComponent.gridTiles.Count; i++) {
                 LocationGridTile gridTile = p_area.gridTileComponent.gridTiles[i];
                 if (!gridTile.structure.isInterior) {
                     gridTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTile.tileObjectComponent.genericTileObject, "Wet");
+                    Wet wet = gridTile.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
+                    if (wet != null) {
+                        wet.SetIsPlayerSource(isPlayerSource);
+                    }
                     if (gridTile.tileObjectComponent.objHere != null) {
                         gridTile.tileObjectComponent.objHere.traitContainer.AddTrait(gridTile.tileObjectComponent.objHere, "Wet");
+                        Wet wetObjHere = gridTile.tileObjectComponent.objHere.traitContainer.GetTraitOrStatus<Wet>("Wet");
+                        if (wet != null) {
+                            wetObjHere.SetIsPlayerSource(isPlayerSource);
+                        }
                     }
                 }
             }
@@ -175,22 +190,29 @@ namespace Locations.Area_Features {
             expiryInTicks = ticks;
         }
         #endregion
+
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
     }
     
     [System.Serializable]
     public class SaveDataRainFeature : SaveDataAreaFeature {
 
         public int expiryInTicks;
+        public bool isPlayerSource;
         public override void Save(AreaFeature tileFeature) {
             base.Save(tileFeature);
             RainFeature rainFeature = tileFeature as RainFeature;
             Assert.IsNotNull(rainFeature, $"Passed feature is not Rain! {tileFeature?.ToString() ?? "Null"}");
             expiryInTicks = GameManager.Instance.Today().GetTickDifference(rainFeature.expiryDate);
+            isPlayerSource = rainFeature.isPlayerSource;
         }
         public override AreaFeature Load() {
             RainFeature rainFeature = base.Load() as RainFeature;
             Assert.IsNotNull(rainFeature, $"Passed feature is not Rain! {rainFeature?.ToString() ?? "Null"}");
             rainFeature.SetExpiryInTicks(expiryInTicks);
+            rainFeature.SetIsPlayerSource(isPlayerSource);
             return rainFeature;
         }
     } 

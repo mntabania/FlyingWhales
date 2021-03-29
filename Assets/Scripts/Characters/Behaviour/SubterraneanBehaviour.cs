@@ -14,7 +14,6 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
         log += $"\n-{character.name} is a subterranean";
         if (!character.isDead && character.gridTileLocation != null && !character.isNormalCharacter && !IsTamedMonster(character)) {
             if (character.behaviourComponent.subterraneanJustExitedCombat) {
-                character.behaviourComponent.SetSubterraneanJustExitedCombat(false);
                 log += $"\n-Just exited combat will teleport to new location";
                 List<LocationStructure> allCavesInTheRegion = character.currentRegion.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
                 if(allCavesInTheRegion != null) {

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Sacrifice
   m_EditorClassIdentifier: 
   skill: 149
-  manaCost: -1
+  manaCost: 10
   charges: 1
-  cooldown: 96
+  cooldown: 160
   threat: 0
   threatPerHour: 0
   expCost: 0
@@ -46,9 +46,9 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 
-    chargesPerLevel: 
-    bonuses: 
+    manacostPerLevel: 0a000000
+    chargesPerLevel: 01000000
+    bonuses: 0e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel: []
     additionalHpPercentagePerLevel: []
@@ -63,5 +63,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 
+    cooldownPerLevel: a0000000
     skillMovementSpeed: 

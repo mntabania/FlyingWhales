@@ -8,6 +8,8 @@ using Inner_Maps;
 
 public class BrimstonesParticleEffect : BaseParticleEffect {
 
+    public bool IsCastedByPlayer { set; get; }
+
     protected override void PlayParticle() {
         base.PlayParticle();
         StartCoroutine(BrimstoneEffect());
@@ -27,7 +29,9 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
     }
     private void BrimstoneEffect(ITraitable traitable, ref BurningSource bs) {
         int additionalDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES);
-        
+        if (!IsCastedByPlayer) {
+            additionalDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES, 0);
+        }
         int processedDamage = additionalDamage;
         if (traitable is TileObject obj) {
             //int processedDamage = m_brimstoneBaseDamage - (m_brimstoneBaseDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));
@@ -38,15 +42,14 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
                 bs = burningSource;
             } else {
                 BurningSource burningSource = bs;
-
-                obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+                obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, isPlayerSource: IsCastedByPlayer);
                 bs = burningSource;
             }
         } else if (traitable is Character character) {
             //int processedDamage = m_brimstoneBaseDamage - (m_brimstoneBaseDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));
             BurningSource burningSource = bs;
             character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, 
-                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, isPlayerSource: IsCastedByPlayer);
             bs = burningSource;
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
             if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
@@ -60,7 +63,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
             BurningSource burningSource = bs;
             //int processedDamage = m_brimstoneBaseDamage - (m_brimstoneBaseDamage * PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.BRIMSTONES));
             traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, 
-                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, isPlayerSource: IsCastedByPlayer);
             bs = burningSource;
         }
     }

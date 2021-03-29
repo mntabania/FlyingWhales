@@ -14,7 +14,8 @@ public class HeatWaveData : SkillData {
     }
 
     public override void ActivateAbility(Area targetArea) {
-        targetArea.featureComponent.AddFeature(AreaFeatureDB.Heat_Wave_Feature, targetArea);
+        HeatWaveFeature feature = targetArea.featureComponent.AddFeature(AreaFeatureDB.Heat_Wave_Feature, targetArea) as HeatWaveFeature;
+        feature.SetIsPlayerSource(true);
         base.ActivateAbility(targetArea);
     }
     public override bool CanPerformAbilityTowards(Area targetArea) {

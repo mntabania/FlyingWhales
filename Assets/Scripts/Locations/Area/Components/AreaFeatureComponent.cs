@@ -18,8 +18,10 @@ public class AreaFeatureComponent {
 			feature.OnAddFeature(p_area);
 		}
 	}
-	public void AddFeature(string featureName, Area p_area) {
-		AddFeature(LandmarkManager.Instance.CreateAreaFeature<AreaFeature>(featureName), p_area);
+	public AreaFeature AddFeature(string featureName, Area p_area) {
+		AreaFeature feature = LandmarkManager.Instance.CreateAreaFeature<AreaFeature>(featureName);
+		AddFeature(feature, p_area);
+		return feature;
 	}
 	public bool RemoveFeature(AreaFeature feature, Area p_area) {
 		if (features.Remove(feature)) {

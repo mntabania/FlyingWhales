@@ -23,11 +23,15 @@ public class AreaSpellsComponent : AreaComponent {
     
     #region Brimstones Variables
     public bool hasBrimstones { get; private set; }
+
+    public bool isBrimStoneCastedByPlayer { get; private set; }
     public int currentBrimstonesDuration  { get; private set; }
     #endregion
 
     #region Electric Storm Variables
     public bool hasElectricStorm { get; private set; }
+
+    public bool isElectricStormCastedByPlayer { get; private set; }
     public int currentElectricStormDuration { get; private set; }
     #endregion
     
@@ -301,8 +305,9 @@ public class AreaSpellsComponent : AreaComponent {
     #endregion
     
     #region Brimstones
-    public void SetHasBrimstones(bool state) {
+    public void SetHasBrimstones(bool state, bool p_isCastedByPlayer = true) {
         if (hasBrimstones != state) {
+            isBrimStoneCastedByPlayer = p_isCastedByPlayer;
             hasBrimstones = state;
             if (hasBrimstones) {
                 StartBrimstones();
@@ -327,7 +332,8 @@ public class AreaSpellsComponent : AreaComponent {
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, owner.gridTileComponent.gridTiles.Count)];
-            GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
+            GameObject go = GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
+            go.GetComponent<BrimstonesParticleEffect>().IsCastedByPlayer = isBrimStoneCastedByPlayer;
             //Note: Damage is moved in BrimstonesParticleEffect
             //chosenTile.PerformActionOnTraitables(ApplyBrimstoneDamage);
         }
@@ -376,9 +382,16 @@ public class AreaSpellsComponent : AreaComponent {
     private void PerTickBrimstones() {
         Profiler.BeginSample($"Per Tick Brimstones");
         currentBrimstonesDuration++;
-        if (currentBrimstonesDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BRIMSTONES)) {
-            SetHasBrimstones(false);
+        if (isBrimStoneCastedByPlayer){
+            if (currentBrimstonesDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BRIMSTONES)) {
+                SetHasBrimstones(false);
+            }
+        } else {
+            if (currentBrimstonesDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BRIMSTONES, 0)) {
+                SetHasBrimstones(false);
+            }
         }
+        
         Profiler.EndSample();
     }
     public void ResetBrimstoneDuration() {
@@ -387,8 +400,9 @@ public class AreaSpellsComponent : AreaComponent {
     #endregion
 
     #region Electric Storm
-    public void SetHasElectricStorm(bool state) {
+    public void SetHasElectricStorm(bool state, bool p_isCastedByPlayer = true) {
         if (hasElectricStorm != state) {
+            isElectricStormCastedByPlayer = p_isCastedByPlayer;
             hasElectricStorm = state;
             if (hasElectricStorm) {
                 StartElectricStorm();
@@ -425,15 +439,26 @@ public class AreaSpellsComponent : AreaComponent {
     private void ElectricStormEffect(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
             int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
-            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
+            if (!isElectricStormCastedByPlayer) {
+                processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM, 0));
+            }
+            
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM), isPlayerSource: isElectricStormCastedByPlayer);
         }
     }
     private void PerTickElectricStorm() {
         Profiler.BeginSample($"Per Tick Electric Storm");
         currentElectricStormDuration++;
-        if (currentElectricStormDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM)) {
-            SetHasElectricStorm(false);
+        if (isElectricStormCastedByPlayer) {
+            if (currentElectricStormDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM)) {
+                SetHasElectricStorm(false);
+            }
+        } else {
+            if (currentElectricStormDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM, 0)) {
+                SetHasElectricStorm(false);
+            }
         }
+        
         Profiler.EndSample();
     }
     public void ResetElectricStormDuration() {

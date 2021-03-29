@@ -119,7 +119,7 @@ public class GenericTileObject : TileObject {
         _owner.SetIsDefault(false);
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
@@ -136,7 +136,7 @@ public class GenericTileObject : TileObject {
                 responsibleCharacter = character;
             }
             Profiler.BeginSample($"GTO - Adjust HP - ApplyElementalDamage - {elementalDamageType.ToString()}");
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, createHitEffect: false);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, createHitEffect: false, setAsPlayerSource: isPlayerSource);
             Profiler.EndSample();
         }
         

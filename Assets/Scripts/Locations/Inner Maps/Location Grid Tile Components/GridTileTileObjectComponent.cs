@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 namespace Inner_Maps {
     public class GridTileTileObjectComponent : LocationGridTileComponent {
@@ -30,6 +31,9 @@ namespace Inner_Maps {
         }
 
         #region Object Here
+        public void SetOccupyingObject(TileObject p_object) {
+            objHere = p_object;
+        }
         public void SetObjectHere(TileObject poi) {
             if (poi.isHidden) {
                 hiddenObjHere = poi;
@@ -38,7 +42,7 @@ namespace Inner_Maps {
             } else {
                 bool isPassablePreviously = owner.IsPassable();
                 if (poi.OccupiesTile()) {
-                    objHere = poi;
+                    SetOccupyingObject(poi);
                 }
                 //if (poi is TileObject tileObject) {
                 //    if (tileObject.OccupiesTile()) {
@@ -70,10 +74,10 @@ namespace Inner_Maps {
                 bool isPassablePreviously = owner.IsPassable();
                 if (poi is TileObject tileObject) {
                     if (tileObject.OccupiesTile()) {
-                        objHere = poi;
+                        SetOccupyingObject(poi);
                     }
                 } else {
-                    objHere = poi;
+                    SetOccupyingObject(poi);
                 }
 
                 poi.SetGridTileLocation(owner);
@@ -90,7 +94,7 @@ namespace Inner_Maps {
         public TileObject RemoveObjectHere(Character removedBy) {
             if (objHere != null) {
                 TileObject removedObj = objHere;
-                objHere = null;
+                SetOccupyingObject(null);
                 removedObj.RemoveTileObject(removedBy);
                 //if (removedObj is TileObject tileObject) {
                 //    //if the object in this tile is a tile object and it was removed by a character, use tile object specific function
@@ -122,7 +126,7 @@ namespace Inner_Maps {
                 TileObject removedObj = objHere;
                 LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
-                objHere = null;
+                SetOccupyingObject(null);
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
                 removedObj.OnRemoveTileObject(null, gridTile, false, false);
                 //if (removedObj is TileObject tileObject) {
@@ -139,7 +143,7 @@ namespace Inner_Maps {
                 TileObject removedObj = objHere;
                 LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
-                objHere = null;
+                SetOccupyingObject(null);
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
                 removedObj.OnRemoveTileObject(null, gridTile, false, false);
                 removedObj.DestroyMapVisualGameObject();
@@ -218,19 +222,19 @@ namespace Inner_Maps {
                     int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE));
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                         } else {
-                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj);
+                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj, setAsPlayerSource: true);
                         }
                     } else if (poi is Character character) {
-                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                         if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
                             Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                         }
                     } else {
-                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                     }
                 }
             }
@@ -255,19 +259,23 @@ namespace Inner_Maps {
             }
         }
         public void TriggerFreezingTrap(Character triggeredBy) {
+            int duration = 0;
+            if (triggeredBy is Summon summon) {
+                if (summon.summonType == SUMMON_TYPE.Kobold) {
+                    duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP, 0);
+                }
+            } else {
+                duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+            }
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
             AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, owner, 1, false);
-            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP);
-            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.FREEZING_TRAP);
             SetHasFreezingTrap(false);
-            for (int i = 0; i < 3; i++) {
-                if (triggeredBy.traitContainer.HasTrait("Frozen")) {
-                    break;
-                } else {
-                    //int duration = TraitManager.Instance.allTraits["Freezing"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
-                    int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP); 
-                    triggeredBy.traitContainer.AddTrait(triggeredBy, "Freezing", bypassElementalChance: true, overrideDuration: duration);
-                }
+            
+            triggeredBy.traitContainer.RemoveStatusAndStacks(triggeredBy, "Freezing");
+            triggeredBy.traitContainer.AddTrait(triggeredBy, "Frozen", bypassElementalChance: true, overrideDuration: duration);
+            Frozen frozen = triggeredBy.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
+            if (frozen != null) {
+                frozen.SetIsPlayerSource(true);
             }
         }
         #endregion

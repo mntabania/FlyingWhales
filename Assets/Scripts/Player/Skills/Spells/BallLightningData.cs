@@ -15,6 +15,7 @@ public class BallLightningData : SkillData {
         BallLightning ballLightning = new BallLightning();
         ballLightning.SetGridTileLocation(targetTile);
         ballLightning.OnPlacePOI();
+        ballLightning.SetIsPlayerSource(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

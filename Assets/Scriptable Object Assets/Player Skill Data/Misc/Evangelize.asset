@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Evangelize
   m_EditorClassIdentifier: 
   skill: 151
-  manaCost: 10
+  manaCost: 20
   charges: 1
-  cooldown: 144
+  cooldown: 240
   threat: 0
   threatPerHour: 0
   expCost: 0
@@ -46,9 +46,9 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 
-    chargesPerLevel: 
-    bonuses: 01000000
+    manacostPerLevel: 14000000
+    chargesPerLevel: 01000000
+    bonuses: 0e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
     - 50
@@ -60,11 +60,11 @@ MonoBehaviour:
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
-    durationBonusPerLevel: 
+    durationBonusPerLevel: 00000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 
+    cooldownPerLevel: f0000000
     skillMovementSpeed: 

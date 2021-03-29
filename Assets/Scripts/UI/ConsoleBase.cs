@@ -313,6 +313,9 @@ public class ConsoleBase : InfoUIBase {
     public void ToggleShowAllTileTooltip(bool state) {
         GameManager.showAllTilesTooltip = state;
     }
+    public void ToggleShowAccumulatedDamage(bool state) {
+        PlayerUI.Instance.accumulatedDamageGO.SetActive(state);
+    }
     #endregion
 
     #region Faction Relationship

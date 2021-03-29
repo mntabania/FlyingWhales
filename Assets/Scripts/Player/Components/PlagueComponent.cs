@@ -17,19 +17,29 @@ public class PlagueComponent {
     }
 
     #region Plague Points
+    public void AdjustPlaguePointsFromChaosOrb(int amount) {
+        if (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {
+            return;
+        }
+        _plaguePoints += amount;
+        Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
+    }
     public void AdjustPlaguePoints(int amount) {
-        if(WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {
+        return;//remove once blanacing is settled
+        if (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {
             return;
         }
         _plaguePoints += amount;
         Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
     }
     public void GainPlaguePointFromCharacter(int amount, Character p_character) {
+        return;//remove once blanacing is settled
         AdjustPlaguePoints(amount);
         PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount);    
     }
     public bool CanGainPlaguePoints() {
-        return PlayerManager.Instance.player.playerSettlement != null && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB);
+        return false;//remove once blanacing is settled
+        //return PlayerManager.Instance.player.playerSettlement != null && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB);
     }
     #endregion
 }

@@ -15,14 +15,14 @@ public class PlagueChaosOrb : PassiveSkill {
             character.traitContainer.HasTrait("Insomnia") ||
             character.traitContainer.HasTrait("Lethargic") ||
             character.traitContainer.HasTrait("Paralyzed")) {
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, UnityEngine.Random.Range(1, 3), character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
         }
     }
 
     private void OnInterruptAdded(InterruptHolder interrupt) {
         Character character = interrupt.actor;
         if (character.faction.factionType.type != FACTION_TYPE.Demon_Cult && (interrupt.interrupt.type == INTERRUPT.Seizure || interrupt.interrupt.type == INTERRUPT.Sneeze || interrupt.interrupt.type == INTERRUPT.Puke)) {
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, UnityEngine.Random.Range(1, 3), character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
         }
     }
 }

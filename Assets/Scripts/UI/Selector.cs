@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Inner_Maps;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
 
 public class Selector : MonoBehaviour {
 
@@ -23,7 +24,28 @@ public class Selector : MonoBehaviour {
     public void Select(ISelectable selectable, Transform parent = null) {
         gameObject.SetActive(true);
         _selected = selectable;
-        transform.SetPositionAndRotation(_selected.worldPosition, Quaternion.Euler(0f,0f,0f));
+
+        Vector3 position = _selected.worldPosition;
+        if (selectable is ManMadeStructure manmadeStructure) {
+            if (!UtilityScripts.Utilities.IsEven(manmadeStructure.structureObj.size.x)) {
+                position.x += 0.5f;
+                //if (position.x >= 0) {
+                //    position.x += 0.5f;
+                //} else {
+                //    position.x -= 0.5f;
+                //}
+            }
+            if (!UtilityScripts.Utilities.IsEven(manmadeStructure.structureObj.size.y)) {
+                position.y += 0.5f;
+                //if (position.y >= 0) {
+                //    position.y += 0.5f;
+                //} else {
+                //    position.y -= 0.5f;
+                //}
+            }
+        }
+
+        transform.SetPositionAndRotation(position, Quaternion.Euler(0f,0f,0f));
         
         Vector2 fromSize = from;
         fromSize.x *= selectable.selectableSize.x;

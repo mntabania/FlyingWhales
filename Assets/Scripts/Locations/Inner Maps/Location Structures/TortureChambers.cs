@@ -58,13 +58,11 @@ namespace Inner_Maps.Location_Structures {
                 door?.Close();
             }
             Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
-            p_character.AddPlayerAction(PLAYER_SKILL_TYPE.CREATE_BLACKMAIL);
         }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {
             base.AfterCharacterRemovedFromLocation(p_character);
             p_character.movementComponent.SetEnableDigging(true);
             Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
-            p_character.RemovePlayerAction(PLAYER_SKILL_TYPE.CREATE_BLACKMAIL);
             PlayerManager.Instance.player.playerSkillComponent.RemoveCharacterFromBlackmailList(p_character);
         }
         public override void ConstructDefaultActions() {

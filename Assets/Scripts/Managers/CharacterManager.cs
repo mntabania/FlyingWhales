@@ -440,8 +440,7 @@ public class CharacterManager : BaseMonoBehaviour {
 
         classManager.Initialize();
         CreateDeadlySinsData();
-        if (GameManager.Instance != null) {
-            defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
+        defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(6);
             CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
             CHARACTER_PRESUMED_DEAD_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72    
         }
@@ -724,13 +723,14 @@ public class CharacterManager : BaseMonoBehaviour {
         return null;
     }
     //This raise dead will replace the dead character with a new character 
-    public void RaiseFromDeadReplaceCharacterWithSkeleton(Character target, Faction faction, string className = "", Action<Character> onRaisedFromDeadAction = null) {
+    public Summon RaiseFromDeadReplaceCharacterWithSkeleton(Character target, Faction faction, string className = "", Action<Character> onRaisedFromDeadAction = null) {
         //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
         //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
         target.SetHasBeenRaisedFromDead(true);
         //target.marker.PlayAnimation("Raise Dead");
         //yield return new WaitForSeconds(0.7f);
         LocationGridTile tile = target.gridTileLocation;
+        Summon summon = null;
         if (target.grave != null) {
             tile = target.grave.gridTileLocation;
         }
@@ -739,7 +739,7 @@ public class CharacterManager : BaseMonoBehaviour {
                 tile.structure.RemovePOI(target.grave);
                 target.SetGrave(null);
             }
-            Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, bypassIdeologyChecking: true);
+            summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, bypassIdeologyChecking: true);
             summon.SetFirstAndLastName(target.firstName, target.surName);
             summon.SetHasBeenRaisedFromDead(true);
             PlaceSummonInitially(summon, tile);
@@ -753,6 +753,7 @@ public class CharacterManager : BaseMonoBehaviour {
             AddNewLimboCharacter(target);
             RemoveCharacter(target);
         }
+        return summon;
         // RemoveCharacter(target);
     }
 

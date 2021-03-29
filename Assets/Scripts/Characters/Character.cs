@@ -2661,13 +2661,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     //Adjust current HP based on specified parameter, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         
         if ((amount < 0 && CanBeDamaged()) || amount > 0) {
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements
+            int prevHP = currentHP;
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
             Messenger.Broadcast(CharacterSignals.CHARACTER_ADJUSTED_HP, this, amount, source);
@@ -2681,6 +2682,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                 }
             }
+            if(amount < 0 && isPlayerSource) {
+                int accumulatedDamage = amount;
+                if(currentHP == 0) {
+                    accumulatedDamage = prevHP;
+                }
+                PlayerManager.Instance.player.damageAccumulator.AccumulateDamage(accumulatedDamage, gridTileLocation);
+            }
         }
         
         if (amount < 0) {
@@ -2690,7 +2698,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
         } else {
             //hp was increased
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
@@ -3215,6 +3223,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (CanPlanGoap()) {
             PerStartTickActionPlanning();
         }
+        //Always set this to false here even if the character cannot do goap planning
+        //The reason is that there is a bug in Wurm that after combat, if the Wurm is restrained, it will not go through the behaviour, hence, the value of this is still true
+        //Now, once the Wurm is released, it will immediately teleport and leave a wurm hole which is weird since the Wurm does not satisfy the "just exited combat" rule already since it's been restrained for quite a while now
+        behaviourComponent.SetSubterraneanJustExitedCombat(false);
     }
     public bool CanPlanGoap() {
         //If there is no npcSettlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
@@ -5270,6 +5282,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
         AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
         AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
+        AddPlayerAction(PLAYER_SKILL_TYPE.CREATE_BLACKMAIL);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {

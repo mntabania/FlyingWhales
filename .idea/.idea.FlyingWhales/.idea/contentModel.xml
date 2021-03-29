@@ -1784,7 +1784,9 @@
           </e>
           <e p="Interfaces" t="Include">
             <e p="ICrimeable.cs" t="Include" />
+            <e p="IDamageable.cs" t="Include" />
             <e p="IDwelling.cs" t="Include" />
+            <e p="IElementalTrait.cs" t="Include" />
             <e p="IJobOwner.cs" t="Include" />
             <e p="ILeader.cs" t="Include" />
             <e p="ILocation.cs" t="Include" />
@@ -1961,7 +1963,6 @@
                 <e p="WallObjectVisionTrigger.cs" t="Include" />
               </e>
               <e p="Damageables" t="Include">
-                <e p="IDamageable.cs" t="Include" />
                 <e p="ThinWallGameObject.cs" t="Include" />
                 <e p="WallAsset.cs" t="Include" />
                 <e p="WallResouceAssets.cs" t="Include" />
@@ -2075,6 +2076,7 @@
                   <e p="BaseMapObject.cs" t="Include" />
                   <e p="BaseMapObjectVisual.cs" t="Include" />
                   <e p="BedObjectGameObject.cs" t="Include" />
+                  <e p="BlockWallGameObject.cs" t="Include" />
                   <e p="CornCropObjectVisual.cs" t="Include" />
                   <e p="CropObjectVisual.cs" t="Include" />
                   <e p="DoorGameObject.cs" t="Include" />
@@ -2147,6 +2149,7 @@
                   <e p="Crate.cs" t="Include" />
                   <e p="Crops.cs" t="Include" />
                   <e p="CryptChest.cs" t="Include" />
+                  <e p="CryptTileObject.cs" t="Include" />
                   <e p="CultAltar.cs" t="Include" />
                   <e p="CultCircle.cs" t="Include" />
                   <e p="CultCross.cs" t="Include" />
@@ -2547,6 +2550,7 @@
               <e p="SpellInputModule.cs" t="Include" />
             </e>
             <e p="Player.cs" t="Include" />
+            <e p="PlayerDamageAccumulator.cs" t="Include" />
             <e p="PlayerDB.cs" t="Include" />
             <e p="PlayerSkillTreeNode.cs" t="Include" />
             <e p="Skills" t="Include">
@@ -3056,6 +3060,7 @@
               <e p="WindBlastSkillData.cs" t="Include" />
             </e>
             <e p="Player Skill Data" t="Include">
+              <e p="AfflictionUpgradeData.cs" t="Include" />
               <e p="PlayerSkillData.cs" t="Include" />
               <e p="RequirementData.cs" t="Include" />
               <e p="SkillUpgradeData.cs" t="Include" />

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Brainwash
   m_EditorClassIdentifier: 
   skill: 138
-  manaCost: 5
+  manaCost: 20
   charges: 1
-  cooldown: 960
+  cooldown: 240
   threat: 0
   threatPerHour: 0
   expCost: 0
@@ -27,7 +27,7 @@ MonoBehaviour:
   unlockCost: 0
   tier: 0
   baseLoadoutWeight: 0
-  resistanceType: 9
+  resistanceType: 0
   archetypeWeightedBonus: 0
   contextMenuIcon: {fileID: 21300000, guid: 052b807b725be584b854b49e2fbbc9f1, type: 3}
   contextMenuColumn: 0
@@ -46,10 +46,10 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 
-    chargesPerLevel: 
-    bonuses: 
-    additionalDamagePerLevel: 
+    manacostPerLevel: 14000000
+    chargesPerLevel: 01000000
+    bonuses: 0e000000
+    additionalDamagePerLevel: 00000000
     additionalPiercePerLevel: []
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel: []
@@ -63,5 +63,5 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 
+    cooldownPerLevel: f0000000
     skillMovementSpeed: 

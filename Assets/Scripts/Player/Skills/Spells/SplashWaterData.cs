@@ -20,7 +20,8 @@ public class SplashWaterData : SkillData {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(MakeTraitbleWet);
         }
-        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);
+        UnityEngine.GameObject go = GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);
+        go.transform.localScale = new UnityEngine.Vector3(go.transform.localScale.x * (processedTileRange * 0.7f), go.transform.localScale.y * (processedTileRange * 0.7f), go.transform.localScale.z * (processedTileRange * 0.7f));
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Surprised Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
@@ -29,6 +30,10 @@ public class SplashWaterData : SkillData {
         //int duration = TraitManager.Instance.allTraits["Wet"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SPLASH_WATER);
         int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SPLASH_WATER);
         traitable.traitContainer.AddTrait(traitable, "Wet", bypassElementalChance: true, overrideDuration: duration);
+        Wet wet = traitable.traitContainer.GetTraitOrStatus<Wet>("Wet");
+        if (wet != null) {
+            wet.SetIsPlayerSource(true);
+        }
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
@@ -38,7 +43,7 @@ public class SplashWaterData : SkillData {
         return canPerform;
     }
     public override void ShowValidHighlight(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(1, tile);
+        TileHighlighter.Instance.PositionHighlight(PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.SPLASH_WATER), tile);
     }
 }
 

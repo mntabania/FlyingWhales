@@ -92,7 +92,7 @@ public class ThinWall : TileObject {
         }
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         bool isWallPreviouslyDestroyed = currentHP <= 0;
         if (isWallPreviouslyDestroyed && amount < 0) {
             return; //ignore
@@ -116,7 +116,7 @@ public class ThinWall : TileObject {
             if (source != null && source is Character) {
                 responsibleCharacter = source as Character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
         }
 
         if (amount < 0) {

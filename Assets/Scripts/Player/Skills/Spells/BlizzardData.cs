@@ -15,7 +15,8 @@ public class BlizzardData : SkillData {
     }
 
     public override void ActivateAbility(Area targetArea) {
-        targetArea.featureComponent.AddFeature(AreaFeatureDB.Blizzard_Feature, targetArea);
+        AreaFeature feature = targetArea.featureComponent.AddFeature(AreaFeatureDB.Blizzard_Feature, targetArea);
+        (feature as BlizzardFeature).SetIsPlayerSource(true);
         base.ActivateAbility(targetArea);
     }
     public override bool CanPerformAbilityTowards(Area targetArea) {

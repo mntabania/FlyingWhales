@@ -106,7 +106,7 @@ public class Drink : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(goapNode.actor.traitContainer.HasTrait("Alcoholic") ? 0.8f : 1.6f);
+        goapNode.actor.needsComponent.AdjustHappiness(goapNode.actor.traitContainer.HasTrait("Alcoholic") ? 1.35f : 2f);
         // goapNode.actor.needsComponent.AdjustStamina(2f);
         // if (goapNode.poiTarget is Table) {
         //     Table table = goapNode.poiTarget as Table;

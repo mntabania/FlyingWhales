@@ -16,6 +16,7 @@ public class FrostyFogData : SkillData {
         frostyFog.SetGridTileLocation(targetTile);
         frostyFog.OnPlacePOI();
         frostyFog.SetStacks(EditableValuesManager.Instance.frostyFogStacks);
+        frostyFog.SetIsPlayerSource(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

@@ -15,6 +15,7 @@ public class FireBallData : SkillData {
         FireBall fireBall = new FireBall();
         fireBall.SetGridTileLocation(targetTile);
         fireBall.OnPlacePOI();
+        fireBall.SetIsPlayerSource(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

@@ -8,7 +8,8 @@ public class SpellDamageChaosOrb : PassiveSkill {
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Spell_Damage_Chaos_Orb;
 
     public override void ActivateSkill() {
-        Messenger.AddListener<Character, int>(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, OnSpellDamageDone);
+        //Messenger.AddListener<Character, int>(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, OnSpellDamageDone);
+        PlayerManager.Instance.player.damageAccumulator.SetActivatedSpellDamageChaosOrbPassiveSkill(true);
     }
     private void OnSpellDamageDone(Character character, int p_damageDone) {
         if (character == null) {

@@ -60,7 +60,6 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         UIManager.Instance.ResumeLastProgressionSpeed();
     }
     private void Start() {
-        UIManager.Instance.structureInfoUI.AddCloseMenuAction(HideUI);
         Messenger.AddListener(Signals.GAME_LOADED, Initialize);
     }
     private void Initialize() {

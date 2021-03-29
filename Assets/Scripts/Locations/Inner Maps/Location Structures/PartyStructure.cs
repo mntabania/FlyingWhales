@@ -17,6 +17,9 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public bool IsAvailableForTargeting() {
+            if (this is Maraud || this is DefensePoint) {
+                return true;
+            }
             bool isOccupied = charactersHere.Count > 0;
             int deadCount = 0;
             charactersHere.ForEach((eachCharacter) => {
@@ -191,6 +194,7 @@ namespace Inner_Maps.Location_Structures {
             }
             partyData.ClearAllData();
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+            party = null;
         }
 
         public void ResetExistingCharges() {
@@ -206,15 +210,15 @@ namespace Inner_Maps.Location_Structures {
         public void OnQuestSucceed() {
             if (!m_isUndeployUserAction) {
                 ResetExistingCharges();
-                UnDeployAll();
                 party.Unsubscribe(this);
+                UnDeployAll();
             }
         }
         public void OnQuestFailed() {
             if (!m_isUndeployUserAction) {
                 ResetExistingCharges();
-                UnDeployAll();
                 party.Unsubscribe(this);
+                UnDeployAll();
             }
         }
         #endregion

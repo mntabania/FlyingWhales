@@ -1,12 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
+using Traits;
 
 namespace Traits {
-    public class Zapped : Status {
+    public class Zapped : Status, IElementalTrait {
 
         private GameObject electricEffectGO;
         private AudioObject _audioObject;
+        public bool isPlayerSource { get; private set; }
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataZapped);
+        #endregion
 
         public Zapped() {
             name = "Zapped";
@@ -23,6 +30,11 @@ namespace Traits {
         }
 
         #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataZapped data = saveDataTrait as SaveDataZapped;
+            isPlayerSource = data.isPlayerSource;
+        }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is IPointOfInterest poi) {
@@ -98,5 +110,24 @@ namespace Traits {
             }
         }
         #endregion
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
+        #endregion
     }
 }
+
+#region Save Data
+public class SaveDataZapped : SaveDataTrait
+{
+    public bool isPlayerSource;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Zapped data = trait as Zapped;
+        isPlayerSource = data.isPlayerSource;
+    }
+}
+#endregion

@@ -52,7 +52,7 @@ public class CreateBlackmailData : PlayerAction {
         bool isValid = base.IsValid(target);
         if (isValid) {
             if (target is Character targetCharacter) {
-                return targetCharacter.isNormalCharacter;
+                return targetCharacter.isNormalCharacter && targetCharacter.currentStructure is TortureChambers;
             }
             return false;
         }

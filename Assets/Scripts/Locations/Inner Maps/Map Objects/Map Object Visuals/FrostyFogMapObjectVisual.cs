@@ -126,6 +126,10 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Profiler.BeginSample($"Frosty Fog Per Tick");
         for (int i = 0; i < _objsInRange.Count; i++) {
             _objsInRange[i].traitContainer.AddTrait(_objsInRange[i], "Freezing");
+            Freezing freezing = _objsInRange[i].traitContainer.GetTraitOrStatus<Freezing>("Freezing");
+            if (freezing != null) {
+                freezing.SetIsPlayerSource(owner.isPlayerSource);
+            }
         }
         Profiler.EndSample();
     }

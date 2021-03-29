@@ -140,9 +140,10 @@ namespace Traits {
                 }
                 if (HasTrait("Poisoned")) {
                     int poisonStacks = stacks["Poisoned"];
+                    Poisoned poisoned = GetTraitOrStatus<Poisoned>("Poisoned");
                     RemoveStatusAndStacks(addTo, "Poisoned");
                     if (addTo is IPointOfInterest to && addTo.gridTileLocation != null) {
-                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible, 1);
+                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible, 1, poisoned.isPlayerSource);
                     }
                     shouldAddTrait = false;
                 }
@@ -188,10 +189,11 @@ namespace Traits {
                     }
                 }
                 if (HasTrait("Frozen")) {
+                    Frozen frozen = GetTraitOrStatus<Frozen>("Frozen");
                     RemoveTrait(addTo, "Frozen");
                     //NOTE: Do not trigger frozen explosion if frozen object is the floor, this is to prevent frozen explosion from getting wild in snow biomes where every tile is frozen
                     if (addTo is IPointOfInterest && addTo is GenericTileObject == false) { 
-                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, 1);
+                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, 1, frozen.isPlayerSource);
                     }
                     shouldAddTrait = false;
                 }
@@ -236,6 +238,7 @@ namespace Traits {
         }
         private bool TraitAddition(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
+                //Highly non performant, because it always creates new instance even though the trait is just being stacked
                 trait = TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName);
                 return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
             } else {
@@ -251,8 +254,7 @@ namespace Traits {
             if (TraitValidator.CanAddTrait(addTo, trait, this) == false) {
                 return false;
             }
-            if(trait is Status) {
-                Status status = trait as Status;
+            if(trait is Status status) {
                 string statusName = status.name;
                 if (status.isStacking) {
                     if (stacks.ContainsKey(statusName)) {
