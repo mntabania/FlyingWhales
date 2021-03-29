@@ -50,7 +50,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         PlayerManager.pickPortalInputModule.RemoveOnPortalPlacedAction(OnPortalPlaced);
         PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.pickPortalInputModule);
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-
+        regenerateWorldBtnGO.SetActive(false);
         pickPortalMessage.DOAnchorPosY(-110f, 0.5f).SetEase(Ease.InBack);
 
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial || WorldSettings.Instance.worldSettingsData.playerSkillSettings.omnipotentMode == OMNIPOTENT_MODE.Enabled) {

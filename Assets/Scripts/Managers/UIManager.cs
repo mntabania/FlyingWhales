@@ -1381,9 +1381,10 @@ public class UIManager : BaseMonoBehaviour {
     /// <param name="noBtnActive">Should the no button be visible?</param>
     /// <param name="yesBtnInactiveHoverAction">Action to execute when user hover over an un-clickable yes button</param>
     /// <param name="yesBtnInactiveHoverExitAction">Action to execute when user hover over an un-clickable no button</param>
+    /// /// <param name="onClickCloseAction">Action to execute when clicking on close btn. NOTE: Hide action is added by default</param>
     public void ShowYesNoConfirmation(string header, string question, Action onClickYesAction = null, Action onClickNoAction = null,
         bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
-        bool yesBtnActive = true, bool noBtnActive = true, Action yesBtnInactiveHoverAction = null, Action yesBtnInactiveHoverExitAction = null) {
+        bool yesBtnActive = true, bool noBtnActive = true, Action yesBtnInactiveHoverAction = null, Action yesBtnInactiveHoverExitAction = null, System.Action onClickCloseAction = null) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, 
                 showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable, pauseAndResume,
@@ -1397,7 +1398,7 @@ public class UIManager : BaseMonoBehaviour {
             SetSpeedTogglesState(false);    
         }
         yesNoConfirmation.ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable, 
-            yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction);
+            yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction, onClickCloseAction);
     }
     public void HideYesNoConfirmation() {
         yesNoConfirmation.HideYesNoConfirmation();

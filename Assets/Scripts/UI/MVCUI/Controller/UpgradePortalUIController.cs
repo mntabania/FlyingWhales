@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Inner_Maps.Location_Structures;
+using Ruinarch;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 
@@ -62,10 +63,14 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
         base.ShowUI();
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
+        InputManager.Instance.AllowHotkeys(false);
+        InnerMapCameraMove.Instance.DisableMovement();
     }
     public override void HideUI() {
         base.HideUI();
         UIManager.Instance.ResumeLastProgressionSpeed();
+        InputManager.Instance.AllowHotkeys(true);
+        InnerMapCameraMove.Instance.EnableMovement();
     }
 
     #region Listeners
