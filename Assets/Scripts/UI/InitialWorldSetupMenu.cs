@@ -37,6 +37,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         //pick tile to place portal.
         placePortalBtnGO.SetActive(false);
         pickPortalMessage.gameObject.SetActive(true);
+        regenerateWorldBtnGO.SetActive(false);
         // Messenger.AddListener<HexTile>(AreaSignals.AREA_LEFT_CLICKED, OnTileLeftClicked);
         pickPortalMessage.anchoredPosition = new Vector2(0f, -110);
         pickPortalMessage.DOAnchorPosY(110f, 0.5f).SetEase(Ease.OutBack);
