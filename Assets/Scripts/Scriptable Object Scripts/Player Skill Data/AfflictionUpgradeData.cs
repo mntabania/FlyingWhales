@@ -20,6 +20,8 @@ public class AfflictionUpgradeData
     [HideInInspector]
     public List<int> numberOfCriteria = new List<int>();
     [HideInInspector]
+    public List<int> hungerRate = new List<int>();
+    [HideInInspector]
     public List<OPINIONS> opinionTrigger = new List<OPINIONS>();
     [HideInInspector]
     public List<AFFLICTION_SPECIFIC_BEHAVIOUR> addedBehaviour = new List<AFFLICTION_SPECIFIC_BEHAVIOUR>();
@@ -34,6 +36,16 @@ public class AfflictionUpgradeData
             return cooldown[cooldown.Count - 1];
         }
         return cooldown[p_currentLevel];
+    }
+
+    public int GethungerratePerLevel(int p_currentLevel) {
+        if (hungerRate == null || hungerRate.Count <= 0) {
+            return -1;
+        }
+        if (p_currentLevel >= hungerRate.Count) {
+            return hungerRate[hungerRate.Count - 1];
+        }
+        return hungerRate[p_currentLevel];
     }
 
     public float GetPiercePerLevel(int p_currentLevel) {

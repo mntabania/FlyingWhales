@@ -26,26 +26,23 @@ public class SkillUpgradeDataEditor : Editor {
         serializedObject.ApplyModifiedProperties();
         EditorGUILayout.Space();
         if (!(target as PlayerSkillData).isAffliction) {
-            EditorGUILayout.TextArea("UPGRADE BONUS STATS");
-            DisplayUpgradeBonus();
-            EditorGUILayout.Space();
-        }
-        if ((target as PlayerSkillData).isAffliction) {
+
+        } else if ((target as PlayerSkillData).isAffliction) {
             EditorGUILayout.TextArea("UPGRADE Afflictions");
             DisplayAfflictionBonus();
         }
-        
+
         serializedObject.ApplyModifiedProperties();
         if (GUI.changed) {
             EditorUtility.SetDirty(target);
         }
     }
 
-	private void OnDisable() {
+    private void OnDisable() {
         //AssetDatabase.SaveAssets();
     }
 
-	void DisplayUpgradeBonus() {
+    void DisplayUpgradeBonus() {
         foldUpgradeBonus = EditorGUILayout.InspectorTitlebar(foldUpgradeBonus, this);
         if (foldUpgradeBonus) {
             DisplayEnumList(data.skillUpgradeData.bonuses, "Bonus stats");
@@ -241,6 +238,10 @@ public class SkillUpgradeDataEditor : Editor {
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.CoolDown)) {
                 DisplayIntList(data.afflictionUpgradeData.cooldown, "Cooldown per level");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Hunger_Rate)) {
+                DisplayIntList(data.afflictionUpgradeData.hungerRate, "Hunger Rate");
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Crowd_Number)) {

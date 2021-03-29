@@ -17,15 +17,7 @@ public class PlagueComponent {
     }
 
     #region Plague Points
-    public void AdjustPlaguePointsFromChaosOrb(int amount) {
-        if (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {
-            return;
-        }
-        _plaguePoints += amount;
-        Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
-    }
     public void AdjustPlaguePoints(int amount) {
-        return;//remove once blanacing is settled
         if (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {
             return;
         }
