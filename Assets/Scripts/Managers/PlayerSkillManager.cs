@@ -484,14 +484,19 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.afflictionUpgradeData.GetPiercePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
-    public float GetRateChancePerLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public float GetAfflictionRateChancePerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
-    public float GetNapsDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public float GetAfflictionNapsDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetNapsDurationPerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public float GetAfflictionDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetDurationPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType) {

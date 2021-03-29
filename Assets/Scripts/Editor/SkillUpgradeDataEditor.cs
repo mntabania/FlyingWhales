@@ -7,7 +7,6 @@ using System.Collections.Generic;
 public class SkillUpgradeDataEditor : Editor {
 
     PlayerSkillData data;
-
     bool foldUnlockingRequirements = true;
     bool foldUpgradeBonus = true;
     bool foldAfflictionBonus = true;
@@ -267,6 +266,10 @@ public class SkillUpgradeDataEditor : Editor {
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Added_Behaviour)) {
                 DisplayEnumListAddedBehaviour(data.afflictionUpgradeData.addedBehaviour, "Added Behaviour");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Duration)) {
+                DisplayFloatList(data.afflictionUpgradeData.duration, "Duration per level");
                 EditorGUILayout.Space();
             }
         }

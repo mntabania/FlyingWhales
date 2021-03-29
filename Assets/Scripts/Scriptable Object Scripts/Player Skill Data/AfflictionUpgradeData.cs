@@ -22,6 +22,8 @@ public class AfflictionUpgradeData
     [HideInInspector]
     public List<int> hungerRate = new List<int>();
     [HideInInspector]
+    public List<float> duration = new List<float>();
+    [HideInInspector]
     public List<OPINIONS> opinionTrigger = new List<OPINIONS>();
     [HideInInspector]
     public List<AFFLICTION_SPECIFIC_BEHAVIOUR> addedBehaviour = new List<AFFLICTION_SPECIFIC_BEHAVIOUR>();
@@ -66,6 +68,16 @@ public class AfflictionUpgradeData
             return napsDuration[napsDuration.Count - 1];
         }
         return napsDuration[p_currentLevel];
+    }
+
+    public float GetDurationPerLevel(int p_currentLevel) {
+        if (duration == null || duration.Count <= 0) {
+            return -1;
+        }
+        if (p_currentLevel >= napsDuration.Count) {
+            return duration[duration.Count - 1];
+        }
+        return duration[p_currentLevel];
     }
 
     public float GetRateChancePerLevel(int p_currentLevel) {

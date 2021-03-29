@@ -1237,7 +1237,7 @@ public enum BOOKMARK_TYPE {
 }
 
 public enum AFFLICTION_UPGRADE_BONUS {
-    Pierce = 0, Crowd_Number, CoolDown, Hunger_Rate, Trigger_Rate, Trigger_Opinion, Naps_Percent, Naps_Duration, Added_Behaviour, Number_Criteria, Criteria,
+    Pierce = 0, Crowd_Number, CoolDown, Hunger_Rate, Trigger_Rate, Trigger_Opinion, Naps_Percent, Naps_Duration, Added_Behaviour, Number_Criteria, Criteria, Duration,
 }
 
 public enum AFFLICTION_SPECIFIC_BEHAVIOUR {
