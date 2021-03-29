@@ -3,7 +3,7 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(PlayerSkillData), false)]
+[CustomEditor(typeof(PlayerSkillData), true)]
 public class SkillUpgradeDataEditor : Editor {
 
     PlayerSkillData data;
