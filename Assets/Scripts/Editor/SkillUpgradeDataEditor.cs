@@ -257,10 +257,6 @@ public class SkillUpgradeDataEditor : Editor {
                 DisplayEnumListCriteria(data.afflictionUpgradeData.listOfCriteria, "Criterias");
                 EditorGUILayout.Space();
             }
-            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Naps_Percent)) {
-                DisplayIntList(data.afflictionUpgradeData.napsPercent, "Naps Percent");
-                EditorGUILayout.Space();
-            }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Naps_Duration)) {
                 DisplayIntList(data.afflictionUpgradeData.napsDuration, "Naps Duration");
                 EditorGUILayout.Space();

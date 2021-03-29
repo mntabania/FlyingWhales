@@ -16,8 +16,6 @@ public class AfflictionUpgradeData
     [HideInInspector]
     public List<int> crowdNumber = new List<int>();
     [HideInInspector]
-    public List<int> napsPercent = new List<int>();
-    [HideInInspector]
     public List<int> napsDuration = new List<int>();
     [HideInInspector]
     public List<int> numberOfCriteria = new List<int>();
@@ -90,22 +88,12 @@ public class AfflictionUpgradeData
         return crowdNumber[p_currentLevel];
     }
 
-    public int GetNapsPercentagePerLevel(int p_currentLevel) {
-        if (napsPercent == null || napsPercent.Count <= 0) {
-            return -1;
-        }
-        if (p_currentLevel >= napsPercent.Count) {
-            return crowdNumber[napsPercent.Count - 1];
-        }
-        return napsPercent[p_currentLevel];
-    }
-
     public OPINIONS GetOpinionTriggerPerLevel(int p_currentLevel) {
         if (opinionTrigger == null || opinionTrigger.Count <= 0) {
             return OPINIONS.NoOne;
         }
-        if (p_currentLevel >= napsPercent.Count) {
-            return opinionTrigger[napsPercent.Count - 1];
+        if (p_currentLevel >= opinionTrigger.Count) {
+            return opinionTrigger[opinionTrigger.Count - 1];
         }
         return opinionTrigger[p_currentLevel];
     }

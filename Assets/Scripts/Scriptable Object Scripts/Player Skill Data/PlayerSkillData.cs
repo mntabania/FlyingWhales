@@ -51,7 +51,6 @@ public class PlayerSkillData : ScriptableObject {
         } else {
             return afflictionUpgradeData.GetCoolDownPerLevel(level);
         }
-        
     }
 
     public int GetMaxChargesBaseOnLevel(int level) {

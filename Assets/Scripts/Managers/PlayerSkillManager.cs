@@ -504,11 +504,6 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.afflictionUpgradeData.GetCrowdNumberPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
-    public int GetAfflictionNapsPercentagePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        return playerSkillData.afflictionUpgradeData.GetNapsPercentagePerLevel(GetSkillData(p_skillType).currentLevel);
-    }
-
     public List<OPINIONS> GetAfflictionOpinionTriggers(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetAllOpinionsTrigger();
