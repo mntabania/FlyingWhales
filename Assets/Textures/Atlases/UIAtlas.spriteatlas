@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 4108749
+    totalSpriteSurfaceArea: 4111821
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -65,6 +65,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3111228042913c0409f873d144280dd8, type: 3}
   - {fileID: 21300000, guid: f59ad880a71de0d42a123c69550b1139, type: 3}
   - {fileID: 21300000, guid: 687a3a90788a6d745ba1b50b087069c6, type: 3}
+  - {fileID: 21300000, guid: 19908f907b370f44fa3d7fa9d1465b04, type: 3}
   - {fileID: 21300000, guid: 507710a0bfe21854686e9815d989cb94, type: 3}
   - {fileID: 21300000, guid: 1b71e4a07e951b847946063b916275e7, type: 3}
   - {fileID: 21300000, guid: e8291ca0a293d7745a64f1a1823f669d, type: 3}
@@ -221,8 +222,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 183bc8179a8da544da6cb0d1e8081285, type: 3}
   - {fileID: 21300000, guid: 64bc17278d4066b419c756ddcf6c216d, type: 3}
   - {fileID: 21300000, guid: 8011c827314a0a244b803e34d5899fbb, type: 3}
+  - {fileID: 21300000, guid: e7843037d98216643952e9e339208106, type: 3}
   - {fileID: 21300000, guid: 239554371ab27c34e8bde733072906c5, type: 3}
   - {fileID: 21300000, guid: 7b372837c69147942ace704a44848bab, type: 3}
+  - {fileID: 21300000, guid: db149837c76f49e478afec093d35b8c7, type: 3}
   - {fileID: 21300000, guid: cb86df373b2dcc84197ff74de5e51f65, type: 3}
   - {fileID: 21300000, guid: 42757347222510840b0df5f9b18c90f0, type: 3}
   - {fileID: 21300000, guid: 0aed244768942cc41b589c6e154ff2ea, type: 3}
@@ -476,6 +479,7 @@ SpriteAtlas:
   - button_minion_action_default
   - world_options_activeradiobutton
   - trait_unconscious
+  - stats_health_icon
   - button_invade_clicked
   - scroll_button_left_off
   - thought_container_positive
@@ -632,8 +636,10 @@ SpriteAtlas:
   - trait_reanimated
   - transparent_bg
   - icon_threat
+  - stats_attack_icon
   - faction_leader_icon
   - Icon-Puppetmaster-3
+  - stats_speed_icon
   - Toggle-Active
   - element_fire_icon
   - Transition-Arrow-Default
