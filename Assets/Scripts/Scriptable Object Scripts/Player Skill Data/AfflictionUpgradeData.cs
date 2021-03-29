@@ -127,4 +127,7 @@ public class AfflictionUpgradeData
     public List<AFFLICTION_SPECIFIC_BEHAVIOUR> GetAllAddedBehaviour() {
         return addedBehaviour;
     }
+    public bool HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR p_behaviour, int p_level) {
+        return addedBehaviour.HasValueInListUntilIndex(p_level, p_behaviour);
+    }
 }

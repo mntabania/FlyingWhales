@@ -3211,6 +3211,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
+    #region Kleptomania
+    public bool TriggerRobLocation(LocationStructure p_target, out JobQueueItem p_producedJob) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.KLEPTOMANIAC_STEAL)) {
+		    List<TileObject> objects = RuinarchListPool<TileObject>.Claim();
+		    p_target.PopulateTileObjectsListWithAllTileObjects(objects);
+		    if (objects.Count > 0) {
+			    TileObject targetObject = CollectionUtilities.GetRandomElement(objects);
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KLEPTOMANIAC_STEAL, INTERACTION_TYPE.STEAL, targetObject, owner);
+			    p_producedJob = job;
+			    return true;    
+		    }
+		    RuinarchListPool<TileObject>.Release(objects);
+	    }
+	    p_producedJob = null;
+	    return false;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A

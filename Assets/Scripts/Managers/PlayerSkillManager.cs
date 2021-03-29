@@ -39,7 +39,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     public Dictionary<string, PLAYER_SKILL_TYPE> afflictionsNameSkillTypeDictionary = new Dictionary<string, PLAYER_SKILL_TYPE>()
     {
-        { "Agoraphobic", PLAYER_SKILL_TYPE.AGORAPHOBIA },
+            { "Agoraphobic", PLAYER_SKILL_TYPE.AGORAPHOBIA },
             { "Alcoholic", PLAYER_SKILL_TYPE.ALCOHOLIC },
             { "Cannibal", PLAYER_SKILL_TYPE.CANNIBALISM },
             { "Coward", PLAYER_SKILL_TYPE.COWARDICE },
@@ -47,7 +47,7 @@ public class PlayerSkillManager : MonoBehaviour {
             { "Hothead", PLAYER_SKILL_TYPE.HOTHEADED },
             { "Kleptomaniac", PLAYER_SKILL_TYPE.KLEPTOMANIA },
             { "Lazy", PLAYER_SKILL_TYPE.GLUTTONY },
-            { "Lycantrophe", PLAYER_SKILL_TYPE.LYCANTHROPY },
+            { "Lycanthrophe", PLAYER_SKILL_TYPE.LYCANTHROPY },
             { "Music Hater", PLAYER_SKILL_TYPE.MUSIC_HATER },
             { "Narcoleptic", PLAYER_SKILL_TYPE.NARCOLEPSY },
             { "Paralyzed", PLAYER_SKILL_TYPE.PARALYSIS },
@@ -385,6 +385,12 @@ public class PlayerSkillManager : MonoBehaviour {
             SkillData spellData = allSummonPlayerSkillsData[allSummonPlayerSkills[i]];
             spellData.ResetData();
         }
+    }
+    public PLAYER_SKILL_TYPE GetSkillTypeFromAfflictionName(string p_name) {
+        if (afflictionsNameSkillTypeDictionary.ContainsKey(p_name)) {
+            return afflictionsNameSkillTypeDictionary[p_name];
+        }
+        throw new Exception($"No affliction skill type with name {p_name}");
     }
     #endregion
 

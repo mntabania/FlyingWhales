@@ -272,6 +272,9 @@ namespace Traits {
                 || name == "Full" || name == "Hungry" || name == "Starving"
                 || name == "Sprightly" || name == "Spent" || name == "Drained";
         }
+        protected PLAYER_SKILL_TYPE GetPlayerSkillType() {
+            return PlayerSkillManager.Instance.GetSkillTypeFromAfflictionName(name);
+        }
         #endregion
 
         #region Actions

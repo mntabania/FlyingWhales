@@ -681,6 +681,11 @@ namespace Inner_Maps.Location_Structures {
             }
             return chosenPile;
         }
+        public void PopulateTileObjectsListWithAllTileObjects(List<TileObject> p_tileObjects) {
+            foreach (var kvp in groupedTileObjects) {
+                p_tileObjects.AddRange(kvp.Value);
+            }
+        }
         #endregion
 
         #region Points Of Interest

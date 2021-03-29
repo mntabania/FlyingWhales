@@ -1106,6 +1106,7 @@
               <e p="HuntPreyBehaviour.cs" t="Include" />
               <e p="InfestorBehaviour.cs" t="Include" />
               <e p="InvadeBehaviour.cs" t="Include" />
+              <e p="KleptomaniacBehaviour.cs" t="Include" />
               <e p="KoboldBehaviour.cs" t="Include" />
               <e p="MimicBehaviour.cs" t="Include" />
               <e p="MineBehaviour.cs" t="Include" />
@@ -3024,6 +3025,7 @@
           </e>
           <e p="Scriptable Object Scripts" t="Include">
             <e p="ArtifactData.cs" t="Include" />
+            <e p="ChanceData.cs" t="Include" />
             <e p="Character Classes" t="Include">
               <e p="CharacterClassData.cs" t="Include" />
             </e>
@@ -3296,7 +3298,11 @@
             <e p="CharacterRelationshipItem.cs" t="Include" />
             <e p="CombatAbilityButton.cs" t="Include" />
             <e p="Comparers.cs" t="Include" />
-            <e p="ConsoleBase.cs" t="Include" />
+            <e p="Console Menu" t="Include">
+              <e p="ChanceItem.cs" t="Include" />
+              <e p="ChanceTheWrapper.cs" t="Include" />
+              <e p="ConsoleBase.cs" t="Include" />
+            </e>
             <e p="ConversationMenu.cs" t="Include" />
             <e p="Custom UI" t="Include">
               <e p="ButtonConverter.cs" t="Include" />
@@ -3612,6 +3618,9 @@
             <e p="FPSDisplay.cs" t="Include" />
             <e p="GameUtilities.cs" t="Include" />
             <e p="HoverHandler.cs" t="Include" />
+            <e p="IEqualityComparers" t="Include">
+              <e p="EnumComparer.cs" t="Include" />
+            </e>
             <e p="IMG2Sprite.cs" t="Include" />
             <e p="IntRange.cs" t="Include" />
             <e p="JobUtilities.cs" t="Include" />
