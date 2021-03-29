@@ -47,7 +47,9 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 
 	private void OnDestroy() {
-		m_purchaseSkillUIView.UIModel.skillItems.ForEach(CleanupItem);
+		if (m_purchaseSkillUIView != null && m_purchaseSkillUIView.UIModel != null) {
+			m_purchaseSkillUIView.UIModel.skillItems.ForEach(CleanupItem);	
+		}
 	}
 	private void CleanupItem(PurchaseSkillItemUI eachItem) {
 		eachItem.onButtonClick -= OnSkillClick;

@@ -99,7 +99,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	public void ApplyCurrentSettingsToData() {
 		//apply chosen biomes to actual data
-		ApplyBiomeSettings();
+		// ApplyBiomeSettings();
 		WorldSettings.Instance.worldSettingsData.factionSettings.FinalizeFactionTemplates();
 	}
 	private void UpdateUIBasedOnCurrentSettings(WorldSettingsData p_settings) {
