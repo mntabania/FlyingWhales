@@ -933,7 +933,6 @@ GameObject:
   - component: {fileID: 2753937090414460567}
   - component: {fileID: 2753937090414460561}
   - component: {fileID: 2753937090414460560}
-  - component: {fileID: 7330447840290720629}
   - component: {fileID: 5470223394839400073}
   m_Layer: 5
   m_Name: DefensePointUIAsset
@@ -1010,19 +1009,6 @@ MonoBehaviour:
   availableSummonsParent: {fileID: 3393263750043549118}
   subSummonContainer: {fileID: 8644398468522536951}
   txtTitle: {fileID: 8644398468777700586}
---- !u!114 &7330447840290720629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2753937090414460565}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d9fc4ac6f426f4459d80b127eece198, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tag: 1
 --- !u!114 &5470223394839400073
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,7 +2,7 @@
 using Ruinarch.MVCFramework;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Ruinarch;
 public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	#region MVCUI
@@ -137,6 +137,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		
 		ProcessButtonAvailability();
+		InputManager.Instance.AllowHotkeys(false);
 		UIManager.Instance.Pause();
 	}
 
@@ -481,6 +482,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		ReturnAllItemToPool();
 		HideUI();
 		m_maraudUIView.HideAllSubMenu();
+		InputManager.Instance.AllowHotkeys(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 

@@ -370,7 +370,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         causeOfDeath = data.causeOfDeath;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
-
+        if (data.afflictionsSkillsInflictedByPlayer != null) {
+            afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;    
+        } else {
+            afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
+        }
         trapStructure = data.trapStructure.Load();
         needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
         buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);

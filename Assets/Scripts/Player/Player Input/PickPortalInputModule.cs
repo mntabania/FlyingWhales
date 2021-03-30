@@ -69,12 +69,16 @@ namespace Player_Input {
 
         private void AskForPlacePortalConfirmation(LocationGridTile p_tile) {
             PlayerManager.Instance.SetStructurePlacementVisualFollowMouseState(false);
-            UIManager.Instance.ShowYesNoConfirmation("Build Portal", "Are you sure you want to build your portal here?", () => PlacePortal(p_tile), OnClickNo, showCover: true, layer: 50, onClickCloseAction: OnClickClose);
+            UIManager.Instance.ShowYesNoConfirmation("Build Portal", "Are you sure you want to build your portal here?", 
+                () => PlacePortal(p_tile), OnClickNo, showCover: true, layer: 50, onClickCloseAction: OnClickClose, onHideUIAction: OnHideUI);
         }
         private void OnClickNo() {
             PlayerManager.Instance.SetStructurePlacementVisualFollowMouseState(true);
         }
         private void OnClickClose() {
+            PlayerManager.Instance.SetStructurePlacementVisualFollowMouseState(true);
+        }
+        private void OnHideUI() {
             PlayerManager.Instance.SetStructurePlacementVisualFollowMouseState(true);
         }
         
