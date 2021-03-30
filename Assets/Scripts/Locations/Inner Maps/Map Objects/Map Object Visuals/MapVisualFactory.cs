@@ -125,6 +125,9 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("CryptGameObject", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.EYE_WARD:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("EyeWardGameObject", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;

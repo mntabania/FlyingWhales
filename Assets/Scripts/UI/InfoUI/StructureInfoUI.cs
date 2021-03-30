@@ -42,7 +42,13 @@ public class StructureInfoUI : InfoUIBase {
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private ScrollRect prisonersScrollView;
-    
+
+    [Space(10)]
+    [Header("Eyes")]
+    [SerializeField] private RuinarchToggle eyesTab;
+    [SerializeField] private GameObject tileObjectNameplatePrefab;
+    [SerializeField] private Transform eyesParentTransform;
+
     [Space(10)]
     [Header("Store Target")] 
     [SerializeField] private StoreTargetButton btnStoreTarget;
@@ -56,7 +62,7 @@ public class StructureInfoUI : InfoUIBase {
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, UpdatePrisonersFromSignal);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, UpdatePrisonersFromSignal);
-        
+        Messenger.AddListener<Beholder>(StructureSignals.UPDATE_EYE_WARDS, UpdateEyeWardsFromSignal);
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
         ListenToPlayerActionSignals();
 
@@ -85,14 +91,13 @@ public class StructureInfoUI : InfoUIBase {
         activeStructure.ShowSelectorOnStructure();
         btnStoreTarget.SetTarget(activeStructure);
         UpdateStructureInfoUI();
+        UpdateContentToShow();
         if (UsesResidentsTab()) {
-            UpdateContentToShow();
             UpdateResidents();    
         } else if (UsesPrisonersTab()) {
-            UpdateContentToShow();
             UpdatePrisoners();
-        } else {
-            UpdateContentToShow();
+        } else if (UsesEyesTab()) {
+            UpdateEyes();
         }
         LoadActions(activeStructure);
     }
@@ -133,20 +138,37 @@ public class StructureInfoUI : InfoUIBase {
             return false;
         }
     }
+    private bool UsesEyesTab() {
+        if (activeStructure is Beholder) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     private void UpdateContentToShow() {
-        if (UsesResidentsTab() && goPrisoners.activeSelf) {
+        if (UsesResidentsTab()) {
             prisonersTab.isOn = false;
-        } else if (UsesPrisonersTab() && goResidents.activeSelf) {
+            eyesTab.isOn = false;
+        } else if (UsesPrisonersTab()) {
             residentsTab.isOn = false;
+            eyesTab.isOn = false;
+        } else if (UsesEyesTab()) {
+            residentsTab.isOn = false;
+            prisonersTab.isOn = false;
         } else {
             prisonersTab.isOn = false;
             residentsTab.isOn = false;
+            eyesTab.isOn = false;
         }
     }
     
     private void UpdateTabs() {
-        residentsTab.gameObject.SetActive(UsesResidentsTab());
-        prisonersTab.gameObject.SetActive(UsesPrisonersTab());
+        residentsTab.gameObject.SetActive(false);
+        prisonersTab.gameObject.SetActive(false);
+        eyesTab.gameObject.SetActive(false);
+        if (UsesResidentsTab()) { residentsTab.gameObject.SetActive(true); }
+        else if (UsesPrisonersTab()) { prisonersTab.gameObject.SetActive(true); }
+        else if (UsesEyesTab()) { eyesTab.gameObject.SetActive(true); }
     }
     public void UpdateStructureInfoUI() {
         if(activeStructure == null) { return; }
@@ -213,7 +235,19 @@ public class StructureInfoUI : InfoUIBase {
             }
         }
     }
-    
+    private void UpdateEyes() {
+        UtilityScripts.Utilities.DestroyChildren(eyesParentTransform);
+        Beholder beholder = activeStructure as Beholder;
+        for (int i = 0; i < beholder.eyeWards.Count; i++) {
+            EyeWard eyeWard = beholder.eyeWards[i];
+            GameObject go = UIManager.Instance.InstantiateUIObject(tileObjectNameplatePrefab.name, eyesParentTransform);
+            TileObjectNameplateItem item = go.GetComponent<TileObjectNameplateItem>();
+            item.SetObject(eyeWard);
+            item.SetAsButton();
+            item.AddOnClickAction(OnClickEye);
+        }
+    }
+
     #region Listeners
     private void UpdateResidentsFromSignal(Character resident, LocationStructure structure) {
         if (isShowing && activeStructure == structure && UsesResidentsTab()) {
@@ -223,6 +257,11 @@ public class StructureInfoUI : InfoUIBase {
     private void UpdatePrisonersFromSignal(Character character, LocationStructure structure) {
         if (isShowing && activeStructure == structure && UsesPrisonersTab()) {
             UpdatePrisoners();
+        }
+    }
+    private void UpdateEyeWardsFromSignal(Beholder structure) {
+        if (isShowing && activeStructure == structure && UsesEyesTab()) {
+            UpdateEyes();
         }
     }
     private void OnDemonicStructureRepaired(DemonicStructure p_demonicStructure) {
@@ -249,7 +288,23 @@ public class StructureInfoUI : InfoUIBase {
     public void OnClickItem() {
         activeStructure.CenterOnStructure();
     }
+    public void OnClickEye(TileObject obj) {
+        if (obj == null) {
+            return;
+        }
+        Selector.Instance.Select(obj);
+        if (obj.worldObject == null && obj.isBeingCarriedBy != null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(obj.isBeingCarriedBy.worldObject.gameObject);
+        } else if (obj.worldObject != null && obj.isBeingCarriedBy == null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(obj.worldObject.gameObject);
+        } else if (obj.worldObject != null && obj.isBeingCarriedBy != null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(obj.worldObject.gameObject);
+        } else {
+            return;
+        }
+    }
     #endregion
+
     #region Hover
     public void OnHoverEnterMigrationMeter() {
         if (activeStructure.settlementLocation != null && activeStructure.settlementLocation is NPCSettlement npcSettlement) {

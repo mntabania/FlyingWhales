@@ -792,6 +792,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         character.partyComponent.SetCurrentParty(null);
         character.behaviourComponent.RemoveBehaviourComponent(typeof(PartyBehaviour));
         character.jobQueue.CancelAllPartyJobs();
+        if (character.isDead) {
+            CharacterDies(character);
+        }
         RemoveMemberThatJoinedQuest(character);
         Messenger.Broadcast(PartySignals.CHARACTER_LEFT_PARTY, this, character);
     }
