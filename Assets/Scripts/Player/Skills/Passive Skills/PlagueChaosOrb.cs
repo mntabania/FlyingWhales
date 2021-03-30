@@ -9,6 +9,7 @@ public class PlagueChaosOrb : PassiveSkill {
     public override void ActivateSkill() {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptAdded);
+        Messenger.AddListener<Character>(SpellSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, OnPoisonCloudActivated);
     }
     private void OnTraitAdded(Character character, Trait trait) {
         if (character.traitContainer.HasTrait("Depressed") ||
@@ -24,5 +25,9 @@ public class PlagueChaosOrb : PassiveSkill {
         if (character.faction.factionType.type != FACTION_TYPE.Demon_Cult && (interrupt.interrupt.type == INTERRUPT.Seizure || interrupt.interrupt.type == INTERRUPT.Sneeze || interrupt.interrupt.type == INTERRUPT.Puke)) {
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
         }
+    }
+
+    private void OnPoisonCloudActivated(Character p_character) {
+        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
     }
 }
