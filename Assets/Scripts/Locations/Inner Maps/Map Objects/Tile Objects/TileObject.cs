@@ -1224,7 +1224,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     public override string ToString() {
-        return $"{name} {id.ToString()}";
+        return $"{name} {id}";
     }
 
     #region Player Action Target

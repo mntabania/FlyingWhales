@@ -13,7 +13,7 @@ public class EyeWard : TileObject {
         AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Indestructible");
-        hiddenComponent.SetIsHidden(true);
+        hiddenComponent.SetIsHidden(true, false);
         PlayerManager.Instance.player.tileObjectComponent.AddEyeWard(this);
     }
     public EyeWard(SaveDataTileObject data) {
