@@ -142,16 +142,6 @@ public class SheepData : SummonPlayerSkill {
         className = "Sheep";
     }
 }
-public class PlaguedRatData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLAGUED_RAT;
-    public override string name => "Plagued Rat";
-    public override string description => "Plagued Rat";
-    public PlaguedRatData() {
-        summonType = SUMMON_TYPE.Rat;
-        race = RACE.RAT;
-        className = "Rat";
-    }
-}
 public class SludgeData : SummonPlayerSkill {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SLUDGE;
     public override string name => "Sludge";
