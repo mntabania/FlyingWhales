@@ -16,9 +16,13 @@ public class AfflictionUpgradeData
     [HideInInspector]
     public List<int> crowdNumber = new List<int>();
     [HideInInspector]
-    public List<int> napsPercent = new List<int>();
+    public List<int> napsDuration = new List<int>();
     [HideInInspector]
     public List<int> numberOfCriteria = new List<int>();
+    [HideInInspector]
+    public List<int> hungerRate = new List<int>();
+    [HideInInspector]
+    public List<float> duration = new List<float>();
     [HideInInspector]
     public List<OPINIONS> opinionTrigger = new List<OPINIONS>();
     [HideInInspector]
@@ -36,6 +40,16 @@ public class AfflictionUpgradeData
         return cooldown[p_currentLevel];
     }
 
+    public int GethungerRatePerLevel(int p_currentLevel) {
+        if (hungerRate == null || hungerRate.Count <= 0) {
+            return -1;
+        }
+        if (p_currentLevel >= hungerRate.Count) {
+            return hungerRate[hungerRate.Count - 1];
+        }
+        return hungerRate[p_currentLevel];
+    }
+
     public float GetPiercePerLevel(int p_currentLevel) {
         if (additionalPiercePerLevel == null || additionalPiercePerLevel.Count <= 0) {
             return -1;
@@ -44,6 +58,26 @@ public class AfflictionUpgradeData
             return additionalPiercePerLevel[additionalPiercePerLevel.Count - 1];
         }
         return additionalPiercePerLevel[p_currentLevel];
+    }
+
+    public float GetNapsDurationPerLevel(int p_currentLevel) {
+        if (napsDuration == null || napsDuration.Count <= 0) {
+            return -1;
+        }
+        if (p_currentLevel >= napsDuration.Count) {
+            return napsDuration[napsDuration.Count - 1];
+        }
+        return napsDuration[p_currentLevel];
+    }
+
+    public float GetDurationPerLevel(int p_currentLevel) {
+        if (duration == null || duration.Count <= 0) {
+            return -1;
+        }
+        if (p_currentLevel >= napsDuration.Count) {
+            return duration[duration.Count - 1];
+        }
+        return duration[p_currentLevel];
     }
 
     public float GetRateChancePerLevel(int p_currentLevel) {
@@ -66,22 +100,12 @@ public class AfflictionUpgradeData
         return crowdNumber[p_currentLevel];
     }
 
-    public int GetNapsPercentagePerLevel(int p_currentLevel) {
-        if (napsPercent == null || napsPercent.Count <= 0) {
-            return -1;
-        }
-        if (p_currentLevel >= napsPercent.Count) {
-            return crowdNumber[napsPercent.Count - 1];
-        }
-        return napsPercent[p_currentLevel];
-    }
-
     public OPINIONS GetOpinionTriggerPerLevel(int p_currentLevel) {
         if (opinionTrigger == null || opinionTrigger.Count <= 0) {
             return OPINIONS.NoOne;
         }
-        if (p_currentLevel >= napsPercent.Count) {
-            return opinionTrigger[napsPercent.Count - 1];
+        if (p_currentLevel >= opinionTrigger.Count) {
+            return opinionTrigger[opinionTrigger.Count - 1];
         }
         return opinionTrigger[p_currentLevel];
     }

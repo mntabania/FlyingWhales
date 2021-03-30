@@ -3,11 +3,10 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(PlayerSkillData), false)]
+[CustomEditor(typeof(PlayerSkillData), true)]
 public class SkillUpgradeDataEditor : Editor {
 
     PlayerSkillData data;
-
     bool foldUnlockingRequirements = true;
     bool foldUpgradeBonus = true;
     bool foldAfflictionBonus = true;
@@ -26,26 +25,24 @@ public class SkillUpgradeDataEditor : Editor {
         serializedObject.ApplyModifiedProperties();
         EditorGUILayout.Space();
         if (!(target as PlayerSkillData).isAffliction) {
-            EditorGUILayout.TextArea("UPGRADE BONUS STATS");
+            EditorGUILayout.TextArea("UPGRADE Skill Bonus");
             DisplayUpgradeBonus();
-            EditorGUILayout.Space();
-        }
-        if ((target as PlayerSkillData).isAffliction) {
+        } else if ((target as PlayerSkillData).isAffliction) {
             EditorGUILayout.TextArea("UPGRADE Afflictions");
             DisplayAfflictionBonus();
         }
-        
+
         serializedObject.ApplyModifiedProperties();
         if (GUI.changed) {
             EditorUtility.SetDirty(target);
         }
     }
 
-	private void OnDisable() {
+    private void OnDisable() {
         //AssetDatabase.SaveAssets();
     }
 
-	void DisplayUpgradeBonus() {
+    void DisplayUpgradeBonus() {
         foldUpgradeBonus = EditorGUILayout.InspectorTitlebar(foldUpgradeBonus, this);
         if (foldUpgradeBonus) {
             DisplayEnumList(data.skillUpgradeData.bonuses, "Bonus stats");
@@ -243,6 +240,10 @@ public class SkillUpgradeDataEditor : Editor {
                 DisplayIntList(data.afflictionUpgradeData.cooldown, "Cooldown per level");
                 EditorGUILayout.Space();
             }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Hunger_Rate)) {
+                DisplayIntList(data.afflictionUpgradeData.hungerRate, "Hunger Rate");
+                EditorGUILayout.Space();
+            }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Crowd_Number)) {
                 DisplayIntList(data.afflictionUpgradeData.crowdNumber, "No. of crowds");
                 EditorGUILayout.Space();
@@ -255,8 +256,8 @@ public class SkillUpgradeDataEditor : Editor {
                 DisplayEnumListCriteria(data.afflictionUpgradeData.listOfCriteria, "Criterias");
                 EditorGUILayout.Space();
             }
-            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Naps_Percent)) {
-                DisplayIntList(data.afflictionUpgradeData.napsPercent, "Naps Percent");
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Naps_Duration)) {
+                DisplayIntList(data.afflictionUpgradeData.napsDuration, "Naps Duration");
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Trigger_Opinion)) {
@@ -265,6 +266,10 @@ public class SkillUpgradeDataEditor : Editor {
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Added_Behaviour)) {
                 DisplayEnumListAddedBehaviour(data.afflictionUpgradeData.addedBehaviour, "Added Behaviour");
+                EditorGUILayout.Space();
+            }
+            if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Duration)) {
+                DisplayFloatList(data.afflictionUpgradeData.duration, "Duration per level");
                 EditorGUILayout.Space();
             }
         }

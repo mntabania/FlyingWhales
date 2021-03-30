@@ -484,19 +484,29 @@ public class PlayerSkillManager : MonoBehaviour {
         return playerSkillData.afflictionUpgradeData.GetPiercePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
-    public float GetRateChancePerLevel(PLAYER_SKILL_TYPE p_skillType) {
+    public float GetAfflictionRateChancePerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public float GetAfflictionNapsDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetNapsDurationPerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public float GetAfflictionDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetDurationPerLevel(GetSkillData(p_skillType).currentLevel);
+    }
+
+    public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GethungerRatePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public int GetAfflictionCrowdNumberPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetCrowdNumberPerLevel(GetSkillData(p_skillType).currentLevel);
-    }
-
-    public int GetAfflictionNapsPercentagePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        return playerSkillData.afflictionUpgradeData.GetNapsPercentagePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public List<OPINIONS> GetAfflictionOpinionTriggers(PLAYER_SKILL_TYPE p_skillType) {

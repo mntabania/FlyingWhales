@@ -1237,13 +1237,13 @@ public enum BOOKMARK_TYPE {
 }
 
 public enum AFFLICTION_UPGRADE_BONUS {
-    Pierce = 0, Crowd_Number, CoolDown, Hunger_Rate, Trigger_Rate, Trigger_Opinion, Naps_Percent, Added_Behaviour, Number_Criteria, Criteria,
+    Pierce = 0, Crowd_Number, CoolDown, Hunger_Rate, Trigger_Rate, Trigger_Opinion, Naps_Percent, Naps_Duration, Added_Behaviour, Number_Criteria, Criteria, Duration,
 }
 
 public enum AFFLICTION_SPECIFIC_BEHAVIOUR {
     None, Make_Anxious, No_Longer_Join_Parties, Ignore_Urgent_Tasks, Angry_Upon_Hear_Music, Knockout_Singers_Guitar_Players, Murder_Singers_Guitar_Players, Active_Search_Affair, Multiple_Affair, Wild_Multiple_Affair, Pass_Out_From_Fright, Flees_From_Anyone, Do_Pick_Pocket, Rob_From_House, Rob_Any_Place, May_Suffer_heart_Attack,
     Becomes_Stronger_Dire_wolf, Transform_Master_Werewolf, Form_Lycan_Clan_faction, Add_And_Selection, Add_Or_Selection, Transform_into_bats, Can_Become_Vampire_Lords,
-    Create_Vampire_Clan_Faction,
+    Create_Vampire_Clan_Faction, Likes_To_Sleep, Loves_To_Sleep,
 }
 
 public enum LIST_OF_CRITERIA {
