@@ -3,6 +3,7 @@ using Inner_Maps.Location_Structures;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 using UtilityScripts;
+using Ruinarch;
 
 public class PortalUIController : MVCUIController, PortalUIView.IListener {
     [SerializeField]
@@ -39,6 +40,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     public void ShowUI(ThePortal p_portal) {
         _portal = p_portal;
         ShowUI();
+        InputManager.Instance.AllowHotkeys(false);
         m_portalUIView.SetUpgradePortalBtnInteractable(!p_portal.IsMaxLevel());
     }
     public override void ShowUI() {
@@ -56,6 +58,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     }
     public override void HideUI() {
         base.HideUI();
+        InputManager.Instance.AllowHotkeys(true);
         UIManager.Instance.SetSpeedTogglesState(true);
         UIManager.Instance.ResumeLastProgressionSpeed();
     }

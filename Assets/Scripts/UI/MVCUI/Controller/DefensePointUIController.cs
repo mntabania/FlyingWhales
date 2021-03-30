@@ -2,7 +2,7 @@
 using Ruinarch.MVCFramework;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
-
+using Ruinarch;
 public class DefensePointUIController : MVCUIController, DefensePointUIView.IListener {
 
 	#region MVCUI
@@ -88,6 +88,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InitializeDeployedItems();
 		m_defensePointUIView.SetTitle("Defense Point");
 		ProcessDeployButtonDisplay();
+		InputManager.Instance.AllowHotkeys(false);
 		UIManager.Instance.Pause();
 	}
 
@@ -273,6 +274,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		ReturnAllItemToPool();
 		HideUI();
 		m_defensePointUIView.HideAllSubMenu();
+		InputManager.Instance.AllowHotkeys(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 

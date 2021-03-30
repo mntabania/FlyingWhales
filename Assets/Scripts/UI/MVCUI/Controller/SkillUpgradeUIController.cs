@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Ruinarch.MVCFramework;
 using System;
-using System.Linq;
+using Ruinarch;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 
@@ -83,10 +83,12 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		base.ShowUI();
 		UpdateTopMenuSummary();
 		m_skillUpgradeUIView.SetTransmissionTabIsOnWithoutNotify(true);
+		InputManager.Instance.AllowHotkeys(false);
 		GameManager.Instance.SetPausedState(true);
 	}
 	public override void HideUI() {
 		UIManager.Instance.ResumeLastProgressionSpeed();
+		InputManager.Instance.AllowHotkeys(true);
 		base.HideUI();
 		Messenger.RemoveListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}
@@ -140,19 +142,8 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	}
 
 	private void UpdateTopMenuSummary() {
-		List<PLAYER_SKILL_TYPE> skills = m_skillComponent.afflictions;
-		switch (m_currentView) {
-			case SKILL_VIEW.AFFLICTIONS:
-			skills = m_skillComponent.afflictions;
-			break;
-			case SKILL_VIEW.SPELLS:
-			skills = m_skillComponent.spells;
-			break;
-			case SKILL_VIEW.PLAYER_ACTION:
-			skills = GetFilteredPlayerActions();
-			break;
-		}
-		m_skillUpgradeUIView.SetUnlockSkillCount(skills.Count.ToString());
+		int totalPowersCount = m_skillComponent.afflictions.Count + m_skillComponent.spells.Count + GetFilteredPlayerActions().Count;
+		m_skillUpgradeUIView.SetUnlockSkillCount(totalPowersCount.ToString());
 		if (isTestScene) {
 			m_skillUpgradeUIView.SetChaticEnergyCount(fakePlayer.currenciesComponent.Spirits.ToString());
 		} else {
