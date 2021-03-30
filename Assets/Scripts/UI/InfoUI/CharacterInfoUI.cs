@@ -977,28 +977,54 @@ public class CharacterInfoUI : InfoUIBase {
         // staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
     }
     public void ShowEnergyTooltip() {
+#if UNITY_EDITOR
+        string summary = $"Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.tiredness.ToString()}/100";
+#else
         string summary = $"Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.tiredness.ToString("N0")}/100";
+#endif
         UIManager.Instance.ShowSmallInfo(summary, "ENERGY");
     }
     public void ShowFullnessTooltip() {
+#if UNITY_EDITOR
+        string summary = $"Villagers will become Malnourished and eventually die once this Meter is empty. This is replenished through eating.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.fullness.ToString()}/100";
+#else
         string summary = $"Villagers will become Malnourished and eventually die once this Meter is empty. This is replenished through eating.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.fullness.ToString("N0")}/100";
+#endif
         UIManager.Instance.ShowSmallInfo(summary, "FULLNESS");
     }
     public void ShowHappinessTooltip() {
+#if UNITY_EDITOR
+        string summary = $"Villager's Mood becomes significantly affected when this Meter goes down. This is replenished by doing fun activities.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.happiness.ToString()}/100";
+#else
         string summary = $"Villager's Mood becomes significantly affected when this Meter goes down. This is replenished by doing fun activities.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.happiness.ToString("N0")}/100";
+#endif
+        
         UIManager.Instance.ShowSmallInfo(summary, "ENTERTAINMENT");
     }
     public void ShowHopeTooltip() {
+#if UNITY_EDITOR
+        string summary = $"How much this Villager trusts you. If this gets too low, they will be uncooperative towards you in various way.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.hope.ToString()}/100";
+#else   
         string summary = $"How much this Villager trusts you. If this gets too low, they will be uncooperative towards you in various way.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.hope.ToString("N0")}/100";
+#endif
         UIManager.Instance.ShowSmallInfo(summary, "TRUST");
     }
     public void ShowStaminaTooltip() {
+#if UNITY_EDITOR
+        string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.stamina.ToString()}/100";
+#else
         string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.stamina.ToString("N0")}/100";
+#endif
         UIManager.Instance.ShowSmallInfo(summary, "STAMINA");
     }
     #endregion
