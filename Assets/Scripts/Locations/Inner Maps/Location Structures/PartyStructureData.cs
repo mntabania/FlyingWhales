@@ -26,8 +26,6 @@ public class PartyStructureData
     public int readyForDeployMinionCount;
     public int readyForDeployTargetCount;
 
-    public int initialDeployedSummonCount = 0;
-    public int initialDeployedMinionCount = 0;
     public void ClearAllData() {
         deployedSummons.Clear();
         deployedSummonUnderlings.Clear();

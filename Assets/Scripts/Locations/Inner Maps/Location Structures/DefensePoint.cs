@@ -48,8 +48,6 @@ namespace Inner_Maps.Location_Structures {
                 party.AddMember(eachSummon);
                 party.AddMemberThatJoinedQuest(eachSummon);
             });
-            partyData.initialDeployedMinionCount = partyData.deployedMinions.Count;
-            partyData.initialDeployedSummonCount = partyData.deployedSummons.Count;
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

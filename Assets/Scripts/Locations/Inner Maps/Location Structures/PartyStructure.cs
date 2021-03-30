@@ -9,13 +9,14 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class PartyStructure : DemonicStructure, Party.PartyEventsIListener {
         public override Type serializedData => typeof(SaveDataPartyStructure);
-
         public virtual List<IStoredTarget> allPossibleTargets { get; }
-
         protected bool m_isUndeployUserAction;
-        public virtual void InitTargets() {
-        }
+        public Party party;
+        public PartyStructureData partyData = new PartyStructureData();
 
+        private bool m_isInitialized = false;
+
+        public virtual void InitTargets() { }
         public bool IsAvailableForTargeting() {
             if (this is Maraud || this is DefensePoint) {
                 return true;
@@ -59,10 +60,6 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         #endregion
-
-        public Party party;
-        public PartyStructureData partyData = new PartyStructureData();
-        private bool m_isInitialized = false;
 
         public void InitializeTeam() {
             m_isUndeployUserAction = false;
