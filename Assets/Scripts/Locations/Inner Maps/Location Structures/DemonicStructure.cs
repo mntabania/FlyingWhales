@@ -51,6 +51,7 @@ namespace Inner_Maps.Location_Structures {
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.REPAIR);
+            AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_STRUCTURE);
         }
         #endregion
 

@@ -16,7 +16,8 @@ public class SacrificeData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Summon summon) {
-            //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, summon.worldPosition, 2, summon.currentRegion.innerMap);
+            int orbCount = UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(2, 5);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, summon.gridTileLocation.centeredWorldLocation, orbCount, summon.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
             summon.Death("sacrifice");
             base.ActivateAbility(targetPOI);
         }
