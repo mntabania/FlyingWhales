@@ -45,6 +45,8 @@ public class SkillData : IPlayerSkill {
     /// </summary>
     public int levelForDisplay => currentLevel + 1;
     public bool isMaxLevel => currentLevel >= MAX_SPELL_LEVEL;
+
+    public bool isUnlockedBaseOnRequirements { get; set; }
     
     public int unlockCost { get; set; }
 
@@ -301,6 +303,9 @@ public class SkillData : IPlayerSkill {
     #endregion
 
     #region Attributes
+    public void SetIsUnlockBaseOnRequirements(bool p_isUnlocked) {
+        isUnlockedBaseOnRequirements = p_isUnlocked;
+    }
     public void SetMaxCharges(int amount) {
         baseMaxCharges = amount;
     }

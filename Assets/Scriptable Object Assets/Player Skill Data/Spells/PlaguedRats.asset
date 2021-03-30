@@ -27,13 +27,14 @@ MonoBehaviour:
   unlockCost: 200
   tier: 2
   baseLoadoutWeight: 300
-  resistanceType: 2
-  archetypeWeightedBonus: 1
+  resistanceType: 0
+  archetypeWeightedBonus: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
   isNonUpgradeable: 1
-  isAffliction: 0
+  isAffliction: 1
+  isLockedBaseOnRequirements: 1
   requirementData:
     requirements: 
     requiredArchetype: 1

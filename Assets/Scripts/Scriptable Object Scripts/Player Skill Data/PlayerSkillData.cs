@@ -35,6 +35,8 @@ public class PlayerSkillData : ScriptableObject {
 
     public bool isAffliction;
 
+    public bool isLockedBaseOnRequirements; //used by plague and plague rats
+
     [Space]
     [Header("--------------Upgrade Related---------------")]
     public RequirementData requirementData;

@@ -58,6 +58,42 @@ public class PlayerSkillComponent {
         cooldownReroll = new RuinarchTimer("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
         timerUpgradePortal = new RuinarchTimer("Summon Demon");
+
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+    }
+
+    void OnStructurePlaced(LocationStructure p_structure) {
+        Debug.LogError(p_structure.structureType);
+        if (p_structure.structureType == STRUCTURE_TYPE.BIOLAB) {
+            UnlockPlagueSkills();
+        }
+    }
+
+    void OnStructureDestroyed(LocationStructure p_structure) {
+        if (p_structure.structureType == STRUCTURE_TYPE.BIOLAB) {
+            LockPlagueSkills();
+        }
+    }
+
+    void UnlockPlagueSkills() {
+        SkillData skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        skilldata.SetIsUnlockBaseOnRequirements(true);
+        AddCharges(skilldata.type, 1);
+        skilldata = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.PLAGUE);
+        skilldata.SetIsUnlockBaseOnRequirements(true);
+        AddCharges(skilldata.type, 1);
+        Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, PLAYER_SKILL_TYPE.PLAGUED_RAT);
+    }
+
+    void LockPlagueSkills() {
+        SkillData skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUE);
+        skilldata.SetIsUnlockBaseOnRequirements(false);
+        skilldata.ResetData();
+        skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        skilldata.SetIsUnlockBaseOnRequirements(false);
+        skilldata.ResetData();
+        Messenger.Broadcast(SpellSignals.PLAYER_LOST_SPELL, PLAYER_SKILL_TYPE.PLAGUED_RAT);
     }
 
     #region Loading
