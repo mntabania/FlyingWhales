@@ -40,7 +40,7 @@ namespace Events.World_Events {
             var hoursBasedOnTicks = GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick);
             if (hoursBasedOnTicks == 18 && !hasCultLeader) {
                 if (_activeCultists.Count >= Minimum_Cultist_Count) {
-                    int chance = 10;
+                    int chance = ChanceData.GetChance(CHANCE_TYPE.Base_Cult_Leader_Spawn_Chance);
                     if (_activeCultists.Count > Minimum_Cultist_Count) {
                         //+2% chance per excess cultist 
                         chance += 2 * (_activeCultists.Count - Minimum_Cultist_Count);

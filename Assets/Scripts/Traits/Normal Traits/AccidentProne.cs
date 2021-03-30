@@ -32,7 +32,7 @@ namespace Traits {
                 owner = character;
             }
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (owner.hasMarker && owner.marker.isMoving) {
                 int stumbleChance = UnityEngine.Random.Range(0, 100);
                 if (stumbleChance < 2) {

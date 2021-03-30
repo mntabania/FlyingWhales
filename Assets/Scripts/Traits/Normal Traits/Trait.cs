@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 namespace Traits {
     [System.Serializable]
-    public class Trait : IMoodModifier, ISavable, IContextMenuItem {
+    public class Trait : IMoodModifier, ISavable, IContextMenuItem, SkillEventDispatcher.ISkillLevelUpListener {
         //Non-changeable values
         public string name;
         public string description;
@@ -136,9 +136,8 @@ namespace Traits {
         public virtual void OnDestroyMapObjectVisual(ITraitable traitable) { }
         public virtual bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
         public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
-        protected virtual void OnChangeLevel() { }
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
-        public virtual bool PerTickWhileStationaryOrUnoccupied() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+        public virtual bool PerTickWhileStationaryOrUnoccupied(Character p_character) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual void OnBeforeStartFlee(ITraitable traitable) { }
         public virtual void OnAfterExitingCombat(ITraitable traitable) { }
@@ -196,6 +195,7 @@ namespace Traits {
         }
         protected virtual string GetDescriptionInUI() { return description; }
         public virtual void AfterDeath(Character character) { }
+        protected virtual void OnAfflictionLeveledUp(SkillData p_skillData, PlayerSkillData p_playerSkillData){}
         #endregion
 
         #region Utilities
@@ -272,7 +272,7 @@ namespace Traits {
                 || name == "Full" || name == "Hungry" || name == "Starving"
                 || name == "Sprightly" || name == "Spent" || name == "Drained";
         }
-        protected PLAYER_SKILL_TYPE GetPlayerSkillType() {
+        public PLAYER_SKILL_TYPE GetPlayerSkillType() {
             return PlayerSkillManager.Instance.GetSkillTypeFromAfflictionName(name);
         }
         #endregion
@@ -368,6 +368,38 @@ namespace Traits {
                 return log;
             }
             return default;
+        }
+        #endregion
+
+        #region Afflictions
+        /// <summary>
+        /// Check if this trait should start listening if the player levels this Affliction up.
+        /// This should only be used on Afflictions and is usually called when the trait is added.
+        /// </summary>
+        /// <param name="p_character">The character the affliction was added to</param>
+        protected void CheckIfShouldListenToLevelUpEvent(Character p_character) {
+            if (p_character.WasAfflictedByPlayer(this)) {
+                //listen for affliction level up
+                SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(GetPlayerSkillType());
+                skillData.skillEventDispatcher.SubscribeToLevelUp(this);
+            }
+        }
+        /// <summary>
+        /// Unsubscribe this trait from the Affliction Level Up Event.
+        /// This should only be used on Afflictions and is usually called when the trait is removed.
+        /// </summary>
+        /// <param name="p_character"></param>
+        protected void UnsubscribeToLevelUpEvent(Character p_character) {
+            //stop listening for affliction level up
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(GetPlayerSkillType());
+            skillData.skillEventDispatcher.UnsubscribeToLevelUp(this);
+            
+        }
+        #endregion
+
+        #region SkillEventDispatcher.ISkillLevelUpListener Implementation
+        public void OnSkillLeveledUp(SkillData p_skillData, PlayerSkillData p_playerSkillData) {
+            OnAfflictionLeveledUp(p_skillData, p_playerSkillData);
         }
         #endregion
     }

@@ -113,6 +113,9 @@ public class AfflictionUpgradeData
     public List<OPINIONS> GetAllOpinionsTrigger() {
         return opinionTrigger;
     }
+    public bool HasOpinionTriggerForLevel(OPINIONS p_opinion, int p_level) {
+        return opinionTrigger.HasValueInListUntilIndex(p_level, p_opinion);
+    }
 
     public AFFLICTION_SPECIFIC_BEHAVIOUR GetAddedBehaviourPerLevel(int p_currentLevel) {
         if (addedBehaviour == null || addedBehaviour.Count <= 0) {

@@ -48,6 +48,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public POI_STATE state;
     public INTERACTION_TYPE causeOfDeath;
 
+    public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer;
+    
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
 
@@ -137,6 +139,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         causeOfDeath = data.causeOfDeath;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
+        afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
 
         if (data.marker) {
             hasMarker = true;

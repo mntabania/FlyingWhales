@@ -1410,4 +1410,19 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Opinions
+    public static string GetOpinionLabel(this OPINIONS p_opinion) {
+        switch (p_opinion) {
+            case OPINIONS.Rival:
+                return RelationshipManager.Rival;
+            case OPINIONS.Enemy:
+                return RelationshipManager.Enemy;
+            case OPINIONS.Acquaintance:
+                return RelationshipManager.Acquaintance;
+            default:
+                return string.Empty;
+        }
+    }
+    #endregion
 }
