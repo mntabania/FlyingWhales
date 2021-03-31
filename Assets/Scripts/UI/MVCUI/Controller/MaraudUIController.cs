@@ -188,11 +188,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void DisplayDeployedDeadMembers() {
-		Debug.LogError(m_targetPartyStructure.party);
 		if (m_targetPartyStructure.party != null) {
 			m_targetPartyStructure.party.deadMembers.ForEach((eachDeadMembers) => Debug.LogError(eachDeadMembers.nameWithID));
 			m_targetPartyStructure.party.deadMembers.ForEach((eachMember) => {
-				Debug.LogError(eachMember);
 				if (eachMember.minion != null) {
 					m_deployedMinionsUI[0].gameObject.SetActive(true);
 					MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMember.minion.minionPlayerSkillType);
@@ -201,15 +199,16 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 					m_deployedMinionsUI[0].HideRemoveButton();
 					m_maraudUIView.HideMinionButtonShowMinionContainer();
 				} else {
-					m_deployedSummonsUI.ForEach((eachSummonUI) => {
-						if (!eachSummonUI.gameObject.activeSelf) {
-							eachSummonUI.gameObject.SetActive(true);
-							eachSummonUI.InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((eachMember as Summon).summonType));
-							eachSummonUI.ShowDeadIcon();
-							eachSummonUI.HideRemoveButton();
+					for(int x = 0; x < m_deployedSummonsUI.Count; ++x) {
+						if (!m_deployedSummonsUI[x].gameObject.activeSelf) {
+							m_deployedSummonsUI[x].gameObject.SetActive(true);
+							m_deployedSummonsUI[x].InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((eachMember as Summon).summonType));
+							m_deployedSummonsUI[x].ShowDeadIcon();
+							m_deployedSummonsUI[x].HideRemoveButton();
 							m_maraudUIView.ProcessSummonDisplay();
+							break;
 						}
-					});
+					}
 				}
 			});
 		}
