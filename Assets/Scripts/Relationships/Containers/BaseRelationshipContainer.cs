@@ -266,12 +266,16 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     #region Opinions
     public void AdjustOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
         if (owner.minion != null || owner is Summon) {
-            //Minions or Summons cannot have opinions
-            return;
+            if (!owner.relationshipContainer.HasSpecialRelationshipWith(target)) {
+                //Minions or Summons cannot have opinions on characters that they do not have relationships with
+                return;    
+            }
         }
         if (target.minion != null || target is Summon) {
-            //Minions or Summons cannot have opinions
-            return;
+            if (!target.relationshipContainer.HasSpecialRelationshipWith(owner)) {
+                //Minions or Summons cannot have opinions on characters that they do not have relationships with
+                return;    
+            }
         }
         if(owner == target) {
             //Cannot adjust opinion to self

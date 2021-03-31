@@ -610,6 +610,8 @@ public static class Extensions {
             case JOB_TYPE.REPORT_CRIME:
             case JOB_TYPE.PREACH:
             case JOB_TYPE.KLEPTOMANIAC_STEAL:
+            case JOB_TYPE.LAZY_NAP:
+            case JOB_TYPE.FIND_AFFAIR:
                 priority = 1050;
                 break;
             case JOB_TYPE.RETURN_HOME_URGENT:

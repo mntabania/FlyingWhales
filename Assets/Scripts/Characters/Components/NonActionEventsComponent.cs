@@ -32,7 +32,7 @@ public class NonActionEventsComponent : CharacterComponent {
     }
 
     #region Utilities
-    public bool CanInteract(Character target) {
+    public bool CanChat(Character target) {
         Character disguisedActor = owner;
         Character disguisedTarget = target;
         if (owner.reactionComponent.disguisedCharacter != null) {
@@ -56,6 +56,29 @@ public class NonActionEventsComponent : CharacterComponent {
             return false;
         }
         return true;
+    }
+    public bool CanFlirt(Character p_character1, Character p_character2) {
+        //This is to fix this issue: https://trello.com/c/QPXOCuTO/2842-dev-03345-executioner-having-a-chat-with-burning-criminal
+        if (p_character2.traitContainer.HasTrait("Burning", "Burning At Stake")) {
+            return false;
+        }
+        if (p_character1.traitContainer.HasTrait("Burning", "Burning At Stake")) {
+            return false;
+        }
+        if (p_character1.relationshipContainer.HasRelationshipWith(p_character2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
+            //character 1 and 2 are lovers/affairs
+            return true;
+        }
+        Unfaithful character1Unfaithful = p_character1.traitContainer.GetTraitOrStatus<Unfaithful>("Unfaithful"); 
+        if (character1Unfaithful != null) {
+            return character1Unfaithful.CanBeLoverOrAffairBasedOnPersonalConstraints(p_character1, p_character2);
+        } else {
+            if (p_character1.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1) {
+                //character 1 has no lover, check if character 2 is a family member, if not, allow flirt
+                return !p_character1.relationshipContainer.IsFamilyMember(p_character2);
+            }
+            return false;
+        }
     }
     #endregion
 
@@ -425,7 +448,7 @@ public class NonActionEventsComponent : CharacterComponent {
         if (target.reactionComponent.disguisedCharacter != null) {
             disguisedTarget = target.reactionComponent.disguisedCharacter;
         }
-        if (!disguisedActor.IsHostileWith(disguisedTarget)) {
+        if (!disguisedActor.IsHostileWith(disguisedTarget) || disguisedTarget.combatComponent.combatMode == COMBAT_MODE.Passive) {
             string result = TriggerFlirtCharacter(target);
             
             if (owner.traitContainer.HasTrait("Plagued")) {
@@ -508,54 +531,56 @@ public class NonActionEventsComponent : CharacterComponent {
             }
         }
         if(chance < 90) {
-            if(!RelationshipManager.IsSexuallyCompatibleOneSided(disguisedTarget, disguisedActor)) {
+            Unfaithful unfaithful = disguisedActor.traitContainer.GetTraitOrStatus<Unfaithful>("Unfaithful");
+            bool isCompatible = unfaithful?.IsCompatibleBasedOnSexualityAndOpinions(disguisedActor, disguisedTarget) ?? RelationshipManager.IsSexuallyCompatibleOneSided(disguisedTarget, disguisedActor);
+            if(!isCompatible) {
                 owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
                 target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
                 return "incompatible";
             }
         }
-        owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Reciprocated courtship", 6);
-        target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", 18);
-        
-        string relationshipName = disguisedActor.relationshipContainer.GetRelationshipNameWith(disguisedTarget);
+        string opinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
 
         //do not develop relationships if either actor or target is disguised
-        if (!actorIsDisguised && !targetIsDisguised && disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter) {
+        if (!actorIsDisguised && !targetIsDisguised) { //&& disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter
             // If Opinion of Target towards Actor is already in Acquaintance range
-            if (relationshipName == RelationshipManager.Acquaintance) {
+            if (opinionLabel == RelationshipManager.Acquaintance) {
                 // 25% chance to develop Lover relationship if both characters have no Lover yet
                 if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
                     && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {
-                    if (UnityEngine.Random.Range(0, 100) < 25) {
+                    if (ChanceData.RollChance(CHANCE_TYPE.Flirt_Acquaintance_Become_Lover_Chance)) {
                         RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER);
                     }
                 }
                 // 35% chance to develop Affair if at least one of the characters already have a Lover
                 else if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)
                          && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.AFFAIR)) {
-                    if (UnityEngine.Random.Range(0, 100) < 35) {
+                    if (ChanceData.RollChance(CHANCE_TYPE.Flirt_Acquaintance_Become_Affair_Chance)) {
                         RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR);
                     }
                 }
             }
             // If Opinion of Target towards Actor is already in Friend or Close Friend range
-            else if (relationshipName == RelationshipManager.Friend || relationshipName == RelationshipManager.Close_Friend) {
+            else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 // 35 % chance to develop Lover relationship if both characters have no Lover yet
                 if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
                     && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {
-                    if (UnityEngine.Random.Range(0, 100) < 35) {
+                    if (ChanceData.RollChance(CHANCE_TYPE.Flirt_Friend_Become_Lover_Chance)) {
                         RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER);
                     }
                 }
                 // 50% chance to develop Affair if at least one of the characters already have a Lover 
                 else if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)
                          && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.AFFAIR)) { 
-                    if (UnityEngine.Random.Range(0, 100) < 50) {
+                    if (ChanceData.RollChance(CHANCE_TYPE.Flirt_Friend_Become_Affair_Chance)) {
                         RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR);
                     }
                 }
             }
         }
+        
+        owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Reciprocated courtship", 6);
+        target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", 18);
         
         return "flirted_back";
     }

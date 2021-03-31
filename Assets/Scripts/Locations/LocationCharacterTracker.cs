@@ -4,7 +4,7 @@ using UnityEngine.Profiling;
 using UtilityScripts;
 namespace Locations {
     public class LocationCharacterTracker {
-        private List<Character> charactersAtLocation { get; set; }
+        public List<Character> charactersAtLocation { get; private set; }
 
         public LocationCharacterTracker() {
             charactersAtLocation = new List<Character>();

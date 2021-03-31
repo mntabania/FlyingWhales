@@ -1141,6 +1141,7 @@
               <e p="TritonBehaviour.cs" t="Include" />
               <e p="TrollBehaviour.cs" t="Include" />
               <e p="UndeadBehaviour.cs" t="Include" />
+              <e p="UnfaithfulBehaviour.cs" t="Include" />
               <e p="VampireBehaviour.cs" t="Include" />
               <e p="VengefulGhostBehaviour.cs" t="Include" />
               <e p="WolfBehaviour.cs" t="Include" />

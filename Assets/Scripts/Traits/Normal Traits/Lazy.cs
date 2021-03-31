@@ -79,6 +79,18 @@ namespace Traits {
         public bool TriggerLazy() {
             return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Lazy, owner);
         }
+        public bool TryIgnoreUrgentTask(JOB_TYPE job) {
+            if (ChanceData.RollChance(CHANCE_TYPE.Ignore_Urgent_Task) && owner.WasAfflictedByPlayer(this) && 
+                PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.LAZINESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Ignore_Urgent_Tasks)) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Lazy", "ignore_urgent_job", null, LOG_TAG.Work, LOG_TAG.Player);
+                log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(job.ToString()), LOG_IDENTIFIER.STRING_1);
+                owner.logComponent.RegisterLog(log);
+                PlayerManager.Instance.player.ShowNotificationFrom(owner, log);
+                return true;
+            }
+            return false;
+        }
         public float GetTriggerChance(Character p_character) {
             if (p_character.WasAfflictedByPlayer(this)) {
                 PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LAZINESS);

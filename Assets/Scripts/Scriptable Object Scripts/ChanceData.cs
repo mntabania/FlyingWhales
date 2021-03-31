@@ -12,6 +12,13 @@ public static class ChanceData {
         {CHANCE_TYPE.Base_Cult_Leader_Spawn_Chance, 10},
         {CHANCE_TYPE.Laziness_Nap_Level_2, 2},
         {CHANCE_TYPE.Laziness_Nap_Level_3, 4},
+        {CHANCE_TYPE.Unfaithful_Active_Search_Affair, 20},
+        {CHANCE_TYPE.Ignore_Urgent_Task, 35},
+        {CHANCE_TYPE.Flirt_Acquaintance_Become_Lover_Chance, 25},
+        {CHANCE_TYPE.Flirt_Acquaintance_Become_Affair_Chance, 35},
+        {CHANCE_TYPE.Flirt_Friend_Become_Lover_Chance, 35},
+        {CHANCE_TYPE.Flirt_Friend_Become_Affair_Chance, 50},
+        {CHANCE_TYPE.Flirt_On_Sight_Base_Chance, 1},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {
