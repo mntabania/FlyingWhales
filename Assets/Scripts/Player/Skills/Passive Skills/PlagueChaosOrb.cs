@@ -23,11 +23,11 @@ public class PlagueChaosOrb : PassiveSkill {
     private void OnInterruptAdded(InterruptHolder interrupt) {
         Character character = interrupt.actor;
         if (character.faction.factionType.type != FACTION_TYPE.Demon_Cult && (interrupt.interrupt.type == INTERRUPT.Seizure || interrupt.interrupt.type == INTERRUPT.Sneeze || interrupt.interrupt.type == INTERRUPT.Puke)) {
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
         }
     }
 
     private void OnPoisonCloudActivated(Character p_character) {
-        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
+        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap);
     }
 }

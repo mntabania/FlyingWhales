@@ -29,7 +29,7 @@ public class PlayerDamageAccumulator {
             accumulatedDamage -= subtractFromAccumulatedDamage;
             
             if(numOfChaosOrbs > 0) {
-                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_expelChaosOrbsOn.centeredWorldLocation, numOfChaosOrbs, p_expelChaosOrbsOn.parentMap, CURRENCY.Chaotic_Energy);
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_expelChaosOrbsOn.centeredWorldLocation, numOfChaosOrbs, p_expelChaosOrbsOn.parentMap);
             }
         }
     }

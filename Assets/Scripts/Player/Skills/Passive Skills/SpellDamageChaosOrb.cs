@@ -25,7 +25,7 @@ public class SpellDamageChaosOrb : PassiveSkill {
                 tileLocation = character.deathTilePosition;
             }
             if (tileLocation != null) {
-                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, tileLocation.centeredWorldLocation, orbCount, tileLocation.parentMap, CURRENCY.Chaotic_Energy);
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, tileLocation.centeredWorldLocation, orbCount, tileLocation.parentMap);
             }
         }
     }
