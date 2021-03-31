@@ -2686,6 +2686,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                 }
             }
+            if (source is Character character) {
+                if (character.partyComponent.hasParty && character.partyComponent.currentParty.isPlayerParty) {
+                    int damageDone = amount;
+                    if (currentHP == 0) {
+                        damageDone = prevHP;
+                    }
+                    character.partyComponent.currentParty.damageAccumulator.AccumulateDamage(damageDone, character);
+                }
+            }
             if(amount < 0 && isPlayerSource) {
                 int accumulatedDamage = amount;
                 if(currentHP == 0) {

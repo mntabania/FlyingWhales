@@ -14,4 +14,6 @@
     public static string UNDEPLOY_PARTY = "UndeployParty";
     public static string PARTY_QUEST_FINISHED_SUCCESSFULLY = "PartyQuestFinishedSuccessfully";
     public static string PARTY_QUEST_FAILED = "PartyQuestFailed";
+
+    public static string PARTY_RAID_DAMAGE_CHAOS_ORB = "PartyRaidDamageChaosOrb";
 }

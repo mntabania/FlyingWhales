@@ -65,6 +65,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private List<Character> _activeMembers;
     private PartyJobTriggerComponent _jobComponent;
 
+    public PartyDamageAccumulator damageAccumulator = new PartyDamageAccumulator();
+
     #region getters
     public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text;
     public string name => partyName;
@@ -1459,5 +1461,4 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         return party;
     }
     #endregion
-
 }
