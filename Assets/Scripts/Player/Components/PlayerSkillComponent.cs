@@ -64,7 +64,6 @@ public class PlayerSkillComponent {
     }
 
     void OnStructurePlaced(LocationStructure p_structure) {
-        Debug.LogError(p_structure.structureType);
         if (p_structure.structureType == STRUCTURE_TYPE.BIOLAB) {
             UnlockPlagueSkills();
         }

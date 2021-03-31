@@ -164,6 +164,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (!canAcceptQuests) {
             SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
         }
+
     }
 
     #region Listeners
@@ -983,6 +984,13 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         return members.Contains(character);
     }
     private void CharacterDies(Character character) {
+        if (membersThatJoinedQuest.Contains(character)) {
+            Debug.LogError("TO BE ADDED: " + character.nameWithID);
+            if (!deadMembers.Contains(character)) {
+                Debug.LogError("ADDED: " + character.nameWithID);
+                
+            }
+        }
         if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
             if (GameUtilities.RollChance(25)) {
                 if (membersThatJoinedQuest.Contains(character)) {
@@ -990,11 +998,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 }
             }
         }
-        if (members.Contains(character)) {
-			if (!deadMembers.Contains(character)) {
-                deadMembers.Add(character);
-            }
-        }
+        
     }
     private void CharacterNoLongerPerform(Character character) {
         if (character.limiterComponent.canMove) {

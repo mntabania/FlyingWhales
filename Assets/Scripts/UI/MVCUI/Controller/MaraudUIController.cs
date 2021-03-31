@@ -142,6 +142,11 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	#region deployed items
+	void InitializeDeployedItems() {
+		HideDeployedItems();
+		DisplayDeployedItems();
+		DisplayDeployedDeadMembers();
+	}
 	void HideDeployedItems() {
 		int x = 0;
 		for (; x < m_targetPartyStructure.partyData.maxSummonLimitDeployCount; ++x) {
@@ -158,15 +163,11 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_maraudUIView.ProcessSummonDisplay();
 		m_targetPartyStructure.partyData.ResetAllReadyCounts();
 	}
-
 	void DisplayDeployedItems() {
 		if ((m_targetPartyStructure.partyData.deployedMinionCount > 0 || m_targetPartyStructure.partyData.deployedSummonCount > 0) && (m_targetPartyStructure.partyData.deployedTargetCount > 0)) {
 			m_isTeamDeployed = true;
 		} else {
 			m_isTeamDeployed = false;
-		}
-		if (m_isTeamDeployed) {
-			PrintDeadMembers();
 		}
 		for (int x = 0; x < m_targetPartyStructure.partyData.deployedSummonUnderlings.Count; ++x) {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
@@ -178,7 +179,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.ShowMinionButtonHideMinionContainer();
 		}
-
 		if (m_targetPartyStructure.partyData.deployedTargetCount > 0) {
 			m_maraudUIView.HideTargetButtonShowTargetContainer();
 			m_deployedTargetItemUI[0].InitializeItem(m_targetPartyStructure.partyData.deployedTargets[0], true);
@@ -187,15 +187,32 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 	}
 
-	void InitializeDeployedItems() {
-		HideDeployedItems();
-		DisplayDeployedItems();
+	void DisplayDeployedDeadMembers() {
+		Debug.LogError(m_targetPartyStructure.party);
+		if (m_targetPartyStructure.party != null) {
+			m_targetPartyStructure.party.deadMembers.ForEach((eachDeadMembers) => Debug.LogError(eachDeadMembers.nameWithID));
+			m_targetPartyStructure.party.deadMembers.ForEach((eachMember) => {
+				Debug.LogError(eachMember);
+				if (eachMember.minion != null) {
+					m_deployedMinionsUI[0].gameObject.SetActive(true);
+					MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMember.minion.minionPlayerSkillType);
+					m_deployedMinionsUI[0].InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetMinionUnderlingChargesByMinionType(minionPlayerSkill.minionType));
+					m_deployedMinionsUI[0].ShowDeadIcon();
+					m_maraudUIView.HideMinionButtonShowMinionContainer();
+				} else {
+					m_deployedSummonsUI.ForEach((eachSummonUI) => {
+						if (!eachSummonUI.gameObject.activeSelf) {
+							eachSummonUI.gameObject.SetActive(true);
+							eachSummonUI.InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((eachMember as Summon).summonType));
+							eachSummonUI.ShowDeadIcon();
+							m_maraudUIView.ProcessSummonDisplay();
+						}
+					});
+				}
+			});
+		}
 	}
 	#endregion
-
-	void PrintDeadMembers() {
-		m_targetPartyStructure.party.deadMembers.ForEach((eachDeadMembers) => { Debug.LogError(eachDeadMembers.name); });
-	}
 
 	#region Summons
 	void InitializeSummons() {
