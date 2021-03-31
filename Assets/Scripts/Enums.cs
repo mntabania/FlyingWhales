@@ -517,6 +517,7 @@ public enum INTERACTION_TYPE {
     PICKPOCKET = 222,
     DISPOSE_FOOD = 223,
     IS_IMPRISONED = 224,
+    STEAL_ANYTHING
 }
 public enum INTERRUPT {
     None,

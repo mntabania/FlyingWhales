@@ -7,6 +7,7 @@ public class SpireTileObject : TileObject {
 
     public SpireTileObject() {
         Initialize(TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public SpireTileObject(SaveDataTileObject data) {

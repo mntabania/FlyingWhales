@@ -3212,13 +3212,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Kleptomania
-    public bool TriggerRobLocation(LocationStructure p_target, out JobQueueItem p_producedJob) {
+    public bool TriggerRobLocation(LocationStructure p_target, INTERACTION_TYPE p_actionType, out JobQueueItem p_producedJob) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.KLEPTOMANIAC_STEAL)) {
 		    List<TileObject> objects = RuinarchListPool<TileObject>.Claim();
 		    p_target.PopulateTileObjectsListWithAllTileObjects(objects);
 		    if (objects.Count > 0) {
 			    TileObject targetObject = CollectionUtilities.GetRandomElement(objects);
-			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KLEPTOMANIAC_STEAL, INTERACTION_TYPE.STEAL, targetObject, owner);
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KLEPTOMANIAC_STEAL, p_actionType, targetObject, owner);
+			    Assert.IsNotNull(owner.homeSettlement);
+			    job.AddPriorityLocation(INTERACTION_TYPE.STEAL_ANYTHING, owner.homeSettlement);
 			    p_producedJob = job;
 			    return true;    
 		    }

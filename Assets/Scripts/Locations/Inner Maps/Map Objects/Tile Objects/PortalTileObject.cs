@@ -13,6 +13,7 @@ public class PortalTileObject : TileObject {
     }
     public PortalTileObject() {
         Initialize(TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public PortalTileObject(SaveDataTileObject data) {

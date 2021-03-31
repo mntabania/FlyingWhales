@@ -125,7 +125,7 @@ namespace Traits {
             return base.TriggerFlaw(character);
         }
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
-            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.PICKPOCKET) {
+            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.PICKPOCKET || action == INTERACTION_TYPE.STEAL_ANYTHING) {
                 cost = 0;//Utilities.rng.Next(5, 10);//5,46
             } else if (action == INTERACTION_TYPE.PICK_UP) {
                 cost = 10000;//Utilities.rng.Next(5, 10);//5,46

@@ -689,6 +689,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.IS_IMPRISONED, new[]{
             new StateNameAndDuration(){ name = "Imprisoned Success", status = InteractionManager.Goap_State_Success, duration = 1 },
         } },
+        {INTERACTION_TYPE.STEAL_ANYTHING, new[]{
+            new StateNameAndDuration(){ name = "Steal Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

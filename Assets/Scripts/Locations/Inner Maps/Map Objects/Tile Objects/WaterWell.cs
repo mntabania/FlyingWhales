@@ -9,6 +9,7 @@ public class WaterWell : TileObject {
 
     public WaterWell() {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Immovable");
         traitContainer.AddTrait(this, "Frozen Immune");

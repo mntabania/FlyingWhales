@@ -7,6 +7,7 @@ public class CryptTileObject : TileObject {
 
     public CryptTileObject() {
         Initialize(TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public CryptTileObject(SaveDataTileObject data) {

@@ -210,12 +210,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         RemoveAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
         RemoveAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
 
     #region Listeners

@@ -15,7 +15,7 @@ public class KleptomaniacBehaviour : CharacterBehaviourComponent {
             return false;
         }
         PLAYER_SKILL_TYPE playerSkillType = PLAYER_SKILL_TYPE.KLEPTOMANIA;
-        if (character.afflictionsSkillsInflictedByPlayer.Contains(playerSkillType)) {
+        if (character.afflictionsSkillsInflictedByPlayer.Contains(playerSkillType) && !character.IsInventoryAtFullCapacity()) {
             //affliction was applied by player
             PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
             SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
@@ -41,7 +41,7 @@ public class KleptomaniacBehaviour : CharacterBehaviourComponent {
                     }
                     if (robChoices.Count > 0) {
                         LocationStructure targetStructure = CollectionUtilities.GetRandomElement(robChoices);
-                        return character.jobComponent.TriggerRobLocation(targetStructure, out producedJob);
+                        return character.jobComponent.TriggerRobLocation(targetStructure, INTERACTION_TYPE.STEAL_ANYTHING, out producedJob);
                     }
                     RuinarchListPool<LocationStructure>.Release(robChoices);
                 }

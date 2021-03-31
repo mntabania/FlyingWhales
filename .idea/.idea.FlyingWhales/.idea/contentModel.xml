@@ -1639,6 +1639,7 @@
               <e p="StartPlagueCare.cs" t="Include" />
               <e p="StartTend.cs" t="Include" />
               <e p="Steal.cs" t="Include" />
+              <e p="StealAnything.cs" t="Include" />
               <e p="StealthTransform.cs" t="Include" />
               <e p="Strangle.cs" t="Include" />
               <e p="StudyMonster.cs" t="Include" />
