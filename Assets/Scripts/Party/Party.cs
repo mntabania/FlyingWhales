@@ -649,7 +649,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             targetCamp = null;
             targetDestination = null;
             SetHasChangedTargetDestination(false);
-
+            deadMembers.Clear();
 
             if (prevQuest.isSuccessful) {
                 Messenger.Broadcast(PartySignals.PARTY_QUEST_FINISHED_SUCCESSFULLY, this);
@@ -987,6 +987,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (membersThatJoinedQuest.Contains(character)) {
             Debug.LogError("TO BE ADDED: " + character.nameWithID);
             if (!deadMembers.Contains(character)) {
+                deadMembers.Add(character);
                 Debug.LogError("ADDED: " + character.nameWithID);
                 
             }
@@ -1142,6 +1143,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         if (data.membersThatJoinedQuest != null) {
             membersThatJoinedQuest = SaveUtilities.ConvertIDListToCharacters(data.membersThatJoinedQuest);
+        }
+        if (data.deadmembers != null) {
+            deadMembers = SaveUtilities.ConvertIDListToCharacters(data.deadmembers);
         }
         if (!string.IsNullOrEmpty(data.partySettlement)) {
             partySettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.partySettlement);
@@ -1349,6 +1353,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public GameDate waitingEndDate;
     public List<string> members;
     public List<string> membersThatJoinedQuest;
+    public List<string> deadmembers;
 
     //Components
     public SaveDataPartyBeaconComponent beaconComponent;
@@ -1408,6 +1413,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
 
         members = SaveUtilities.ConvertSavableListToIDs(data.members);
         membersThatJoinedQuest = SaveUtilities.ConvertSavableListToIDs(data.membersThatJoinedQuest);
+        deadmembers = SaveUtilities.ConvertSavableListToIDs(data.deadMembers);
 
         jobBoard = new SaveDataJobBoard();
         jobBoard.Save(data.jobBoard);

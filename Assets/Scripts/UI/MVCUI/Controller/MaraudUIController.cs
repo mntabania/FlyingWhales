@@ -198,6 +198,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 					MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMember.minion.minionPlayerSkillType);
 					m_deployedMinionsUI[0].InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetMinionUnderlingChargesByMinionType(minionPlayerSkill.minionType));
 					m_deployedMinionsUI[0].ShowDeadIcon();
+					m_deployedMinionsUI[0].HideRemoveButton();
 					m_maraudUIView.HideMinionButtonShowMinionContainer();
 				} else {
 					m_deployedSummonsUI.ForEach((eachSummonUI) => {
@@ -205,6 +206,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 							eachSummonUI.gameObject.SetActive(true);
 							eachSummonUI.InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((eachMember as Summon).summonType));
 							eachSummonUI.ShowDeadIcon();
+							eachSummonUI.HideRemoveButton();
 							m_maraudUIView.ProcessSummonDisplay();
 						}
 					});
