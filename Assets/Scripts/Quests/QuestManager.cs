@@ -76,6 +76,9 @@ namespace Quests {
                 case WorldSettingsData.World_Type.Pitto:
                     winConditionTracker = new PittoWinConditionTracker();
                     break;
+                case WorldSettingsData.World_Type.Custom:
+                    winConditionTracker = new OonaWinConditionTracker();
+                    break;
                 default:
                     winConditionTracker = new TutorialWinConditionTracker();
                     break;
