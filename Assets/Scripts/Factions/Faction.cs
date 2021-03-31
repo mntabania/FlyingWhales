@@ -47,7 +47,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     //private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
-    public bool isInfoUnlocked;
+    public bool isInfoUnlocked = true;
 
 
     #region getters/setters
@@ -72,6 +72,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
         SetFactionType(p_factionType);
+        isInfoUnlocked = true;
         race = p_race == RACE.NONE ? p_factionType.GetRaceForFactionType() : p_race;
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();

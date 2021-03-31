@@ -100,6 +100,7 @@ public class FactionManager : BaseMonoBehaviour {
         SetVagrantFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
         Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
+        newFaction.isInfoUnlocked = true;
     }
     public void CreateDisguisedFaction() {
         Faction newFaction = new Faction(FACTION_TYPE.Disguised);
@@ -158,8 +159,13 @@ public class FactionManager : BaseMonoBehaviour {
         if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
         }
+        
         if (newFaction.race.IsSapient()) {
-            newFaction.isInfoUnlocked = false;
+            if (newFaction.factionType.type == FACTION_TYPE.Undead) {
+                newFaction.isInfoUnlocked = true;
+            } else {
+                newFaction.isInfoUnlocked = false;
+            }
         }
         return newFaction;
     }
