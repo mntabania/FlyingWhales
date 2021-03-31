@@ -9,49 +9,49 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af6b250ddb9365c4a924f945cd5f95b6, type: 3}
-  m_Name: Plague
+  m_Script: {fileID: 11500000, guid: 305aa9c5df6e71e48bcf62b69ee060cc, type: 3}
+  m_Name: PlaguedRats
   m_EditorClassIdentifier: 
-  skill: 14
-  manaCost: 30
+  skill: 156
+  manaCost: 25
   charges: 1
-  cooldown: 320
-  threat: 3
+  cooldown: 240
+  threat: 12
   threatPerHour: 0
   expCost: 300
   cheatedLevel: 0
   pierce: 0
-  buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
-  tooltipVideoClip: {fileID: 0}
+  buttonSprite: {fileID: 21300000, guid: 7ecd3228d54a4dc4f817bd86a29d1f1a, type: 3}
+  tooltipVideoClip: {fileID: 32900000, guid: 3a9d7052cb7ee0343b1da53d3b8d6639, type: 3}
   tooltipImage: {fileID: 0}
-  unlockCost: 300
-  tier: 3
-  baseLoadoutWeight: 0
-  resistanceType: 10
-  archetypeWeightedBonus: 2
-  contextMenuIcon: {fileID: 21300000, guid: 3aa12ad36bc6d1d479696c177317a09a, type: 3}
-  contextMenuColumn: 1
+  unlockCost: 200
+  tier: 2
+  baseLoadoutWeight: 300
+  resistanceType: 0
+  archetypeWeightedBonus: 0
+  contextMenuIcon: {fileID: 0}
+  contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
-  isNonUpgradeable: 0
-  isAffliction: 0
+  isNonUpgradeable: 1
+  isAffliction: 1
   isLockedBaseOnRequirements: 1
   requirementData:
-    requirements: 03000000
-    requiredArchetype: 0
+    requirements: 
+    requiredArchetype: 1
     requiredSkills: 
     actionCount: 0
-    afflictionCount: 3
+    afflictionCount: 0
     spellsCount: 0
-    tier1Count: 3
+    tier1Count: 0
     tier2Count: 0
     tier3Count: 0
     isOR: 0
   skillUpgradeData:
-    upgradeCosts: 5e010000f40100008a020000
-    manacostPerLevel: 1e00000023000000280000002d000000
-    chargesPerLevel: 01000000010000000200000002000000
-    bonuses: 010000000e000000
-    additionalDamagePerLevel: 
+    upgradeCosts: 
+    manacostPerLevel: 0a000000
+    chargesPerLevel: 01000000
+    bonuses: 0e000000
+    additionalDamagePerLevel: 52030000e80300007e04000014050000
     additionalPiercePerLevel:
     - 0
     - 50
@@ -62,14 +62,18 @@ MonoBehaviour:
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
-    statsIncreasedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 50
+    - 75
+    - 100
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 400100000001000000010000e0000000
+    cooldownPerLevel: a0000000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 
@@ -84,3 +88,7 @@ MonoBehaviour:
     opinionTrigger: 
     addedBehaviour: 
     listOfCriteria: 
+  impactSounds:
+  - {fileID: 8300000, guid: 584d7df54b0e6ba468199f66277304e0, type: 3}
+  - {fileID: 8300000, guid: e85cc59650fe25a4d96062d7b5e9b010, type: 3}
+  - {fileID: 8300000, guid: 375f7d3ee754c9d47af5cc63324a1ee4, type: 3}

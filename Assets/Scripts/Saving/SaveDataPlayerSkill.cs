@@ -16,6 +16,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
     public List<int> upgradeCost;
     public int currentCooldownTick;
     public float basePierce;
+    public bool isUnlockedBaseOnRequirements;
 
     #region Overrides
     public override void Save(SkillData data) {
@@ -30,7 +31,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
         currentLevel = data.currentLevel;
         basePierce = data.basePierce;
         unlockCost = data.unlockCost;
-
+        isUnlockedBaseOnRequirements = data.isUnlockedBaseOnRequirements;
     }
     public override SkillData Load() {
         SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(type);
@@ -44,6 +45,7 @@ public class SaveDataPlayerSkill : SaveData<SkillData> {
         data.SetCurrentCooldownTick(currentCooldownTick);
         data.SetMaxCharges(maxCharges);
         data.SetCurrentLevel(currentLevel);
+        data.SetIsUnlockBaseOnRequirements(isUnlockedBaseOnRequirements);
         return data;
     }
     #endregion

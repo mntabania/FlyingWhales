@@ -141,6 +141,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		UIManager.Instance.Pause();
 	}
 
+	#region deployed items
 	void HideDeployedItems() {
 		int x = 0;
 		for (; x < m_targetPartyStructure.partyData.maxSummonLimitDeployCount; ++x) {
@@ -163,6 +164,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			m_isTeamDeployed = true;
 		} else {
 			m_isTeamDeployed = false;
+		}
+		if (m_isTeamDeployed) {
+			PrintDeadMembers();
 		}
 		for (int x = 0; x < m_targetPartyStructure.partyData.deployedSummonUnderlings.Count; ++x) {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
@@ -187,6 +191,30 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		HideDeployedItems();
 		DisplayDeployedItems();
 	}
+	#endregion
+
+	void PrintDeadMembers() {
+		m_targetPartyStructure.party.deadMembers.ForEach((eachDeadMembers) => { Debug.LogError(eachDeadMembers.name); });
+	}
+
+	#region Summons
+	void InitializeSummons() {
+		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
+			if (entry.Value.hasMaxCharge) {
+				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableSummonsParent());
+				MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
+				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
+				item.SetObject(entry.Value);
+				item.SetAsButton();
+				m_summonList.Add(item);
+				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClass.className).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower);
+				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
+				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
+			}
+		}
+		m_maraudUIView.ProcessSummonDisplay();
+	}
+	#endregion
 
 	void ReturnAllItemToPool() { 
 		for(int x = 0; x < m_summonList.Count; ++x) {
@@ -203,24 +231,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_targetList.ForEach((eachItem) => {
 			eachItem.gameObject.SetActive(false);
 		});
-	}
-
-	void InitializeSummons() {
-
-		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
-            if (entry.Value.hasMaxCharge) {
-				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableSummonsParent());
-				MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
-				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
-				item.SetObject(entry.Value);
-				item.SetAsButton();
-				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClass.className).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower);
-				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
-				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
-			}
-		}
-		m_maraudUIView.ProcessSummonDisplay();
 	}
 
 	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {

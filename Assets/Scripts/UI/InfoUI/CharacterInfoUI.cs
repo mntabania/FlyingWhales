@@ -39,6 +39,8 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI attackLbl;
     [SerializeField] private TextMeshProUGUI speedLbl;
+    [SerializeField] private TextMeshProUGUI titlePiercingLbl;
+    [SerializeField] private TextMeshProUGUI piercingLbl;
     [SerializeField] private TextMeshProUGUI raceLbl;
     [SerializeField] private TextMeshProUGUI elementLbl;
 
@@ -322,13 +324,46 @@ public class CharacterInfoUI : InfoUIBase {
     }
     #endregion
 
+    private string GetRichTextIconForElement(ELEMENTAL_TYPE p_type) {
+        string formatted = string.Empty;
+		switch (p_type) {
+            case ELEMENTAL_TYPE.Normal: 
+            formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.NormalIcon()}")}";
+            break;
+            case ELEMENTAL_TYPE.Poison:
+            formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.PoisonIcon()}")}";
+            break;
+            case ELEMENTAL_TYPE.Fire:
+            formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.FireIcon()}")}";
+            break;
+            case ELEMENTAL_TYPE.Water:
+            formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.WaterIcon()}")}";
+            break;
+            case ELEMENTAL_TYPE.Wind:
+            formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.WindIcon()}")}";
+            break;
+            case ELEMENTAL_TYPE.Ice:
+            formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.IceIcon()}")}";
+            break;
+            case ELEMENTAL_TYPE.Electric:
+            formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.ElectricIcon()}")}";
+            break;
+            case ELEMENTAL_TYPE.Earth:
+            formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.EarthIcon()}")}";
+            break;
+        }
+        return formatted;
+    }
+
     #region Stats
     private void UpdateStatInfo() {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
         attackLbl.text = $"{_activeCharacter.combatComponent.attack.ToString()}";
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
         raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
-        elementLbl.text = $"{_activeCharacter.combatComponent.elementalDamage.type.ToString()}";
+        elementLbl.text = GetRichTextIconForElement(_activeCharacter.combatComponent.elementalDamage.type) + $"{_activeCharacter.combatComponent.elementalDamage.type}";
+        piercingLbl.text = $"{_activeCharacter.piercingAndResistancesComponent.piercingPower}";
+        titlePiercingLbl.text = $"Piercing{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.PiercingIcon()}")}";
     }
     #endregion
 

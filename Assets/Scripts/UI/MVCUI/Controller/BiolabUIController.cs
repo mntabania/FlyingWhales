@@ -97,11 +97,13 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
 			m_biolabUIView.SetPlaguePoints(PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString());	
 		}
-		if (PlayerSkillManager.Instance != null) {
+		//remove for now
+		/*if (PlayerSkillManager.Instance != null) {
 			m_biolabUIView.SetPlagueRats(PlayerSkillManager.Instance.GetSummonPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT).charges.ToString());
-		}
+		}*/
+		//remove for now
 	}
-	
+
 	#region BiolabUIView.IListener implementation
 	public void OnTransmissionTabClicked(bool isOn) {
 		if (isOn) {

@@ -44,6 +44,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public List<Character> members { get; private set; }
     public List<Character> membersThatJoinedQuest { get; private set; }
 
+    public List<Character> deadMembers { get; private set; }
+
     //public bool cannotProduceFoodThisRestPeriod { get; private set; }
     //public bool hasStartedAcceptingQuests { get; private set; }
     public GameDate nextQuestCheckDate { get; private set; }
@@ -81,6 +83,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         members = new List<Character>();
         membersThatJoinedQuest = new List<Character>();
         _activeMembers = new List<Character>();
+        deadMembers = new List<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         _jobComponent = new PartyJobTriggerComponent(this);
         jobBoard = new JobBoard();
@@ -985,6 +988,11 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 if (membersThatJoinedQuest.Contains(character)) {
                     currentQuest.EndQuest(character.name + " died");
                 }
+            }
+        }
+        if (members.Contains(character)) {
+			if (!deadMembers.Contains(character)) {
+                deadMembers.Add(character);
             }
         }
     }
