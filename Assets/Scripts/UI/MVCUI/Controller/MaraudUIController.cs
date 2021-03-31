@@ -181,6 +181,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.ShowTargetButtonHideTargetContainer();
 		}
+		m_maraudUIView.ProcessSummonDisplay();
 	}
 
 	void InitializeDeployedItems() {
@@ -215,7 +216,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClass.className).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower);
+				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClass.className).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower && entry.Value.currentCharges > 0);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}

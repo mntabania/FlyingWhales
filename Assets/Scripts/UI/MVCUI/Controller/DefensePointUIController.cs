@@ -134,7 +134,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
 				item.SetObject(entry.Value);
 				item.SetAsButton();
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost);
+				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && entry.Value.currentCharges > 0);
 				m_summonList.Add(item);
 			}
 		}
