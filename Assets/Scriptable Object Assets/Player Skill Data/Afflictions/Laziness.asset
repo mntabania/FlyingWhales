@@ -80,10 +80,10 @@ MonoBehaviour:
     additionalPiercePerLevel: []
     rateChance: 0f00000014000000190000001e000000
     crowdNumber: 
-    napsPercent: 00000000000000000200000004000000
     napsDuration: 
     numberOfCriteria: 
     hungerRate: 
+    duration: []
     opinionTrigger: 
-    addedBehaviour: 00000000000000001800000019000000
+    addedBehaviour: 00000000000000001800000003000000
     listOfCriteria: 

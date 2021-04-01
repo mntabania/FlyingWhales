@@ -1299,44 +1299,33 @@ public class ReactionComponent : CharacterComponent {
         Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
         if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
             bool hasHigherPrioJob = actor.jobQueue.jobsInQueue.Count > 0 && actor.jobQueue.jobsInQueue[0].priority > JOB_TYPE.DOUSE_FIRE.GetJobTypePriority();
-            if (!hasHigherPrioJob && targetTileObject.traitContainer.HasTrait("Burning")
-                                  && (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.DOUSE_FIRE))
-                                  && targetTileObject.gridTileLocation != null
-                                  && actor.homeSettlement != null
-                                  && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
-                                  && !actor.traitContainer.HasTrait("Pyrophobic")
-                                  && !actor.traitContainer.HasTrait("Dousing")
-                                  && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+            if (!hasHigherPrioJob 
+                && targetTileObject.traitContainer.HasTrait("Burning")
+                && targetTileObject.gridTileLocation != null
+                && actor.homeSettlement != null
+                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                && !actor.traitContainer.HasTrait("Pyrophobic")
+                && !actor.traitContainer.HasTrait("Dousing")
+                && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                 debugLog = $"{debugLog}\n-Target is Burning and Character is not Pyrophobic";
                 actor.SetHasSeenFire(true);
-                actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
-                    Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
-                }
-
-                List<JobQueueItem> douseFireJobs = actor.homeSettlement.GetJobs(JOB_TYPE.DOUSE_FIRE)
-                    .Where(j => j.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(j)).ToList();
-
-                if (douseFireJobs.Count > 0) {
-                    actor.jobQueue.AddJobInQueue(douseFireJobs[0]);
-                } else {
-                    if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                        actor.combatComponent.Flight(targetTileObject, "saw fire");
+                if (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.DOUSE_FIRE)) {
+                    actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                    if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+                        Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
                     }
-                }
 
-                // for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
-                //     JobQueueItem job = owner.homeSettlement.availableJobs[i];
-                //     if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
-                //         if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
-                //             owner.jobQueue.AddJobInQueue(job);
-                //         } else {
-                //             if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                //                 owner.combatComponent.Flight(targetTileObject, "saw fire");
-                //             }
-                //         }
-                //     }
-                // }
+                    List<JobQueueItem> douseFireJobs = actor.homeSettlement.GetJobs(JOB_TYPE.DOUSE_FIRE)
+                        .Where(j => j.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(j)).ToList();
+
+                    if (douseFireJobs.Count > 0) {
+                        actor.jobQueue.AddJobInQueue(douseFireJobs[0]);
+                    } else {
+                        if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                            actor.combatComponent.Flight(targetTileObject, "saw fire");
+                        }
+                    }    
+                }
             }
         }
         if (!actor.combatComponent.isInActualCombat && !actor.hasSeenWet) {
