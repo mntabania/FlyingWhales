@@ -112,7 +112,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (character == owner && character.isDead == false) {
 			//TODO: THIS IS ONLY TEMPORARY! REDO THIS!
 			if (character.interruptComponent.isInterrupted &&
-			           character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Narcoleptic_Attack) {
+                (character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Narcoleptic_Nap
+                || character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Narcoleptic_Nap_Short
+                || character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Narcoleptic_Nap_Medium
+                || character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Narcoleptic_Nap_Long)) {
 				//Don't do anything
 			} else if (character.currentActionNode != null && character.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && character.currentActionNode.action.goapType.IsRestingAction()) {
 				character.CancelAllJobsExceptForCurrent();

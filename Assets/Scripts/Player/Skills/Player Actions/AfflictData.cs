@@ -50,11 +50,11 @@ public class AfflictData : PlayerAction {
     #endregion
 
     protected void AfflictPOIWith(string traitName, IPointOfInterest target, string logName, int overridenDuration = 0) {
-        if (PlayerSkillManager.Instance.afflictionsNameSkillTypeDictionary.ContainsKey(traitName)) {
-            PLAYER_SKILL_TYPE skillType = PlayerSkillManager.Instance.afflictionsNameSkillTypeDictionary[traitName];
+        PLAYER_SKILL_TYPE afflictionType = PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(traitName);
+        if (afflictionType != PLAYER_SKILL_TYPE.NONE) {
             if (target is Character character) {
-                if (!character.afflictionsSkillsInflictedByPlayer.Contains(skillType)) {
-                    character.afflictionsSkillsInflictedByPlayer.Add(skillType);
+                if (!character.afflictionsSkillsInflictedByPlayer.Contains(afflictionType)) {
+                    character.afflictionsSkillsInflictedByPlayer.Add(afflictionType);
                 }
             }
         }

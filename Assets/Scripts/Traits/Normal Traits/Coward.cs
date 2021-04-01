@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 namespace Traits {
     public class Coward : Trait {
@@ -14,9 +15,24 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         #region Overrides
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is Character targetCharacter) {
+                bool notFactionmate = targetCharacter.faction != characterThatWillDoJob.faction || targetCharacter.faction == null;
+                bool noRelationship = characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter);
+                if(notFactionmate && noRelationship) {
+                    if (characterThatWillDoJob.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.COWARDICE)) {
+                        if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.COWARDICE).currentLevel >= 3) {
+                            return characterThatWillDoJob.combatComponent.Flight(targetCharacter, "character is a coward");
+                        }
+                    }
+                }
+            }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
+        }
         public override string TriggerFlaw(Character character) {
             //If outside and the character lives in a house, the character will flee and go back home.
             string successLogKey = base.TriggerFlaw(character);
@@ -45,6 +61,15 @@ namespace Traits {
             }
         }
         #endregion
-    }
 
+        public bool TryActivatePassOut(Character p_character) {
+            if (GameUtilities.RollChance(20)) {
+                bool activatePassOut = p_character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.COWARDICE) && PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.COWARDICE).currentLevel >= 2;
+                if (activatePassOut) {
+                    return p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Pass_Out, p_character, "coward");
+                }
+            }
+            return false;
+        }
+    }
 }

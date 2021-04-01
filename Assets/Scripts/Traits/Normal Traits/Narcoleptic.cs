@@ -30,18 +30,43 @@ namespace Traits {
             }
         }
         public override bool PerTickWhileStationaryOrUnoccupied() {
-            int napChance = UnityEngine.Random.Range(0, 100);
-            if (napChance < 4) {
-                return DoNarcolepticNap();
+            int chance = 4;
+            INTERRUPT type = INTERRUPT.Narcoleptic_Nap;
+            GetChanceAndInterruptType(ref chance, ref type);
+            int roll = UnityEngine.Random.Range(0, 100);
+            if (roll < chance) {
+                return DoNarcolepticNap(type);
             }
             return false;
         }
         public override string TriggerFlaw(Character character) {
-            DoNarcolepticNap();
+            int chance = 4;
+            INTERRUPT type = INTERRUPT.Narcoleptic_Nap;
+            GetChanceAndInterruptType(ref chance, ref type);
+            DoNarcolepticNap(type);
             return base.TriggerFlaw(character);
         }
-        private bool DoNarcolepticNap() {
-            return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Narcoleptic_Attack, owner);
+        private bool DoNarcolepticNap(INTERRUPT p_interruptType) {
+            return owner.interruptComponent.TriggerInterrupt(p_interruptType, owner);
+        }
+        private void GetChanceAndInterruptType(ref int p_chance, ref INTERRUPT p_interruptType) {
+            int level = 0;
+            if (owner.HasAfflictedByPlayerWith(name)) {
+                level = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.NARCOLEPSY).currentLevel;
+            }
+            if (level == 0) {
+                p_chance = 3;
+                p_interruptType = INTERRUPT.Narcoleptic_Nap;
+            } else if (level == 1) {
+                p_chance = 4;
+                p_interruptType = INTERRUPT.Narcoleptic_Nap_Short;
+            } else if (level == 2) {
+                p_chance = 5;
+                p_interruptType = INTERRUPT.Narcoleptic_Nap_Medium;
+            } else if (level == 3) {
+                p_chance = 6;
+                p_interruptType = INTERRUPT.Narcoleptic_Nap_Long;
+            }
         }
         #endregion
     }

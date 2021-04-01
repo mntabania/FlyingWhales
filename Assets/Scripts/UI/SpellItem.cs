@@ -29,7 +29,7 @@ public class SpellItem : NameplateItem<SkillData> {
         Messenger.AddListener<SkillData>(SpellSignals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
         Messenger.AddListener<SkillData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SkillData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.AddListener<SkillData>(SpellSignals.SPELL_UPGRADED, OnSpellUpgraded);
+        Messenger.AddListener<SkillData>(SpellSignals.PLAYER_SKILL_LEVEL_UP, OnSpellUpgraded);
         Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnExecuteSpell);
         Messenger.AddListener<SkillData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);

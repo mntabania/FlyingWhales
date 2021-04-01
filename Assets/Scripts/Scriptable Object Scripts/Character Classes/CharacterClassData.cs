@@ -13,6 +13,7 @@ public class CharacterClassData : ScriptableObject {
     [Header("Misc")] 
     public int summonCost;
     [Header("Visuals")]
+    public Sprite portraitSprite;
     public CharacterClassAsset defaultSprites;
     public RaceSpriteListDictionary raceSprites;
 

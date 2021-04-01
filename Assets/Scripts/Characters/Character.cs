@@ -81,7 +81,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ILocationAwareness currentLocationAwareness { get; private set; }
     public Vector2Int gridTilePosition { get; private set; }
     public bool hasMarker { get; private set; }
-
     public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer { get; set; }
     public LocationStructure deployedAtStructure { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
@@ -118,6 +117,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public PiercingAndResistancesComponent piercingAndResistancesComponent { get; private set; }
     public CharacterEventDispatcher eventDispatcher { get; }
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
+    public CharacterTraitComponent traitComponent { get; private set; }
     public INTERACTION_TYPE causeOfDeath { set; get; }
     public PLAYER_SKILL_TYPE skillCauseOfDeath { set; get; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
@@ -325,6 +325,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         eventDispatcher = new CharacterEventDispatcher();
         previousCharacterDataComponent = new PreviousCharacterDataComponent(); previousCharacterDataComponent.SetOwner(this);
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+        traitComponent = new CharacterTraitComponent();
 
         needsComponent.ResetSleepTicks();
     }
@@ -402,6 +403,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+        traitComponent = new CharacterTraitComponent();
 
         if (data.hasMinion) {
             _minion = data.minion.Load(this);
@@ -5881,16 +5883,22 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
+    #region Afflictions By Player
+    public bool HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE p_afflictionType) {
+        return afflictionsSkillsInflictedByPlayer.Contains(p_afflictionType);
+    }
+    public bool HasAfflictedByPlayerWith(string p_traitName) {
+        PLAYER_SKILL_TYPE afflictionType = PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(p_traitName);
+        return afflictionType != PLAYER_SKILL_TYPE.NONE && afflictionsSkillsInflictedByPlayer.Contains(afflictionType);
+    }
+    #endregion
+
     #region Loading
     public virtual void LoadReferences(SaveDataCharacter data) {
         isInfoUnlocked = data.isInfoUnlocked;
         ConstructDefaultActions();
         if (data.hasLycan && lycanData == null) {
             LycanthropeData lycanData = data.lycanData.Load();
-
-            //Should only set 1 instance of lycan data even when loaded from save
-            lycanData.originalForm.SetLycanthropeData(lycanData);
-            lycanData.lycanthropeForm.SetLycanthropeData(lycanData);
         }
         if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;

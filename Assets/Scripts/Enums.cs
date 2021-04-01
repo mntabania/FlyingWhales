@@ -535,7 +535,7 @@ public enum INTERRUPT {
     Laugh_At,
     Leave_Faction,
     Mock,
-    Narcoleptic_Attack,
+    Narcoleptic_Nap,
     Puke,
     Reduce_Conflict,
     Septic_Shock,
@@ -602,6 +602,10 @@ public enum INTERRUPT {
     Declare_War,
     Pulled_Down,
     Taunted,
+    Pass_Out,
+    Narcoleptic_Nap_Short,
+    Narcoleptic_Nap_Medium,
+    Narcoleptic_Nap_Long,
 }
 
 public enum TRAIT_TYPE {
@@ -1003,7 +1007,7 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, SPAWN_EYE_WARD = 182, DESTROY_EYE_WARD = 183, MANA_PIT = 184, MARAUD = 185,
     DRAIN_SPIRIT = 186, LET_GO = 187, FULL_HEAL = 188, CREATE_BLACKMAIL = 189, DEFENSE_POINT = 190, IMP_HUT = 191, ICE_BLAST = 192, EARTH_SPIKE = 193, WATER_SPIKE = 194,
     RELEASE_ABILITIES = 195, SNATCH_VILLAGER = 196, SNATCH_MONSTER = 197, RAID = 198, UPGRADE_ABILITIES = 199, DEFEND = 200, 
-    UPGRADE_PORTAL = 201, DESTROY_STRUCTURE = 202,
+    UPGRADE_PORTAL = 201, DESTROY_STRUCTURE = 202, DIRE_WOLF = 203,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1064,6 +1068,7 @@ public enum SUMMON_TYPE {
     Harpy,
     Triton,
     Imp,
+    Dire_Wolf,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }

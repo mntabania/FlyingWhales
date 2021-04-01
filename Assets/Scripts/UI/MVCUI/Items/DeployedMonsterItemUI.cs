@@ -57,10 +57,10 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         txtSummonCost.text = summonCost.ToString();
         if (p_underling.isDemon) {
             isMinion = true;
-            imgPortrait.sprite = CharacterManager.Instance.GetMinionSettings(p_underling.minionType).minionPortrait;
+            imgPortrait.sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetMinionSettings(p_underling.minionType).className).portraitSprite;
         } else {
             isMinion = false;
-            imgPortrait.sprite = CharacterManager.Instance.GetSummonSettings(p_underling.monsterType).summonPortrait;
+            imgPortrait.sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetSummonSettings(p_underling.monsterType).className).portraitSprite;
         }
         
         if (!p_isDeployed) {

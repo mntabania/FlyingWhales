@@ -371,8 +371,9 @@ namespace Traits {
         public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false) {
             if (HasTrait(traitName)) {
                 if (removeFrom is Character character) {
-                    if (PlayerSkillManager.Instance.afflictionsNameSkillTypeDictionary.ContainsKey(traitName)) {
-                        character.afflictionsSkillsInflictedByPlayer.Remove(PlayerSkillManager.Instance.afflictionsNameSkillTypeDictionary[traitName]);
+                    PLAYER_SKILL_TYPE afflictionType = PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(traitName);
+                    if (afflictionType != PLAYER_SKILL_TYPE.NONE) {
+                        character.afflictionsSkillsInflictedByPlayer.Remove(afflictionType);
                     }
                 }
                 Trait trait = GetTraitOrStatus<Trait>(traitName);

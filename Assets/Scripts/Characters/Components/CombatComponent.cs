@@ -281,8 +281,14 @@ public class CombatComponent : CharacterComponent {
             if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
                 debugLog += "\n-FLIGHT";
+                Coward coward = owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
+                if (!coward.TryActivatePassOut(owner)) {
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                }
+                debugLog += "\n-Coward character passed out instead";
                 owner.logComponent.PrintLogIfActive(debugLog);
-                return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                return default;
             } else if (targetTileObject.traitContainer.HasTrait("Dangerous")) {
                 debugLog += "\n-Object is dangerous";
                 if (string.IsNullOrEmpty(targetTileObject.neutralizer) == false &&
@@ -309,8 +315,14 @@ public class CombatComponent : CharacterComponent {
                 if (owner.traitContainer.HasTrait("Coward")) {
                     debugLog += "\n-Character is coward";
                     debugLog += "\n-FLIGHT";
+                    Coward coward = owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
+                    if (!coward.TryActivatePassOut(owner)) {
+                        owner.logComponent.PrintLogIfActive(debugLog);
+                        return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                    }
+                    debugLog += "\n-Coward character passed out instead";
                     owner.logComponent.PrintLogIfActive(debugLog);
-                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                    return default;
                 } else {
                     bool isTargetCombatant = targetCharacter.characterClass.IsCombatant() || targetCharacter.characterClass.className == "Noble";
                     if (!isTargetCombatant) {
@@ -356,10 +368,18 @@ public class CombatComponent : CharacterComponent {
                         return new CombatReaction(COMBAT_REACTION.Flight);
                     }
                 } else if (owner.traitContainer.HasTrait("Coward", "Vampire") && owner.currentHP <= Mathf.CeilToInt(owner.maxHP * 0.2f)) {
-                    debugLog += "\n-Character is coward and and HP is 20% or less of Max HP";
-                    debugLog += "\n-FLIGHT";
-                    owner.logComponent.PrintLogIfActive(debugLog);
-                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                    debugLog += "\n-Character is coward/vampire bat and and HP is 20% or less of Max HP";
+                    Coward coward = owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
+                    if(coward != null) {
+                        if (!coward.TryActivatePassOut(owner)) {
+                            owner.logComponent.PrintLogIfActive(debugLog);
+                            return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                        }
+                        debugLog += "\n-Coward character passed out instead";
+                        owner.logComponent.PrintLogIfActive(debugLog);
+                        return default;
+                    }
+                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a vampire bat");
                 } else {
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
@@ -385,7 +405,9 @@ public class CombatComponent : CharacterComponent {
     }
     public void FightOrFlight(IPointOfInterest target, string fightReason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         CombatReaction combatReaction = GetFightOrFlightReaction(target, fightReason);
-        FightOrFlight(target, combatReaction, connectedAction, isLethal);
+        if(combatReaction.reaction != COMBAT_REACTION.None) {
+            FightOrFlight(target, combatReaction, connectedAction, isLethal);
+        }
     }
     public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";

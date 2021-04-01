@@ -4,9 +4,10 @@ using Logs;
 using UnityEngine;
 
 namespace Interrupts {
-    public class NarcolepticAttack : Interrupt {
-        public NarcolepticAttack() : base(INTERRUPT.Narcoleptic_Attack) {
-            duration = 6;
+    public class NarcolepticNapShort : Interrupt {
+        public NarcolepticNapShort() : base(INTERRUPT.Narcoleptic_Nap_Short) {
+            name = "Narcoleptic Nap";
+            duration = 10;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sleep_Icon;
             isIntel = true;

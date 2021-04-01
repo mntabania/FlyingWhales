@@ -496,17 +496,19 @@ public class ReactionComponent : CharacterComponent {
                         //Determine whether to fight or flight.
                         //There is a special case, even if the source is defending if he/she is a demon and the target is an angel and vice versa, make the combat lethal
                         CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
-                        if (combatReaction.reaction == COMBAT_REACTION.Flight) {
-                            //if flight was decided
-                            //if target is restrained or resting, do nothing
-                            if (!targetCharacter.traitContainer.HasTrait("Restrained", "Resting")) {
+                        if (combatReaction.reaction != COMBAT_REACTION.None) {
+                            if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+                                //if flight was decided
+                                //if target is restrained or resting, do nothing
+                                if (!targetCharacter.traitContainer.HasTrait("Restrained", "Resting")) {
+                                    actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: false);
+                                }
+                                //else {
+                                //    actor.combatComponent.Fight(targetCharacter, combatReaction.reason, isLethal: false);
+                                //}
+                            } else {
                                 actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: false);
                             }
-                            //else {
-                            //    actor.combatComponent.Fight(targetCharacter, combatReaction.reason, isLethal: false);
-                            //}
-                        } else {
-                            actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: false);
                         }
                     }
                     
@@ -610,14 +612,16 @@ public class ReactionComponent : CharacterComponent {
                         if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
                             //Determine whether to fight or flight.
                             CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
-                            if (combatReaction.reaction == COMBAT_REACTION.Flight) {
-                                //if flight was decided
-                                //if target is restrained or resting, do nothing
-                                if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
+                            if (combatReaction.reaction != COMBAT_REACTION.None) {
+                                if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+                                    //if flight was decided
+                                    //if target is restrained or resting, do nothing
+                                    if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
+                                        actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
+                                    }
+                                } else {
                                     actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
                                 }
-                            } else {
-                                actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
                             }
                         }
                     }
