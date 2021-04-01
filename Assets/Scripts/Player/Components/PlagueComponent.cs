@@ -7,21 +7,29 @@ public class PlagueComponent {
 
     #region getters
     public int plaguePoints => _plaguePoints;
+    public int maxPlaguePoints { private set; get; }
     #endregion
 
     public PlagueComponent() {
-        _plaguePoints = 35;
+        _plaguePoints = 50;
+        maxPlaguePoints = 200;
+        Messenger.AddListener(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }
     public PlagueComponent(SaveDataPlagueComponent p_component) {
         _plaguePoints = p_component.plaguePoints;
+        Messenger.AddListener(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }
 
     #region Plague Points
+    void OnPortalUpgraded() {
+        maxPlaguePoints *= 2;
+    }
     public void AdjustPlaguePoints(int amount) {
         if (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {
             return;
         }
-        _plaguePoints += amount;
+        _plaguePoints = Mathf.Clamp(_plaguePoints + amount, 0, maxPlaguePoints);
+
         Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
     }
     public void GainPlaguePointFromCharacter(int amount, Character p_character) {
@@ -39,9 +47,11 @@ public class PlagueComponent {
 [System.Serializable]
 public class SaveDataPlagueComponent : SaveData<PlagueComponent> {
     public int plaguePoints;
+    public int maxPlaguePoints; 
 
     public override void Save(PlagueComponent p_component) {
         plaguePoints = p_component.plaguePoints;
+        maxPlaguePoints = p_component.maxPlaguePoints;
     }
     public override PlagueComponent Load() {
         PlagueComponent component = new PlagueComponent(this);
