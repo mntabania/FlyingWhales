@@ -7,6 +7,13 @@ public class PlayerDamageAccumulator {
     public int accumulatedDamage { get; private set; }
     public bool activatedSpellDamageChaosOrbPassiveSkill { get; private set; }
 
+    public PlayerDamageAccumulator() {
+
+    }
+    public PlayerDamageAccumulator(SaveDataPlayerDamageAccumulator data) {
+        accumulatedDamage = data.accumulatedDamage;
+        activatedSpellDamageChaosOrbPassiveSkill = data.activatedSpellDamageChaosOrbPassiveSkill;
+    }
     public void SetActivatedSpellDamageChaosOrbPassiveSkill(bool p_state) {
         activatedSpellDamageChaosOrbPassiveSkill = p_state;
     }
@@ -32,5 +39,20 @@ public class PlayerDamageAccumulator {
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_expelChaosOrbsOn.centeredWorldLocation, numOfChaosOrbs, p_expelChaosOrbsOn.parentMap);
             }
         }
+    }
+}
+
+[System.Serializable]
+public class SaveDataPlayerDamageAccumulator : SaveData<PlayerDamageAccumulator> {
+    public int accumulatedDamage;
+    public bool activatedSpellDamageChaosOrbPassiveSkill;
+
+    public override void Save(PlayerDamageAccumulator data) {
+        base.Save(data);
+        accumulatedDamage = data.accumulatedDamage;
+        activatedSpellDamageChaosOrbPassiveSkill = data.activatedSpellDamageChaosOrbPassiveSkill;
+    }
+    public override PlayerDamageAccumulator Load() {
+        return new PlayerDamageAccumulator(this);
     }
 }

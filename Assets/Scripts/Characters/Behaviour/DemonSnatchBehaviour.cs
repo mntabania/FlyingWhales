@@ -18,7 +18,7 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
             DemonSnatchPartyQuest quest = party.currentQuest as DemonSnatchPartyQuest;
             if(quest.targetCharacter != null) {
                 if (quest.targetCharacter.isDead) {
-                    party.GoBackHomeAndEndQuest();
+                    quest.EndQuest("Target is dead");
                     return true;
                 }
                 Prisoner prisoner = quest.targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
@@ -28,7 +28,11 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
                     return true;
                 } else {
                     if (quest.targetCharacter.isBeingSeized) {
-                        hasJob = character.jobComponent.CreateGoToSpecificTileJob(quest.targetCharacter.marker.previousGridTile, out producedJob);
+                        if(quest.targetCharacter.marker.previousGridTile == character.gridTileLocation) {
+                            quest.EndQuest("Target is unavailable");
+                        } else {
+                            hasJob = character.jobComponent.CreateGoToSpecificTileJob(quest.targetCharacter.marker.previousGridTile, out producedJob);
+                        }
                     } else {
                         hasJob = character.jobComponent.TriggerRestrainJob(quest.targetCharacter, JOB_TYPE.SNATCH_RESTRAIN, out producedJob);
                     }

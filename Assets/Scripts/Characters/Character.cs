@@ -5261,23 +5261,22 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             actions.Clear();
         }
 
-        //if (race == RACE.DEMON) {
-        //    AddPlayerAction(PLAYER_SKILL_TYPE.UNSUMMON);
-        //} else {
-        if (isNormalCharacter) {
-            AddPlayerAction(PLAYER_SKILL_TYPE.AFFLICT);
-            AddPlayerAction(PLAYER_SKILL_TYPE.ZAP);
-            AddPlayerAction(PLAYER_SKILL_TYPE.TRIGGER_FLAW);
-            AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
+        if (race == RACE.DEMON) {
+            //AddPlayerAction(PLAYER_SKILL_TYPE.UNSUMMON);
+        } else {
+            if (isNormalCharacter) {
+                AddPlayerAction(PLAYER_SKILL_TYPE.AFFLICT);
+                AddPlayerAction(PLAYER_SKILL_TYPE.ZAP);
+                AddPlayerAction(PLAYER_SKILL_TYPE.TRIGGER_FLAW);
+                AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
+            }
+            AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_CHARACTER);
+            AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+            AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
+            AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
+            AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
+            AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
         }
-        AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_CHARACTER);
-        AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
-        AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
-        AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
-        AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
-
-        AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
-        //}
         AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
         AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
         AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_BUFF);
