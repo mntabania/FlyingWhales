@@ -107,6 +107,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         // }
         newLeaderDesignationChance = data.newLeaderDesignationChance;
         pathfindingTag = data.pathfindingTag;
+        isInfoUnlocked = data.isInfoUnlocked;
         pathfindingDoorTag = data.pathfindingDoorTag;
     }
 
