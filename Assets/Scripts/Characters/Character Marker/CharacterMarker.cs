@@ -694,25 +694,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         if (character.traitContainer.HasTrait("Vampire")) {
             if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
-                //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
-                //Transform to bat so the character can traverse the tile
-                Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-                if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                    if(!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)){
-                        //Only transform to bat if there is really no path between the current location and destination tile
-                        //If it has, even if the destination reached is not really the destination tile, do not transform
-                        if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
-                            vampireTrait.SetIsTraversingUnwalkableAsBat(true);
-                            shouldRecomputePath = true;
-                            return;
+                if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 1) {
+                    //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
+                    //Transform to bat so the character can traverse the tile
+                    Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                    if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                        if (!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)) {
+                            //Only transform to bat if there is really no path between the current location and destination tile
+                            //If it has, even if the destination reached is not really the destination tile, do not transform
+                            if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
+                                vampireTrait.SetIsTraversingUnwalkableAsBat(true);
+                                shouldRecomputePath = true;
+                                return;
+                            }
                         }
+                    } else if (vampireTrait.isTraversingUnwalkableAsBat) {
+                        //If character is still traversing unwalkable path do not do arrive action
+                        shouldRecomputePath = true;
+                        return;
                     }
-                } else if (vampireTrait.isTraversingUnwalkableAsBat) {
-                    //If character is still traversing unwalkable path do not do arrive action
-                    shouldRecomputePath = true;
-                    return;
                 }
             }
+            
         }
 
         if (character.combatComponent.isInCombat) {

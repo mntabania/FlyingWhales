@@ -143,9 +143,11 @@ namespace Traits {
             base.OnBeforeStartFlee(traitable);
             if(traitable is Character character) {
                 if (!isInVampireBatForm) {
-                    if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                        //TransformToBat(character);
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
+                    if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 1) {
+                        if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                            //TransformToBat(character);
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
+                        }
                     }
                 }
             }
