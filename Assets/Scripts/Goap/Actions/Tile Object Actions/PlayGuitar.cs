@@ -142,6 +142,11 @@ public class PlayGuitar : GoapAction {
             }
         }
     }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        MusicHater musicHater = witness.traitContainer.GetTraitOrStatus<MusicHater>("Music Hater");
+        musicHater?.ReactToMusicPerformer(witness, actor);
+        return base.ReactionToActor(actor, target, witness, node, status);
+    }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (witness.traitContainer.HasTrait("Music Hater")) {
             return REACTABLE_EFFECT.Negative;
