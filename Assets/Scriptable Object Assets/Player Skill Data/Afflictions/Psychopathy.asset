@@ -81,8 +81,9 @@ MonoBehaviour:
     rateChance: 
     crowdNumber: 01000000010000000200000002000000
     napsDuration: 
-    numberOfCriteria: 
+    numberOfCriteria: 01000000010000000200000002000000
     hungerRate: 
+    duration: []
     opinionTrigger: 
     addedBehaviour: 00000000000000001300000014000000
     listOfCriteria: 01000000020000000300000004000000

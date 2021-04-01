@@ -310,6 +310,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustFullnessDecreaseRate(float amount) {
         fullnessDecreaseRate += amount;
+        Debug.Log($"{owner.name} adjusted fullness decrease rate by {amount.ToString()}. New value is {fullnessDecreaseRate.ToString()}");
     }
     public void AdjustTirednessDecreaseRate(float amount) {
         tirednessDecreaseRate += amount;

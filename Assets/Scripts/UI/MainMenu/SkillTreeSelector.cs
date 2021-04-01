@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Quests;
 using Ruinarch.Custom_UI;
 using UnityEngine;
@@ -90,7 +91,8 @@ public class SkillTreeSelector : MonoBehaviour {
         UIManager.Instance.initialWorldSetupMenu.Hide();
         
         InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
-        InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        portal.CenterOnStructure();
     }
     public void LoadLoadout(PLAYER_ARCHETYPE archetype) {
         PlayerSkillManager.Instance.SetSelectedArchetype(archetype);
@@ -99,7 +101,8 @@ public class SkillTreeSelector : MonoBehaviour {
         UIManager.Instance.initialWorldSetupMenu.Hide();
 
         InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
-        InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        portal.CenterOnStructure();
     }
     private void BroadcastLoadoutSelectedSignals() {
         Messenger.Broadcast(UISignals.SAVE_LOADOUTS);

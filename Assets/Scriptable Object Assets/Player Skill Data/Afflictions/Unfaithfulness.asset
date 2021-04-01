@@ -75,7 +75,7 @@ MonoBehaviour:
     cooldownPerLevel: a0000000800000008000000070000000
     skillMovementSpeed: 
   afflictionUpgradeData:
-    bonuses: 07000000
+    bonuses: 08000000
     cooldown: 
     additionalPiercePerLevel: []
     rateChance: 

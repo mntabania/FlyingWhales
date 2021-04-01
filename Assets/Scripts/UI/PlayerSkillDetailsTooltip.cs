@@ -79,6 +79,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
             bonusesText.text = $"{bonusesText.text}{UtilityScripts.Utilities.ColorizeSpellTitle("Charges:")} {charges.ToString()}/{charges.ToString()}";
         }
+        bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(skillData, 1)}";
     }
     private void UpdateData(SkillData spellData) {
         titleText.text = spellData.name;
@@ -95,6 +96,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         string bonusesStr = GetBonusesString(playerSkillData, spellData.currentLevel);
         bonusesStr = $"{bonusesStr}{GetAdditionalBonusesString(spellData, playerSkillData, spellData.currentLevel)}";
         bonusesText.text = bonusesStr;
+        bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(playerSkillData, spellData.currentLevel)}";
         
         additionalText.text = GetAdditionalInfo(spellData);
 
@@ -128,8 +130,14 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
         
         string bonusesStr = GetBonusesLevelUpString(playerSkillData, spellData.currentLevel);
-        bonusesStr = $"{bonusesStr}{GetAdditionalBonusesLevelUpString(spellData, playerSkillData, spellData.currentLevel)}";
-
+        string additionalBonusesLevelUpString = GetAdditionalBonusesLevelUpString(spellData, playerSkillData, spellData.currentLevel);
+        if (!string.IsNullOrEmpty(additionalBonusesLevelUpString)) {
+            bonusesStr = $"{bonusesStr}\n{additionalBonusesLevelUpString}";    
+        }
+        string afflictionBonusesString = GetAfflictionBonusesWithLevelUpDetailsString(playerSkillData, spellData.currentLevel);
+        if (!string.IsNullOrEmpty(afflictionBonusesString)) {
+            bonusesStr = $"{bonusesStr}\n{afflictionBonusesString}";    
+        }
         bonusesText.text = bonusesStr;
         // if (spellData.maxCharges > 0) {
         //     //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
@@ -146,39 +154,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         
         descriptionText.SetTextAndReplaceWithIcons(fullDescription);
     }
-
-    private bool HasEnoughMana(SkillData spellData) {
-        if (spellData.hasManaCost) {
-            if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
-                return true;
-            }
-            return false;
-        }
-        //if skill has no mana cost then always has enough mana
-        return true;
-    }
-    private bool HasEnoughCharges(SkillData spellData) {
-        if (spellData.hasCharges) {
-            if (spellData.charges > 0) {
-                return true;
-            }
-            return false;
-        }
-        //if skill has no charges then always has enough charges
-        return true;
-    }
-    private bool HasEnoughMana(int manaCost) {
-        if (PlayerManager.Instance.player.mana >= manaCost) {
-            return true;
-        }
-        return false;
-    }
-    private bool HasEnoughCharges(int charges) {
-        if (charges > 0) {
-            return true;
-        }
-        return false;
-    }
+    
     private string GetBonusesString(PlayerSkillData p_data, int p_level) {
         string bonuses = string.Empty;
         List<UPGRADE_BONUS> orderedBonuses = RuinarchListPool<UPGRADE_BONUS>.Claim();
@@ -195,6 +171,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         RuinarchListPool<UPGRADE_BONUS>.Release(orderedBonuses);
         return bonuses;
     }
+
+    #region Bonuses
     /// <summary>
     /// Get the formatted string for a bonus type.
     /// </summary>
@@ -219,7 +197,6 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             case UPGRADE_BONUS.Duration:
                 int durationInTicks = p_data.skillUpgradeData.GetDurationBonusPerLevel(p_level);
                 formatted = $"{formatted}{GameManager.ConvertTicksToWholeTime(durationInTicks)}";
-                // formatted = $"{formatted}{GameManager.GetTimeAsWholeDuration(durationInTicks).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(durationInTicks)}";
                 break;
             case UPGRADE_BONUS.Tile_Range:
                 int tileRangeBonusPerLevel = p_data.skillUpgradeData.GetTileRangeBonusPerLevel(p_level);
@@ -231,7 +208,6 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             case UPGRADE_BONUS.Cooldown:
                 int cooldownInTicks = p_data.skillUpgradeData.GetCoolDownPerLevel(p_level);
                 formatted = $"{formatted}{GameManager.ConvertTicksToWholeTime(cooldownInTicks)}";
-                // formatted = $"{formatted}{GameManager.GetTimeAsWholeDuration(cooldownInTicks).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldownInTicks)}";
                 break;
             default:
                 formatted = string.Empty;
@@ -323,10 +299,12 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 if (!string.IsNullOrEmpty(differenceString)) {
                     formatted = $"{formatted} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText($"{differenceString}")}";
                 }
-                bonuses = $"{bonuses}{formatted}\n";
-                // if (!orderedBonuses.IsLastIndex(i)) {
-                //     bonuses = $"{bonuses}\n";
-                // }
+                bonuses = $"{bonuses}{formatted}";
+                if (!orderedBonuses.IsLastIndex(i)) {
+                    bonuses = $"{bonuses}\n";
+                }
+            } else {
+                bonuses = bonuses.TrimEnd();
             }
         }
         RuinarchListPool<UPGRADE_BONUS>.Release(orderedBonuses);
@@ -395,6 +373,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         
         return additionalText;
     }
+    private string GetTileRangeDisplay(int radius) {
+        int dimension = (radius * 2) + 1;
+        return $"{dimension.ToString()}x{dimension.ToString()}";
+    }
+    #endregion
+
+    #region Currency
     private string GetCurrencySummary(int manaCost, int charges, int maxCharges, int cooldown) {
         string currencies = string.Empty;
         if (charges > 0) {
@@ -424,8 +409,256 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
         return currencies;
     }
-    private string GetTileRangeDisplay(int radius) {
-        int dimension = (radius * 2) + 1;
-        return $"{dimension.ToString()}x{dimension.ToString()}";
+    private bool HasEnoughMana(SkillData spellData) {
+        if (spellData.hasManaCost) {
+            if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
+                return true;
+            }
+            return false;
+        }
+        //if skill has no mana cost then always has enough mana
+        return true;
     }
+    private bool HasEnoughCharges(SkillData spellData) {
+        if (spellData.hasCharges) {
+            if (spellData.charges > 0) {
+                return true;
+            }
+            return false;
+        }
+        //if skill has no charges then always has enough charges
+        return true;
+    }
+    #endregion
+
+    #region Affliction
+    private string GetAfflictionBonusesString(PlayerSkillData p_data, int p_level) {
+        string bonuses = string.Empty;
+        for (int i = 0; i < p_data.afflictionUpgradeData.bonuses.Count; i++) {
+            AFFLICTION_UPGRADE_BONUS afflictionUpgradeBonus = p_data.afflictionUpgradeData.bonuses[i];
+            string formattedString = GetFormattedAfflictionBonusString(afflictionUpgradeBonus, p_data, p_level);
+            if (!string.IsNullOrEmpty(formattedString)) {
+                bonuses = $"{bonuses}{formattedString}\n";
+            }
+        }
+        return bonuses.TrimEnd();
+    }
+    private string GetAfflictionBonusesWithLevelUpDetailsString(PlayerSkillData p_data, int p_level) {
+        string bonuses = string.Empty;
+        for (int i = 0; i < p_data.afflictionUpgradeData.bonuses.Count; i++) {
+            AFFLICTION_UPGRADE_BONUS afflictionUpgradeBonus = p_data.afflictionUpgradeData.bonuses[i];
+            string formattedString = GetFormattedAfflictionBonusString(afflictionUpgradeBonus, p_data, p_level);
+            int nextLevel = p_level + 1;
+            if (afflictionUpgradeBonus == AFFLICTION_UPGRADE_BONUS.Added_Behaviour) {
+                List<AFFLICTION_SPECIFIC_BEHAVIOUR> currentBehaviours = RuinarchListPool<AFFLICTION_SPECIFIC_BEHAVIOUR>.Claim();
+                p_data.afflictionUpgradeData.PopulateAddedBehavioursForLevelNoDuplicates(currentBehaviours, p_level);
+                AFFLICTION_SPECIFIC_BEHAVIOUR newBehaviour = p_data.afflictionUpgradeData.addedBehaviour[nextLevel];
+                if (currentBehaviours.Contains(AFFLICTION_SPECIFIC_BEHAVIOUR.Knockout_Singers_Guitar_Players)&& newBehaviour == AFFLICTION_SPECIFIC_BEHAVIOUR.Murder_Singers_Guitar_Players) {
+                    formattedString = formattedString.Replace("knock out", UtilityScripts.Utilities.ColorizeUpgradeText("murder"));
+                    bonuses = $"{bonuses}{formattedString}\n";
+                } else {
+                    bonuses = $"{bonuses}{formattedString}";
+                    if (!string.IsNullOrEmpty(formattedString)) { bonuses = $"{bonuses}\n"; }
+                    string differenceStr = GetAfflictionBonusDifferenceString(afflictionUpgradeBonus, p_data, p_level, nextLevel);
+                    bonuses = $"{bonuses}{UtilityScripts.Utilities.ColorizeUpgradeText(differenceStr)}\n";    
+                }
+                RuinarchListPool<AFFLICTION_SPECIFIC_BEHAVIOUR>.Release(currentBehaviours);
+            } else {
+                if (!string.IsNullOrEmpty(formattedString)) {
+                    bonuses = $"{bonuses}{formattedString}";
+                    string differenceStr = GetAfflictionBonusDifferenceString(afflictionUpgradeBonus, p_data, p_level, nextLevel);
+                    bonuses = $"{bonuses}{UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText(differenceStr)}\n";    
+                }
+            }
+        }
+        return bonuses.TrimEnd();
+    }
+    private string GetAfflictionBonusDifferenceString(AFFLICTION_UPGRADE_BONUS p_afflictionUpgradeBonus, PlayerSkillData p_data, int p_level, int p_nextLevel) {
+        switch (p_afflictionUpgradeBonus) {
+            case AFFLICTION_UPGRADE_BONUS.Crowd_Number:
+                return $"{p_data.afflictionUpgradeData.crowdNumber[p_nextLevel].ToString()}";
+            case AFFLICTION_UPGRADE_BONUS.Hunger_Rate:
+                return $"+{p_data.afflictionUpgradeData.hungerRate[p_nextLevel].ToString()}%";
+            case AFFLICTION_UPGRADE_BONUS.Trigger_Rate:
+                return $"{p_data.afflictionUpgradeData.rateChance[p_nextLevel].ToString()}%";
+            case AFFLICTION_UPGRADE_BONUS.Naps_Duration:
+                int napTicks = p_data.afflictionUpgradeData.napsDuration[p_nextLevel];
+                return $"{GameManager.ConvertTicksToWholeTime(napTicks)}";
+            case AFFLICTION_UPGRADE_BONUS.Duration:
+                int afflictionDuration = (int)p_data.afflictionUpgradeData.duration[p_nextLevel];
+                string timeStr = afflictionDuration == 0 ? "Permanent" : GameManager.ConvertTicksToWholeTime(afflictionDuration);
+                return $"{timeStr}";
+            case AFFLICTION_UPGRADE_BONUS.Number_Criteria:
+                return $"{p_data.afflictionUpgradeData.numberOfCriteria[p_nextLevel].ToString()}";
+            case AFFLICTION_UPGRADE_BONUS.Criteria:
+                List<LIST_OF_CRITERIA> criteriaList = RuinarchListPool<LIST_OF_CRITERIA>.Claim();
+                p_data.afflictionUpgradeData.PopulateAvailableCriteriaForLevel(criteriaList, p_nextLevel);
+                string criteriaSummary = $"{criteriaList.ComafyList()}";
+                RuinarchListPool<LIST_OF_CRITERIA>.Release(criteriaList);
+                return criteriaSummary;
+            case AFFLICTION_UPGRADE_BONUS.Trigger_Opinion:
+                string allAddedOpinionTriggers = string.Empty;
+                List<OPINIONS> triggers = RuinarchListPool<OPINIONS>.Claim();
+                p_data.afflictionUpgradeData.PopulateOpinionTriggerForLevel(triggers, p_nextLevel);
+                if (triggers.Contains(OPINIONS.Everyone)) {
+                    allAddedOpinionTriggers = $"{allAddedOpinionTriggers}Everyone";
+                } else {
+                    for (int i = 0; i < triggers.Count; i++) {
+                        OPINIONS opinions = triggers[i];
+                        if (opinions == OPINIONS.NoOne) { continue;; }
+                        allAddedOpinionTriggers = $"{allAddedOpinionTriggers}{opinions.ToString()}";
+                        if (!triggers.IsLastIndex(i)) {
+                            allAddedOpinionTriggers = $"{allAddedOpinionTriggers}, ";
+                        }
+                    }    
+                }
+                RuinarchListPool<OPINIONS>.Release(triggers);
+                return allAddedOpinionTriggers;
+            case AFFLICTION_UPGRADE_BONUS.Added_Behaviour:
+                string allAddedBehaviours = string.Empty;
+                List<AFFLICTION_SPECIFIC_BEHAVIOUR> currentBehaviours = RuinarchListPool<AFFLICTION_SPECIFIC_BEHAVIOUR>.Claim();
+                p_data.afflictionUpgradeData.PopulateAddedBehavioursForLevelNoDuplicates(currentBehaviours, p_level);
+                AFFLICTION_SPECIFIC_BEHAVIOUR newBehaviour = p_data.afflictionUpgradeData.addedBehaviour[p_nextLevel];
+                if (currentBehaviours.Contains(newBehaviour) || newBehaviour == AFFLICTION_SPECIFIC_BEHAVIOUR.None) {
+                    return string.Empty;
+                } else {
+                    string addedBehaviour = GetFormattedAfflictionSpecificBehaviour(newBehaviour);
+                    if (!string.IsNullOrEmpty(addedBehaviour)) {
+                        allAddedBehaviours = $"{allAddedBehaviours}\"{addedBehaviour}\"";
+                    }
+                }
+                RuinarchListPool<AFFLICTION_SPECIFIC_BEHAVIOUR>.Release(currentBehaviours);
+                if (!string.IsNullOrEmpty(allAddedBehaviours)) {
+                    // return UtilityScripts.Utilities.ColorizeSpellTitle(allAddedBehaviours);
+                    return allAddedBehaviours;
+                }
+                return string.Empty;
+            default:
+                return string.Empty;
+        }
+    }
+    private string GetFormattedAfflictionBonusString(AFFLICTION_UPGRADE_BONUS p_afflictionUpgradeBonus, PlayerSkillData p_data, int p_level) {
+        switch (p_afflictionUpgradeBonus) {
+            case AFFLICTION_UPGRADE_BONUS.Crowd_Number:
+                return $"{UtilityScripts.Utilities.ColorizeSpellTitle("Crowd:")} {p_data.afflictionUpgradeData.crowdNumber[p_level].ToString()}";
+            case AFFLICTION_UPGRADE_BONUS.Hunger_Rate:
+                return $"{UtilityScripts.Utilities.ColorizeSpellTitle("Hunger Rate:")} +{p_data.afflictionUpgradeData.hungerRate[p_level].ToString()}%";
+            case AFFLICTION_UPGRADE_BONUS.Trigger_Rate:
+                return $"{UtilityScripts.Utilities.ColorizeSpellTitle("Trigger Rate:")} {p_data.afflictionUpgradeData.rateChance[p_level].ToString()}%";
+            case AFFLICTION_UPGRADE_BONUS.Naps_Duration:
+                int napTicks = p_data.afflictionUpgradeData.napsDuration[p_level];
+                return $"{UtilityScripts.Utilities.ColorizeSpellTitle("Nap Duration:")} {GameManager.ConvertTicksToWholeTime(napTicks)}";
+            case AFFLICTION_UPGRADE_BONUS.Duration:
+                int afflictionDuration = (int)p_data.afflictionUpgradeData.duration[p_level];
+                string timeStr = afflictionDuration == 0 ? "Permanent" : GameManager.ConvertTicksToWholeTime(afflictionDuration);
+                return $"{UtilityScripts.Utilities.ColorizeSpellTitle("Status Duration:")} {timeStr}";
+            case AFFLICTION_UPGRADE_BONUS.Number_Criteria:
+                return $"{UtilityScripts.Utilities.ColorizeSpellTitle("Criteria:")} {p_data.afflictionUpgradeData.numberOfCriteria[p_level].ToString()}";
+            case AFFLICTION_UPGRADE_BONUS.Criteria:
+                string criteriaSummary = UtilityScripts.Utilities.ColorizeSpellTitle("Available Criteria: ");
+                List<LIST_OF_CRITERIA> criteriaList = RuinarchListPool<LIST_OF_CRITERIA>.Claim();
+                p_data.afflictionUpgradeData.PopulateAvailableCriteriaForLevel(criteriaList, p_level);
+                criteriaSummary = $"{criteriaSummary}{criteriaList.ComafyList()}";
+                RuinarchListPool<LIST_OF_CRITERIA>.Release(criteriaList);
+                return criteriaSummary;
+            case AFFLICTION_UPGRADE_BONUS.Trigger_Opinion:
+                string allAddedOpinionTriggers = UtilityScripts.Utilities.ColorizeSpellTitle("Triggers: ");
+                List<OPINIONS> triggers = RuinarchListPool<OPINIONS>.Claim();
+                p_data.afflictionUpgradeData.PopulateOpinionTriggerForLevel(triggers, p_level);
+                if (triggers.Contains(OPINIONS.Everyone)) {
+                    allAddedOpinionTriggers = $"{allAddedOpinionTriggers}Everyone";
+                } else {
+                    for (int i = 0; i < triggers.Count; i++) {
+                        OPINIONS opinions = triggers[i];
+                        if (opinions == OPINIONS.NoOne) { continue;; }
+                        allAddedOpinionTriggers = $"{allAddedOpinionTriggers}{opinions.ToString()}";
+                        if (!triggers.IsLastIndex(i)) {
+                            allAddedOpinionTriggers = $"{allAddedOpinionTriggers}, ";
+                        }
+                    }    
+                }
+                RuinarchListPool<OPINIONS>.Release(triggers);
+                return allAddedOpinionTriggers;
+            case AFFLICTION_UPGRADE_BONUS.Added_Behaviour:
+                string allAddedBehaviours = string.Empty;
+                List<AFFLICTION_SPECIFIC_BEHAVIOUR> behaviours = RuinarchListPool<AFFLICTION_SPECIFIC_BEHAVIOUR>.Claim();
+                p_data.afflictionUpgradeData.PopulateAddedBehavioursForLevelNoDuplicates(behaviours, p_level);
+                for (int i = 0; i < behaviours.Count; i++) {
+                    AFFLICTION_SPECIFIC_BEHAVIOUR behaviour = behaviours[i];
+                    if (behaviour == AFFLICTION_SPECIFIC_BEHAVIOUR.Knockout_Singers_Guitar_Players && behaviours.Contains(AFFLICTION_SPECIFIC_BEHAVIOUR.Murder_Singers_Guitar_Players)) {
+                        //skip knock out singers if murder singers is already part of the added behaviours list
+                        continue;
+                    }
+                    string addedBehaviour = GetFormattedAfflictionSpecificBehaviour(behaviour);
+                    if (!string.IsNullOrEmpty(addedBehaviour)) {
+                        allAddedBehaviours = $"{allAddedBehaviours}\"{addedBehaviour}\"\n";
+                    }
+                }
+                allAddedBehaviours = allAddedBehaviours.TrimEnd();
+                RuinarchListPool<AFFLICTION_SPECIFIC_BEHAVIOUR>.Release(behaviours);
+                if (!string.IsNullOrEmpty(allAddedBehaviours)) {
+                    return UtilityScripts.Utilities.ColorizeSpellTitle(allAddedBehaviours);    
+                }
+                return string.Empty;
+            default:
+                return string.Empty;
+        }
+    }
+    private string GetFormattedAfflictionSpecificBehaviour(AFFLICTION_SPECIFIC_BEHAVIOUR p_behaviour) {
+        switch (p_behaviour) {
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Make_Anxious:
+                return "Makes character Anxious";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.No_Longer_Join_Parties:
+                return "Will no longer joins Parties";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Ignore_Urgent_Tasks:
+                return "May ignore urgent tasks";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Angry_Upon_Hear_Music:
+                return "Always gets Angry when hearing music";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Knockout_Singers_Guitar_Players:
+                return "Will knock out singers and guitar players";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Murder_Singers_Guitar_Players:
+                return "Will murder singers and guitar players";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Active_Search_Affair:
+                return "Actively searches for an Affair";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Multiple_Affair:
+                return "Actively searches for multiple Affairs";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Wild_Multiple_Affair:
+                return "Actively searches for multiple Affairs. Anyone will do";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Pass_Out_From_Fright:
+                return "May pass out from fright";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Flees_From_Anyone:
+                return "Flees from anyone they don't know";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Do_Pick_Pocket:
+                return "May pickpocket other Villagers";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Rob_From_House:
+                return "May rob from other houses";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Rob_Any_Place:
+                return "May rob any place";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.May_Suffer_heart_Attack:
+                return "May suffer heart attack from fright";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Becomes_Stronger_Dire_wolf:
+                return "Becomes a stronger Dire Wolf while in Wolf form.";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Transform_Master_Werewolf:
+                return "Transforms into a Master Werewolf";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Form_Lycan_Clan_faction:
+                return "Werewolves may now form a Lycan Clan faction";
+            // case AFFLICTION_SPECIFIC_BEHAVIOUR.Add_And_Selection:
+            //     return "Includes AND setting only";
+            // case AFFLICTION_SPECIFIC_BEHAVIOUR.Add_Or_Selection:
+            //     return "Includes AND or OR dropdown";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Transform_into_bats:
+                return "Vampires may transform into bats";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Can_Become_Vampire_Lords:
+                return "Vampires may eventually become Vampire Lords";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Create_Vampire_Clan_Faction:
+                return "Vampires may now form a Vampire Clan faction";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Likes_To_Sleep:
+                return "Likes to take naps";
+            case AFFLICTION_SPECIFIC_BEHAVIOUR.Loves_To_Sleep:
+                return "Loves to take naps";
+            default:
+                return string.Empty;
+        }
+    }
+    #endregion
 }
