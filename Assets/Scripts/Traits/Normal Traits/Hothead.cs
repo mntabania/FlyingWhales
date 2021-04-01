@@ -24,7 +24,7 @@ namespace Traits {
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character targetCharacter) {
-                string debugLog = $"{characterThatWillDoJob.name} saw {targetCharacter.name} and has {name}";
+                string debugLog = $"Hotheaded reaction: {characterThatWillDoJob.name} saw {targetCharacter.name} and has {name}";
                 // int chance = UnityEngine.Random.Range(0, 100);
                 float chance = PlayerSkillManager.Instance.GetTriggerRateForCurrentLevel(PLAYER_SKILL_TYPE.HOTHEADED);
                 debugLog = $"{debugLog}\n-{chance.ToString("F2")} chance to trigger Angered interrupt if saw a character";
