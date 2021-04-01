@@ -39350,6 +39350,7 @@ MonoBehaviour:
   _buildStructureManaCost: 0
   _chaosOrbExpulsionThreshold: 300
   _sortingOrdersInBetweenHexTileRows: 20
+  currencyHoverData: {fileID: 11400000, guid: 4554e545483287347a940b31691f1945, type: 2}
   vaporStacks: 5
   poisonCloudStacks: 1
   frostyFogStacks: 5
@@ -50001,11 +50002,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 308965762}
     m_Modifications:
-    - target: {fileID: 648894024448412690, guid: 65a159b014602c143bbf2126de537ad7,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4523589963864561818, guid: 65a159b014602c143bbf2126de537ad7,
         type: 3}
       propertyPath: villagersToggle

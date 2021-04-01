@@ -2349,7 +2349,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8656598969651862788
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4258,7 +4258,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &719882613566848917
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8203,7 +8203,7 @@ MonoBehaviour:
   seriousCrimesLbl: {fileID: 738680655793335941}
   heinousCrimesLbl: {fileID: 17962589307580875}
   crimesScrollRect: {fileID: 508388106628938370}
-  crimesScrollRectTransform: {fileID: 8656598969651862788}
+  crimesScrollRectTransform: {fileID: 719882613566848917}
   logsWindow: {fileID: 5209958565781191454}
   characterItemPrefab: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
     type: 3}

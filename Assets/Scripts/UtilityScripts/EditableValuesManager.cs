@@ -39,6 +39,10 @@ public class EditableValuesManager : MonoBehaviour {
 	[Header("Visuals")]
 	[SerializeField] private int _sortingOrdersInBetweenHexTileRows = 20; //this is the number of sorting orders in between rows of the world map.
 
+	[Header("Currency Hover Values")]
+	[SerializeField] private CurrencyHoverData currencyHoverData;
+
+
 	public int vaporStacks;
 	public int poisonCloudStacks;
 	public int frostyFogStacks;
@@ -73,5 +77,17 @@ public class EditableValuesManager : MonoBehaviour {
 
 	private void Awake() {
 		Instance = this;
+	}
+
+	public int GetChaosOrbHoverAmount() {
+		return UnityEngine.Random.Range(currencyHoverData.minAmountHover, currencyHoverData.maxAmountHover);
+	}
+
+	public int GetInitialMaxChaoticEnergy() { 
+		return currencyHoverData.maxChaoticPerValues[0];
+	}
+
+	public int GetMaxChaoticEnergyPerPortalLevel(int p_portalLevel) {
+		return currencyHoverData.maxChaoticPerValues[p_portalLevel - 1];
 	}
 }

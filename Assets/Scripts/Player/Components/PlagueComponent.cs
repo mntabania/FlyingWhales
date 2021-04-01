@@ -12,17 +12,17 @@ public class PlagueComponent {
 
     public PlagueComponent() {
         _plaguePoints = 50;
-        maxPlaguePoints = 200;
-        Messenger.AddListener(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
+        maxPlaguePoints = EditableValuesManager.Instance.GetInitialMaxChaoticEnergy();
+        Messenger.AddListener<int>(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }
     public PlagueComponent(SaveDataPlagueComponent p_component) {
         _plaguePoints = p_component.plaguePoints;
-        Messenger.AddListener(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
+        Messenger.AddListener<int>(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }
 
     #region Plague Points
-    void OnPortalUpgraded() {
-        maxPlaguePoints *= 2;
+    void OnPortalUpgraded(int p_currentPortalLevel) {
+        maxPlaguePoints = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(p_currentPortalLevel);
     }
     public void AdjustPlaguePoints(int amount) {
         if (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {

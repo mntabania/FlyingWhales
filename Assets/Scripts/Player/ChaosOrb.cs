@@ -95,7 +95,7 @@ public class ChaosOrb : PooledObject {
 		Messenger.Broadcast(PlayerSignals.CHAOS_ORB_COLLECTED);
 	}
 	private void GainPlaguePoints() {
-		PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(1);
+		PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(EditableValuesManager.Instance.GetChaosOrbHoverAmount());
 		Destroy();
 	}
 	public override void Reset() {
