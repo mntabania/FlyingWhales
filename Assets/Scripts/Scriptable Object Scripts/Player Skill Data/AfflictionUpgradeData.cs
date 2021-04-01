@@ -74,7 +74,7 @@ public class AfflictionUpgradeData
         if (duration == null || duration.Count <= 0) {
             return -1;
         }
-        if (p_currentLevel >= napsDuration.Count) {
+        if (p_currentLevel >= duration.Count) {
             return duration[duration.Count - 1];
         }
         return duration[p_currentLevel];
