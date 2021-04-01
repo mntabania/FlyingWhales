@@ -246,7 +246,7 @@ namespace Quests {
                 case VICTORY_CONDITION.Create_Demon_Cult:
                 CreateDemonCult();
                 break;
-                case VICTORY_CONDITION.Summon_The_Demon:
+                case VICTORY_CONDITION.Summon_Ruinarch:
                 CreateSummonTheDemon();
                 break;
                 case VICTORY_CONDITION.Sandbox:

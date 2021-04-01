@@ -39342,7 +39342,7 @@ MonoBehaviour:
   _baseFullnessDecreaseRate: 0.204
   _baseTirednessDecreaseRate: 0.108
   _baseHappinessDecreaseRate: 0.156
-  _startingMana: 200
+  _startingMana: 500
   _maximumMana: 500
   _summonMinionManaCost: 80
   _corruptTileManaCost: 0
