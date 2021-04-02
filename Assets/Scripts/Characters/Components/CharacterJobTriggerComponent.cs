@@ -801,42 +801,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
     
     #region Roam
-    public bool TriggerRoamAroundTerritory() {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
-            LocationGridTile chosenTile;
-            if (owner.homeStructure != null) {
-                chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
-            } 
-            else if (owner.homeSettlement != null) {
-                chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
-            } 
-            else if (owner.HasTerritory()) {
-                Area chosenTerritory = owner.territory;
-                chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.gridTileComponent.gridTiles);
-            } else {
-                if (owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                    Area chosenArea = owner.areaLocation;
-                    chosenTile = CollectionUtilities.GetRandomElement(chosenArea.gridTileComponent.gridTiles);
-                } else {
-                    chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
-                }
-            }
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, owner, owner);
-            goapPlan.SetDoNotRecalculate(true);
-            job.SetCannotBePushedBack(true);
-            job.SetAssignedPlan(goapPlan);
-            owner.jobQueue.AddJobInQueue(job);
-            return true;
-        }
-        return false;
-    }
     public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob, bool checkIfPathPossibleWithoutDigging = false) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
 		    Profiler.BeginSample($"{owner.name} TriggerRoamAroundTerritory");
 		    LocationGridTile chosenTile = null;
-		    if (owner.homeSettlement != null) {
+		    if (owner.homeSettlement != null && owner.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
 			    Profiler.BeginSample($"Home settlement");
 			    List<LocationGridTile> choices = ObjectPoolManager.Instance.CreateNewGridTileList();
 			    owner.homeSettlement.PopulatePassableTilesList(choices);
