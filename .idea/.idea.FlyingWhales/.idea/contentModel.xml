@@ -3556,6 +3556,7 @@
               <e p="SpellListUI.cs" t="Include" />
               <e p="SummonListUI.cs" t="Include" />
               <e p="TargetsListUI.cs" t="Include" />
+              <e p="UIModelGenericPopupMenu.cs" t="Include" />
               <e p="VillagersListUI.cs" t="Include" />
               <e p="YesNoConfirmation.cs" t="Include" />
             </e>

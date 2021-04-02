@@ -137,7 +137,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		
 		ProcessButtonAvailability();
-		InputManager.Instance.AllowHotkeys(false);
+		InputManager.Instance.SetAllHotkeysEnabledState(false);
+		InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
 		UIManager.Instance.Pause();
 	}
 
@@ -510,7 +511,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		ReturnAllItemToPool();
 		HideUI();
 		m_maraudUIView.HideAllSubMenu();
-		InputManager.Instance.AllowHotkeys(true);
+		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 

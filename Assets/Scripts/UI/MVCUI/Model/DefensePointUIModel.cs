@@ -60,7 +60,7 @@ public class DefensePointUIModel : MVCUIModel {
 		onDeployClicked?.Invoke();
 	}
 
-	void ClickClose() {
+	public void ClickClose() {
 		onCloseClicked?.Invoke();
 	}
 	void ClickAddSummon() {

@@ -83,12 +83,13 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		base.ShowUI();
 		UpdateTopMenuSummary();
 		m_skillUpgradeUIView.SetTransmissionTabIsOnWithoutNotify(true);
-		InputManager.Instance.AllowHotkeys(false);
+		InputManager.Instance.SetAllHotkeysEnabledState(false);
+		InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
 		GameManager.Instance.SetPausedState(true);
 	}
 	public override void HideUI() {
 		UIManager.Instance.ResumeLastProgressionSpeed();
-		InputManager.Instance.AllowHotkeys(true);
+		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		base.HideUI();
 		Messenger.RemoveListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}

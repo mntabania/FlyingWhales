@@ -1662,12 +1662,12 @@ public class UIManager : BaseMonoBehaviour {
         Pause();
         SetSpeedTogglesState(false);
         _biolabUIController.Open();
-        InputManager.Instance.AllowHotkeys(false);
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
     }
     private void OnCloseBiolabUI() {
         SetSpeedTogglesState(true);
         ResumeLastProgressionSpeed();
-        InputManager.Instance.AllowHotkeys(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
     }
     #endregion
 
@@ -1678,13 +1678,13 @@ public class UIManager : BaseMonoBehaviour {
         Pause();
         SetSpeedTogglesState(false);
         _schemeUIController.Show(p_targetCharacter, p_otherTarget, p_schemeUsed, OnCloseSchemeUI);
-        InputManager.Instance.AllowHotkeys(false);
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
         Messenger.Broadcast(UISignals.SCHEME_UI_SHOWN);
     }
     private void OnCloseSchemeUI() {
         SetSpeedTogglesState(true);
         ResumeLastProgressionSpeed();
-        InputManager.Instance.AllowHotkeys(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
     }
     #endregion
 

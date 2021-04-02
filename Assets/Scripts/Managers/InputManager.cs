@@ -33,7 +33,25 @@ namespace Ruinarch {
         
         private CursorMode cursorMode = CursorMode.ForceSoftware;
         private bool runUpdate;
-        private bool _allowHotKeys = true;
+
+        private Dictionary<KeyCode, bool> allowedHotKeys = new Dictionary<KeyCode, bool>() {
+            {KeyCode.F1, true},
+            {KeyCode.F2, true},
+            {KeyCode.F3, true},
+            {KeyCode.F4, true},
+            {KeyCode.F5, true},
+            {KeyCode.F6, true},
+            {KeyCode.F7, true},
+            {KeyCode.F8, true},
+            {KeyCode.F9, true},
+            {KeyCode.Space, true},
+            {KeyCode.Escape, true},
+            {KeyCode.Alpha1, true},
+            {KeyCode.Alpha2, true},
+            {KeyCode.Alpha3, true},
+            {KeyCode.Tab, true},
+            {KeyCode.R, true},
+        };
         
         #region Monobehaviours
         private void Awake() {
@@ -121,9 +139,11 @@ namespace Ruinarch {
             } else if (Input.GetKeyDown(KeyCode.F9)) {
                 if (!CanUseHotkey(KeyCode.F9)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F9);
-            } else if (Input.GetKeyDown(KeyCode.M)) {
-                BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
-            } else if (Input.GetKeyDown(KeyCode.Tab)) {
+            } 
+            // else if (Input.GetKeyDown(KeyCode.M)) {
+            //     BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
+            // } 
+            else if (Input.GetKeyDown(KeyCode.Tab)) {
                 if (!CanUseHotkey(KeyCode.Tab)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Tab);
@@ -156,10 +176,17 @@ namespace Ruinarch {
                     return false;
                 }    
             }
-            return _allowHotKeys;
+            return allowedHotKeys[p_keyCode];
         }
-        public void AllowHotkeys(bool p_state) {
-            _allowHotKeys = p_state;
+        public void SetAllHotkeysEnabledState(bool p_state) {
+            List<KeyCode> keys = allowedHotKeys.Keys.ToList();
+            for (int i = 0; i < keys.Count; i++) {
+                KeyCode key = keys[i];
+                allowedHotKeys[key] = p_state;
+            }
+        }
+        public void SetSpecificHotkeyEnabledState(KeyCode p_keyCode, bool p_state) {
+            allowedHotKeys[p_keyCode] = p_state;
         }
         #endregion
 

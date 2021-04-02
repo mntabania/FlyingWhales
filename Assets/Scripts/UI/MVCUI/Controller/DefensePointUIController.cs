@@ -88,7 +88,8 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InitializeDeployedItems();
 		m_defensePointUIView.SetTitle("Defense Point");
 		ProcessDeployButtonDisplay();
-		InputManager.Instance.AllowHotkeys(false);
+		InputManager.Instance.SetAllHotkeysEnabledState(false);
+		InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
 		UIManager.Instance.Pause();
 	}
 
@@ -274,7 +275,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		ReturnAllItemToPool();
 		HideUI();
 		m_defensePointUIView.HideAllSubMenu();
-		InputManager.Instance.AllowHotkeys(true);
+		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 

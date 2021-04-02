@@ -38,7 +38,7 @@ public class PopUpScreensUI : MonoBehaviour {
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         InnerMapCameraMove.Instance.DisableMovement();
-        InputManager.Instance.AllowHotkeys(false);
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
         startScreen.gameObject.SetActive(true);
         startMessageWindow.gameObject.SetActive(true);
         
@@ -69,7 +69,7 @@ public class PopUpScreensUI : MonoBehaviour {
         startScreen.gameObject.SetActive(false);
         UIManager.Instance.SetSpeedTogglesState(true);
         InnerMapCameraMove.Instance.EnableMovement();
-        InputManager.Instance.AllowHotkeys(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
 
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             TutorialManager.Instance.InstantiateImportantTutorials();
