@@ -7,6 +7,7 @@ public class ImpHutTileObject : TileObject {
 
     public ImpHutTileObject() {
         Initialize(TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public ImpHutTileObject(SaveDataTileObject data) {

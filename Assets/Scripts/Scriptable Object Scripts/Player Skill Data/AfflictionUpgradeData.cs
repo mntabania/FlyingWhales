@@ -40,7 +40,7 @@ public class AfflictionUpgradeData
         return cooldown[p_currentLevel];
     }
 
-    public int GethungerRatePerLevel(int p_currentLevel) {
+    public int GetHungerRatePerLevel(int p_currentLevel) {
         if (hungerRate == null || hungerRate.Count <= 0) {
             return -1;
         }
@@ -74,7 +74,7 @@ public class AfflictionUpgradeData
         if (duration == null || duration.Count <= 0) {
             return -1;
         }
-        if (p_currentLevel >= napsDuration.Count) {
+        if (p_currentLevel >= duration.Count) {
             return duration[duration.Count - 1];
         }
         return duration[p_currentLevel];
@@ -113,6 +113,15 @@ public class AfflictionUpgradeData
     public List<OPINIONS> GetAllOpinionsTrigger() {
         return opinionTrigger;
     }
+    public bool HasOpinionTriggerForLevel(OPINIONS p_opinion, int p_level) {
+        return opinionTrigger.HasValueInListUntilIndex(p_level, p_opinion);
+    }
+    public void PopulateOpinionTriggerForLevel(List<OPINIONS> p_opinions, int p_level) {
+        for (int i = 0; i <= p_level; i++) {
+            OPINIONS opinions = opinionTrigger[i];
+            p_opinions.Add(opinions);
+        }
+    }
 
     public AFFLICTION_SPECIFIC_BEHAVIOUR GetAddedBehaviourPerLevel(int p_currentLevel) {
         if (addedBehaviour == null || addedBehaviour.Count <= 0) {
@@ -126,5 +135,23 @@ public class AfflictionUpgradeData
 
     public List<AFFLICTION_SPECIFIC_BEHAVIOUR> GetAllAddedBehaviour() {
         return addedBehaviour;
+    }
+    public bool HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR p_behaviour, int p_level) {
+        return addedBehaviour.HasValueInListUntilIndex(p_level, p_behaviour);
+    }
+    public void PopulateAddedBehavioursForLevelNoDuplicates(List<AFFLICTION_SPECIFIC_BEHAVIOUR> behaviours, int p_level) {
+        for (int i = 0; i <= p_level; i++) {
+            AFFLICTION_SPECIFIC_BEHAVIOUR specificBehaviour = addedBehaviour[i];
+            if (!behaviours.Contains(specificBehaviour)) {
+                behaviours.Add(specificBehaviour);    
+            }
+        }
+    }
+    
+    public void PopulateAvailableCriteriaForLevel(List<LIST_OF_CRITERIA> p_criteria, int p_level) {
+        for (int i = 0; i <= p_level; i++) {
+            LIST_OF_CRITERIA criteria = listOfCriteria[i];
+            p_criteria.Add(criteria);
+        }
     }
 }

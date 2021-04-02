@@ -7,6 +7,7 @@ public class MeddlerTileObject : TileObject {
 
     public MeddlerTileObject() {
         Initialize(TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public MeddlerTileObject(SaveDataTileObject data) {

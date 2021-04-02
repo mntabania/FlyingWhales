@@ -19,16 +19,41 @@ namespace Traits {
             canBeTriggered = true;
             //AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
             traitOwner = sourceCharacter as Character;
+            traitOwner.behaviourComponent.AddBehaviourComponent(typeof(KleptomaniacBehaviour));
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            traitOwner.behaviourComponent.RemoveBehaviourComponent(typeof(KleptomaniacBehaviour));
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             traitOwner = addTo as Character;
+        }
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is Character targetCharacter) {
+                PLAYER_SKILL_TYPE playerSkillType = GetPlayerSkillType();
+                if (characterThatWillDoJob.afflictionsSkillsInflictedByPlayer.Contains(playerSkillType)) {
+                    //affliction was applied by player
+                    PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
+                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                    if (playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Do_Pick_Pocket, skillData.currentLevel)) {
+                        var chanceMet = ChanceData.RollChance(skillData.currentLevel == 1 ? CHANCE_TYPE.Kleptomania_Pickpocket_Level_1 : CHANCE_TYPE.Kleptomania_Pickpocket_Level_2);
+                        if (chanceMet && !characterThatWillDoJob.IsHostileWith(targetCharacter) && 
+                            !characterThatWillDoJob.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KLEPTOMANIAC_STEAL, INTERACTION_TYPE.PICKPOCKET, targetCharacter, characterThatWillDoJob);
+                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                        }
+                    }
+                }    
+            }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override string TriggerFlaw(Character character) {
             //The character will begin Hunt for Blood.
@@ -100,7 +125,7 @@ namespace Traits {
             return base.TriggerFlaw(character);
         }
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
-            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.PICKPOCKET) {
+            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.PICKPOCKET || action == INTERACTION_TYPE.STEAL_ANYTHING) {
                 cost = 0;//Utilities.rng.Next(5, 10);//5,46
             } else if (action == INTERACTION_TYPE.PICK_UP) {
                 cost = 10000;//Utilities.rng.Next(5, 10);//5,46

@@ -7,6 +7,7 @@ public class MaraudTileObject : TileObject {
 
     public MaraudTileObject() {
         Initialize(TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public MaraudTileObject(SaveDataTileObject data) {

@@ -79,15 +79,15 @@ MonoBehaviour:
     cooldownPerLevel: a0000000800000008000000070000000
     skillMovementSpeed: 
   afflictionUpgradeData:
-    bonuses: 0100000007000000
+    bonuses: 0100000008000000
     cooldown: 
     additionalPiercePerLevel: []
     rateChance: 
     crowdNumber: 04000000030000000300000002000000
-    napsPercent: 
     napsDuration: 
     numberOfCriteria: 
     hungerRate: 
+    duration: []
     opinionTrigger: 
     addedBehaviour: 00000000010000000100000002000000
     listOfCriteria: 

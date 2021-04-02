@@ -34,6 +34,7 @@ public class ConsoleBase : InfoUIBase {
     [SerializeField] private TextMeshProUGUI fullDebug2Lbl;
 
     [SerializeField] private Toggle tglAlwaysSuccessScheme;
+    [SerializeField] private ChanceTheWrapper chanceTheWrapper;
 
     void Awake() {
         Initialize();
@@ -106,6 +107,7 @@ public class ConsoleBase : InfoUIBase {
         tglAlwaysSuccessScheme.SetIsOnWithoutNotify(SchemeData.alwaysSuccessScheme);
         tglAlwaysSuccessScheme.onValueChanged.RemoveAllListeners();
         tglAlwaysSuccessScheme.onValueChanged.AddListener(OnToggleAlwaysSuccessScheme);
+        chanceTheWrapper.Initialize();
     }
     private void Update() {
         if (!isShowing) {

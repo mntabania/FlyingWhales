@@ -29,7 +29,7 @@ namespace Traits {
                 owner = character;
             }
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             int napChance = UnityEngine.Random.Range(0, 100);
             if (napChance < 4) {
                 return DoNarcolepticNap();

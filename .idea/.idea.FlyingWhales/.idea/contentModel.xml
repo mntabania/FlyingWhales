@@ -1106,6 +1106,7 @@
               <e p="HuntPreyBehaviour.cs" t="Include" />
               <e p="InfestorBehaviour.cs" t="Include" />
               <e p="InvadeBehaviour.cs" t="Include" />
+              <e p="KleptomaniacBehaviour.cs" t="Include" />
               <e p="KoboldBehaviour.cs" t="Include" />
               <e p="MimicBehaviour.cs" t="Include" />
               <e p="MineBehaviour.cs" t="Include" />
@@ -1140,6 +1141,7 @@
               <e p="TritonBehaviour.cs" t="Include" />
               <e p="TrollBehaviour.cs" t="Include" />
               <e p="UndeadBehaviour.cs" t="Include" />
+              <e p="UnfaithfulBehaviour.cs" t="Include" />
               <e p="VampireBehaviour.cs" t="Include" />
               <e p="VengefulGhostBehaviour.cs" t="Include" />
               <e p="WolfBehaviour.cs" t="Include" />
@@ -1637,6 +1639,7 @@
               <e p="StartPlagueCare.cs" t="Include" />
               <e p="StartTend.cs" t="Include" />
               <e p="Steal.cs" t="Include" />
+              <e p="StealAnything.cs" t="Include" />
               <e p="StealthTransform.cs" t="Include" />
               <e p="Strangle.cs" t="Include" />
               <e p="StudyMonster.cs" t="Include" />
@@ -2503,6 +2506,7 @@
             </e>
             <e p="ManaRegenComponent.cs" t="Include" />
             <e p="MonsterCapacity.cs" t="Include" />
+            <e p="PartyDamageAccumulator.cs" t="Include" />
             <e p="Plague Related Scripts" t="Include">
               <e p="Death Effects" t="Include">
                 <e p="Explosion.cs" t="Include" />
@@ -2610,6 +2614,7 @@
                 <e p="PlagueChaosOrb.cs" t="Include" />
                 <e p="PlayerSuccessRaidChaosOrb.cs" t="Include" />
                 <e p="PrayerChaosOrb.cs" t="Include" />
+                <e p="RaidChaosOrb.cs" t="Include" />
                 <e p="SpellDamageChaosOrb.cs" t="Include" />
                 <e p="UndeadChaosOrb.cs" t="Include" />
               </e>
@@ -2627,6 +2632,7 @@
                 <e p="DefendData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />
                 <e p="DestroyEyeWardData.cs" t="Include" />
+                <e p="DestroyStructureData.cs" t="Include" />
                 <e p="DrainSpiritData.cs" t="Include" />
                 <e p="EmpowerData.cs" t="Include" />
                 <e p="EvangelizeData.cs" t="Include" />
@@ -2677,6 +2683,7 @@
                 <e p="StifleMigrationData.cs" t="Include" />
               </e>
               <e p="SkillData.cs" t="Include" />
+              <e p="SkillEventDispatcher.cs" t="Include" />
               <e p="SkillProgressionManager.cs" t="Include" />
               <e p="Spells" t="Include">
                 <e p="BallLightningData.cs" t="Include" />
@@ -2698,6 +2705,7 @@
                 <e p="LocustSwarmData.cs" t="Include" />
                 <e p="ManifestFoodData.cs" t="Include" />
                 <e p="MeteorData.cs" t="Include" />
+                <e p="PlaguedRatsData.cs" t="Include" />
                 <e p="PlantGermData.cs" t="Include" />
                 <e p="PoisonBloomData.cs" t="Include" />
                 <e p="PoisonCloudData.cs" t="Include" />
@@ -3024,6 +3032,7 @@
           </e>
           <e p="Scriptable Object Scripts" t="Include">
             <e p="ArtifactData.cs" t="Include" />
+            <e p="ChanceData.cs" t="Include" />
             <e p="Character Classes" t="Include">
               <e p="CharacterClassData.cs" t="Include" />
             </e>
@@ -3296,7 +3305,11 @@
             <e p="CharacterRelationshipItem.cs" t="Include" />
             <e p="CombatAbilityButton.cs" t="Include" />
             <e p="Comparers.cs" t="Include" />
-            <e p="ConsoleBase.cs" t="Include" />
+            <e p="Console Menu" t="Include">
+              <e p="ChanceItem.cs" t="Include" />
+              <e p="ChanceTheWrapper.cs" t="Include" />
+              <e p="ConsoleBase.cs" t="Include" />
+            </e>
             <e p="ConversationMenu.cs" t="Include" />
             <e p="Custom UI" t="Include">
               <e p="ButtonConverter.cs" t="Include" />
@@ -3489,7 +3502,6 @@
               </e>
             </e>
             <e p="Nameplates" t="Include">
-              <e p="ArtifactPickerItem.cs" t="Include" />
               <e p="CharacterNameplateItem.cs" t="Include" />
               <e p="EnumNameplateItem.cs" t="Include" />
               <e p="FactionNameplateItem.cs" t="Include" />
@@ -3505,6 +3517,7 @@
               <e p="StringNameplateItem.cs" t="Include" />
               <e p="StructureNameplateItem.cs" t="Include" />
               <e p="SummonMinionPlayerSkillNameplateItem.cs" t="Include" />
+              <e p="TileObjectNameplateItem.cs" t="Include" />
               <e p="WorldEventNameplate.cs" t="Include" />
             </e>
             <e p="ObjectPicker.cs" t="Include" />
@@ -3612,6 +3625,9 @@
             <e p="FPSDisplay.cs" t="Include" />
             <e p="GameUtilities.cs" t="Include" />
             <e p="HoverHandler.cs" t="Include" />
+            <e p="IEqualityComparers" t="Include">
+              <e p="EnumComparer.cs" t="Include" />
+            </e>
             <e p="IMG2Sprite.cs" t="Include" />
             <e p="IntRange.cs" t="Include" />
             <e p="JobUtilities.cs" t="Include" />

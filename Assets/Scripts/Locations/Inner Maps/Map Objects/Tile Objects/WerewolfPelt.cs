@@ -7,6 +7,7 @@
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Interesting");
     }
     public WerewolfPelt(SaveDataTileObject data) { }

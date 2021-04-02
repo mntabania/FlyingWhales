@@ -49,6 +49,7 @@ public class SkillData : IPlayerSkill {
     public bool isUnlockedBaseOnRequirements { get; set; }
     
     public int unlockCost { get; set; }
+    public SkillEventDispatcher skillEventDispatcher { get; }
 
     public void LevelUp() {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
@@ -60,9 +61,11 @@ public class SkillData : IPlayerSkill {
 
         SetCharges(maxCharges);
         FinishCooldown();
+        skillEventDispatcher.ExecuteLevelUpEvent(this, playerSkillData);
     }
     
     protected SkillData() {
+        skillEventDispatcher = new SkillEventDispatcher();
         ResetData();
     }
 
@@ -143,6 +146,7 @@ public class SkillData : IPlayerSkill {
         currentCooldownTick = cooldown;
         currentLevel = 0;
         isInUse = false;
+        skillEventDispatcher.CleanUp();
     }
     public bool CanPerformAbilityTowards(IPointOfInterest poi) {
         if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {

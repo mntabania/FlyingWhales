@@ -104,7 +104,7 @@ namespace Traits {
                 _overheatingEffectGO = null;
             }
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             int roll = UnityEngine.Random.Range(0, 1000);
             int chance = 15 * traitable.traitContainer.GetStacks(name);
             if (roll < chance) {

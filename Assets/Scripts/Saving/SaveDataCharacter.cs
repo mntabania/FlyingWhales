@@ -48,7 +48,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public POI_STATE state;
     public INTERACTION_TYPE causeOfDeath;
     public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer;
-
+    
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
 

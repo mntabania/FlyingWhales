@@ -3095,7 +3095,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                     Trait trait = traitOverrideFunctions[i];
-                    if (trait.PerTickWhileStationaryOrUnoccupied()) {
+                    if (trait.PerTickWhileStationaryOrUnoccupied(this)) {
                         break;
                     }
                 }
@@ -4293,13 +4293,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //}
                     Profiler.BeginSample($"{name} Lazy checking");
                     if(traitContainer.HasTrait("Lazy")) {
-                        log = $"{log}\n - Character is lazy, has 30% chance to not perform job if it is a settlement job...";
+                        Lazy lazy = traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+                        float chance = lazy.GetTriggerChance(this);
+                        log = $"{log}\n - Character is lazy, has {chance.ToString("F2")} chance to not perform job if it is a settlement job...";
                         //Note: Changed the checker from "Just settlement jobs" to "anything other than personal jobs", because non personal jobs are treated as work jobs
                         if (currentTopPrioJob.originalOwner != null && currentTopPrioJob.originalOwner.ownerType != JOB_OWNER.CHARACTER) { //currentTopPrioJob.originalOwner.ownerType == JOB_OWNER.SETTLEMENT
-                            int chance = UnityEngine.Random.Range(0, 100);
-                            log = $"{log}\n - Roll: {chance.ToString()}";
-                            if (chance < 30) {
-                                Lazy lazy = traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+                            if (GameUtilities.RollChance(chance, ref log)) {
                                 if (lazy.TriggerLazy()) {
                                     log = $"{log}\n - Character triggered lazy, not going to do job, and cancel it";
                                     logComponent.PrintLogIfActive(log);
@@ -6092,6 +6091,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void RemoveBookmark() {
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
+    }
+    #endregion
+
+    #region Afflictions
+    public bool WasAfflictedByPlayer(Trait p_trait) {
+        PLAYER_SKILL_TYPE skillType = p_trait.GetPlayerSkillType();
+        return afflictionsSkillsInflictedByPlayer.Contains(skillType);
     }
     #endregion
 

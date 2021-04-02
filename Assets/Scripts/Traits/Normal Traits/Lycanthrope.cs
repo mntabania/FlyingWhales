@@ -84,7 +84,7 @@ namespace Traits {
                 }
             }
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (owner.hasMarker && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
                 float roll = Random.Range(0f, 100f);
                 float chance = 0.85f;

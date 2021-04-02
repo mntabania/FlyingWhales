@@ -7,6 +7,8 @@ using UnityEngine;
 
 [CustomPropertyDrawer(typeof(StringIntDictionary))]
 public class StringIntDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(StringFloatDictionary))]
+public class StringFloatDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]
 public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileSpriteCorruptionListDictionary))]
@@ -91,6 +93,8 @@ public class MonsterMigrationBiomeDictionaryPropertyDrawer : SerializableDiction
 public class ScenarioSettingsDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(StructureDataDictionary))]
 public class StructureDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(IntChancesDictionary))]
+public class IntChancesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

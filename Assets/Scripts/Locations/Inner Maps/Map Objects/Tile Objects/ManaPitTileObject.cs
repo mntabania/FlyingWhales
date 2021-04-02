@@ -7,6 +7,7 @@ public class ManaPitTileObject : TileObject {
 
     public ManaPitTileObject() {
         Initialize(TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public ManaPitTileObject(SaveDataTileObject data) {

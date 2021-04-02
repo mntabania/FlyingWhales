@@ -321,6 +321,18 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(0, 10000);
             return roll < chance;
         }
+        /// <summary>
+        /// Roll a chance. This rolls from 0f - 1000f.
+        /// </summary>
+        /// <param name="chance">The chance for this to return true.</param>
+        /// <param name="log">The log string to append this roll to.</param>
+        /// <returns>Whether or not the given chance was met.</returns>
+        public static bool RollChance(float chance, ref string log) {
+            chance *= 100f;
+            int roll = UnityEngine.Random.Range(0, 10000);
+            log += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+            return roll < chance;
+        }
         public static int RandomBetweenTwoNumbers(int p_min, int p_max) {
             //+1 because max range in Random.Range is exclusive
             int roll = UnityEngine.Random.Range(p_min, p_max + 1);

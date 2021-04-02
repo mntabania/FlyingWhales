@@ -57,7 +57,7 @@ namespace Traits {
             log.AddLogToDatabase(true);
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             float pukeRoll = Random.Range(0f, 100f);
             if (pukeRoll < pukeChance) {
                 //do puke action

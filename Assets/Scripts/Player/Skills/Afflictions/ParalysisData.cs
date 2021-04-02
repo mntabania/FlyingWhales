@@ -15,7 +15,8 @@ public class ParalysisData : AfflictData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        AfflictPOIWith("Paralyzed", targetPOI, name);
+        int duration = (int)PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.PARALYSIS).afflictionUpgradeData.GetDurationPerLevel(currentLevel);
+        AfflictPOIWith("Paralyzed", targetPOI, name, overridenDuration: duration);
         OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {

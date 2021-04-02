@@ -13,6 +13,7 @@ public class DoorTileObject : TileObject {
     
     public DoorTileObject() {
         Initialize(TILE_OBJECT_TYPE.DOOR_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public DoorTileObject(SaveDataTileObject data) : base(data) { }

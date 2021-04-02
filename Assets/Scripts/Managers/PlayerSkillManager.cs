@@ -39,7 +39,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     public Dictionary<string, PLAYER_SKILL_TYPE> afflictionsNameSkillTypeDictionary = new Dictionary<string, PLAYER_SKILL_TYPE>()
     {
-        { "Agoraphobic", PLAYER_SKILL_TYPE.AGORAPHOBIA },
+            { "Agoraphobic", PLAYER_SKILL_TYPE.AGORAPHOBIA },
             { "Alcoholic", PLAYER_SKILL_TYPE.ALCOHOLIC },
             { "Cannibal", PLAYER_SKILL_TYPE.CANNIBALISM },
             { "Coward", PLAYER_SKILL_TYPE.COWARDICE },
@@ -47,7 +47,7 @@ public class PlayerSkillManager : MonoBehaviour {
             { "Hothead", PLAYER_SKILL_TYPE.HOTHEADED },
             { "Kleptomaniac", PLAYER_SKILL_TYPE.KLEPTOMANIA },
             { "Lazy", PLAYER_SKILL_TYPE.GLUTTONY },
-            { "Lycantrophe", PLAYER_SKILL_TYPE.LYCANTHROPY },
+            { "Lycanthrophe", PLAYER_SKILL_TYPE.LYCANTHROPY },
             { "Music Hater", PLAYER_SKILL_TYPE.MUSIC_HATER },
             { "Narcoleptic", PLAYER_SKILL_TYPE.NARCOLEPSY },
             { "Paralyzed", PLAYER_SKILL_TYPE.PARALYSIS },
@@ -386,6 +386,12 @@ public class PlayerSkillManager : MonoBehaviour {
             spellData.ResetData();
         }
     }
+    public PLAYER_SKILL_TYPE GetSkillTypeFromAfflictionName(string p_name) {
+        if (afflictionsNameSkillTypeDictionary.ContainsKey(p_name)) {
+            return afflictionsNameSkillTypeDictionary[p_name];
+        }
+        throw new Exception($"No affliction skill type with name {p_name}");
+    }
     #endregion
 
     #region Assets
@@ -501,9 +507,12 @@ public class PlayerSkillManager : MonoBehaviour {
 
     public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        return playerSkillData.afflictionUpgradeData.GethungerRatePerLevel(GetSkillData(p_skillType).currentLevel);
+        return playerSkillData.afflictionUpgradeData.GetHungerRatePerLevel(GetSkillData(p_skillType).currentLevel);
     }
-
+    public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType, int p_level) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetHungerRatePerLevel(p_level);
+    }
     public int GetAfflictionCrowdNumberPerLevel(PLAYER_SKILL_TYPE p_skillType) {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetCrowdNumberPerLevel(GetSkillData(p_skillType).currentLevel);
@@ -523,6 +532,33 @@ public class PlayerSkillManager : MonoBehaviour {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
         SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
         return skillData;
+    }
+    public bool HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE p_skillType, AFFLICTION_SPECIFIC_BEHAVIOUR p_behaviour) {
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetPlayerSkillData(p_skillType);
+        return playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(p_behaviour, skillData.currentLevel);
+    }
+    public float GetTriggerRateForCurrentLevel(PLAYER_SKILL_TYPE p_skillType) {
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetPlayerSkillData(p_skillType);
+        return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(skillData.currentLevel);
+    }
+    public bool HasOpinionTriggerAtCurrentLevel(PLAYER_SKILL_TYPE p_skillType, OPINIONS p_opinion) {
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetPlayerSkillData(p_skillType);
+        return playerSkillData.afflictionUpgradeData.HasOpinionTriggerForLevel(p_opinion, skillData.currentLevel);
+    }
+    public void PopulateOpinionTriggersAtCurrentLevel(PLAYER_SKILL_TYPE p_skillType, List<OPINIONS> p_opinions) {
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetPlayerSkillData(p_skillType);
+        for (int i = 0; i < playerSkillData.afflictionUpgradeData.opinionTrigger.Count; i++) {
+            if (i <= skillData.currentLevel) {
+                OPINIONS currentOpinion = playerSkillData.afflictionUpgradeData.opinionTrigger[i];
+                p_opinions.Add(currentOpinion);
+            } else {
+                break;
+            }
+        }
     }
     #endregion
 }

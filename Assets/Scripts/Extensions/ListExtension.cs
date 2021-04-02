@@ -51,6 +51,16 @@ public static class ListExtension {
             sourceList.Remove(currItem);
         }
     }
+    public static bool HasValueInListUntilIndex<T>(this List<T> sourceList, int p_index, T value) {
+        int loopCount = p_index + 1;
+        for (int i = 0; i < loopCount; i++) {
+            T currentValue = sourceList[i];
+            if (currentValue.Equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 public static class ArrayExtensions {

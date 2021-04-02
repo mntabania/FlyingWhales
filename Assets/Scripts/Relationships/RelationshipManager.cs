@@ -82,6 +82,21 @@ public class RelationshipManager : BaseMonoBehaviour {
                 return RELATIONSHIP_TYPE.NONE;
         }
     }
+    public bool IsCompatibleBasedOnSexualityAndOpinion(Character p_character1, Character p_character2) {
+        Unfaithful unfaithful = p_character1.traitContainer.GetTraitOrStatus<Unfaithful>("Unfaithful");
+        if (unfaithful == null) {
+            return IsSexuallyCompatible(p_character1, p_character2);
+        } else {
+            return unfaithful.IsCompatibleBasedOnSexualityAndOpinions(p_character1, p_character2);
+        }
+    }
+    public bool CanHaveRelationship(Character p_character1, Character p_character2, RELATIONSHIP_TYPE p_rel) {
+        if (GetValidator(p_character1).CanHaveRelationship(p_character2, p_character1, p_rel) &&
+            GetValidator(p_character2).CanHaveRelationship(p_character1, p_character2, p_rel)) {
+            return true;
+        }
+        return false;
+    }
     /// <summary>
     /// Check whether or not 2 characters are sexually compatible.
     /// NOTE: This takes into account some traits.
