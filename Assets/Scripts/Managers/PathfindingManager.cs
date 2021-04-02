@@ -61,10 +61,12 @@ public class PathfindingManager : BaseMonoBehaviour {
         if (fromTile == null || toTile == null) { return false; }
         if (fromTile == toTile) { return true; }
         if (fromTile.structure == null) {
-            throw new Exception($"Structure of {fromTile.ToString()} is null");
+            Debug.LogError($"Structure of {fromTile.ToString()} is null");
+            return false;
         }
         if (toTile.structure == null) {
-            throw new Exception($"Structure of {toTile.ToString()} is null");
+            Debug.LogError($"Structure of {toTile.ToString()} is null");
+            return false;
         }
         if(fromTile.structure.region == toTile.structure.region) {
             return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, fromTile.parentMap.onlyUnwalkableGraph).node,

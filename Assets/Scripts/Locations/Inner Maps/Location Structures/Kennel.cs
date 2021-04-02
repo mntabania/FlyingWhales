@@ -54,7 +54,7 @@ namespace Inner_Maps.Location_Structures {
             //In case there are multiple monsters inside kennel, only the first one will be counted.
             //Reference: https://www.notion.so/ruinarch/f5da33a23d5545298c66be49c3c767fd?v=1ebbd3791a3d477fb7818103643f9a41&p=595c5767c8684d2b91274f304058c4a1
             if (p_character is Summon summon) {
-                if (_occupyingSummon == null && !summon.isDead) { //charactersHere.Count(c => c is Summon && !c.isDead) == 1
+                if (_occupyingSummon == null && IsValidOccupant(summon)) { //charactersHere.Count(c => c is Summon && !c.isDead) == 1
                     OccupyKennel(summon);    
                 }
                 summon.movementComponent.SetEnableDigging(false);
@@ -115,10 +115,22 @@ namespace Inner_Maps.Location_Structures {
             _occupyingSummon = null;
 
             //in case there is another monster that is still at this kennel, then set the occupying monster to that monster, also add related charges
-            Summon otherSummon = charactersHere.FirstOrDefault(c => c is Summon && !c.isDead) as Summon;
+            Summon otherSummon = charactersHere.FirstOrDefault(IsValidOccupant) as Summon;
             if (otherSummon != null) {
                 OccupyKennel(otherSummon);    
             }
+        }
+        private bool IsValidOccupant(Character p_character) {
+            if (p_character is Summon summon) {
+                if (summon.isDead) {
+                    return false;
+                }
+                if (summon.faction != null && summon.faction.isPlayerFaction) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
         }
         
         private void StopDrainingCharactersHere() {

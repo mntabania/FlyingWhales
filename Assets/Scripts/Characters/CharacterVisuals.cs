@@ -242,7 +242,11 @@ public class CharacterVisuals {
 
         //Character State
         if (_owner.stateComponent.currentState != null) {
-            return _owner.stateComponent.currentState.thoughtBubbleLog.logText;
+            if (_owner.stateComponent.currentState.thoughtBubbleLog != null) {
+                return _owner.stateComponent.currentState.thoughtBubbleLog.logText;    
+            } else {
+                Debug.LogWarning($"Thought Bubble Log of {_owner.name}'s state {_owner.stateComponent.currentState.stateName} is null!");
+            }
         }
         //fleeing
         if (_owner.marker && _owner.marker.hasFleePath) {
