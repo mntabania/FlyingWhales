@@ -63,13 +63,13 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
         base.ShowUI();
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
-        InputManager.Instance.AllowHotkeys(false);
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
         InnerMapCameraMove.Instance.DisableMovement();
     }
     public override void HideUI() {
         base.HideUI();
         UIManager.Instance.ResumeLastProgressionSpeed();
-        InputManager.Instance.AllowHotkeys(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
         InnerMapCameraMove.Instance.EnableMovement();
     }
 

@@ -91,8 +91,8 @@ namespace Traits {
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(job.ToString()), LOG_IDENTIFIER.STRING_1);
                 owner.logComponent.RegisterLog(log);
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-                // PlayerManager.Instance.player.ShowNotificationFrom(owner, log);
+                // PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFrom(owner, log);
                 return true;
             }
             return false;

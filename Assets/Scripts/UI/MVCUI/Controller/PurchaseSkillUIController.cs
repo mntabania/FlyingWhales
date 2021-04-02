@@ -90,7 +90,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		base.HideUI();
 		UIManager.Instance.SetSpeedTogglesState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
-		InputManager.Instance.AllowHotkeys(true);
+		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		InnerMapCameraMove.Instance.EnableMovement();
 	}
 	public override void ShowUI() {
@@ -235,7 +235,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			SpawnItems();
 			UIManager.Instance.Pause();
 			UIManager.Instance.SetSpeedTogglesState(false);
-			InputManager.Instance.AllowHotkeys(false);
+			InputManager.Instance.SetAllHotkeysEnabledState(false);
 			InnerMapCameraMove.Instance.DisableMovement();
 		});
 	}
@@ -266,7 +266,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		}
 		UIManager.Instance.Pause();
 		UIManager.Instance.SetSpeedTogglesState(false);
-		InputManager.Instance.AllowHotkeys(false);
+		InputManager.Instance.SetAllHotkeysEnabledState(false);
 		InnerMapCameraMove.Instance.DisableMovement();
 	}
 
