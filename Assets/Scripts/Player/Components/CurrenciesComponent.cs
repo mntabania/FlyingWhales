@@ -34,7 +34,7 @@ public class CurrenciesComponent {
     }
     public void GainPlaguePointFromCharacter(int amount, Character p_character) {
         AdjustPlaguePoints(amount);
-        PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount);
+        // PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount);
     }
     public bool CanGainPlaguePoints() {
         return PlayerManager.Instance.player.playerSettlement != null && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB);

@@ -96,6 +96,7 @@
     public static string UNSET_PLAGUE_DEATH_EFFECT = "UnsetPlagueDeathEffect";
 
     public static string UPDATED_PLAGUE_POINTS = "UpdatedPlaguePoints";
+    public static string PLAGUE_POINTS_ADJUSTED = "PlaguePointsAdjusted";
 
     /// <summary>
     /// Signals for MONSTER UNDERLINGS of PLAYER

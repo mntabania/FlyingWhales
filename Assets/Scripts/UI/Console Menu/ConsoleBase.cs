@@ -1311,7 +1311,7 @@ public class ConsoleBase : InfoUIBase {
         string valueParameterStr = parameters[0];
         if (Int32.TryParse(valueParameterStr, out var value)) {
             PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(value);
-            AddSuccessMessage($"Adjusted Plague Points by {value.ToString()}. New Plague Points is {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}");
+            AddSuccessMessage($"Adjusted Chaotic Energy by {value.ToString()}. New Chaotic Energy is {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}");
         } else {
             AddErrorMessage($"Could not parse value {valueParameterStr} to an integer.");
         }

@@ -186,6 +186,7 @@ public class PlayerUI : BaseMonoBehaviour {
         //currencies
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAGUE_POINTS_ADJUSTED, OnPlaguePointsAdjusted);
         
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
@@ -1030,33 +1031,35 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region Plague
     private Tweener _currentPlaguePointPunchTween;
+    private void OnPlaguePointsAdjusted(int p_adjustedAmount, int p_totalAmount) {
+        if (p_adjustedAmount != 0) {
+            UpdatePlaguePointsAmount(p_totalAmount);
+            ShowPlaguePointsGainedEffect(p_adjustedAmount);
+            DoPlaguePointPunchEffect();
+            AudioManager.Instance.PlayParticleMagnet();    
+        }
+    }
     private void DoPlaguePointPunchEffect() {
         if (_currentPlaguePointPunchTween == null) {
             _currentPlaguePointPunchTween = plaguePointsContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentPlaguePointPunchTween = null);    
         }
     }
-    public void ShowPlaguePointsGainedEffect(int adjustmentAmount) {
+    private void ShowPlaguePointsGainedEffect(int adjustmentAmount) {
         if (plaguePointsContainer.gameObject.activeSelf) {
-            DoPlaguePointPunchEffect();
-            var text = $"<color=#FE4D60>+{adjustmentAmount.ToString()}{UtilityScripts.Utilities.PlagueIcon()}</color>";
+            var text = adjustmentAmount > 0 ? $"<color=\"green\">+{adjustmentAmount.ToString()}</color>" : $"<color=\"red\">{adjustmentAmount.ToString()}</color>";
             GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", plaguePointLbl.transform.position, Quaternion.identity, transform, true);
-            effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));    
+            effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
         }
     }
     private void UpdatePlaguePointsAmount(int p_amount) {
         plaguePointLbl.text = p_amount.ToString();
     }
     public void OnHoverEnterPlaguePoints() {
-        string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";
-        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.PlagueIcon()} Plague Points");
+        string text = "The amount of Chaotic Energy you've generated. You can use this to upgrade your Plague if you have a Biolab built";
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.PlagueIcon()} Chaotic Energy");
     }
     public void OnHoverExitPlaguePoints() {
         UIManager.Instance.HideSmallInfo();
-    }
-    public void OnClickPlaguePoints() {
-        if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
-            UIManager.Instance.ShowBiolabUI();    
-        }
     }
     #endregion
 

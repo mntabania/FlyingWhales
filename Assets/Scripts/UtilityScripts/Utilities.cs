@@ -295,17 +295,23 @@ namespace UtilityScripts {
                     if (logFiller.identifier == identifier) {
                         object obj = logFiller.GetObjectForFiller();
                         if (obj != null) {
-                            wordToReplace = $"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>";
-                            if (obj is Character c) {
-                                wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
-                            } else if (obj is Faction) {
-                                wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
-                            } else if (obj is TileObject) {
-                                wordToReplace = ColorizeName(wordToReplace);
+                            if (obj is Wilderness) {
+                                //do not add link to wilderness, since it should not be selectable
+                                wordToReplace = $"<b>{logFiller.value}</b>";
+                            } else {
+                                wordToReplace = $"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>";
+                                if (obj is Character c) {
+                                    wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
+                                } else if (obj is Faction) {
+                                    wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
+                                } else if (obj is TileObject) {
+                                    wordToReplace = ColorizeName(wordToReplace);
+                                }
+                                if (obj is Character character) {
+                                    wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
+                                }    
                             }
-                            if (obj is Character character) {
-                                wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
-                            }
+                            
                         } else {
                             wordToReplace = $"<b>{logFiller.value}</b>";
                         }
@@ -534,16 +540,21 @@ namespace UtilityScripts {
                     LogFiller logFiller = objectLog[i];
                     if (logFiller.identifier == identifier) {
                         if (logFiller.obj != null) {
-                            wordToReplace = $"<b><link={i}>{logFiller.value}</link></b>";
-                            if (logFiller.obj is Character c) {
-                                wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
-                            } else if (logFiller.obj is Faction) {
-                                wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
-                            } else if (logFiller.obj is TileObject) {
-                                wordToReplace = ColorizeName(wordToReplace);
-                            }
-                            if (logFiller.obj is Character character) {
-                                wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
+                            if (logFiller.obj is Wilderness) {
+                                //do not add link to wilderness, since it should not be selectable
+                                wordToReplace = $"<b>{logFiller.value}</b>";
+                            } else {
+                                wordToReplace = $"<b><link={i}>{logFiller.value}</link></b>";
+                                if (logFiller.obj is Character c) {
+                                    wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
+                                } else if (logFiller.obj is Faction) {
+                                    wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
+                                } else if (logFiller.obj is TileObject) {
+                                    wordToReplace = ColorizeName(wordToReplace);
+                                }
+                                if (logFiller.obj is Character character) {
+                                    wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
+                                }
                             }
                         } else {
                             wordToReplace = $"<b>{logFiller.value}</b>";

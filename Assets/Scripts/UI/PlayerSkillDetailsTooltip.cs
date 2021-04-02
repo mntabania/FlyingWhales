@@ -100,10 +100,17 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         
         additionalText.text = GetAdditionalInfo(spellData);
 
-        if (spellData is BrainwashData && UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
-            Character targetCharacter = defilerRoom.charactersInRoom.First();
+        if (spellData is BrainwashData) {
+            Character targetCharacter = null;
+            if (UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
+                targetCharacter = defilerRoom.charactersInRoom.First();    
+            } else if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character character) {
+                targetCharacter = character;
+            } else if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is PrisonCell room && room.charactersInRoom.Count > 0) {
+                targetCharacter = room.charactersInRoom.First();    
+            }
             if (targetCharacter != null) {
-                fullDescription += $"\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
+                fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
             }
         }
         
@@ -145,12 +152,12 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         // }
         additionalText.text = GetAdditionalInfo(spellData);
 
-        if (spellData is BrainwashData && UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
-            Character targetCharacter = defilerRoom.charactersInRoom.First();
-            if (targetCharacter != null) {
-                fullDescription += $"\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
-            }
-        }
+        // if (spellData is BrainwashData && UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
+        //     Character targetCharacter = defilerRoom.charactersInRoom.First();
+        //     if (targetCharacter != null) {
+        //         fullDescription += $"\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
+        //     }
+        // }
         
         descriptionText.SetTextAndReplaceWithIcons(fullDescription);
     }
