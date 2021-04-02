@@ -46,6 +46,11 @@ public class RemoveFlawData : PlayerAction {
         if (RollSuccessChance(p_character)) {
             p_character.traitContainer.RemoveTrait(p_character, traitName);
             Activate(p_character);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
+            log.AddToFillers(p_character, p_character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, traitName, LOG_IDENTIFIER.STRING_1);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         } else {
             //Go into cooldown but do not activate ability
             OnExecutePlayerSkill();
