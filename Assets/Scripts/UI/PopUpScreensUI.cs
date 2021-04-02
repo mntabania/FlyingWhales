@@ -109,8 +109,8 @@ public class PopUpScreensUI : MonoBehaviour {
     }
     
     private void ShowEndScreen() {
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         endScreen.SetActive(true);
-
         // //bg image
         // Color fromColor = bgImage.color;
         // fromColor.a = 0f;

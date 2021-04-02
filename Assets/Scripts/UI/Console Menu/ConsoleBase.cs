@@ -100,7 +100,8 @@ public class ConsoleBase : InfoUIBase {
             {"/activate_settlement_event", ActivateSettlementEvent},
             {"/trigger_quarantine", TriggerQuarantine},
             {"/add_ideology", AddFactionIdeology},
-            {"/check_tiles", CheckTiles}
+            {"/check_tiles", CheckTiles},
+            {"/reveal_all", RevealAll}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1316,6 +1317,19 @@ public class ConsoleBase : InfoUIBase {
             AddErrorMessage($"Could not parse value {valueParameterStr} to an integer.");
         }
 
+    }
+    private void RevealAll(string[] parameters) {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            character.isInfoUnlocked = true;
+        }
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            if (faction.isMajorFaction) {
+                faction.isInfoUnlocked = true;
+            }
+        }
+        AddSuccessMessage($"Revealed all Character and Faction Info");
     }
     #endregion
 

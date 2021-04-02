@@ -43,8 +43,10 @@ namespace Inner_Maps.Location_Structures {
             //area.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
             currentAttackers.Clear();
-            DemonicStructurePlayerSkill skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-            PlayerManager.Instance.player.playerSkillComponent.AddCharges(skill.type, 1);
+            if (structureType != STRUCTURE_TYPE.THE_PORTAL) {
+                DemonicStructurePlayerSkill skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
+                PlayerManager.Instance.player.playerSkillComponent.AddCharges(skill.type, 1);    
+            }
             Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
