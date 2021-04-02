@@ -322,10 +322,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
         limiterComponent = new LimiterComponent(); limiterComponent.SetOwner(this);
         piercingAndResistancesComponent = new PiercingAndResistancesComponent(); piercingAndResistancesComponent.SetOwner(this);
-        eventDispatcher = new CharacterEventDispatcher();
         previousCharacterDataComponent = new PreviousCharacterDataComponent(); previousCharacterDataComponent.SetOwner(this);
+        traitComponent = new CharacterTraitComponent(); traitComponent.SetOwner(this);
+        eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-        traitComponent = new CharacterTraitComponent();
 
         needsComponent.ResetSleepTicks();
     }
@@ -401,9 +401,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         limiterComponent = data.limiterComponent.Load(); limiterComponent.SetOwner(this);
         piercingAndResistancesComponent = data.piercingAndResistancesComponent.Load(); piercingAndResistancesComponent.SetOwner(this);
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
+        traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-        traitComponent = new CharacterTraitComponent();
 
         if (data.hasMinion) {
             _minion = data.minion.Load(this);
@@ -5987,6 +5987,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         tileObjectComponent.LoadReferences(data.tileObjectComponent);
         crimeComponent.LoadReferences(data.crimeComponent);
         previousCharacterDataComponent.LoadReferences(data.previousCharacterDataComponent);
+        traitComponent.LoadReferences(data.traitComponent);
 
         //Place marker after loading references
         if (data.hasMarker) {

@@ -5,7 +5,6 @@ namespace Traits {
     public class Agoraphobic : Trait {
         public override bool isSingleton => true;
 
-        public bool hasReactedThisTick;
         public Agoraphobic() {
             name = "Agoraphobic";
             description = "Crowds? Oh no!";
@@ -13,7 +12,6 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
-            hasReactedThisTick = false;
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
@@ -21,6 +19,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
+                ApplyLeavePartyEffect(character);
                 ApplyAgoraphobicEffect(character);
                 character.traitComponent.SubscribeToAgoraphobiaLevelUpSignal();
             }
@@ -38,14 +37,11 @@ namespace Traits {
                 //     return false;
                 // }
                 // ApplyAgoraphobicEffect(characterThatWillDoJob);
-                if (hasReactedThisTick) {
+                if (characterThatWillDoJob.traitComponent.hasAgoraphobicReactedThisTick) {
                     return false;
                 }
                 if (ApplyAgoraphobicEffect(characterThatWillDoJob)) {
-                    hasReactedThisTick = true;
-                    GameDate date = GameManager.Instance.Today();
-                    date.AddTicks(1);
-                    SchedulingManager.Instance.AddEntry(date, () => hasReactedThisTick = false, this);
+                    characterThatWillDoJob.traitComponent.SetHasAgoraphobicReactedThisTick(true);
                 }
 
                 return true;
@@ -58,7 +54,16 @@ namespace Traits {
 
         }
         #endregion
-
+        private void ApplyLeavePartyEffect(Character character) {
+            if (character.HasAfflictedByPlayerWith(name)) {
+                int level = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel;
+                if (level >= 3) {
+                    if (character.partyComponent.hasParty) {
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, character, "Agoraphobic");
+                    }
+                }
+            }
+        }
         private bool ApplyAgoraphobicEffect(Character character) {
             if (!character.limiterComponent.canWitness) { //!character.limiterComponent.canPerform || 
                 return false;
@@ -67,29 +72,36 @@ namespace Traits {
                 return false;
             }
             character.jobQueue.CancelAllJobs();
-            string debugLog = $"{character.name} Is agoraphobic and has a crowd in vision. Character became anxious.";
+            string debugLog = $"{character.name} is agoraphobic and has a crowd in vision.";
 
             bool shouldAddAnxiousTrait = true;
             if (character.HasAfflictedByPlayerWith(name)) {
-                shouldAddAnxiousTrait = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel >= 1;
+                int level = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel;
+                shouldAddAnxiousTrait = level >= 1;
+                if(level >= 3) {
+                    if (character.partyComponent.hasParty) {
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, character, "Agoraphobic");
+                    }
+                }
             }
             if (shouldAddAnxiousTrait) {
+                debugLog += $"\n{character.name} became anxious";
                 character.traitContainer.AddTrait(character, "Anxious");
             }
             if (GameUtilities.RollChance(10)) {
-                debugLog += $"{character.name} became catatonic";
+                debugLog += $"\n{character.name} became catatonic";
                 character.traitContainer.AddTrait(character, "Catatonic");
             } else if (GameUtilities.RollChance(15)) {
-                debugLog += $"{character.name} became berserked";
+                debugLog += $"\n{character.name} became berserked";
                 character.traitContainer.AddTrait(character, "Berserked");
             } else if (GameUtilities.RollChance(15)) {
-                debugLog += $"{character.name} Had a seizure";
+                debugLog += $"\n{character.name} Had a seizure";
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Seizure, character);
             } else if (GameUtilities.RollChance(10) && (character.characterClass.className == "Druid" || character.characterClass.className == "Shaman" || character.characterClass.className == "Mage")) {
-                debugLog += $"{character.name} Had a loss of control";
+                debugLog += $"\n{character.name} Had a loss of control";
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, character);
             } else {
-                debugLog += $"{character.name} became anxious and is cowering.";
+                debugLog += $"\n{character.name} is cowering.";
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: "Agoraphobic");
             }
             character.logComponent.PrintLogIfActive(debugLog);
