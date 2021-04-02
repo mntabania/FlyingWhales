@@ -6,7 +6,7 @@ public class SplashWaterData : SkillData {
 
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPLASH_WATER;
     public override string name => "Splash Water";
-    public override string description => "This Spell applies Wet to a 3x3 tile floor.";
+    public override string description => "This Spell applies Wet to a small area.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
 

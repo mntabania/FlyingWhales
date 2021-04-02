@@ -180,6 +180,8 @@ public class StructureInfoUI : InfoUIBase {
         nameLbl.text = $"{activeStructure.nameplateName}";
         if (activeStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
             locationPortrait.SetLocation(activeStructure.settlementLocation);
+        } else {
+            locationPortrait.ClearLocations();
         }
         locationPortrait.SetPortrait(activeStructure.structureType);
     }

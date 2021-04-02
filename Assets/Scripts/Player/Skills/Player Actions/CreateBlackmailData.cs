@@ -20,7 +20,8 @@ public class CreateBlackmailData : PlayerAction {
             }, 0);
             action.SetAsIllusion();
             var intel = InteractionManager.Instance.CreateNewIntel(action);
-
+            PlayerManager.Instance.player.AddIntel(intel);
+            
             Vector3 pos = targetCharacter.worldPosition;
             pos.z = 0f;
             GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("StoreIntelEffect", pos, Quaternion.identity, InnerMapManager.Instance.transform, true);
@@ -34,19 +35,15 @@ public class CreateBlackmailData : PlayerAction {
             Vector3 controlPointB = intelTabPos;
             controlPointB.y -= 5f;
 
-            IIntel storedIntel = intel;
             effectGO.transform.DOPath(new[] {intelTabPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
-                .SetEase(Ease.InSine).OnComplete(() => OnReachIntelTab(effectGO, storedIntel));
-            
-            PlayerManager.Instance.player.playerSkillComponent.AddCharacterToBlackmailList(targetCharacter);
+                .SetEase(Ease.InSine).OnComplete(() => OnReachIntelTab(effectGO));
             
             base.ActivateAbility(targetPOI);    
         }
     }
-    private void OnReachIntelTab(GameObject effectGO, IIntel intel) {
+    private void OnReachIntelTab(GameObject effectGO) {
         PlayerUI.Instance.DoIntelTabPunchEffect();
         ObjectPoolManager.Instance.DestroyObject(effectGO);
-        PlayerManager.Instance.player.AddIntel(intel);
     }
     public override bool IsValid(IPlayerActionTarget target) {
         bool isValid = base.IsValid(target);
