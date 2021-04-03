@@ -22,11 +22,15 @@ namespace Traits {
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character targetCharacter) {
                 bool notFactionmate = targetCharacter.faction != characterThatWillDoJob.faction || targetCharacter.faction == null;
-                bool noRelationship = characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter);
+                bool noRelationship = !characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter);
                 if(notFactionmate && noRelationship) {
                     if (characterThatWillDoJob.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.COWARDICE)) {
                         if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.COWARDICE).currentLevel >= 3) {
-                            return characterThatWillDoJob.combatComponent.Flight(targetCharacter, "character is a coward");
+                            characterThatWillDoJob.combatComponent.hostilesInRange.Remove(targetCharacter);
+                            characterThatWillDoJob.combatComponent.avoidInRange.Remove(targetCharacter);
+                            if (characterThatWillDoJob.combatComponent.Flight(targetCharacter, "character is a coward")) {
+                                characterThatWillDoJob.ForceCancelAllJobsTargetingPOI(targetCharacter, "actor fled");
+                            }
                         }
                     }
                 }
@@ -63,7 +67,7 @@ namespace Traits {
         #endregion
 
         public bool TryActivatePassOut(Character p_character) {
-            if (GameUtilities.RollChance(20)) {
+            if (GameUtilities.RollChance(0)) {
                 bool activatePassOut = p_character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.COWARDICE) && PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.COWARDICE).currentLevel >= 2;
                 if (activatePassOut) {
                     return p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Pass_Out, p_character, "coward");
