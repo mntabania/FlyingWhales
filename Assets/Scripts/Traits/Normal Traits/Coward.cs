@@ -67,7 +67,7 @@ namespace Traits {
         #endregion
 
         public bool TryActivatePassOut(Character p_character) {
-            if (GameUtilities.RollChance(0)) {
+            if (GameUtilities.RollChance(20)) {
                 bool activatePassOut = p_character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.COWARDICE) && PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.COWARDICE).currentLevel >= 2;
                 if (activatePassOut) {
                     return p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Pass_Out, p_character, "coward");
