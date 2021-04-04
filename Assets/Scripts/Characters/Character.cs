@@ -2670,6 +2670,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         
         if ((amount < 0 && CanBeDamaged()) || amount > 0) {
+            if (hasMarker) {
+                marker.ShowHealthAdjustmentEffect(amount);
+            }
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements
             int prevHP = currentHP;

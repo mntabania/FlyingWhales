@@ -3753,6 +3753,10 @@
             <e p="WeightedName.cs" t="Include" />
           </e>
         </e>
+        <e p="Sources" t="Include">
+          <e p="TextParticlesShader.shader" t="Include" />
+          <e p="TextRendererParticleSystem.cs" t="Include" />
+        </e>
         <e p="TextMesh Pro" t="Include">
           <e p="Fonts" t="Include">
             <e p="LiberationSans - OFL.txt" t="Include" />
