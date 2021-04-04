@@ -241,7 +241,7 @@ public class CharacterVisuals {
         }
 
         //Character State
-        if (_owner.stateComponent.currentState != null) {
+        if (_owner.stateComponent.currentState != null && _owner.stateComponent.currentState.thoughtBubbleLog != null) {
             return _owner.stateComponent.currentState.thoughtBubbleLog.logText;
         }
         //fleeing
@@ -265,9 +265,7 @@ public class CharacterVisuals {
         if (_owner.currentStructure != null) {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
-
         
-
         if(_owner.minion != null && !_owner.minion.isSummoned) {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is unsummoned.";
         }

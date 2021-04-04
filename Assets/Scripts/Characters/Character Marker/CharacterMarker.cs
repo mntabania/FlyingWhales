@@ -694,10 +694,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         if (character.traitContainer.HasTrait("Vampire")) {
             if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
-                if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 1) {
-                    //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
-                    //Transform to bat so the character can traverse the tile
-                    Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
+                //Transform to bat so the character can traverse the tile
+                Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                if (vampireTrait.CanTransformIntoBat()) {
                     if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
                         if (!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)) {
                             //Only transform to bat if there is really no path between the current location and destination tile
@@ -715,7 +715,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                 }
             }
-            
         }
 
         if (character.combatComponent.isInCombat) {

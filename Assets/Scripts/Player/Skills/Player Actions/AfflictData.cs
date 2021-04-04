@@ -51,6 +51,14 @@ public class AfflictData : PlayerAction {
 
     protected void AfflictPOIWith(string traitName, IPointOfInterest target, string logName, int overridenDuration = 0) {
         //Log First
+        OnAfflictPOIWith(traitName, target, logName);
+        if (overridenDuration > 0) {
+            target.traitContainer.AddTrait(target, traitName, overrideDuration: overridenDuration);
+        } else {
+            target.traitContainer.AddTrait(target, traitName);
+        }
+    }
+    protected void OnAfflictPOIWith(string traitName, IPointOfInterest target, string logName) {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LogUtilities.Player_Life_Changes_Tags);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, logName, LOG_IDENTIFIER.STRING_1);
@@ -65,11 +73,6 @@ public class AfflictData : PlayerAction {
                     character.afflictionsSkillsInflictedByPlayer.Add(afflictionType);
                 }
             }
-        }
-        if (overridenDuration > 0) {
-            target.traitContainer.AddTrait(target, traitName, overrideDuration: overridenDuration);
-        } else {
-            target.traitContainer.AddTrait(target, traitName);
         }
     }
 }

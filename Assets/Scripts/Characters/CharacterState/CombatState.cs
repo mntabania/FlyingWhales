@@ -448,7 +448,10 @@ public class CombatState : CharacterState {
             if (stateComponent.owner.isLycanthrope && stateComponent.owner.lycanData.isMaster) {
                 if (!stateComponent.owner.isInWerewolfForm) {
                     if (!stateComponent.owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf)) {
-                        stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner);
+                        if(stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner)) {
+                            stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+                            return;
+                        }
                     }
                 }
             }

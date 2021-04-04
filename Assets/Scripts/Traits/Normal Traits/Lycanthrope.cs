@@ -287,6 +287,7 @@ namespace Traits {
 
         public LycanthropeData(Character originalForm) {
             this.originalForm = originalForm;
+            isMaster = false;
             CreatePlainWolfForm();
             UpdateLycanForm();
             activeForm = originalForm;
@@ -294,7 +295,6 @@ namespace Traits {
             originalForm.traitContainer.AddTrait(originalForm, "Lycanthrope");
             lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Lycanthrope");
             originalForm.SetLycanthropeData(this);
-            isMaster = false;
             awareCharacters = new List<Character>();
             DetermineIfDesireOrDislike(originalForm);
             Messenger.AddListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
@@ -325,12 +325,17 @@ namespace Traits {
         private void UpdateLycanForm() {
             lycanthropeForm = plainWolf;
             if (originalForm.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.LYCANTHROPY)) {
-                if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.LYCANTHROPY).currentLevel >= 1) {
+                int level = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.LYCANTHROPY).currentLevel;
+                if(level >= 2) {
+                    SetIsMaster(true);
+                }
+                if (level >= 1) {
                     if(direWolf == null) {
                         CreateDireWolfForm();
                     }
                     lycanthropeForm = direWolf;
                 }
+
             }
         }
         private void UpdateLycanFormName() {

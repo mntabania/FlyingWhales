@@ -47,7 +47,7 @@ public class PlayerSkillManager : MonoBehaviour {
         { "Hothead", PLAYER_SKILL_TYPE.HOTHEADED },
         { "Kleptomaniac", PLAYER_SKILL_TYPE.KLEPTOMANIA },
         { "Lazy", PLAYER_SKILL_TYPE.GLUTTONY },
-        { "Lycantrophe", PLAYER_SKILL_TYPE.LYCANTHROPY },
+        { "Lycanthrope", PLAYER_SKILL_TYPE.LYCANTHROPY },
         { "Music Hater", PLAYER_SKILL_TYPE.MUSIC_HATER },
         { "Narcoleptic", PLAYER_SKILL_TYPE.NARCOLEPSY },
         { "Paralyzed", PLAYER_SKILL_TYPE.PARALYSIS },

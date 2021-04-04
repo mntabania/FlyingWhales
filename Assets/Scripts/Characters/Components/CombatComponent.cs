@@ -379,7 +379,17 @@ public class CombatComponent : CharacterComponent {
                         owner.logComponent.PrintLogIfActive(debugLog);
                         return default;
                     }
-                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a vampire bat");
+                    Vampire vampire = owner.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                    if (vampire != null) {
+                        if (vampire.CanTransformIntoBat()) {
+                            debugLog += "\n-Character can transform into a bat, flee";
+                            owner.logComponent.PrintLogIfActive(debugLog);
+                            return new CombatReaction(COMBAT_REACTION.Flight, "can escape as a vampire bat");
+                        }
+                    }
+                    debugLog += "\n-Character is a coward/vampire but cannot flee, fight instead";
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 } else {
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);

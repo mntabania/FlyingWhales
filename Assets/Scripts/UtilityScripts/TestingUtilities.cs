@@ -110,6 +110,7 @@ namespace UtilityScripts {
         public static void ShowCharacterTestingInfo(Character activeCharacter) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}";
+        summary = $"{summary} {$"Class: {activeCharacter.characterClass.className ?? "None"}"}";
         summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
         summary = $"{summary} Home Settlement: {activeCharacter.homeSettlement?.name ?? "None"}";
         summary = $"{summary} Current structure: {activeCharacter.currentStructure}";
