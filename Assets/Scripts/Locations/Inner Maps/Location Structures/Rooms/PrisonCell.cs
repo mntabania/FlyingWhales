@@ -67,7 +67,7 @@ namespace Inner_Maps.Location_Structures {
             if (HasAnyAliveCharacterInRoom()) {
                 return false;
             }
-            return character.isNormalCharacter && character.isDead == false;
+            return character.isNormalCharacter && character.isDead == false && (character.faction == null || !character.faction.isPlayerFaction);
         }
         #endregion
 

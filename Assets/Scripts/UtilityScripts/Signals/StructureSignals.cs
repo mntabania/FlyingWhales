@@ -29,4 +29,5 @@
     /// Parameters (DemonicStructure)
     /// </summary>
     public static string DEMONIC_STRUCTURE_REPAIRED = "OnDemonicStructureRepaired";
+    public static string UPDATE_EYE_WARDS = "OnUpdateEyeWards";
 }

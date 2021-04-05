@@ -9,6 +9,8 @@ using UnityEngine.Tilemaps;
 [System.Serializable]
 public class StringIntDictionary : SerializableDictionary<string, int> { }
 [System.Serializable]
+public class StringFloatDictionary : SerializableDictionary<string, float> { }
+[System.Serializable]
 public class BiomeLandmarkSpriteListDictionary : SerializableDictionary<BIOMES, List<LandmarkStructureSprite>, LandmarkSpriteListStorage> { }
 [System.Serializable]
 public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite, List<GameObject>, CorruptionObjectsListStorage> { }
@@ -100,6 +102,8 @@ public class MonsterMigrationBiomeDictionary : SerializableDictionary<BIOMES, Mo
 public class ScenarioSettingsDataDictionary : SerializableDictionary<WorldSettingsData.World_Type, ScenarioData> { }
 [System.Serializable]
 public class StructureDataDictionary : SerializableDictionary<STRUCTURE_TYPE, StructureData> { }
+[System.Serializable]
+public class IntChancesDictionary : SerializableDictionary<CHANCE_TYPE, int> { }
 
 //List storage
 [System.Serializable]

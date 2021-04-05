@@ -10,8 +10,8 @@ using Traits;
 using UnityEngine.Assertions;
 namespace Traits {
     public class Psychopath : Trait {
-
         public SerialVictim victim1Requirement { get; private set; }
+        public SerialVictim victim2Requirement { get; private set; }
         public Character character { get; private set; }
         public Character targetVictim { get; private set; }
         public Dictionary<int, OpinionData> opinionCopy { get; private set; }
@@ -38,6 +38,11 @@ namespace Traits {
             SaveDataPsychopath saveDataPsychopath = saveDataTrait as SaveDataPsychopath;
             Assert.IsNotNull(saveDataPsychopath);
             victim1Requirement = saveDataPsychopath.victim1Requirement;
+            if(saveDataPsychopath.victim2Requirement == null || saveDataPsychopath.victim2Requirement.isEmpty) {
+                victim2Requirement = null;
+            } else {
+                victim2Requirement = saveDataPsychopath.victim2Requirement;
+            }
             opinionCopy = saveDataPsychopath.opinionCopy;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
@@ -141,16 +146,27 @@ namespace Traits {
         }
         #endregion
 
-        private void SetVictimRequirements(SerialVictim serialVictim) {
-            victim1Requirement = serialVictim;
+        private void SetVictimRequirements(SerialVictim serialVictim1, SerialVictim serialVictim2) {
+            victim1Requirement = serialVictim1;
+            victim2Requirement = serialVictim2;
+
+            string reqText = victim1Requirement.text;
+            if(victim2Requirement != null) {
+                reqText += " and " + victim2Requirement.text;
+            }
+
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer", null, LOG_TAG.Crimes);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, reqText, LOG_IDENTIFIER.STRING_1);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
-        public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
-            SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc));
+        public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc, string conjunction) {
+            if(conjunction == "And" || victimFirstType == SERIAL_VICTIM_TYPE.None || victimSecondType == SERIAL_VICTIM_TYPE.None) {
+                SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc), null);
+            } else {
+                SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, SERIAL_VICTIM_TYPE.None, string.Empty), new SerialVictim(victimSecondType, victimSecondDesc, SERIAL_VICTIM_TYPE.None, string.Empty));
+            }
         }
         public void SetTargetVictim(Character victim) {
             if (targetVictim != null) {
@@ -304,7 +320,15 @@ namespace Traits {
             return true;
         }
         private bool DoesCharacterFitAnyVictimRequirements(Character target) {
-            return victim1Requirement.DoesCharacterFitVictimRequirements(target); //|| victim2Requirement.DoesCharacterFitVictimRequirements(target)
+            bool doesFitVictim1 = victim1Requirement.DoesCharacterFitVictimRequirements(target);
+            if (doesFitVictim1) {
+                return true;
+            } else if (victim2Requirement == null) {
+                return doesFitVictim1;
+            } else if (victim2Requirement.DoesCharacterFitVictimRequirements(target)) {
+                return true;
+            }
+            return false;
         }
 
         #region Opinion
@@ -362,6 +386,8 @@ namespace Traits {
         public string victimSecondDescription;
 
         public string text { get; private set; }
+
+        public bool isEmpty => victimFirstType == SERIAL_VICTIM_TYPE.None && victimSecondType == SERIAL_VICTIM_TYPE.None;
 
         //public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, SERIAL_VICTIM_TYPE victimSecondType) {
         //    this.victimFirstType = victimFirstType;
@@ -544,6 +570,7 @@ namespace Traits {
 #region Save Data
 public class SaveDataPsychopath : SaveDataTrait {
     public SerialVictim victim1Requirement;
+    public SerialVictim victim2Requirement;
     public string targetVictimID;
     public Dictionary<int, OpinionData> opinionCopy;
 
@@ -552,6 +579,7 @@ public class SaveDataPsychopath : SaveDataTrait {
         Psychopath psychopath = trait as Psychopath;
         Assert.IsNotNull(psychopath);
         victim1Requirement = psychopath.victim1Requirement;
+        victim2Requirement = psychopath.victim2Requirement;
         targetVictimID = psychopath.targetVictim != null ? psychopath.targetVictim.persistentID : string.Empty;
         opinionCopy = psychopath.opinionCopy;
     }

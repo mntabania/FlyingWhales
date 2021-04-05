@@ -496,17 +496,19 @@ public class ReactionComponent : CharacterComponent {
                         //Determine whether to fight or flight.
                         //There is a special case, even if the source is defending if he/she is a demon and the target is an angel and vice versa, make the combat lethal
                         CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
-                        if (combatReaction.reaction == COMBAT_REACTION.Flight) {
-                            //if flight was decided
-                            //if target is restrained or resting, do nothing
-                            if (!targetCharacter.traitContainer.HasTrait("Restrained", "Resting")) {
+                        if (combatReaction.reaction != COMBAT_REACTION.None) {
+                            if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+                                //if flight was decided
+                                //if target is restrained or resting, do nothing
+                                if (!targetCharacter.traitContainer.HasTrait("Restrained", "Resting")) {
+                                    actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: false);
+                                }
+                                //else {
+                                //    actor.combatComponent.Fight(targetCharacter, combatReaction.reason, isLethal: false);
+                                //}
+                            } else {
                                 actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: false);
                             }
-                            //else {
-                            //    actor.combatComponent.Fight(targetCharacter, combatReaction.reason, isLethal: false);
-                            //}
-                        } else {
-                            actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: false);
                         }
                     }
                     
@@ -610,14 +612,16 @@ public class ReactionComponent : CharacterComponent {
                         if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
                             //Determine whether to fight or flight.
                             CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
-                            if (combatReaction.reaction == COMBAT_REACTION.Flight) {
-                                //if flight was decided
-                                //if target is restrained or resting, do nothing
-                                if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
+                            if (combatReaction.reaction != COMBAT_REACTION.None) {
+                                if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+                                    //if flight was decided
+                                    //if target is restrained or resting, do nothing
+                                    if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
+                                        actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
+                                    }
+                                } else {
                                     actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
                                 }
-                            } else {
-                                actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
                             }
                         }
                     }
@@ -632,28 +636,22 @@ public class ReactionComponent : CharacterComponent {
                 debugLog = $"{debugLog}\n-Character is a villager, continue reaction"; //and Target is not being targeted by an action
                 if (!targetCharacter.isDead) {
                     debugLog = $"{debugLog}\n-Target is not dead";
-                    if (!actor.isConversing && !targetCharacter.isConversing && actor.nonActionEventsComponent.CanInteract(targetCharacter) 
+                    if (!actor.isConversing && !targetCharacter.isConversing 
                         //only allow chat if characters current action is not have affair or if his action is have affair but the character he is reacting to is not the target of that action.
                         && (actor.currentActionNode == null || (actor.currentActionNode.action.goapType != INTERACTION_TYPE.HAVE_AFFAIR || actor.currentActionNode.poiTarget != targetCharacter))) {
                         debugLog = $"{debugLog}\n-Character and Target are not Chatting or Flirting and Character can interact with Target, has 3% chance to Chat";
                         int chance = UnityEngine.Random.Range(0, 100);
                         debugLog = $"{debugLog}\n-Roll: {chance.ToString()}";
-                        if (chance < 3) {
+                        if (actor.nonActionEventsComponent.CanChat(targetCharacter) && chance < 3) {
                             debugLog = $"{debugLog}\n-Chat triggered";
                             actor.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
                         } else {
-                            debugLog =
-                                $"{debugLog}\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover and character is sociable.";
-                            if (RelationshipManager.IsSexuallyCompatibleOneSided(disguisedActor, disguisedTarget) && 
-                                disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && disguisedActor.limiterComponent.isSociable) {
-                                
-                                if (disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                                    || disguisedActor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
-                                    || disguisedActor.traitContainer.HasTrait("Unfaithful")) {
-                                    debugLog = $"{debugLog}\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
+                            debugLog = $"{debugLog}\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover and character is sociable.";
+                            if (RelationshipManager.Instance.IsCompatibleBasedOnSexualityAndOpinion(disguisedActor, disguisedTarget) && disguisedActor.limiterComponent.isSociable) {
+                                if (disguisedActor.nonActionEventsComponent.CanFlirt(disguisedActor, disguisedTarget)) {
                                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(disguisedActor, disguisedTarget);
-                                    
-                                    int baseChance = 1;
+                                    int baseChance = ChanceData.GetChance(CHANCE_TYPE.Flirt_On_Sight_Base_Chance);
+                                    debugLog = $"{debugLog}\n-Flirt has {baseChance}% (multiplied by Compatibility value) chance to trigger";
                                     if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
                                         debugLog = $"{debugLog}\n-Flirt has +2% chance to trigger because character is in a normal mood";
                                         baseChance += 2;
@@ -907,52 +905,55 @@ public class ReactionComponent : CharacterComponent {
                             //Add personal Remove Status - Restrained job when seeing a restrained non-enemy villager
                             //https://trello.com/c/Pe6wuHQc/1197-add-personal-remove-status-restrained-job-when-seeing-a-restrained-non-enemy-villager
                             Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                            if(prisoner == null || !prisoner.IsConsideredPrisonerOf(disguisedActor)) {
-                                bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
-                                bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
-                                bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
-                                bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
-                                bool isEnslaved = targetCharacter.traitContainer.HasTrait("Enslaved");
-                                bool isEnslavedAndNotEnemy = isEnslaved && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget) && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget);
+                            Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+                            if (lazy == null ||!lazy.TryIgnoreUrgentTask(JOB_TYPE.REMOVE_STATUS)) {
+                                if(prisoner == null || !prisoner.IsConsideredPrisonerOf(disguisedActor)) {
+                                    bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
+                                    bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
+                                    bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
+                                    bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
+                                    bool isEnslaved = targetCharacter.traitContainer.HasTrait("Enslaved");
+                                    bool isEnslavedAndNotEnemy = isEnslaved && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget) && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget);
 
-                                if (disguisedActor.isNormalCharacter && ((disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious)) || isEnslavedAndNotEnemy) &&
-                                    !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)) {
+                                    if (disguisedActor.isNormalCharacter && ((disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious)) || isEnslavedAndNotEnemy) &&
+                                        !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)) {
 
-                                    bool isResponsibleForRestrained = isRestrained && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Restrained").IsResponsibleForTrait(disguisedActor);
-                                    bool isResponsibleForEnsnared = isEnsnared && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Ensnared").IsResponsibleForTrait(disguisedActor);
-                                    bool isResponsibleForFrozen = isFrozen && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Frozen").IsResponsibleForTrait(disguisedActor);
-                                    bool isResponsibleForUnconscious = isUnconscious && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Unconscious").IsResponsibleForTrait(disguisedActor);
-                                    bool isResponsibleForEnslaved = isEnslaved && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
+                                        bool isResponsibleForRestrained = isRestrained && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Restrained").IsResponsibleForTrait(disguisedActor);
+                                        bool isResponsibleForEnsnared = isEnsnared && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Ensnared").IsResponsibleForTrait(disguisedActor);
+                                        bool isResponsibleForFrozen = isFrozen && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Frozen").IsResponsibleForTrait(disguisedActor);
+                                        bool isResponsibleForUnconscious = isUnconscious && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Unconscious").IsResponsibleForTrait(disguisedActor);
+                                        bool isResponsibleForEnslaved = isEnslaved && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
 
-                                    //NOTE: Manyayari na lang ito kapag same home settlement na lang yung actor and target
-                                    if (!disguisedActor.traitContainer.HasTrait("Enslaved") && isEnslaved && !isResponsibleForEnslaved && disguisedActor.faction != targetCharacter.faction) {
-                                        actor.jobComponent.TriggerReleaseJob(targetCharacter);
-                                    }
-                                    if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
-                                        if (isRestrained && !isResponsibleForRestrained) {
-                                            actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                                        //NOTE: Manyayari na lang ito kapag same home settlement na lang yung actor and target
+                                        if (!disguisedActor.traitContainer.HasTrait("Enslaved") && isEnslaved && !isResponsibleForEnslaved && disguisedActor.faction != targetCharacter.faction) {
+                                            actor.jobComponent.TriggerReleaseJob(targetCharacter);
                                         }
-                                        if (isEnsnared && !isResponsibleForEnsnared) {
-                                            actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Ensnared");
-                                        }
-                                        if (isFrozen && !isResponsibleForFrozen) {
-                                            actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Frozen");
-                                        }
-                                        if (isUnconscious && !isResponsibleForUnconscious) {
-                                            actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Unconscious");
-                                        }
-                                    } else {
-                                        if(!isResponsibleForRestrained && !isResponsibleForEnsnared && !isResponsibleForFrozen && !isResponsibleForUnconscious) {
-                                            if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
-                                                if (GameUtilities.RollChance(35)) {
-                                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);    
-                                                } else {
-                                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter, reason: "someone they know is in a bind");  
+                                        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
+                                            if (isRestrained && !isResponsibleForRestrained) {
+                                                actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                                            }
+                                            if (isEnsnared && !isResponsibleForEnsnared) {
+                                                actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Ensnared");
+                                            }
+                                            if (isFrozen && !isResponsibleForFrozen) {
+                                                actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Frozen");
+                                            }
+                                            if (isUnconscious && !isResponsibleForUnconscious) {
+                                                actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Unconscious");
+                                            }
+                                        } else {
+                                            if(!isResponsibleForRestrained && !isResponsibleForEnsnared && !isResponsibleForFrozen && !isResponsibleForUnconscious) {
+                                                if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
+                                                    if (GameUtilities.RollChance(35)) {
+                                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);    
+                                                    } else {
+                                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter, reason: "someone they know is in a bind");  
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-                                }
+                                }    
                             }
                         }
 
@@ -972,29 +973,32 @@ public class ReactionComponent : CharacterComponent {
                         if(factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral || factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Friendly) {
                             //If actor's faction is friendly/neutral with prisoner's faction and prisoner is restrained
                             Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                            if(prisoner != null && !prisoner.IsConsideredPrisonerOf(disguisedActor)) {
-                                bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
-                                if (isRestrained) {
-                                    Faction factionThatImprisoned = prisoner.GetFactionThatImprisoned();
-                                    //Release prisoner if actor's faction is hostile with the faction that imprisoned the prisoner and prisoner is not enemy/rival of the actor
-                                    //Or if the prisoner is friend/close friend/acquaintance
-                                    bool shouldRelease = false;
-                                    if(factionThatImprisoned != null && disguisedActor.faction != factionThatImprisoned) {
-                                        FactionRelationship relWithFactionTheImprisoned = disguisedActor.faction.GetRelationshipWith(factionThatImprisoned);
-                                        if(relWithFactionTheImprisoned.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
-                                            shouldRelease = true;
+                            Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+                            if (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.RELEASE_CHARACTER)) {
+                                if(prisoner != null && !prisoner.IsConsideredPrisonerOf(disguisedActor)) {
+                                    bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
+                                    if (isRestrained) {
+                                        Faction factionThatImprisoned = prisoner.GetFactionThatImprisoned();
+                                        //Release prisoner if actor's faction is hostile with the faction that imprisoned the prisoner and prisoner is not enemy/rival of the actor
+                                        //Or if the prisoner is friend/close friend/acquaintance
+                                        bool shouldRelease = false;
+                                        if(factionThatImprisoned != null && disguisedActor.faction != factionThatImprisoned) {
+                                            FactionRelationship relWithFactionTheImprisoned = disguisedActor.faction.GetRelationshipWith(factionThatImprisoned);
+                                            if(relWithFactionTheImprisoned.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
+                                                shouldRelease = true;
+                                            }
+                                        }
+                                        if (!shouldRelease) {
+                                            string opinionTowardsPrisoner = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
+                                            if(opinionTowardsPrisoner == RelationshipManager.Close_Friend || opinionTowardsPrisoner == RelationshipManager.Friend || opinionTowardsPrisoner == RelationshipManager.Acquaintance) {
+                                                shouldRelease = true;
+                                            }
+                                        }
+                                        if (shouldRelease) {
+                                            actor.jobComponent.TriggerReleaseJob(targetCharacter);
                                         }
                                     }
-                                    if (!shouldRelease) {
-                                        string opinionTowardsPrisoner = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
-                                        if(opinionTowardsPrisoner == RelationshipManager.Close_Friend || opinionTowardsPrisoner == RelationshipManager.Friend || opinionTowardsPrisoner == RelationshipManager.Acquaintance) {
-                                            shouldRelease = true;
-                                        }
-                                    }
-                                    if (shouldRelease) {
-                                        actor.jobComponent.TriggerReleaseJob(targetCharacter);
-                                    }
-                                }
+                                }    
                             }
                         }
                     }
@@ -1296,10 +1300,11 @@ public class ReactionComponent : CharacterComponent {
             return;
         }
         debugLog = $"{debugLog}{actor.name} is reacting to {targetTileObject.nameWithID}";
+        Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
         if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
             bool hasHigherPrioJob = actor.jobQueue.jobsInQueue.Count > 0 && actor.jobQueue.jobsInQueue[0].priority > JOB_TYPE.DOUSE_FIRE.GetJobTypePriority();
-
-            if (!hasHigherPrioJob && targetTileObject.traitContainer.HasTrait("Burning")
+            if (!hasHigherPrioJob 
+                && targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null
                 && actor.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
@@ -1308,34 +1313,23 @@ public class ReactionComponent : CharacterComponent {
                 && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                 debugLog = $"{debugLog}\n-Target is Burning and Character is not Pyrophobic";
                 actor.SetHasSeenFire(true);
-                actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
-                    Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
-                }
-
-                List<JobQueueItem> douseFireJobs = actor.homeSettlement.GetJobs(JOB_TYPE.DOUSE_FIRE)
-                    .Where(j => j.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(j)).ToList();
-
-                if (douseFireJobs.Count > 0) {
-                    actor.jobQueue.AddJobInQueue(douseFireJobs[0]);
-                } else {
-                    if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                        actor.combatComponent.Flight(targetTileObject, "saw fire");
+                if (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.DOUSE_FIRE)) {
+                    actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                    if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+                        Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
                     }
-                }
 
-                // for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
-                //     JobQueueItem job = owner.homeSettlement.availableJobs[i];
-                //     if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
-                //         if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
-                //             owner.jobQueue.AddJobInQueue(job);
-                //         } else {
-                //             if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                //                 owner.combatComponent.Flight(targetTileObject, "saw fire");
-                //             }
-                //         }
-                //     }
-                // }
+                    List<JobQueueItem> douseFireJobs = actor.homeSettlement.GetJobs(JOB_TYPE.DOUSE_FIRE)
+                        .Where(j => j.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(j)).ToList();
+
+                    if (douseFireJobs.Count > 0) {
+                        actor.jobQueue.AddJobInQueue(douseFireJobs[0]);
+                    } else {
+                        if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                            actor.combatComponent.Flight(targetTileObject, "saw fire");
+                        }
+                    }    
+                }
             }
         }
         if (!actor.combatComponent.isInActualCombat && !actor.hasSeenWet) {
@@ -1359,6 +1353,7 @@ public class ReactionComponent : CharacterComponent {
         }
         if (!actor.combatComponent.isInActualCombat && !actor.hasSeenPoisoned) {
             if (targetTileObject.traitContainer.HasTrait("Poisoned")
+                && (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.CLEANSE_TILES))
                 && targetTileObject.gridTileLocation != null
                 && actor.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)

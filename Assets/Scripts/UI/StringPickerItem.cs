@@ -47,7 +47,7 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
                 iconImg.sprite = PlayerManager.Instance.GetJobActionSprite(str);
                 iconImg.gameObject.SetActive(true);
             } else if (identifier == "minion") {
-                iconImg.sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(str);
+                iconImg.sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(str).portraitSprite;
                 iconImg.gameObject.SetActive(true);
             } else if (identifier == "player skill") {
                 iconImg.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((PLAYER_SKILL_TYPE) System.Enum.Parse(typeof(PLAYER_SKILL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;

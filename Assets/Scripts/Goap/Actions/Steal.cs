@@ -138,10 +138,12 @@ public class Steal : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             TileObject item = poiTarget as TileObject;
-            if (item.gridTileLocation != null) {
-                return item.characterOwner != null && !item.IsOwnedBy(actor);
-            } else {
-                return item.isBeingCarriedBy != null && item.characterOwner != null && !item.IsOwnedBy(actor);
+            if (item.characterOwner != null) {
+                if (item.gridTileLocation != null) {
+                    return !item.IsOwnedBy(actor);
+                } else {
+                    return item.isBeingCarriedBy != null && !item.IsOwnedBy(actor);
+                }    
             }
         }
         return false;

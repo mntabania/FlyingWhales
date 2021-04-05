@@ -66,6 +66,7 @@ public interface IRelationshipContainer {
     List<Character> GetCharactersWithOpinionLabel(params string[] labels);
     bool HasCharacterWithOpinionLabel(params string[] labels);
     bool HasOpinionLabelWithCharacter(Character character, params string[] labels);
+    bool HasOpinionLabelWithCharacter(Character character, params OPINIONS[] labels);
     bool HasEnemyCharacter();
     int GetNumberOfFriendCharacters();
     RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character character);

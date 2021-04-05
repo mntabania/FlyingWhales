@@ -88,7 +88,8 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InitializeDeployedItems();
 		m_defensePointUIView.SetTitle("Defense Point");
 		ProcessDeployButtonDisplay();
-		InputManager.Instance.AllowHotkeys(false);
+		InputManager.Instance.SetAllHotkeysEnabledState(false);
+		InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
 		UIManager.Instance.Pause();
 	}
 
@@ -202,7 +203,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
 			if (eachSummonToBeDeployed.isReadyForDeploy) {
 				Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.obj.monsterType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement);
-				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomTile());
+				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomPassableTile());
 				summon.OnSummonAsPlayerMonster();
 				eachSummonToBeDeployed.HideManaCost();
 				eachSummonToBeDeployed.Deploy(summon, true);
@@ -274,7 +275,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		ReturnAllItemToPool();
 		HideUI();
 		m_defensePointUIView.HideAllSubMenu();
-		InputManager.Instance.AllowHotkeys(true);
+		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 

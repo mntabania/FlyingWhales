@@ -774,6 +774,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2753937089154088951}
+  - component: {fileID: 689341155539297461}
   m_Layer: 5
   m_Name: Parent
   m_TagString: Untagged
@@ -802,6 +803,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &689341155539297461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753937089154088950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 660bce02e0c34b94a557fb6e9d627c34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  closeAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2753937090414460560}
+        m_MethodName: ClickClose
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2753937089636940480
 GameObject:
   m_ObjectHideFlags: 0
@@ -933,7 +960,6 @@ GameObject:
   - component: {fileID: 2753937090414460567}
   - component: {fileID: 2753937090414460561}
   - component: {fileID: 2753937090414460560}
-  - component: {fileID: 5470223394839400073}
   m_Layer: 5
   m_Name: DefensePointUIAsset
   m_TagString: Untagged
@@ -1009,19 +1035,6 @@ MonoBehaviour:
   availableSummonsParent: {fileID: 3393263750043549118}
   subSummonContainer: {fileID: 8644398468522536951}
   txtTitle: {fileID: 8644398468777700586}
---- !u!114 &5470223394839400073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2753937090414460565}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8803d62703eac8a44a3e9884c71009da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  KeepWindowInCanvas: 10
 --- !u!1 &2753937090535130411
 GameObject:
   m_ObjectHideFlags: 0

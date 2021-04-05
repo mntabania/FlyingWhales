@@ -7,6 +7,7 @@ public class DefensePointTileObject : TileObject {
 
     public DefensePointTileObject() {
         Initialize(TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public DefensePointTileObject(SaveDataTileObject data) {

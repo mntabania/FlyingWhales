@@ -176,7 +176,7 @@ namespace Traits {
                 RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (owner is Character character) {
                 _perTickWhileStationaryOrUnoccupied?.Invoke(character);
             }

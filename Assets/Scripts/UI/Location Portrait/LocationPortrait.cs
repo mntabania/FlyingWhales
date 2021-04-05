@@ -33,6 +33,10 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
         region = null;
         _settlement = p_settlement;
     }
+    public void ClearLocations() {
+        region = null;
+        _settlement = null;
+    }
     public void SetPortrait(STRUCTURE_TYPE landmarkType) {
         portrait.sprite = LandmarkManager.Instance.GetStructureData(landmarkType).structureSprite;
     }
@@ -54,6 +58,7 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
     public override void Reset() {
         base.Reset();
         region = null;
+        _settlement = null;
         //landmark = null;
     }
 }

@@ -48,7 +48,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public POI_STATE state;
     public INTERACTION_TYPE causeOfDeath;
     public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer;
-
+    
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
 
@@ -104,6 +104,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataLimiterComponent limiterComponent;
     public SaveDataPiercingAndResistancesComponent piercingAndResistancesComponent;
     public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
+    public SaveDataCharacterTraitComponent traitComponent;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -176,6 +177,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         limiterComponent = new SaveDataLimiterComponent(); limiterComponent.Save(data.limiterComponent);
         piercingAndResistancesComponent = new SaveDataPiercingAndResistancesComponent(); piercingAndResistancesComponent.Save(data.piercingAndResistancesComponent);
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
+        traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
 
         isInfoUnlocked = data.isInfoUnlocked;
 

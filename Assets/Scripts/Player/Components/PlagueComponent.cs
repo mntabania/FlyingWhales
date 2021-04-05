@@ -31,11 +31,12 @@ public class PlagueComponent {
         _plaguePoints = Mathf.Clamp(_plaguePoints + amount, 0, maxPlaguePoints);
 
         Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
+        Messenger.Broadcast(PlayerSignals.PLAGUE_POINTS_ADJUSTED, amount, _plaguePoints);
     }
     public void GainPlaguePointFromCharacter(int amount, Character p_character) {
         return;//remove once blanacing is settled
         AdjustPlaguePoints(amount);
-        PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount);    
+        // PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount);    
     }
     public bool CanGainPlaguePoints() {
         return false;//remove once blanacing is settled

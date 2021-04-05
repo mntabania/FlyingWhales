@@ -33,6 +33,9 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _triggerFlawManaCost;
 	[SerializeField] private int _buildStructureManaCost;
 
+	[Header("Chaos Orb from raid")]
+	[SerializeField] private int _chaosOrbExpulsionThresholdFromRaid;
+
 	[Header("Chaos Orb")]
 	[SerializeField] private int _chaosOrbExpulsionThreshold;
 
@@ -74,6 +77,9 @@ public class EditableValuesManager : MonoBehaviour {
 	public int sortingOrdersInBetweenHexTileRows => _sortingOrdersInBetweenHexTileRows;
 	//chaos orb
 	public int chaosOrbExpulsionThreshold => _chaosOrbExpulsionThreshold;
+
+	//chaos orb from raid
+	public int chaosOrbExpulsionThresholdFromRaid => _chaosOrbExpulsionThresholdFromRaid;
 
 	private void Awake() {
 		Instance = this;

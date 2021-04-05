@@ -7,9 +7,11 @@ public class DarkRitualChaosOrb : PassiveSkill {
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Dark_Ritual_Chaos_Orb;
 
     public override void ActivateSkill() {
-        Messenger.AddListener<GoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnSuccessPraying);
+        Messenger.AddListener<ActualGoapNode>(JobSignals.ON_FINISH_PRAYING, OnSuccessPraying);
     }
-    private void OnSuccessPraying(GoapNode p_goapNode) {
-        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_goapNode.target.worldPosition, 4, p_goapNode.target.gridTileLocation.parentMap);
+    private void OnSuccessPraying(ActualGoapNode p_goapNode) {
+        if (p_goapNode.goapType == INTERACTION_TYPE.PRAY) {
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_goapNode.target.worldPosition, 4, p_goapNode.target.gridTileLocation.parentMap);
+        }
     }
 }

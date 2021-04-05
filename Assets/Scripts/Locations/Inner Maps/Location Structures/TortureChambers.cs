@@ -13,11 +13,12 @@ namespace Inner_Maps.Location_Structures {
         public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) { }
 
         #region Overrides
-        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
-            base.LoadReferences(saveDataLocationStructure);
-        }
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {
+                if (character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room)) {
+                    DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
+                    door?.Close();
+                }
                 // character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
                 if (character.partyComponent.hasParty) {
                     //We remove the character from the party quest if he is put in the defiler so he will not dig out of it and do the quest
@@ -63,7 +64,6 @@ namespace Inner_Maps.Location_Structures {
             base.AfterCharacterRemovedFromLocation(p_character);
             p_character.movementComponent.SetEnableDigging(true);
             Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
-            PlayerManager.Instance.player.playerSkillComponent.RemoveCharacterFromBlackmailList(p_character);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

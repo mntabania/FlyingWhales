@@ -10,6 +10,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 using Locations.Settlements;
+using Necromancy.UI;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -25,6 +26,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private ParticleSystem bloodSplatterEffect;
     [SerializeField] private ParticleSystemRenderer bloodSplatterEffectRenderer;
     [SerializeField] private SpriteRenderer additionalEffectsImg;
+    [SerializeField] private TextRendererParticleSystem textRendererParticleSystem;
     public Transform particleEffectParentAllowRotation;
 
     [Header("Animation")]
@@ -697,20 +699,22 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                 //Transform to bat so the character can traverse the tile
                 Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-                if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                    if(!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)){
-                        //Only transform to bat if there is really no path between the current location and destination tile
-                        //If it has, even if the destination reached is not really the destination tile, do not transform
-                        if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
-                            vampireTrait.SetIsTraversingUnwalkableAsBat(true);
-                            shouldRecomputePath = true;
-                            return;
+                if (vampireTrait.CanTransformIntoBat()) {
+                    if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                        if (!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)) {
+                            //Only transform to bat if there is really no path between the current location and destination tile
+                            //If it has, even if the destination reached is not really the destination tile, do not transform
+                            if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
+                                vampireTrait.SetIsTraversingUnwalkableAsBat(true);
+                                shouldRecomputePath = true;
+                                return;
+                            }
                         }
+                    } else if (vampireTrait.isTraversingUnwalkableAsBat) {
+                        //If character is still traversing unwalkable path do not do arrive action
+                        shouldRecomputePath = true;
+                        return;
                     }
-                } else if (vampireTrait.isTraversingUnwalkableAsBat) {
-                    //If character is still traversing unwalkable path do not do arrive action
-                    shouldRecomputePath = true;
-                    return;
                 }
             }
         }
@@ -2073,6 +2077,35 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void UpdateTagPenalties() {
         seeker.tagPenalties = character.movementComponent.tagPenalties;
+    }
+    #endregion
+
+    #region Effects
+    public void ShowHealthAdjustmentEffect(int damage) {
+        Color color = damage > 0 ? Color.green : Color.red;
+        float startSize;
+        float absoluteValue = Mathf.Abs(damage);
+        if (absoluteValue >= 200) {
+            startSize = 3f;
+        } else if (absoluteValue >= 50f) {
+            startSize = 2f;
+        } else  {
+            startSize = 1f;
+        }
+        textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
+    }
+    public void ShowHealthAdjustmentEffect(float damage) {
+        Color color = damage > 0 ? Color.green : Color.red;
+        float startSize;
+        float absoluteValue = Mathf.Abs(damage);
+        if (absoluteValue >= 200) {
+            startSize = 3f;
+        } else if (absoluteValue >= 50f) {
+            startSize = 2f;
+        } else  {
+            startSize = 1f;
+        }
+        textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
     }
     #endregion
 }

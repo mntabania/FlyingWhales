@@ -110,8 +110,20 @@ public class PlayGuitar : GoapAction {
         Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
+                if (witness.HasAfflictedByPlayerWith(trait)) {
+                    PLAYER_SKILL_TYPE playerSkillType = trait.GetAfflictionSkillType();
+                    if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
+                        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
+                        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                        if (playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Angry_Upon_Hear_Music, skillData.currentLevel)) {
+                            reactions.Add(EMOTION.Anger);
+                        }
+                    }
+                }
                 if (witness.moodComponent.moodState == MOOD_STATE.Bad) {
-                    reactions.Add(EMOTION.Anger);
+                    if (!reactions.Contains(EMOTION.Anger)) {
+                        reactions.Add(EMOTION.Anger);    
+                    }
                 } else if (witness.moodComponent.moodState == MOOD_STATE.Critical) {
                     reactions.Add(EMOTION.Rage);
                 } else {
@@ -131,6 +143,11 @@ public class PlayGuitar : GoapAction {
                 }
             }
         }
+    }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        MusicHater musicHater = witness.traitContainer.GetTraitOrStatus<MusicHater>("Music Hater");
+        musicHater?.ReactToMusicPerformer(witness, actor);
+        return base.ReactionToActor(actor, target, witness, node, status);
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (witness.traitContainer.HasTrait("Music Hater")) {
@@ -212,32 +229,4 @@ public class PlayGuitar : GoapAction {
         return false;
     }
     #endregion
-
-    //#region Intel Reactions
-    //private List<string> PlaySuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-
-    //    if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait<Trait>("Music Hater") != null) {
-    //        recipient.traitContainer.AddTrait(recipient, "Annoyed");
-    //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
-    //            if (recipient.CreateBreakupJob(actor) != null) {
-    //                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
-    //                log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //                log.AddLogToInvolvedObjects();
-    //                PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
-    //            }
-    //        } else if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //            //Otherwise, if the Actor does not yet consider the Target an Enemy, relationship degradation will occur, log:
-    //            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "MusicHater", "degradation");
-    //            log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //            log.AddLogToInvolvedObjects();
-    //            PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
-    //            RelationshipManager.Instance.RelationshipDegradation(actor, recipient);
-    //        }
-    //    }
-    //    return reactions;
-    //}
-    //#endregion
 }

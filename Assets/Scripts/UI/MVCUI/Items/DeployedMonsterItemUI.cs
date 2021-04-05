@@ -23,6 +23,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public RuinarchText txtUnlockPrice;
     public GameObject lockCover;
     public GameObject emptyCover;
+    public GameObject deadIcon;
 
     public bool isReadyForDeploy;
     public bool isDeployed;
@@ -57,10 +58,10 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         txtSummonCost.text = summonCost.ToString();
         if (p_underling.isDemon) {
             isMinion = true;
-            imgPortrait.sprite = CharacterManager.Instance.GetMinionSettings(p_underling.minionType).minionPortrait;
+            imgPortrait.sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetMinionSettings(p_underling.minionType).className).portraitSprite;
         } else {
             isMinion = false;
-            imgPortrait.sprite = CharacterManager.Instance.GetSummonSettings(p_underling.monsterType).summonPortrait;
+            imgPortrait.sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetSummonSettings(p_underling.monsterType).className).portraitSprite;
         }
         
         if (!p_isDeployed) {
@@ -80,6 +81,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         }
         lockCover.SetActive(false);
         emptyCover.SetActive(false);
+        HideDeadIcon();
     }
 
     public void MakeSlotEmpty() {
@@ -147,5 +149,13 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 
     public void ShowRemoveButton() {
         btnDelete.gameObject.SetActive(true);
+    }
+
+    public void ShowDeadIcon() {
+        deadIcon.SetActive(true);
+    }
+
+    public void HideDeadIcon() {
+        deadIcon.SetActive(false);
     }
 }

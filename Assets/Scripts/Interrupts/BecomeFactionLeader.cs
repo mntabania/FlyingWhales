@@ -95,7 +95,6 @@ namespace Interrupts {
             changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
             changeIdeologyLog.AddLogToDatabase(true);
 
-
             //check if faction characters still meets ideology requirements
             List<Character> charactersToCheck = ObjectPoolManager.Instance.CreateNewCharactersList();
             charactersToCheck.AddRange(faction.characters);

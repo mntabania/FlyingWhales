@@ -81,7 +81,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ILocationAwareness currentLocationAwareness { get; private set; }
     public Vector2Int gridTilePosition { get; private set; }
     public bool hasMarker { get; private set; }
-
     public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer { get; set; }
     public LocationStructure deployedAtStructure { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
@@ -118,6 +117,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public PiercingAndResistancesComponent piercingAndResistancesComponent { get; private set; }
     public CharacterEventDispatcher eventDispatcher { get; }
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
+    public CharacterTraitComponent traitComponent { get; private set; }
     public INTERACTION_TYPE causeOfDeath { set; get; }
     public PLAYER_SKILL_TYPE skillCauseOfDeath { set; get; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
@@ -322,8 +322,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
         limiterComponent = new LimiterComponent(); limiterComponent.SetOwner(this);
         piercingAndResistancesComponent = new PiercingAndResistancesComponent(); piercingAndResistancesComponent.SetOwner(this);
-        eventDispatcher = new CharacterEventDispatcher();
         previousCharacterDataComponent = new PreviousCharacterDataComponent(); previousCharacterDataComponent.SetOwner(this);
+        traitComponent = new CharacterTraitComponent(); traitComponent.SetOwner(this);
+        eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
 
         needsComponent.ResetSleepTicks();
@@ -400,6 +401,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         limiterComponent = data.limiterComponent.Load(); limiterComponent.SetOwner(this);
         piercingAndResistancesComponent = data.piercingAndResistancesComponent.Load(); piercingAndResistancesComponent.SetOwner(this);
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
+        traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
 
@@ -2670,6 +2672,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         
         if ((amount < 0 && CanBeDamaged()) || amount > 0) {
+            if (hasMarker) {
+                marker.ShowHealthAdjustmentEffect(amount);
+            }
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements
             int prevHP = currentHP;
@@ -2684,6 +2689,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         //only show hp bar if hp was reduced and hp is greater than 0
                         marker.QuickShowHPBar(this);
                     }
+                }
+            }
+            if (source is Character character) {
+                if (character.partyComponent.hasParty && character.partyComponent.currentParty.isPlayerParty) {
+                    int damageDone = amount;
+                    if (currentHP == 0) {
+                        damageDone = prevHP;
+                    }
+                    character.partyComponent.currentParty.damageAccumulator.AccumulateDamage(damageDone, character);
                 }
             }
             if(amount < 0 && isPlayerSource) {
@@ -3086,7 +3100,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                     Trait trait = traitOverrideFunctions[i];
-                    if (trait.PerTickWhileStationaryOrUnoccupied()) {
+                    if (trait.PerTickWhileStationaryOrUnoccupied(this)) {
                         break;
                     }
                 }
@@ -4284,13 +4298,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //}
                     Profiler.BeginSample($"{name} Lazy checking");
                     if(traitContainer.HasTrait("Lazy")) {
-                        log = $"{log}\n - Character is lazy, has 30% chance to not perform job if it is a settlement job...";
+                        Lazy lazy = traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+                        float chance = lazy.GetTriggerChance(this);
+                        log = $"{log}\n - Character is lazy, has {chance.ToString("F2")} chance to not perform job if it is a settlement job...";
                         //Note: Changed the checker from "Just settlement jobs" to "anything other than personal jobs", because non personal jobs are treated as work jobs
                         if (currentTopPrioJob.originalOwner != null && currentTopPrioJob.originalOwner.ownerType != JOB_OWNER.CHARACTER) { //currentTopPrioJob.originalOwner.ownerType == JOB_OWNER.SETTLEMENT
-                            int chance = UnityEngine.Random.Range(0, 100);
-                            log = $"{log}\n - Roll: {chance.ToString()}";
-                            if (chance < 30) {
-                                Lazy lazy = traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+                            if (GameUtilities.RollChance(chance, ref log)) {
                                 if (lazy.TriggerLazy()) {
                                     log = $"{log}\n - Character triggered lazy, not going to do job, and cancel it";
                                     logComponent.PrintLogIfActive(log);
@@ -5880,16 +5893,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
+    #region Afflictions By Player
+    public bool HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE p_afflictionType) {
+        return afflictionsSkillsInflictedByPlayer.Contains(p_afflictionType);
+    }
+    public bool HasAfflictedByPlayerWith(string p_traitName) {
+        PLAYER_SKILL_TYPE afflictionType = PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(p_traitName);
+        return afflictionType != PLAYER_SKILL_TYPE.NONE && afflictionsSkillsInflictedByPlayer.Contains(afflictionType);
+    }
+    public bool HasAfflictedByPlayerWith(Trait p_trait) {
+        return HasAfflictedByPlayerWith(p_trait.name);
+    }
+    #endregion
+
     #region Loading
     public virtual void LoadReferences(SaveDataCharacter data) {
         isInfoUnlocked = data.isInfoUnlocked;
         ConstructDefaultActions();
         if (data.hasLycan && lycanData == null) {
             LycanthropeData lycanData = data.lycanData.Load();
-
-            //Should only set 1 instance of lycan data even when loaded from save
-            lycanData.originalForm.SetLycanthropeData(lycanData);
-            lycanData.lycanthropeForm.SetLycanthropeData(lycanData);
         }
         if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
@@ -5978,6 +6000,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         tileObjectComponent.LoadReferences(data.tileObjectComponent);
         crimeComponent.LoadReferences(data.crimeComponent);
         previousCharacterDataComponent.LoadReferences(data.previousCharacterDataComponent);
+        traitComponent.LoadReferences(data.traitComponent);
 
         //Place marker after loading references
         if (data.hasMarker) {

@@ -28,7 +28,7 @@ public class MinionCard : MonoBehaviour {
         //    this.minionData = temp;
         //}
 
-        Sprite classPortrait = CharacterManager.Instance.GetWholeImagePortraitSprite(this.minionData.className);
+        Sprite classPortrait = CharacterManager.Instance.GetOrCreateCharacterClassData(this.minionData.className).portraitSprite;
         if(classPortrait != null) {
             portraitImg.sprite = classPortrait;
             portraitImg.gameObject.SetActive(true);
@@ -73,7 +73,7 @@ public class MinionCard : MonoBehaviour {
 
             // txtCombatAbility.text = "<link=\"0\">" + minion.combatAbility.name + "</link>";
 
-            Sprite classPortrait = CharacterManager.Instance.GetWholeImagePortraitSprite(minion.character.characterClass.className);
+            Sprite classPortrait = CharacterManager.Instance.GetOrCreateCharacterClassData(minion.character.characterClass.className).portraitSprite;
             if (classPortrait != null) {
                 portraitImg.sprite = classPortrait;
                 portraitImg.gameObject.SetActive(true);

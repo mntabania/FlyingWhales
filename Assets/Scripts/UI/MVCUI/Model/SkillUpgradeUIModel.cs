@@ -50,7 +50,7 @@ public class SkillUpgradeUIModel : MVCUIModel {
 		onPlayerActionTabClicked?.Invoke(isOn);
 	}
 
-	void ClickClose() {
+	public void ClickClose() {
 		onCloseClicked?.Invoke();
 	}
 	#endregion

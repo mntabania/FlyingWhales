@@ -40,7 +40,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     public void ShowUI(ThePortal p_portal) {
         _portal = p_portal;
         ShowUI();
-        InputManager.Instance.AllowHotkeys(false);
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
         m_portalUIView.SetUpgradePortalBtnInteractable(!p_portal.IsMaxLevel());
     }
     public override void ShowUI() {
@@ -58,7 +58,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     }
     public override void HideUI() {
         base.HideUI();
-        InputManager.Instance.AllowHotkeys(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
         UIManager.Instance.SetSpeedTogglesState(true);
         UIManager.Instance.ResumeLastProgressionSpeed();
     }

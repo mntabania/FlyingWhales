@@ -517,6 +517,7 @@ public enum INTERACTION_TYPE {
     PICKPOCKET = 222,
     DISPOSE_FOOD = 223,
     IS_IMPRISONED = 224,
+    STEAL_ANYTHING
 }
 public enum INTERRUPT {
     None,
@@ -535,7 +536,7 @@ public enum INTERRUPT {
     Laugh_At,
     Leave_Faction,
     Mock,
-    Narcoleptic_Attack,
+    Narcoleptic_Nap,
     Puke,
     Reduce_Conflict,
     Septic_Shock,
@@ -602,6 +603,10 @@ public enum INTERRUPT {
     Declare_War,
     Pulled_Down,
     Taunted,
+    Pass_Out,
+    Narcoleptic_Nap_Short,
+    Narcoleptic_Nap_Medium,
+    Narcoleptic_Nap_Long,
 }
 
 public enum TRAIT_TYPE {
@@ -931,7 +936,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE, REPORT_CRIME
         , PREACH, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY, GO_TO_WAITING, PRODUCE_FOOD_FOR_CAMP, KIDNAP_RAID, STEAL_RAID, BUILD_CAMP, CAPTURE_CHARACTER, BURY_IN_ACTIVE_PARTY, VAMPIRIC_EMBRACE, BUILD_VAMPIRE_CASTLE, FIND_NEW_VILLAGE
         , IMPRISON_BLOOD_SOURCE, OFFER_BLOOD, CURE_MAGICAL_AFFLICTION, LYCAN_HUNT_PREY, STEAL_CORPSE, SUMMON_BONE_GOLEM, CHANGE_CLASS, QUARANTINE, PLAGUE_CARE, TORTURE, MONSTER_EAT_CORPSE, TRITON_KIDNAP, RETURN_STOLEN_THING
-        , DISPOSE_FOOD_PILE, SNATCH_RESTRAIN,
+        , DISPOSE_FOOD_PILE, SNATCH_RESTRAIN, KLEPTOMANIAC_STEAL, LAZY_NAP, FIND_AFFAIR
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, PARTY }
@@ -1002,8 +1007,8 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177, TRITON = 178,
     CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, SPAWN_EYE_WARD = 182, DESTROY_EYE_WARD = 183, MANA_PIT = 184, MARAUD = 185,
     DRAIN_SPIRIT = 186, LET_GO = 187, FULL_HEAL = 188, CREATE_BLACKMAIL = 189, DEFENSE_POINT = 190, IMP_HUT = 191, ICE_BLAST = 192, EARTH_SPIKE = 193, WATER_SPIKE = 194,
-    RELEASE_ABILITIES = 195, SNATCH_VILLAGER = 196, SNATCH_MONSTER = 197, RAID = 198, UPGRADE_ABILITIES = 199, DEFEND = 200,
-    UPGRADE_PORTAL = 201,
+    RELEASE_ABILITIES = 195, SNATCH_VILLAGER = 196, SNATCH_MONSTER = 197, RAID = 198, UPGRADE_ABILITIES = 199, DEFEND = 200, 
+    UPGRADE_PORTAL = 201, DESTROY_STRUCTURE = 202, DIRE_WOLF = 203,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1064,6 +1069,7 @@ public enum SUMMON_TYPE {
     Harpy,
     Triton,
     Imp,
+    Dire_Wolf,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -1117,7 +1123,7 @@ public enum OBJECT_TYPE {
     Reaction_Quest = 24, Plague_Disease = 25
 }
 public enum PASSIVE_SKILL {
-    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb, Dark_Ritual_Chaos_Orb,
+    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb, Dark_Ritual_Chaos_Orb, Raid_Chaos_Orb,
 }
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
@@ -1252,4 +1258,15 @@ public enum LIST_OF_CRITERIA {
 
 public enum OPINIONS { 
     NoOne = 0, Rival, Enemy, Acquaintance, Everyone,
+}
+
+public enum CHANCE_TYPE {
+    Kleptomania_Pickpocket_Level_1, Kleptomania_Pickpocket_Level_2, Kleptomania_Rob_Other_House, Kleptomania_Rob_Any_Place,
+    Base_Cult_Leader_Spawn_Chance, Laziness_Nap_Level_2, Laziness_Nap_Level_3, Unfaithful_Active_Search_Affair,
+    Ignore_Urgent_Task,
+    Flirt_Acquaintance_Become_Lover_Chance,
+    Flirt_Acquaintance_Become_Affair_Chance,
+    Flirt_Friend_Become_Lover_Chance,
+    Flirt_Friend_Become_Affair_Chance,
+    Flirt_On_Sight_Base_Chance
 }

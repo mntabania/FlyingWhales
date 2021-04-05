@@ -34,7 +34,6 @@ public class TileObjectInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI charactersToggleLbl;
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
-    [SerializeField] private GameObject charactersGO;
 
     [Space(10)] [Header("Logs")] 
     [SerializeField] private LogsWindow logsWindow;
@@ -128,6 +127,22 @@ public class TileObjectInfoUI : InfoUIBase {
         UpdateUsers();
         logsWindow.OnParentMenuOpened(activeTileObject.persistentID);
         UpdateLogs();
+        LoadActions(activeTileObject);
+    }
+    protected override void LoadActions(IPlayerActionTarget target) {
+        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
+        activeActionItems.Clear();
+        for (int i = 0; i < target.actions.Count; i++) {
+            PLAYER_SKILL_TYPE skillType = target.actions[i];
+            if(skillType == PLAYER_SKILL_TYPE.DESTROY_EYE_WARD) {
+                PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(skillType);
+                if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
+                    ActionItem actionItem = AddNewAction(action, target);
+                    actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+                    actionItem.ForceUpdateCooldown();
+                }
+            }
+        }
     }
     #endregion
 

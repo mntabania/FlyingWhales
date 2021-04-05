@@ -68,23 +68,23 @@ namespace Plague.Symptom {
         public static string GetSymptomTooltip(this PLAGUE_SYMPTOM p_symptom) {
             switch (p_symptom) {
                 case PLAGUE_SYMPTOM.Paralysis:
-                    return "The Plague may eventually render about a quarter of Plague victims paralyzed.";
+                    return $"The Plague may eventually render about a quarter of Plague victims paralyzed. This symptom produces {UtilityScripts.Utilities.PlagueIcon()}Chaos Orbs.";
                 case PLAGUE_SYMPTOM.Vomiting:
-                    return $"The Plague may sometimes trigger vomiting. This symptom produces {UtilityScripts.Utilities.PlagueIcon()}Plague Points.";
+                    return $"The Plague may sometimes trigger vomiting. This symptom produces {UtilityScripts.Utilities.PlagueIcon()}Chaos Orbs.";
                 case PLAGUE_SYMPTOM.Lethargy:
-                    return "Plagued victims will always becomes Lethargic after waking up or sitting down.";
+                    return $"Plagued victims will always becomes Lethargic after waking up or sitting down. This symptom produces {UtilityScripts.Utilities.PlagueIcon()}Chaos Orbs.";
                 case PLAGUE_SYMPTOM.Seizure:
-                    return $"The Plague may sometimes trigger seizures. This symptom produces \n{UtilityScripts.Utilities.PlagueIcon()}Plague Points.";
+                    return $"The Plague may sometimes trigger seizures. This symptom produces \n{UtilityScripts.Utilities.PlagueIcon()}Chaos Orbs.";
                 case PLAGUE_SYMPTOM.Insomnia:
-                    return "Plagued victims have insomnia which sometimes prevent them from having restful sleep.";
+                    return $"Plagued victims have insomnia which sometimes prevent them from having restful sleep. This symptom produces {UtilityScripts.Utilities.PlagueIcon()}Chaos Orbs.";
                 case PLAGUE_SYMPTOM.Poison_Cloud:
-                    return $"The Plague may sometimes trigger its victim to produce small Poison Clouds while walking. Also applies to Objects. This symptom produces \n{UtilityScripts.Utilities.PlagueIcon()}Plague Points.";
+                    return $"The Plague may sometimes trigger its victim to produce small Poison Clouds while walking. Also applies to Objects. This symptom produces \n{UtilityScripts.Utilities.PlagueIcon()}Chaos Orbs.";
                 case PLAGUE_SYMPTOM.Monster_Scent:
                     return "The Plague gives Sapient victims an alluring scent that may attract \nmonster attacks.";
                 case PLAGUE_SYMPTOM.Sneezing:
-                    return $"The Plague may sometimes trigger sneezing. Sneezing may trigger airborne transmission. This symptom produces {UtilityScripts.Utilities.PlagueIcon()}Plague Points.";
+                    return $"The Plague may sometimes trigger sneezing. Sneezing may trigger airborne transmission. This symptom produces {UtilityScripts.Utilities.PlagueIcon()}Chaos Orbs.";
                 case PLAGUE_SYMPTOM.Depression:
-                    return "Plagued victims have depression which sometimes prevent them from doing entertaining activities.";
+                    return $"Plagued victims have depression which sometimes prevent them from doing entertaining activities. This symptom produces {UtilityScripts.Utilities.PlagueIcon()}Chaos Orbs.";
                 case PLAGUE_SYMPTOM.Hunger_Pangs:
                     return "Plagued victims may sometimes lose an amount of their Fullness Meter while they are moving.";
                 default:

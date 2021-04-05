@@ -26,9 +26,6 @@ public class PlayerSkillComponent {
     public int tier2Count { get; protected set; }
     public int tier3Count { get; protected set; }
     
-    //Blackmail
-    public List<Character> blackmailedCharacters { get; private set; }
-    
     //Skill Unlocking
     public PLAYER_SKILL_TYPE currentSpellBeingUnlocked { get; private set; }
     public int currentSpellUnlockCost { get; private set; }
@@ -49,7 +46,6 @@ public class PlayerSkillComponent {
         minionsSkills = new List<PLAYER_SKILL_TYPE>();
         summonsSkills = new List<PLAYER_SKILL_TYPE>();
         passiveSkills = new List<PASSIVE_SKILL>();
-        blackmailedCharacters = new List<Character>();
         //summons = new List<Summon>();
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
@@ -58,6 +54,43 @@ public class PlayerSkillComponent {
         cooldownReroll = new RuinarchTimer("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
         timerUpgradePortal = new RuinarchTimer("Summon Demon");
+
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+    }
+
+    void OnStructurePlaced(LocationStructure p_structure) {
+        if (p_structure.structureType == STRUCTURE_TYPE.BIOLAB) {
+            UnlockPlagueSkills();
+        }
+    }
+
+    void OnStructureDestroyed(LocationStructure p_structure) {
+        if (p_structure.structureType == STRUCTURE_TYPE.BIOLAB) {
+			if (!HasBiolab()) {
+                LockPlagueSkills();
+            }
+        }
+    }
+
+    void UnlockPlagueSkills() {
+        SkillData skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        skilldata.SetIsUnlockBaseOnRequirements(true);
+        AddCharges(skilldata.type, 1);
+        skilldata = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.PLAGUE);
+        skilldata.SetIsUnlockBaseOnRequirements(true);
+        AddCharges(skilldata.type, 1);
+        Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, PLAYER_SKILL_TYPE.PLAGUED_RAT);
+    }
+
+    void LockPlagueSkills() {
+        SkillData skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUE);
+        skilldata.SetIsUnlockBaseOnRequirements(false);
+        skilldata.ResetData();
+        skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        skilldata.SetIsUnlockBaseOnRequirements(false);
+        skilldata.ResetData();
+        Messenger.Broadcast(SpellSignals.PLAYER_LOST_SPELL, PLAYER_SKILL_TYPE.PLAGUED_RAT);
     }
 
     #region Loading
@@ -442,6 +475,15 @@ public class PlayerSkillComponent {
     }
     #endregion
 
+    bool HasBiolab() {
+        for(int x = 0; x < PlayerManager.Instance.player.playerSettlement.allStructures.Count; ++x) {
+            if(PlayerManager.Instance.player.playerSettlement.allStructures[x].structureType == STRUCTURE_TYPE.BIOLAB) {
+                return true;
+			}
+		}
+        return false;
+	}
+
     #region Summons
     //public void AddSummon(Summon summon) {
     //    summons.Add(summon);
@@ -489,28 +531,12 @@ public class PlayerSkillComponent {
 
     #region Blackmail
     /// <summary>
-    /// Add a character to the list of characters that the player has
-    /// blackmail material on.
-    /// </summary>
-    /// <param name="p_character">The character to add.</param>
-    public void AddCharacterToBlackmailList(Character p_character) {
-        blackmailedCharacters.Add(p_character);
-    }
-    /// <summary>
-    /// Remove a character to the list of characters that the player has
-    /// blackmail material on.
-    /// </summary>
-    /// <param name="p_character">The character to remove.</param>
-    public void RemoveCharacterFromBlackmailList(Character p_character) {
-        blackmailedCharacters.Remove(p_character);
-    }
-    /// <summary>
     /// Has the player already stored blackmail for a given character.
     /// </summary>
     /// <param name="p_character">The character in question.</param>
     /// <returns>True or false.</returns>
     public bool AlreadyHasBlackmail(Character p_character) {
-        return blackmailedCharacters.Contains(p_character) || PlayerManager.Instance.player.HasHostageIntel(p_character);
+        return PlayerManager.Instance.player.HasHostageIntel(p_character);
     }
     #endregion
 
@@ -556,7 +582,6 @@ public class PlayerSkillComponent {
         PopulatePassiveSkills(loadout.passiveSkills);
     }
     public void LoadReferences(SaveDataPlayerSkillComponent data) {
-        blackmailedCharacters = SaveUtilities.ConvertIDListToCharacters(data.blackmailedCharacters);
         currentSpellBeingUnlocked = data.currentSpellBeingUnlocked;
         currentSpellUnlockCost = data.currentSpellUnlockCost;
         timerUnlockSpell = data.timerUnlockSpell;
@@ -583,7 +608,6 @@ public class PlayerSkillComponent {
 [System.Serializable]
 public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
     public List<SaveDataPlayerSkill> skills;
-    public List<string> blackmailedCharacters;
     //public bool canTriggerFlaw;
     //public bool canRemoveTraits;
     //Skill Unlocking
@@ -643,7 +667,6 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
             skills.Add(dataPlayerSkill);
         }
 
-        blackmailedCharacters = SaveUtilities.ConvertSavableListToIDs(component.blackmailedCharacters);
         
         currentSpellBeingUnlocked = component.currentSpellBeingUnlocked;
         currentSpellUnlockCost = component.currentSpellUnlockCost;

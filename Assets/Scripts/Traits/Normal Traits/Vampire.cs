@@ -143,9 +143,11 @@ namespace Traits {
             base.OnBeforeStartFlee(traitable);
             if(traitable is Character character) {
                 if (!isInVampireBatForm) {
-                    if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                        //TransformToBat(character);
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
+                    if (CanTransformIntoBat()) {
+                        if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                            //TransformToBat(character);
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
+                        }
                     }
                 }
             }
@@ -206,7 +208,7 @@ namespace Traits {
             }
             return data;
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecoveryTypeJob()) { //1
                 _owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
                 _owner.traitContainer.AddTrait(_owner, "Ashamed");
@@ -244,6 +246,9 @@ namespace Traits {
         }
         #endregion
 
+        public bool CanTransformIntoBat() {
+            return PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 1;
+        }
         public void SetIsInVampireBatForm(bool state) {
             isInVampireBatForm = state;
             SetIsTraversingUnwalkableAsBat(state);

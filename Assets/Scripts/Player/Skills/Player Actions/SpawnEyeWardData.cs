@@ -29,7 +29,7 @@ public class SpawnEyeWardData : PlayerAction {
 
         if (UIManager.Instance.structureInfoUI.isShowing) {
             if (UIManager.Instance.structureInfoUI.activeStructure is Beholder beholder) {
-                beholder.SetEyeWard(ward);
+                beholder.AddEyeWard(ward);
             }
         }
 

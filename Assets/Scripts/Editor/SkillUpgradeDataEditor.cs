@@ -249,7 +249,7 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Number_Criteria)) {
-                DisplayIntList(data.afflictionUpgradeData.crowdNumber, "No. of Criteria");
+                DisplayIntList(data.afflictionUpgradeData.numberOfCriteria, "No. of Criteria");
                 EditorGUILayout.Space();
             }
             if (data.afflictionUpgradeData.bonuses.Contains(AFFLICTION_UPGRADE_BONUS.Criteria)) {

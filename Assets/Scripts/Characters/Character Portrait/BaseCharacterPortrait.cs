@@ -25,15 +25,15 @@ public class BaseCharacterPortrait : PooledObject, IPointerClickHandler {
         hoverHandler.AddOnHoverOutAction(OnHoverOut);
     }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
-        Sprite sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(portraitSettings.wholeImage);
+        Sprite sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(portraitSettings.className)?.portraitSprite;
         UpdatePortrait(sprite);
     }
     public void GeneratePortrait(SUMMON_TYPE p_monsterType) {
-        Sprite sprite = CharacterManager.Instance.GetSummonSettings(p_monsterType).summonPortrait;
+        Sprite sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetSummonSettings(p_monsterType).className).portraitSprite;
         UpdatePortrait(sprite);
     }
     public void GeneratePortrait(MINION_TYPE p_demonType) {
-        Sprite sprite = CharacterManager.Instance.GetMinionSettings(p_demonType).minionPortrait;
+        Sprite sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetMinionSettings(p_demonType).className).portraitSprite;
         UpdatePortrait(sprite);
     }
     

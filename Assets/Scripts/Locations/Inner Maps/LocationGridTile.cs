@@ -1640,9 +1640,33 @@ namespace Inner_Maps {
             connectorsOnTile--;
         }
         #endregion
-        
-        #region Meteor
-        public int meteorCount { get; private set; }
+
+        #region Plagued Rats
+        public void AddPlaguedRats(bool p_randomizedPosition = false) {
+            Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Rat, PlayerManager.Instance.player.playerFaction, homeRegion: parentMap.region);
+            summon.OnSummonAsPlayerMonster();
+            CharacterManager.Instance.PlaceSummonInitially(summon, this);
+
+			if (p_randomizedPosition) {
+                Vector3 pos = summon.mapObjectVisual.transform.position;
+                pos.x += Random.Range(-1f, 1f);
+                pos.y += Random.Range(-1f, 1f);
+                summon.mapObjectVisual.transform.position = pos;
+            }
+
+            BaseSettlement settlement = null;
+            if (this.structure.structureType != STRUCTURE_TYPE.WILDERNESS && this.structure.structureType != STRUCTURE_TYPE.OCEAN && IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
+                summon.MigrateHomeStructureTo(this.structure);
+            } else {
+                summon.SetTerritory(this.area, false);
+            }
+            summon.jobQueue.CancelAllJobs();
+            Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
+        }
+		#endregion
+
+		#region Meteor
+		public int meteorCount { get; private set; }
         public void AddMeteor() {
             SetIsDefault(false);
             meteorCount++;

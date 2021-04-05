@@ -137,10 +137,17 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		
 		ProcessButtonAvailability();
-		InputManager.Instance.AllowHotkeys(false);
+		InputManager.Instance.SetAllHotkeysEnabledState(false);
+		InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
 		UIManager.Instance.Pause();
 	}
 
+	#region deployed items
+	void InitializeDeployedItems() {
+		HideDeployedItems();
+		DisplayDeployedItems();
+		DisplayDeployedDeadMembers();
+	}
 	void HideDeployedItems() {
 		int x = 0;
 		for (; x < m_targetPartyStructure.partyData.maxSummonLimitDeployCount; ++x) {
@@ -157,7 +164,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_maraudUIView.ProcessSummonDisplay();
 		m_targetPartyStructure.partyData.ResetAllReadyCounts();
 	}
-
 	void DisplayDeployedItems() {
 		if ((m_targetPartyStructure.partyData.deployedMinionCount > 0 || m_targetPartyStructure.partyData.deployedSummonCount > 0) && (m_targetPartyStructure.partyData.deployedTargetCount > 0)) {
 			m_isTeamDeployed = true;
@@ -174,7 +180,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.ShowMinionButtonHideMinionContainer();
 		}
-
 		if (m_targetPartyStructure.partyData.deployedTargetCount > 0) {
 			m_maraudUIView.HideTargetButtonShowTargetContainer();
 			m_deployedTargetItemUI[0].InitializeItem(m_targetPartyStructure.partyData.deployedTargets[0], true);
@@ -184,10 +189,52 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_maraudUIView.ProcessSummonDisplay();
 	}
 
-	void InitializeDeployedItems() {
-		HideDeployedItems();
-		DisplayDeployedItems();
+	void DisplayDeployedDeadMembers() {
+		if (m_targetPartyStructure.party != null) {
+			m_targetPartyStructure.party.deadMembers.ForEach((eachDeadMembers) => Debug.LogError(eachDeadMembers.nameWithID));
+			m_targetPartyStructure.party.deadMembers.ForEach((eachMember) => {
+				if (eachMember.minion != null) {
+					m_deployedMinionsUI[0].gameObject.SetActive(true);
+					MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMember.minion.minionPlayerSkillType);
+					m_deployedMinionsUI[0].InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetMinionUnderlingChargesByMinionType(minionPlayerSkill.minionType));
+					m_deployedMinionsUI[0].ShowDeadIcon();
+					m_deployedMinionsUI[0].HideRemoveButton();
+					m_maraudUIView.HideMinionButtonShowMinionContainer();
+				} else {
+					for(int x = 0; x < m_deployedSummonsUI.Count; ++x) {
+						if (!m_deployedSummonsUI[x].gameObject.activeSelf) {
+							m_deployedSummonsUI[x].gameObject.SetActive(true);
+							m_deployedSummonsUI[x].InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((eachMember as Summon).summonType));
+							m_deployedSummonsUI[x].ShowDeadIcon();
+							m_deployedSummonsUI[x].HideRemoveButton();
+							m_maraudUIView.ProcessSummonDisplay();
+							break;
+						}
+					}
+				}
+			});
+		}
 	}
+	#endregion
+
+	#region Summons
+	void InitializeSummons() {
+		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
+			if (entry.Value.hasMaxCharge) {
+				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableSummonsParent());
+				MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
+				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
+				item.SetObject(entry.Value);
+				item.SetAsButton();
+				m_summonList.Add(item);
+				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClass.className).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower);
+				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
+				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
+			}
+		}
+		m_maraudUIView.ProcessSummonDisplay();
+	}
+	#endregion
 
 	void ReturnAllItemToPool() { 
 		for(int x = 0; x < m_summonList.Count; ++x) {
@@ -204,24 +251,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_targetList.ForEach((eachItem) => {
 			eachItem.gameObject.SetActive(false);
 		});
-	}
-
-	void InitializeSummons() {
-
-		foreach (KeyValuePair<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.monsterUnderlingCharges) {
-            if (entry.Value.hasMaxCharge) {
-				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableSummonsParent());
-				MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
-				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
-				item.SetObject(entry.Value);
-				item.SetAsButton();
-				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClass.className).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower && entry.Value.currentCharges > 0);
-				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
-				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
-			}
-		}
-		m_maraudUIView.ProcessSummonDisplay();
 	}
 
 	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
@@ -483,7 +512,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		ReturnAllItemToPool();
 		HideUI();
 		m_maraudUIView.HideAllSubMenu();
-		InputManager.Instance.AllowHotkeys(true);
+		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 

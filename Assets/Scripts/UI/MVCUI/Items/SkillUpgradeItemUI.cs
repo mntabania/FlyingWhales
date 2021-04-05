@@ -64,6 +64,7 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 
 	private void SkillClicked() {
 		onButtonClick?.Invoke(m_skillType);
+		OnHoverOverItem();
 	}
 	private void OnHoverOverItem() {
 		onHoverOverUpgradeItem?.Invoke(m_skillType);

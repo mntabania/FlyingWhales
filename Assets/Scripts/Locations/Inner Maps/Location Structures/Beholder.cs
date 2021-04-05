@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 
 namespace Inner_Maps.Location_Structures {
     public class Beholder : DemonicStructure {
-        public EyeWard[] eyeWards { get; private set; }
+        public List<EyeWard> eyeWards { get; private set; }
 
         #region getters
         public override System.Type serializedData => typeof(SaveDataBeholder);
         #endregion
         public Beholder(Region location) : base(STRUCTURE_TYPE.BEHOLDER, location){
-            eyeWards = new EyeWard[3];
+            eyeWards = new List<EyeWard>();
         }
         public Beholder(Region location, SaveDataBeholder data) : base(location, data) {
-            eyeWards = new EyeWard[data.eyeWards.Length];
+            eyeWards = new List<EyeWard>();
         }
 
         #region Overrides
@@ -50,13 +51,13 @@ namespace Inner_Maps.Location_Structures {
             }
             Messenger.RemoveListener<TileObject>(TileObjectSignals.DESTROY_TILE_OBJECT, OnDestroyTileObject);
 
-            for (int i = 0; i < eyeWards.Length; i++) {
+            for (int i = 0; i < eyeWards.Count; i++) {
                 EyeWard eye = eyeWards[i];
-                if (eye != null) {
-                    if(eye.gridTileLocation != null) {
-                        eye.gridTileLocation.structure.RemovePOI(eye);
-                    }
-                    eyeWards[i] = null;
+                if (eye.gridTileLocation != null) {
+                    eye.gridTileLocation.structure.RemovePOI(eye);
+                }
+                if (RemoveEyeWard(eye)) {
+                    i--;
                 }
             }
         }
@@ -78,21 +79,19 @@ namespace Inner_Maps.Location_Structures {
                 RemoveEyeWard(eyeWard);
             }
         }
-        public void SetEyeWard(EyeWard p_eyeWard) {
-            for (int i = 0; i < eyeWards.Length; i++) {
-                if(eyeWards[i] == null) {
-                    eyeWards[i] = p_eyeWard;
-                    break;
-                }
+        public void AddEyeWard(EyeWard p_eyeWard) {
+            if (!eyeWards.Contains(p_eyeWard)) {
+                eyeWards.Add(p_eyeWard);
+                Messenger.Broadcast(StructureSignals.UPDATE_EYE_WARDS, this);
             }
         }
-        public void RemoveEyeWard(EyeWard p_eyeWard) {
-            for (int i = 0; i < eyeWards.Length; i++) {
-                if (eyeWards[i] == p_eyeWard) {
-                    eyeWards[i] = null;
-                    break;
-                }
+        public bool RemoveEyeWard(EyeWard p_eyeWard) {
+            if (eyeWards.Remove(p_eyeWard)) {
+                //broadcast signal
+                Messenger.Broadcast(StructureSignals.UPDATE_EYE_WARDS, this);
+                return true;
             }
+            return false;
         }
         #endregion
 
@@ -100,7 +99,7 @@ namespace Inner_Maps.Location_Structures {
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
             SaveDataBeholder data = saveDataLocationStructure as SaveDataBeholder;
-            for (int i = 0; i < data.eyeWards.Length; i++) {
+            for (int i = 0; i < data.eyeWards.Count; i++) {
                 if (!string.IsNullOrEmpty(data.eyeWards[i])) {
                     eyeWards[i] = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.eyeWards[i]) as EyeWard;
                 }
@@ -111,15 +110,15 @@ namespace Inner_Maps.Location_Structures {
 }
 
 public class SaveDataBeholder : SaveDataDemonicStructure {
-    public string[] eyeWards { get; private set; }
+    public List<string> eyeWards { get; private set; }
 
     public override void Save(LocationStructure structure) {
         base.Save(structure);
         Beholder data = structure as Beholder;
-        eyeWards = new string[data.eyeWards.Length];
-        for (int i = 0; i < data.eyeWards.Length; i++) {
-            if(data.eyeWards[i] != null) {
-                eyeWards[i] = data.eyeWards[i].persistentID;
+        if(data.eyeWards.Count > 0) {
+            eyeWards = new List<string>();
+            for (int i = 0; i < data.eyeWards.Count; i++) {
+                eyeWards.Add(data.eyeWards[i].persistentID);
             }
         }
     }

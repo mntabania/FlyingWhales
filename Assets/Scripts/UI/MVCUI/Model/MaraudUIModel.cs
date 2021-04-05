@@ -87,7 +87,7 @@ public class MaraudUIModel : MVCUIModel {
 		onDeployClicked?.Invoke();
 	}
 
-	void ClickClose() {
+	public void ClickClose() {
 		onCloseClicked?.Invoke();
 	}
 	void ClickAddSummon() {

@@ -585,7 +585,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (action.goapType == INTERACTION_TYPE.REMOVE_BUFF) {
             return true;
         }
-        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE || action.goapType == INTERACTION_TYPE.PICKPOCKET) {
+        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.STEAL_ANYTHING || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE || action.goapType == INTERACTION_TYPE.PICKPOCKET) {
             return true;
         } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
             return true;
@@ -719,7 +719,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     }
                 } else if (action.goapType == INTERACTION_TYPE.EXPLORE || action.goapType == INTERACTION_TYPE.COUNTERATTACK_ACTION
                     || action.goapType == INTERACTION_TYPE.EXTERMINATE || action.goapType == INTERACTION_TYPE.HUNT_HEIRLOOM || action.goapType == INTERACTION_TYPE.RAID
-                    || action.goapType == INTERACTION_TYPE.RESCUE || action.goapType == INTERACTION_TYPE.HOST_SOCIAL_PARTY || action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER) {
+                    || action.goapType == INTERACTION_TYPE.RESCUE || action.goapType == INTERACTION_TYPE.HOST_SOCIAL_PARTY || action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER 
+                    || action.goapType == INTERACTION_TYPE.NEUTRALIZE) {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(descriptionLog);
                 } else if (action.showNotification) {
                     PlayerManager.Instance.player.ShowNotificationFrom(actor, descriptionLog);

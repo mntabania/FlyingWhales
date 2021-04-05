@@ -15,6 +15,7 @@ MonoBehaviour:
   combatBehaviourType: 6
   combatSpecialSkillType: 2
   summonCost: 0
+  portraitSprite: {fileID: 21300000, guid: 3187860cdb845ff4a8fe10bb432bd421, type: 3}
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: c4151fc2bb3c6d340bf0fa63154e2a10, type: 3}
     animationSprites:

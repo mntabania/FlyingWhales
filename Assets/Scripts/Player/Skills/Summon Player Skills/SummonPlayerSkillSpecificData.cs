@@ -12,6 +12,18 @@ public class WolfData : SummonPlayerSkill {
         className = "Ravager";
     }
 }
+
+public class DireWolfData : SummonPlayerSkill
+{
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DIRE_WOLF;
+    public override string name => "Dire Wolf";
+    public override string description => "Dire Wolf";
+    public DireWolfData() {
+        summonType = SUMMON_TYPE.Dire_Wolf;
+        race = RACE.WOLF;
+        className = "Dire";
+    }
+}
 public class GolemData : SummonPlayerSkill {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.GOLEM;
     public override string name => "Golem";
@@ -140,16 +152,6 @@ public class SheepData : SummonPlayerSkill {
         summonType = SUMMON_TYPE.Sheep;
         race = RACE.SHEEP;
         className = "Sheep";
-    }
-}
-public class PlaguedRatData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLAGUED_RAT;
-    public override string name => "Plagued Rat";
-    public override string description => "Plagued Rat";
-    public PlaguedRatData() {
-        summonType = SUMMON_TYPE.Rat;
-        race = RACE.RAT;
-        className = "Rat";
     }
 }
 public class SludgeData : SummonPlayerSkill {

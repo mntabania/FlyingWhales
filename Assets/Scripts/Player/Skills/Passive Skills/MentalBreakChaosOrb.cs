@@ -6,7 +6,7 @@ using Interrupts;
 public class MentalBreakChaosOrb : PassiveSkill {
     public override string name => "Gain Chaos Orbs from Mental Breaks";
     public override string description => "This is a Passive Skill that produces Chaos Orbs whenever a Villager enters a Mental Break.";
-    public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Dark_Ritual_Chaos_Orb;
+    public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Mental_Break_Chaos_Orb;
 
     public override void ActivateSkill() {
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnDarkRitualStarted);

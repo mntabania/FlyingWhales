@@ -74,6 +74,7 @@ public class LetGoData : PlayerAction {
             }
             CharacterManager.Instance.Teleport(targetCharacter, targetTile);
             GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);
+            targetPOI.traitContainer.RemoveRestrainAndImprison(targetPOI);
             RuinarchListPool<LocationGridTile>.Release(allTilesOutside);
             base.ActivateAbility(targetPOI);    
         }

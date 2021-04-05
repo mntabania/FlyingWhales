@@ -45,7 +45,7 @@ public class SocialGatheringBehaviour : CharacterBehaviourComponent {
                             x => !x.combatComponent.isInCombat && x.limiterComponent.canPerform && x.limiterComponent.canWitness && !x.isDead &&
                                  x != character
                         );
-                        if (chosenCharacter != null && character.nonActionEventsComponent.CanInteract(chosenCharacter)) {
+                        if (chosenCharacter != null && character.nonActionEventsComponent.CanChat(chosenCharacter)) {
                             hasJob = character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenCharacter);
                         }
                     } else if (roll >= 70 && roll < 85) {

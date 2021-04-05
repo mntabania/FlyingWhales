@@ -34,6 +34,7 @@ public class ConsoleBase : InfoUIBase {
     [SerializeField] private TextMeshProUGUI fullDebug2Lbl;
 
     [SerializeField] private Toggle tglAlwaysSuccessScheme;
+    [SerializeField] private ChanceTheWrapper chanceTheWrapper;
 
     void Awake() {
         Initialize();
@@ -99,13 +100,15 @@ public class ConsoleBase : InfoUIBase {
             {"/activate_settlement_event", ActivateSettlementEvent},
             {"/trigger_quarantine", TriggerQuarantine},
             {"/add_ideology", AddFactionIdeology},
-            {"/check_tiles", CheckTiles}
+            {"/check_tiles", CheckTiles},
+            {"/reveal_all", RevealAll}
         };
         
         SchemeData.alwaysSuccessScheme = false;
         tglAlwaysSuccessScheme.SetIsOnWithoutNotify(SchemeData.alwaysSuccessScheme);
         tglAlwaysSuccessScheme.onValueChanged.RemoveAllListeners();
         tglAlwaysSuccessScheme.onValueChanged.AddListener(OnToggleAlwaysSuccessScheme);
+        chanceTheWrapper.Initialize();
     }
     private void Update() {
         if (!isShowing) {
@@ -1309,11 +1312,24 @@ public class ConsoleBase : InfoUIBase {
         string valueParameterStr = parameters[0];
         if (Int32.TryParse(valueParameterStr, out var value)) {
             PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(value);
-            AddSuccessMessage($"Adjusted Plague Points by {value.ToString()}. New Plague Points is {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}");
+            AddSuccessMessage($"Adjusted Chaotic Energy by {value.ToString()}. New Chaotic Energy is {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}");
         } else {
             AddErrorMessage($"Could not parse value {valueParameterStr} to an integer.");
         }
 
+    }
+    private void RevealAll(string[] parameters) {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            character.isInfoUnlocked = true;
+        }
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            if (faction.isMajorFaction) {
+                faction.isInfoUnlocked = true;
+            }
+        }
+        AddSuccessMessage($"Revealed all Character and Faction Info");
     }
     #endregion
 

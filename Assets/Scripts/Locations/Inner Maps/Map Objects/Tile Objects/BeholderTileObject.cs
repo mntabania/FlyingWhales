@@ -7,6 +7,7 @@ public class BeholderTileObject : TileObject {
 
     public BeholderTileObject() {
         Initialize(TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public BeholderTileObject(SaveDataTileObject data) {
