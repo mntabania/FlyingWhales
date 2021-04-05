@@ -38,8 +38,8 @@ namespace Traits {
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character targetCharacter) {
-                PLAYER_SKILL_TYPE playerSkillType = GetPlayerSkillType();
-                if (characterThatWillDoJob.afflictionsSkillsInflictedByPlayer.Contains(playerSkillType)) {
+                PLAYER_SKILL_TYPE playerSkillType = GetAfflictionSkillType();
+                if (characterThatWillDoJob.HasAfflictedByPlayerWith(playerSkillType)) {
                     //affliction was applied by player
                     PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
                     SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);

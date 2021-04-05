@@ -64,26 +64,25 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         UpdateLeaderIcon();
     }
     public void GeneratePortrait(SUMMON_TYPE p_monsterType, bool makePixelPerfect = true) {
-        _portraitSprite = CharacterManager.Instance.GetSummonSettings(p_monsterType).summonPortrait;
+        _portraitSprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetSummonSettings(p_monsterType).className)?.portraitSprite;
         UpdatePortrait(makePixelPerfect);
         UpdateLeaderIcon();
     }
     public void GeneratePortrait(MINION_TYPE p_demonType, bool makePixelPerfect = true) {
-        _portraitSprite = CharacterManager.Instance.GetMinionSettings(p_demonType).minionPortrait;
+        _portraitSprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetMinionSettings(p_demonType).className)?.portraitSprite;
         UpdatePortrait(makePixelPerfect);
         UpdateLeaderIcon();
     }
 
     private void UpdatePortrait(bool makePixelPerfect) {
         isPixelPerfect = makePixelPerfect;
+        if(_portraitSprite == null) {
+            _portraitSprite = CharacterManager.Instance.GetOrCreateCharacterClassData(_portraitSettings.className)?.portraitSprite;
+        }
         if (_portraitSprite != null) {
             //use portrait sprite directly
-            SetWholeImageSprite(_portraitSprite);
-            SetWholeImageState(true);
-            SetFaceObjectStates(false);
-        } else if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
             //use whole image
-            SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite(_portraitSettings.wholeImage));
+            SetWholeImageSprite(_portraitSprite);
             if (character != null) {
                 SetWholeImageMaterial(character.visuals.wholeImageMaterial);
             }
@@ -153,7 +152,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         wholeImage.sprite = sprite;
     }
     public void SetAsDefaultMinion() {
-        SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite("Wrath"));
+        SetWholeImageSprite(CharacterManager.Instance.GetOrCreateCharacterClassData("Wrath").portraitSprite);
         SetWholeImageState(true);
         SetFaceObjectStates(false);
         lvlGO.SetActive(false);

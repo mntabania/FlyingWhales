@@ -97,27 +97,28 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         } else {
             Vampire vampire = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
             if (!vampire.hasAlreadyBecomeVampireLord) {
-                if (character.characterClass.className == "Necromancer") {
-                    log += $"\n-{character.name} is not yet a vampire lord. But is a necromancer, not becoming a Vampire Lord.";
-                } else if (character.characterClass.className == "Werewolf") {
-                    log += $"\n-{character.name} is not yet a vampire lord. But is currently a Werewolf, not becoming a Vampire Lord.";
-                } else if (character.traitContainer.HasTrait("Enslaved")) {
-                    log += $"\n-{character.name} is Enslaved, not becoming a Vampire Lord.";
-                } else {
-                    log += $"\n-{character.name} is not yet a vampire lord. Rolling for chance to check converted villagers.";
-                    if (GameUtilities.RollChance(10, ref log)) { //10
-                        log += $"\n-{character.name} converted villagers are {vampire.numOfConvertedVillagers.ToString()}.";
-                        if (vampire.numOfConvertedVillagers >= 3) {
-                            //Become vampire lord
-                            log += $"\n-{character.name} will become a vampire lord.";
-                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Vampire_Lord, character);
-                            producedJob = null;
-                            return true;    
+                if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 2) {
+                    if (character.characterClass.className == "Necromancer") {
+                        log += $"\n-{character.name} is not yet a vampire lord. But is a necromancer, not becoming a Vampire Lord.";
+                    } else if (character.characterClass.className == "Werewolf") {
+                        log += $"\n-{character.name} is not yet a vampire lord. But is currently a Werewolf, not becoming a Vampire Lord.";
+                    } else if (character.traitContainer.HasTrait("Enslaved")) {
+                        log += $"\n-{character.name} is Enslaved, not becoming a Vampire Lord.";
+                    } else {
+                        log += $"\n-{character.name} is not yet a vampire lord. Rolling for chance to check converted villagers.";
+                        if (GameUtilities.RollChance(10, ref log)) { //10
+                            log += $"\n-{character.name} converted villagers are {vampire.numOfConvertedVillagers.ToString()}.";
+                            if (vampire.numOfConvertedVillagers >= 3) {
+                                //Become vampire lord
+                                log += $"\n-{character.name} will become a vampire lord.";
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Vampire_Lord, character);
+                                producedJob = null;
+                                return true;
+                            }
                         }
-                    }    
-                }    
+                    }
+                }
             }
-            
         }
 
         if (character.needsComponent.isSulking) {

@@ -726,9 +726,10 @@ public class FactionManager : BaseMonoBehaviour {
     public FACTION_TYPE GetFactionTypeForCharacter(Character character) {
         if (character.characterClass.className == "Cult Leader") {
             return FACTION_TYPE.Demon_Cult;
-        } else if (character.traitContainer.HasTrait("Vampire")) {
+        } else if (character.traitContainer.HasTrait("Vampire") && PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 3) {
             return FACTION_TYPE.Vampire_Clan;
-        } else if (character.isLycanthrope && character.lycanData.isMaster) {
+        } else if (character.isLycanthrope && character.lycanData.isMaster
+            && PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.LYCANTHROPY).currentLevel >= 3) {
             return FACTION_TYPE.Lycan_Clan;
         } else if (character.traitContainer.HasTrait("Cultist")) {
             return FACTION_TYPE.Demon_Cult;

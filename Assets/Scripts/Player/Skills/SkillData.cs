@@ -58,12 +58,15 @@ public class SkillData : IPlayerSkill {
         SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
         SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
         SetCooldown(playerSkillData.skillUpgradeData.GetCoolDownPerLevel(currentLevel));
-
         SetCharges(maxCharges);
         FinishCooldown();
         skillEventDispatcher.ExecuteLevelUpEvent(this, playerSkillData);
+        if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
+            Messenger.Broadcast(name + "LevelUp", this);
+        }
+        Messenger.Broadcast(SpellSignals.PLAYER_SKILL_LEVEL_UP, this);
     }
-    
+
     protected SkillData() {
         skillEventDispatcher = new SkillEventDispatcher();
         ResetData();

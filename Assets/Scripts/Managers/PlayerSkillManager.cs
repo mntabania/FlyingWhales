@@ -39,23 +39,23 @@ public class PlayerSkillManager : MonoBehaviour {
 
     public Dictionary<string, PLAYER_SKILL_TYPE> afflictionsNameSkillTypeDictionary = new Dictionary<string, PLAYER_SKILL_TYPE>()
     {
-            { "Agoraphobic", PLAYER_SKILL_TYPE.AGORAPHOBIA },
-            { "Alcoholic", PLAYER_SKILL_TYPE.ALCOHOLIC },
-            { "Cannibal", PLAYER_SKILL_TYPE.CANNIBALISM },
-            { "Coward", PLAYER_SKILL_TYPE.COWARDICE },
-            { "Glutton", PLAYER_SKILL_TYPE.GLUTTONY },
-            { "Hothead", PLAYER_SKILL_TYPE.HOTHEADED },
-            { "Kleptomaniac", PLAYER_SKILL_TYPE.KLEPTOMANIA },
-            { "Lazy", PLAYER_SKILL_TYPE.GLUTTONY },
-            { "Lycanthrophe", PLAYER_SKILL_TYPE.LYCANTHROPY },
-            { "Music Hater", PLAYER_SKILL_TYPE.MUSIC_HATER },
-            { "Narcoleptic", PLAYER_SKILL_TYPE.NARCOLEPSY },
-            { "Paralyzed", PLAYER_SKILL_TYPE.PARALYSIS },
-            { "Plagued", PLAYER_SKILL_TYPE.PLAGUE },
-            { "Psychopath", PLAYER_SKILL_TYPE.PSYCHOPATHY },
-            { "Pyrophobic", PLAYER_SKILL_TYPE.PYROPHOBIA },
-            { "Unfaithful", PLAYER_SKILL_TYPE.UNFAITHFULNESS },
-            { "Vampire", PLAYER_SKILL_TYPE.VAMPIRISM },
+        { "Agoraphobic", PLAYER_SKILL_TYPE.AGORAPHOBIA },
+        { "Alcoholic", PLAYER_SKILL_TYPE.ALCOHOLIC },
+        { "Cannibal", PLAYER_SKILL_TYPE.CANNIBALISM },
+        { "Coward", PLAYER_SKILL_TYPE.COWARDICE },
+        { "Glutton", PLAYER_SKILL_TYPE.GLUTTONY },
+        { "Hothead", PLAYER_SKILL_TYPE.HOTHEADED },
+        { "Kleptomaniac", PLAYER_SKILL_TYPE.KLEPTOMANIA },
+        { "Lazy", PLAYER_SKILL_TYPE.GLUTTONY },
+        { "Lycanthrope", PLAYER_SKILL_TYPE.LYCANTHROPY },
+        { "Music Hater", PLAYER_SKILL_TYPE.MUSIC_HATER },
+        { "Narcoleptic", PLAYER_SKILL_TYPE.NARCOLEPSY },
+        { "Paralyzed", PLAYER_SKILL_TYPE.PARALYSIS },
+        { "Plagued", PLAYER_SKILL_TYPE.PLAGUE },
+        { "Psychopath", PLAYER_SKILL_TYPE.PSYCHOPATHY },
+        { "Pyrophobic", PLAYER_SKILL_TYPE.PYROPHOBIA },
+        { "Unfaithful", PLAYER_SKILL_TYPE.UNFAITHFULNESS },
+        { "Vampire", PLAYER_SKILL_TYPE.VAMPIRISM },
     };
 
     #region getters
@@ -386,12 +386,6 @@ public class PlayerSkillManager : MonoBehaviour {
             spellData.ResetData();
         }
     }
-    public PLAYER_SKILL_TYPE GetSkillTypeFromAfflictionName(string p_name) {
-        if (afflictionsNameSkillTypeDictionary.ContainsKey(p_name)) {
-            return afflictionsNameSkillTypeDictionary[p_name];
-        }
-        throw new Exception($"No affliction skill type with name {p_name}");
-    }
     #endregion
 
     #region Assets
@@ -423,7 +417,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     #region utility
     public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         if (p_forcedLevel == -1) {
             return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(GetSkillData(p_skillType).currentLevel);
         } else {
@@ -432,47 +426,47 @@ public class PlayerSkillManager : MonoBehaviour {
     }
 
     public int GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetTileRangeBonusPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetChanceBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetChanceBonusPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public int GetAdditionalAttackActualPerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalAttackActualPerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public int GetDurationBonusPerLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         if (p_forcedLevel == -1) {
             return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(GetSkillData(p_skillType).currentLevel);
         } else {
@@ -481,56 +475,56 @@ public class PlayerSkillManager : MonoBehaviour {
     }
 
     public int GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetSkillMovementSpeedPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionPiercePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetPiercePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionRateChancePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionNapsDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetNapsDurationPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetDurationPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetHungerRatePerLevel(GetSkillData(p_skillType).currentLevel);
     }
     public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType, int p_level) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetHungerRatePerLevel(p_level);
     }
     public int GetAfflictionCrowdNumberPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetCrowdNumberPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public List<OPINIONS> GetAfflictionOpinionTriggers(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetAllOpinionsTrigger();
     }
 
     public List<AFFLICTION_SPECIFIC_BEHAVIOUR> GetAfflictionAllAddedBehaviour(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetAllAddedBehaviour();
     }
 
     private SkillData GetSkillData(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetPlayerSkillData(p_skillType);
         return skillData;
     }
     public bool HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE p_skillType, AFFLICTION_SPECIFIC_BEHAVIOUR p_behaviour) {
@@ -559,6 +553,12 @@ public class PlayerSkillManager : MonoBehaviour {
                 break;
             }
         }
+    }
+    public PLAYER_SKILL_TYPE GetAfflictionTypeByTraitName(string p_traitName) {
+        if (afflictionsNameSkillTypeDictionary.ContainsKey(p_traitName)) {
+            return afflictionsNameSkillTypeDictionary[p_traitName];
+        }
+        throw new Exception($"No affliction skill type with name {p_traitName}");
     }
     #endregion
 }

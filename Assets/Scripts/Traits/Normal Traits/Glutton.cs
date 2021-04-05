@@ -67,7 +67,7 @@ namespace Traits {
         #endregion
 
         private float GetHungerDecreaseRate(Character p_character) {
-            var hungerRate = p_character.WasAfflictedByPlayer(this) ? 
+            var hungerRate = p_character.HasAfflictedByPlayerWith(this) ? 
                 PlayerSkillManager.Instance.GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE.GLUTTONY) : 
                 PlayerSkillManager.Instance.GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE.GLUTTONY, 0);
             hungerRate /= 100f;

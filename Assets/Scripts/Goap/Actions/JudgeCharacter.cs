@@ -201,10 +201,10 @@ public class JudgeCharacter : GoapAction {
             } else if (chosen == "Whip") {
                 TargetWhip(goapNode);
             } else if (chosen == "Execute") {
-                if (GameUtilities.RollChance(50)) {
-                    TargetExecuted(goapNode);
-                } else {
+                if (GameUtilities.RollChance(50) && !goapNode.actor.traitContainer.HasTrait("Pyrophobic")) {
                     TargetBurnAtStake(goapNode);
+                } else {
+                    TargetExecuted(goapNode);
                 }
             } else if (chosen == "Exile") {
                 TargetExiled(goapNode);

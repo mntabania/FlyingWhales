@@ -30,6 +30,7 @@ public class CharacterManager : BaseMonoBehaviour {
         Default_Wanderer_Behaviour = "Default Wanderer Behaviour",
         Default_Angel_Behaviour = "Default Angel Behaviour",
         Ravager_Behaviour = "Ravager Behaviour",
+        Dire_Wolf_Behaviour = "Dire Wolf Behaviour",
         Kobold_Behaviour = "Kobold Behaviour",
         Giant_Spider_Behaviour = "Giant Spider Behaviour",
         Noxious_Wanderer_Behaviour = "Noxious Wanderer Behaviour",
@@ -79,7 +80,6 @@ public class CharacterManager : BaseMonoBehaviour {
     [SerializeField] private GameObject _characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
     [SerializeField] private RolePortraitFramesDictionary portraitFrames;
-    [SerializeField] private StringSpriteDictionary classPortraits;
     [SerializeField] private Vector3[] hairColors;
     public Material hsvMaterial;
     public Material hairUIMaterial;
@@ -173,6 +173,14 @@ public class CharacterManager : BaseMonoBehaviour {
             }
         },
         { Ravager_Behaviour,
+            new []{
+                typeof(WolfBehaviour),
+                typeof(MovementProcessing),
+                typeof(DefaultMonster),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Dire_Wolf_Behaviour,
             new []{
                 typeof(WolfBehaviour),
                 typeof(MovementProcessing),
@@ -1111,8 +1119,8 @@ public class CharacterManager : BaseMonoBehaviour {
     /// <returns>The updated portrait settings.</returns>
     public PortraitSettings UpdatePortraitSettings(Character character) {
         PortraitSettings portraitSettings = GeneratePortrait(character);
-        
-        if (string.IsNullOrEmpty(portraitSettings.wholeImage)) {
+        Sprite sprite = GetOrCreateCharacterClassData(portraitSettings.className).portraitSprite;
+        if (sprite == null) {
             //keep the following settings from the original face.
             portraitSettings.head = character.visuals.portraitSettings.head;
             portraitSettings.brows = character.visuals.portraitSettings.brows;
@@ -1140,7 +1148,7 @@ public class CharacterManager : BaseMonoBehaviour {
         PortraitSettings ps = new PortraitSettings {
             race = race,
             gender = gender,
-            wholeImage = classPortraits.ContainsKey(characterClass) ? characterClass : string.Empty
+            className = characterClass
         };
         if (race == RACE.DEMON) {
             ps.head = -1;
@@ -1203,12 +1211,6 @@ public class CharacterManager : BaseMonoBehaviour {
             return portraitFrames[role];
         }
         throw new Exception($"There is no frame for role {role.ToString()}");
-    }
-    public Sprite GetWholeImagePortraitSprite(string className) {
-        if (classPortraits.ContainsKey(className)) {
-            return classPortraits[className];
-        }
-        return null;
     }
     public bool TryGetPortraitSprite(string identifier, int index, RACE race, GENDER gender, out Sprite sprite) {
         if (index < 0) {
@@ -1555,13 +1557,11 @@ public class PortraitFrame {
 [Serializable]
 public struct SummonSettings {
     public string className;
-    public Sprite summonPortrait;
 }
 
 [Serializable]
 public struct MinionSettings {
     public string className;
-    public Sprite minionPortrait;
 }
 
 [Serializable]

@@ -210,7 +210,9 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		}
 		UpdateTopMenuSummary();
 		//m_skillComponent.SetPlayerSkillData(p_type);
-		Messenger.Broadcast(SpellSignals.SPELL_UPGRADED, skillData);
+
+		//Broadcast is moved inside LevelUp function
+		//Messenger.Broadcast(SpellSignals.PLAYER_SKILL_UPGRADED_ON_SPIRE, skillData);
 	}
 
 	#region SkillUpgradeUIView.IListener implementation

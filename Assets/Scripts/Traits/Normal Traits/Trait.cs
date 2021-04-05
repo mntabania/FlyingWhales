@@ -272,8 +272,8 @@ namespace Traits {
                 || name == "Full" || name == "Hungry" || name == "Starving"
                 || name == "Sprightly" || name == "Spent" || name == "Drained";
         }
-        public PLAYER_SKILL_TYPE GetPlayerSkillType() {
-            return PlayerSkillManager.Instance.GetSkillTypeFromAfflictionName(name);
+        public PLAYER_SKILL_TYPE GetAfflictionSkillType() {
+            return PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(name);
         }
         #endregion
 
@@ -378,9 +378,9 @@ namespace Traits {
         /// </summary>
         /// <param name="p_character">The character the affliction was added to</param>
         protected void CheckIfShouldListenToLevelUpEvent(Character p_character) {
-            if (p_character.WasAfflictedByPlayer(this)) {
+            if (p_character.HasAfflictedByPlayerWith(this)) {
                 //listen for affliction level up
-                SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(GetPlayerSkillType());
+                SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(GetAfflictionSkillType());
                 skillData.skillEventDispatcher.SubscribeToLevelUp(this);
             }
         }
@@ -391,7 +391,7 @@ namespace Traits {
         /// <param name="p_character"></param>
         protected void UnsubscribeToLevelUpEvent(Character p_character) {
             //stop listening for affliction level up
-            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(GetPlayerSkillType());
+            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(GetAfflictionSkillType());
             skillData.skillEventDispatcher.UnsubscribeToLevelUp(this);
             
         }

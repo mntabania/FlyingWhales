@@ -19,13 +19,8 @@ public class LycanthropyData : AfflictData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         //targetPOI.traitContainer.AddTrait(targetPOI, "Lycanthrope");
-        LycanthropeData lycanthropeData = new LycanthropeData(targetPOI as Character);
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LogUtilities.Player_Life_Changes_Tags);
-        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Lycanthrope", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        LogPool.Release(log);
+        OnAfflictPOIWith("Lycanthrope", targetPOI, "Lycanthrope");
+        new LycanthropeData(targetPOI as Character);
         OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {

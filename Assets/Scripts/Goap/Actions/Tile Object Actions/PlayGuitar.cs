@@ -110,8 +110,8 @@ public class PlayGuitar : GoapAction {
         Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
-                if (witness.WasAfflictedByPlayer(trait)) {
-                    PLAYER_SKILL_TYPE playerSkillType = trait.GetPlayerSkillType();
+                if (witness.HasAfflictedByPlayerWith(trait)) {
+                    PLAYER_SKILL_TYPE playerSkillType = trait.GetAfflictionSkillType();
                     PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
                     SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
                     if (playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Angry_Upon_Hear_Music, skillData.currentLevel)) {

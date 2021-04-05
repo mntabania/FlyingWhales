@@ -47,7 +47,7 @@ namespace Traits {
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);
             if (traitable is Character character) {
-                data = $"{data}Is Master: {character.lycanData.isMaster.ToString()}";
+                data = $"{data}Is Master: {character.lycanData.isMaster}";
             }
             return data;
         }
@@ -272,7 +272,6 @@ namespace Traits {
     public class LycanthropeData {
         public Character activeForm { get; private set; }
         public Character limboForm { get; private set; }
-
         public Character lycanthropeForm { get; private set; }
         public Character originalForm { get; private set; }
         
@@ -281,31 +280,66 @@ namespace Traits {
         public List<Character> awareCharacters { get; private set; }
         public bool isInWerewolfForm { get; private set; }
 
+        public Character plainWolf { get; private set; }
+        public Character direWolf { get; private set; }
+
         public GameObject transformRevertEffectGO { get; private set; }
 
         public LycanthropeData(Character originalForm) {
             this.originalForm = originalForm;
-            CreateLycanthropeForm();
+            isMaster = false;
+            CreatePlainWolfForm();
+            UpdateLycanForm();
             activeForm = originalForm;
             limboForm = lycanthropeForm;
             originalForm.traitContainer.AddTrait(originalForm, "Lycanthrope");
-            lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Lycanthrope");
             originalForm.SetLycanthropeData(this);
-            lycanthropeForm.SetLycanthropeData(this);
-            isMaster = false;
             awareCharacters = new List<Character>();
             DetermineIfDesireOrDislike(originalForm);
+            Messenger.AddListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
         }
-        public LycanthropeData(Character originalForm, Character lycanthropeForm, Character activeForm, Character limboForm) {
+        public LycanthropeData(Character originalForm, Character lycanthropeForm, Character activeForm, Character limboForm, Character plainWolf, Character direWolf) {
             this.originalForm = originalForm;
             this.lycanthropeForm = lycanthropeForm;
             this.activeForm = activeForm;
             this.limboForm = limboForm;
+            plainWolf?.SetLycanthropeData(this);
+            direWolf?.SetLycanthropeData(this);
+            Messenger.AddListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
         }
 
-        private void CreateLycanthropeForm() {
-            lycanthropeForm = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Wolf, faction: FactionManager.Instance.neutralFaction);
-            lycanthropeForm.ConstructInitialGoapAdvertisementActions();
+        private void CreatePlainWolfForm() {
+            plainWolf = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Wolf, faction: FactionManager.Instance.neutralFaction);
+            plainWolf.ConstructInitialGoapAdvertisementActions();
+            plainWolf.SetFirstAndLastName(originalForm.firstName, originalForm.surName);
+            plainWolf.SetLycanthropeData(this);
+            plainWolf.traitContainer.AddTrait(plainWolf, "Lycanthrope");
+        }
+        private void CreateDireWolfForm() {
+            direWolf = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Dire_Wolf, faction: FactionManager.Instance.neutralFaction);
+            direWolf.ConstructInitialGoapAdvertisementActions();
+            direWolf.SetFirstAndLastName(originalForm.firstName, originalForm.surName);
+            direWolf.SetLycanthropeData(this);
+            direWolf.traitContainer.AddTrait(direWolf, "Lycanthrope");
+        }
+
+        private void UpdateLycanForm() {
+            lycanthropeForm = plainWolf;
+            if (originalForm.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.LYCANTHROPY)) {
+                int level = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.LYCANTHROPY).currentLevel;
+                if(level >= 2) {
+                    SetIsMaster(true);
+                }
+                if (level >= 1) {
+                    if(direWolf == null) {
+                        CreateDireWolfForm();
+                    }
+                    lycanthropeForm = direWolf;
+                }
+
+            }
+        }
+        private void UpdateLycanFormName() {
             lycanthropeForm.SetFirstAndLastName(originalForm.firstName, originalForm.surName);
         }
 
@@ -326,13 +360,14 @@ namespace Traits {
             if (UIManager.Instance.monsterInfoUI.activeMonster == activeForm) {
                 UIManager.Instance.monsterInfoUI.CloseMenu();
             }
-
+            UpdateLycanForm();
             activeForm.traitContainer.RemoveTrait(activeForm, "Transforming");
             activeForm = lycanthropeForm;
             limboForm = originalForm;
             LocationGridTile tile = originalForm.gridTileLocation;
             Region homeRegion = originalForm.homeRegion;
             PutToLimbo(originalForm);
+            UpdateLycanFormName();
             ReleaseFromLimbo(lycanthropeForm, tile, homeRegion);
             CopyImportantTraits(originalForm, lycanthropeForm);
             lycanthropeForm.needsComponent.ResetFullnessMeter();
@@ -362,6 +397,7 @@ namespace Traits {
             limboForm = lycanthropeForm;
             LocationGridTile tile = lycanthropeForm.gridTileLocation;
             Region homeRegion = lycanthropeForm.homeRegion;
+            UpdateLycanFormName();
             PutToLimbo(lycanthropeForm);
             ReleaseFromLimbo(originalForm, tile, homeRegion);
             CopyImportantTraits(lycanthropeForm, originalForm);
@@ -469,7 +505,9 @@ namespace Traits {
             lycanthropeForm.faction?.LeaveFaction(lycanthropeForm);
             CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
             originalForm.SetLycanthropeData(null);
-            lycanthropeForm.SetLycanthropeData(null);
+            plainWolf?.SetLycanthropeData(null);
+            direWolf?.SetLycanthropeData(null);
+            Messenger.RemoveListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
         }
 
         //Parameter: which form is this data erased?
@@ -482,12 +520,22 @@ namespace Traits {
                 RevertToNormal();
                 //CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
                 originalForm.SetLycanthropeData(null);
-                lycanthropeForm.SetLycanthropeData(null);
+                plainWolf?.SetLycanthropeData(null);
+                direWolf?.SetLycanthropeData(null);
+                Messenger.RemoveListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
                 originalForm.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             } 
             //else if (form == originalForm) {
             //    originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
             //}
+        }
+
+        private void OnLycanthropyLevelUp(SkillData p_skill) {
+            if (p_skill.currentLevel >= 2) {
+                if (originalForm.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.LYCANTHROPY)) {
+                    SetIsMaster(true);
+                }
+            }
         }
         public void SetIsInWerewolfForm(bool state) {
             isInWerewolfForm = state;
@@ -580,7 +628,10 @@ namespace Traits {
 
         public string lycanthropeForm;
         public string originalForm;
-        
+
+        public string plainWolf;
+        public string direWolf;
+
         public bool dislikesBeingLycan;
         public bool isMaster;
         public List<string> awareCharacterIDs;
@@ -594,6 +645,10 @@ namespace Traits {
 
             lycanthropeForm = data.lycanthropeForm.persistentID;
             originalForm = data.originalForm.persistentID;
+
+            plainWolf = data.plainWolf?.persistentID;
+            direWolf = data.direWolf?.persistentID;
+
             dislikesBeingLycan = data.dislikesBeingLycan;
             isMaster = data.isMaster;
             isInWerewolfForm = data.isInWerewolfForm;
@@ -602,6 +657,14 @@ namespace Traits {
         public override LycanthropeData Load() {
             Character origForm = CharacterManager.Instance.GetCharacterByPersistentID(originalForm);
             Character lycanForm = CharacterManager.Instance.GetCharacterByPersistentID(lycanthropeForm);
+            Character plainWolf = null;
+            if (!string.IsNullOrEmpty(this.plainWolf)) {
+                plainWolf = CharacterManager.Instance.GetCharacterByPersistentID(this.plainWolf);
+            }
+            Character direWolf = null;
+            if (!string.IsNullOrEmpty(this.direWolf)) {
+                direWolf = CharacterManager.Instance.GetCharacterByPersistentID(this.direWolf);
+            }
             Character activeForm = origForm;
             Character limboForm = lycanForm;
             if (this.activeForm == this.lycanthropeForm) {
@@ -611,7 +674,7 @@ namespace Traits {
                 activeForm = origForm;
                 limboForm = lycanForm;
             }
-            LycanthropeData data = new LycanthropeData(origForm, lycanForm, activeForm, limboForm);
+            LycanthropeData data = new LycanthropeData(origForm, lycanForm, activeForm, limboForm, plainWolf, direWolf);
             data.SetDislikesBeingLycan(dislikesBeingLycan);
             data.SetIsMaster(isMaster);
             data.SetIsInWerewolfForm(isInWerewolfForm);

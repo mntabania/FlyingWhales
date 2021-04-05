@@ -31,13 +31,18 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log = $"{log}\n-{character.name} is in home structure and just returned home";
 
                 if((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.partyComponent.hasParty && character.homeSettlement != null && !character.traitContainer.HasTrait("Enslaved")) {
+                    bool shouldCreateOrJoinParty = true;
+                    if (character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.AGORAPHOBIA)) {
+                        shouldCreateOrJoinParty = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel >= 3;
+                    }
+
                     Party unfullParty = character.homeSettlement.GetFirstUnfullParty();
                     if(unfullParty == null) {
-                        if (GameUtilities.RollChance(20) && character.faction != null) { //10
+                        if (GameUtilities.RollChance(20) && character.faction != null && shouldCreateOrJoinParty) { //10
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Party, character);
                         }
                     } else {
-                        if (GameUtilities.RollChance(45)) { //15
+                        if (GameUtilities.RollChance(45) && shouldCreateOrJoinParty) { //15
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Party, unfullParty.members[0]);
                         }
                     }

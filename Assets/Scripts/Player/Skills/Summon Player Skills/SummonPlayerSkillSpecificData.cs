@@ -12,6 +12,18 @@ public class WolfData : SummonPlayerSkill {
         className = "Ravager";
     }
 }
+
+public class DireWolfData : SummonPlayerSkill
+{
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DIRE_WOLF;
+    public override string name => "Dire Wolf";
+    public override string description => "Dire Wolf";
+    public DireWolfData() {
+        summonType = SUMMON_TYPE.Dire_Wolf;
+        race = RACE.WOLF;
+        className = "Dire";
+    }
+}
 public class GolemData : SummonPlayerSkill {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.GOLEM;
     public override string name => "Golem";
