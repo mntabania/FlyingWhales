@@ -152,7 +152,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
 					SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
 					PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_purchaseSkillUIView.GetSkillsParent(), true);
-					go.InitItem(data.type, PlayerManager.Instance.player.mana);
+					go.InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 					go.onButtonClick += OnSkillClick;
 					go.onHoverOver += OnHoverOverSkill;
 					go.onHoverOut += OnHoverOutSkill;
@@ -164,7 +164,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 					SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
 					PurchaseSkillItemUI skillItem = m_purchaseSkillUIView.UIModel.skillItems[i];
 					skillItem.gameObject.SetActive(true);
-					skillItem.InitItem(data.type, PlayerManager.Instance.player.mana);
+					skillItem.InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 				}
 			}
 			m_weightedList.Clear();
@@ -173,7 +173,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	private void UpdateItems() {
 		if (m_purchaseSkillUIView.UIModel.skillItems.Count > 0) {
 			m_purchaseSkillUIView.UIModel.skillItems.ForEach((eachItems) => {
-				eachItems.UpdateItem(PlayerManager.Instance.player.mana);
+				eachItems.UpdateItem(PlayerManager.Instance.player.plagueComponent.plaguePoints);
 			});
 		}
 	}
@@ -189,7 +189,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 				if (entry.Value.category == PLAYER_SKILL_CATEGORY.AFFLICTION || entry.Value.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION || entry.Value.category == PLAYER_SKILL_CATEGORY.SPELL) {
 					PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(entry.Value.type);
 					if (playerSkillData != null) {
-						if (m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.mana, entry.Value.type) != -1) {
+						if (m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, entry.Value.type) != -1) {
 							int processedWeight = playerSkillData.baseLoadoutWeight;
 							if (PlayerSkillManager.Instance.selectedArchetype == playerSkillData.archetypeWeightedBonus) {
 								processedWeight += 100;
@@ -326,7 +326,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	private void OnHoverOverSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
 		if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == PLAYER_SKILL_TYPE.NONE) {
-			if (PlayerManager.Instance.player.mana < p_skillData.unlockCost) {
+			if (PlayerManager.Instance.player.plagueComponent.plaguePoints < p_skillData.unlockCost) {
 				UIManager.Instance.ShowSmallInfo("Not enough mana!");
 			} else {
 				p_item.borderShineEffect.Play();
@@ -335,7 +335,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	private void OnHoverOutSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
 		if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == PLAYER_SKILL_TYPE.NONE) {
-			if (PlayerManager.Instance.player.mana < p_skillData.unlockCost) {
+			if (PlayerManager.Instance.player.plagueComponent.plaguePoints < p_skillData.unlockCost) {
 				UIManager.Instance.HideSmallInfo();
 			} else {
 				p_item.borderShineEffect.Stop(true);
@@ -345,11 +345,11 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	private void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
 		int result = isTestScene ? 
 			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(fakePlayer.skillComponent, fakePlayer.currenciesComponent, p_type) : 
-			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.mana, p_type);
+			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, p_type);
 		if (result != -1) {
 			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
 			m_firstRun = false;
-			PlayerManager.Instance.player.AdjustMana(-result);
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-result);
 			PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToUnlock(skillData, result);
 			UpdateRerollBtn();
 			UpdateItems();

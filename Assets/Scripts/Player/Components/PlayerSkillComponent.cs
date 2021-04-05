@@ -167,7 +167,7 @@ public class PlayerSkillComponent {
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         portal.GainUpgradePowers(portal.nextTier);
         portal.IncreaseLevel();
-        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE);
+        Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, portal.level);
         currentPortalUpgradeCost = null;
     }
     private void ResetPlayerSpellChoices() {

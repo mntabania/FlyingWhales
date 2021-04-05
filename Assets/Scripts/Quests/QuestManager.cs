@@ -76,6 +76,9 @@ namespace Quests {
                 case WorldSettingsData.World_Type.Pitto:
                     winConditionTracker = new PittoWinConditionTracker();
                     break;
+                case WorldSettingsData.World_Type.Custom:
+                    winConditionTracker = new OonaWinConditionTracker();
+                    break;
                 default:
                     winConditionTracker = new TutorialWinConditionTracker();
                     break;
@@ -243,7 +246,7 @@ namespace Quests {
                 case VICTORY_CONDITION.Create_Demon_Cult:
                 CreateDemonCult();
                 break;
-                case VICTORY_CONDITION.Summon_The_Demon:
+                case VICTORY_CONDITION.Summon_Ruinarch:
                 CreateSummonTheDemon();
                 break;
                 case VICTORY_CONDITION.Sandbox:

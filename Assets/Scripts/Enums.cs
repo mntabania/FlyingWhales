@@ -1123,7 +1123,7 @@ public enum OBJECT_TYPE {
     Reaction_Quest = 24, Plague_Disease = 25
 }
 public enum PASSIVE_SKILL {
-    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb, Raid_Chaos_Orb,
+    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb, Dark_Ritual_Chaos_Orb, Raid_Chaos_Orb,
 }
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
@@ -1195,7 +1195,7 @@ public enum OMNIPOTENT_MODE {
     Disabled, Enabled 
 }
 public enum VICTORY_CONDITION {
-    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Summon_The_Demon, Sandbox, 
+    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Summon_Ruinarch, Sandbox, 
 }
 public enum RESISTANCE {
     None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,

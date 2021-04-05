@@ -9,7 +9,7 @@ using UtilityScripts;
 
 public class CharacterInfoUI : InfoUIBase {
 
-    private enum VIEW_MODE { None = 0, Info, Mood, Relationship }
+    private enum VIEW_MODE { None = 0, Info, Mood, Relationship, Logs, }
     private VIEW_MODE m_currentViewMode = VIEW_MODE.None;
     
     [Header("Basic Info")]
@@ -105,6 +105,8 @@ public class CharacterInfoUI : InfoUIBase {
     public GameObject btnRevealMood;
     public GameObject relationshipContent;
     public GameObject btnRevealRelationship;
+    public GameObject logContent;
+    public GameObject btnRevealLogs;
     #endregion
 
     #region pierce display UI
@@ -254,6 +256,9 @@ public class CharacterInfoUI : InfoUIBase {
             break;
             case VIEW_MODE.Relationship:
             OnToggleRelations(true);
+            break;
+            case VIEW_MODE.Logs:
+            OnToggleLogs(true);
             break;
             default:
             OnToggleInfo(false);
@@ -1120,16 +1125,28 @@ public class CharacterInfoUI : InfoUIBase {
         relationshipContent.SetActive(false);
     }
 
+    void ShowLogsHideRevealButton() {
+        btnRevealLogs.SetActive(false);
+        logContent.SetActive(true);
+    }
+
+    void ShowRevealButtonHideLogs() {
+        btnRevealLogs.SetActive(true);
+        logContent.SetActive(false);
+    }
+
     void HideAllInfo() {
         ShowRevealButtonHideInfo();
         ShowRevealButtonHideMood();
         ShowRevealButtonHideRelationship();
+        ShowRevealButtonHideLogs();
     }
 
     void ShowAllInfo() {
         ShowInfoHideRevealButton();
         ShowMoodHideRevealButton();
         ShowRelationshipHideRevealButton();
+        ShowLogsHideRevealButton();
     }
 
     public void OnToggleInfo(bool isOn) {
@@ -1177,8 +1194,18 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void OnToggleLogs(bool isOn) {
         if (isOn) {
-            m_currentViewMode = VIEW_MODE.None;
+            m_currentViewMode = VIEW_MODE.Logs;
+            if (activeCharacter.race.IsSapient()) {
+                if (activeCharacter.isInfoUnlocked) {
+                    ShowAllInfo();
+                } else {
+                    HideAllInfo();
+                }
+            } else {
+                ShowLogsHideRevealButton();
+            }
         }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(relationshipsScrollView.content);
     }
     #endregion
 

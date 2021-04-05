@@ -31,7 +31,7 @@ namespace Traits {
             }
         }
         public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
-            if (p_character.WasAfflictedByPlayer(this)) {
+            if (p_character.HasAfflictedByPlayerWith(this)) {
                 if (PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.LAZINESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Likes_To_Sleep) ||
                     PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.LAZINESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Loves_To_Sleep)) {
                     SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.LAZINESS);
@@ -85,7 +85,7 @@ namespace Traits {
             return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Lazy, owner);
         }
         public bool TryIgnoreUrgentTask(JOB_TYPE job) {
-            if (ChanceData.RollChance(CHANCE_TYPE.Ignore_Urgent_Task) && owner.WasAfflictedByPlayer(this) && 
+            if (ChanceData.RollChance(CHANCE_TYPE.Ignore_Urgent_Task) && owner.HasAfflictedByPlayerWith(this) && 
                 PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.LAZINESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Ignore_Urgent_Tasks)) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Lazy", "ignore_urgent_job", null, LOG_TAG.Work, LOG_TAG.Player);
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -98,7 +98,7 @@ namespace Traits {
             return false;
         }
         public float GetTriggerChance(Character p_character) {
-            if (p_character.WasAfflictedByPlayer(this)) {
+            if (p_character.HasAfflictedByPlayerWith(this)) {
                 PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LAZINESS);
                 SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.LAZINESS);
                 return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(skillData.currentLevel);

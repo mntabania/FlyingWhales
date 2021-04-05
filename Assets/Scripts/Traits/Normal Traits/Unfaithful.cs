@@ -82,7 +82,7 @@ namespace Traits {
         #endregion
 
         public bool IsCompatibleBasedOnSexualityAndOpinions(Character p_character1, Character p_character2) {
-            if (p_character1.WasAfflictedByPlayer(this)) {
+            if (p_character1.HasAfflictedByPlayerWith(this)) {
                 if (PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.UNFAITHFULNESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Wild_Multiple_Affair)) {
                     return !p_character1.relationshipContainer.IsEnemiesWith(p_character2);
                 } else {
@@ -100,7 +100,7 @@ namespace Traits {
         /// <param name="p_character2">The target character to check against.</param>
         /// <returns>True or False</returns>
         public  bool CanBeLoverOrAffairBasedOnPersonalConstraints(Character p_character1, Character p_character2) {
-            if (p_character1.WasAfflictedByPlayer(this)) {
+            if (p_character1.HasAfflictedByPlayerWith(this)) {
                 if (PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.UNFAITHFULNESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Wild_Multiple_Affair)) {
                     return true; //can have affair with anyone
                 } else if (PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.UNFAITHFULNESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Multiple_Affair)) {

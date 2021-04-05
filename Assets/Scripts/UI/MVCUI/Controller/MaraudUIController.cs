@@ -186,6 +186,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.ShowTargetButtonHideTargetContainer();
 		}
+		m_maraudUIView.ProcessSummonDisplay();
 	}
 
 	void DisplayDeployedDeadMembers() {

@@ -22,9 +22,8 @@ public class ChaosOrb : PooledObject {
 	
 	public Region location { get; private set; }
 	
-	public void Initialize(Region location, CURRENCY currency) {
+	public void Initialize(Region locationy) {
 		this.location = location;
-		targetCurrency = currency;
 		GameDate expiry = GameManager.Instance.Today();
 		expiry = expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(ExpiryInHours));
 		expiryKey = SchedulingManager.Instance.AddEntry(expiry, Expire, this);
@@ -36,9 +35,8 @@ public class ChaosOrb : PooledObject {
 		_collider.enabled = true;
 		_trail.enabled = false;
 	}
-    public void Initialize(Vector3 pos, Region location, CURRENCY currency) {
+    public void Initialize(Vector3 pos, Region location) {
         this.location = location;
-		targetCurrency = currency;
         GameDate expiry = GameManager.Instance.Today();
         expiry = expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(ExpiryInHours));
         expiryKey = SchedulingManager.Instance.AddEntry(expiry, Expire, this);
@@ -78,11 +76,7 @@ public class ChaosOrb : PooledObject {
 		_collider.enabled = false;
 		_trail.enabled = true;
 		Transform targetTransform;
-		if (targetCurrency == CURRENCY.Mana) {
-			targetTransform = PlayerUI.Instance.manaLbl.transform;
-		} else {
-			targetTransform = PlayerUI.Instance.plaguePointLbl.transform;
-		}
+		targetTransform = PlayerUI.Instance.plaguePointLbl.transform;
 		Vector3 plaguePointsContainer = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(targetTransform.position);
 
 		Vector3 controlPointA = transform.position;
@@ -101,12 +95,7 @@ public class ChaosOrb : PooledObject {
 		Messenger.Broadcast(PlayerSignals.CHAOS_ORB_COLLECTED);
 	}
 	private void GainPlaguePoints() {
-		if (targetCurrency == CURRENCY.Mana) {
-			PlayerManager.Instance.player.AdjustMana(1);
-		} else {
-			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(1);
-		}
-		
+		PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(EditableValuesManager.Instance.GetChaosOrbHoverAmount());
 		Destroy();
 	}
 	public override void Reset() {
@@ -123,15 +112,13 @@ public class ChaosOrb : PooledObject {
 public class SaveDataChaosOrb {
     public Vector3 pos;
     public string regionID;
-	public CURRENCY targetCurrency;
     public void Save(ChaosOrb orb) {
         pos = orb.transform.position;
         regionID = orb.location.persistentID;
-		targetCurrency = orb.targetCurrency;
 	}
 
     public void Load() {
         Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(regionID);
-        PlayerManager.Instance.CreateChaosOrbFromSave(pos, region, targetCurrency);
+        PlayerManager.Instance.CreateChaosOrbFromSave(pos, region);
     }
 }

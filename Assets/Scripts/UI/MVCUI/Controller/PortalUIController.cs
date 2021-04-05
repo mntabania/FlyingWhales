@@ -91,7 +91,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         Messenger.AddListener(PlayerSignals.PLAYER_SKILL_UNLOCK_CANCELLED, OnPlayerCancelledSkillUnlock);
         
         Messenger.AddListener(PlayerSignals.PLAYER_STARTED_PORTAL_UPGRADE, OnPlayerChosePortalUpgrade);
-        Messenger.AddListener(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPlayerFinishedPortalUpgrade);
+        Messenger.AddListener<int>(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPlayerFinishedPortalUpgrade);
         Messenger.AddListener(PlayerSignals.PORTAL_UPGRADE_CANCELLED, OnPlayerCancelledPortalUpgrade);
     }
     private void OnPlayerChoseSkillToUnlock(SkillData p_skill, int p_unlockCost) {
@@ -108,7 +108,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     private void OnPlayerChosePortalUpgrade() {
         m_portalUIView.ShowUpgradePortalTimerAndHideButton();
     }
-    private void OnPlayerFinishedPortalUpgrade() {
+    private void OnPlayerFinishedPortalUpgrade(int p_currentPortal) {
         m_portalUIView.ShowUpgradePortalButtonAndHideTimer();
     }
     private void OnPlayerCancelledPortalUpgrade() {

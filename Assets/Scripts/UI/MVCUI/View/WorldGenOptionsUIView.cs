@@ -162,8 +162,8 @@ public class WorldGenOptionsUIView : MVCUIView {
     }
     public void InitializeVictoryConditionDropdown() {
         UIModel.dropDownVictory.ClearOptions();
-        UIModel.dropDownVictory.AddOptions(UtilityScripts.Utilities.GetEnumChoices<VICTORY_CONDITION>(VICTORY_CONDITION.Eliminate_All, VICTORY_CONDITION.Sandbox));
-        UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex("Eliminate All");
+        UIModel.dropDownVictory.AddOptions(UtilityScripts.Utilities.GetEnumChoices<VICTORY_CONDITION>(VICTORY_CONDITION.Summon_Ruinarch, VICTORY_CONDITION.Sandbox));
+        UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex("Summon Ruinarch");
     }
     public void SetVictoryDropdownValue(string p_value) {
         UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex(p_value);

@@ -5274,7 +5274,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             actions.Clear();
         }
 
-        if (race != RACE.DEMON) {
+        if (race == RACE.DEMON) {
+            //AddPlayerAction(PLAYER_SKILL_TYPE.UNSUMMON);
+        } else {
             if (isNormalCharacter) {
                 AddPlayerAction(PLAYER_SKILL_TYPE.AFFLICT);
                 AddPlayerAction(PLAYER_SKILL_TYPE.ZAP);
@@ -5286,7 +5288,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
             AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
             AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
-
             AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
         }
         AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
