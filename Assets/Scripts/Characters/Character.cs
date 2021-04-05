@@ -4790,6 +4790,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
             }
         }
+
+        //Every time a character is unseized on a non demonic structure, if the character is a prisoner of player faction, remove prisoner trait.
+        //Reason: so that if the character becomes a snatch target again, the snatch behaviour will also treat the target as a new snatch target
+        if (!tileLocation.structure.structureType.IsPlayerStructure()) {
+            Prisoner prisoner = traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
+                traitContainer.RemoveRestrainAndImprison(this);
+            }
+        }
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
         //if (traitOverrideFunctions != null) {
         //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
