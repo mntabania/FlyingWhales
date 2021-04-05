@@ -67,9 +67,11 @@ public class AfflictData : PlayerAction {
         LogPool.Release(log);
 
         PLAYER_SKILL_TYPE afflictionType = PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(traitName);
-        if (target is Character character) {
-            if (!character.afflictionsSkillsInflictedByPlayer.Contains(afflictionType)) {
-                character.afflictionsSkillsInflictedByPlayer.Add(afflictionType);
+        if (afflictionType != PLAYER_SKILL_TYPE.NONE) {
+            if (target is Character character) {
+                if (!character.afflictionsSkillsInflictedByPlayer.Contains(afflictionType)) {
+                    character.afflictionsSkillsInflictedByPlayer.Add(afflictionType);
+                }
             }
         }
     }
