@@ -25,4 +25,6 @@
     /// </summary>
     public static string CHARACTER_ASSUMED = "OnCharacterAssumed";
     public static string JOB_REMOVED_FROM_JOB_BOARD = "OnJobRemovedFromJobBoard";
+
+    public static string ON_FINISH_PRAYING = "OnFinishPraying";
 }

@@ -87,7 +87,7 @@ public class DarkRitual : GoapAction {
     
     #region State Effects
     public void AfterRitualSuccess(ActualGoapNode goapNode) {
-        Messenger.Broadcast(JobSignals.CHARACTER_FINISHED_ACTION, goapNode);
+        Messenger.Broadcast(JobSignals.ON_FINISH_PRAYING, goapNode);
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
     }
     #endregion
