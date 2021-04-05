@@ -600,6 +600,7 @@ public static class Extensions {
             case JOB_TYPE.FEED:
             case JOB_TYPE.RITUAL_KILLING:
             case JOB_TYPE.MONSTER_ABDUCT:
+            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
                 priority = 1003;
                 break;
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
@@ -718,9 +719,7 @@ public static class Extensions {
             case JOB_TYPE.STEAL_RAID:
                 priority = 530;
                 break;
-            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
-                priority = 520;
-                break;
+            
             case JOB_TYPE.TAKE_ITEM:
             case JOB_TYPE.INSPECT:
                 priority = 510;

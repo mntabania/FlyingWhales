@@ -6851,8 +6851,8 @@
       },
       {
         "location": {
-          "X": 10,
-          "Y": 10
+          "X": 8,
+          "Y": 9
         },
         "structureType": "MONSTER_LAIR"
       },
@@ -6860,13 +6860,6 @@
         "location": {
           "X": 12,
           "Y": 0
-        },
-        "structureType": "MAGE_TOWER"
-      },
-      {
-        "location": {
-          "X": 13,
-          "Y": 12
         },
         "structureType": "MAGE_TOWER"
       }
