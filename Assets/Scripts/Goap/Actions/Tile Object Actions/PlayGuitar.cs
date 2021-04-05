@@ -112,10 +112,12 @@ public class PlayGuitar : GoapAction {
             if (trait.name == "Music Hater") {
                 if (witness.HasAfflictedByPlayerWith(trait)) {
                     PLAYER_SKILL_TYPE playerSkillType = trait.GetAfflictionSkillType();
-                    PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
-                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
-                    if (playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Angry_Upon_Hear_Music, skillData.currentLevel)) {
-                        reactions.Add(EMOTION.Anger);        
+                    if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
+                        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
+                        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                        if (playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Angry_Upon_Hear_Music, skillData.currentLevel)) {
+                            reactions.Add(EMOTION.Anger);
+                        }
                     }
                 }
                 if (witness.moodComponent.moodState == MOOD_STATE.Bad) {

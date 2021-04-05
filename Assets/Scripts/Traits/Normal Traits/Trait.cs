@@ -380,8 +380,11 @@ namespace Traits {
         protected void CheckIfShouldListenToLevelUpEvent(Character p_character) {
             if (p_character.HasAfflictedByPlayerWith(this)) {
                 //listen for affliction level up
-                SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(GetAfflictionSkillType());
-                skillData.skillEventDispatcher.SubscribeToLevelUp(this);
+                PLAYER_SKILL_TYPE playerSkillType = GetAfflictionSkillType();
+                if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
+                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                    skillData.skillEventDispatcher.SubscribeToLevelUp(this);
+                }
             }
         }
         /// <summary>
@@ -391,9 +394,11 @@ namespace Traits {
         /// <param name="p_character"></param>
         protected void UnsubscribeToLevelUpEvent(Character p_character) {
             //stop listening for affliction level up
-            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(GetAfflictionSkillType());
-            skillData.skillEventDispatcher.UnsubscribeToLevelUp(this);
-            
+            PLAYER_SKILL_TYPE playerSkillType = GetAfflictionSkillType();
+            if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
+                SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                skillData.skillEventDispatcher.UnsubscribeToLevelUp(this);
+            }
         }
         #endregion
 
