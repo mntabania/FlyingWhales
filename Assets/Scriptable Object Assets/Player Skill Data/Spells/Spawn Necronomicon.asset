@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 305aa9c5df6e71e48bcf62b69ee060cc, type: 3}
-  m_Name: PlaguedRats
+  m_Name: Spawn Necronomicon
   m_EditorClassIdentifier: 
-  skill: 156
+  skill: 204
   manaCost: 25
   charges: 1
   cooldown: 240
@@ -48,7 +48,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 0a000000
+    manacostPerLevel: 1e000000
     chargesPerLevel: 01000000
     bonuses: 0e000000
     additionalDamagePerLevel: 52030000e80300007e04000014050000
@@ -73,7 +73,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: a0000000
+    cooldownPerLevel: e0010000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 

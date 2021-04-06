@@ -1663,10 +1663,17 @@ namespace Inner_Maps {
             summon.jobQueue.CancelAllJobs();
             Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         }
-		#endregion
+        #endregion
 
-		#region Meteor
-		public int meteorCount { get; private set; }
+        #region Spawn Necronomicon
+        public void AddNecronomicon() {
+            Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
+            this.structure.AddPOI(artifact, this);
+        }
+        #endregion
+
+        #region Meteor
+        public int meteorCount { get; private set; }
         public void AddMeteor() {
             SetIsDefault(false);
             meteorCount++;
