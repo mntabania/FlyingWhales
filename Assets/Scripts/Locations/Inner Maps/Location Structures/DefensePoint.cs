@@ -48,6 +48,7 @@ namespace Inner_Maps.Location_Structures {
                 party.AddMember(eachSummon);
                 party.AddMemberThatJoinedQuest(eachSummon);
             });
+            partyData.readyForDeploySummonCount = 0;
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

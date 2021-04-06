@@ -197,7 +197,6 @@ namespace Inner_Maps.Location_Structures {
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
             Debug.Log($"Un Deployed party at {name}. Party was {party?.name}");
             party = null;
-            startingSummonCount = 2;
         }
 
         public void ResetExistingCharges() {

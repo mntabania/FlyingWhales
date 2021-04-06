@@ -442,6 +442,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 	}
 
+	public void OnAddSummonClicked() { m_maraudUIView.ShowSummonSubContainer(); }
+
 	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
 		if (m_isTeamDeployed) {
 			return;
@@ -531,8 +533,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
 		Init();
 	}
-
-	public void OnAddSummonClicked() { m_maraudUIView.ShowSummonSubContainer(); }
 
 	public void OnCloseClicked() {
 		HideAvailableItems();
