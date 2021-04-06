@@ -146,7 +146,6 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 				}
 			}
 			
-			
 			if (m_purchaseSkillUIView.UIModel.skillItems.Count <= 0) {
 				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
 					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
@@ -194,7 +193,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 							if (PlayerSkillManager.Instance.selectedArchetype == playerSkillData.archetypeWeightedBonus) {
 								processedWeight += 100;
 							}
-							if (processedWeight >= 0) {
+							if (processedWeight > 0) {
 								weights.AddElement(entry.Value, processedWeight);
 							}
 						}
