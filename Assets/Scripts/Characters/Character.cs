@@ -5728,7 +5728,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             if(responsibleCharacter != null) {
                 if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, deathTile.parentMap);
+                    //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, deathTile.parentMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, deathTile.worldLocation, 1, deathTile.parentMap);
                 }
 			}
 

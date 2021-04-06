@@ -468,7 +468,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 8170638536613158687}
+  - {fileID: 2701383863409763696}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1876,69 +1876,6 @@ MonoBehaviour:
     - baseBG: {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
     - baseBG: {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
     - baseBG: {fileID: 21300000, guid: 51cc2170d7bb77744b58e9a139303d2d, type: 3}
-  classPortraits:
-    m_keys:
-    - Envy
-    - Greed
-    - Lust
-    - Pride
-    - Sloth
-    - Wrath
-    - Gluttony
-    - Necromancer
-    - Incubus
-    - Succubus
-    - Corrupt Ent
-    - Desert Ent
-    - Forest Ent
-    - Grass Ent
-    - Earthen Wisp
-    - Electric Wisp
-    - Fire Wisp
-    - Ice Nymph
-    - Water Nymph
-    - Wind Nymph
-    - Magical Angel
-    - Warrior Angel
-    - Snow Ent
-    - Bone Golem
-    - Walker Zombie
-    - Night Zombie
-    - Boomer Zombie
-    - Tank Zombie
-    - Fast Zombie
-    - Vengeful Ghost
-    m_values:
-    - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
-    - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
-    - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
-    - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
-    - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
-    - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
-    - {fileID: 21300000, guid: 4fbebd3819f55ca47a56d25a0a84d46e, type: 3}
-    - {fileID: 21300000, guid: c13636746116b374bab64e03d481aaa5, type: 3}
-    - {fileID: 21300000, guid: 7acfc5bc61f73a141ad190bb96a66cea, type: 3}
-    - {fileID: 21300000, guid: b01760fa846b3474eac6f467194029d0, type: 3}
-    - {fileID: 21300000, guid: 98d557a1c3fa4a74fb348a35421e9b98, type: 3}
-    - {fileID: 21300000, guid: 68cd1ff0454ef1e4cb4ebea1f50e6be3, type: 3}
-    - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - {fileID: 21300000, guid: 2922f110bc541a44998a3c638c284f78, type: 3}
-    - {fileID: 21300000, guid: e7a2781c7d87254478da24e883eb4144, type: 3}
-    - {fileID: 21300000, guid: 7de9bb4993f04944fa5f7b7e5b2c9a5a, type: 3}
-    - {fileID: 21300000, guid: c758c0d0c1ffb0344ae5cc5f2ee78197, type: 3}
-    - {fileID: 21300000, guid: ec424fd5a02dea54b825c08a5a5e2b9a, type: 3}
-    - {fileID: 21300000, guid: 1181dd6621aeee2458f1b80f7103dff5, type: 3}
-    - {fileID: 21300000, guid: d4a2b85f04c8ab648b7a67249d128e4e, type: 3}
-    - {fileID: 21300000, guid: 815519bddcb4aad47ab2af8b83324dfb, type: 3}
-    - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - {fileID: 21300000, guid: 3187860cdb845ff4a8fe10bb432bd421, type: 3}
-    - {fileID: 21300000, guid: 0637b97171b11ce4db147dadb7962a93, type: 3}
-    - {fileID: 21300000, guid: cf485e1dfc3b8d84b97e2e6eceaed4f5, type: 3}
-    - {fileID: 21300000, guid: 80b6fcb2b7b287a4297e7b15c0e256a7, type: 3}
-    - {fileID: 21300000, guid: 0c701f4a29f2ef044bbbefc8067a1cfd, type: 3}
-    - {fileID: 21300000, guid: 42a41a8a384b71f48bdfef91a5786d1f, type: 3}
-    - {fileID: 21300000, guid: 8e3f91766d658f94d9459a4f8369c875, type: 3}
   hairColors:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0.5, z: 0}
@@ -1986,85 +1923,45 @@ MonoBehaviour:
     m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000
     m_values:
     - className: Wolf
-      summonPortrait: {fileID: 21300000, guid: bb519cc5a55c1284d8bfe22ff5cd0e25, type: 3}
     - className: Skeleton
-      summonPortrait: {fileID: 21300000, guid: 362b5aa2e37e9da499ca8a81f43cdae7, type: 3}
     - className: Golem
-      summonPortrait: {fileID: 21300000, guid: c6756a4a1e068244bbb0505a07406409, type: 3}
     - className: Succubus
-      summonPortrait: {fileID: 21300000, guid: b01760fa846b3474eac6f467194029d0, type: 3}
     - className: Incubus
-      summonPortrait: {fileID: 21300000, guid: 7acfc5bc61f73a141ad190bb96a66cea, type: 3}
     - className: FireElemental
-      summonPortrait: {fileID: 21300000, guid: 8079e2be5be425e4984d3bff7e212764, type: 3}
     - className: Kobold
-      summonPortrait: {fileID: 21300000, guid: fa0619b7cb438ad43bd60489182d2aa1, type: 3}
     - className: GiantSpider
-      summonPortrait: {fileID: 21300000, guid: 24ddc0decde552649b24891f92edac8b, type: 3}
     - className: Mimic
-      summonPortrait: {fileID: 21300000, guid: a139866de57b9d84b814b5a52126a901, type: 3}
     - className: SmallSpider
-      summonPortrait: {fileID: 21300000, guid: 24ddc0decde552649b24891f92edac8b, type: 3}
     - className: Abomination
-      summonPortrait: {fileID: 21300000, guid: 9b0e42b61dbe3bb47ae54d8d3d8d6393, type: 3}
     - className: Pig
-      summonPortrait: {fileID: 21300000, guid: 40507c8f8647b26409f2f9d92b28fb70, type: 3}
     - className: Sheep
-      summonPortrait: {fileID: 21300000, guid: e03a0da1821763243b38cfa2edaef43e, type: 3}
     - className: Chicken
-      summonPortrait: {fileID: 21300000, guid: 59f382848bf662e49a24e9fa7fd1080b, type: 3}
     - className: DesertEnt
-      summonPortrait: {fileID: 21300000, guid: 68cd1ff0454ef1e4cb4ebea1f50e6be3, type: 3}
     - className: ForestEnt
-      summonPortrait: {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
     - className: SnowEnt
-      summonPortrait: {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
     - className: GrassEnt
-      summonPortrait: {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
     - className: CorruptEnt
-      summonPortrait: {fileID: 21300000, guid: 98d557a1c3fa4a74fb348a35421e9b98, type: 3}
     - className: IceNymph
-      summonPortrait: {fileID: 21300000, guid: c758c0d0c1ffb0344ae5cc5f2ee78197, type: 3}
     - className: WaterNymph
-      summonPortrait: {fileID: 21300000, guid: ec424fd5a02dea54b825c08a5a5e2b9a, type: 3}
     - className: WindNymph
-      summonPortrait: {fileID: 21300000, guid: 1181dd6621aeee2458f1b80f7103dff5, type: 3}
     - className: ElectricWisp
-      summonPortrait: {fileID: 21300000, guid: e7a2781c7d87254478da24e883eb4144, type: 3}
     - className: FireWisp
-      summonPortrait: {fileID: 21300000, guid: 7de9bb4993f04944fa5f7b7e5b2c9a5a, type: 3}
     - className: EarthenWisp
-      summonPortrait: {fileID: 21300000, guid: 2922f110bc541a44998a3c638c284f78, type: 3}
     - className: Sludge
-      summonPortrait: {fileID: 21300000, guid: 22cfd84bf71a94148a77f19eecc86c75, type: 3}
     - className: Ghost
-      summonPortrait: {fileID: 21300000, guid: 7357917f81b59fc4c8bd413941774aa7, type: 3}
     - className: WarriorAngel
-      summonPortrait: {fileID: 21300000, guid: 815519bddcb4aad47ab2af8b83324dfb, type: 3}
     - className: MagicalAngel
-      summonPortrait: {fileID: 21300000, guid: d4a2b85f04c8ab648b7a67249d128e4e, type: 3}
     - className: VengefulGhost
-      summonPortrait: {fileID: 21300000, guid: 8e3f91766d658f94d9459a4f8369c875, type: 3}
     - className: Wurm
-      summonPortrait: {fileID: 21300000, guid: 4e988cd7d035c5f4c912ac30b3ef0421, type: 3}
     - className: Revenant
-      summonPortrait: {fileID: 21300000, guid: 6a7b5bac1c96118428f50fc9cd5ba1f4, type: 3}
     - className: Dragon
-      summonPortrait: {fileID: 21300000, guid: 5483171b9e7c90743943dbbd7fa20a7a, type: 3}
     - className: Troll
-      summonPortrait: {fileID: 21300000, guid: 372b94906660deb43b5bd3f454be6217, type: 3}
     - className: BoneGolem
-      summonPortrait: {fileID: 21300000, guid: 3187860cdb845ff4a8fe10bb432bd421, type: 3}
     - className: Rat
-      summonPortrait: {fileID: 21300000, guid: 24b73dbd41dbd1f459072d0dcf1f4314, type: 3}
     - className: Scorpion
-      summonPortrait: {fileID: 21300000, guid: 178794461f348bf4bbfa485a335d0c96, type: 3}
     - className: Harpy
-      summonPortrait: {fileID: 21300000, guid: ed184afac7a62a7469733a2479af94e8, type: 3}
     - className: Triton
-      summonPortrait: {fileID: 21300000, guid: 5a559ddc24c142e45afcc44ad0833f80, type: 3}
     - className: Imp
-      summonPortrait: {fileID: 21300000, guid: cbb07a794c232b944a5fb53de05ce5aa, type: 3}
   minionSettings:
     m_keys: 
     m_values: []
@@ -2132,7 +2029,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &4171541220710007274
+--- !u!1001 &2688676479073751107
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -2249,6 +2146,16 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 4905128870225505140, guid: f896c18de75dce946a8d03895f40303a,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4905128870225505140, guid: f896c18de75dce946a8d03895f40303a,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5401141114350016918, guid: f896c18de75dce946a8d03895f40303a,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -2279,36 +2186,26 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6388029620863613661, guid: f896c18de75dce946a8d03895f40303a,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6388029620863613661, guid: f896c18de75dce946a8d03895f40303a,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8227776616077130185, guid: f896c18de75dce946a8d03895f40303a,
+    - target: {fileID: 7969889873584236640, guid: f896c18de75dce946a8d03895f40303a,
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8227776616294868296, guid: f896c18de75dce946a8d03895f40303a,
+    - target: {fileID: 7969889873768690913, guid: f896c18de75dce946a8d03895f40303a,
         type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8227776616294868296, guid: f896c18de75dce946a8d03895f40303a,
+    - target: {fileID: 7969889873768690913, guid: f896c18de75dce946a8d03895f40303a,
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f896c18de75dce946a8d03895f40303a, type: 3}
---- !u!224 &8170638536613158687 stripped
+--- !u!224 &2701383863409763696 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2060806865198195866, guid: f896c18de75dce946a8d03895f40303a,
     type: 3}
-  m_PrefabInstance: {fileID: 4171541220710007274}
+  m_PrefabInstance: {fileID: 2688676479073751107}
   m_PrefabAsset: {fileID: 0}

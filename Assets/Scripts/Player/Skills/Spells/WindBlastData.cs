@@ -41,7 +41,8 @@ public class WindBlastData : SkillData {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
             if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.WIND_BLAST;
-                Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
             }
         }
     }
