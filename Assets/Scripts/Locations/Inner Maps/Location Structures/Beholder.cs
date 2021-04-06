@@ -104,6 +104,7 @@ namespace Inner_Maps.Location_Structures {
                     eyeWards.Add(DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.eyeWards[i]) as EyeWard);
                 }
             }
+            Messenger.AddListener<TileObject>(TileObjectSignals.DESTROY_TILE_OBJECT, OnDestroyTileObject);
         }
         #endregion
     }
