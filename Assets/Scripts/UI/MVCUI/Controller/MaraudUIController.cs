@@ -191,7 +191,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void DisplayDeployedDeadMembers() {
 		if (m_targetPartyStructure.party != null) {
-			m_targetPartyStructure.party.deadMembers.ForEach((eachDeadMembers) => Debug.LogError(eachDeadMembers.nameWithID));
+			m_targetPartyStructure.party.deadMembers.ForEach((eachDeadMembers) => Debug.Log(eachDeadMembers.nameWithID));
 			m_targetPartyStructure.party.deadMembers.ForEach((eachMember) => {
 				if (eachMember.minion != null) {
 					m_deployedMinionsUI[0].gameObject.SetActive(true);
