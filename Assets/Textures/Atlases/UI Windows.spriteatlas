@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 4b18ba5513d55364284cd64228896343, type: 3}
-    totalSpriteSurfaceArea: 10174832
+    totalSpriteSurfaceArea: 10385735
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -51,6 +51,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ae43244188953b94ca4bfbb6e53e17b1, type: 3}
   - {fileID: 21300000, guid: aee89f91e27b7ea4fb6082333a3ed6ee, type: 3}
   - {fileID: 21300000, guid: 3ad825620f90e104ba9787f50b283e46, type: 3}
+  - {fileID: 21300000, guid: 210cb0a2957d55444964ebaecb2d2ecf, type: 3}
   - {fileID: 21300000, guid: ad0ba403edcb24941bfe8c77517193b9, type: 3}
   - {fileID: 21300000, guid: 3a17d623ca130c644a1e81eac1474f7d, type: 3}
   - {fileID: 21300000, guid: 86897a3345403f240a98a45707546524, type: 3}
@@ -65,6 +66,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: df0ef0a758a443748978f2fd68df6dfc, type: 3}
   - {fileID: 21300000, guid: 4ad043e7f6d9df24d91e3edcd0385832, type: 3}
   - {fileID: 21300000, guid: c01396480b0e11e48aec5b89a59ded67, type: 3}
+  - {fileID: 21300000, guid: 3b16d98854a7e4f4ba62f50ef6271f50, type: 3}
   - {fileID: 21300000, guid: 961f63a8786743c4b9e5d59e513f938c, type: 3}
   - {fileID: 21300000, guid: 53ad7d09c765f9e49879049dd5e279a1, type: 3}
   - {fileID: 21300000, guid: aeacff293460a1a4ab5cf13c2c554f21, type: 3}
@@ -84,6 +86,7 @@ SpriteAtlas:
   - demonic_structure_popup_container
   - maraud_second_column
   - world_options_bg
+  - maraud_defense_point_container (1)
   - skill_details_tooltip_container
   - actions_list_container
   - Tabs Container
@@ -98,6 +101,7 @@ SpriteAtlas:
   - scheme_container
   - minion_info_tooltip_container
   - corrupt_rile_up_container
+  - minion_selector_disabled
   - two_columns_list_container
   - PopUp-List
   - unlockContainer_no_border

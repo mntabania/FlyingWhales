@@ -77,6 +77,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
 			eachDeployedItem.onDelete += OnDeployedMonsterClicked;
 		});
+		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
+			eachDeployedItem.onUnlockClicked += OnUnlockSlotClicked;
+		});
+		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
+			eachDeployedItem.onAddSummonClicked += OnAddSummonClicked;
+		});
 		m_deployedTargetItemUI.ForEach((eachDeployedItem) => {
 			eachDeployedItem.onDeleteClick += OnDeployedTargetClicked;
 		});
@@ -88,6 +94,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		});
 		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
 			eachDeployedItem.onDelete -= OnDeployedMonsterClicked;
+		});
+		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
+			eachDeployedItem.onUnlockClicked -= OnUnlockSlotClicked;
+		});
+		m_deployedSummonsUI.ForEach((eachDeployedItem) => {
+			eachDeployedItem.onAddSummonClicked -= OnAddSummonClicked;
 		});
 		m_deployedTargetItemUI.ForEach((eachDeployedItem) => {
 			eachDeployedItem.onDeleteClick -= OnDeployedTargetClicked;
@@ -420,6 +432,13 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		ProcessButtonAvailability();
 	}
 
+	void OnUnlockSlotClicked(DeployedMonsterItemUI p_itemUI) {
+		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT) {
+			m_targetPartyStructure.startingSummonCount++;
+			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
+		}
+	}
+
 	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
 		if (m_isTeamDeployed) {
 			return;
@@ -510,6 +529,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		Init();
 	}
 
+	public void OnAddSummonClicked() { m_maraudUIView.ShowSummonSubContainer(); }
+
 	public void OnCloseClicked() {
 		HideAvailableItems();
 		ReturnAllItemToPool();
@@ -518,8 +539,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
-
-	public void OnAddSummonClicked() { m_maraudUIView.ShowSummonSubContainer(); }
 	public void OnAddMinionClicked() { m_maraudUIView.ShowMinionSubContainer(); }
 	public void OnAddTargetClicked() { m_maraudUIView.ShowTargetSubContainer(); }
 
@@ -545,13 +564,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	public void OnHoverOut() {
 		Tooltip.Instance.HideSmallInfo();
-	}
-
-	public void OnAddSummonSlotClicked() {
-		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT) {
-			m_targetPartyStructure.startingSummonCount++;
-			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
-		}
 	}
 	#endregion
 }
