@@ -5505,6 +5505,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
             //    SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
             //}
+
+            //Unseize first before processing death
+            if (isBeingSeized) {
+                PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
+            }
+
             SetIsConversing(false);
             //SetIsFlirting(false);
             Region deathLocation = currentRegion;
@@ -5535,6 +5541,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CharacterManager.Instance.RemoveLimboCharacter(this);
                 return;
             }
+
             //Remove disguise first before processing death
             reactionComponent.SetDisguisedCharacter(null);
 

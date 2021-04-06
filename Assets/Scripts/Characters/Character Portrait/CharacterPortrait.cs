@@ -76,7 +76,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private void UpdatePortrait(bool makePixelPerfect) {
         isPixelPerfect = makePixelPerfect;
-        if(_portraitSprite == null) {
+        if(!string.IsNullOrEmpty(_portraitSettings.className)) {
             _portraitSprite = CharacterManager.Instance.GetOrCreateCharacterClassData(_portraitSettings.className)?.portraitSprite;
         }
         if (_portraitSprite != null) {
