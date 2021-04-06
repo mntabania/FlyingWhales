@@ -320,6 +320,10 @@ public static class TileObjectDB {
             maxHP = 3000,
             occupiedSize = new Point(4, 3)
         } },
+        { TILE_OBJECT_TYPE.TORTURE_CHAMBERS_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(1, 1)
+        } },
     };
 
     public static bool HasTileObjectData(TILE_OBJECT_TYPE objType) {

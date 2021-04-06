@@ -114,7 +114,8 @@ namespace Inner_Maps {
         private void OnRightClick() {
             if (!UIManager.Instance.IsMouseOnUI() && !ReferenceEquals(currentlyShowingMap, null) && GameManager.Instance.gameHasStarted) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
-                if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                List<ISelectable> selectables = null;
+                if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out selectables)) {
                     IPointOfInterest currentlySelectedPOI = UIManager.Instance.GetCurrentlySelectedPOI();
                     if (currentlySelectedPOI != null && selectables.Contains(currentlySelectedPOI)) {
                         currentlySelectedPOI.RightSelectAction();
@@ -122,6 +123,9 @@ namespace Inner_Maps {
                         ISelectable selectable = selectables.FirstOrDefault();
                         selectable?.RightSelectAction();
                     }
+                }
+                if (selectables != null) {
+                    RuinarchListPool<ISelectable>.Release(selectables);    
                 }
             }
         }
@@ -136,7 +140,8 @@ namespace Inner_Maps {
             //TODO: Create system that disables normal clicks.
             if (!UIManager.Instance.IsMouseOnUI() && !ReferenceEquals(currentlyShowingMap, null) && (!GameManager.Instance.gameHasStarted || !PlayerManager.Instance.player.IsPerformingPlayerAction())) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
-                if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                List<ISelectable> selectables = null;
+                if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out selectables)) {
                     if (selectables.Count > 0) {
                         ISelectable objToSelect = null;
                         if (lastClickedTile != clickedTile) {
@@ -161,6 +166,9 @@ namespace Inner_Maps {
                     }
                     lastClickedTile = clickedTile;
                 }
+                if (selectables != null) {
+                    RuinarchListPool<ISelectable>.Release(selectables);    
+                }
             }
         }
         private ISelectable GetFirstSelectableOnTile(LocationGridTile tile) {
@@ -181,6 +189,7 @@ namespace Inner_Maps {
                         }
                         //assume that all objects that have the specified tags have the BaseMapObjectVisual class
                         if (visual.selectable != null && visual.selectable.CanBeSelected()) {
+                            //this is meant for unbuilt structures
                             return visual.selectable;
                         }
                     }
@@ -188,7 +197,7 @@ namespace Inner_Maps {
             }
 
             if (tile.structure != null) {
-                if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                if (tile.structure.IsTilePartOfARoom(tile, out var room) && room.CanBeSelected()) {
                     return room;
                 }
                 if (tile.structure.structureType.IsPlayerStructure()) {
@@ -209,7 +218,7 @@ namespace Inner_Maps {
             return null;
         }
         private bool TryGetSelectablesOnTile(LocationGridTile tile, out List<ISelectable> selectables) {
-            selectables = new List<ISelectable>();
+            selectables = RuinarchListPool<ISelectable>.Claim();
 
             PointerEventData pointer = new PointerEventData(EventSystem.current) {position = Input.mousePosition};
 
@@ -230,6 +239,7 @@ namespace Inner_Maps {
                     } else if (go.gameObject.CompareTag("Location Structure Object")) {
                         LocationStructureObjectClickCollider structureObjectClickCollider = go.gameObject.GetComponent<LocationStructureObjectClickCollider>();
                         if (structureObjectClickCollider.structureObject != null && structureObjectClickCollider.structureObject.CanBeSelected()) {
+                            //this is meant for unbuilt structures
                             selectables.Add(structureObjectClickCollider.structureObject);    
                         }
                     } else if (go.gameObject.CompareTag("Map_Click_Blocker")) {
@@ -238,20 +248,24 @@ namespace Inner_Maps {
                 }
             }
             if (tile.structure != null) {
-                if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
+                if (tile.structure.IsTilePartOfARoom(tile, out var room) && room.CanBeSelected() && !selectables.Contains(tile.structure)) {
                     selectables.Add(room);
                 }
                 if (tile.structure.structureType.IsPlayerStructure()) {
-                    if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
-                        selectables.Add(tile.structure);    
+                    if (tile.tileState == LocationGridTile.Tile_State.Occupied && !selectables.Contains(tile.structure)) {
+                        selectables.Add(tile.structure);        
                     }
                 } else {
                     if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) || //if man made structure check if structure object has not yet been destroyed 
                         (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed
                         tile.structure is CityCenter == false) {
-                        selectables.Add(tile.structure);
+                        if (!selectables.Contains(tile.structure)) {
+                            selectables.Add(tile.structure);    
+                        }
                     } else if (tile.structure is Cave || tile.structure is MonsterLair) {
-                        selectables.Add(tile.structure);    
+                        if (!selectables.Contains(tile.structure)) {
+                            selectables.Add(tile.structure);    
+                        }    
                     }
                 }    
             }

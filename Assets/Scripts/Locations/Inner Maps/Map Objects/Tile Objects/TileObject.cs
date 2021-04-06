@@ -1247,7 +1247,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     #region Selectable
-    public bool IsCurrentlySelected() {
+    public virtual bool IsCurrentlySelected() {
         return UIManager.Instance.tileObjectInfoUI.isShowing &&
                UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
     }

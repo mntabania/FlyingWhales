@@ -371,6 +371,12 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         #endregion
+
+        #region Selectable
+        public override bool CanBeSelected() {
+            return false;
+        }
+        #endregion
     }
 }
 

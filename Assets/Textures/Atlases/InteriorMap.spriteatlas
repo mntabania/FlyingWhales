@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3997845
+    totalSpriteSurfaceArea: 4067477
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -536,6 +536,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1aa0f5b9c7de5ac49bbf0a62a344b74e, type: 3}
   - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
   - {fileID: 21300000, guid: c77799b9783c3b1419ac8bf68b07ec36, type: 3}
+  - {fileID: 21300000, guid: f6d799b91848c7e4e9d0b5c621d60732, type: 3}
   - {fileID: 21300000, guid: 4f208db9e5ee54b4e9b58074d963d240, type: 3}
   - {fileID: 21300000, guid: d5fb61d92848cf149a96ae7d2054e15b, type: 3}
   - {fileID: 21300000, guid: a9b153d972870a24abeb826b0c38ea0b, type: 3}
@@ -677,6 +678,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9507e9ec9a1d85548b17f92b5eaf4cfe, type: 3}
   - {fileID: 21300000, guid: 3f5abaecfa6166e4fa876bf76ef0d792, type: 3}
   - {fileID: 21300000, guid: 37de0fec9e752464dbba8d627d5d99cd, type: 3}
+  - {fileID: 21300000, guid: b7366fec44a384d4dbe2fd4a1415cde8, type: 3}
   - {fileID: 21300000, guid: d03e62fce06146a4a9df1309669441a6, type: 3}
   - {fileID: 21300000, guid: aaaa66fc3e32b2a46b309f2321d6988b, type: 3}
   - {fileID: 21300000, guid: 913c76fc6bf5a6548b1d84ac1a00a195, type: 3}
@@ -1319,6 +1321,7 @@ SpriteAtlas:
   - crypt_256x192
   - supplies
   - desert_rose
+  - kennel_256x128
   - CHAIN#2
   - shore01010111-00
   - shelfDecor00
@@ -1460,6 +1463,7 @@ SpriteAtlas:
   - wallA-0101-wall0010
   - laidWallA00001000-00
   - demonWallA-10100000-00
+  - prison_192x192
   - caveWallA-11111011-00
   - grass_h00
   - desertSand01

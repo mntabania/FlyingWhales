@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-
+using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class TortureChambers : PartyStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
-        public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
         public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         public override string nameplateName => "Prison";
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
@@ -71,10 +70,14 @@ namespace Inner_Maps.Location_Structures {
         }
         
         #region Structure Object
+        #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             _tortureChamberStructureObject = structureObj as TortureChamberStructureObject;
+            Vector3 position = structureObj.transform.position;
+            worldPosition = position;
         }
+        #endregion
         public override void OnBuiltNewStructure() {
             base.OnBuiltNewStructure();
             _tortureChamberStructureObject.SetEntrance(region.innerMap);
