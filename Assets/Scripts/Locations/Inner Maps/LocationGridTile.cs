@@ -189,12 +189,15 @@ namespace Inner_Maps {
 
         #region Other Data
         public Vector3 GetPositionWithinTileThatIsOnAWalkableNode() {
-            if (AstarPath.active.GetNearest(centeredWorldLocation, parentMap.onlyUnwalkableGraph).node.Walkable) {
+            //Used WalkableErosion because for some reason the Walkable field always returns true
+            if (AstarPath.active.GetNearest(centeredWorldLocation).node is GridNodeBase grid && grid.WalkableErosion) {
                 return centeredWorldLocation;
             } else {
                 for (int i = 0; i < nodePoints.Length; i++) {
-                    Vector3 pos = new Vector3(centeredWorldLocation.x + nodePoints[i].X, centeredWorldLocation.y + nodePoints[i].Y, centeredWorldLocation.z);
-                    if(AstarPath.active.GetNearest(centeredWorldLocation, parentMap.onlyUnwalkableGraph).node.Walkable) {
+                    float posX = centeredWorldLocation.x + nodePoints[i].X;
+                    float posY = centeredWorldLocation.y + nodePoints[i].Y;
+                    Vector3 pos = new Vector3(posX, posY, centeredWorldLocation.z);
+                    if (AstarPath.active.GetNearest(pos).node is GridNodeBase gridNode && gridNode.WalkableErosion) {
                         return pos;
                     }
                 }

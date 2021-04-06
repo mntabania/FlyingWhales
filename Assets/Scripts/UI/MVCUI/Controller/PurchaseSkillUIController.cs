@@ -194,7 +194,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 							if (PlayerSkillManager.Instance.selectedArchetype == playerSkillData.archetypeWeightedBonus) {
 								processedWeight += 100;
 							}
-							if (processedWeight >= 0) {
+							if (processedWeight > 0) {
 								weights.AddElement(entry.Value, processedWeight);
 							}
 						}
