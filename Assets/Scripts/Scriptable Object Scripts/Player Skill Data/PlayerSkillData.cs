@@ -48,7 +48,7 @@ public class PlayerSkillData : ScriptableObject {
     }
 
     public int GetCoolDownBaseOnLevel(int level) {
-        if (isAffliction) {
+        if (!isAffliction) {
             return skillUpgradeData.GetCoolDownPerLevel(level);
         } else {
             return afflictionUpgradeData.GetCoolDownPerLevel(level);
