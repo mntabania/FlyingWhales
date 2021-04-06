@@ -624,7 +624,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             ClearArrivalAction();
             action?.Invoke();
         } else {
-            SetDestination(destinationTile.centeredWorldLocation, destinationTile);
+            SetDestination(destinationTile.GetPositionWithinTileThatIsOnAWalkableNode(), destinationTile);
             StartMovement();
         }
     }
@@ -652,7 +652,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if (targetPOI.gridTileLocation == null) {
                         throw new Exception($"{character.name} is trying to go to a {targetPOI.ToString()} but its tile location is null");
                     }
-                    SetDestination(targetPOI.gridTileLocation.centeredWorldLocation, targetPOI.gridTileLocation);
+                    SetDestination(targetPOI.gridTileLocation.GetPositionWithinTileThatIsOnAWalkableNode(), targetPOI.gridTileLocation);
                 }
                 break;
         }

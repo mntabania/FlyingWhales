@@ -18,7 +18,7 @@ public class EyeWard : TileObject {
     }
     public EyeWard(SaveDataTileObject data) {
         tilesInRadius = new List<LocationGridTile>();
-        AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
+        //AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
     }
 
     #region Overrides
@@ -120,6 +120,7 @@ public class EyeWard : TileObject {
     #region Loading
     public override void LoadSecondWave(SaveDataTileObject data) {
         base.LoadSecondWave(data);
+        AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
         PlayerManager.Instance.player.tileObjectComponent.AddEyeWard(this);
     }
     #endregion

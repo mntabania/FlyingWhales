@@ -1293,6 +1293,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         perHourElapsedInWaiting = 0;
         bookmarkEventDispatcher.ClearAll();
         members.Clear();
+        onQuestFailed = null;
+        onQuestSucceed = null;
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
         ForceCancelAllJobsImmediately();
