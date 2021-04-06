@@ -161,7 +161,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_deployedTargetItemUI[0].ResetButton();
 		m_maraudUIView.ShowMinionButtonHideMinionContainer();
 		m_maraudUIView.ShowTargetButtonHideTargetContainer();
-		m_maraudUIView.ProcessSummonDisplay();
+		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
 		m_targetPartyStructure.partyData.ResetAllReadyCounts();
 	}
 	void DisplayDeployedItems() {
@@ -186,7 +186,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			m_maraudUIView.ShowTargetButtonHideTargetContainer();
 		}
-		m_maraudUIView.ProcessSummonDisplay();
+		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
 	}
 
 	void DisplayDeployedDeadMembers() {
@@ -207,7 +207,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 							m_deployedSummonsUI[x].InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((eachMember as Summon).summonType));
 							m_deployedSummonsUI[x].ShowDeadIcon();
 							m_deployedSummonsUI[x].HideRemoveButton();
-							m_maraudUIView.ProcessSummonDisplay();
+							m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
 							break;
 						}
 					}
@@ -232,7 +232,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}
 		}
-		m_maraudUIView.ProcessSummonDisplay();
+		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
 	}
 	#endregion
 
@@ -341,10 +341,13 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 			return;
 		}
+		if (m_targetPartyStructure.partyData.readyForDeploySummonCount >= m_targetPartyStructure.startingSummonCount) {
+			return;
+		}
 		if (!p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeploySummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedSummonsUI, p_clickedMonster);
-			m_maraudUIView.ProcessSummonDisplay();
+			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
 		} else if (p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedMinionsUI, p_clickedMonster);
@@ -423,7 +426,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		if (!p_itemUI.isMinion) {
 			ProcessAvailableItemFromClickingDeployedItem(m_summonList, p_itemUI);
-			m_maraudUIView.ProcessSummonDisplay();
+			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
 		} else {
 			ProcessAvailableItemFromClickingDeployedItem(m_minionList, p_itemUI);
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
@@ -503,7 +506,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		});
 		m_maraudUIView.ShowMinionButtonHideMinionContainer();
 		m_maraudUIView.ShowTargetButtonHideTargetContainer();
-		m_maraudUIView.ProcessSummonDisplay();
+		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
 		Init();
 	}
 
@@ -542,6 +545,13 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	public void OnHoverOut() {
 		Tooltip.Instance.HideSmallInfo();
+	}
+
+	public void OnAddSummonSlotClicked() {
+		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT) {
+			m_targetPartyStructure.startingSummonCount++;
+			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT);
+		}
 	}
 	#endregion
 }

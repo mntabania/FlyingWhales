@@ -5,7 +5,7 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class DefensePoint : PartyStructure {
         public DefensePoint(Region location) : base(STRUCTURE_TYPE.DEFENSE_POINT, location) {
-            
+            startingSummonCount = 2;
         }
         public DefensePoint(Region location, SaveDataPartyStructure data) : base(location, data) {
             

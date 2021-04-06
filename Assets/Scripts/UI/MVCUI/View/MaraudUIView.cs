@@ -10,12 +10,12 @@ public class MaraudUIView : MVCUIView {
 		void OnAddSummonClicked();
 		void OnAddMinionClicked();
 		void OnAddTargetClicked();
-
 		void OnCloseSummonSubContainer();
 		void OnCloseMinionSubContainer();
 		void OnCloseTargetSubContainer();
 		void OnHoverOver();
 		void OnHoverOut();
+		void OnAddSummonSlotClicked();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -93,12 +93,23 @@ public class MaraudUIView : MVCUIView {
 		UIModel.scrollViewDeployedTargets.gameObject.SetActive(false);
 	}
 
-	public void ProcessSummonDisplay() {
+	public void ProcessSummonDisplay(int p_currentCount, int p_maxCount) {
 		int count = 0;
 		for (int x = 0; x < UIModel.deployedItemSummonsUI.Count; ++x) {
 			if (UIModel.deployedItemSummonsUI[x].isActiveAndEnabled) {
 				count++;
 			}
+		}
+
+		if (count >= p_currentCount) {
+			if (p_currentCount >= p_maxCount) {
+				UIModel.btnAddSummonSlot.gameObject.SetActive(false);
+			} else {
+				UIModel.btnAddSummonSlot.gameObject.SetActive(true);
+			}
+			
+		} else {
+			UIModel.btnAddSummonSlot.gameObject.SetActive(false);
 		}
 
 		if (count >= 5) {
@@ -157,6 +168,7 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseTargetSubContainer += p_listener.OnCloseTargetSubContainer;
 		UIModel.onHoverOver += p_listener.OnHoverOver;
 		UIModel.onHoverOut += p_listener.OnHoverOut;
+		UIModel.onAddSummonSlotClicked += p_listener.OnAddSummonSlotClicked;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -170,6 +182,7 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseTargetSubContainer -= p_listener.OnCloseTargetSubContainer;
 		UIModel.onHoverOver -= p_listener.OnHoverOver;
 		UIModel.onHoverOut -= p_listener.OnHoverOut;
+		UIModel.onAddSummonSlotClicked -= p_listener.OnAddSummonSlotClicked;
 	}
 	#endregion
 }

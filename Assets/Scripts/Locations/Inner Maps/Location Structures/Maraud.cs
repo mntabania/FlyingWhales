@@ -7,6 +7,7 @@ namespace Inner_Maps.Location_Structures {
         
         private List<IStoredTarget> _allVillages;
         public Maraud(Region location) : base(STRUCTURE_TYPE.MARAUD, location) {
+            startingSummonCount = 2;
             _allVillages = new List<IStoredTarget>();
             UpdateTargetsList();
         }
