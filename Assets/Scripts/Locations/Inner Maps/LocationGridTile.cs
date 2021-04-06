@@ -27,7 +27,23 @@ namespace Inner_Maps {
         }
 
         private static readonly GridNeighbourDirection[] gridNeighbourDirections = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
-        
+        private Dictionary<GridNeighbourDirection, Point> possibleExits => new Dictionary<GridNeighbourDirection, Point>() {
+            {GridNeighbourDirection.North, new Point(0,1) },
+            {GridNeighbourDirection.South, new Point(0,-1) },
+            {GridNeighbourDirection.West, new Point(-1,0) },
+            {GridNeighbourDirection.East, new Point(1,0) },
+            {GridNeighbourDirection.North_West, new Point(-1,1) },
+            {GridNeighbourDirection.North_East, new Point(1,1) },
+            {GridNeighbourDirection.South_West, new Point(-1,-1) },
+            {GridNeighbourDirection.South_East, new Point(1,-1) },
+        };
+        private PointFloat[] nodePoints = new PointFloat[] {
+            new PointFloat(0.25f, 0.25f),
+            new PointFloat(-0.25f, 0.25f),
+            new PointFloat(0.25f, -0.25f),
+            new PointFloat(-0.25f, -0.25f),
+        };
+
         public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
@@ -172,17 +188,19 @@ namespace Inner_Maps {
         #endregion
 
         #region Other Data
-        private Dictionary<GridNeighbourDirection, Point> possibleExits =>
-            new Dictionary<GridNeighbourDirection, Point>() {
-                {GridNeighbourDirection.North, new Point(0,1) },
-                {GridNeighbourDirection.South, new Point(0,-1) },
-                {GridNeighbourDirection.West, new Point(-1,0) },
-                {GridNeighbourDirection.East, new Point(1,0) },
-                {GridNeighbourDirection.North_West, new Point(-1,1) },
-                {GridNeighbourDirection.North_East, new Point(1,1) },
-                {GridNeighbourDirection.South_West, new Point(-1,-1) },
-                {GridNeighbourDirection.South_East, new Point(1,-1) },
-            };
+        public Vector3 GetPositionWithinTileThatIsOnAWalkableNode() {
+            if (AstarPath.active.GetNearest(centeredWorldLocation, parentMap.onlyUnwalkableGraph).node.Walkable) {
+                return centeredWorldLocation;
+            } else {
+                for (int i = 0; i < nodePoints.Length; i++) {
+                    Vector3 pos = new Vector3(centeredWorldLocation.x + nodePoints[i].X, centeredWorldLocation.y + nodePoints[i].Y, centeredWorldLocation.z);
+                    if(AstarPath.active.GetNearest(centeredWorldLocation, parentMap.onlyUnwalkableGraph).node.Walkable) {
+                        return pos;
+                    }
+                }
+            }
+            return centeredWorldLocation;
+        }
         public void SetTileType(Tile_Type tileType) {
             this.tileType = tileType;
         }

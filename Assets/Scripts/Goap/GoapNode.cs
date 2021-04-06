@@ -430,15 +430,24 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     job.ForceCancelJob(false);
                 } else {
                     if (isInvalidOnVision || isInvalidStealth) { //If action is invalid because of stealth, cancel job immediately, we do not need to recalculate it anymore since there are witnesses around, it will just become invalid again even if we let it recalculate
+                        if (job.originalOwner != null && job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+                            job.AddBlacklistedCharacter(actor);
+                        }
                         job.CancelJob(false);
                     } else {
                         //Special case for Invite action for Make Love
                         //Once the invite action became invalid because the target rejected the invite, it must be cancelled immediately, so that the actor will not try to invite again
                         //Maybe create a system for this?
                         if (goapActionInvalidity.stateName == "Invite Rejected" && action.goapType == INTERACTION_TYPE.INVITE) {
+                            if (job.originalOwner != null && job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+                                job.AddBlacklistedCharacter(actor);
+                            }
                             job.CancelJob(false);
                         } else {
                             if (job.invalidCounter > 0) {
+                                if (job.originalOwner != null && job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+                                    job.AddBlacklistedCharacter(actor);
+                                }
                                 job.CancelJob(false);
                             } else {
                                 job.IncreaseInvalidCounter();
