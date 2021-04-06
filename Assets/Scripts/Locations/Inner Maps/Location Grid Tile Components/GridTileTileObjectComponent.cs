@@ -181,13 +181,28 @@ namespace Inner_Maps {
             walls.Clear();
         }
         public bool HasWalls() {
-            return walls.Count > 0 || objHere is BlockWall;
+            if(objHere is BlockWall) {
+                return true;
+            } else {
+                if(walls.Count > 0) {
+                    for (int i = 0; i < walls.Count; i++) {
+                        if (walls[i].currentHP > 0) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
         public TileObject GetFirstWall() {
             if(objHere is BlockWall) {
                 return objHere;
             } else if (walls.Count > 0) {
-                return walls[0];
+                for (int i = 0; i < walls.Count; i++) {
+                    if (walls[i].currentHP > 0) {
+                        return walls[i];
+                    }
+                }
             }
             return null;
         }

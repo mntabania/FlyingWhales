@@ -202,7 +202,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 			DisplaySkills(m_skillComponent.afflictions);
 			break;
 			case SKILL_VIEW.SPELLS:
-			DisplaySkills(m_skillComponent.spells);
+			DisplaySkills(GetFilteredSpells());
 			break;
 			case SKILL_VIEW.PLAYER_ACTION:
 			DisplaySkills(GetFilteredPlayerActions());
@@ -226,7 +226,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	public void OnSpellTabClicked(bool isOn) {
 		if (isOn) {
 			m_currentView = SKILL_VIEW.SPELLS;
-			DisplaySkills(m_skillComponent.spells);
+			DisplaySkills(GetFilteredSpells());
 			UpdateTopMenuSummary();
 		}
 	}
@@ -241,6 +241,15 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	public List<PLAYER_SKILL_TYPE> GetFilteredPlayerActions() {
 		List<PLAYER_SKILL_TYPE> skills = new List<PLAYER_SKILL_TYPE>();
 		m_skillComponent.playerActions.ForEach((eachSkill) => {
+			if (!PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).isNonUpgradeable) {
+				skills.Add(eachSkill);
+			}
+		});
+		return skills;
+	}
+	public List<PLAYER_SKILL_TYPE> GetFilteredSpells() {
+		List<PLAYER_SKILL_TYPE> skills = new List<PLAYER_SKILL_TYPE>();
+		m_skillComponent.spells.ForEach((eachSkill) => {
 			if (!PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).isNonUpgradeable) {
 				skills.Add(eachSkill);
 			}
