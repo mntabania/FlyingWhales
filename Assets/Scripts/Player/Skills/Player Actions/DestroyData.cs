@@ -42,7 +42,8 @@ public class DestroyData : PlayerAction {
                     if (eachCharacters.isDead && eachCharacters.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                         eachCharacters.skillCauseOfDeath = PLAYER_SKILL_TYPE.DESTROY;
                         if (eachCharacters.deathTilePosition != null) {
-                            Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, eachCharacters.deathTilePosition.centeredWorldLocation, 1, eachCharacters.deathTilePosition.parentMap);
+                            //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, eachCharacters.deathTilePosition.centeredWorldLocation, 1, eachCharacters.deathTilePosition.parentMap);
+                            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, eachCharacters.deathTilePosition.centeredWorldLocation, 1, eachCharacters.deathTilePosition.parentMap);
                         }
                     }
                 });

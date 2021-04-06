@@ -60,6 +60,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public void GeneratePortrait(Character character, bool makePixelPerfect = true) {
         _character = character;
         _portraitSettings = character.visuals.portraitSettings;
+        _portraitSprite = null;
         UpdatePortrait(makePixelPerfect);
         UpdateLeaderIcon();
     }
@@ -76,7 +77,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private void UpdatePortrait(bool makePixelPerfect) {
         isPixelPerfect = makePixelPerfect;
-        if(_portraitSprite == null) {
+        if(!string.IsNullOrEmpty(_portraitSettings.className)) {
             _portraitSprite = CharacterManager.Instance.GetOrCreateCharacterClassData(_portraitSettings.className)?.portraitSprite;
         }
         if (_portraitSprite != null) {
@@ -315,6 +316,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         _character = null;
         _onClickAction = null;
         ignoreInteractions = false;
+        _portraitSprite = null;
         RemoveListeners();
     }
     #endregion

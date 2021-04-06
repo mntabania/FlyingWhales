@@ -50,12 +50,12 @@ namespace Tutorial {
         private void OnCompleteClickBiolab() {
             PlayerUI.Instance.ShowGeneralConfirmation(
             "Biolab", $"The Biolab allows you to customize and improve your {UtilityScripts.Utilities.ColorizeAction("Plague")} spell. " +
-                      $"Spread your Plague and let it wreak havoc to produce {UtilityScripts.Utilities.ColorizeAction("Plague Points")} that you can then use for upgrade."
+                      $"Spread your Plague and let it wreak havoc to produce {UtilityScripts.Utilities.ColorizeAction("Chaotic Energy")} that you can then use for upgrade."
             );
         }
         private void OnCompleteClickLifespan() {
             PlayerUI.Instance.ShowGeneralConfirmation(
-                "Upgrades", $"You gain a significant amount of {UtilityScripts.Utilities.ColorizeAction("Plague Points")} each time your Plague spreads. " +
+                "Upgrades", $"You gain a significant amount of {UtilityScripts.Utilities.ColorizeAction("Chaotic Energy")} each time your Plague spreads. " +
                             $"You gain a small amount when a Plagued victim dies. Some {UtilityScripts.Utilities.ColorizeAction("Symptoms")} may also give you Plague Points when they get triggered." +
                             $"\n\nUse these Points to upgrade various aspects of your Plague!" 
             );

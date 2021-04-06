@@ -27,7 +27,23 @@ namespace Inner_Maps {
         }
 
         private static readonly GridNeighbourDirection[] gridNeighbourDirections = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
-        
+        private Dictionary<GridNeighbourDirection, Point> possibleExits => new Dictionary<GridNeighbourDirection, Point>() {
+            {GridNeighbourDirection.North, new Point(0,1) },
+            {GridNeighbourDirection.South, new Point(0,-1) },
+            {GridNeighbourDirection.West, new Point(-1,0) },
+            {GridNeighbourDirection.East, new Point(1,0) },
+            {GridNeighbourDirection.North_West, new Point(-1,1) },
+            {GridNeighbourDirection.North_East, new Point(1,1) },
+            {GridNeighbourDirection.South_West, new Point(-1,-1) },
+            {GridNeighbourDirection.South_East, new Point(1,-1) },
+        };
+        private PointFloat[] nodePoints = new PointFloat[] {
+            new PointFloat(0.25f, 0.25f),
+            new PointFloat(-0.25f, 0.25f),
+            new PointFloat(0.25f, -0.25f),
+            new PointFloat(-0.25f, -0.25f),
+        };
+
         public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
@@ -172,17 +188,22 @@ namespace Inner_Maps {
         #endregion
 
         #region Other Data
-        private Dictionary<GridNeighbourDirection, Point> possibleExits =>
-            new Dictionary<GridNeighbourDirection, Point>() {
-                {GridNeighbourDirection.North, new Point(0,1) },
-                {GridNeighbourDirection.South, new Point(0,-1) },
-                {GridNeighbourDirection.West, new Point(-1,0) },
-                {GridNeighbourDirection.East, new Point(1,0) },
-                {GridNeighbourDirection.North_West, new Point(-1,1) },
-                {GridNeighbourDirection.North_East, new Point(1,1) },
-                {GridNeighbourDirection.South_West, new Point(-1,-1) },
-                {GridNeighbourDirection.South_East, new Point(1,-1) },
-            };
+        public Vector3 GetPositionWithinTileThatIsOnAWalkableNode() {
+            //Used WalkableErosion because for some reason the Walkable field always returns true
+            if (AstarPath.active.GetNearest(centeredWorldLocation).node is GridNodeBase grid && grid.WalkableErosion) {
+                return centeredWorldLocation;
+            } else {
+                for (int i = 0; i < nodePoints.Length; i++) {
+                    float posX = centeredWorldLocation.x + nodePoints[i].X;
+                    float posY = centeredWorldLocation.y + nodePoints[i].Y;
+                    Vector3 pos = new Vector3(posX, posY, centeredWorldLocation.z);
+                    if (AstarPath.active.GetNearest(pos).node is GridNodeBase gridNode && gridNode.WalkableErosion) {
+                        return pos;
+                    }
+                }
+            }
+            return centeredWorldLocation;
+        }
         public void SetTileType(Tile_Type tileType) {
             this.tileType = tileType;
         }
@@ -1663,10 +1684,17 @@ namespace Inner_Maps {
             summon.jobQueue.CancelAllJobs();
             Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         }
-		#endregion
+        #endregion
 
-		#region Meteor
-		public int meteorCount { get; private set; }
+        #region Spawn Necronomicon
+        public void AddNecronomicon() {
+            Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
+            this.structure.AddPOI(artifact, this);
+        }
+        #endregion
+
+        #region Meteor
+        public int meteorCount { get; private set; }
         public void AddMeteor() {
             SetIsDefault(false);
             meteorCount++;

@@ -22,7 +22,6 @@ public class DefensePointUIModel : MVCUIModel {
 	[Header("Buttons")]
 	public Button btnDeploy;
 	public Button btnClose;
-	public Button btnAddSummon;
 	[Space]
 	public Button btnCloseSummonSubContainer;
 	[Space]
@@ -40,7 +39,6 @@ public class DefensePointUIModel : MVCUIModel {
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);
-		btnAddSummon.onClick.AddListener(ClickAddSummon);
 		btnCloseSummonSubContainer.onClick.AddListener(ClickCloseSummonSubContainer);
 		btnDeployHover.AddOnHoverOverAction(OnHoverOverDeployCursor);
 		btnDeployHover.AddOnHoverOutAction(OnHoverOutDeployCursor);
@@ -49,7 +47,6 @@ public class DefensePointUIModel : MVCUIModel {
 	private void OnDisable() {
 		btnDeploy.onClick.RemoveListener(ClickDeploy);
 		btnClose.onClick.RemoveListener(ClickClose);
-		btnAddSummon.onClick.RemoveListener(ClickAddSummon);
 		btnCloseSummonSubContainer.onClick.RemoveListener(ClickCloseSummonSubContainer);
 		btnDeployHover.RemoveOnHoverOverAction(OnHoverOverDeployCursor);
 		btnDeployHover.RemoveOnHoverOutAction(OnHoverOutDeployCursor);

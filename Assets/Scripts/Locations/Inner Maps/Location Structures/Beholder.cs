@@ -99,18 +99,21 @@ namespace Inner_Maps.Location_Structures {
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
             SaveDataBeholder data = saveDataLocationStructure as SaveDataBeholder;
-            for (int i = 0; i < data.eyeWards.Count; i++) {
-                if (!string.IsNullOrEmpty(data.eyeWards[i])) {
-                    eyeWards[i] = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.eyeWards[i]) as EyeWard;
+            if(data.eyeWards != null) {
+                for (int i = 0; i < data.eyeWards.Count; i++) {
+                    if (!string.IsNullOrEmpty(data.eyeWards[i])) {
+                        eyeWards.Add(DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.eyeWards[i]) as EyeWard);
+                    }
                 }
             }
+            Messenger.AddListener<TileObject>(TileObjectSignals.DESTROY_TILE_OBJECT, OnDestroyTileObject);
         }
         #endregion
     }
 }
 
 public class SaveDataBeholder : SaveDataDemonicStructure {
-    public List<string> eyeWards { get; private set; }
+    public List<string> eyeWards;
 
     public override void Save(LocationStructure structure) {
         base.Save(structure);

@@ -285,7 +285,8 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                 if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.TORNADO;
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                    //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                 }
             } else {
                 damageable.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, isPlayerSource: _tornado.isPlayerSource);    

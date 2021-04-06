@@ -8,7 +8,6 @@ using TMPro;
 public class MaraudUIModel : MVCUIModel {
 
 	public Action onAddMinionClicked;
-	public Action onAddSummonClicked;
 	public Action onAddTargetClicked;
 	public Action onDeployClicked;
 	public Action onCloseClicked;
@@ -28,7 +27,6 @@ public class MaraudUIModel : MVCUIModel {
 	[Header("Buttons")]
 	public RuinarchButton btnDeploy;
 	public RuinarchButton btnClose;
-	public RuinarchButton btnAddSummon;
 	public RuinarchButton btnAddMinion;
 	public RuinarchButton btnAddTarget;
 	[Space]
@@ -59,7 +57,6 @@ public class MaraudUIModel : MVCUIModel {
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);
-		btnAddSummon.onClick.AddListener(ClickAddSummon);
 		btnAddMinion.onClick.AddListener(ClickAddMinion);
 		btnAddTarget.onClick.AddListener(ClickAddTarget);
 		btnCloseSummonSubContainer.onClick.AddListener(ClickCloseSummonSubContainer);
@@ -72,7 +69,6 @@ public class MaraudUIModel : MVCUIModel {
 	private void OnDisable() {
 		btnDeploy.onClick.RemoveListener(ClickDeploy);
 		btnClose.onClick.RemoveListener(ClickClose);
-		btnAddSummon.onClick.RemoveListener(ClickAddSummon);
 		btnAddMinion.onClick.RemoveListener(ClickAddMinion);
 		btnAddTarget.onClick.RemoveListener(ClickAddTarget);
 		btnCloseSummonSubContainer.onClick.RemoveListener(ClickCloseSummonSubContainer);
@@ -89,9 +85,6 @@ public class MaraudUIModel : MVCUIModel {
 
 	public void ClickClose() {
 		onCloseClicked?.Invoke();
-	}
-	void ClickAddSummon() {
-		onAddSummonClicked?.Invoke();
 	}
 
 	void ClickAddMinion() {

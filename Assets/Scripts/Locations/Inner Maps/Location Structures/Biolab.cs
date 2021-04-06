@@ -14,8 +14,8 @@ namespace Inner_Maps.Location_Structures {
 
         public Biolab(Region location) : base(STRUCTURE_TYPE.BIOLAB, location) { }
         public Biolab(Region location, SaveDataBiolab data) : base(location, data) {
-            replenishDate = data.replenishDate;
-            SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
+            //replenishDate = data.replenishDate;
+            //SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
         }
 
         #region Overrides

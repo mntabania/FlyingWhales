@@ -7,6 +7,7 @@ namespace Inner_Maps.Location_Structures {
         public override string nameplateName => "Prison";
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             nameWithoutID = "Prison";
+            startingSummonCount = 2;
             name = $"{nameWithoutID} {id.ToString()}";
         }
         public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) { }

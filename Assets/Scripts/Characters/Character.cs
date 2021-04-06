@@ -4790,6 +4790,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
             }
         }
+
+        //Every time a character is unseized on a non demonic structure, if the character is a prisoner of player faction, remove prisoner trait.
+        //Reason: so that if the character becomes a snatch target again, the snatch behaviour will also treat the target as a new snatch target
+        if (!tileLocation.structure.structureType.IsPlayerStructure()) {
+            Prisoner prisoner = traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
+                traitContainer.RemoveRestrainAndImprison(this);
+            }
+        }
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
         //if (traitOverrideFunctions != null) {
         //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
@@ -5496,6 +5505,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
             //    SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
             //}
+
+            //Unseize first before processing death
+            if (isBeingSeized) {
+                PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
+            }
+
             SetIsConversing(false);
             //SetIsFlirting(false);
             Region deathLocation = currentRegion;
@@ -5526,6 +5541,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CharacterManager.Instance.RemoveLimboCharacter(this);
                 return;
             }
+
             //Remove disguise first before processing death
             reactionComponent.SetDisguisedCharacter(null);
 
@@ -5728,7 +5744,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             if(responsibleCharacter != null) {
                 if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
-                    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, deathTile.parentMap);
+                    //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, deathTile.parentMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, deathTile.worldLocation, 1, deathTile.parentMap);
                 }
 			}
 

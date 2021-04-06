@@ -102,6 +102,7 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(p_summon);
             _occupyingSummon = p_summon;
             occupyingSummon.eventDispatcher.SubscribeToCharacterDied(this);
+            startingSummonCount = 2;
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity, false);
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
             Debug.Log($"Set occupant of {name} to {occupyingSummon?.name}");

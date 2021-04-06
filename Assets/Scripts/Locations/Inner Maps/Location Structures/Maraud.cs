@@ -10,7 +10,7 @@ namespace Inner_Maps.Location_Structures {
             _allVillages = new List<IStoredTarget>();
             UpdateTargetsList();
         }
-        public Maraud(Region location, SaveDataDemonicStructure data) : base(location, data) {
+        public Maraud(Region location, SaveDataPartyStructure data) : base(location, data) {
             _allVillages = new List<IStoredTarget>();
             UpdateTargetsList();
         }

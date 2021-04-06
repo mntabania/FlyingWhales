@@ -23,3 +23,26 @@ public struct Point {
         return $"({X}, {Y})";
     }
 }
+
+[System.Serializable]
+public struct PointFloat
+{
+    public float X, Y;
+
+    public PointFloat(float x, float y) {
+        this.X = x;
+        this.Y = y;
+    }
+
+    public PointFloat Sum(PointFloat otherPoint) {
+        return new PointFloat(otherPoint.X + X, otherPoint.Y + Y);
+    }
+
+    public float Product() {
+        return X * Y;
+    }
+    public override string ToString() {
+        return $"({X}, {Y})";
+    }
+}
+

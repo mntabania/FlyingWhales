@@ -8,6 +8,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class PartyStructure : DemonicStructure, Party.PartyEventsIListener {
+        public int MAX_SUMMON_COUNT = 5;
         public override Type serializedData => typeof(SaveDataPartyStructure);
         public virtual List<IStoredTarget> allPossibleTargets { get; }
         protected bool m_isUndeployUserAction;
@@ -16,6 +17,7 @@ namespace Inner_Maps.Location_Structures {
 
         private bool m_isInitialized = false;
 
+        public virtual int startingSummonCount { set; get; }
         public virtual void InitTargets() { }
         public bool IsAvailableForTargeting() {
             if (this is Maraud || this is DefensePoint) {
@@ -35,6 +37,7 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
+            startingSummonCount = 2;
             Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
@@ -58,6 +61,7 @@ namespace Inner_Maps.Location_Structures {
                 PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
                 ListenToParty();
             }
+            startingSummonCount = saveData.startingSummonCount;
         }
         #endregion
 
@@ -191,6 +195,7 @@ namespace Inner_Maps.Location_Structures {
             }
             partyData.ClearAllData();
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+            Debug.Log($"Un Deployed party at {name}. Party was {party?.name}");
             party = null;
         }
 
@@ -223,13 +228,14 @@ namespace Inner_Maps.Location_Structures {
 
     public class SaveDataPartyStructure : SaveDataDemonicStructure {
         public string partyID;
-
+        public int startingSummonCount;
         public override void Save(LocationStructure structure) {
             base.Save(structure);
             PartyStructure ps = structure as PartyStructure;
             if (ps.party != null) {
                 partyID = ps.party.persistentID;
             }
+            startingSummonCount = ps.startingSummonCount;
         }
     }
 }

@@ -7,10 +7,8 @@ public class MaraudUIView : MVCUIView {
 	public interface IListener {
 		void OnDeployClicked();
 		void OnCloseClicked();
-		void OnAddSummonClicked();
 		void OnAddMinionClicked();
 		void OnAddTargetClicked();
-
 		void OnCloseSummonSubContainer();
 		void OnCloseMinionSubContainer();
 		void OnCloseTargetSubContainer();
@@ -93,18 +91,30 @@ public class MaraudUIView : MVCUIView {
 		UIModel.scrollViewDeployedTargets.gameObject.SetActive(false);
 	}
 
-	public void ProcessSummonDisplay() {
-		int count = 0;
-		for (int x = 0; x < UIModel.deployedItemSummonsUI.Count; ++x) {
-			if (UIModel.deployedItemSummonsUI[x].isActiveAndEnabled) {
-				count++;
+	public void ProcessSummonDisplay(int p_currentCount, int p_maxCount, int p_currentMana) {
+		int lastAvailIndex = -1;
+		for (int x = 0; x < p_currentCount; ++x) {
+			if (!UIModel.deployedItemSummonsUI[x].isDeployed && !UIModel.deployedItemSummonsUI[x].isReadyForDeploy) {
+				UIModel.deployedItemSummonsUI[x].gameObject.SetActive(true);
+				UIModel.deployedItemSummonsUI[x].MakeSlotEmpty();
+				if (lastAvailIndex == -1) {
+					lastAvailIndex = x;
+				}
 			}
 		}
 
-		if (count >= 5) {
-			UIModel.btnAddSummon.gameObject.SetActive(false);
-		} else {
-			UIModel.btnAddSummon.gameObject.SetActive(true);
+		if (lastAvailIndex != -1) {
+			UIModel.deployedItemSummonsUI[lastAvailIndex].gameObject.SetActive(true);
+			UIModel.deployedItemSummonsUI[lastAvailIndex].DisplayAddSummon();
+		}
+		if (p_currentCount < p_maxCount) {
+			UIModel.deployedItemSummonsUI[p_currentCount].gameObject.SetActive(true);
+			UIModel.deployedItemSummonsUI[p_currentCount].MakeSlotLocked(p_currentMana >= UIModel.deployedItemSummonsUI[p_currentCount].unlockCost);
+		}
+		
+		for (int x = p_currentCount + 1; x < UIModel.deployedItemSummonsUI.Count; ++x) {
+			UIModel.deployedItemSummonsUI[x].gameObject.SetActive(true);
+			UIModel.deployedItemSummonsUI[x].MakeSlotLockedNoButton();
 		}
 	}
 
@@ -150,7 +160,6 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onDeployClicked += p_listener.OnDeployClicked;
 		UIModel.onCloseClicked += p_listener.OnCloseClicked;
 		UIModel.onAddMinionClicked += p_listener.OnAddMinionClicked;
-		UIModel.onAddSummonClicked += p_listener.OnAddSummonClicked;
 		UIModel.onAddTargetClicked += p_listener.OnAddTargetClicked;
 		UIModel.onCloseSummonSubContainer += p_listener.OnCloseSummonSubContainer;
 		UIModel.onCloseMinionSubContainer += p_listener.OnCloseMinionSubContainer;
@@ -163,7 +172,6 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onDeployClicked -= p_listener.OnDeployClicked;
 		UIModel.onCloseClicked -= p_listener.OnCloseClicked;
 		UIModel.onAddMinionClicked -= p_listener.OnAddMinionClicked;
-		UIModel.onAddSummonClicked -= p_listener.OnAddSummonClicked;
 		UIModel.onAddTargetClicked -= p_listener.OnAddTargetClicked;
 		UIModel.onCloseSummonSubContainer -= p_listener.OnCloseSummonSubContainer;
 		UIModel.onCloseMinionSubContainer -= p_listener.OnCloseMinionSubContainer;

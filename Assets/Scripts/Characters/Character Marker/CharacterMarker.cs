@@ -624,7 +624,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             ClearArrivalAction();
             action?.Invoke();
         } else {
-            SetDestination(destinationTile.centeredWorldLocation, destinationTile);
+            SetDestination(destinationTile.GetPositionWithinTileThatIsOnAWalkableNode(), destinationTile);
             StartMovement();
         }
     }
@@ -652,7 +652,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if (targetPOI.gridTileLocation == null) {
                         throw new Exception($"{character.name} is trying to go to a {targetPOI.ToString()} but its tile location is null");
                     }
-                    SetDestination(targetPOI.gridTileLocation.centeredWorldLocation, targetPOI.gridTileLocation);
+                    SetDestination(targetPOI.gridTileLocation.GetPositionWithinTileThatIsOnAWalkableNode(), targetPOI.gridTileLocation);
                 }
                 break;
         }
@@ -685,9 +685,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ArrivedAtTarget(ref bool shouldRecomputePath) {
         StopMovement();
 
-        LocationGridTile actualDestinationTile = null;
-        LocationGridTile attainedDestinationTile = null;
-        ProcessDestinationAndAttainedDestinationTile(ref actualDestinationTile, ref attainedDestinationTile);
+        LocationGridTile actualDestinationTile = GetDestinationTile();
+        LocationGridTile attainedDestinationTile = character.gridTileLocation;
+        //ProcessDestinationAndAttainedDestinationTile(ref actualDestinationTile, ref attainedDestinationTile);
 
         Action actionBeforeDigging = arrivalActionBeforeDigging;
         //set arrival action to null, because some arrival actions set it
@@ -695,13 +695,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         actionBeforeDigging?.Invoke();
 
         if (character.traitContainer.HasTrait("Vampire")) {
-            if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
+            if (attainedDestinationTile != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                 //Transform to bat so the character can traverse the tile
                 Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                 if (vampireTrait.CanTransformIntoBat()) {
                     if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                        if (!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)) {
+                        if (!PathfindingManager.Instance.HasPathEvenDiffRegion(attainedDestinationTile, actualDestinationTile)) {
                             //Only transform to bat if there is really no path between the current location and destination tile
                             //If it has, even if the destination reached is not really the destination tile, do not transform
                             if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
@@ -723,7 +723,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             CombatState combatState = character.stateComponent.currentState as CombatState;
             if (combatState.isAttacking){
                 if (combatState.currentClosestHostile != null && !character.movementComponent.HasPathToEvenIfDiffRegion(combatState.currentClosestHostile.gridTileLocation)) {
-                    if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
+                    if (attainedDestinationTile != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
                         //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                         if (character.movementComponent.AttackBlockersOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile, actualDestinationTile)) {
                             targetPOI = null;
@@ -740,9 +740,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
 
         if (character.movementComponent.CanDig()) {
-            if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
+            if (attainedDestinationTile != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
                 //Only really dig if the character has really no path towards target
-                if(!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)) {
+                if(!PathfindingManager.Instance.HasPathEvenDiffRegion(attainedDestinationTile, actualDestinationTile)) {
                     //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                     if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile, actualDestinationTile)) {
                         targetPOI = null;

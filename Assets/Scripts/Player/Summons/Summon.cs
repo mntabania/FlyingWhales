@@ -74,6 +74,12 @@ public class Summon : Character {
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
 
+            //Unseize first before processing death
+            if (isBeingSeized) {
+                PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
+            }
+
+
             if (isLycanthrope) {
                 //Added this so that human and lycan form can share the same death log and prevent duplicates
                 Character humanForm = lycanData.originalForm;

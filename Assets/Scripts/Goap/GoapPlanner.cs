@@ -188,6 +188,9 @@ public class GoapPlanner {
                         owner.jobComponent.CreateProduceFoodJob();
                     }
                 }
+                if (owner.traitContainer.HasTrait("Pest") || owner is Rat) {
+                    owner.behaviourComponent.SetPestHasFailedEat(true);
+                }
             } else if (jobType == JOB_TYPE.RECOVER_HP) {
                 owner.jobComponent.SetDoNotDoRecoverHPJob(true);
             }
