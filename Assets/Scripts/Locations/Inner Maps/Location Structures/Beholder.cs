@@ -101,7 +101,7 @@ namespace Inner_Maps.Location_Structures {
             SaveDataBeholder data = saveDataLocationStructure as SaveDataBeholder;
             for (int i = 0; i < data.eyeWards.Count; i++) {
                 if (!string.IsNullOrEmpty(data.eyeWards[i])) {
-                    eyeWards[i] = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.eyeWards[i]) as EyeWard;
+                    eyeWards.Add(DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.eyeWards[i]) as EyeWard);
                 }
             }
         }
