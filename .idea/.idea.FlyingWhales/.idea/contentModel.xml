@@ -1230,6 +1230,7 @@
               <e p="CharacterJobTriggerComponent.cs" t="Include" />
               <e p="CharacterPartyComponent.cs" t="Include" />
               <e p="CharacterTileObjectComponent.cs" t="Include" />
+              <e p="CharacterTraitComponent.cs" t="Include" />
               <e p="CombatComponent.cs" t="Include" />
               <e p="CrimeComponent.cs" t="Include" />
               <e p="GatheringComponent.cs" t="Include" />
@@ -1851,11 +1852,15 @@
             <e p="MentalBreak.cs" t="Include" />
             <e p="Mock.cs" t="Include" />
             <e p="MoraleBoost.cs" t="Include" />
-            <e p="NarcolepticAttack.cs" t="Include" />
+            <e p="NarcolepticNap.cs" t="Include" />
+            <e p="NarcolepticNapLong.cs" t="Include" />
+            <e p="NarcolepticNapMedium.cs" t="Include" />
+            <e p="NarcolepticNapShort.cs" t="Include" />
             <e p="NecromanticTransformation.cs" t="Include" />
             <e p="NoiseWakeUp.cs" t="Include" />
             <e p="OrderAttack.cs" t="Include" />
             <e p="Panicking.cs" t="Include" />
+            <e p="PassOut.cs" t="Include" />
             <e p="Plagued.cs" t="Include" />
             <e p="Pneumonia.cs" t="Include" />
             <e p="Puke.cs" t="Include" />
@@ -2606,6 +2611,7 @@
               </e>
               <e p="Passive Skills" t="Include">
                 <e p="AutoAbsorbChaosOrb.cs" t="Include" />
+                <e p="DarkRitualChaosOrb.cs" t="Include" />
                 <e p="EnemiesChaosOrb.cs" t="Include" />
                 <e p="MentalBreakChaosOrb.cs" t="Include" />
                 <e p="MonsterChaosOrb.cs" t="Include" />
@@ -2744,6 +2750,7 @@
                 <e p="Sheep.cs" t="Include" />
               </e>
               <e p="BoneGolem.cs" t="Include" />
+              <e p="DireWolf.cs" t="Include" />
               <e p="Dragon.cs" t="Include" />
               <e p="Ent" t="Include">
                 <e p="CorruptEnt.cs" t="Include" />
@@ -3041,6 +3048,7 @@
               <e p="ContextMenuColumn.cs" t="Include" />
               <e p="ContextMenuUIObject.cs" t="Include" />
             </e>
+            <e p="CurrencyHoverData.cs" t="Include" />
             <e p="ElementalDamageData.cs" t="Include" />
             <e p="ItemGenerationSetting.cs" t="Include" />
             <e p="MonsterGenerationSetting.cs" t="Include" />

@@ -987,21 +987,22 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
     private void CharacterDies(Character character) {
         if (membersThatJoinedQuest.Contains(character)) {
-            Debug.LogError("TO BE ADDED: " + character.nameWithID);
+            Debug.Log("TO BE ADDED: " + character.nameWithID);
             if (!deadMembers.Contains(character)) {
                 deadMembers.Add(character);
-                Debug.LogError("ADDED: " + character.nameWithID);
+                Debug.Log("ADDED: " + character.nameWithID);
                 
             }
         }
-        if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            if (GameUtilities.RollChance(25)) {
-                if (membersThatJoinedQuest.Contains(character)) {
-                    currentQuest.EndQuest(character.name + " died");
+        if (currentQuest != null) {
+            if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
+                if (GameUtilities.RollChance(25)) {
+                    if (membersThatJoinedQuest.Contains(character)) {
+                        currentQuest.EndQuest(character.name + " died");
+                    }
                 }
-            }
+            }    
         }
-        
     }
     private void CharacterNoLongerPerform(Character character) {
         if (character.limiterComponent.canMove) {

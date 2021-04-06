@@ -17,6 +17,7 @@ public class PlagueComponent {
     }
     public PlagueComponent(SaveDataPlagueComponent p_component) {
         _plaguePoints = p_component.plaguePoints;
+        maxPlaguePoints = p_component.maxPlaguePoints;
         Messenger.AddListener<int>(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }
 

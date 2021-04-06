@@ -33,6 +33,7 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 m_owner = character;
+                CheckIfShouldListenToLevelUpEvent(character);
                 additionalFullnessDecreaseRate = GetHungerDecreaseRate(character);
             }
         }
