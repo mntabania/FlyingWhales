@@ -30,7 +30,7 @@ public class SeizeComponent {
                 if (poi.isBeingCarriedBy.carryComponent.isCarryingAnyPOI && poi.isBeingCarriedBy.carryComponent.carriedPOI == poi) {
                     poi.isBeingCarriedBy.UncarryPOI();
                 } else {
-                    poi.isBeingCarriedBy.UncarryPOI(poi);    
+                    poi.isBeingCarriedBy.UncarryPOI(poi);
                 }
             }
             // poi.isBeingCarriedBy?.UncarryPOI();
@@ -56,7 +56,7 @@ public class SeizeComponent {
                 Debug.LogError($"Cannot seize. {poi.name} has no tile");
                 return;
             }
-            
+
             PrepareToUnseize();
             // PlayerManager.Instance.player.AdjustMana(-manaCost);
             //PlayerUI.Instance.ShowSeizedObjectUI();
@@ -81,7 +81,7 @@ public class SeizeComponent {
         Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnReceiveKeyCodeSignal);
     }
     private void OnReceiveKeyCodeSignal(KeyCode keyCode) {
-        if(keyCode == KeyCode.Mouse0) {
+        if (keyCode == KeyCode.Mouse0) {
             TryToUnseize();
         }
     }
@@ -98,15 +98,25 @@ public class SeizeComponent {
             return false;
         }
         // isPreparingToBeUnseized = false;
-        IPointOfInterest prevSeizedPOI = seizedPOI;
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
         if (!CanUnseizeHere(hoveredTile)) {
             return false;
         }
+        UnseizePOIBase(hoveredTile);
+        return true;
+    }
+    public void UnseizePOIOnDeath() {
+        if(seizedPOI != null) {
+            UnseizePOIBase(seizedPOI.gridTileLocation);
+            DoneUnseize();
+        }
+    }
+    private void UnseizePOIBase(LocationGridTile tileLocation) {
+        IPointOfInterest prevSeizedPOI = seizedPOI;
         DisableFollowMousePosition();
-        seizedPOI.OnUnseizePOI(hoveredTile);
+        seizedPOI.OnUnseizePOI(tileLocation);
         if (seizedPOI.mapObjectVisual != null) {
-            seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);    
+            seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);
             seizedPOI.mapObjectVisual.visionTrigger.SetFilterVotes(_seizedPOIVisionTriggerVotes);
             seizedPOI.mapObjectVisual.visionTrigger.SetVisionTriggerCollidersState(_seizedPOIVisionTriggerState);
             // seizedPOI.mapObjectVisual.SetColor(_seizedPOIColor);    
@@ -125,7 +135,6 @@ public class SeizeComponent {
         if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
         }
-        return true;
     }
     public bool CanUnseize() {
         if (!hasSeizedPOI) {

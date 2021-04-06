@@ -57,6 +57,11 @@ public class Minion {
             LocationStructure deathStructure = character.currentStructure;
             LocationGridTile deathTile = character.gridTileLocation;
 
+            //Unseize first before processing death
+            if (character.isBeingSeized) {
+                PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
+            }
+
             character.SetIsDead(true);
             character.SetPOIState(POI_STATE.INACTIVE);
 

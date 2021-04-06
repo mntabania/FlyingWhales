@@ -101,7 +101,8 @@ public class ConsoleBase : InfoUIBase {
             {"/trigger_quarantine", TriggerQuarantine},
             {"/add_ideology", AddFactionIdeology},
             {"/check_tiles", CheckTiles},
-            {"/reveal_all", RevealAll}
+            {"/reveal_all", RevealAll},
+            {"/enable_dig", EnableDigging}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1330,6 +1331,17 @@ public class ConsoleBase : InfoUIBase {
             }
         }
         AddSuccessMessage($"Revealed all Character and Faction Info");
+    }
+    private void EnableDigging(string[] parameters) {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            character.movementComponent.SetEnableDigging(!character.movementComponent.enableDigging);
+        }
+        for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.limboCharacters[i];
+            character.movementComponent.SetEnableDigging(!character.movementComponent.enableDigging);
+        }
+        AddSuccessMessage($"Enabled Digging all Characters");
     }
     #endregion
 

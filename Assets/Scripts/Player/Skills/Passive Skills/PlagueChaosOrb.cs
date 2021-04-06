@@ -16,7 +16,7 @@ public class PlagueChaosOrb : PassiveSkill {
             character.traitContainer.HasTrait("Insomnia") ||
             character.traitContainer.HasTrait("Lethargic") ||
             character.traitContainer.HasTrait("Paralyzed")) {
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap, CURRENCY.Chaotic_Energy);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
         }
     }
 

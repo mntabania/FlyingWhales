@@ -194,6 +194,7 @@ namespace Inner_Maps.Location_Structures {
             }
             partyData.ClearAllData();
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
+            Debug.Log($"Un Deployed party at {name}. Party was {party?.name}");
             party = null;
         }
 

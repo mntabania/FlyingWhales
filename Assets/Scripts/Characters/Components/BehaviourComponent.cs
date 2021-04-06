@@ -68,6 +68,7 @@ public class BehaviourComponent : CharacterComponent {
 
     //pest
     public BaseSettlement pestSettlementTarget { get; private set; }
+    public bool pestHasFailedEat { get; private set; }
 
     //private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure { get; private set; }
@@ -121,6 +122,7 @@ public class BehaviourComponent : CharacterComponent {
         hasEatenInTheNight = data.hasEatenInTheNight;
         isCurrentlySnatching = data.isCurrentlySnatching;
         combatModeBeforeAttackingDemonicStructure = data.combatModeBeforeAttackingDemonicStructure;
+        pestHasFailedEat = data.pestHasFailedEat;
     }
 
     #region General
@@ -903,6 +905,9 @@ public class BehaviourComponent : CharacterComponent {
     public void SetPestSettlementTarget(BaseSettlement p_settlement) {
         pestSettlementTarget = p_settlement;
     }
+    public void SetPestHasFailedEat(bool p_state) {
+        pestHasFailedEat = p_state;
+    }
     #endregion
 
     #region Work
@@ -1078,6 +1083,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
 
     //pest
     public string pestSettlementTarget;
+    public bool pestHasFailedEat;
 
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -1100,6 +1106,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
         hasEatenInTheNight = data.hasEatenInTheNight;
         isCurrentlySnatching = data.isCurrentlySnatching;
         combatModeBeforeAttackingDemonicStructure = data.combatModeBeforeAttackingDemonicStructure;
+        pestHasFailedEat = data.pestHasFailedEat;
 
         if (data.attackVillageTarget != null) {
             attackVillageTarget = data.attackVillageTarget.persistentID;
