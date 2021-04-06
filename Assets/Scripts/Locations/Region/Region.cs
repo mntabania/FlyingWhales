@@ -577,11 +577,21 @@ public class Region : ISavable, ILogFiller {
                     settlements = new List<BaseSettlement>();
                 }
                 if (settlements.Contains(settlement) == false) {
-                    settlements.Add(settlement);    
+                    settlements.Add(settlement);
                 }
             }
         }
         return settlements;
+    }
+    public void PopulateSettlementsInRegionThatHasAliveResidentExcept(List<BaseSettlement> settlements, Character exception, BaseSettlement exceptionSettlement) {
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = settlementsInRegion[i];
+            if(settlement != exceptionSettlement) {
+                if (settlement.HasResidentThatMeetsCriteria(x => exception != x && !x.isDead)) {
+                    settlements.Add(settlement);
+                }
+            }
+        }
     }
     public BaseSettlement GetFirstSettlementInRegion(System.Func<BaseSettlement, bool> validityChecker) {
         for (int i = 0; i < settlementsInRegion.Count; i++) {

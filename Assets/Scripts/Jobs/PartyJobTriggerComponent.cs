@@ -43,6 +43,7 @@ public class PartyJobTriggerComponent : JobTriggerComponent {
     public bool CreateSnatchJob(Character targetCharacter, LocationGridTile targetLocation, LocationStructure structure) {
         if (_owner.jobBoard.HasJob(JOB_TYPE.SNATCH, targetCharacter) == false) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP_RESTRAINED, targetCharacter, _owner);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Snatch_Job);
             job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { structure, targetLocation });
             _owner.jobBoard.AddToAvailableJobs(job);
             return true;
