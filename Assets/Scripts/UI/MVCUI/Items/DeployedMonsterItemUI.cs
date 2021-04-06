@@ -22,6 +22,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public RuinarchText txtAtkSpd;
     public RuinarchText txtStatus;
     public RuinarchText txtSummonCost;
+    public RuinarchText txtUnlockCost;
     public Image imgPortrait;
 
     public RuinarchText txtUnlockPrice;
@@ -35,6 +36,9 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public bool isMinion;
 
     public int summonCost;
+    public int unlockCost;
+
+    public HoverText hoverText;
 
     private MonsterAndDemonUnderlingCharges _monsterOrMinion;
     public MonsterAndDemonUnderlingCharges obj => _monsterOrMinion;
@@ -108,17 +112,25 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         emptyCover.SetActive(true);
     }
 
-    public void MakeSlotLocked() {
+    public void MakeSlotLocked(bool p_isAbleToBuy) {
         isDeployed = false;
         isReadyForDeploy = false;
         emptyCover.SetActive(false);
         lockCover.SetActive(true);
         addSummonCover.SetActive(false);
+        txtUnlockCost.text = unlockCost.ToString();
         btnUnlockSlot.gameObject.SetActive(true);
+        if (p_isAbleToBuy) {
+            btnUnlockSlot.interactable = true;
+            hoverText.SetText("Unlock More Slot to add summon");
+        } else {
+            btnUnlockSlot.interactable = false;
+            hoverText.SetText("Not enough Mana");
+        }
     }
 
     public void MakeSlotLockedNoButton() {
-        MakeSlotLocked();
+        MakeSlotLocked(false);
         btnUnlockSlot.gameObject.SetActive(false);
     }
 

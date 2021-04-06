@@ -91,7 +91,7 @@ public class MaraudUIView : MVCUIView {
 		UIModel.scrollViewDeployedTargets.gameObject.SetActive(false);
 	}
 
-	public void ProcessSummonDisplay(int p_currentCount, int p_maxCount) {
+	public void ProcessSummonDisplay(int p_currentCount, int p_maxCount, int p_currentMana) {
 		int lastAvailIndex = -1;
 		for (int x = 0; x < p_currentCount; ++x) {
 			if (!UIModel.deployedItemSummonsUI[x].isDeployed && !UIModel.deployedItemSummonsUI[x].isReadyForDeploy) {
@@ -109,7 +109,7 @@ public class MaraudUIView : MVCUIView {
 		}
 		if (p_currentCount < p_maxCount) {
 			UIModel.deployedItemSummonsUI[p_currentCount].gameObject.SetActive(true);
-			UIModel.deployedItemSummonsUI[p_currentCount].MakeSlotLocked();
+			UIModel.deployedItemSummonsUI[p_currentCount].MakeSlotLocked(p_currentMana >= UIModel.deployedItemSummonsUI[p_currentCount].unlockCost);
 		}
 		
 		for (int x = p_currentCount + 1; x < UIModel.deployedItemSummonsUI.Count; ++x) {

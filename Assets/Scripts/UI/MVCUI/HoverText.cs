@@ -6,6 +6,10 @@ public class HoverText : MonoBehaviour
 {
     public string hoverDisplayText;
 
+	public void SetText(string p_newText) {
+		hoverDisplayText = p_newText;
+	}
+
 	public void OnHoverOver() {
 		Tooltip.Instance.ShowSmallInfo(hoverDisplayText, autoReplaceText: false);
 	}
