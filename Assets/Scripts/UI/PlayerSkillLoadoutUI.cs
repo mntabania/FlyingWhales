@@ -123,10 +123,10 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         for (int i = 0; i < extraSlots; i++) {
             PlayerSkillData skillData = null;
             if(extraSkills != null && extraSkills.Count > 0 && i < extraSkills.Count) {
-                skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(extraSkills[i]);
+                skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(extraSkills[i]);
             }
             if (skillData != null) {
-                var playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
+                var playerSkillData = PlayerSkillManager.Instance.GetSkillData(skillData.skill);
                 if (playerSkillData == null) {
                     continue;
                 }    

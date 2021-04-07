@@ -71,7 +71,7 @@ namespace Inner_Maps.Location_Structures {
 
         public bool isTargetted { set; get; }
 
-        public string iconRichText => UtilityScripts.Utilities.ChargesIcon();
+        public string iconRichText => UtilityScripts.Utilities.StructureIcon();
         public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
         #endregion
 
@@ -1093,12 +1093,12 @@ namespace Inner_Maps.Location_Structures {
         public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Contains(action) == false) {
                 actions.Add(action);
-                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
             }
         }
         public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Remove(action)) {
-                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
             }
         }
         public void ClearPlayerActions() {

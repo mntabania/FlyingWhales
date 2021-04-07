@@ -55,8 +55,8 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	}
 
 	public void InitItem(PLAYER_SKILL_TYPE p_type, int p_currentMana) {
-		m_data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
-		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
+		m_data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
+		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
 		txtSkillName.text = m_data.name;
 		txtDescription.text = skillData.description;
 		switch (skillData.category) {

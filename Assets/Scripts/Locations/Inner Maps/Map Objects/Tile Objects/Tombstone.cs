@@ -63,7 +63,7 @@ public class Tombstone : TileObject {
         if (character.race.IsSapient()) {
             AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
         }
-        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+        Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
@@ -91,7 +91,7 @@ public class Tombstone : TileObject {
             }
             character.DestroyMarker();
         }
-        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+        Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public void SetRespawnCorpseOnDestroy(bool state) {
         _respawnCorpseOnDestroy = state;

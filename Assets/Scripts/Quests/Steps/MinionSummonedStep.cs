@@ -6,10 +6,10 @@ namespace Quests.Steps {
             _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, CheckForCompletion);
+            Messenger.AddListener<Minion>(PlayerSkillSignals.SUMMON_MINION, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Minion>(SpellSignals.SUMMON_MINION, CheckForCompletion);
+            Messenger.RemoveListener<Minion>(PlayerSkillSignals.SUMMON_MINION, CheckForCompletion);
         }
 
         private void CheckForCompletion(Minion minion) {

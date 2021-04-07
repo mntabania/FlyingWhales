@@ -30,7 +30,7 @@ public class UpgradePortalItemUI : PooledObject {
         locationPortrait.AddHoverOutAction(OnHoverOutItem);
     }
     public void SetData(PLAYER_SKILL_TYPE p_type) {
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
         _skill = p_type;
         if (skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
             MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(p_type);

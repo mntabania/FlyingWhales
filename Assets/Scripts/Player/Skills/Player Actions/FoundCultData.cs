@@ -21,7 +21,7 @@ public class FoundCultData : PlayerAction {
         if (targetPOI is Character character) {
             character.MigrateHomeStructureTo(null);
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
             if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages) {
                 if (!character.currentRegion.IsRegionVillageCapacityReached()) {
                     Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());

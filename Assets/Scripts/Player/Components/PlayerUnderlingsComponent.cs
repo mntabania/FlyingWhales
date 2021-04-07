@@ -13,14 +13,14 @@ public class PlayerUnderlingsComponent {
         //summons = new List<Summon>();
         monsterUnderlingCharges = new Dictionary<SUMMON_TYPE, MonsterAndDemonUnderlingCharges>();
         demonUnderlingCharges = new Dictionary<MINION_TYPE, MonsterAndDemonUnderlingCharges>();
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
     public PlayerUnderlingsComponent(SaveDataPlayerUnderlingsComponent data) {
         //minions = new List<Minion>();
         //summons = new List<Summon>();
         monsterUnderlingCharges = data.monsterUnderlingCharges;
         demonUnderlingCharges = data.demonUnderlingCharges;
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
 
     #region Utilities
@@ -47,9 +47,9 @@ public class PlayerUnderlingsComponent {
 
     #region Listeners
     public void SubscribeListeners() {
-        Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
-        Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
-        Messenger.AddListener<SkillData>(PlayerSignals.CHARGES_ADJUSTED, OnSkillChargesAdjusted);
+        Messenger.AddListener<Minion>(PlayerSkillSignals.SUMMON_MINION, OnSummonMinion);
+        Messenger.AddListener<Minion>(PlayerSkillSignals.UNSUMMON_MINION, OnUnsummonMinion);
+        Messenger.AddListener<SkillData>(PlayerSkillSignals.CHARGES_ADJUSTED, OnSkillChargesAdjusted);
     }
     private void OnSkillChargesAdjusted(SkillData data) {
         if (data is MinionPlayerSkill demonPlayerSkill) {

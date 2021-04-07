@@ -8,8 +8,6 @@ namespace Traits {
     public class Lycanthrope : Trait {
         public Character owner { get; private set; }
 
-        private int _level;
-
         #region getters
         public override bool isPersistent => true;
         #endregion
@@ -85,24 +83,24 @@ namespace Traits {
             }
         }
         public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
-            if (owner.hasMarker && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
+            if (p_character.hasMarker && p_character.marker.isMoving && (p_character.lycanData.activeForm == p_character.lycanData.lycanthropeForm || p_character.lycanData.isInWerewolfForm)) {
                 float roll = Random.Range(0f, 100f);
                 float chance = 0.85f;
-                if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
+                if (p_character.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
                     chance = 0.5f;
                 }
-                if (roll < chance && owner.gridTileLocation.tileObjectComponent.objHere == null) {
+                if (roll < chance && p_character.gridTileLocation.tileObjectComponent.objHere == null) {
                     //spawn werewolf pelt
-                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, owner);
+                    p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, p_character);
                 }
             }
-            if (owner.needsComponent.isStarving && owner.lycanData.isMaster && !IsHuntingForPrey() && GameUtilities.RollChance(1)) {
+            if (p_character.needsComponent.isStarving && p_character.lycanData.isMaster && !IsHuntingForPrey() && GameUtilities.RollChance(1)) {
                 Character huntPreyTarget = GetHuntPreyTarget();
                 if (huntPreyTarget != null) {
-                    owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);    
+                    p_character.jobComponent.TriggerHuntPreyJob(huntPreyTarget);    
                 }
             }
-            if (owner.lycanData.dislikesBeingLycan && GameUtilities.RollChance(1)) { //1
+            if (p_character.lycanData.dislikesBeingLycan && GameUtilities.RollChance(1)) { //1
                 if (IsHuntingForPrey()) {
                     ResistHunger();
                 }
@@ -292,8 +290,8 @@ namespace Traits {
             UpdateLycanForm();
             activeForm = originalForm;
             limboForm = lycanthropeForm;
-            originalForm.traitContainer.AddTrait(originalForm, "Lycanthrope");
             originalForm.SetLycanthropeData(this);
+            originalForm.traitContainer.AddTrait(originalForm, "Lycanthrope");
             awareCharacters = new List<Character>();
             DetermineIfDesireOrDislike(originalForm);
             Messenger.AddListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
@@ -465,11 +463,11 @@ namespace Traits {
             form.homeRegion?.RemoveResident(form);
             CharacterManager.Instance.AddNewLimboCharacter(form);
             CharacterManager.Instance.RemoveCharacter(form, false);
-            Messenger.AddListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
+            Messenger.AddListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeizedOrIsInLimbo);
         }
         private void ReleaseFromLimbo(Character form, LocationGridTile tileLocation, Region homeRegion) {
             if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-                Messenger.RemoveListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
+                Messenger.RemoveListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeizedOrIsInLimbo);
             }
             homeRegion?.AddResident(form);
             form.needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.region.coreTile.region);

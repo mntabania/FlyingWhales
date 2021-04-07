@@ -1,4 +1,4 @@
-﻿public static class SpellSignals {
+﻿public static class PlayerSkillSignals {
     public static string ADDED_PLAYER_MINION_SKILL = "OnAddPlayerMinionSkill";
     public static string ADDED_PLAYER_SUMMON_SKILL = "OnAddPlayerSummonSkill";
     public static string METEOR_FELL = "OnMeteorFell";
@@ -57,4 +57,7 @@
     public static string PLAYER_GAINED_DEMONIC_STRUCTURE = "OnPlayerGainedDemonicStructure";
     public static string PLAYER_SKILL_LEVEL_UP = "OnPlayerSkillLevelUp";
     public static string ON_PLAGUE_POISON_CLOUD_ACTIVATED = "OnPlaguePoisonCloudActivated";
+
+    public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
+    public static string BONUS_CHARGES_ADJUSTED = "OnBonusChargesAdjusted";
 }

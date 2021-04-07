@@ -27,11 +27,11 @@ public abstract class InfoUIBase : MonoBehaviour {
         _toggles = GetComponentsInChildren<RuinarchToggle>(true);
     }
     protected void ListenToPlayerActionSignals() {
-        Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
-        Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.AddListener<PlayerAction>(PlayerSkillSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
+        Messenger.AddListener<IPlayerActionTarget>(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.AddListener(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
     private void OnReceiveHideMenuSignal() {
         if (isShowing) {

@@ -59,12 +59,12 @@ namespace Inner_Maps.Location_Structures {
                 DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
                 door?.Close();
             }
-            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {
             base.AfterCharacterRemovedFromLocation(p_character);
             p_character.movementComponent.SetEnableDigging(true);
-            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

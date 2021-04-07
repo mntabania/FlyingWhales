@@ -85,7 +85,7 @@ namespace Traits {
                     character.combatComponent.ClearHostilesInRange(false);
                     character.combatComponent.ClearAvoidInRange(false);
                 }
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
             }
             base.OnRemoveTrait(sourcePOI, removedBy);
         }

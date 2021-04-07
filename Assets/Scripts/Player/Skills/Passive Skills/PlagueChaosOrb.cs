@@ -9,7 +9,7 @@ public class PlagueChaosOrb : PassiveSkill {
     public override void ActivateSkill() {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptAdded);
-        Messenger.AddListener<Character>(SpellSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, OnPoisonCloudActivated);
+        Messenger.AddListener<Character>(PlayerSkillSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, OnPoisonCloudActivated);
     }
     private void OnTraitAdded(Character character, Trait trait) {
         if (character.traitContainer.HasTrait("Depressed") ||

@@ -7,9 +7,9 @@ using UtilityScripts;
 public class PlayerAction : SkillData, IContextMenuItem {
     public virtual bool canBeCastOnBlessed => false;
     public virtual bool shouldShowOnContextMenu => true;
-    public virtual Sprite contextMenuIcon => PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type)?.contextMenuIcon;
+    public virtual Sprite contextMenuIcon => PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type)?.contextMenuIcon;
     public string contextMenuName => name;
-    public virtual int contextMenuColumn  => PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type)?.contextMenuColumn ?? 0;
+    public virtual int contextMenuColumn  => PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type)?.contextMenuColumn ?? 0;
     public List<IContextMenuItem> subMenus => GetSubMenus(_contextMenuItems);
     private List<IContextMenuItem> _contextMenuItems;
     
@@ -42,7 +42,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
             IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         }
         base.ActivateAbility(targetPOI);
-        Messenger.Broadcast(SpellSignals.PLAYER_ACTION_EXECUTED_TOWARDS_POI, this, targetPOI);
+        Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_EXECUTED_TOWARDS_POI, this, targetPOI);
     }
     #endregion  
 
@@ -60,7 +60,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
             } else if (target is BaseSettlement settlement) {
                 ActivateAbility(settlement);
             }
-            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this);
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, this);
         } else {
             //Go into cooldown but do not activate ability
             OnExecutePlayerSkill();
@@ -99,7 +99,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
     protected bool RollSuccessChance(IPlayerActionTarget p_target) {
         int baseChance = 100;
         if(p_target is Character targetCharacter) {
-            PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
+            PlayerSkillData data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
             if(data.resistanceType != RESISTANCE.None) {
                 float resistanceValue = targetCharacter.piercingAndResistancesComponent.GetResistanceValue(data.resistanceType);
                 float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type);

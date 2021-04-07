@@ -102,7 +102,8 @@ public class ConsoleBase : InfoUIBase {
             {"/add_ideology", AddFactionIdeology},
             {"/check_tiles", CheckTiles},
             {"/reveal_all", RevealAll},
-            {"/enable_dig", EnableDigging}
+            {"/enable_dig", EnableDigging},
+            {"/bonus_charge", BonusCharges}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1342,6 +1343,23 @@ public class ConsoleBase : InfoUIBase {
             character.movementComponent.SetEnableDigging(!character.movementComponent.enableDigging);
         }
         AddSuccessMessage($"Enabled Digging all Characters");
+    }
+    private void BonusCharges(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of BonusCharges");
+            return;
+        }
+        string typeParameterString = parameters[0];
+        string amount = parameters[1];
+        PLAYER_SKILL_TYPE type;
+        if (Enum.TryParse(typeParameterString, out type)) {
+            SkillData data = PlayerSkillManager.Instance.GetSkillData(type);
+            data.AdjustBonusCharges(int.Parse(amount));
+        } else {
+            AddErrorMessage($"There is no skill of type {typeParameterString}");
+        }
+
     }
     #endregion
 

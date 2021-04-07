@@ -192,7 +192,7 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<Faction>(UISignals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
 
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
-        Messenger.AddListener<PlayerAction>(SpellSignals.PLAYER_ACTION_ACTIVATED, OnPlayerActionActivated);
+        Messenger.AddListener<PlayerAction>(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, OnPlayerActionActivated);
 
         AddPlayerActionContextMenuSignals();
         
@@ -1764,80 +1764,80 @@ public class UIManager : BaseMonoBehaviour {
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData, p_hoverPosition);
         return;
         
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
-        string title = $"{spellData.name}";
-        string fullDescription = spellData.description;
-        int charges = spellData.charges;
-        int manaCost = playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel);
-        int cooldown = playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel);
+        //PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(spellData.type);
+        //string title = $"{spellData.name}";
+        //string fullDescription = spellData.description;
+        //int charges = spellData.charges;
+        //int manaCost = playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel);
+        //int cooldown = playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel);
 
-        string currencyStr = string.Empty; 
+        //string currencyStr = string.Empty; 
         
-        if (manaCost != -1) {
-            currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
-        }
-        if (charges != -1) {
-            currencyStr = $"{currencyStr}{charges.ToString()}/{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel).ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
-        }
-        if (cooldown != -1) {
-            currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}{UtilityScripts.Utilities.CooldownIcon()}  ";
-        }
-        if (spellData.threat > 0) {
-            currencyStr = $"{currencyStr}{spellData.threat.ToString()}{UtilityScripts.Utilities.ThreatIcon()}  ";
-        }
-        title = $"{title}    <size=16>{currencyStr}";
+        //if (manaCost != -1) {
+        //    currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
+        //}
+        //if (charges != -1) {
+        //    currencyStr = $"{currencyStr}{charges.ToString()}/{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel).ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
+        //}
+        //if (cooldown != -1) {
+        //    currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}{UtilityScripts.Utilities.CooldownIcon()}  ";
+        //}
+        //if (spellData.threat > 0) {
+        //    currencyStr = $"{currencyStr}{spellData.threat.ToString()}{UtilityScripts.Utilities.ThreatIcon()}  ";
+        //}
+        //title = $"{title}    <size=16>{currencyStr}";
 
-        string additionalText = string.Empty;
-        if (spellData is PlayerAction) {
-            IPlayerActionTarget activePOI = p_target;
-            if (activePOI != null) {
-                if (activePOI is Character activeCharacter) {
-                    if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
-                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
-                            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
-                        }
-                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
-                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
-                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
-                    }
-                } else if (activePOI is TileObject activeTileObject) {
-                    if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
-                        additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
-                    }
-                    string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeTileObject);
-                    wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
-                    additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
-                } else if (activePOI is BaseSettlement activeSettlement) {
-                    if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
-                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
-                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
-                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
-                    }
-                } else if (activePOI is LocationStructure activeStructure) {
-                    if (spellData.CanPerformAbilityTowards(activeStructure) == false) {
-                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeStructure);
-                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
-                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
-                    }
-                }
-            }
-        }
-        if(HasEnoughMana(spellData) == false) {
-            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
-        }
-        if(HasEnoughCharges(spellData) == false) {
-            if (spellData.hasCooldown) {
-                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Recharging.")}\n";
-            } else {
-                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough charges.")}\n";
-            }
-        }
-        if (spellData is BrainwashData && p_target is Character targetCharacter) {
-            fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";
-        }
+        //string additionalText = string.Empty;
+        //if (spellData is PlayerAction) {
+        //    IPlayerActionTarget activePOI = p_target;
+        //    if (activePOI != null) {
+        //        if (activePOI is Character activeCharacter) {
+        //            if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
+        //                if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
+        //                    additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
+        //                }
+        //                string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
+        //                wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+        //                additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+        //            }
+        //        } else if (activePOI is TileObject activeTileObject) {
+        //            if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
+        //                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
+        //            }
+        //            string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeTileObject);
+        //            wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+        //            additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+        //        } else if (activePOI is BaseSettlement activeSettlement) {
+        //            if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
+        //                string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
+        //                wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+        //                additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+        //            }
+        //        } else if (activePOI is LocationStructure activeStructure) {
+        //            if (spellData.CanPerformAbilityTowards(activeStructure) == false) {
+        //                string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeStructure);
+        //                wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+        //                additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+        //            }
+        //        }
+        //    }
+        //}
+        //if(HasEnoughMana(spellData) == false) {
+        //    additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
+        //}
+        //if(HasEnoughCharges(spellData) == false) {
+        //    if (spellData.hasCooldown) {
+        //        additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Recharging.")}\n";
+        //    } else {
+        //        additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough charges.")}\n";
+        //    }
+        //}
+        //if (spellData is BrainwashData && p_target is Character targetCharacter) {
+        //    fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";
+        //}
 
-        fullDescription = $"{fullDescription}\n\n{additionalText}";
-        ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
+        //fullDescription = $"{fullDescription}\n\n{additionalText}";
+        //ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private bool HasEnoughMana(SkillData spellData) {
         if (spellData.hasManaCost) {
@@ -1863,7 +1863,7 @@ public class UIManager : BaseMonoBehaviour {
         List<IContextMenuItem> contextMenuItems = null;
         for (int i = 0; i < p_target.actions.Count; i++) {
             PLAYER_SKILL_TYPE skillType = p_target.actions[i];
-            PlayerAction playerAction = PlayerSkillManager.Instance.GetPlayerSkillData(skillType) as PlayerAction;
+            PlayerAction playerAction = PlayerSkillManager.Instance.GetSkillData(skillType) as PlayerAction;
             if(playerAction != null && playerAction.shouldShowOnContextMenu) {
                 if (playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
                     if (contextMenuItems == null) { contextMenuItems = new List<IContextMenuItem>(); }
@@ -1874,16 +1874,16 @@ public class UIManager : BaseMonoBehaviour {
         return contextMenuItems;
     }
     private void AddPlayerActionContextMenuSignals() {
-        Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.AddListener<IPlayerActionTarget>(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.AddListener(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
     private void RemovePlayerActionContextMenuSignals() {
-        Messenger.RemoveListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.RemoveListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.RemoveListener<IPlayerActionTarget>(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.RemoveListener(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
     private void OnPlayerActionRemovedFromTarget(PLAYER_SKILL_TYPE p_skillType, IPlayerActionTarget p_target) {
         if (IsContextMenuShowing() && p_target != null && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target) {

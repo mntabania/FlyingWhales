@@ -1019,6 +1019,9 @@ namespace UtilityScripts {
         public static string ChargesIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\">";
         }
+        public static string BonusChargesIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Bonus_Charges_Icon\">";
+        }
         public static string ThreatIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Threat_Icon\">";
         }
@@ -1082,9 +1085,17 @@ namespace UtilityScripts {
         public static string ElectricIcon() {
             return "<sprite=\"Text_Sprites\" name=\"element_electric_icon\">";
         }
-        
         public static string RatmanIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\">";
+        }
+        public static string VillageIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Village_Icon\">";
+        }
+        public static string TileObjectIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Tile_Object_Icon\">";
+        }
+        public static string StructureIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Structure_Icon\">";
         }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";

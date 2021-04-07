@@ -18,7 +18,7 @@ public class FreezingTrapData : SkillData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         targetTile.tileObjectComponent.SetHasFreezingTrap(true);
         AudioManager.Instance.TryCreateAudioObject(
-            PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).placeTrapSound, targetTile, 1, false);
+            PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).placeTrapSound, targetTile, 1, false);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

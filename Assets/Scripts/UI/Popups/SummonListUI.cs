@@ -36,8 +36,8 @@ public class SummonListUI : PopupMenuBase {
         _monsterUnderlingQuantityNameplateItems = new List<MonsterUnderlingQuantityNameplateItem>();
         Messenger.AddListener<Summon>(PlayerSignals.PLAYER_GAINED_SUMMON, OnGainSummon);
         Messenger.AddListener<Summon>(PlayerSignals.PLAYER_LOST_SUMMON, OnLostSummon);
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
-        Messenger.AddListener<SkillData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
+        Messenger.AddListener<SkillData>(PlayerSkillSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
         Messenger.AddListener<MonsterAndDemonUnderlingCharges>(PlayerSignals.UPDATED_MONSTER_UNDERLING, OnUpdateMonsterUnderling);
     }
     public void UpdateList() {

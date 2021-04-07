@@ -46,7 +46,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     public override void ShowUI() {
         m_mvcUIView.ShowUI();
         if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
-            m_portalUIView.ShowUnlockAbilityTimerAndHideButton(PlayerSkillManager.Instance.GetPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked));
+            m_portalUIView.ShowUnlockAbilityTimerAndHideButton(PlayerSkillManager.Instance.GetSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked));
         } else {
             m_portalUIView.ShowUnlockAbilityButtonAndHideTimer();
         }
@@ -124,7 +124,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
         upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level);
     }
     public void OnClickCancelReleaseAbility() {
-        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
+        SkillData spellData = PlayerSkillManager.Instance.GetSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
         UIManager.Instance.ShowYesNoConfirmation(
             "Cancel Release Ability", $"Are you sure you want to cancel Releasing Ability: <b>{spellData.name}</b>? " + 
                                       $"\n<i>{UtilityScripts.Utilities.InvalidColorize("Cancelling will reset all current release progress!")}</i>", OnConfirmCancelRelease, showCover: true, layer: 30);

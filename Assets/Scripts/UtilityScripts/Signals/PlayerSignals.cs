@@ -66,7 +66,6 @@
     /// </summary>
     public static string CHAOS_ORB_EXPIRED = "OnChaosOrbExpired";
     public static string SPIRIT_ENERGY_EXPIRED = "OnSpiritEnergyExpired";
-    public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
     public static string CHECK_IF_PLAYER_WINS = "CheckIfPlayerWins";
     /// <summary>
     /// ParametersL string winMessage

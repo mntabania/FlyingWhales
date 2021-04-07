@@ -14,32 +14,33 @@ public class UnlockMinionItemUI : MonoBehaviour {
     [SerializeField] private GameObject goPortraitCover;
 
     private PLAYER_SKILL_TYPE _minionType;
-    private PlayerSkillData _skillData;
+    private PlayerSkillData _playerSkillData;
     public void SetMinionType(PLAYER_SKILL_TYPE p_type) {
         _minionType = p_type;
         string trimmed = p_type.ToString().Remove(0, 6);
         lblName.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(trimmed);
-        _skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
+        _playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
         MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(p_type);
-        lblCosts.text = $"{_skillData.unlockCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}";
+        lblCosts.text = $"{_playerSkillData.unlockCost}{UtilityScripts.Utilities.ManaIcon()}";
         _portrait.GeneratePortrait(CharacterManager.Instance.GeneratePortrait(RACE.DEMON, GENDER.MALE, minionPlayerSkill.className, false));
         _portrait.AddPointerClickAction(OnClickMinionItem);
     }
 
     public void UpdateSelectableState() {
-        if (PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Contains(_minionType)) {
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(_minionType);
+        if (skillData.isInUse) {
             //player already has minion type
             SetCheckmarkState(true);
             SetCoverState(true);
         } else {
             SetCheckmarkState(false);
             //player does not yet have minion type, check if player can afford to unlock this
-            SetCoverState(PlayerManager.Instance.player.mana < _skillData.unlockCost);
+            SetCoverState(PlayerManager.Instance.player.mana < _playerSkillData.unlockCost);
         }
     }
     
     private void OnClickMinionItem() {
-        onClickUnlockMinion?.Invoke(_minionType, _skillData.unlockCost);
+        onClickUnlockMinion?.Invoke(_minionType, _playerSkillData.unlockCost);
     }
 
     public void SetCoverState(bool p_state) {

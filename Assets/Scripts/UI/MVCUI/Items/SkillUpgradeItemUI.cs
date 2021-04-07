@@ -33,8 +33,8 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 	}
 
 	public void InitItem(PLAYER_SKILL_TYPE p_type, int p_spiritCount) {
-		PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
-		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
+		PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
+		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
 		if (skillData.isMaxLevel) {
 			txtCost.text = "MAX";
 			spiritIcon.gameObject.SetActive(false);

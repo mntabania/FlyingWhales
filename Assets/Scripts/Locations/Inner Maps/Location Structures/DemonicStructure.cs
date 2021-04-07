@@ -45,10 +45,12 @@ namespace Inner_Maps.Location_Structures {
             currentAttackers.Clear();
             if (structureType != STRUCTURE_TYPE.THE_PORTAL) {
                 DemonicStructurePlayerSkill skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-                PlayerManager.Instance.player.playerSkillComponent.AddCharges(skill.type, 1);    
+                if(skill.isInUse) {
+                    skill.AdjustCharges(1);
+                }
             }
             Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

@@ -101,7 +101,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 IPointOfInterest inVision = owner.marker.inVisionPOIs[i];
                 owner.marker.AddUnprocessedPOI(inVision);
             }
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
             //for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
             //    Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
             //    _owner.marker.AddUnprocessedPOI(inVisionCharacter);
@@ -134,7 +134,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (character.traitContainer.HasTrait("Unconscious")) {
                 character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
             //_owner.behaviourComponent.SetIsHarassing(false, null);
             //_owner.behaviourComponent.SetIsInvading(false, null);
             //_owner.behaviourComponent.SetIsDefending(false, null);

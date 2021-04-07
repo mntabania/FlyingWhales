@@ -3140,7 +3140,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void DailyGoapProcesses() {
         needsComponent.DailyGoapProcesses();
     }
-    public virtual void OnTickStartedWhileSeized() {
+    public virtual void OnTickStartedWhileSeizedOrIsInLimbo() {
         Profiler.BeginSample($"{name} OnTickStartedWhileSeized");
         stateAwarenessComponent.PerTick();
         Profiler.EndSample();
@@ -4736,7 +4736,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             DisableMarker();
             Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         }
-        Messenger.AddListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
+        Messenger.AddListener(Signals.TICK_STARTED, OnTickStartedWhileSeizedOrIsInLimbo);
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Destroy_Map_Visual_Trait);
         //if (traitOverrideFunctions != null) {
         //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
@@ -4747,7 +4747,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
     }
     public virtual void OnUnseizePOI(LocationGridTile tileLocation) {
-        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
+        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeizedOrIsInLimbo);
         needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.region);
         if (minion == null) {
             if (!isDead) {
@@ -5312,12 +5312,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
-            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
     public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Remove(action)) {
-            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
     }
     public void ClearPlayerActions() {
@@ -5749,7 +5749,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
 			}
 
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
     }
     public void SetDeathLog(Log log) {

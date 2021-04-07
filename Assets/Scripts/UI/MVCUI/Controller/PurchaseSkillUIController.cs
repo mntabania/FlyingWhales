@@ -149,7 +149,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			if (m_purchaseSkillUIView.UIModel.skillItems.Count <= 0) {
 				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
 					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
-					SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
+					SkillData data = PlayerSkillManager.Instance.GetSkillData(skillType);
 					PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_purchaseSkillUIView.GetSkillsParent(), true);
 					go.InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 					go.onButtonClick += OnSkillClick;
@@ -160,7 +160,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			} else {
 				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
 					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
-					SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
+					SkillData data = PlayerSkillManager.Instance.GetSkillData(skillType);
 					PurchaseSkillItemUI skillItem = m_purchaseSkillUIView.UIModel.skillItems[i];
 					skillItem.gameObject.SetActive(true);
 					skillItem.InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
@@ -186,7 +186,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		foreach (KeyValuePair<PLAYER_SKILL_TYPE, SkillData> entry in PlayerSkillManager.Instance.allPlayerSkillsData) {
 			if (!entry.Value.isInUse) {
 				if (entry.Value.category == PLAYER_SKILL_CATEGORY.AFFLICTION || entry.Value.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION || entry.Value.category == PLAYER_SKILL_CATEGORY.SPELL) {
-					PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(entry.Value.type);
+					PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(entry.Value.type);
 					if (playerSkillData != null) {
 						if (m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, entry.Value.type) != -1) {
 							int processedWeight = playerSkillData.baseLoadoutWeight;
@@ -315,7 +315,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		UIManager.Instance.HideSmallInfo();
 	}
 	public void OnClickCancelReleaseAbility() {
-		SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
+		SkillData spellData = PlayerSkillManager.Instance.GetSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
 		UIManager.Instance.ShowYesNoConfirmation(
 			"Cancel Release Ability", $"Are you sure you want to cancel Releasing Ability: <b>{spellData.name}</b>? " + 
 			                          $"\n<i>{UtilityScripts.Utilities.InvalidColorize("Cancelling will reset all current release progress!")}</i>", OnConfirmCancelRelease, showCover: true, layer: 30);
@@ -346,7 +346,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(fakePlayer.skillComponent, fakePlayer.currenciesComponent, p_type) : 
 			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, p_type);
 		if (result != -1) {
-			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
+			SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
 			m_firstRun = false;
 			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-result);
 			PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToUnlock(skillData, result);

@@ -9,8 +9,8 @@ public class SkillUpgradeUIView : MVCUIView {
 		void OnSpellTabClicked(bool isOn);
 		void OnPlayerActionTabClicked(bool isOn);
 		void OnCloseClicked();
-		void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition);
-		void OnHoveredOutPlaguedRat();
+		//void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition);
+		//void OnHoveredOutPlaguedRat();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -64,8 +64,8 @@ public class SkillUpgradeUIView : MVCUIView {
 		UIModel.onSpellTabClicked += p_listener.OnSpellTabClicked;
 		UIModel.onPlayerActionTabClicked += p_listener.OnPlayerActionTabClicked;
 		UIModel.onCloseClicked += p_listener.OnCloseClicked;
-		UIModel.onPlaguedRatsHoveredOver += p_listener.OnHoveredOverPlaguedRat;
-		UIModel.onPlaguedRatsHoveredOut += p_listener.OnHoveredOutPlaguedRat;
+		//UIModel.onPlaguedRatsHoveredOver += p_listener.OnHoveredOverPlaguedRat;
+		//UIModel.onPlaguedRatsHoveredOut += p_listener.OnHoveredOutPlaguedRat;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -73,8 +73,8 @@ public class SkillUpgradeUIView : MVCUIView {
 		UIModel.onSpellTabClicked -= p_listener.OnSpellTabClicked;
 		UIModel.onPlayerActionTabClicked -= p_listener.OnPlayerActionTabClicked;
 		UIModel.onCloseClicked -= p_listener.OnCloseClicked;
-		UIModel.onPlaguedRatsHoveredOver -= p_listener.OnHoveredOverPlaguedRat;
-		UIModel.onPlaguedRatsHoveredOut -= p_listener.OnHoveredOutPlaguedRat;
+		//UIModel.onPlaguedRatsHoveredOver -= p_listener.OnHoveredOverPlaguedRat;
+		//UIModel.onPlaguedRatsHoveredOut -= p_listener.OnHoveredOutPlaguedRat;
 	}
 	#endregion
 }

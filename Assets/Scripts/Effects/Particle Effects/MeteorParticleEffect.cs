@@ -44,7 +44,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         hasMeteorFell = true;
         AudioManager.Instance.TryCreateAudioObject(
             CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance
-                .GetPlayerSkillData<MeteorSkillData>(PLAYER_SKILL_TYPE.METEOR).impactSounds),
+                .GetScriptableObjPlayerSkillData<MeteorSkillData>(PLAYER_SKILL_TYPE.METEOR).impactSounds),
             targetTile, 3, false
         );
         //for (int i = 0; i < meteorExplosionParticles.Length; i++) {
@@ -60,7 +60,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
 
         //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
-        Messenger.Broadcast(SpellSignals.METEOR_FELL);
+        Messenger.Broadcast(PlayerSkillSignals.METEOR_FELL);
         InnerMapCameraMove.Instance.MeteorShake();
         targetTile.RemoveMeteor();
         //GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));

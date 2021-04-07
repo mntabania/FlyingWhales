@@ -109,7 +109,7 @@ public class TriggerFlawData : PlayerAction {
             }
             PlayerUI.Instance.ShowGeneralConfirmation("Trigger Flaw Failed", log);
         }
-        Messenger.Broadcast(SpellSignals.FLAW_TRIGGERED_BY_PLAYER, trait);
+        Messenger.Broadcast(PlayerSkillSignals.FLAW_TRIGGERED_BY_PLAYER, trait);
     }
     // private bool CanActivateTriggerFlaw(string traitName, Character p_character) {
     //     Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);

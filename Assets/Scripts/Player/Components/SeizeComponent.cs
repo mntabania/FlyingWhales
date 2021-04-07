@@ -133,7 +133,7 @@ public class SeizeComponent {
         //PlayerUI.Instance.HideSeizedObjectUI();
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
         }
     }
     public bool CanUnseize() {

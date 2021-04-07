@@ -172,13 +172,13 @@ public class Player : ILeader, IObjectManipulator {
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
                 previousActiveAction.UnhighlightAffectedTiles();
                 UIManager.Instance.HideSmallInfo(); //This is to hide the invalid messages.
-                Messenger.Broadcast(SpellSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
                 action.OnSetAsCurrentActiveSpell();
                 PlayerManager.Instance.AddPlayerInputModule(PlayerManager.spellInputModule);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
                 Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
-                Messenger.Broadcast(SpellSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
             }
         }
     }
@@ -611,7 +611,7 @@ public class Player : ILeader, IObjectManipulator {
         spiritEnergy += amount;
         spiritEnergy = Mathf.Clamp(spiritEnergy, 0, 100000);
         Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, amount, spiritEnergy);
-        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     #endregion
     
@@ -620,7 +620,7 @@ public class Player : ILeader, IObjectManipulator {
         mana += amount;
         mana = Mathf.Clamp(mana, 0, EditableValuesManager.Instance.maximumMana);
         Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_MANA, amount, mana);
-        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public int GetManaCostForInterventionAbility(PLAYER_SKILL_TYPE ability) {
         int tier = PlayerManager.Instance.GetSpellTier(ability);

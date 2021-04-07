@@ -3,7 +3,7 @@ public class SkillProgressionManager {
 
 	public bool CheckAndUpgrade(CurrenciesComponent p_currencies, PLAYER_SKILL_TYPE p_type) {
 		bool success = false;
-		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
+		PlayerSkillData data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
 		UnityEngine.Debug.Log(data);
 		if (data.unlockCost <= p_currencies.Mana) {
 			success = true;
@@ -23,7 +23,7 @@ public class SkillProgressionManager {
 	}
 
 	private int CheckRequirement(PlayerSkillComponent p_availablePlayerSkills, int p_mana, PLAYER_SKILL_TYPE p_type) {
-		PlayerSkillData playerSkilldata = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
+		PlayerSkillData playerSkilldata = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
 
 		for (int x = 0; x < playerSkilldata.requirementData.requiredSkills.Count; ++x) {
 			if (!p_availablePlayerSkills.CheckIfSkillIsAvailable(playerSkilldata.requirementData.requiredSkills[x])) {

@@ -42,7 +42,7 @@ public class StringNameplateItem : NameplateItem<string> {
             img.sprite = PlayerManager.Instance.GetJobActionSprite(str);
         } else if (identifier == "player skill") {
             img.gameObject.SetActive(true);
-            img.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((PLAYER_SKILL_TYPE) System.Enum.Parse(typeof(PLAYER_SKILL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
+            img.sprite = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>((PLAYER_SKILL_TYPE) System.Enum.Parse(typeof(PLAYER_SKILL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
         } 
         // else if (identifier == "Trigger Flaw") {
         //     additionalText.text = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";

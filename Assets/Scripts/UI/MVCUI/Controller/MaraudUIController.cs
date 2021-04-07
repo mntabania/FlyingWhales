@@ -305,7 +305,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	void InitializeMinions() {
 		foreach (KeyValuePair<MINION_TYPE, MonsterAndDemonUnderlingCharges> entry in PlayerManager.Instance.player.underlingsComponent.demonUnderlingCharges) {
 			SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(entry.Value.minionType);
-			if (skillData.isInUse) {
+			if (skillData.isInUse || skillData.isTemporarilyInUse) {
 				MinionSettings settings = CharacterManager.Instance.GetMinionSettings(entry.Value.minionType);
 				CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(settings.className);
 				GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(m_availableMonsterItemUI.name, Vector3.zero, Quaternion.identity, m_maraudUIView.GetAvailableMinionsParent());

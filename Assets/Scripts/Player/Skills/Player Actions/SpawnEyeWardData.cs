@@ -34,7 +34,7 @@ public class SpawnEyeWardData : PlayerAction {
         }
 
         base.ActivateAbility(p_targetTile);
-        Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this as PlayerAction);
+        Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, this as PlayerAction);
     }
     public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(EyeWard.EYE_WARD_VISION_RANGE, tile);

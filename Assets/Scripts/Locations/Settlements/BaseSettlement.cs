@@ -40,7 +40,7 @@ namespace Locations.Settlements {
 
         public bool isTargetted { set; get; }
 
-        public string iconRichText => UtilityScripts.Utilities.CooldownIcon();
+        public string iconRichText => UtilityScripts.Utilities.VillageIcon();
         public virtual Type serializedData => typeof(SaveDataBaseSettlement);
         public virtual Region region => null;
         public string locationName => name;
@@ -884,12 +884,12 @@ namespace Locations.Settlements {
         public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Contains(action) == false) {
                 actions.Add(action);
-                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);
             }
         }
         public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Remove(action)) {
-                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
             }
         }
         public void ClearPlayerActions() {

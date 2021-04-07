@@ -54,7 +54,12 @@ public class ContextMenuUIObject : PooledObject {
             if (txtCooldownTimer.gameObject.activeSelf) {
                 txtCooldownTimer.text = m_parentUIMenu.GetCurrentRemainingCooldownTicks().ToString();
             }
-            if (m_parentUIMenu is PlayerAction playerAction && playerAction.charges > 0) {
+            if (m_parentUIMenu is PlayerAction playerAction) {
+                string chargesText = playerAction.displayOfCurrentChargesWithBonusChargesCombined;
+                if (!string.IsNullOrEmpty(chargesText)) {
+                    txtCharges.text = $"{chargesText}";
+                    txtCharges.gameObject.SetActive(true);
+                }
                 txtCharges.text = $"{playerAction.charges}{UtilityScripts.Utilities.ChargesIcon()}";
                 txtCharges.gameObject.SetActive(true);
             } else {

@@ -382,7 +382,7 @@ namespace Traits {
                 //listen for affliction level up
                 PLAYER_SKILL_TYPE playerSkillType = GetAfflictionSkillType();
                 if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
-                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                    SkillData skillData = PlayerSkillManager.Instance.GetSkillData(playerSkillType);
                     skillData.skillEventDispatcher.SubscribeToLevelUp(this);
                 }
             }
@@ -396,7 +396,7 @@ namespace Traits {
             //stop listening for affliction level up
             PLAYER_SKILL_TYPE playerSkillType = GetAfflictionSkillType();
             if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
-                SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                SkillData skillData = PlayerSkillManager.Instance.GetSkillData(playerSkillType);
                 skillData.skillEventDispatcher.UnsubscribeToLevelUp(this);
             }
         }
