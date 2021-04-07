@@ -160,5 +160,6 @@
     #region used for chaotic energy generation
     public static string CHARACTER_PRAY_SUCCESS = "OnCharacterPraySuccess";
     public static string CHARACTER_BECAME_VAMPIRE = "OnCharacterBecameVampire";
-	#endregion
+    public static string CHARACTER_MEDDLER_SCHEME_SUCCESSFUL = "OnCharacterMedlerSchemeSuccessful";
+    #endregion
 }

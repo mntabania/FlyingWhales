@@ -3,7 +3,7 @@ using Interrupts;
 
 public class NightCreatureChaosOrb : PassiveSkill {
     public override string name => "Chaos Orbs from Night Creatures";
-    public override string description => "Chaos Orbs upon Acquiring plague symptom";
+    public override string description => "Chaos Orbs from Night Creature actions";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Night_Creature_Chaos_Orb;
 
     public override void ActivateSkill() {
