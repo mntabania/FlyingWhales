@@ -45,6 +45,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.MARAUD:
             case STRUCTURE_TYPE.DEFENSE_POINT:
+            case STRUCTURE_TYPE.MEDDLER:
+            case STRUCTURE_TYPE.IMP_HUT:
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
@@ -426,9 +428,40 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.RAVENOUS_SPIRIT:
             case TILE_OBJECT_TYPE.HUMAN_MEAT:
             case TILE_OBJECT_TYPE.ELF_MEAT:
+            case TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.TORTURE_CHAMBERS_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
+        }
+    }
+    public static bool IsDemonicStructureTileObject(this TILE_OBJECT_TYPE tileObjectType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.TORTURE_CHAMBERS_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
+                return true;
+            default:
+                return false;
         }
     }
     public static bool CanBeRepaired(this TILE_OBJECT_TYPE tileObjectType) {

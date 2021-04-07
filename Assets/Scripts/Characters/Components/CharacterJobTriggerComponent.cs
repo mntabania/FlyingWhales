@@ -1634,7 +1634,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Report Demonic Structure
-    public void CreateReportDemonicStructure(LocationStructure structureToReport) {
+    public bool CreateReportDemonicStructure(LocationStructure structureToReport) {
         NPCSettlement homeSettlement = owner.homeSettlement;
 	    if (canReportDemonicStructure && homeSettlement != null && homeSettlement.mainStorage != null && !owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
 		    // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Seen", 
@@ -1645,7 +1645,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             job.AddOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new object[] { structureToReport, homeSettlement.mainStorage });
             owner.jobQueue.AddJobInQueue(job);
             Messenger.Broadcast(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, owner, job);
-        }
+            return true;
+	    }
+	    return false;
     }
     /// <summary>
     /// Disable report demonic structure until this character steps foot in his/her home.

@@ -29,6 +29,9 @@ public class TileObjectVisionTrigger : POIVisionTrigger {
         if (poi is MovingTileObject) {
             return true;
         }
+        if (poi is TileObject tileObject && tileObject.tileObjectType.IsDemonicStructureTileObject()) {
+            return true;
+        }
         return false;
     }
 }
