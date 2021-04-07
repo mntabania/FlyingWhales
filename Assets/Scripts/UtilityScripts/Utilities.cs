@@ -1097,6 +1097,9 @@ namespace UtilityScripts {
         public static string VillageIcon() {
             return "<sprite=\"Text_Sprites\" name=\"icon_village\">";
         }
+        public static string StructureIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"icon_structure\">";
+        }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
         }

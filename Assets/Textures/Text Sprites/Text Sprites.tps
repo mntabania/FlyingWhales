@@ -247,6 +247,7 @@
             <key type="filename">All Icons/icon_monster.png</key>
             <key type="filename">All Icons/icon_object.png</key>
             <key type="filename">All Icons/icon_ratvillager.png</key>
+            <key type="filename">All Icons/icon_structure.png</key>
             <key type="filename">All Icons/icon_undead.png</key>
             <key type="filename">All Icons/icon_village.png</key>
             <key type="filename">All Icons/icon_villager.png</key>

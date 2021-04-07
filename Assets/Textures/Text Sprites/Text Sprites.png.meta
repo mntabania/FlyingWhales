@@ -110,6 +110,9 @@ TextureImporter:
   - first:
       213: -4969417178778282018
     second: icon_village
+  - first:
+      213: -2520808341190306995
+    second: icon_structure
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -186,7 +189,7 @@ TextureImporter:
       name: bonus_charges_icon
       rect:
         serializedVersion: 2
-        x: 181
+        x: 209
         y: 167
         width: 21
         height: 31
@@ -375,8 +378,8 @@ TextureImporter:
       name: icon_chargesB
       rect:
         serializedVersion: 2
-        x: 153
-        y: 139
+        x: 181
+        y: 141
         width: 21
         height: 31
       alignment: 0
@@ -459,8 +462,8 @@ TextureImporter:
       name: icon_ideology
       rect:
         serializedVersion: 2
-        x: 125
-        y: 152
+        x: 234
+        y: 184
         width: 17
         height: 14
       alignment: 0
@@ -480,8 +483,8 @@ TextureImporter:
       name: icon_leader
       rect:
         serializedVersion: 2
-        x: 125
-        y: 170
+        x: 181
+        y: 176
         width: 24
         height: 22
       alignment: 0
@@ -603,6 +606,27 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
+      name: icon_structure
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 202
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4392846b2a440dd0800000000000000
+      internalID: -2520808341190306995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: icon_target
       rect:
         serializedVersion: 2
@@ -648,7 +672,7 @@ TextureImporter:
       name: icon_undead
       rect:
         serializedVersion: 2
-        x: 187
+        x: 215
         y: 202
         width: 24
         height: 24
@@ -669,8 +693,8 @@ TextureImporter:
       name: icon_village
       rect:
         serializedVersion: 2
-        x: 215
-        y: 202
+        x: 153
+        y: 174
         width: 24
         height: 24
       alignment: 0
@@ -690,8 +714,8 @@ TextureImporter:
       name: icon_villager
       rect:
         serializedVersion: 2
-        x: 153
-        y: 174
+        x: 125
+        y: 168
         width: 24
         height: 24
       alignment: 0
@@ -921,8 +945,8 @@ TextureImporter:
       name: upgrade_arrow_icon
       rect:
         serializedVersion: 2
-        x: 125
-        y: 138
+        x: 234
+        y: 170
         width: 15
         height: 10
       alignment: 0
