@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,11 +40,21 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         structuresSkillSlotItems = new GroupedSkillSlotItems();
         miscsSkillSlotItems = new GroupedSkillSlotItems();
         loadoutChoices = new List<PLAYER_SKILL_TYPE>();
-        LoadSkillDataToUI(loadout.spells.fixedSkills, loadout.spells.extraSlots, spellsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraSpells(loadout.archetype), spellsScrollRect.content);
-        LoadSkillDataToUI(loadout.afflictions.fixedSkills, loadout.afflictions.extraSlots, afflictionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraAfflictions(loadout.archetype), afflictionsScrollRect.content);
-        LoadSkillDataToUI(loadout.minions.fixedSkills, loadout.minions.extraSlots, minionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMinions(loadout.archetype), minionsScrollRect.content);
-        LoadSkillDataToUI(loadout.structures.fixedSkills, loadout.structures.extraSlots, structuresSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraStructures(loadout.archetype), structuresScrollRect.content);
-        LoadSkillDataToUI(loadout.miscs.fixedSkills, loadout.miscs.extraSlots, miscsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMiscs(loadout.archetype), miscsScrollRect.content);
+        if (loadout.archetype == PLAYER_ARCHETYPE.Scenario) {
+            ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
+            LoadSkillDataToUI(scenarioData.spells.Keys.ToList(), loadout.spells.extraSlots, spellsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraSpells(loadout.archetype), spellsScrollRect.content);
+            LoadSkillDataToUI(scenarioData.afflictions.Keys.ToList(), loadout.afflictions.extraSlots, afflictionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraAfflictions(loadout.archetype), afflictionsScrollRect.content);
+            LoadSkillDataToUI(scenarioData.minions.Keys.ToList(), loadout.minions.extraSlots, minionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMinions(loadout.archetype), minionsScrollRect.content);
+            LoadSkillDataToUI(scenarioData.structures.Keys.ToList(), loadout.structures.extraSlots, structuresSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraStructures(loadout.archetype), structuresScrollRect.content);
+            LoadSkillDataToUI(scenarioData.skills.Keys.ToList(), loadout.miscs.extraSlots, miscsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMiscs(loadout.archetype), miscsScrollRect.content);
+        } else {
+            LoadSkillDataToUI(loadout.spells.fixedSkills, loadout.spells.extraSlots, spellsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraSpells(loadout.archetype), spellsScrollRect.content);
+            LoadSkillDataToUI(loadout.afflictions.fixedSkills, loadout.afflictions.extraSlots, afflictionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraAfflictions(loadout.archetype), afflictionsScrollRect.content);
+            LoadSkillDataToUI(loadout.minions.fixedSkills, loadout.minions.extraSlots, minionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMinions(loadout.archetype), minionsScrollRect.content);
+            LoadSkillDataToUI(loadout.structures.fixedSkills, loadout.structures.extraSlots, structuresSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraStructures(loadout.archetype), structuresScrollRect.content);
+            LoadSkillDataToUI(loadout.miscs.fixedSkills, loadout.miscs.extraSlots, miscsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMiscs(loadout.archetype), miscsScrollRect.content);
+        }
+        
 
         Messenger.AddListener<SkillSlotItem, PLAYER_ARCHETYPE>(UISignals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
         Messenger.AddListener(UISignals.SAVE_LOADOUTS, SaveLoadoutSettings);
@@ -210,14 +221,20 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         }
     }
     private void OnHoverEnterSkill(PlayerSkillData skillData) {
-        skillDetailsTooltip.ShowPlayerSkillDetails(skillData, objectPicker.hoverPos);
+        skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position: objectPicker.hoverPos);
     }
     private void OnHoverExitSkill(PlayerSkillData skillData) {
         skillDetailsTooltip.HidePlayerSkillDetails();
     }
     private void OnHoverEnterSkillSlotItem(PlayerSkillData skillData) {
         if(skillData != null) {
-            skillDetailsTooltip.ShowPlayerSkillDetails(skillData);
+            if (loadout.archetype == PLAYER_ARCHETYPE.Scenario) {
+                ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
+                skillDetailsTooltip.ShowPlayerSkillDetails(skillData, scenarioData.GetLevelForPower(skillData.skill));  
+            } else {
+                skillDetailsTooltip.ShowPlayerSkillDetails(skillData);    
+            }
+            
         }
     }
     private void OnHoverExitSkillSlotItem(PlayerSkillData skillData) {

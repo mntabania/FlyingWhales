@@ -15,5 +15,12 @@ public class UpgradePortalData : PlayerAction {
         }
         base.ActivateAbility(structure);
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        bool isValid = base.IsValid(target);
+        if (isValid) {
+            return WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom;
+        }
+        return false;
+    }
     #endregion
 }
