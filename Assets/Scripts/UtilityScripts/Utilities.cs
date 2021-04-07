@@ -1082,9 +1082,23 @@ namespace UtilityScripts {
         public static string ElectricIcon() {
             return "<sprite=\"Text_Sprites\" name=\"element_electric_icon\">";
         }
-        
         public static string RatmanIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\">";
+        }
+        public static string BonusChargesIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"bonus_charges_icon\">";
+        }
+        public static string TargetIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"icon_target\">";
+        }
+        public static string ObjectIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"icon_object\">";
+        }
+        public static string VillageIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"icon_village\">";
+        }
+        public static string StructureIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"icon_structure\">";
         }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";

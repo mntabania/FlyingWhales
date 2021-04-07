@@ -211,6 +211,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">All Icons/bonus_charges_icon.png</key>
             <key type="filename">All Icons/icon_chargesB.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -244,8 +245,11 @@
             <key type="filename">All Icons/icon_cultist.png</key>
             <key type="filename">All Icons/icon_demon.png</key>
             <key type="filename">All Icons/icon_monster.png</key>
+            <key type="filename">All Icons/icon_object.png</key>
             <key type="filename">All Icons/icon_ratvillager.png</key>
+            <key type="filename">All Icons/icon_structure.png</key>
             <key type="filename">All Icons/icon_undead.png</key>
+            <key type="filename">All Icons/icon_village.png</key>
             <key type="filename">All Icons/icon_villager.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -318,6 +322,21 @@
                 <rect>10,10,19,19</rect>
                 <key>scale9Paddings</key>
                 <rect>10,10,19,19</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/icon_target.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>9,9,17,17</rect>
+                <key>scale9Paddings</key>
+                <rect>9,9,17,17</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
