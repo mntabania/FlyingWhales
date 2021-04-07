@@ -2214,6 +2214,7 @@
                   <e p="ImpHutTileObject.cs" t="Include" />
                   <e p="IronMaiden.cs" t="Include" />
                   <e p="Jars.cs" t="Include" />
+                  <e p="KennelTileObject.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
                   <e p="LocustSwarm.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />

@@ -52,7 +52,7 @@ namespace Necromancy.UI
         [ContextMenu("TestText")]
         public void TestText()
         {
-            SpawnParticle(transform.position, "+600", Color.red, 2f);
+            SpawnParticle(transform.position, "+600", Color.red, 10f);
         }
 
         public void SpawnParticle(Vector3 position, float amount, Color color, float? startSize = null)

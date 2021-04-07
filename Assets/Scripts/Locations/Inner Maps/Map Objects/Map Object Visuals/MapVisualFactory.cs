@@ -131,6 +131,9 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.TORTURE_CHAMBERS_TILE_OBJECT:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("TortureChambersGameObject", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("KennelGameObject", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;

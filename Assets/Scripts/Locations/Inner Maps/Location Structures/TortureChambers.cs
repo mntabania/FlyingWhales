@@ -4,7 +4,7 @@ namespace Inner_Maps.Location_Structures {
     public class TortureChambers : PartyStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
-        public override string nameplateName => "Prison";
+        public override string nameplateName => name;
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             nameWithoutID = "Prison";
             startingSummonCount = 2;

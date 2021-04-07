@@ -2083,28 +2083,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Effects
     public void ShowHealthAdjustmentEffect(int damage) {
         Color color = damage > 0 ? Color.green : Color.red;
-        float startSize;
-        float absoluteValue = Mathf.Abs(damage);
-        if (absoluteValue >= 200) {
-            startSize = 3f;
-        } else if (absoluteValue >= 50f) {
-            startSize = 2f;
-        } else  {
-            startSize = 1f;
-        }
+        float startSize = 1.5f;
         textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
     }
     public void ShowHealthAdjustmentEffect(float damage) {
         Color color = damage > 0 ? Color.green : Color.red;
-        float startSize;
-        float absoluteValue = Mathf.Abs(damage);
-        if (absoluteValue >= 200) {
-            startSize = 3f;
-        } else if (absoluteValue >= 50f) {
-            startSize = 2f;
-        } else  {
-            startSize = 1f;
-        }
+        float startSize = 1.5f;
         textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
     }
     #endregion
