@@ -31,6 +31,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         gameObject.SetActive(true);
         UIManager.Instance.DisableContextMenuInteractions(); 
         PlayerUI.Instance.DisableTopMenuButtons();
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
         OnClickPlacePortal();
     }
     public void OnClickPlacePortal() {
@@ -63,6 +64,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         UIManager.Instance.EnableContextMenuInteractions();
         PlayerUI.Instance.EnableTopMenuButtons();
         UIManager.Instance.SetSpeedTogglesState(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
         gameObject.SetActive(false);
     }
 
