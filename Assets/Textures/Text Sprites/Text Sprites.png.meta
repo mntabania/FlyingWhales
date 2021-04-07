@@ -98,6 +98,21 @@ TextureImporter:
   - first:
       213: 4377157959891871483
     second: upgrade_arrow_icon
+  - first:
+      213: 5128765376105686326
+    second: bonus_charges_icon
+  - first:
+      213: 8331790326296830240
+    second: icon_object
+  - first:
+      213: 5671965764122512287
+    second: icon_target
+  - first:
+      213: -4969417178778282018
+    second: icon_village
+  - first:
+      213: -2520808341190306995
+    second: icon_structure
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -171,11 +186,32 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
+      name: bonus_charges_icon
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 167
+        width: 21
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6352a1bafe80d2740800000000000000
+      internalID: 5128765376105686326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: element_earth_icon
       rect:
         serializedVersion: 2
-        x: 2
-        y: 36
+        x: 38
+        y: 141
         width: 32
         height: 32
       alignment: 0
@@ -195,7 +231,7 @@ TextureImporter:
       name: element_electric_icon
       rect:
         serializedVersion: 2
-        x: 38
+        x: 41
         y: 180
         width: 32
         height: 32
@@ -238,7 +274,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 38
-        y: 144
+        y: 105
         width: 32
         height: 32
       alignment: 0
@@ -259,7 +295,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 38
-        y: 108
+        y: 69
         width: 32
         height: 32
       alignment: 0
@@ -280,7 +316,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 38
-        y: 72
+        y: 33
         width: 32
         height: 32
       alignment: 0
@@ -300,8 +336,8 @@ TextureImporter:
       name: element_water_icon
       rect:
         serializedVersion: 2
-        x: 38
-        y: 36
+        x: 74
+        y: 144
         width: 32
         height: 32
       alignment: 0
@@ -321,8 +357,8 @@ TextureImporter:
       name: element_wind_icon
       rect:
         serializedVersion: 2
-        x: 102
-        y: 222
+        x: 77
+        y: 186
         width: 32
         height: 32
       alignment: 0
@@ -342,8 +378,8 @@ TextureImporter:
       name: icon_chargesB
       rect:
         serializedVersion: 2
-        x: 74
-        y: 131
+        x: 181
+        y: 141
         width: 21
         height: 31
       alignment: 0
@@ -363,8 +399,8 @@ TextureImporter:
       name: icon_cooldown
       rect:
         serializedVersion: 2
-        x: 102
-        y: 156
+        x: 64
+        y: 3
         width: 23
         height: 26
       alignment: 0
@@ -384,8 +420,8 @@ TextureImporter:
       name: icon_cultist
       rect:
         serializedVersion: 2
-        x: 74
-        y: 194
+        x: 159
+        y: 230
         width: 24
         height: 24
       alignment: 0
@@ -405,8 +441,8 @@ TextureImporter:
       name: icon_demon
       rect:
         serializedVersion: 2
-        x: 74
-        y: 166
+        x: 187
+        y: 230
         width: 24
         height: 24
       alignment: 0
@@ -426,8 +462,8 @@ TextureImporter:
       name: icon_ideology
       rect:
         serializedVersion: 2
-        x: 80
-        y: 240
+        x: 234
+        y: 184
         width: 17
         height: 14
       alignment: 0
@@ -447,8 +483,8 @@ TextureImporter:
       name: icon_leader
       rect:
         serializedVersion: 2
-        x: 138
-        y: 166
+        x: 181
+        y: 176
         width: 24
         height: 22
       alignment: 0
@@ -468,8 +504,8 @@ TextureImporter:
       name: icon_mana
       rect:
         serializedVersion: 2
-        x: 138
-        y: 192
+        x: 34
+        y: 3
         width: 26
         height: 26
       alignment: 0
@@ -489,8 +525,8 @@ TextureImporter:
       name: icon_monster
       rect:
         serializedVersion: 2
-        x: 168
-        y: 194
+        x: 215
+        y: 230
         width: 24
         height: 24
       alignment: 0
@@ -502,6 +538,27 @@ TextureImporter:
       bones: []
       spriteID: f5252670071f3ada0800000000000000
       internalID: -5934634420481666465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_object
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 202
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02165f5782770a370800000000000000
+      internalID: 8331790326296830240
       vertices: []
       indices: 
       edges: []
@@ -531,8 +588,8 @@ TextureImporter:
       name: icon_ratvillager
       rect:
         serializedVersion: 2
-        x: 196
-        y: 194
+        x: 125
+        y: 196
         width: 24
         height: 24
       alignment: 0
@@ -549,11 +606,53 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
+      name: icon_structure
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 202
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4392846b2a440dd0800000000000000
+      internalID: -2520808341190306995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_target
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 177
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9b03b4afced6be40800000000000000
+      internalID: 5671965764122512287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: icon_threat
       rect:
         serializedVersion: 2
-        x: 70
-        y: 6
+        x: 2
+        y: 3
         width: 28
         height: 26
       alignment: 0
@@ -573,8 +672,8 @@ TextureImporter:
       name: icon_undead
       rect:
         serializedVersion: 2
-        x: 224
-        y: 194
+        x: 215
+        y: 202
         width: 24
         height: 24
       alignment: 0
@@ -591,11 +690,32 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
+      name: icon_village
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 174
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed7523ea765190bb0800000000000000
+      internalID: -4969417178778282018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: icon_villager
       rect:
         serializedVersion: 2
-        x: 168
-        y: 166
+        x: 125
+        y: 168
         width: 24
         height: 24
       alignment: 0
@@ -616,7 +736,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2
-        y: 180
+        y: 141
         width: 32
         height: 32
       alignment: 0
@@ -637,7 +757,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2
-        y: 144
+        y: 105
         width: 32
         height: 32
       alignment: 0
@@ -658,7 +778,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2
-        y: 108
+        y: 69
         width: 32
         height: 32
       alignment: 0
@@ -679,7 +799,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2
-        y: 72
+        y: 33
         width: 32
         height: 32
       alignment: 0
@@ -699,7 +819,7 @@ TextureImporter:
       name: piercing_icon
       rect:
         serializedVersion: 2
-        x: 2
+        x: 91
         y: 2
         width: 30
         height: 30
@@ -720,8 +840,8 @@ TextureImporter:
       name: resistance_icon
       rect:
         serializedVersion: 2
-        x: 36
-        y: 2
+        x: 125
+        y: 224
         width: 30
         height: 30
       alignment: 0
@@ -741,7 +861,7 @@ TextureImporter:
       name: spirit_energy_icon
       rect:
         serializedVersion: 2
-        x: 138
+        x: 80
         y: 222
         width: 32
         height: 32
@@ -762,8 +882,8 @@ TextureImporter:
       name: stats_attack_icon
       rect:
         serializedVersion: 2
-        x: 174
-        y: 222
+        x: 74
+        y: 108
         width: 32
         height: 32
       alignment: 0
@@ -783,8 +903,8 @@ TextureImporter:
       name: stats_health_icon
       rect:
         serializedVersion: 2
-        x: 210
-        y: 222
+        x: 74
+        y: 72
         width: 32
         height: 32
       alignment: 0
@@ -804,8 +924,8 @@ TextureImporter:
       name: stats_speed_icon
       rect:
         serializedVersion: 2
-        x: 102
-        y: 186
+        x: 74
+        y: 36
         width: 32
         height: 32
       alignment: 0
@@ -825,8 +945,8 @@ TextureImporter:
       name: upgrade_arrow_icon
       rect:
         serializedVersion: 2
-        x: 80
-        y: 226
+        x: 234
+        y: 170
         width: 15
         height: 10
       alignment: 0

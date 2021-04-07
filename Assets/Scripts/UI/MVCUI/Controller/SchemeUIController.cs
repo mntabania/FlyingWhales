@@ -208,6 +208,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         //Only activate temptation effects if scheme is successful
         if (isSuccessful) {
             //Process all activate temptations also
+            Messenger.Broadcast(CharacterSignals.CHARACTER_MEDDLER_SCHEME_SUCCESSFUL, _targetCharacter);
             for (int i = 0; i < _chosenTemptations.Count; i++) {
                 TEMPTATION temptation = _chosenTemptations[i];
                 ActivateTemptationEffect(temptation);

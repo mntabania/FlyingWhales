@@ -91,6 +91,7 @@ namespace Traits {
                 }
                 if (roll < chance && p_character.gridTileLocation.tileObjectComponent.objHere == null) {
                     //spawn werewolf pelt
+                    Messenger.Broadcast(CharacterSignals.LYCANTHROPE_SHED_WOLF_PELT, p_character);
                     p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, p_character);
                 }
             }
