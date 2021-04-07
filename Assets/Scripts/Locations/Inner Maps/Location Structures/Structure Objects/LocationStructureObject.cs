@@ -217,6 +217,8 @@ public class LocationStructureObject : PooledObject, ISelectable {
             structure.AddObjectAsDamageContributor(newTileObject);
         } else if (structureType == STRUCTURE_TYPE.CRYPT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);
+        } else if (structureType == STRUCTURE_TYPE.DEFILER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEFILER_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);
         }
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
