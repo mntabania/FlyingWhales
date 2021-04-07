@@ -9865,7 +9865,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Regions
+  m_text: Villages
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57aeb108c5856cb45a7fdd5452dc5403, type: 2}
   m_sharedMaterial: {fileID: 21643060167599512, guid: 57aeb108c5856cb45a7fdd5452dc5403,
