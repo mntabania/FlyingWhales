@@ -57,7 +57,7 @@ public class SpellItem : NameplateItem<SkillData> {
                 currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{spellData.manaCost} ";
             }
         }
-        currencyLbl.text += $"{spellData.displayOfCurrentChargesWithBonusChargesCombined}  ";
+        currencyLbl.text += $"{spellData.displayOfCurrentChargesWithBonusChargesCombinedIconFirst}  ";
 
         if (spellData.cooldown >= 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.CooldownIcon()}{GameManager.GetTimeAsWholeDuration(spellData.cooldown)} {GameManager.GetTimeIdentifierAsWholeDuration(spellData.cooldown)}  ";

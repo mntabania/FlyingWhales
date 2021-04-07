@@ -55,6 +55,7 @@ public class SkillData : IPlayerSkill {
     public virtual bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
     public string displayOfCurrentChargesWithBonusChargesNotCombined => GetDisplayOfCurrentChargesWithBonusChargesNotCombined();
     public string displayOfCurrentChargesWithBonusChargesCombined => GetDisplayOfCurrentChargesWithBonusChargesCombined();
+    public string displayOfCurrentChargesWithBonusChargesCombinedIconFirst => GetDisplayOfCurrentChargesWithBonusChargesCombinedIconFirst();
     #endregion
 
     public void LevelUp() {
@@ -318,12 +319,19 @@ public class SkillData : IPlayerSkill {
         return str;
     }
     private string GetDisplayOfCurrentChargesWithBonusChargesNotCombined() {
-        return SpellUtilities.GetDisplayOfCurrentChargesWithBonusChargesNotCombined(charges, maxCharges, bonusCharges, hasCharges);
+        return SpellUtilities.GetDisplayOfCurrentChargesWithBonusChargesNotCombined(charges, maxCharges, bonusCharges, hasCharges && isInUse);
     }
     private string GetDisplayOfCurrentChargesWithBonusChargesCombined() {
         string str = string.Empty;
         if (hasCharges || hasBonusCharges) {
-            str += $"{totalCharges} {(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}";
+            str += $"{(isInUse ? totalCharges : bonusCharges)} {(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}";
+        }
+        return str;
+    }
+    private string GetDisplayOfCurrentChargesWithBonusChargesCombinedIconFirst() {
+        string str = string.Empty;
+        if (hasCharges || hasBonusCharges) {
+            str += $"{(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}{(isInUse ? totalCharges : bonusCharges)}";
         }
         return str;
     }
@@ -354,8 +362,8 @@ public class SkillData : IPlayerSkill {
         }
     }
     public void AdjustBonusCharges(int amount) {
-        charges += amount;
-        charges = Mathf.Max(charges, 0);
+        bonusCharges += amount;
+        bonusCharges = Mathf.Max(bonusCharges, 0);
         Messenger.Broadcast(PlayerSkillSignals.BONUS_CHARGES_ADJUSTED, this);
     }
 

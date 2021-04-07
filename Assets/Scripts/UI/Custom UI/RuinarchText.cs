@@ -64,27 +64,27 @@ public class RuinarchText : TextMeshProUGUI {
             if (text.Contains("undead")) {
                 text = text.Replace("undead", $"{UtilityScripts.Utilities.UndeadIcon()}undead");
             }
-            //village
-            if (text.Contains("Village")) {
-                text = text.Replace("Village", $"{UtilityScripts.Utilities.VillageIcon()}Village");
-            }
-            if (text.Contains("village")) {
-                text = text.Replace("village", $"{UtilityScripts.Utilities.VillageIcon()}village");
-            }
+            ////village
+            //if (text.Contains("Village")) {
+            //    text = text.Replace("Village", $"{UtilityScripts.Utilities.VillageIcon()}Village");
+            //}
+            //if (text.Contains("village")) {
+            //    text = text.Replace("village", $"{UtilityScripts.Utilities.VillageIcon()}village");
+            //}
             //object
-            if (text.Contains("Object")) {
-                text = text.Replace("Object", $"{UtilityScripts.Utilities.TileObjectIcon()}Object");
-            }
-            if (text.Contains("object")) {
-                text = text.Replace("object", $"{UtilityScripts.Utilities.TileObjectIcon()}object");
-            }
+            //if (text.Contains("Object")) {
+            //    text = text.Replace("Object", $"{UtilityScripts.Utilities.TileObjectIcon()}Object");
+            //}
+            //if (text.Contains("object")) {
+            //    text = text.Replace("object", $"{UtilityScripts.Utilities.TileObjectIcon()}object");
+            //}
             //structure
-            if (text.Contains("Structure")) {
-                text = text.Replace("Structure", $"{UtilityScripts.Utilities.StructureIcon()}Structure");
-            }
-            if (text.Contains("structure")) {
-                text = text.Replace("structure", $"{UtilityScripts.Utilities.StructureIcon()}structure");
-            }
+            //if (text.Contains("Structure")) {
+            //    text = text.Replace("Structure", $"{UtilityScripts.Utilities.StructureIcon()}Structure");
+            //}
+            //if (text.Contains("structure")) {
+            //    text = text.Replace("structure", $"{UtilityScripts.Utilities.StructureIcon()}structure");
+            //}
             //Elements
             if (text.Contains("Water")) {
                 text = text.Replace("Water", $"{UtilityScripts.Utilities.WaterIcon()}Water");

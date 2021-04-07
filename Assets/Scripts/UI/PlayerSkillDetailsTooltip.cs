@@ -69,7 +69,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
 
         //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
-        string currencyStr = GetCurrencySummary(manaCost, charges, charges, cooldown, skillData.bonusCharges); 
+        string currencyStr = GetCurrencySummary(manaCost, charges, charges, cooldown, skillData.bonusCharges, skillData.isInUse); 
         
         levelText.text = string.Empty;
         currenciesText.text = currencyStr;
@@ -89,7 +89,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         int cooldown = skillData.cooldown;
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(skillData.type);
         
-        string currencyStr = GetCurrencySummary(manaCost, charges, skillData.maxCharges, cooldown, skillData.bonusCharges);
+        string currencyStr = GetCurrencySummary(manaCost, charges, skillData.maxCharges, cooldown, skillData.bonusCharges, skillData.isInUse);
         levelText.text = playerSkillData.isNonUpgradeable ? string.Empty : $"Lv. {skillData.levelForDisplay}";
         currenciesText.text = currencyStr;
         
@@ -387,9 +387,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     #endregion
 
     #region Currency
-    private string GetCurrencySummary(int manaCost, int charges, int maxCharges, int cooldown, int bonusCharges) {
+    private string GetCurrencySummary(int manaCost, int charges, int maxCharges, int cooldown, int bonusCharges, bool isInUse) {
         string currencies = string.Empty;
-        string notCombinedChargesText = SpellUtilities.GetDisplayOfCurrentChargesWithBonusChargesNotCombined(charges, maxCharges, bonusCharges, true);
+        string notCombinedChargesText = SpellUtilities.GetDisplayOfCurrentChargesWithBonusChargesNotCombined(charges, maxCharges, bonusCharges, maxCharges > 0 && isInUse);
         if (!string.IsNullOrEmpty(notCombinedChargesText)) {
             currencies = $"{currencies}{notCombinedChargesText}    ";
         }

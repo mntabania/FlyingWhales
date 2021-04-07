@@ -203,7 +203,7 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     public void InitializeAfterLoadOutPicked() {
         UpdateIntel();
-        CreateInitialSpells();
+        //CreateInitialSpells();
         _buildListUI.Initialize();
         cultistsList.Initialize();
         targetsList.Initialize();

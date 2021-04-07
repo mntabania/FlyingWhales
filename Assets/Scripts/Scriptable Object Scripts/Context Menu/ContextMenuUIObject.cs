@@ -60,8 +60,6 @@ public class ContextMenuUIObject : PooledObject {
                     txtCharges.text = $"{chargesText}";
                     txtCharges.gameObject.SetActive(true);
                 }
-                txtCharges.text = $"{playerAction.charges}{UtilityScripts.Utilities.ChargesIcon()}";
-                txtCharges.gameObject.SetActive(true);
             } else {
                 txtCharges.gameObject.SetActive(false);
             }
