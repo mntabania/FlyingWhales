@@ -52,11 +52,12 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 				txtPlus.color = new Color32(255, 255, 0,  255);
 			}
 		}
+		/*
 		if (playerSkillData.skillUpgradeData.bonuses.Count > 0) {
 			txtUpgrade.text = playerSkillData.skillUpgradeData.GetDescriptionBaseOnFirstBonus(skillData.currentLevel + 1);
 		} else {
 			txtUpgrade.text = "n/a";
-		}
+		}*/
 		
 		txtSkillName.text = playerSkillData.name;
 		m_skillType = p_type;
