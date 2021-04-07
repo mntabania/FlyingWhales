@@ -18,7 +18,6 @@ namespace Interrupts {
             // interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Lycanthrope");
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Unconscious");
             interruptHolder.actor.UnobtainItem(TILE_OBJECT_TYPE.WEREWOLF_PELT);
-            Messenger.Broadcast(CharacterSignals.LYCANTHROPE_SHED_WOLF_PELT, interruptHolder.actor);
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
