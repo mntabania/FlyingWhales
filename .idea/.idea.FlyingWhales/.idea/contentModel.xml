@@ -1744,6 +1744,7 @@
                 <e p="CanTakeRemoveStatus.cs" t="Include" />
                 <e p="CanTakeRepairJob.cs" t="Include" />
                 <e p="CanTakeRestrainJob.cs" t="Include" />
+                <e p="CanTakeSnatchJob.cs" t="Include" />
               </e>
             </e>
             <e p="JobCheckers.cs" t="Include" />
@@ -2723,6 +2724,7 @@
                 <e p="RavenousSpiritData.cs" t="Include" />
                 <e p="SnareTrapData.cs" t="Include" />
                 <e p="SpawnBoulderData.cs" t="Include" />
+                <e p="SpawnNecronomiconData.cs" t="Include" />
                 <e p="SplashPoisonData.cs" t="Include" />
                 <e p="SplashWaterData.cs" t="Include" />
                 <e p="TerrifyingHowlData.cs" t="Include" />

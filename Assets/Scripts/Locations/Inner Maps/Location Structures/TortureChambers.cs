@@ -54,10 +54,10 @@ namespace Inner_Maps.Location_Structures {
         protected override void AfterCharacterAddedToLocation(Character p_character) {
             base.AfterCharacterAddedToLocation(p_character);
             p_character.movementComponent.SetEnableDigging(false);
-            if (p_character.isNormalCharacter && IsTilePartOfARoom(p_character.gridTileLocation, out var room) && room is PrisonCell prisonCell && prisonCell.skeleton == null) {
-                DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
-                door?.Close();
-            }
+            // if (p_character.isNormalCharacter && IsTilePartOfARoom(p_character.gridTileLocation, out var room) && room is PrisonCell prisonCell && prisonCell.skeleton == null) {
+            //     DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
+            //     door?.Close();
+            // }
             Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {

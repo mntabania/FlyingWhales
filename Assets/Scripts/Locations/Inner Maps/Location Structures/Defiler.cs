@@ -34,10 +34,10 @@ namespace Inner_Maps.Location_Structures {
             Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-            if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell defilerRoom && defilerRoom.skeleton == null) {
-                DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
-                door?.Close();
-            }
+            // if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell defilerRoom && defilerRoom.skeleton == null) {
+            //     DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
+            //     door?.Close();
+            // }
         }
         #endregion
 
