@@ -2,8 +2,8 @@
 using Interrupts;
 
 public class PlagueChaosOrb : PassiveSkill {
-    public override string name => "Mana Orbs from Plague";
-    public override string description => "Mana Orbs upon Acquiring plague symptom";
+    public override string name => "Chaos Orbs from Plague";
+    public override string description => "Chaos Orbs upon Acquiring plague symptom";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Plague_Chaos_Orb;
 
     public override void ActivateSkill() {
