@@ -168,7 +168,7 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbility();
     }
     public bool CanPerformAbility() {
-        bool canBePerformed = (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
+        bool canBePerformed = (((!hasCharges || charges > 0) && isInUse) || hasBonusCharges) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
         if (!canBePerformed) {
             if (type == PLAYER_SKILL_TYPE.SCHEME) {
                 //This is the scheme parent, even if there are no charges, it can be performed so that the player can see the second column
