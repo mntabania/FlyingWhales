@@ -349,7 +349,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		if (result != -1) {
 			SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
 			m_firstRun = false;
-			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-result);
+			PlayerManager.Instance.player.AdjustMana(-result);
 			PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToUnlock(skillData, result);
 			UpdateRerollBtn();
 			UpdateItems();
