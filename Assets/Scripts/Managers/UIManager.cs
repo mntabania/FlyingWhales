@@ -1745,19 +1745,23 @@ public class UIManager : BaseMonoBehaviour {
         if (string.IsNullOrEmpty(fullDescription)) {
             fullDescription = "Flaw cannot be triggered.";
         }
-        int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
-        string currencyStr = string.Empty;
-        if (manaCost != -1) {
-            currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
+        if (p_character.isInfoUnlocked) {
+            int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
+            string currencyStr = string.Empty;
+            if (manaCost != -1) {
+                currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
+            }
+            title = $"{title}    <size=16>{currencyStr}";
+            string additionalText = string.Empty;
+            if (PlayerManager.Instance.player.mana < manaCost) {
+                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
+            }
+            fullDescription = $"{fullDescription}\n\n{additionalText}";
+        } else {
+            title = "Unknown flaw";
+            fullDescription = $"{"Trigger "} { UtilityScripts.Utilities.ColorizeName(p_character.name)}{"\'s unknown flaw"}";
         }
-        title = $"{title}    <size=16>{currencyStr}";
-        string additionalText = string.Empty;
-        if(PlayerManager.Instance.player.mana < manaCost) {
-            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
-        }
-        
-        fullDescription = $"{fullDescription}\n\n{additionalText}";
-        
+      
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private void OnHoverPlayerAction(SkillData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
