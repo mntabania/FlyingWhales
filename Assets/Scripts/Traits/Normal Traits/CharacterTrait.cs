@@ -181,7 +181,6 @@ namespace Traits {
                         }
                     }
                 } else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
-                    bool wasReportCreated = false;
                     if (characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
                         characterThatWillDoJob.homeSettlement != null && characterThatWillDoJob.necromancerTrait == null && characterThatWillDoJob.race.IsSapient() && 
                         characterThatWillDoJob.hasMarker && characterThatWillDoJob.carryComponent.IsNotBeingCarried() && !characterThatWillDoJob.isAlliedWithPlayer && 
@@ -192,7 +191,7 @@ namespace Traits {
                         if (characterThatWillDoJob.faction != null && characterThatWillDoJob.faction.isMajorNonPlayer && 
                             !characterThatWillDoJob.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && 
                             !characterThatWillDoJob.faction.HasActiveReportDemonicStructureJob(demonicStructure)) {
-                            wasReportCreated = characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
+                            characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
                         }
                     }
                 }

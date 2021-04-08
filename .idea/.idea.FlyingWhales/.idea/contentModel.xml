@@ -2093,6 +2093,7 @@
                   <e p="FireBallMapObjectVisual.cs" t="Include" />
                   <e p="FishingSpotGameObject.cs" t="Include" />
                   <e p="FrostyFogMapObjectVisual.cs" t="Include" />
+                  <e p="KennelGameObject.cs" t="Include" />
                   <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
                   <e p="MapObject.cs" t="Include" />
                   <e p="MapObjectVisual.cs" t="Include" />

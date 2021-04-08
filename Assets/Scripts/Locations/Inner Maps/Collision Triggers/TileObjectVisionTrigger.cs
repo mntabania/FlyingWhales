@@ -34,4 +34,10 @@ public class TileObjectVisionTrigger : POIVisionTrigger {
         }
         return false;
     }
+    public override bool IgnoresRoomDifference() {
+        if (poi is TileObject tileObject && tileObject.tileObjectType.IsDemonicStructureTileObject()) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 4067477
+    totalSpriteSurfaceArea: 4071573
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -414,6 +414,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 433fae477b4b93640a0390bc7bd1d061, type: 3}
   - {fileID: 21300000, guid: 0ed9a357103622241af0e691d7dcd484, type: 3}
   - {fileID: 21300000, guid: d55e1557727ed694dba17cc8f7ec30d4, type: 3}
+  - {fileID: 21300000, guid: 4da76557f3422654995b6fea0f0771a6, type: 3}
   - {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380, type: 3}
   - {fileID: 21300000, guid: 5274dc57ab8285046bed37ceb3fe073d, type: 3}
   - {fileID: 21300000, guid: 2c0dbd579f0fd1d49b5b2cf8194cb866, type: 3}
@@ -536,7 +537,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1aa0f5b9c7de5ac49bbf0a62a344b74e, type: 3}
   - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
   - {fileID: 21300000, guid: c77799b9783c3b1419ac8bf68b07ec36, type: 3}
-  - {fileID: 21300000, guid: f6d799b91848c7e4e9d0b5c621d60732, type: 3}
   - {fileID: 21300000, guid: 4f208db9e5ee54b4e9b58074d963d240, type: 3}
   - {fileID: 21300000, guid: d5fb61d92848cf149a96ae7d2054e15b, type: 3}
   - {fileID: 21300000, guid: a9b153d972870a24abeb826b0c38ea0b, type: 3}
@@ -1199,6 +1199,7 @@ SpriteAtlas:
   - laidWallA00001110-00
   - demonWallA-10101111-00
   - demonWallA-00000000-01
+  - kennel_192x192
   - berryBushEmpty00
   - tundraDirt_v01
   - well05
@@ -1321,7 +1322,6 @@ SpriteAtlas:
   - crypt_256x192
   - supplies
   - desert_rose
-  - kennel_256x128
   - CHAIN#2
   - shore01010111-00
   - shelfDecor00

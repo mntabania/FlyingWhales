@@ -237,7 +237,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7730155022504708397}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5791d8d13ac64d8a9c8cc291ac797f8c, type: 3}
+  m_Script: {fileID: 11500000, guid: a1dd3314cf3c42d0808d6e8161dc5c2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
@@ -262,7 +262,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1340829586555444, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
       propertyPath: m_Name
-      value: TortureChambersGameObject
+      value: KennelGameObject
       objectReference: {fileID: 0}
     - target: {fileID: 4125362542383046, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
       propertyPath: m_LocalPosition.x

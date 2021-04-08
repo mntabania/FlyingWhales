@@ -35,4 +35,9 @@ public class DemonicStructureBlockerTileObject : TileObject {
     //     //portal has no actions by default
     // }
     protected override string GenerateName() { return "Demonic Structure Blocker"; }
+    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null, 
+        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0, bool isPlayerSource = false) {
+        showHPBar = false; //never show hp bar for this tile object
+        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar, piercingPower, isPlayerSource);
+    }
 }

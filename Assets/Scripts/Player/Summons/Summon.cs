@@ -271,7 +271,7 @@ public class Summon : Character {
         AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_MONSTER);
         // AddPlayerAction(PLAYER_SKILL_TYPE.BREED_MONSTER);
         AddPlayerAction(PLAYER_SKILL_TYPE.AGITATE);
-        AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+        // AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
         AddPlayerAction(PLAYER_SKILL_TYPE.SACRIFICE);
         AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
         AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);

@@ -328,6 +328,10 @@ public static class TileObjectDB {
             maxHP = 10000,
             occupiedSize = new Point(1, 1)
         } },
+        { TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(1, 1)
+        } },
     };
 
     public static bool HasTileObjectData(TILE_OBJECT_TYPE objType) {
