@@ -39,7 +39,7 @@ public class GoapNode {
 //actual nodes located in a finished plan that is going to be executed by a character
 public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 
-    private static string[] vigilantCancellingTraits = new[] { "Resting", "Unconscious", "Restrained" };
+    private static string[] vigilantCancellingTraits = new[] { "Resting", "Unconscious", "Restrained", "Zapped" };
     
     public string persistentID { get; private set; }
     public Character actor { get; private set; }

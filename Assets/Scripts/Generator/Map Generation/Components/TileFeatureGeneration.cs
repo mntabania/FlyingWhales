@@ -127,6 +127,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				if (area.elevationComponent.IsFully(ELEVATION.PLAIN)) {
 					int adjacentWaterTiles = 0;
 					int adjacentFlatTiles = 0;
+					int adjacentCaveTiles = 0;
 					habitability += 1;
 					for (int i = 0; i < area.neighbourComponent.neighbours.Count; i++) {
 						Area neighbour = area.neighbourComponent.neighbours[i];
@@ -137,6 +138,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 							adjacentFlatTiles += 1;
 						} else if (neighbour.elevationType == ELEVATION.WATER) {
 							adjacentWaterTiles += 1;
+						} else if (neighbour.elevationType == ELEVATION.MOUNTAIN) {
+							adjacentCaveTiles += 1;
 						}
 
 						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature)) {
@@ -155,10 +158,12 @@ public class TileFeatureGeneration : MapGenerationComponent {
 							habitability += 5;
 						}
 					}
-					if (adjacentWaterTiles == 1) {
+					if (adjacentWaterTiles == 1 || adjacentCaveTiles == 1) {
 						habitability += 5;
 					}
-					if (adjacentFlatTiles < 2) {
+					if (adjacentFlatTiles >= 1) {
+						habitability += 20;
+					} else {
 						habitability -= 10;
 					}
 				}
