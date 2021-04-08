@@ -2515,9 +2515,9 @@
             <e p="PartyDamageAccumulator.cs" t="Include" />
             <e p="Plague Related Scripts" t="Include">
               <e p="Death Effects" t="Include">
+                <e p="ChaosGenerator.cs" t="Include" />
                 <e p="Explosion.cs" t="Include" />
                 <e p="HauntedSpirits.cs" t="Include" />
-                <e p="ManaGenerator.cs" t="Include" />
                 <e p="PlagueDeathEffect.cs" t="Include" />
                 <e p="Zombie.cs" t="Include" />
               </e>

@@ -531,7 +531,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 } else {
                     string addedBehaviour = GetFormattedAfflictionSpecificBehaviour(newBehaviour);
                     if (!string.IsNullOrEmpty(addedBehaviour)) {
-                        allAddedBehaviours = $"{allAddedBehaviours}\"{addedBehaviour}\"";
+                        allAddedBehaviours = $"{allAddedBehaviours}{addedBehaviour}";
                     }
                 }
                 RuinarchListPool<AFFLICTION_SPECIFIC_BEHAVIOUR>.Release(currentBehaviours);
@@ -598,7 +598,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                     }
                     string addedBehaviour = GetFormattedAfflictionSpecificBehaviour(behaviour);
                     if (!string.IsNullOrEmpty(addedBehaviour)) {
-                        allAddedBehaviours = $"{allAddedBehaviours}\"{addedBehaviour}\"\n";
+                        allAddedBehaviours = $"{allAddedBehaviours}{addedBehaviour}\n";
                     }
                 }
                 allAddedBehaviours = allAddedBehaviours.TrimEnd();
