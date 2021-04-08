@@ -54,8 +54,10 @@ namespace Traits {
                 if (character.traitContainer.HasTrait("Necromancer")) {
                     FactionManager.Instance.undeadFaction.SetRelationshipFor(PlayerManager.Instance.player.playerFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
                 }
+                if (character.traitContainer.HasTrait("Blessed")) {
+                    character.traitContainer.RemoveTrait(character, "Blessed");
+                }
                 Messenger.Broadcast(CharacterSignals.CHARACTER_BECOME_CULTIST, character);
-
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {

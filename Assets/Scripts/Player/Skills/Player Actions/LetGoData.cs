@@ -7,6 +7,8 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class LetGoData : PlayerAction {
+
+    public override bool canBeCastOnBlessed => true;
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LET_GO;
     public override string name => "Let It Go";
     public override string description => "This Ability will move the target out of its cold and bothersome Prison or Kennel.";
