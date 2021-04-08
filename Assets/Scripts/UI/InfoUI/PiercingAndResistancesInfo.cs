@@ -38,6 +38,11 @@ public class PiercingAndResistancesInfo : MonoBehaviour {
     }
     #endregion
 
+    public void UpdatePierceUI(Character p_character) {
+        _character = p_character;
+        UpdatePiercingAndResistancesInfo();
+    }
+
     #region General
     public void ShowPiercingAndResistancesInfo(Character p_character) {
         _character = p_character;
@@ -68,7 +73,7 @@ public class PiercingAndResistancesInfo : MonoBehaviour {
         physicalResistanceTxt.text = TransformToPercentString(_character.piercingAndResistancesComponent.GetResistanceValue(RESISTANCE.Physical));
     }
     private string TransformToPercentString(float p_value) {
-        return p_value.ToString("N2") + "%";
+        return p_value.ToString("N0") + "%";
     }
     #endregion
 }
