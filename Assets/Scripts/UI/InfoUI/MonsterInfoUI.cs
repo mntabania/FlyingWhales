@@ -190,6 +190,8 @@ public class MonsterInfoUI : InfoUIBase {
     }
     #endregion
 
+    
+
     #region Stats
     private void UpdateStatInfo() {
         if (_activeMonster is Summon summon) {
@@ -197,7 +199,7 @@ public class MonsterInfoUI : InfoUIBase {
             attackLbl.text = $"{summon.combatComponent.attack.ToString()}";
             speedLbl.text = $"{summon.combatComponent.attackSpeed / 1000f}s";
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(summon.race)}";
-            elementLbl.text = $"{summon.combatComponent.elementalDamage.type.ToString()}";
+            elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type) + $"{_activeMonster.combatComponent.elementalDamage.type}";
             behaviourLbl.gameObject.SetActive(false);
             // behaviourLbl.text = $"<link=\"0\">{summon.bredBehaviour}</link>";    
         } else {
@@ -205,7 +207,7 @@ public class MonsterInfoUI : InfoUIBase {
             attackLbl.text = $"{_activeMonster.combatComponent.attack.ToString()}";
             speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeMonster.race)}";
-            elementLbl.text = $"{_activeMonster.combatComponent.elementalDamage.type.ToString()}";
+            elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type) + $"{_activeMonster.combatComponent.elementalDamage.type}";
             // behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";
             behaviourLbl.gameObject.SetActive(false);
         }
