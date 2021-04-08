@@ -89,14 +89,19 @@ public class PartyBeaconComponent : PartyComponent {
             return;
         }
         if(owner.partyState == PARTY_STATE.Moving) {
+            bool hasSetBeacon = false;
             for (int i = 0; i < owner.membersThatJoinedQuest.Count; i++) {
                 Character member = owner.membersThatJoinedQuest[i];
                 if (!member.isBeingSeized && member.limiterComponent.canPerform && member.limiterComponent.canMove && !member.isDead) {
                     if (owner.IsMemberActive(member)) {
+                        hasSetBeacon = true;
                         SetBeaconCharacter(member);
                         break;
                     }
                 }
+            }
+            if (!hasSetBeacon) {
+                SetBeaconCharacter(null);
             }
         } else {
             SetBeaconCharacter(null);

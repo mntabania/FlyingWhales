@@ -1759,7 +1759,7 @@ public class UIManager : BaseMonoBehaviour {
             fullDescription = $"{fullDescription}\n\n{additionalText}";
         } else {
             title = "Unknown flaw";
-            fullDescription = $"{"Trigger "} { UtilityScripts.Utilities.ColorizeName(p_character.name)}{"\'s unknown flaw"}";
+            fullDescription = $"{"Trigger "}{ UtilityScripts.Utilities.ColorizeName(p_character.name)}{"\'s unknown flaw"}";
         }
       
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);

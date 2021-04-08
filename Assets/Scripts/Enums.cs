@@ -1154,7 +1154,7 @@ public enum PLAGUE_TRANSMISSION {
     Airborne, Consumption, Physical_Contact, Combat
 }
 public enum PLAGUE_DEATH_EFFECT {
-    Explosion, Zombie, Mana_Generator, Haunted_Spirits,
+    Explosion, Zombie, Chaos_Generator, Haunted_Spirits,
 }
 public enum PLAGUE_EVENT_RESPONSE {
     Undecided, Do_Nothing, Quarantine, Slay, Exile

@@ -5,23 +5,23 @@ using Inner_Maps;
 using System.Collections.Generic;
 
 namespace Plague.Death_Effect {
-    public class ManaGenerator : PlagueDeathEffect {
+    public class ChaosGenerator : PlagueDeathEffect {
         
-        public override PLAGUE_DEATH_EFFECT deathEffectType => PLAGUE_DEATH_EFFECT.Mana_Generator;
+        public override PLAGUE_DEATH_EFFECT deathEffectType => PLAGUE_DEATH_EFFECT.Chaos_Generator;
 
         protected override void ActivateEffect(Character p_character) {
             switch (_level) {
                 case 1:
-                    CreateManaOrbs(1, p_character);
+                    CreateChaosOrbs(1, p_character);
                     break;
                 case 2:
-                    CreateManaOrbs(GameUtilities.RandomBetweenTwoNumbers(2, 3), p_character);
+                    CreateChaosOrbs(GameUtilities.RandomBetweenTwoNumbers(2, 3), p_character);
                     break;
                 case 3:
-                    CreateManaOrbs(GameUtilities.RandomBetweenTwoNumbers(3, 5), p_character);
+                    CreateChaosOrbs(GameUtilities.RandomBetweenTwoNumbers(3, 5), p_character);
                     break;
             }
-            Debug.Log("Activated Mana Generator Effect");
+            Debug.Log("Activated Chaos Generator Effect");
         }
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {
@@ -36,11 +36,11 @@ namespace Plague.Death_Effect {
         public override string GetCurrentEffectDescription() {
             switch (_level) {
                 case 1:
-                    return "1 Mana";
+                    return "1 Orbs";
                 case 2:
-                    return "2-3 Mana";
+                    return "2-3 Orbs";
                 case 3:
-                    return "3-5 Mana";
+                    return "3-5 Orbs";
                 default:
                     return string.Empty;
             }
@@ -49,7 +49,7 @@ namespace Plague.Death_Effect {
             ActivateEffectOn(p_character);
         }
 
-        private void CreateManaOrbs(int amount, Character p_character) {
+        private void CreateChaosOrbs(int amount, Character p_character) {
             if (p_character.marker && p_character.currentRegion != null) {
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.marker.transform.position, amount, p_character.currentRegion.innerMap);
             }

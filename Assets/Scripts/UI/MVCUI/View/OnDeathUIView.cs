@@ -93,7 +93,7 @@ public class OnDeathUIView : MVCUIView
 				return UIModel.txtIgniteUpgradeCost;
 			case PLAGUE_DEATH_EFFECT.Zombie:
 				return UIModel.txtWalkerZombieUpgradeCost;
-			case PLAGUE_DEATH_EFFECT.Mana_Generator:
+			case PLAGUE_DEATH_EFFECT.Chaos_Generator:
 				return UIModel.txtMana2_3UpgradeCost;
 			case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
 				return UIModel.txtRandomSpirit_1UpgradeCost;
@@ -107,7 +107,7 @@ public class OnDeathUIView : MVCUIView
 				return UIModel.txtIgniteEffect;
 			case PLAGUE_DEATH_EFFECT.Zombie:
 				return UIModel.txtWalkerZombieEffect;
-			case PLAGUE_DEATH_EFFECT.Mana_Generator:
+			case PLAGUE_DEATH_EFFECT.Chaos_Generator:
 				return UIModel.txtMana2_3Effect;
 			case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
 				return UIModel.txtRandomSpirit_1Effect;
@@ -121,7 +121,7 @@ public class OnDeathUIView : MVCUIView
 				return UIModel.btnIgniteUpgrade;
 			case PLAGUE_DEATH_EFFECT.Zombie:
 				return UIModel.btnWalkerZombieUpgrade;
-			case PLAGUE_DEATH_EFFECT.Mana_Generator:
+			case PLAGUE_DEATH_EFFECT.Chaos_Generator:
 				return UIModel.btnMana2_3Upgrade;
 			case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
 				return UIModel.btnRandomSpirit_1Upgrade;
@@ -135,7 +135,7 @@ public class OnDeathUIView : MVCUIView
 				return UIModel.txtIgniteUpgrade;
 			case PLAGUE_DEATH_EFFECT.Zombie:
 				return UIModel.txtWalkerZombieUpgrade;
-			case PLAGUE_DEATH_EFFECT.Mana_Generator:
+			case PLAGUE_DEATH_EFFECT.Chaos_Generator:
 				return UIModel.txtMana2_3Upgrade;
 			case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
 				return UIModel.txtRandomSpirit_1Upgrade;
