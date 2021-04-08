@@ -32,7 +32,6 @@ public class TauntSpecialSkill : CombatSpecialSkill {
                     if (p_character.faction != null
                         && visionCharacter.faction != null 
                         && p_character.faction.IsHostileWith(visionCharacter.faction)
-                        && !p_character.combatComponent.IsHostileInRange(visionCharacter)
                         && !p_character.combatComponent.IsAvoidInRange(visionCharacter)) {
                         if (visionCharacter.combatComponent.IsCurrentlyAttackingFriendlyWith(p_character)) {
                             p_validTargets.Add(visionCharacter);
