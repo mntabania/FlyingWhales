@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 using Inner_Maps;
-
+using UnityEngine.Assertions;
 namespace Traits {
     public class Kleptomaniac : Trait {
         private Character traitOwner;
@@ -95,14 +95,17 @@ namespace Traits {
                     //    }
                     //}
                     List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
-                    for (int i = 0; i < character.currentSettlement.SettlementResources.characters.Count; i++) {
-                        Character otherCharacter = character.currentSettlement.SettlementResources.characters[i];
-                        if (otherCharacter.HasItem()) {
-                            choices.Add(otherCharacter);
-                        }
+                    if (character.currentSettlement != null && character.currentSettlement.SettlementResources != null) {
+                        //Pickpocket only from characters inside Settlement, if not inside a settlement, cannot target anyone
+                        for (int i = 0; i < character.currentSettlement.SettlementResources.characters.Count; i++) {
+                            Character otherCharacter = character.currentSettlement.SettlementResources.characters[i];
+                            if (otherCharacter.HasItem()) {
+                                choices.Add(otherCharacter);
+                            }
+                        }    
                     }
                     if (choices.Count > 0) {
-                        IPointOfInterest target = CollectionUtilities.GetRandomElement(choices);
+                        Character target = CollectionUtilities.GetRandomElement(choices);
                         LocationGridTile targetTile = target.gridTileLocation;
                         //if(target.isBeingCarriedBy != null) {
                         //    targetTile = target.isBeingCarriedBy.gridTileLocation;
@@ -112,6 +115,8 @@ namespace Traits {
                         } else {
                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.PICKPOCKET, target, character);
                             //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
+                            Assert.IsNotNull(character.currentSettlement);
+                            job.AddPriorityLocation(INTERACTION_TYPE.PICKPOCKET, character.currentSettlement);
                             character.jobQueue.AddJobInQueue(job);
                         }
                     } else {

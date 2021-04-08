@@ -103,7 +103,7 @@ public class TriggerFlawData : PlayerAction {
             if (LocalizationManager.Instance.HasLocalizedValue("Trigger Flaw", trait.name, result)) {
                 _triggerFlawLogFillers.Clear();
                 _triggerFlawLogFillers.Add(new LogFiller(p_character, p_character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-
+                
                 string reason = LocalizationManager.Instance.GetLocalizedValue("Trigger Flaw", trait.name, result);
                 log = UtilityScripts.Utilities.StringReplacer(reason, _triggerFlawLogFillers);
             }
