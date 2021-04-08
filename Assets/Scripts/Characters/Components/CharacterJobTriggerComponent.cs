@@ -2565,6 +2565,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerReleaseJob(Character targetCharacter) {
+        JobQueueItem job = null;
+        TriggerReleaseJob(targetCharacter, out job);
+        if(job != null) {
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    public bool TriggerReleaseJob(Character targetCharacter, out JobQueueItem producedJob) {
+        producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.RELEASE_CHARACTER, targetCharacter)) {
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RELEASE_CHARACTER], owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
@@ -2572,7 +2581,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            return owner.jobQueue.AddJobInQueue(job);
+            producedJob = job;
+            return true;
         }
         return false;
     }

@@ -197,7 +197,7 @@ namespace Traits {
             if(targetPOI is Character targetCharacter) {
                 if (characterThatWillDoJob.limiterComponent.canMove && characterThatWillDoJob.limiterComponent.canPerform) {
                     if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
-                        if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty) {
+                        if (owner.partyComponent.currentParty.currentQuest is IRescuePartyQuest rescueParty) {
                             if (rescueParty.targetCharacter == targetCharacter) {
                                 if (!targetCharacter.isDead) {
                                     if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {

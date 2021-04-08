@@ -1110,7 +1110,7 @@ public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
-public enum PARTY_QUEST_TYPE { None, Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, Demon_Defend, Demon_Snatch, Demon_Raid, }
+public enum PARTY_QUEST_TYPE { None, Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, Demon_Defend, Demon_Snatch, Demon_Raid, Demon_Rescue }
 public enum PARTY_STATE { None, Waiting, Moving, Resting, Working, }
 public enum GATHERING_TYPE { Social, Monster_Invade }
 public enum COMBAT_REACTION { None, Fight, Flight }

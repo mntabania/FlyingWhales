@@ -4,7 +4,7 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class RescuePartyQuest : PartyQuest {
+public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
 
     public Character targetCharacter { get; private set; }
     public bool isReleasing { get; private set; }

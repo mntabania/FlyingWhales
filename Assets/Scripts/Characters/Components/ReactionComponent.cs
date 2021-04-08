@@ -464,7 +464,7 @@ public class ReactionComponent : CharacterComponent {
             }
             bool shouldRelease = disguisedActor.isNormalCharacter && !disguisedActor.traitContainer.HasTrait("Enslaved") && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
                 && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor) && disguisedActor.faction != targetCharacter.faction;
-            bool isPartOfRescueJob = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueQuest && rescueQuest.targetCharacter == targetCharacter
+            bool isPartOfRescueJob = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is IRescuePartyQuest rescueQuest && rescueQuest.targetCharacter == targetCharacter
                 && targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved");
 
             bool shouldNotAttackSkeletons = disguisedActor.traitContainer.HasTrait("Necromancer") && targetCharacter.race == RACE.SKELETON && targetCharacter.faction == disguisedActor.prevFaction && disguisedActor.prevFaction != null;
