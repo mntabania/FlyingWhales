@@ -101,7 +101,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Tutorial);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetOonaWorldSettings() {
         Debug.Log("Set world settings as Second World");
@@ -114,7 +114,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Oona);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
@@ -140,7 +140,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Pangat_Loo);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
     }
     private void SetAffattWorldSettings() {
         Debug.Log("Set world settings as Affatt");
@@ -168,7 +168,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Zenko);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetAneemWorldSettings() {
         Debug.Log("Set world settings as Aneem");
@@ -181,7 +181,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Aneem);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
     }
     private void SetPittoWorldSettings() {
         Debug.Log("Set world settings as Pitto");
@@ -194,7 +194,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Pitto);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     public void ApplyCustomWorldSettings() {
         mapSettings.AllowMonsterMigrations();

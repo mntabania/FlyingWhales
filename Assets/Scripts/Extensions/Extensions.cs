@@ -1301,6 +1301,12 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsScenarioArchetype(this PLAYER_ARCHETYPE p_archetype) {
+        switch (p_archetype) {
+            default:
+                return System.Enum.TryParse(p_archetype.ToString(), out WorldSettingsData.World_Type worldType);
+        }
+    }
     #endregion
 
     #region Piercing and Resistances

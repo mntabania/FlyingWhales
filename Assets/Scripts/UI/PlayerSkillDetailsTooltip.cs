@@ -71,7 +71,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
         string currencyStr = GetCurrencySummary(manaCost, charges, charges, cooldown); 
         
-        levelText.text = (level + 1).ToString();
+        levelText.text = $"Lv. {(level + 1).ToString()}";
         currenciesText.text = currencyStr;
         additionalText.text = string.Empty;
         bonusesText.text = GetBonusesString(skillData, level);

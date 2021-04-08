@@ -217,7 +217,13 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
     }
     private void OnHoverEnterSkillSlotItem(PlayerSkillData skillData) {
         if(skillData != null) {
-            skillDetailsTooltip.ShowPlayerSkillDetails(skillData);
+            if (loadout.archetype.IsScenarioArchetype()) {
+                ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
+                skillDetailsTooltip.ShowPlayerSkillDetails(skillData, scenarioData.GetLevelForPower(skillData.skill));
+            } else {
+                skillDetailsTooltip.ShowPlayerSkillDetails(skillData);    
+            }
+            
         }
     }
     private void OnHoverExitSkillSlotItem(PlayerSkillData skillData) {
