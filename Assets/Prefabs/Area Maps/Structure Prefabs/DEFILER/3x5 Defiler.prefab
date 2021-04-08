@@ -506,14 +506,7 @@ MonoBehaviour:
   _thinWallResource: 0
   _predeterminedOccupiedCoordinates: []
   _connectors: []
-  roomTemplates:
-  - coordinatesInRoom:
-    - {x: 1, y: 1, z: 0}
-    - {x: 1, y: 2, z: 0}
-    - {x: 2, y: 1, z: 0}
-    - {x: 2, y: 2, z: 0}
-    - {x: 1, y: 3, z: 0}
-    - {x: 2, y: 3, z: 0}
+  roomTemplates: []
   _clickCollider: {fileID: 0}
   wallsContributeToDamage: 1
   wallTileMap: {fileID: 7766376355357131671}

@@ -166,7 +166,7 @@ public class SeizeComponent {
                 return !kennel.HasReachedKennelCapacity() && kennel.preOccupiedBy == null && (summon.faction == null || !summon.faction.isPlayerFaction);
             }
             return false;
-        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS || tileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
+        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
             if (tileLocation.structure.IsTilePartOfARoom(tileLocation, out var room)) {
                 if (seizedPOI is Character character) {
                     return room.CanUnseizeCharacterInRoom(character) && (tileLocation.structure as DemonicStructure).preOccupiedBy == null;
