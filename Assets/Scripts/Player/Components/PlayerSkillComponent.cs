@@ -69,7 +69,7 @@ public class PlayerSkillComponent {
 
     void OnStructureDestroyed(LocationStructure p_structure) {
         if (p_structure.structureType == STRUCTURE_TYPE.BIOLAB) {
-            if (!HasBiolab()) {
+            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
                 LockPlagueSkills();
             }
         }
@@ -548,15 +548,6 @@ public class PlayerSkillComponent {
         p_skillData.SetThreatPerHour(p_playerSkillData.threatPerHour);
     }
     #endregion
-
-    bool HasBiolab() {
-        for(int x = 0; x < PlayerManager.Instance.player.playerSettlement.allStructures.Count; ++x) {
-            if(PlayerManager.Instance.player.playerSettlement.allStructures[x].structureType == STRUCTURE_TYPE.BIOLAB) {
-                return true;
-			}
-		}
-        return false;
-	}
 
     #region Summons
     //public void AddSummon(Summon summon) {

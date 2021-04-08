@@ -41,9 +41,10 @@ public class SacrificeData : PlayerAction {
                         return true;
                     } else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
                         return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
-                    } else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
-                        return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
-                    }
+                    } 
+                    //else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
+                    //    return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+                    //}
                 }
             }
             return false;
@@ -57,9 +58,10 @@ public class SacrificeData : PlayerAction {
                     return true;
                 } else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
                     return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
-                }else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
-                    return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
                 }
+                //else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
+                //    return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+                //}
             }
             return false;
         }

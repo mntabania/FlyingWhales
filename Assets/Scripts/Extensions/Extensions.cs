@@ -174,7 +174,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MEDDLER:
             case STRUCTURE_TYPE.KENNEL:
             case STRUCTURE_TYPE.CAVE:
-            case STRUCTURE_TYPE.DEFILER:
+            //case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.RUINED_ZOO:
             case STRUCTURE_TYPE.BIOLAB:
             case STRUCTURE_TYPE.QUARRY:

@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3997845
+    totalSpriteSurfaceArea: 4059285
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -756,6 +756,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: acd0388ed4c272f4e8c094ab07ec4cba, type: 3}
   - {fileID: 21300000, guid: 0fcf0a8ed43b7774fb6983eb91e742c1, type: 3}
   - {fileID: 21300000, guid: b5c02b9ef4f2108498c7ba82f044151c, type: 3}
+  - {fileID: 21300000, guid: 05b4e4ae01a06044095ab6510bf22fbf, type: 3}
   - {fileID: 21300000, guid: 836365aef532aad46a15bbd0feab095a, type: 3}
   - {fileID: 21300000, guid: 9530e8ae20a049b4caa08d16e9218894, type: 3}
   - {fileID: 21300000, guid: f6ac7caed00cf71478c14b1e19a1572d, type: 3}
@@ -1539,6 +1540,7 @@ SpriteAtlas:
   - floorStone11
   - well03
   - caveWallA-0011-00
+  - defiler_192x320
   - laidWallA11101000-00
   - demonBarsVertical00
   - BIG_TREE_OBJECT#5
