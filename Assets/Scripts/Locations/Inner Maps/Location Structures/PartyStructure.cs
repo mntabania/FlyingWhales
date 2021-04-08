@@ -160,11 +160,13 @@ namespace Inner_Maps.Location_Structures {
             }
 
             if(partyData.deployedSummonCount <= 0 && partyData.deployedMinionCount <= 0) {
+                partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
                 partyData.deployedTargets.Clear();
 			}
         }
 
         void OnTargetRemoved(IStoredTarget p_removedTarget) {
+            p_removedTarget.isTargetted = false;
             partyData.deployedTargets.Remove(p_removedTarget);
 		}
 
@@ -189,9 +191,7 @@ namespace Inner_Maps.Location_Structures {
                 partyData.deployedMinions[0].Death();    
             }
             RuinarchListPool<Character>.Release(deployed);
-            if (partyData.deployedTargets.Count > 0) {
-                partyData.deployedTargets[0].isTargetted = false;
-            }
+            partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
             partyData.ClearAllData();
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
             Debug.Log($"Un Deployed party at {name}. Party was {party?.name}");
@@ -210,6 +210,7 @@ namespace Inner_Maps.Location_Structures {
         #region Party.EventsIListener
         public void OnQuestSucceed() {
             if (!m_isUndeployUserAction) {
+                partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
                 ResetExistingCharges();
                 party.Unsubscribe(this);
                 UnDeployAll();
@@ -217,6 +218,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public void OnQuestFailed() {
             if (!m_isUndeployUserAction) {
+                partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
                 ResetExistingCharges();
                 party.Unsubscribe(this);
                 UnDeployAll();
