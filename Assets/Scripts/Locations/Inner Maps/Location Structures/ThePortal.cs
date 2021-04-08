@@ -72,7 +72,13 @@ namespace Inner_Maps.Location_Structures {
         public void GainUpgradePowers(PortalUpgradeTier p_tier) {
             for (int i = 0; i < p_tier.skillTypesToUnlock.Length; i++) {
                 PLAYER_SKILL_TYPE skill = p_tier.skillTypesToUnlock[i];
-                PlayerManager.Instance.player.playerSkillComponent.AddMaxCharges(skill, 1);
+                SkillData skillData = PlayerSkillManager.Instance.GetSkillData(skill);
+                if (skillData.isInUse) {
+                    skillData.AdjustMaxCharges(1);
+                    skillData.AdjustCharges(1);
+                } else {
+                    PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(skill);
+                }
             }
             for (int i = 0; i < p_tier.passiveSkillsToUnlock.Length; i++) {
                 PASSIVE_SKILL passiveSkill = p_tier.passiveSkillsToUnlock[i];
