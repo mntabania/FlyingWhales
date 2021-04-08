@@ -168,6 +168,7 @@ public class PlayerSkillComponent {
         portal.GainUpgradePowers(portal.nextTier);
         portal.IncreaseLevel();
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, portal.level);
+        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         currentPortalUpgradeCost = null;
     }
     private void ResetPlayerSpellChoices() {
