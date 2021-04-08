@@ -120,6 +120,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		}
 		ClearListFirst();
 		List<PLAYER_SKILL_TYPE> skillToBeDisplayed = ListPoolManager.CreateNewPlayerSkillTypeList();
+		//add the available first
 		p_skillSets.ForEach((eachSkill) => {
 			if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
 			GetUpgradeCostBaseOnLevel(PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel) <= plaguePoints) {
@@ -128,6 +129,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 				}
 			}
 		});
+		//add can't afford list
 		p_skillSets.ForEach((eachSkill) => {
 			if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
 			GetUpgradeCostBaseOnLevel(PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel) > plaguePoints) {
