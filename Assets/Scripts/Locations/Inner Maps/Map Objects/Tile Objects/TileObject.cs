@@ -1145,6 +1145,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         //mapVisual.SetVisualAlpha(1f);
         hiddenComponent.OnSetHiddenState();
+        mapVisual.SetVisualAlpha(255f / 255f);
         SetSlotAlpha(255f / 255f);
         SetPOIState(POI_STATE.ACTIVE);
         if (advertisedActions != null && advertisedActions.Count > 0) {

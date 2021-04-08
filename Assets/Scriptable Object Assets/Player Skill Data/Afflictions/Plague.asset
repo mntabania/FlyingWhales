@@ -25,7 +25,7 @@ MonoBehaviour:
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
   unlockCost: 300
-  tier: 3
+  tier: 0
   baseLoadoutWeight: 0
   resistanceType: 10
   archetypeWeightedBonus: 2

@@ -1139,6 +1139,36 @@ namespace UtilityScripts {
         public static string ColorizeSpellTitle(string name) {
             return $"<color=#D7AE50>{name}</color>";
         }
+        public static string GetRichTextIconForElement(ELEMENTAL_TYPE p_type) {
+            string formatted = string.Empty;
+            switch (p_type) {
+                case ELEMENTAL_TYPE.Normal:
+                formatted = $"{ColorizeSpellTitle($"{NormalIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Poison:
+                formatted = $"{ColorizeSpellTitle($"{PoisonIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Fire:
+                formatted = $"{ColorizeSpellTitle($"{FireIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Water:
+                formatted = $"{ColorizeSpellTitle($"{WaterIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Wind:
+                formatted = $"{ColorizeSpellTitle($"{WindIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Ice:
+                formatted = $"{ColorizeSpellTitle($"{IceIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Electric:
+                formatted = $"{ColorizeSpellTitle($"{ElectricIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Earth:
+                formatted = $"{ColorizeSpellTitle($"{EarthIcon()}")}";
+                break;
+            }
+            return formatted;
+        }
         public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
             string[] emotions = emotionsStr.Split(' ');
             string trimmedEmotions = string.Empty;
