@@ -52,6 +52,7 @@ public class LetGoData : PlayerAction {
     }
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
+            LocationStructure letGoFrom = targetCharacter.currentStructure;
             //Make character dazed (if not summon) and teleport him/her on a random spot outside
             List<LocationGridTile> allTilesOutside = RuinarchListPool<LocationGridTile>.Claim();
             List<LocationGridTile> passableTilesOutside = RuinarchListPool<LocationGridTile>.Claim();
@@ -76,6 +77,13 @@ public class LetGoData : PlayerAction {
             GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);
             targetPOI.traitContainer.RemoveRestrainAndImprison(targetPOI);
             RuinarchListPool<LocationGridTile>.Release(allTilesOutside);
+
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Let Go", "activated");
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(letGoFrom, letGoFrom?.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+            
             base.ActivateAbility(targetPOI);    
         }
     }
