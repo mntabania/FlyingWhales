@@ -193,6 +193,7 @@ public class CharacterInfoUI : InfoUIBase {
         _dictMoodSummary = new Dictionary<string, MoodSummaryEntry>();
 
         piercingAndResistancesInfo.Initialize();
+
     }
 
     #region Overrides
@@ -207,13 +208,13 @@ public class CharacterInfoUI : InfoUIBase {
             }
             character.marker.UpdateNameplateElementsState();
         }
-        piercingAndResistancesInfo.HidePiercingAndResistancesInfo();
         m_currentViewMode = VIEW_MODE.None;
     }
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
+        piercingAndResistancesInfo.UpdatePierceUI(_activeCharacter);
         if (_previousCharacter != null && _previousCharacter.hasMarker) {
             _previousCharacter.marker.UpdateNameplateElementsState();
         }
