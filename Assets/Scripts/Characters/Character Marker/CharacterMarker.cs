@@ -503,7 +503,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemovePOIAsInRangeButDifferentStructure(obj);
     }
     private void OnActiveIntelSet(IIntel intel) {
-        if (PlayerManager.Instance.player.CanShareIntel(character) && HasRelationshipWithIntel(intel)) {
+        if (PlayerManager.Instance.player.CanShareIntelTo(character, intel) && HasRelationshipWithIntel(intel)) {
             _nameplate.SetHighlighterState(true);    
         }
     }
