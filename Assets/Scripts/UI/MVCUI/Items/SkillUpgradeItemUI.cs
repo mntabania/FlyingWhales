@@ -42,7 +42,7 @@ public class SkillUpgradeItemUI : MonoBehaviour {
 		} else {
 			btnSkill.gameObject.SetActive(true);
 			spiritIcon.gameObject.SetActive(true);
-			txtCost.text = playerSkillData.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel).ToString();
+			txtCost.text = playerSkillData.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel + 1).ToString();
 
 			if (p_spiritCount < playerSkillData.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel + 1)) {
 				btnSkill.interactable = false;
