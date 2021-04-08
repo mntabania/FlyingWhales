@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 4119029
+    totalSpriteSurfaceArea: 4122250
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -318,6 +318,7 @@ SpriteAtlas:
   - {fileID: -6210221001400506702, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -7536090202175102610, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -5934634420481666465, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 21300000, guid: 835623a948f6394498d275526def36b4, type: 3}
   - {fileID: 21300000, guid: 9450c3a9507c1e549800df5991839a0e, type: 3}
   - {fileID: 21300000, guid: 244795c91a7b97749a8656d2778003d4, type: 3}
   - {fileID: 21300000, guid: b5a91dc998b014448be00704f6143f25, type: 3}
@@ -378,6 +379,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fe1a591c45577164caffea0071e2c890, type: 3}
   - {fileID: 21300000, guid: c101cb1c982e91d478d9503ab435474c, type: 3}
   - {fileID: 21300000, guid: cd0fdf3cea6343b489b62c13f949612b, type: 3}
+  - {fileID: 21300000, guid: 32ddb04c496080b409702772751d00d9, type: 3}
   - {fileID: 21300000, guid: 54202d4c9c12b6c42b0a5d56630b9b11, type: 3}
   - {fileID: 21300000, guid: 4e862e4ca18156648bc6399151215394, type: 3}
   - {fileID: 21300000, guid: 7a96c65c4fcb0314ead2e37437289838, type: 3}
@@ -742,6 +744,7 @@ SpriteAtlas:
   - stats_attack_icon
   - element_poison_icon
   - icon_monster
+  - icon_target_hover
   - dropdown_container
   - element_normal_icon
   - active_ability_icon
@@ -802,6 +805,7 @@ SpriteAtlas:
   - Scroll-Circle-Selected
   - icon_cooldown
   - notification_intel_button_hover
+  - icon_target_disabled
   - button_close_hover
   - faction_ui_resident_default
   - Arrow-Faction-Btn-Selected

@@ -155,7 +155,7 @@ public class SkillData : IPlayerSkill {
         threatPerHour = 0;
         currentCooldownTick = cooldown;
         currentLevel = 0;
-        isInUse = false;
+        ResetIsInUse();
         isTemporarilyInUse = false;
         skillEventDispatcher.CleanUp();
     }
@@ -407,6 +407,9 @@ public class SkillData : IPlayerSkill {
             }
         }
         // Debug.Log($"Set spell {name} in use to {isInUse.ToString()}");
+    }
+    public void ResetIsInUse() {
+        isInUse = false;
     }
     public void SetIsTemporarilyInUse(bool p_state) {
         isTemporarilyInUse = p_state;
