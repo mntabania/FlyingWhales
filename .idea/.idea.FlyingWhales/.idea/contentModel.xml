@@ -2164,6 +2164,7 @@
                   <e p="CultCross.cs" t="Include" />
                   <e p="CultistKit.cs" t="Include" />
                   <e p="DefensePointTileObject.cs" t="Include" />
+                  <e p="DefilerTileObject.cs" t="Include" />
                   <e p="DemonAltar.cs" t="Include" />
                   <e p="DemonCircle.cs" t="Include" />
                   <e p="DemonRack.cs" t="Include" />
@@ -2515,9 +2516,9 @@
             <e p="PartyDamageAccumulator.cs" t="Include" />
             <e p="Plague Related Scripts" t="Include">
               <e p="Death Effects" t="Include">
+                <e p="ChaosGenerator.cs" t="Include" />
                 <e p="Explosion.cs" t="Include" />
                 <e p="HauntedSpirits.cs" t="Include" />
-                <e p="ManaGenerator.cs" t="Include" />
                 <e p="PlagueDeathEffect.cs" t="Include" />
                 <e p="Zombie.cs" t="Include" />
               </e>
@@ -2614,8 +2615,11 @@
                 <e p="AutoAbsorbChaosOrb.cs" t="Include" />
                 <e p="DarkRitualChaosOrb.cs" t="Include" />
                 <e p="EnemiesChaosOrb.cs" t="Include" />
+                <e p="LycanthropeChaosOrb.cs" t="Include" />
+                <e p="MeddlerChaosOrb.cs" t="Include" />
                 <e p="MentalBreakChaosOrb.cs" t="Include" />
                 <e p="MonsterChaosOrb.cs" t="Include" />
+                <e p="NightCreatureChaosOrb.cs" t="Include" />
                 <e p="PassiveManaRegen.cs" t="Include" />
                 <e p="PassiveSkill.cs" t="Include" />
                 <e p="PlagueChaosOrb.cs" t="Include" />
@@ -2623,6 +2627,7 @@
                 <e p="PrayerChaosOrb.cs" t="Include" />
                 <e p="RaidChaosOrb.cs" t="Include" />
                 <e p="SpellDamageChaosOrb.cs" t="Include" />
+                <e p="TriggerFlawChaosOrb.cs" t="Include" />
                 <e p="UndeadChaosOrb.cs" t="Include" />
               </e>
               <e p="Player Actions" t="Include">
@@ -3019,8 +3024,8 @@
             <e p="SaveDataMinion.cs" t="Include" />
             <e p="SaveDataPlayer.cs" t="Include" />
             <e p="SaveDataPlayerGame.cs" t="Include" />
-            <e p="SaveDataPlayerSkill.cs" t="Include" />
             <e p="SaveDataRegion.cs" t="Include" />
+            <e p="SaveDataSkillData.cs" t="Include" />
             <e p="SaveDataTileObject.cs" t="Include" />
             <e p="SaveDataTrait.cs" t="Include" />
             <e p="SaveUtilities.cs" t="Include" />
@@ -3677,11 +3682,11 @@
               <e p="PartySignals.cs" t="Include" />
               <e p="PlayerQuestSignals.cs" t="Include" />
               <e p="PlayerSignals.cs" t="Include" />
+              <e p="PlayerSkillSignals.cs" t="Include" />
               <e p="RegionSignals.cs" t="Include" />
               <e p="SettingsSignals.cs" t="Include" />
               <e p="SettlementSignals.cs" t="Include" />
               <e p="Signals.cs" t="Include" />
-              <e p="SpellSignals.cs" t="Include" />
               <e p="StructureSignals.cs" t="Include" />
               <e p="TileObjectSignals.cs" t="Include" />
               <e p="TraitSignals.cs" t="Include" />
