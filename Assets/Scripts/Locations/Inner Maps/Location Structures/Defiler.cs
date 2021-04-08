@@ -40,6 +40,15 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
+        #region Structure Object
+        public override void SetStructureObject(LocationStructureObject structureObj) {
+            base.SetStructureObject(structureObj);
+            Vector3 position = structureObj.transform.position;
+            //position.x += 0.25f;
+            worldPosition = position;
+        }
+        #endregion
+
         //#region Listeners
         //protected override void SubscribeListeners() {
         //    base.SubscribeListeners();
@@ -62,7 +71,7 @@ namespace Inner_Maps.Location_Structures {
         //    return new PrisonCell(tilesInRoom);
         //}
         //#endregion
-        
+
         //private void StopDrainingCharactersHere() {
         //    for (int i = 0; i < charactersHere.Count; i++) {
         //        Character character = charactersHere[i];
