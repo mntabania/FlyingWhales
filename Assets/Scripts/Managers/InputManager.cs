@@ -44,6 +44,7 @@ namespace Ruinarch {
             {KeyCode.F7, true},
             {KeyCode.F8, true},
             {KeyCode.F9, true},
+            {KeyCode.F10, true},
             {KeyCode.Space, true},
             {KeyCode.Escape, true},
             {KeyCode.Alpha1, true},

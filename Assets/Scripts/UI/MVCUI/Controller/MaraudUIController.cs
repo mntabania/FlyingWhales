@@ -297,7 +297,11 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	void SetTargetHoverText(AvailableTargetItemUI p_item) {
 		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 			p_item.SetHoverText("You cant add a team member bacause the structure is occupied");
-		} else {
+		} else if ((p_item.target as Character).currentStructure.structureType == STRUCTURE_TYPE.KENNEL ||
+			(p_item.target as Character).currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+			p_item.SetHoverText("Target already imprisoned");
+		}
+		else {
 			p_item.SetHoverText("Target already chased by another party");
 		}
 	}

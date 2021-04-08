@@ -120,6 +120,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		}
 		ClearListFirst();
 		List<PLAYER_SKILL_TYPE> skillToBeDisplayed = ListPoolManager.CreateNewPlayerSkillTypeList();
+		//add the available first
 		p_skillSets.ForEach((eachSkill) => {
 			SkillData skill = PlayerSkillManager.Instance.GetSkillData(eachSkill);
 			if (PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
@@ -129,6 +130,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 				}
 			}
 		});
+		//add can't afford list
 		p_skillSets.ForEach((eachSkill) => {
 			SkillData skill = PlayerSkillManager.Instance.GetSkillData(eachSkill);
 			if (PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
