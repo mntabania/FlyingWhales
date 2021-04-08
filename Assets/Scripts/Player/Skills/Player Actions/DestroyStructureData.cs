@@ -12,12 +12,24 @@ public class DestroyStructureData : PlayerAction {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.STRUCTURE };
     }
 
+    private LocationStructure m_targetStructure;
+
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        if (structure is DemonicStructure demonicStructure) {
-            demonicStructure.AdjustHP(-structure.currentHP);
+        m_targetStructure = structure;
+        UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Destroy Structure.", $"Are you sure you want to destroy {structure.name}?", OnActualDestroyStructure, showCover: true, layer: 150);
+    }
+
+    void OnActualDestroyStructure() {
+        if (m_targetStructure is DemonicStructure demonicStructure) {
+            demonicStructure.AdjustHP(-m_targetStructure.currentHP);
         }
-        base.ActivateAbility(structure);
+        base.ActivateAbility(m_targetStructure);
+        
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Destroy Structure", "activated", null, LOG_TAG.Player);
+        log.AddToFillers(m_targetStructure, m_targetStructure.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
         bool canPerform = base.CanPerformAbilityTowards(structure);
