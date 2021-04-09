@@ -1239,7 +1239,7 @@ namespace Inner_Maps {
             for (int i = 0; i < neighbourList.Count; i++) {
                 LocationGridTile neighbor = neighbourList[i];
                 if (!thisStructureOnly || neighbor.structure == structure) {
-                    if (neighbor.tileObjectComponent.objHere == null) {
+                    if (neighbor.tileObjectComponent.objHere == null && neighbor.IsPassable()) {
                         return neighbor;
                     }
                 }
@@ -1253,7 +1253,7 @@ namespace Inner_Maps {
             if (!checkedTiles.Contains(this)) {
                 checkedTiles.Add(this);
 
-                if (tileObjectComponent.objHere == null && this != exception) {
+                if (tileObjectComponent.objHere == null && IsPassable() && this != exception) {
                     return this;
                 }
                 LocationGridTile chosenTile = GetFirstNoObjectNeighbor(thisStructureOnly);
