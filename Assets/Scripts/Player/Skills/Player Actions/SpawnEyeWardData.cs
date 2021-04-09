@@ -42,7 +42,7 @@ public class SpawnEyeWardData : PlayerAction {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            if(targetTile.tileObjectComponent.hiddenObjHere != null) {
+            if(targetTile.tileObjectComponent.hiddenObjHere != null || targetTile.isOccupied) {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Skills", "Spawn Eye Ward", "invalid_already_has_hidden_object");
                 return false;
             }
