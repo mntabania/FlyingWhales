@@ -113,8 +113,14 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
 
     private void OnHoverOverUpgradeItem(UpgradePortalItemUI p_item) {
         if (PlayerUI.Instance != null) {
-            PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_item.skill);
-            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);    
+            if (p_item.skill != PLAYER_SKILL_TYPE.NONE) {
+                PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_item.skill);
+                PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);    
+            } else if (p_item.passiveSkill != PASSIVE_SKILL.None) {
+                PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(p_item.passiveSkill);
+                PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(passiveSkill.name, passiveSkill.description, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);
+            }
+                
         }
     }
     private void OnHoverOutUpgradeItem(UpgradePortalItemUI p_item) {
