@@ -867,6 +867,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         destinationSetter.target = target;
         pathfindingAI.canSearch = true;
     }
+    public bool IsTargetPOIInPathfinding(IPointOfInterest poi) {
+        return destinationSetter.target = poi.mapObjectVisual.transform;
+    }
     public void ClearArrivalAction() {
          arrivalAction = null;
     }
@@ -1765,6 +1768,44 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
         ReconstructFleePath();
+    }
+    public void OnStartFleeToPartyMate() {
+        Character chosenCharacter = null;
+        Character secondChosenCharacter = null;
+
+        LocationGridTile currentTileLocation = character.gridTileLocation;
+        if (character.partyComponent.isMemberThatJoinedQuest && currentTileLocation != null) {
+            for (int i = 0; i < character.partyComponent.currentParty.membersThatJoinedQuest.Count; i++) {
+                Character member = character.partyComponent.currentParty.membersThatJoinedQuest[i];
+                LocationGridTile memberTileLocation = member.gridTileLocation;
+                if (member.limiterComponent.canPerform && member.limiterComponent.canMove && member.hasMarker && !member.isBeingSeized
+                    && member.carryComponent.IsNotBeingCarried() && memberTileLocation != null) {
+                    if (character.movementComponent.HasPathToEvenIfDiffRegion(memberTileLocation)) {
+                        float dist = currentTileLocation.GetDistanceTo(memberTileLocation);
+                        if(dist <= 20f) {
+                            if (member.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Tank)) {
+                                chosenCharacter = member;
+                                break;
+                            } else if(secondChosenCharacter == null) {
+                                secondChosenCharacter = member;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(chosenCharacter != null || secondChosenCharacter != null) {
+            pathfindingAI.ClearAllCurrentPathData();
+            SetHasFleePath(true);
+            pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
+            if (chosenCharacter != null) {
+                GoTo(chosenCharacter, OnFinishedTraversingFleePath);
+            } else if (secondChosenCharacter != null) {
+                GoTo(secondChosenCharacter, OnFinishedTraversingFleePath);
+            }
+        } else {
+            OnStartFlee();
+        }
     }
     public void OnStartFleeToHome() {
         if (!hasFleePath) {

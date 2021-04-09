@@ -785,14 +785,24 @@ namespace Locations.Settlements {
             }
             return false;
         }
-        public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] type) where T : TileObject {
-            for (int i = 0; i < allStructures.Count; i++) {
-                T obj = allStructures[i].GetFirstTileObjectOfType<T>(type);
-                if(obj != null) {
-                    return obj as T;
+        public TileObject GetRandomTileObject() {
+            List<Area> areaChoices = RuinarchListPool<Area>.Claim();
+            areaChoices.AddRange(areas);
+            TileObject chosenTileObject = null;
+            while (chosenTileObject == null && areaChoices.Count > 0) {
+                int areaIndex = GameUtilities.RandomBetweenTwoNumbers(0, areaChoices.Count - 1);
+                Area randomArea = areaChoices[areaIndex];
+                if (randomArea != null) {
+                    chosenTileObject = randomArea.tileObjectComponent.GetRandomTileObject();
+                    if(chosenTileObject == null) {
+                        areaChoices.RemoveAt(areaIndex);
+                    }
+                } else {
+                    break;
                 }
             }
-            return null;
+            RuinarchListPool<Area>.Release(areaChoices);
+            return chosenTileObject;
         }
         public T GetRandomTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
             List<T> objs = null;
@@ -805,8 +815,17 @@ namespace Locations.Settlements {
                     objs.AddRange(structureTileObjects);
                 }
             }
-            if(objs != null && objs.Count > 0) {
+            if (objs != null && objs.Count > 0) {
                 return objs[UnityEngine.Random.Range(0, objs.Count)];
+            }
+            return null;
+        }
+        public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] type) where T : TileObject {
+            for (int i = 0; i < allStructures.Count; i++) {
+                T obj = allStructures[i].GetFirstTileObjectOfType<T>(type);
+                if(obj != null) {
+                    return obj as T;
+                }
             }
             return null;
         }

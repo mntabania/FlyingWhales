@@ -965,16 +965,11 @@ public class CombatState : CharacterState {
             }
         }
         string reason = GetAvoidReason(objToAvoid);
-        if (reason == "critically low health") {
-            if (stateComponent.owner.partyComponent.hasParty) {
-                Party party = stateComponent.owner.partyComponent.currentParty;
-                if (party.isActive && party.partyState == PARTY_STATE.Working && party.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Raid) {
-                    stateComponent.owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(stateComponent.owner);
-                }
-            }
-        }
-        //stateComponent.owner.marker.OnStartFlee();
-        if (stateComponent.owner.currentStructure != null && stateComponent.owner.currentStructure.structureType.IsSpecialStructure()) {
+
+        if (reason == CombatManager.Vulnerable) {
+            //Will go to party mate
+            stateComponent.owner.marker.OnStartFleeToPartyMate();
+        } else if (stateComponent.owner.currentStructure != null && stateComponent.owner.currentStructure.structureType.IsSpecialStructure()) {
             stateComponent.owner.marker.OnStartFleeToOutside();
         } else {
             stateComponent.owner.marker.OnStartFlee();
@@ -984,6 +979,15 @@ public class CombatState : CharacterState {
             //} else {
             //    stateComponent.owner.marker.OnStartFlee();
             //}
+        }
+
+        if (reason == "critically low health") {
+            if (stateComponent.owner.partyComponent.hasParty) {
+                Party party = stateComponent.owner.partyComponent.currentParty;
+                if (party.isActive && party.partyState == PARTY_STATE.Working && party.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Raid) {
+                    stateComponent.owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(stateComponent.owner);
+                }
+            }
         }
 
         if (shouldLog) {

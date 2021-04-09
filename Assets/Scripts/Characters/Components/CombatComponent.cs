@@ -309,6 +309,26 @@ public class CombatComponent : CharacterComponent {
             }
         } else if (target is Character targetCharacter) {
             debugLog += "\n-Target is character";
+            if((owner.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Glass_Cannon)
+                || owner.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Healer)) && owner.partyComponent.isMemberThatJoinedQuest) {
+                debugLog += "\n-Owner is glass cannon/healer and is part of an active party";
+                bool hasMemberInVision = false;
+                if (owner.hasMarker) {
+                    for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                        Character inVision = owner.marker.inVisionCharacters[i];
+                        if (inVision.partyComponent.IsAMemberOfParty(owner.partyComponent.currentParty) && inVision.partyComponent.isMemberThatJoinedQuest) {
+                            hasMemberInVision = true;
+                            break;
+                        }
+                    }
+                }
+                if (!hasMemberInVision) {
+                    debugLog += "\n-Owner has no party member in vision, will flee";
+                    return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Vulnerable);
+                } else {
+                    debugLog += "\n-Owner has party member in vision";
+                }
+            }
             bool isOwnerCombatant = owner.characterClass.IsCombatant() || owner.characterClass.className == "Noble";
             if (!isOwnerCombatant) {
                 debugLog += "\n-Character is non-combatant";

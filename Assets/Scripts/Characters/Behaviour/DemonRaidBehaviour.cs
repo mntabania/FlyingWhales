@@ -24,8 +24,8 @@ public class DemonRaidBehaviour : CharacterBehaviourComponent {
                     return true;
                 }
                 BaseSettlement targetSettlement = quest.targetSettlement;
-                Character target = targetSettlement.GetRandomResidentThatMeetCriteria(resident => character != resident && !resident.isDead && !resident.isBeingSeized && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(targetSettlement) && !resident.traitContainer.HasTrait("Hibernating", "Indestructible"));
-                if (target != null) {
+                TileObject target = targetSettlement.GetRandomTileObject();
+                if (target != null && !target.traitContainer.HasTrait("Indestructible")) {
                     log += $"\n-Chosen target is {target.name}";
                     character.combatComponent.Fight(target, CombatManager.Hostility);
                 } else {

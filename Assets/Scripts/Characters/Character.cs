@@ -1988,7 +1988,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnSeizePOI(IPointOfInterest poi) {
-        if(poi is Character character) {
+        if (poi != this) {
+            if (hasMarker && marker.IsTargetPOIInPathfinding(poi)) {
+                if (marker.hasFleePath) {
+                    marker.SetHasFleePath(false);
+                    marker.pathfindingAI.ClearAllCurrentPathData();
+                    combatComponent.SetWillProcessCombat(true);
+                }
+            }
+        }
+        if (poi is Character character) {
             OnSeizeCharacter(character);
         } else if (poi is TileObject tileObject) {
             OnSeizeTileObject(tileObject);
