@@ -247,6 +247,21 @@ public class CombatComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
+        if (target is Character) {
+            if (owner.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Glass_Cannon) 
+                || owner.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Healer)) {
+                debugLog += "\n-Owner is glass cannon/healer and is part of an active party";
+                if (owner.partyComponent.HasReachablePartymateToFleeTo()) {
+                    if (!owner.partyComponent.HasPartymateInVision()) {
+                        debugLog += "\n-Owner has no party member in vision, will flee";
+                        owner.logComponent.PrintLogIfActive(debugLog);
+                        return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Vulnerable);
+                    } else {
+                        debugLog += "\n-Owner has party member in vision";
+                    }
+                }
+            }
+        }
         if (owner.traitContainer.HasTrait("Berserked") || owner is Summon || owner.characterClass.IsZombie() || owner.race == RACE.DEMON) {
             debugLog += "\n-Character is berserked/monster/zombie/demon";
             debugLog += "\n-FIGHT";
@@ -309,26 +324,6 @@ public class CombatComponent : CharacterComponent {
             }
         } else if (target is Character targetCharacter) {
             debugLog += "\n-Target is character";
-            if((owner.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Glass_Cannon)
-                || owner.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Healer)) && owner.partyComponent.isMemberThatJoinedQuest) {
-                debugLog += "\n-Owner is glass cannon/healer and is part of an active party";
-                bool hasMemberInVision = false;
-                if (owner.hasMarker) {
-                    for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
-                        Character inVision = owner.marker.inVisionCharacters[i];
-                        if (inVision.partyComponent.IsAMemberOfParty(owner.partyComponent.currentParty) && inVision.partyComponent.isMemberThatJoinedQuest) {
-                            hasMemberInVision = true;
-                            break;
-                        }
-                    }
-                }
-                if (!hasMemberInVision) {
-                    debugLog += "\n-Owner has no party member in vision, will flee";
-                    return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Vulnerable);
-                } else {
-                    debugLog += "\n-Owner has party member in vision";
-                }
-            }
             bool isOwnerCombatant = owner.characterClass.IsCombatant() || owner.characterClass.className == "Noble";
             if (!isOwnerCombatant) {
                 debugLog += "\n-Character is non-combatant";
@@ -848,7 +843,7 @@ public class CombatComponent : CharacterComponent {
         }
         return false;
     }
-    public void RemoveAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
+    public bool RemoveAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (avoidInRange.Remove(poi)) {
             if (processCombatBehavior) {
                 SetWillProcessCombat(true);
@@ -857,7 +852,9 @@ public class CombatComponent : CharacterComponent {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
             }
+            return true;
         }
+        return false;
     }
     public void RemoveAvoidInRangeSchedule(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (IsAvoidInRange(poi)) {

@@ -868,7 +868,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI.canSearch = true;
     }
     public bool IsTargetPOIInPathfinding(IPointOfInterest poi) {
-        return destinationSetter.target = poi.mapObjectVisual.transform;
+        return destinationSetter.target == poi.mapObjectVisual.transform;
     }
     public void ClearArrivalAction() {
          arrivalAction = null;
@@ -1778,7 +1778,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             for (int i = 0; i < character.partyComponent.currentParty.membersThatJoinedQuest.Count; i++) {
                 Character member = character.partyComponent.currentParty.membersThatJoinedQuest[i];
                 LocationGridTile memberTileLocation = member.gridTileLocation;
-                if (member.limiterComponent.canPerform && member.limiterComponent.canMove && member.hasMarker && !member.isBeingSeized
+                if (character != member && member.limiterComponent.canPerform && member.limiterComponent.canMove && member.hasMarker && !member.isBeingSeized
                     && member.carryComponent.IsNotBeingCarried() && memberTileLocation != null) {
                     if (character.movementComponent.HasPathToEvenIfDiffRegion(memberTileLocation)) {
                         float dist = currentTileLocation.GetDistanceTo(memberTileLocation);
@@ -1795,7 +1795,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
         if(chosenCharacter != null || secondChosenCharacter != null) {
-            pathfindingAI.ClearAllCurrentPathData();
+            if (!hasFleePath) {
+                //Only clear path on the first start of flee, once the character is already in flee path and decided to flee again do not clear path anymore
+                pathfindingAI.ClearAllCurrentPathData();
+            }
             SetHasFleePath(true);
             pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
             if (chosenCharacter != null) {

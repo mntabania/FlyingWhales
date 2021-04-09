@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps;
 
 public class CharacterPartyComponent : CharacterComponent {
     public Party currentParty { get; private set; }
@@ -87,6 +88,36 @@ public class CharacterPartyComponent : CharacterComponent {
                     if (owner.hasMarker && !owner.marker.IsPOIInVision(beacon)) {
                         return true;
                     }
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasReachablePartymateToFleeTo() {
+        LocationGridTile currentTileLocation = owner.gridTileLocation;
+        if (isMemberThatJoinedQuest && currentTileLocation != null) {
+            for (int i = 0; i < currentParty.membersThatJoinedQuest.Count; i++) {
+                Character member = currentParty.membersThatJoinedQuest[i];
+                LocationGridTile memberTileLocation = member.gridTileLocation;
+                if (owner != member && member.limiterComponent.canPerform && member.limiterComponent.canMove && member.hasMarker && !member.isBeingSeized
+                    && member.carryComponent.IsNotBeingCarried() && memberTileLocation != null) {
+                    if (owner.movementComponent.HasPathToEvenIfDiffRegion(memberTileLocation)) {
+                        float dist = currentTileLocation.GetDistanceTo(memberTileLocation);
+                        if (dist <= 20f) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasPartymateInVision() {
+        if (owner.hasMarker && isMemberThatJoinedQuest) {
+            for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                Character inVision = owner.marker.inVisionCharacters[i];
+                if (inVision.partyComponent.IsAMemberOfParty(owner.partyComponent.currentParty) && inVision.partyComponent.isMemberThatJoinedQuest) {
+                    return true;
                 }
             }
         }

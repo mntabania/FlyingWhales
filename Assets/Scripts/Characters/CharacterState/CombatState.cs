@@ -208,9 +208,9 @@ public class CombatState : CharacterState {
                 //the reason is we need to let him go to a place where he can transform back to human safely, that is also the reason why we put him in a flee state in the first place
                 summary = $"{summary}\n-Has no flee path";
                 if (HasStillAvoidPOIThatIsInRange()) {
-                    IPointOfInterest avoidedPOI = stateComponent.owner.combatComponent.avoidInRange[0];
+                    IPointOfInterest avoidedPOI = stateComponent.owner.combatComponent.avoidInRange[stateComponent.owner.combatComponent.avoidInRange.Count - 1];
                     string avoidReason = GetAvoidReason(avoidedPOI);
-                    bool doNotCower = avoidReason == CombatManager.Avoiding_Witnesses || avoidReason == CombatManager.Encountered_Hostile;
+                    bool doNotCower = avoidReason == CombatManager.Avoiding_Witnesses || avoidReason == CombatManager.Encountered_Hostile || avoidReason == CombatManager.Vulnerable;
                     summary = $"{summary}\n-Has avoid that is still in range";
                     if(avoidedPOI is Character avoidedCharacter && avoidedCharacter.isNormalCharacter && stateComponent.owner.traitContainer.HasTrait("Enslaved") && stateComponent.owner.isNormalCharacter) {
                         //If character is a slave and the target being avoided is a villager, always cower, so that the target will be able to reach this slave
@@ -929,6 +929,7 @@ public class CombatState : CharacterState {
         //fleeChance = 10;
         log += "\nFinished travelling flee path, determining action...";
         stateComponent.owner.logComponent.PrintLogIfActive(log);
+        EvaluateFleeingBecauseOfVulnerability(false);
         DetermineReaction(stateComponent.owner);
         stateComponent.owner.marker.UpdateAnimation();
         stateComponent.owner.marker.UpdateActionIcon();
@@ -1011,6 +1012,25 @@ public class CombatState : CharacterState {
         //        stateComponent.character.marker.AddTerrifyingObject(fledFrom);
         //    }
         //}
+    }
+    private void EvaluateFleeingBecauseOfVulnerability(bool processCombatBehaviour) {
+        bool hasPartymateInVision = stateComponent.owner.partyComponent.HasPartymateInVision();
+        bool hasRemovedAvoidInRange = false;
+        if (hasPartymateInVision) {
+            for (int i = 0; i < stateComponent.owner.combatComponent.avoidInRange.Count; i++) {
+                IPointOfInterest poi = stateComponent.owner.combatComponent.avoidInRange[i];
+                CombatData data = stateComponent.owner.combatComponent.GetCombatData(poi);
+                if(data.avoidReason == CombatManager.Vulnerable) {
+                    if(stateComponent.owner.combatComponent.RemoveAvoidInRange(poi, false)) {
+                        hasRemovedAvoidInRange = true;
+                        i--;
+                    }
+                }
+            }
+        }
+        if(hasRemovedAvoidInRange && processCombatBehaviour) {
+            stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+        }
     }
     #endregion
 

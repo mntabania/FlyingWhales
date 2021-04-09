@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 4122250
+    totalSpriteSurfaceArea: 4121025
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -305,7 +305,6 @@ SpriteAtlas:
   - {fileID: -9215279008727855101, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -639575249176307655, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 4293407070905854547, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
-  - {fileID: 5671965764122512287, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -3053055662445826506, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 5128765376105686326, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -6281302631860722087, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
@@ -731,7 +730,6 @@ SpriteAtlas:
   - element_normal_icon
   - stats_health_icon
   - element_earth_icon
-  - icon_target
   - icon_undead
   - bonus_charges_icon
   - icon_demon
