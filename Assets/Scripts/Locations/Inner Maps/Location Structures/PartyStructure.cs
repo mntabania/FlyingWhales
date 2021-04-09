@@ -167,8 +167,8 @@ namespace Inner_Maps.Location_Structures {
         }
 
         void OnTargetRemoved(IStoredTarget p_removedTarget) {
-            p_removedTarget.isTargetted = false;
-            partyData.deployedTargets.Remove(p_removedTarget);
+            allPossibleTargets.Remove(p_removedTarget);
+            //partyData.deployedTargets.Remove(p_removedTarget);
 		}
 
         public virtual void DeployParty() {
