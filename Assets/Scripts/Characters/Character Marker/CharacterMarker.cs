@@ -1039,7 +1039,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hpBarGO.GetComponent<Canvas>().sortingOrder = characterSortingOrder;
     }
     private new void SetActiveState(bool state) {
-        // Debug.Log($"Set active state of {this.name} to {state.ToString()}");
+        Debug.Log($"Set active state of {this.name} to {state.ToString()}");
         this.gameObject.SetActive(state);
     }
     /// <summary>
