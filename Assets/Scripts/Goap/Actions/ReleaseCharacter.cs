@@ -106,7 +106,7 @@ public class ReleaseCharacter : GoapAction {
             if(quest.targetCharacter == goapNode.poiTarget) {
                 quest.SetIsSuccessful(true);
                 quest.SetIsReleasing(false);
-                goapNode.actor.partyComponent.currentParty.GoBackHomeAndEndQuest();
+                goapNode.actor.partyComponent.currentParty.currentQuest.EndQuest("Finished quest");
             }
         }
         if (isEnslaved) {
