@@ -196,6 +196,26 @@ namespace Traits {
             }
             if(targetPOI is Character targetCharacter) {
                 if (characterThatWillDoJob.limiterComponent.canMove && characterThatWillDoJob.limiterComponent.canPerform) {
+                    if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
+                        if (owner.partyComponent.currentParty.currentQuest is IRescuePartyQuest rescueParty) {
+                            if (rescueParty.targetCharacter == targetCharacter) {
+                                if (!targetCharacter.isDead) {
+                                    if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
+                                        if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
+                                            rescueParty.SetIsReleasing(true);
+                                        }
+                                    } else {
+                                        //rescueParty.SetIsSuccessful(true);
+                                        rescueParty.SetIsReleasing(false);
+                                        rescueParty.EndQuest("Saw target is safe");
+                                    }
+                                } else {
+                                    rescueParty.SetIsReleasing(false);
+                                    rescueParty.EndQuest("Target is already dead");
+                                }
+                            }
+                        }
+                    }
                     if (!targetCharacter.isDead) {
                         if (!targetCharacter.isNormalCharacter) {
                             string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -213,13 +233,7 @@ namespace Traits {
                         } else {
                             if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
                                 if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
-                                    if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
-                                        if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
-                                            if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
-                                                rescueParty.SetIsReleasing(true);
-                                            }
-                                        }
-                                    } else if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                                    if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                                         if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest exploreParty) {
                                             if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
                                                 if (UnityEngine.Random.Range(0, 100) < 15) {
@@ -229,20 +243,6 @@ namespace Traits {
                                                 }
                                             } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful) && !owner.faction.IsHostileWith(targetCharacter.faction)) {
                                                 owner.jobComponent.TriggerReleaseJob(targetCharacter);
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
-                                    if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty) {
-                                        if (rescueParty.targetCharacter == targetCharacter) {
-                                            //rescueParty.SetIsSuccessful(true);
-                                            rescueParty.SetIsReleasing(false);
-                                            if (rescueParty.isWaitTimeOver) {
-                                                owner.partyComponent.currentParty.GoBackHomeAndEndQuest();
-                                            } else {
-                                                rescueParty.EndQuest("Finished quest");
                                             }
                                         }
                                     }

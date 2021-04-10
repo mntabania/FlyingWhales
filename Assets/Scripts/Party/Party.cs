@@ -694,6 +694,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         //Every time a quest is dropped, always clear out the party jobs
         ForceCancelAllJobs();
+        CancellAllPartyGoToJobsOfMembers();
 
         //Do not start the 12-hour cooldown if party is already disbanded
         if (!isDisbanded) {
