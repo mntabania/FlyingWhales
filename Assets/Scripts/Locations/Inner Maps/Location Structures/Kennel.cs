@@ -36,9 +36,9 @@ namespace Inner_Maps.Location_Structures {
             _markerDummy = ObjectPoolManager.Instance.InstantiateObjectFromPool("MarkerDummy", Vector3.zero, Quaternion.identity, structureObj.objectsParent).GetComponent<MarkerDummy>();
             _markerDummy.Deactivate();
         }
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
             StopDrainingCharactersHere();
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
             if (_markerDummy != null) {
                 ObjectPoolManager.Instance.DestroyObject(_markerDummy.gameObject);
             }

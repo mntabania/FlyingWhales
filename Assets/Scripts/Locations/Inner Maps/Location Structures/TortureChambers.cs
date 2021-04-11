@@ -30,9 +30,9 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
             StopDrainingCharactersHere();
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
         }
         public override void DeployParty() {
             base.DeployParty();

@@ -29,17 +29,17 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Overrides
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
             if (hasBeenDestroyed) {
                 return;
             }
             InnerMapManager.Instance.RemoveWorldKnownDemonicStructure(this);
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
         }
-        protected override void AfterStructureDestruction() {
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             structureObj.OnOwnerStructureDestroyed(region.innerMap); 
             //Area area = occupiedArea;
-            base.AfterStructureDestruction();
+            base.AfterStructureDestruction(p_responsibleCharacter);
             //area.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
             currentAttackers.Clear();
@@ -73,10 +73,12 @@ namespace Inner_Maps.Location_Structures {
         #region Listeners
         protected override void SubscribeListeners() {
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int, Character>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int, Character>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         private bool DoesSnatchJobTargetThisStructure(JobQueueItem job) {

@@ -188,15 +188,6 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             PerHourInWaitingState();
         }
     }
-    private void OnCharacterDeath(Character character) {
-        CharacterDies(character);
-    }
-    private void OnCharacterNoLongerMove(Character character) {
-        CharacterNoLongerMove(character);
-    }
-    private void OnCharacterNoLongerPerform(Character character) {
-        CharacterNoLongerPerform(character);
-    }
     private void OnJobRemovedFromJobBoard(JobQueueItem p_job, JobBoard p_jobBoard) {
         if(jobBoard == p_jobBoard) {
             JobRemovedFromJobBoard(p_job);
@@ -616,7 +607,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 LogPool.Release(log);
             }
             
-            OnAcceptQuest(quest);
+            //OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);
         }
     }
@@ -672,26 +663,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             currentQuest = p_quest;
         }
     }
-    private void OnAcceptQuest(PartyQuest quest) {
-        if(quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-        }
-    }
-    private void OnAcceptQuestFromSaveData(PartyQuest quest) {
-        if (quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-        }
-    }
     private void OnDropQuest(PartyQuest quest) {
-        if (quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-        }
         //Every time a quest is dropped, always clear out the party jobs
         ForceCancelAllJobs();
         CancellAllPartyGoToJobsOfMembers();
@@ -996,55 +968,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             }
         }
         if (currentQuest != null) {
-            if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-                if (GameUtilities.RollChance(25)) {
-                    if (membersThatJoinedQuest.Contains(character)) {
-                        currentQuest.EndQuest(character.name + " died");
-                    }
-                }
-            }    
-        }
-    }
-    private void CharacterNoLongerPerform(Character character) {
-        if (character.limiterComponent.canMove) {
-            //If character can still move even if he/she cannot perform, do not end quest
-            //In order for the quest to be ended, character must be both cannot perform and move
-            //The reason is so the quest will not end if the character only sleeps or rests
-            return;
-        }
-        if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            if (GameUtilities.RollChance(15)) {
-                if (membersThatJoinedQuest.Contains(character)) {
-                    currentQuest.EndQuest(character.name + " is incapacitated");
-                    return;
-                }
-            }
-        }
-        if (isActive) {
-            if (DidMemberJoinQuest(character) && !HasActiveMemberThatJoinedQuest()) {
-                currentQuest.EndQuest("Members are incapacitated");
-            }
-        }
-    }
-    private void CharacterNoLongerMove(Character character) {
-        if (character.limiterComponent.canPerform) {
-            //If character can still perform even if he/she cannot move, do not end quest
-            //In order for the quest to be ended, character must be both cannot perform and move
-            //The reason is so the quest will not end if the character only sleeps or rests
-            return;
-        }
-        if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            if (GameUtilities.RollChance(15)) {
-                if (membersThatJoinedQuest.Contains(character)) {
-                    currentQuest.EndQuest(character.name + " is incapacitated");
-                    return;
-                }
-            }
-        }
-        if (isActive) {
-            if (DidMemberJoinQuest(character) && !HasActiveMemberThatJoinedQuest()) {
-                currentQuest.EndQuest("Members are incapacitated");
-            }
+            currentQuest.OnCharacterDeath(character);  
         }
     }
     public bool HasMemberThatJoinedQuestThatIsInRangeOfCharacterThatConsidersCrimeTypeACrime(Character character, CRIME_TYPE crimeType) {
@@ -1130,12 +1054,6 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 targetDestination = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.targetDestination);
             }
         }
-        if (!string.IsNullOrEmpty(data.currentQuest)) {
-            currentQuest = DatabaseManager.Instance.partyQuestDatabase.GetPartyQuestByPersistentID(data.currentQuest);
-            if(currentQuest != null) {
-                OnAcceptQuestFromSaveData(currentQuest);
-            }
-        }
         //if (!string.IsNullOrEmpty(data.campSetter)) {
         //    campSetter = CharacterManager.Instance.GetCharacterByPersistentID(data.campSetter);
         //}
@@ -1159,6 +1077,13 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         beaconComponent.LoadReferences(data.beaconComponent);
         UpdatePartyWalkSpeed();
+
+        if (!string.IsNullOrEmpty(data.currentQuest)) {
+            currentQuest = DatabaseManager.Instance.partyQuestDatabase.GetPartyQuestByPersistentID(data.currentQuest);
+            if (currentQuest != null) {
+                currentQuest.OnAcceptQuestFromSaveData(this);
+            }
+        }
     }
     #endregion
 

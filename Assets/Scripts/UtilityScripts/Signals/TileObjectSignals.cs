@@ -19,6 +19,10 @@
     /// </summary>
     public static string TILE_OBJECT_DAMAGED = "OnTileObjectDamaged";
     /// <summary>
+    /// Parameters (TileObject damagedObj, int damageAmount, Character p_responsibleCharacter)
+    /// </summary>
+    public static string TILE_OBJECT_DAMAGED_BY = "OnTileObjectDamagedBy";
+    /// <summary>
     /// Parameters (TileObject repairedObj, int repairAmount)
     /// </summary>
     public static string TILE_OBJECT_REPAIRED = "OnTileObjectRepaired";

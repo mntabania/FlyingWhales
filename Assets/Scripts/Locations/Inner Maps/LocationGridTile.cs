@@ -700,7 +700,7 @@ namespace Inner_Maps {
                         if (character.limiterComponent.canWitness && !character.behaviourComponent.isAttackingDemonicStructure 
                             && character.homeSettlement != null && character.necromancerTrait == null && character.race.IsSapient()
                             && character.hasMarker && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
-                            && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) 
+                            && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && !(character.partyComponent.currentParty.currentQuest is IRescuePartyQuest))) 
                             //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
                             && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
                             if (character.faction != null && character.faction.isMajorNonPlayer && !character.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && !character.faction.HasActiveReportDemonicStructureJob(mostImportantStructureOnTile)) {
@@ -711,7 +711,7 @@ namespace Inner_Maps {
                         //If cannot report flee instead
                         //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
                         if (character.limiterComponent.canWitness && !character.behaviourComponent.isAttackingDemonicStructure 
-                              && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
+                              && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && !(character.partyComponent.currentParty.currentQuest is IRescuePartyQuest) && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
                               && character.isAlliedWithPlayer == false 
                               && character.necromancerTrait == null
                               && !character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {

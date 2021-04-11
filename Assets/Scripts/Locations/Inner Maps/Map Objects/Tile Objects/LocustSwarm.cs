@@ -54,7 +54,11 @@ public class LocustSwarm : MovingTileObject {
             _locustSwarmMapObjectVisual.Expire();
         }
         if (amount < 0) {
-            Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this as TileObject, amount);
+            if (source is Character responsibleCharacter) {
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this as TileObject, amount, responsibleCharacter);
+            } else {
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this as TileObject, amount);
+            }
         } else if (amount > 0) {
             if (currentHP == maxHP) {
                 Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, this as TileObject);

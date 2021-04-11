@@ -35,8 +35,8 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsTrue(p_usedConnector.tileObjectComponent.objHere is FishingSpot, $"{name} did not connect to a tile with a Fishing Spot!");
             (p_usedConnector.tileObjectComponent.objHere as FishingSpot).SetConnectedFishingShack(this);
         }
-        protected override void AfterStructureDestruction() {
-            base.AfterStructureDestruction();
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
+            base.AfterStructureDestruction(p_responsibleCharacter);
             connectedOcean = null;
         }
     }

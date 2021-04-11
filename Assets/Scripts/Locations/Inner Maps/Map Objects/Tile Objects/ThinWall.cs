@@ -120,7 +120,11 @@ public class ThinWall : TileObject {
         }
 
         if (amount < 0) {
-            Messenger.Broadcast(StructureSignals.WALL_DAMAGED, this, amount);
+            if (source is Character responsibleCharacter) {
+                Messenger.Broadcast(StructureSignals.WALL_DAMAGED_BY, this, amount, responsibleCharacter);
+            } else {
+                Messenger.Broadcast(StructureSignals.WALL_DAMAGED, this, amount);
+            }
         } else if (amount > 0) {
             Messenger.Broadcast(StructureSignals.WALL_REPAIRED, this, amount);
             if (isWallPreviouslyDestroyed) {

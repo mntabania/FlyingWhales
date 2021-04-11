@@ -1295,6 +1295,14 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
+        if (targetTileObject.isDamageContributorToStructure) {
+            LocationStructure structure = targetTileObject.currentStructure;
+            if (structure != null && structure.structureType.IsPlayerStructure()) {
+                if (actor.partyComponent.isMemberThatJoinedQuest && actor.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Counterattack) {
+                    actor.combatComponent.Fight(targetTileObject, CombatManager.Clear_Demonic_Intrusion);
+                }
+            }
+        }
 
         if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
