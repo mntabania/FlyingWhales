@@ -27,8 +27,8 @@ namespace Inner_Maps.Location_Structures {
             PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(spawnNecronomicon);
             PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(vampirism);
         }
-        protected override void AfterStructureDestruction() {
-            base.AfterStructureDestruction();
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
+            base.AfterStructureDestruction(p_responsibleCharacter);
             if (!PlayerManager.Instance.player.playerSettlement.HasStructure(structureType)) {
                 if (!hasVampirismBefore) {
                     PlayerManager.Instance.player.playerSkillComponent.RemovePlayerSkill(PLAYER_SKILL_TYPE.VAMPIRISM);

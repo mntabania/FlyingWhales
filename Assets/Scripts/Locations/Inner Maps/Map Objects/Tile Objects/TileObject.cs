@@ -587,7 +587,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         if (amount < 0) {
-            Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this, amount);
+            if (source is Character responsibleCharacter) {
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this, amount, responsibleCharacter);
+            } else {
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this, amount);
+            }
         } else if (amount > 0) {
             Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_REPAIRED, this, amount);
         }

@@ -38,9 +38,9 @@ namespace Inner_Maps.Location_Structures {
             Vector3 position = structureObj.transform.position;
             worldPosition = position;
         }
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
             StopDrainingCharactersHere();
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
             if (_markerDummy != null) {
                 ObjectPoolManager.Instance.DestroyObject(_markerDummy.gameObject);
             }

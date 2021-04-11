@@ -48,8 +48,8 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        protected override void DestroyStructure() {
-            base.DestroyStructure();
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
+            base.DestroyStructure(p_responsibleCharacter);
             connectedCave = null;
         }
     }

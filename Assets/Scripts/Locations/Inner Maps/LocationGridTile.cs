@@ -737,7 +737,7 @@ namespace Inner_Maps {
                     if (character.limiterComponent.canWitness && !character.behaviourComponent.isAttackingDemonicStructure && 
                         (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || 
                          (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && 
-                          character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && 
+                          !(character.partyComponent.currentParty.currentQuest is IRescuePartyQuest) && 
                           character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) && 
                         !character.isAlliedWithPlayer == false && 
                         character.necromancerTrait == null && 
