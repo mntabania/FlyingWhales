@@ -27,8 +27,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         UpdateData(spellData);
         UpdatePosition(position);
     }
-    public void ShowPlayerSkillDetails(PlayerSkillData skillData, UIHoverPosition position = null) {
-        UpdateData(skillData);
+    public void ShowPlayerSkillDetails(PlayerSkillData skillData, int level = 0, UIHoverPosition position = null) {
+        UpdateData(skillData, level);
         UpdatePosition(position);
     }
     public void ShowPlayerSkillDetails(string title, string description, UIHoverPosition position = null) {
@@ -59,7 +59,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.anchoredPosition = Vector2.zero;
         thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 264f);
     }
-    private void UpdateData(PlayerSkillData p_playerSkillData) {
+    private void UpdateData(PlayerSkillData p_playerSkillData, int level) {
         SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_playerSkillData.skill);
         titleText.SetText(skillData.name);
         descriptionText.SetTextAndReplaceWithIcons(skillData.description);
@@ -71,10 +71,10 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
         string currencyStr = GetCurrencySummary(manaCost, charges, charges, cooldown, skillData.bonusCharges, skillData.isInUse); 
         
-        levelText.text = string.Empty;
+        levelText.text = $"Lv. {(level + 1).ToString()}";
         currenciesText.text = currencyStr;
         additionalText.text = string.Empty;
-        bonusesText.text = GetBonusesString(p_playerSkillData, 1);
+        bonusesText.text = GetBonusesString(p_playerSkillData, level);
         if (charges > 0) {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
             bonusesText.text = $"{bonusesText.text}{UtilityScripts.Utilities.ColorizeSpellTitle("Charges:")} {charges.ToString()}/{charges.ToString()}";

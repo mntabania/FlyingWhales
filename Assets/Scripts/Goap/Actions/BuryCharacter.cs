@@ -139,6 +139,9 @@ public class BuryCharacter : GoapAction {
         Tombstone tombstone = new Tombstone();
         tombstone.SetCharacter(targetCharacter);
         goapNode.actor.currentStructure.AddPOI(tombstone, chosenLocation);
+        if (targetCharacter.hasMarker) {
+            targetCharacter.DisableMarker();    
+        }
 
         //Note: Added this because it is stated in the Bury Job document that all other bury jobs must be cancelled instantaneously when the character is buried
         //This might cause some problems because it is a bad form to call cancelling jobs whenever an action of the same type is being done

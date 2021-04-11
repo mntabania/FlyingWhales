@@ -104,6 +104,8 @@ public class ScenarioSettingsDataDictionary : SerializableDictionary<WorldSettin
 public class StructureDataDictionary : SerializableDictionary<STRUCTURE_TYPE, StructureData> { }
 [System.Serializable]
 public class IntChancesDictionary : SerializableDictionary<CHANCE_TYPE, int> { }
+[System.Serializable]
+public class PowerAndLevelDictionary : SerializableDictionary<PLAYER_SKILL_TYPE, int> { }
 
 //List storage
 [System.Serializable]

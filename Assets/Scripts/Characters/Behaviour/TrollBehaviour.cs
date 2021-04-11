@@ -107,7 +107,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
                     meat = character.homeStructure.GetFirstTileObjectOfType<FoodPile>(TILE_OBJECT_TYPE.HUMAN_MEAT, TILE_OBJECT_TYPE.ELF_MEAT, TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.RAT_MEAT);
                 }
                 if (meat != null) {
-                    if (character.jobComponent.CreateEatJob(meat, false, out producedJob)) {
+                    if (character.jobComponent.CreateFullnessRecoveryOnSight(meat, false, out producedJob)) {
                         return true;
                     }
                 }

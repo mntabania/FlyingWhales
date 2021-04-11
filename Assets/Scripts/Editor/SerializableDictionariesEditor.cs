@@ -95,6 +95,8 @@ public class ScenarioSettingsDataDictionaryPropertyDrawer : SerializableDictiona
 public class StructureDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(IntChancesDictionary))]
 public class IntChancesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(PowerAndLevelDictionary))]
+public class PowerAndLevelDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

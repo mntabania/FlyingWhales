@@ -903,6 +903,9 @@ public enum TILE_OBJECT_TYPE {
     MEDDLER_TILE_OBJECT = 177,
     CRYPT_TILE_OBJECT = 178,
     DEFILER_TILE_OBJECT = 179,
+    TORTURE_CHAMBERS_TILE_OBJECT = 180,
+    DEMONIC_STRUCTURE_BLOCKER_TILE_OBJECT = 181,
+    KENNEL_TILE_OBJECT = 182,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1087,7 +1090,7 @@ public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, RELIGION }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage, Plague_Hysteria, Distraught,
 }
-public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Icalawa, Affatt }
+public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Icalawa, Affatt, Oona, Pangat_Loo, Zenko, Aneem, Pitto }
 public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action

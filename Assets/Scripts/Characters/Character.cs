@@ -722,6 +722,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void DisableMarker() {
         if (marker.gameObject.activeSelf) {
+            Debug.Log($"Disabled marker of {name}");
             marker.gameObject.SetActive(false);
             // marker.SetVisualState(false);
             gridTileLocation.RemoveCharacterHere(this);
@@ -731,6 +732,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         // marker.SetVisualState(true);
         Assert.IsNotNull(marker, $"Marker of {name} is trying to be enabled, but is null!");
         if (!marker.gameObject.activeSelf) {
+            Debug.Log($"Enabled marker of {name}");
             marker.gameObject.SetActive(true);
         }
     }
@@ -5302,7 +5304,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
             }
             AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_CHARACTER);
-            AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+            // AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
             AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
             AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
             AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);

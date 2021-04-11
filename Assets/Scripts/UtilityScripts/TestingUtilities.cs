@@ -1,11 +1,12 @@
 ﻿using System.Globalization;
 using System.Linq;
 using Boo.Lang;
+using Locations.Settlements;
 using Locations.Settlements.Settlement_Events;
 namespace UtilityScripts {
     public static class TestingUtilities {
         
-        public static void ShowLocationInfo(Region region) {
+        public static void ShowLocationInfo(Region region, NPCSettlement p_settlement) {
             string summary = $"{region.name} Info:";
             summary += "\nDivisions:";
             for (int i = 0; i < region.biomeDivisionComponent.divisions.Count; i++) {
@@ -15,82 +16,80 @@ namespace UtilityScripts {
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
             summary += $"\n-----------------------------";
             summary += "\nLocations Info:";
-            for (int i = 0; i < settlements.Count; i++) {
-                NPCSettlement npcSettlement = settlements[i];
-                bool isRatmanFaction = npcSettlement.owner?.factionType.type == FACTION_TYPE.Ratmen;
-                if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE && !isRatmanFaction) {
-                    continue;
-                }
-                if (!isRatmanFaction) {
-                    summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
-                    summary += $"\nPoisoned Tiles: {npcSettlement.settlementJobTriggerComponent.poisonedTiles.Count.ToString()}";
-                    summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
-                    summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
-                    summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
-                    summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
-                    summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.fishingSpots.Count}";
-                    summary += $"\nCharacters inside: {npcSettlement.SettlementResources.characters.Count}";
-                    summary += $"\nNeeded Items: ";
-                    for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
-                        summary += $"|{npcSettlement.neededObjects[j].ToString()}|";
-                    }
-                    summary += $"\nActive Events: ";
-                    for (int j = 0; j < npcSettlement.eventManager.activeEvents.Count; j++) {
-                        SettlementEvent settlementEvent = npcSettlement.eventManager.activeEvents[j];
-                        summary += $"|{settlementEvent.GetTestingInfo()}|";
-                    }
-                }
-                if (npcSettlement.owner == null) { continue; }
-                summary += $"\n{npcSettlement.name} Location Job Queue:";
-                if (npcSettlement.availableJobs.Count > 0) {
-                    for (int j = 0; j < npcSettlement.availableJobs.Count; j++) {
-                        JobQueueItem jqi = npcSettlement.availableJobs[j];
-                        if (jqi is GoapPlanJob) {
-                            GoapPlanJob gpj = jqi as GoapPlanJob;
-                            summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>" ;
-                        } else {
-                            summary += $"\n<b>{jqi.name}</b>";
-                        }
-                        summary += $"\n Assigned Character: {jqi.assignedCharacter?.name}";
-                    }
-                } else {
-                    summary += "\nNone";
-                }
-                if (!isRatmanFaction) {
-                    if (npcSettlement.owner != null) {
-                        summary += $"\nAdditional Migration Gain: {npcSettlement.owner.factionType.GetAdditionalMigrationMeterGain(npcSettlement)}";
-                        summary += $"\n-----------------------------";
-                        summary += $"\n{npcSettlement.owner.name} Faction Job Queue:";
-                        if (npcSettlement.owner.availableJobs.Count > 0) {
-                            for (int j = 0; j < npcSettlement.owner.availableJobs.Count; j++) {
-                                JobQueueItem jqi = npcSettlement.owner.availableJobs[j];
-                                if (jqi is GoapPlanJob) {
-                                    GoapPlanJob gpj = jqi as GoapPlanJob;
-                                    summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>";
-                                } else {
-                                    summary += $"\n<b>{jqi.name}</b>";
-                                }
-                                summary += $"\n Assigned Character: {jqi.assignedCharacter?.name}";
-                            }
-                        } else {
-                            summary += "\nNone";
-                        }
-                        summary += $"\n-----------------------------";
-                        summary += $"\n{npcSettlement.owner.name} Party Quests:";
-                        if (npcSettlement.owner.partyQuestBoard.availablePartyQuests.Count > 0) {
-                            for (int j = 0; j < npcSettlement.owner.partyQuestBoard.availablePartyQuests.Count; j++) {
-                                PartyQuest quest = npcSettlement.owner.partyQuestBoard.availablePartyQuests[j];
-                                summary += $"\n<b>{quest.partyQuestType.ToString()}</b>";
-                                summary += $"(Assigned Party: {quest.assignedParty?.partyName})";
-                            }
-                        } else {
-                            summary += "\nNone";
-                        }
-                    }
-                }
-                summary += "\n";
-                UIManager.Instance.ShowSmallInfo(summary);
+            NPCSettlement npcSettlement = p_settlement;
+            bool isRatmanFaction = npcSettlement.owner?.factionType.type == FACTION_TYPE.Ratmen;
+            if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE && !isRatmanFaction) {
+                return;
             }
+            if (!isRatmanFaction) {
+                summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
+                summary += $"\nPoisoned Tiles: {npcSettlement.settlementJobTriggerComponent.poisonedTiles.Count.ToString()}";
+                summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
+                summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
+                summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
+                summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
+                summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.fishingSpots.Count}";
+                summary += $"\nCharacters inside: {npcSettlement.SettlementResources.characters.Count}";
+                summary += $"\nNeeded Items: ";
+                for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
+                    summary += $"|{npcSettlement.neededObjects[j].ToString()}|";
+                }
+                summary += $"\nActive Events: ";
+                for (int j = 0; j < npcSettlement.eventManager.activeEvents.Count; j++) {
+                    SettlementEvent settlementEvent = npcSettlement.eventManager.activeEvents[j];
+                    summary += $"|{settlementEvent.GetTestingInfo()}|";
+                }
+            }
+            if (npcSettlement.owner == null) { return; }
+            summary += $"\n{npcSettlement.name} Location Job Queue:";
+            if (npcSettlement.availableJobs.Count > 0) {
+                for (int j = 0; j < npcSettlement.availableJobs.Count; j++) {
+                    JobQueueItem jqi = npcSettlement.availableJobs[j];
+                    if (jqi is GoapPlanJob) {
+                        GoapPlanJob gpj = jqi as GoapPlanJob;
+                        summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>" ;
+                    } else {
+                        summary += $"\n<b>{jqi.name}</b>";
+                    }
+                    summary += $"\n Assigned Character: {jqi.assignedCharacter?.name}";
+                }
+            } else {
+                summary += "\nNone";
+            }
+            if (!isRatmanFaction) {
+                if (npcSettlement.owner != null) {
+                    summary += $"\nAdditional Migration Gain: {npcSettlement.owner.factionType.GetAdditionalMigrationMeterGain(npcSettlement)}";
+                    summary += $"\n-----------------------------";
+                    summary += $"\n{npcSettlement.owner.name} Faction Job Queue:";
+                    if (npcSettlement.owner.availableJobs.Count > 0) {
+                        for (int j = 0; j < npcSettlement.owner.availableJobs.Count; j++) {
+                            JobQueueItem jqi = npcSettlement.owner.availableJobs[j];
+                            if (jqi is GoapPlanJob) {
+                                GoapPlanJob gpj = jqi as GoapPlanJob;
+                                summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>";
+                            } else {
+                                summary += $"\n<b>{jqi.name}</b>";
+                            }
+                            summary += $"\n Assigned Character: {jqi.assignedCharacter?.name}";
+                        }
+                    } else {
+                        summary += "\nNone";
+                    }
+                    summary += $"\n-----------------------------";
+                    summary += $"\n{npcSettlement.owner.name} Party Quests:";
+                    if (npcSettlement.owner.partyQuestBoard.availablePartyQuests.Count > 0) {
+                        for (int j = 0; j < npcSettlement.owner.partyQuestBoard.availablePartyQuests.Count; j++) {
+                            PartyQuest quest = npcSettlement.owner.partyQuestBoard.availablePartyQuests[j];
+                            summary += $"\n<b>{quest.partyQuestType.ToString()}</b>";
+                            summary += $"(Assigned Party: {quest.assignedParty?.partyName})";
+                        }
+                    } else {
+                        summary += "\nNone";
+                    }
+                }
+            }
+            summary += "\n";
+            UIManager.Instance.ShowSmallInfo(summary);
         }
         public static void HideLocationInfo() {
             UIManager.Instance.HideSmallInfo();

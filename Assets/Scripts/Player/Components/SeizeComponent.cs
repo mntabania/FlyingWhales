@@ -171,8 +171,11 @@ public class SeizeComponent {
                 if (seizedPOI is Character character) {
                     return room.CanUnseizeCharacterInRoom(character) && (tileLocation.structure as DemonicStructure).preOccupiedBy == null;
                 }
+                return true;
+            } else {
+                //in torture chamber, can only unseize inside room
+                return false;
             }
-            return true;
         }
         return true;
     }

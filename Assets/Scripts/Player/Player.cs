@@ -321,7 +321,7 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void TryExecuteCurrentActiveIntel() {
         string hoverText = string.Empty;
-        if (CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
+        if (CanShareIntelTo(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText, currentActiveIntel)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
             List<ConversationData> conversationList = ObjectPoolManager.Instance.CreateNewConversationDataList();
             ConversationData targetOpeningLine = ObjectPoolManager.Instance.CreateNewConversationData("What do you want from me?", targetCharacter, DialogItem.Position.Left);
@@ -347,7 +347,7 @@ public class Player : ILeader, IObjectManipulator {
             ObjectPoolManager.Instance.ReturnConversationDataListToPool(conversationList);
         }
     }
-    public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {
+    public bool CanShareIntelTo(IPointOfInterest poi, ref string hoverText, IIntel p_intel) {
         if(poi is Character character) {
             if (!character.isNormalCharacter) {
                 return false;
@@ -364,13 +364,16 @@ public class Player : ILeader, IObjectManipulator {
             if (!character.limiterComponent.canWitness) {
                 return false;
             }
+            if (!p_intel.CanShareIntelTo(character)) {
+                return false;
+            }
             if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
                 return true;
             }
         }
         return false;
     }
-    public bool CanShareIntel(IPointOfInterest poi) {
+    public bool CanShareIntelTo(IPointOfInterest poi, IIntel p_intel) {
         if(poi is Character character) {
             if (!character.isNormalCharacter) {
                 return false;
@@ -382,6 +385,9 @@ public class Player : ILeader, IObjectManipulator {
                 return false;
             }
             if (!character.limiterComponent.canWitness) {
+                return false;
+            }
+            if (!p_intel.CanShareIntelTo(character)) {
                 return false;
             }
             if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER

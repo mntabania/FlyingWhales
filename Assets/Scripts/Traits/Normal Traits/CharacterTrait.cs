@@ -143,8 +143,9 @@ namespace Traits {
                         !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.INSPECT)) {
                         characterThatWillDoJob.jobComponent.TriggerInspect(item);
                     }
-                } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && characterThatWillDoJob.limiterComponent.canDoFullnessRecovery && !characterThatWillDoJob.traitContainer.HasTrait("Vampire") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
-                    characterThatWillDoJob.jobComponent.CreateEatJob(item);
+                } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && characterThatWillDoJob.limiterComponent.canDoFullnessRecovery && 
+                           !characterThatWillDoJob.traitContainer.HasTrait("Vampire") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
+                    characterThatWillDoJob.jobComponent.CreateFullnessRecoveryOnSight(item);
                 } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))
                     && !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
                     //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
@@ -177,6 +178,20 @@ namespace Traits {
                         if (quest.targetHeirloom == item) {
                             quest.SetFoundHeirloom(true);
                             characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM_PARTY, quest.targetHeirloom, quest.targetHeirloom.structureSpot, true);
+                        }
+                    }
+                } else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
+                    if (characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
+                        characterThatWillDoJob.homeSettlement != null && characterThatWillDoJob.necromancerTrait == null && characterThatWillDoJob.race.IsSapient() && 
+                        characterThatWillDoJob.hasMarker && characterThatWillDoJob.carryComponent.IsNotBeingCarried() && !characterThatWillDoJob.isAlliedWithPlayer && 
+                        (!characterThatWillDoJob.partyComponent.hasParty || !characterThatWillDoJob.partyComponent.currentParty.isActive || 
+                         (characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && 
+                          characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) && 
+                        (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
+                        if (characterThatWillDoJob.faction != null && characterThatWillDoJob.faction.isMajorNonPlayer && 
+                            !characterThatWillDoJob.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && 
+                            !characterThatWillDoJob.faction.HasActiveReportDemonicStructureJob(demonicStructure)) {
+                            characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
                         }
                     }
                 }

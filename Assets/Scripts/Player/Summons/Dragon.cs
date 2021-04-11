@@ -89,7 +89,7 @@ public class Dragon : Summon {
     }
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        RemovePlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+        // RemovePlayerAction(PLAYER_SKILL_TYPE.SNATCH);
     }
     public override void LoadReferences(SaveDataCharacter data) {
         if(data is SaveDataDragon savedData) {

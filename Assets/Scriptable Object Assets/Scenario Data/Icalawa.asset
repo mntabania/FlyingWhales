@@ -18,3 +18,18 @@ MonoBehaviour:
     minRange: 3
     maxRange: 5
     weight: 100
+  spells:
+    m_keys: 19000000
+    m_values: 02000000
+  afflictions:
+    m_keys: 
+    m_values: 
+  minions:
+    m_keys: 
+    m_values: 
+  structures:
+    m_keys: 
+    m_values: 
+  skills:
+    m_keys: 
+    m_values: 

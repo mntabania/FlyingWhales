@@ -6,7 +6,7 @@ namespace Player_Input {
             IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
             if (hoveredPOI != null) {
                 string hoverText = string.Empty;
-                InputManager.Instance.SetCursorTo(PlayerManager.Instance.player.CanShareIntel(hoveredPOI, ref hoverText)
+                InputManager.Instance.SetCursorTo(PlayerManager.Instance.player.CanShareIntelTo(hoveredPOI, ref hoverText, PlayerManager.Instance.player.currentActiveIntel)
                     ? InputManager.Cursor_Type.Check
                     : InputManager.Cursor_Type.Cross);
                 if(hoverText != string.Empty) {

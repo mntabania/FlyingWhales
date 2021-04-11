@@ -17,11 +17,11 @@ public struct VillageSetting {
     public int GetTileCountReservedForVillage() {
         switch (villageSize) {
             case VILLAGE_SIZE.Small:
-                return 2;
+                return 1;
             case VILLAGE_SIZE.Medium:
                 return 2;
             case VILLAGE_SIZE.Large:
-                return 3;
+                return 2;
             default:
                 throw new ArgumentOutOfRangeException();
         }

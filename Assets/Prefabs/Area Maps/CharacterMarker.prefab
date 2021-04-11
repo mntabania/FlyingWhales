@@ -6245,30 +6245,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Text_Particles
       objectReference: {fileID: 0}
-    - target: {fileID: 3492755681695876625, guid: 300e583fdb7f74e2d939f819db5055a4,
+    - target: {fileID: 3492755681695876626, guid: 300e583fdb7f74e2d939f819db5055a4,
         type: 3}
-      propertyPath: m_VertexStreams.Array.size
-      value: 7
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 3492755681695876625, guid: 300e583fdb7f74e2d939f819db5055a4,
+    - target: {fileID: 3492755681695876626, guid: 300e583fdb7f74e2d939f819db5055a4,
         type: 3}
-      propertyPath: m_VertexStreams.Array.data[4]
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492755681695876625, guid: 300e583fdb7f74e2d939f819db5055a4,
-        type: 3}
-      propertyPath: m_VertexStreams.Array.data[5]
-      value: 34
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492755681695876625, guid: 300e583fdb7f74e2d939f819db5055a4,
-        type: 3}
-      propertyPath: m_VertexStreams.Array.data[6]
-      value: 38
+      propertyPath: InitialModule.startSpeed.minScalar
+      value: 1.8
       objectReference: {fileID: 0}
     - target: {fileID: 3492755681695876626, guid: 300e583fdb7f74e2d939f819db5055a4,
         type: 3}
       propertyPath: ShapeModule.radius.value
-      value: 0.99
+      value: 0.57
       objectReference: {fileID: 0}
     - target: {fileID: 3492755681695876627, guid: 300e583fdb7f74e2d939f819db5055a4,
         type: 3}
@@ -6356,6 +6346,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: InnerMapLight
+      objectReference: {fileID: 0}
+    - target: {fileID: 283353901439333757, guid: a1f23643fbdff744db95ec146ba780e4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}

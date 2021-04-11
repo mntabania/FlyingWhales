@@ -93,8 +93,8 @@ public class WorldSettingsData {
     private void SetTutorialWorldSettings() {
         Debug.Log("Set world settings as Tutorial");
         worldType = World_Type.Tutorial;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Summon_Ruinarch;
+        SetDefaultSpellSettings(victoryCondition);
         mapSettings.AllowMonsterMigrations();
         villageSettings.BlockAllFactionMigrations();
         villageSettings.BlockNewVillages();

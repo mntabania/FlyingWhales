@@ -25,5 +25,5 @@ public class DefensePointTileObject : TileObject {
         actions = new List<PLAYER_SKILL_TYPE>();
         //portal has no actions by default
     }
-    protected override string GenerateName() { return "Defense Point"; }
+    protected override string GenerateName() { return "Prism"; }
 }

@@ -19063,6 +19063,7 @@ MonoBehaviour:
   - {fileID: 374432336}
   - {fileID: 556227247}
   - {fileID: 16455712}
+  - {fileID: 1271312853}
   spellList: {fileID: 1251235325}
   customDropdownList: {fileID: 1677628230}
   cultistsList: {fileID: 1291172670}
@@ -43706,6 +43707,7 @@ MonoBehaviour:
     - crypt_256x192
     - defense_point_128x128
     - imp_huts_128x128
+    - kennel_256x128
     - mana_pit_128x128
     - maraud_192x256
     - meddler_256x384
@@ -43713,6 +43715,7 @@ MonoBehaviour:
     - portalBase_b
     - portalGlow00
     - portalGlow01
+    - prison_192x192
     - spire_128x384
     m_values:
     - {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
@@ -44259,6 +44262,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 1aa0f5b9c7de5ac49bbf0a62a344b74e, type: 3}
     - {fileID: 21300000, guid: efdd057fc9ca2c34b80c69e5d8b39ec6, type: 3}
     - {fileID: 21300000, guid: 3600c0dfedad24c49bcae84eee2159da, type: 3}
+    - {fileID: 21300000, guid: f6d799b91848c7e4e9d0b5c621d60732, type: 3}
     - {fileID: 21300000, guid: 750504dca338a694fbcfab5ef36c5ea5, type: 3}
     - {fileID: 21300000, guid: 1686050b44658ea469336a12621c637a, type: 3}
     - {fileID: 21300000, guid: 017bc2c4195258b42aeb81838eff4d2f, type: 3}
@@ -44266,6 +44270,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 20b70003227af2c4790023cab2b6dc60, type: 3}
     - {fileID: 21300000, guid: 0440e894fd66cf24dabd17f77ca828e2, type: 3}
     - {fileID: 21300000, guid: c4e35b7f84eb0894cb62a9d729cd744d, type: 3}
+    - {fileID: 21300000, guid: b7366fec44a384d4dbe2fd4a1415cde8, type: 3}
     - {fileID: 21300000, guid: 24a31a30f2ca2594d9b46d823c6f323e, type: 3}
   burntMaterial: {fileID: 2100000, guid: 1010dec766f2511479731f5cc07e612d, type: 2}
   defaultObjectMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,

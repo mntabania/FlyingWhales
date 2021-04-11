@@ -80,7 +80,7 @@ namespace Quests {
                     winConditionTracker = new OonaWinConditionTracker();
                     break;
                 default:
-                    winConditionTracker = new TutorialWinConditionTracker();
+                    winConditionTracker = new OonaWinConditionTracker();
                     break;
             }
         }

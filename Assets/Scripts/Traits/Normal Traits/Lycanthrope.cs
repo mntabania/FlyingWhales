@@ -302,6 +302,9 @@ namespace Traits {
             this.lycanthropeForm = lycanthropeForm;
             this.activeForm = activeForm;
             this.limboForm = limboForm;
+            this.plainWolf = plainWolf;
+            this.direWolf = direWolf;
+            originalForm.SetLycanthropeData(this);
             plainWolf?.SetLycanthropeData(this);
             direWolf?.SetLycanthropeData(this);
             Messenger.AddListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);

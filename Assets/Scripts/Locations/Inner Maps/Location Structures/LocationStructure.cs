@@ -1314,7 +1314,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region IPartyTargetDestination
-        public bool IsAtTargetDestination(Character character) {
+        public virtual bool IsAtTargetDestination(Character character) {
             return character.currentStructure == this;
         }
         #endregion

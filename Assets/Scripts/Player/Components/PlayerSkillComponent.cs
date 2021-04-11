@@ -249,28 +249,32 @@ public class PlayerSkillComponent {
     //    }
     //}
     public void LoadPlayerSkillTreeOrLoadout(SaveDataPlayer save) {
+        ScenarioData scenarioData = null;
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
+        }
         if (PlayerSkillManager.Instance.unlockAllSkills) {
-            PopulateDevModeSkills();
+            PopulateDevModeSkills(scenarioData);
             PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();
             PopulatePassiveSkills(loadout.passiveSkills);
             // PopulatePassiveSkills(PlayerSkillManager.Instance.allPassiveSkillTypes);
         } else {
             //PopulateAllSkills(save.learnedSkills);
             PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();
-            PopulateAllSkills(loadout.spells.fixedSkills);
-            PopulateAllSkills(loadout.afflictions.fixedSkills);
-            PopulateAllSkills(loadout.minions.fixedSkills);
-            PopulateAllSkills(loadout.structures.fixedSkills);
-            PopulateAllSkills(loadout.miscs.fixedSkills);
+            PopulateAllSkills(loadout.spells.fixedSkills, scenarioData);
+            PopulateAllSkills(loadout.afflictions.fixedSkills, scenarioData);
+            PopulateAllSkills(loadout.minions.fixedSkills, scenarioData);
+            PopulateAllSkills(loadout.structures.fixedSkills, scenarioData);
+            PopulateAllSkills(loadout.miscs.fixedSkills, scenarioData);
             PopulatePassiveSkills(loadout.passiveSkills);
 
             LoadoutSaveData loadoutSaveData = save.GetLoadout(PlayerSkillManager.Instance.selectedArchetype);
             if (loadoutSaveData != null) {
-                PopulateAllSkills(loadoutSaveData.extraSpells);
-                PopulateAllSkills(loadoutSaveData.extraAfflictions);
-                PopulateAllSkills(loadoutSaveData.extraMinions);
-                PopulateAllSkills(loadoutSaveData.extraStructures);
-                PopulateAllSkills(loadoutSaveData.extraMiscs);
+                PopulateAllSkills(loadoutSaveData.extraSpells, scenarioData);
+                PopulateAllSkills(loadoutSaveData.extraAfflictions, scenarioData);
+                PopulateAllSkills(loadoutSaveData.extraMinions, scenarioData);
+                PopulateAllSkills(loadoutSaveData.extraStructures, scenarioData);
+                PopulateAllSkills(loadoutSaveData.extraMiscs, scenarioData);    
             }
 
             PopulateAllSkills(PlayerSkillManager.Instance.constantSkills);
@@ -379,7 +383,7 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Skills
-    private void PopulateDevModeSkills() {
+    private void PopulateDevModeSkills(ScenarioData scenarioData = null) {
         foreach (PlayerSkillData data in PlayerSkillManager.Instance.playerSkillDataDictionary.Values) {
             bool shouldAddSpell = true;
             // if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -396,6 +400,14 @@ public class PlayerSkillComponent {
             // }
             if (shouldAddSpell) {
                 AddAndCategorizePlayerSkill(data.skill, false, true);
+                if (scenarioData != null) {
+                    //set level provided by scenario data
+                    int providedLevel = scenarioData.GetLevelForPower(data.skill);
+                    SkillData skillData = PlayerSkillManager.Instance.GetSkillData(data.skill);
+                    for (int j = 0; j < providedLevel; j++) {
+                        skillData.LevelUp();
+                    }
+                }
             }
         }
         //for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
@@ -436,11 +448,19 @@ public class PlayerSkillComponent {
         //SpellData ostracizer = PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.OSTRACIZER);
         //CategorizePlayerSkill(ostracizer);    
     }
-    private void PopulateAllSkills(List<PLAYER_SKILL_TYPE> skillTypes) {
+    private void PopulateAllSkills(List<PLAYER_SKILL_TYPE> skillTypes, ScenarioData scenarioData = null) {
         if (skillTypes != null) {
             for (int i = 0; i < skillTypes.Count; i++) {
                 PLAYER_SKILL_TYPE spellType = skillTypes[i];
                 AddAndCategorizePlayerSkill(spellType);
+                if (scenarioData != null) {
+                    //set level provided by scenario data
+                    int providedLevel = scenarioData.GetLevelForPower(spellType);
+                    SkillData skillData = PlayerSkillManager.Instance.GetSkillData(spellType);
+                    for (int j = 0; j < providedLevel; j++) {
+                        skillData.LevelUp();
+                    }
+                }
             }
         }
     }
