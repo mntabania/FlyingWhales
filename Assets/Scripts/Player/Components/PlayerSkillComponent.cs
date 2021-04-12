@@ -668,6 +668,7 @@ public class PlayerSkillComponent {
         PopulatePassiveSkills(loadout.passiveSkills);
     }
     public void LoadReferences(SaveDataPlayerSkillComponent data) {
+        LoadSkills(data.skills);
         currentSpellBeingUnlocked = data.currentSpellBeingUnlocked;
         currentSpellUnlockCost = data.currentSpellUnlockCost;
         timerUnlockSpell = data.timerUnlockSpell;
@@ -764,7 +765,7 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
     }
     public override PlayerSkillComponent Load() {
         PlayerSkillComponent component = new PlayerSkillComponent();
-        component.LoadSkills(skills);
+        //component.LoadSkills(skills);
         return component;
     }
 }
