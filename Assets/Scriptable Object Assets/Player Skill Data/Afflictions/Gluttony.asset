@@ -34,6 +34,7 @@ MonoBehaviour:
   playerActionIcon: {fileID: 0}
   isNonUpgradeable: 0
   isAffliction: 1
+  isLockedBaseOnRequirements: 0
   requirementData:
     requirements: 
     requiredArchetype: 0
@@ -75,14 +76,15 @@ MonoBehaviour:
     cooldownPerLevel: a0000000800000008000000070000000
     skillMovementSpeed: 
   afflictionUpgradeData:
-    bonuses: 03000000
-    cooldown: 
+    bonuses: 0300000002000000
+    cooldown: 64000000c80000002c01000000000000
     additionalPiercePerLevel: []
     rateChance: 
     crowdNumber: 
-    napsPercent: 
+    napsDuration: 
     numberOfCriteria: 
     hungerRate: 19000000320000004b00000064000000
+    duration: []
     opinionTrigger: 
     addedBehaviour: 
     listOfCriteria: 

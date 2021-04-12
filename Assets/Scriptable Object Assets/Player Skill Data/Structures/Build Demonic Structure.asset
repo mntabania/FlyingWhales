@@ -25,14 +25,16 @@ MonoBehaviour:
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
   unlockCost: 10
-  tier: 0
-  baseLoadoutWeight: 0
+  tier: 1
+  baseLoadoutWeight: 200
   resistanceType: 0
   archetypeWeightedBonus: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
   isNonUpgradeable: 1
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
   requirementData:
     requirements: 
     requiredArchetype: 0
@@ -65,3 +67,16 @@ MonoBehaviour:
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: 
     skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

@@ -7,7 +7,8 @@ using UtilityScripts;
 
 public class PlayerSkillComponent {
 
-    public const int RerollCooldownInHours = 12;
+    public const int RerollCooldownInHours = 6;
+    public const int GetBonusChargeCooldownInHours = 6;
 
     //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
     public List<PLAYER_SKILL_TYPE> spells { get; protected set; }
@@ -121,11 +122,11 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Unlocking
-    public void PlayerChoseSkillToUnlock(SkillData p_skillData, int p_unlockCost) {
+    public void PlayerChoseSkillToAddBonusCharge(SkillData p_skillData, int p_unlockCost) {
         currentSpellBeingUnlocked = p_skillData.type;
         currentSpellUnlockCost = p_unlockCost;
         timerUnlockSpell.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillData.name}");
-        timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddDays(1), OnCompleteSpellUnlockTimer); //.AddDays(1)
+        timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GetBonusChargeCooldownInHours)), OnCompleteSpellUnlockTimer); //.AddDays(1)
         timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
         PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell, BOOKMARK_CATEGORY.Portal);
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, p_skillData, p_unlockCost);
@@ -140,8 +141,11 @@ public class PlayerSkillComponent {
         Messenger.Broadcast(PlayerSignals.PLAYER_SKILL_UNLOCK_CANCELLED);
     }
     private void OnCompleteSpellUnlockTimer() {
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(currentSpellBeingUnlocked);
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(currentSpellBeingUnlocked);
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUnlockSpell);
-        PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(currentSpellBeingUnlocked);
+        //PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(currentSpellBeingUnlocked);
+        skillData.AdjustBonusCharges(playerSkillData.bonusChargeWhenUnlocked);
         ResetPlayerSpellChoices();
         //SkillData skillData = PlayerSkillManager.Instance.GetSkillData(currentSpellBeingUnlocked);
         //if (skillData.category == PLAYER_SKILL_CATEGORY.SPELL) {

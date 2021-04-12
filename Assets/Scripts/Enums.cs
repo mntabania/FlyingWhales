@@ -1211,7 +1211,7 @@ public enum UPGRADE_BONUS {
 }
 
 public enum UNLOCKING_SKILL_REQUIREMENT {
-    Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count,
+    Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count, portal_level,
 }
 
 public enum SOUND_EFFECT {

@@ -34,6 +34,7 @@ MonoBehaviour:
   playerActionIcon: {fileID: 0}
   isNonUpgradeable: 0
   isAffliction: 1
+  isLockedBaseOnRequirements: 0
   requirementData:
     requirements: 
     requiredArchetype: 0
@@ -75,8 +76,8 @@ MonoBehaviour:
     cooldownPerLevel: a0000000800000008000000070000000
     skillMovementSpeed: 
   afflictionUpgradeData:
-    bonuses: 0400000008000000
-    cooldown: 
+    bonuses: 040000000800000002000000
+    cooldown: 00000000000000000000000000000000
     additionalPiercePerLevel: []
     rateChance: 0f00000014000000190000001e000000
     crowdNumber: 

@@ -1,4 +1,5 @@
-﻿
+﻿using Inner_Maps.Location_Structures;
+
 public class SkillProgressionManager {
 
 	public bool CheckAndUpgrade(CurrenciesComponent p_currencies, PLAYER_SKILL_TYPE p_type) {
@@ -30,12 +31,20 @@ public class SkillProgressionManager {
 				return -1;
 			}
 		}
+		if (playerSkilldata.tier <= 0) {
+			return -1;
+		}
+		/*
 		if (playerSkilldata.requirementData.actionCount <= p_availablePlayerSkills.playerActions.Count &&
 			playerSkilldata.requirementData.afflictionCount <= p_availablePlayerSkills.afflictions.Count &&
 			playerSkilldata.requirementData.spellsCount <= p_availablePlayerSkills.spells.Count &&
 			playerSkilldata.requirementData.tier1Count <= p_availablePlayerSkills.tier1Count &&
 			playerSkilldata.requirementData.tier2Count <= p_availablePlayerSkills.tier2Count &&
-			playerSkilldata.requirementData.tier3Count <= p_availablePlayerSkills.tier3Count) {
+			playerSkilldata.requirementData.tier3Count <= p_availablePlayerSkills.tier3Count &&
+			playerSkilldata.requirementData.portalLevel <= (PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal).level) {
+			return playerSkilldata.unlockCost;
+		}*/
+		if (playerSkilldata.requirementData.portalLevel <= (PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal).level) {
 			return playerSkilldata.unlockCost;
 		}
 		return -1;

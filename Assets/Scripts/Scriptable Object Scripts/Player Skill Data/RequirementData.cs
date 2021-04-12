@@ -25,5 +25,7 @@ public class RequirementData {
     [HideInInspector]
     public int tier3Count;
     [HideInInspector]
+    public int portalLevel;
+    [HideInInspector]
     public bool isOR;
 }

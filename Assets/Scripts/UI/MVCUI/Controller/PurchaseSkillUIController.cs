@@ -185,14 +185,16 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		WeightedDictionary<SkillData> weights = new WeightedDictionary<SkillData>();
 		foreach (KeyValuePair<PLAYER_SKILL_TYPE, SkillData> entry in PlayerSkillManager.Instance.allPlayerSkillsData) {
 			if (!entry.Value.isInUse) {
-				if (entry.Value.category == PLAYER_SKILL_CATEGORY.AFFLICTION || entry.Value.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION || entry.Value.category == PLAYER_SKILL_CATEGORY.SPELL) {
+				if (entry.Value.category == PLAYER_SKILL_CATEGORY.AFFLICTION || entry.Value.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION || entry.Value.category == PLAYER_SKILL_CATEGORY.SPELL || entry.Value.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
 					PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(entry.Value.type);
 					if (playerSkillData != null) {
 						if (m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, entry.Value.type) != -1) {
 							int processedWeight = playerSkillData.baseLoadoutWeight;
+							/* //Remove archetype weighted bonus for now
 							if (PlayerSkillManager.Instance.selectedArchetype == playerSkillData.archetypeWeightedBonus) {
 								processedWeight += 100;
 							}
+							*/ //Remove archetype weighted bonus for now
 							if (processedWeight > 0) {
 								weights.AddElement(entry.Value, processedWeight);
 							}
@@ -349,7 +351,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
 			m_firstRun = false;
 			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-result);
-			PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToUnlock(skillData, result);
+			PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToAddBonusCharge(skillData, result);
 			UpdateRerollBtn();
 			UpdateItems();
 		}
