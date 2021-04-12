@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Elf
   m_EditorClassIdentifier: 
   race: 2
-  hpMultiplier: 1.5
-  attackMultiplier: 1
-  attackSpeedMultiplier: 0.8
-  staminaReductionMultiplier: 1.4
+  hpMultiplier: 0
+  attackMultiplier: 0
+  attackSpeedMultiplier: 0
+  staminaReductionMultiplier: 0
   walkSpeed: 2.7
   runSpeed: 4.2
   traitNames:
