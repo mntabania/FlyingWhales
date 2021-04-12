@@ -39,6 +39,7 @@ public class CounterattackPartyQuest : PartyQuest {
     }
     protected override void OnEndQuest() {
         base.OnEndQuest();
+        RemoveAllCombatToDemonicStructure();
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<LocationStructure, Character>(StructureSignals.STRUCTURE_DESTROYED_BY, OnStructureDestroyedBy);
     }
@@ -129,6 +130,28 @@ public class CounterattackPartyQuest : PartyQuest {
                     // } else {
                     //     member.traitContainer.AddTrait(member, "Betrayed", characterResponsible: character);
                     // }
+                }
+            }
+        }
+    }
+    private void RemoveAllCombatToDemonicStructure() {
+        if (assignedParty != null) {
+            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                Character member = assignedParty.membersThatJoinedQuest[i];
+                if (member.combatComponent.isInCombat) {
+                    bool hasRemovedHostile = false;
+                    for (int j = 0; j < member.combatComponent.hostilesInRange.Count; j++) {
+                        IPointOfInterest hostile = member.combatComponent.hostilesInRange[j];
+                        if (hostile is TileObject obj && obj.isDamageContributorToStructure && obj.structureLocation.structureType.IsPlayerStructure()) {
+                            if (member.combatComponent.RemoveHostileInRange(hostile, false)) {
+                                hasRemovedHostile = true;
+                                j--;
+                            }
+                        }
+                    }
+                    if (hasRemovedHostile) {
+                        member.combatComponent.SetWillProcessCombat(true);
+                    }
                 }
             }
         }
