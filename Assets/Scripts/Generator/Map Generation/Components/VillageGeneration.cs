@@ -58,12 +58,22 @@ public class VillageGeneration : MapGenerationComponent {
 				SETTLEMENT_TYPE settlementType = LandmarkManager.Instance.GetSettlementTypeForFaction(faction);
 				npcSettlement.SetSettlementType(settlementType);
 				
-				var structureSettings = GenerateCityCenterAndDwellings(faction, villageSetting, npcSettlement);
+				var structureSettings = GenerateCityCenter(faction, villageSetting, npcSettlement);
 				
 				Assert.IsTrue(structureSettings.First().structureType == STRUCTURE_TYPE.CITY_CENTER);
 				Assert.IsTrue(npcSettlement.areas.Count > 0);
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
+				RuinarchListPool<StructureSetting>.Release(structureSettings);
 			}
+		}
+		
+		//Generate Dwellings
+		for (int i = 0; i < createdSettlements.Count; i++) {
+			NPCSettlement npcSettlement = createdSettlements[i];
+			VillageSetting villageSetting = villageSettings[i];
+			var structureSettings = GenerateDwellings(npcSettlement.owner, villageSetting, npcSettlement);
+			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
+			RuinarchListPool<StructureSetting>.Release(structureSettings);
 		}
 		
 		//Generate facilities and residents
@@ -88,8 +98,13 @@ public class VillageGeneration : MapGenerationComponent {
 		RuinarchListPool<NPCSettlement>.Release(createdSettlements);
 		RuinarchListPool<VillageSetting>.Release(villageSettings);
 	}
-	private List<StructureSetting> GenerateCityCenterAndDwellings(Faction p_faction, VillageSetting p_villageSetting, NPCSettlement p_settlement) {
-		List<StructureSetting> structureSettings =  new List<StructureSetting> { new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, p_faction.factionType.mainResource, p_faction.factionType.usesCorruptedStructures) };
+	private List<StructureSetting> GenerateCityCenter(Faction p_faction, VillageSetting p_villageSetting, NPCSettlement p_settlement) {
+		List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();
+		structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, p_faction.factionType.mainResource, p_faction.factionType.usesCorruptedStructures));
+		return structureSettings;
+	}
+	private List<StructureSetting> GenerateDwellings(Faction p_faction, VillageSetting p_villageSetting, NPCSettlement p_settlement) {
+		List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();
 		int randomDwellings = p_villageSetting.GetRandomDwellingCount();
 		var dwellingSetting = p_settlement.settlementType.GetDwellingSetting(p_faction);
 		for (int i = 0; i < randomDwellings; i++) {
