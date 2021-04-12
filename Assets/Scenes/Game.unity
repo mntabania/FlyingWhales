@@ -43706,8 +43706,9 @@ MonoBehaviour:
     - biolab_256x256
     - crypt_256x192
     - defense_point_128x128
+    - defiler_192x320
     - imp_huts_128x128
-    - kennel_256x128
+    - kennel_192x192
     - mana_pit_128x128
     - maraud_192x256
     - meddler_256x384
@@ -44261,8 +44262,9 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 113b282935393734d9ad69c5afeb4900, type: 3}
     - {fileID: 21300000, guid: 1aa0f5b9c7de5ac49bbf0a62a344b74e, type: 3}
     - {fileID: 21300000, guid: efdd057fc9ca2c34b80c69e5d8b39ec6, type: 3}
+    - {fileID: 21300000, guid: 05b4e4ae01a06044095ab6510bf22fbf, type: 3}
     - {fileID: 21300000, guid: 3600c0dfedad24c49bcae84eee2159da, type: 3}
-    - {fileID: 21300000, guid: f6d799b91848c7e4e9d0b5c621d60732, type: 3}
+    - {fileID: 21300000, guid: 4da76557f3422654995b6fea0f0771a6, type: 3}
     - {fileID: 21300000, guid: 750504dca338a694fbcfab5ef36c5ea5, type: 3}
     - {fileID: 21300000, guid: 1686050b44658ea469336a12621c637a, type: 3}
     - {fileID: 21300000, guid: 017bc2c4195258b42aeb81838eff4d2f, type: 3}

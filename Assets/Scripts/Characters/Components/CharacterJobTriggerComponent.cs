@@ -3214,6 +3214,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.KLEPTOMANIAC_STEAL)) {
 		    List<TileObject> objects = RuinarchListPool<TileObject>.Claim();
 		    p_target.PopulateTileObjectsListWithAllTileObjects(objects);
+		    objects = objects.Where(x => !x.traitContainer.HasTrait("Immovable") && x.OccupiesTile()).ToList();
 		    if (objects.Count > 0) {
 			    TileObject targetObject = CollectionUtilities.GetRandomElement(objects);
 			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KLEPTOMANIAC_STEAL, p_actionType, targetObject, owner);

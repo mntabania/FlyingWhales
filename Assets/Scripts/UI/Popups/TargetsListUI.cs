@@ -20,9 +20,16 @@ public class TargetsListUI : PopupMenuBase {
         Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_STORED_TARGET, OnPlayerStoredTarget);
         Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnPlayerRemovedStoredTarget);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         UpdateItems();
     }
-    private void OnCharacterChangedName(Character arg1) {
+    private void OnCharacterSwitchFromLimbo(Character p_inLimbo, Character p_outOfLimbo) {
+        if (PlayerManager.Instance.player.storedTargetsComponent.allStoredTargets.Contains(p_inLimbo) || 
+            PlayerManager.Instance.player.storedTargetsComponent.allStoredTargets.Contains(p_outOfLimbo)) {
+            UpdateItems();
+        }
+    }
+    private void OnCharacterChangedName(Character p_character) {
         UpdateItems();
     }
     private void OnPlayerRemovedStoredTarget(IStoredTarget p_target) {

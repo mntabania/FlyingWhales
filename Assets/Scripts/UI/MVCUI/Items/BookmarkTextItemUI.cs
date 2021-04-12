@@ -42,4 +42,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
             LayoutRebuilder.ForceRebuildLayoutImmediate(parentOfParent);
         }
     }
+    public void OnBookmarkChangedName(IBookmarkable p_bookmarkable) {
+        lblName.text = p_bookmarkable.bookmarkName;
+    }
 }
