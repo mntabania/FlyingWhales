@@ -681,12 +681,12 @@ namespace Inner_Maps {
                         if (character.marker && character.marker.hasFleePath && character.isNormalCharacter) {
                             if (character.gridTileLocation != null) {
                                 //TileObject genericTileObject = character.gridTileLocation.hexTileOwner.GetCenterLocationGridTile().tileObjectComponent.genericTileObject;
-                                character.movementComponent.SetHasMovedOnCorruption(true);
+                                // character.movementComponent.SetHasMovedOnCorruption(true);
                                 //character.marker.AddPOIAsInVisionRange(genericTileObject);
                                 //character.combatComponent.Flight(genericTileObject, "saw something frightening", forcedFlight: true);
                                 //genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
                                 character.marker.AddAvoidPositions(character.gridTileLocation.area.gridTileComponent.centerGridTile.worldLocation);
-                                return;
+                                // return;
                             }
                         }
                     }
@@ -739,7 +739,7 @@ namespace Inner_Maps {
                          (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && 
                           !(character.partyComponent.currentParty.currentQuest is IRescuePartyQuest) && 
                           character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) && 
-                        !character.isAlliedWithPlayer == false && 
+                        !character.isAlliedWithPlayer && 
                         character.necromancerTrait == null && 
                         !character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
