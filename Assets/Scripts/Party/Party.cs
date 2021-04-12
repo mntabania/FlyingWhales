@@ -1003,7 +1003,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             }
             members.Clear();
         }
-        Debug.LogError("TEST");
+        // Debug.LogError("TEST");
         OnDisbandParty();
     }
     private void OnDisbandParty() {
