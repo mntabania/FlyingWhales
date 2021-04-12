@@ -31,6 +31,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         gameObject.SetActive(true);
         UIManager.Instance.DisableContextMenuInteractions(); 
         PlayerUI.Instance.DisableTopMenuButtons();
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
         OnClickPlacePortal();
     }
     public void OnClickPlacePortal() {
@@ -41,6 +42,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         pickPortalMessage.anchoredPosition = new Vector2(0f, -110);
         pickPortalMessage.DOAnchorPosY(110f, 0.5f).SetEase(Ease.OutBack);
         PlayerManager.Instance.AddPlayerInputModule(PlayerManager.pickPortalInputModule);
+        InnerMapCameraMove.Instance.SetZoom(InnerMapCameraMove.Instance.maxFOV);
         PlayerManager.pickPortalInputModule.AddOnPortalPlacedAction(OnPortalPlaced);
         PlayerManager.Instance.ShowStructurePlacementVisual(STRUCTURE_TYPE.THE_PORTAL);
     }
@@ -63,6 +65,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         UIManager.Instance.EnableContextMenuInteractions();
         PlayerUI.Instance.EnableTopMenuButtons();
         UIManager.Instance.SetSpeedTogglesState(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
         gameObject.SetActive(false);
     }
 

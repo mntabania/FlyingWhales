@@ -86,7 +86,7 @@ public class ReportCorruptedStructure : GoapAction {
         //LocationStructure targetDemonicStructure = InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure() ? 
         //    CollectionUtilities.GetRandomElement(InnerMapManager.Instance.worldKnownDemonicStructures): 
         //    PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
-        
+        targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
         if (targetDemonicStructure == null) {
             //it is assumed that this only happens if the player casts a spell that is seen by another character,
             //but results in the destruction of the portal

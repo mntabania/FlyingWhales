@@ -64,6 +64,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     private List<string> filteredTraits; //Characters must NOT have the traits inside this list
     private List<Region> filteredRegions;
+    private List<BaseSettlement> filteredVillages;
     //private int traitFilterHalfCount;
 
     public GameObject overviewScrollRectParent;
@@ -86,12 +87,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
         _regionFilterItems = new List<FactionRegionFilterItem>();
         filteredTraits = new List<string>();
         filteredRegions = new List<Region>();
-        
+        filteredVillages = new List<BaseSettlement>();
         searchTraitFilterField.onValueChanged.AddListener(OnSearchTraitFilterValueChanged);
         searchRegionFilterField.onValueChanged.AddListener(OnSearchRegionFilterValueChanged);
 
         PopulateFilterTraits();
-        PopulateFilterRegions();
 
         ClearFilteredTraits();
         ClearFilteredRegions();
@@ -127,6 +127,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
             UpdateAllCharacters();
             ResetScrollPositions();
             ProcessDisplay();
+            PopulateFilterRegions();
         }
     }
     //public void UpdateFactionInfo() {
@@ -479,11 +480,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
     private bool IsCharacterFilteredByRegion(Character character) {
         //If character's home region is in one of the filtered regions, it means that the nameplate item of the character must show
         //The list of the filtered regions contains the traits that the player does want to show
-        if (filteredRegions.Count <= 0) {
+        if (filteredVillages.Count <= 0) {
             return true;
         }
-        for (int i = 0; i < filteredRegions.Count; i++) {
-            if (character.homeRegion == filteredRegions[i] && character.isInfoUnlocked) {
+        for (int i = 0; i < filteredVillages.Count; i++) {
+            if (character.homeSettlement == filteredVillages[i] && character.isInfoUnlocked) {
                 return true;
             }
         }
@@ -505,9 +506,14 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private void PopulateFilterRegions() {
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            CreateFactionRegionFilterItem(region);
+        if (activeFaction != null) {
+            ClearFilteredRegions();
+            for (int i = 0; i < GridMap.Instance.mainRegion.settlementsInRegion.Count; i++) {
+                if (GridMap.Instance.mainRegion.settlementsInRegion[i].locationType == LOCATION_TYPE.VILLAGE &&
+                    GridMap.Instance.mainRegion.settlementsInRegion[i].owner == activeFaction) {
+                    CreateFactionRegionFilterItem(GridMap.Instance.mainRegion.settlementsInRegion[i]);
+                }
+            }
         }
     }
     public void AddFilteredTrait(string traitName) {
@@ -529,22 +535,24 @@ public class FactionInfoUIV2 : MonoBehaviour {
             _traitFilterItems[i].toggle.isOn = false;
         }
     }
-    public void AddFilteredRegion(Region region) {
-        filteredRegions.Add(region);
+    public void AddFilteredRegion(BaseSettlement village) {
+        filteredVillages.Add(village);
         FilterCharacters();
     }
-    public void RemoveFilteredRegion(Region region) {
-        if (filteredRegions.Remove(region)) {
+    public void RemoveFilteredRegion(BaseSettlement village) {
+        if (filteredVillages.Remove(village)) {
             FilterCharacters();
         }
     }
     public void ClearFilteredRegions() {
+        filteredVillages.Clear();
         filteredRegions.Clear();
         FilterCharacters();
         ResetFilterRegions();
     }
     private void ResetFilterRegions() {
         for (int i = 0; i < _regionFilterItems.Count; i++) {
+            ObjectPoolManager.Instance.DestroyObject(_regionFilterItems[i]);
             _regionFilterItems[i].toggle.isOn = false;
         }
     }
@@ -593,10 +601,10 @@ public class FactionInfoUIV2 : MonoBehaviour {
         _traitFilterItems.Add(item);
         return item;
     }
-    private FactionRegionFilterItem CreateFactionRegionFilterItem(Region region) {
+    private FactionRegionFilterItem CreateFactionRegionFilterItem(BaseSettlement village) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(regionFilterItemPrefab.name, Vector3.zero, Quaternion.identity, regionFilterScrollRect.content);
         FactionRegionFilterItem item = go.GetComponent<FactionRegionFilterItem>();
-        item.SetRegion(region);
+        item.SetVillage(village);
         _regionFilterItems.Add(item);
         return item;
     }

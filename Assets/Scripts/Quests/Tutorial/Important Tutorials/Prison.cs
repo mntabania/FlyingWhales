@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
             if (hasMetCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SEIZE_CHARACTER).isInUse;
+                return PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.SEIZE_CHARACTER).isInUse;
             }
             return false;
         }

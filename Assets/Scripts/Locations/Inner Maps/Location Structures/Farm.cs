@@ -19,8 +19,8 @@ namespace Inner_Maps.Location_Structures {
             base.Initialize();
             Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         }
-        protected override void AfterStructureDestruction() {
-            base.AfterStructureDestruction();
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
+            base.AfterStructureDestruction(p_responsibleCharacter);
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         }
 

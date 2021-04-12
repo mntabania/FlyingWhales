@@ -79,9 +79,8 @@ public class MapGenerator : BaseMonoBehaviour {
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
             LevelLoaderManager.Instance.SetLoadingState(false);
-            UIManager.Instance.initialWorldSetupMenu.Show();
             Messenger.Broadcast(Signals.GAME_LOADED);
-
+            UIManager.Instance.initialWorldSetupMenu.Show();
             yield return new WaitForSeconds(1f);
         }
     }
@@ -145,8 +144,8 @@ public class MapGenerator : BaseMonoBehaviour {
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
             LevelLoaderManager.Instance.SetLoadingState(false);
-            UIManager.Instance.initialWorldSetupMenu.Show();
             Messenger.Broadcast(Signals.GAME_LOADED);
+            UIManager.Instance.initialWorldSetupMenu.Show();
             yield return new WaitForSeconds(1f);
         }
     }

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-
+using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class TortureChambers : PartyStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
-        public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
         public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
-        public override string nameplateName => "Prison";
+        public override string nameplateName => name;
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             nameWithoutID = "Prison";
+            startingSummonCount = 2;
             name = $"{nameWithoutID} {id.ToString()}";
         }
         public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) { }
@@ -29,9 +29,9 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
             StopDrainingCharactersHere();
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
         }
         public override void DeployParty() {
             base.DeployParty();
@@ -54,16 +54,16 @@ namespace Inner_Maps.Location_Structures {
         protected override void AfterCharacterAddedToLocation(Character p_character) {
             base.AfterCharacterAddedToLocation(p_character);
             p_character.movementComponent.SetEnableDigging(false);
-            if (p_character.isNormalCharacter && IsTilePartOfARoom(p_character.gridTileLocation, out var room) && room is PrisonCell prisonCell && prisonCell.skeleton == null) {
-                DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
-                door?.Close();
-            }
-            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            // if (p_character.isNormalCharacter && IsTilePartOfARoom(p_character.gridTileLocation, out var room) && room is PrisonCell prisonCell && prisonCell.skeleton == null) {
+            //     DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
+            //     door?.Close();
+            // }
+            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {
             base.AfterCharacterRemovedFromLocation(p_character);
             p_character.movementComponent.SetEnableDigging(true);
-            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
@@ -71,10 +71,14 @@ namespace Inner_Maps.Location_Structures {
         }
         
         #region Structure Object
+        #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             _tortureChamberStructureObject = structureObj as TortureChamberStructureObject;
+            Vector3 position = structureObj.transform.position;
+            worldPosition = position;
         }
+        #endregion
         public override void OnBuiltNewStructure() {
             base.OnBuiltNewStructure();
             _tortureChamberStructureObject.SetEntrance(region.innerMap);

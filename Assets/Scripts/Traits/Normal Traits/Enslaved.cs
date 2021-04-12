@@ -51,7 +51,7 @@ namespace Traits {
                 }
                 targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.PRODUCE_FOOD);
                 targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.HAUL);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
             }
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
@@ -62,7 +62,7 @@ namespace Traits {
                 targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
                 targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.PRODUCE_FOOD);
                 targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.HAUL);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
             }
         }
         #endregion

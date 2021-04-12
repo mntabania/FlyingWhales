@@ -13,8 +13,8 @@ namespace Inner_Maps.Location_Structures {
             base.OnBuiltNewStructure();
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Imp, 5);
         }
-        protected override void DestroyStructure() {
-            base.DestroyStructure();
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
+            base.DestroyStructure(p_responsibleCharacter);
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Imp, -5);
         }
         #endregion

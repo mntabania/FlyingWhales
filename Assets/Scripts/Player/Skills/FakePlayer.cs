@@ -15,7 +15,7 @@ public class FakePlayer : MonoBehaviour
 
 	public void Initialize() {
 		PlayerSkillManager.Instance.Initialize();
-		availableSkills.ForEach((eachAvailableSkill) => skillComponent.SetPlayerSkillData(eachAvailableSkill, true));
+		availableSkills.ForEach((eachAvailableSkill) => skillComponent.AddAndCategorizePlayerSkill(eachAvailableSkill, true));
 		progressionManager.CheckRequirementsAndGetUnlockCost(skillComponent, currenciesComponent, PLAYER_SKILL_TYPE.LIGHTNING);
 		underlingsComponent = new PlayerUnderlingsComponent();
 		summons.ForEach((eachSummon) => {

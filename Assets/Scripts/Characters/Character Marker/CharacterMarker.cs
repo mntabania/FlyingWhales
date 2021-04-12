@@ -503,7 +503,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemovePOIAsInRangeButDifferentStructure(obj);
     }
     private void OnActiveIntelSet(IIntel intel) {
-        if (PlayerManager.Instance.player.CanShareIntel(character) && HasRelationshipWithIntel(intel)) {
+        if (PlayerManager.Instance.player.CanShareIntelTo(character, intel) && HasRelationshipWithIntel(intel)) {
             _nameplate.SetHighlighterState(true);    
         }
     }
@@ -867,6 +867,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         destinationSetter.target = target;
         pathfindingAI.canSearch = true;
     }
+    public bool IsTargetPOIInPathfinding(IPointOfInterest poi) {
+        return destinationSetter.target == poi.mapObjectVisual.transform;
+    }
     public void ClearArrivalAction() {
          arrivalAction = null;
     }
@@ -1039,7 +1042,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hpBarGO.GetComponent<Canvas>().sortingOrder = characterSortingOrder;
     }
     private new void SetActiveState(bool state) {
-        // Debug.Log($"Set active state of {this.name} to {state.ToString()}");
+        Debug.Log($"Set active state of {this.name} to {state.ToString()}");
         this.gameObject.SetActive(state);
     }
     /// <summary>
@@ -1766,6 +1769,47 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         ReconstructFleePath();
     }
+    public void OnStartFleeToPartyMate() {
+        Character chosenCharacter = null;
+        Character secondChosenCharacter = null;
+
+        LocationGridTile currentTileLocation = character.gridTileLocation;
+        if (character.partyComponent.isMemberThatJoinedQuest && currentTileLocation != null) {
+            for (int i = 0; i < character.partyComponent.currentParty.membersThatJoinedQuest.Count; i++) {
+                Character member = character.partyComponent.currentParty.membersThatJoinedQuest[i];
+                LocationGridTile memberTileLocation = member.gridTileLocation;
+                if (character != member && member.limiterComponent.canPerform && member.limiterComponent.canMove && member.hasMarker && !member.isBeingSeized
+                    && member.carryComponent.IsNotBeingCarried() && memberTileLocation != null) {
+                    if (character.movementComponent.HasPathToEvenIfDiffRegion(memberTileLocation)) {
+                        float dist = currentTileLocation.GetDistanceTo(memberTileLocation);
+                        if(dist <= 20f) {
+                            if (member.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Tank)) {
+                                chosenCharacter = member;
+                                break;
+                            } else if(secondChosenCharacter == null) {
+                                secondChosenCharacter = member;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(chosenCharacter != null || secondChosenCharacter != null) {
+            if (!hasFleePath) {
+                //Only clear path on the first start of flee, once the character is already in flee path and decided to flee again do not clear path anymore
+                pathfindingAI.ClearAllCurrentPathData();
+            }
+            SetHasFleePath(true);
+            pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
+            if (chosenCharacter != null) {
+                GoTo(chosenCharacter, OnFinishedTraversingFleePath);
+            } else if (secondChosenCharacter != null) {
+                GoTo(secondChosenCharacter, OnFinishedTraversingFleePath);
+            }
+        } else {
+            OnStartFlee();
+        }
+    }
     public void OnStartFleeToHome() {
         if (!hasFleePath) {
             //Only clear path on the first start of flee, once the character is already in flee path and decided to flee again do not clear path anymore
@@ -2083,28 +2127,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Effects
     public void ShowHealthAdjustmentEffect(int damage) {
         Color color = damage > 0 ? Color.green : Color.red;
-        float startSize;
-        float absoluteValue = Mathf.Abs(damage);
-        if (absoluteValue >= 200) {
-            startSize = 3f;
-        } else if (absoluteValue >= 50f) {
-            startSize = 2f;
-        } else  {
-            startSize = 1f;
-        }
+        float startSize = 1.5f;
         textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
     }
     public void ShowHealthAdjustmentEffect(float damage) {
         Color color = damage > 0 ? Color.green : Color.red;
-        float startSize;
-        float absoluteValue = Mathf.Abs(damage);
-        if (absoluteValue >= 200) {
-            startSize = 3f;
-        } else if (absoluteValue >= 50f) {
-            startSize = 2f;
-        } else  {
-            startSize = 1f;
-        }
+        float startSize = 1.5f;
         textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
     }
     #endregion

@@ -60,7 +60,7 @@ public class CarryComponent : CharacterComponent {
             mapVisualTransform.localPosition = new Vector3(0f, 0.5f, 0f);
             mapVisualTransform.eulerAngles = Vector3.zero;
             tileObject.mapVisual.UpdateSortingOrders(tileObject);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, tileObject as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, tileObject as IPlayerActionTarget);
             return true;
         }
         return false;

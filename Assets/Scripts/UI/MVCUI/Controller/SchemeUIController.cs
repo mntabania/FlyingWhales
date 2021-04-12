@@ -208,6 +208,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         //Only activate temptation effects if scheme is successful
         if (isSuccessful) {
             //Process all activate temptations also
+            Messenger.Broadcast(CharacterSignals.CHARACTER_MEDDLER_SCHEME_SUCCESSFUL, _targetCharacter);
             for (int i = 0; i < _chosenTemptations.Count; i++) {
                 TEMPTATION temptation = _chosenTemptations[i];
                 ActivateTemptationEffect(temptation);
@@ -264,7 +265,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     }
     public void OnHoverOverSuccessRate() {
         if (_schemeUIItems.Count > 0) {
-            PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(_schemeUsed.type);
+            PlayerSkillData skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(_schemeUsed.type);
             float resistanceValue = _targetCharacter.piercingAndResistancesComponent.GetResistanceValue(skillData.resistanceType);
 
             if (resistanceValue > 0f) {
@@ -332,7 +333,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         for (int i = 0; i < _schemeUIItems.Count; i++) {
             successRate += _schemeUIItems[i].successRate;
         }
-        PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(_schemeUsed.type);
+        PlayerSkillData skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(_schemeUsed.type);
         float resistanceValue = _targetCharacter.piercingAndResistancesComponent.GetResistanceValue(skillData.resistanceType);
         CombatManager.ModifyValueByPiercingAndResistance(ref successRate, PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(_schemeUsed.type), resistanceValue);
 

@@ -30,7 +30,8 @@ namespace Interrupts {
             if (actor != target && witness != target && target is Character targetCharacter) {
                 if (actor.relationshipContainer.GetAwarenessState(targetCharacter) == AWARENESS_STATE.Missing) {
                     if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                        if (witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {
+                        if (witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)
+                             && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, targetCharacter)) {
                             if (targetCharacter.IsConsideredInDangerBy(witness)) {
                                 witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, targetCharacter);
                             }

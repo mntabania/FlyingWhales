@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 namespace Traits {
     [System.Serializable]
-    public class Trait : IMoodModifier, ISavable, IContextMenuItem, SkillEventDispatcher.ISkillLevelUpListener {
+    public class Trait : IMoodModifier, ISavable, IContextMenuItem {
         //Non-changeable values
         public string name;
         public string description;
@@ -195,7 +195,6 @@ namespace Traits {
         }
         protected virtual string GetDescriptionInUI() { return description; }
         public virtual void AfterDeath(Character character) { }
-        protected virtual void OnAfflictionLeveledUp(SkillData p_skillData, PlayerSkillData p_playerSkillData){}
         #endregion
 
         #region Utilities
@@ -368,43 +367,6 @@ namespace Traits {
                 return log;
             }
             return default;
-        }
-        #endregion
-
-        #region Afflictions
-        /// <summary>
-        /// Check if this trait should start listening if the player levels this Affliction up.
-        /// This should only be used on Afflictions and is usually called when the trait is added.
-        /// </summary>
-        /// <param name="p_character">The character the affliction was added to</param>
-        protected void CheckIfShouldListenToLevelUpEvent(Character p_character) {
-            if (p_character.HasAfflictedByPlayerWith(this)) {
-                //listen for affliction level up
-                PLAYER_SKILL_TYPE playerSkillType = GetAfflictionSkillType();
-                if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
-                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
-                    skillData.skillEventDispatcher.SubscribeToLevelUp(this);
-                }
-            }
-        }
-        /// <summary>
-        /// Unsubscribe this trait from the Affliction Level Up Event.
-        /// This should only be used on Afflictions and is usually called when the trait is removed.
-        /// </summary>
-        /// <param name="p_character"></param>
-        protected void UnsubscribeToLevelUpEvent(Character p_character) {
-            //stop listening for affliction level up
-            PLAYER_SKILL_TYPE playerSkillType = GetAfflictionSkillType();
-            if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
-                SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
-                skillData.skillEventDispatcher.UnsubscribeToLevelUp(this);
-            }
-        }
-        #endregion
-
-        #region SkillEventDispatcher.ISkillLevelUpListener Implementation
-        public void OnSkillLeveledUp(SkillData p_skillData, PlayerSkillData p_playerSkillData) {
-            OnAfflictionLeveledUp(p_skillData, p_playerSkillData);
         }
         #endregion
     }

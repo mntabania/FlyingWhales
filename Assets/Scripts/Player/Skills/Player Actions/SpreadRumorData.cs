@@ -126,7 +126,7 @@ public class SpreadRumorData : PlayerAction {
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             }
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, actor as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, actor as IPlayerActionTarget);
         }
     }
 }

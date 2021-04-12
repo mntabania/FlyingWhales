@@ -23,15 +23,19 @@ namespace Inner_Maps.Location_Structures {
         protected override void SubscribeListeners() {
             if (hasBeenDestroyed) { return; }
             Messenger.AddListener<ThinWall, int>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
+            Messenger.AddListener<ThinWall, int, Character>(StructureSignals.WALL_DAMAGED_BY, OnWallDamagedBy);
             Messenger.AddListener<ThinWall, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int, Character>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
             if (hasBeenDestroyed) { return; }
             Messenger.RemoveListener<ThinWall, int>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
+            Messenger.RemoveListener<ThinWall, int, Character>(StructureSignals.WALL_DAMAGED_BY, OnWallDamagedBy);
             Messenger.RemoveListener<ThinWall, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int, Character>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         #endregion
@@ -73,6 +77,16 @@ namespace Inner_Maps.Location_Structures {
             }
             if (objectsThatContributeToDamage.Contains(structureWall)) {
                 AdjustHP(amount);
+            }
+        }
+        private void OnWallDamagedBy(ThinWall structureWall, int amount, Character p_responsibleCharacter) {
+            if (structureWalls != null && structureWalls.Contains(structureWall)) {
+                //create repair job
+                structureObj.RescanPathfindingGridOfStructure(region.innerMap);
+                OnStructureDamaged();
+            }
+            if (objectsThatContributeToDamage.Contains(structureWall)) {
+                AdjustHP(amount, p_responsibleCharacter);
             }
         }
         public override void OnTileRepaired(LocationGridTile tile, int amount) {
@@ -147,7 +161,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Destroy
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
             if (hasBeenDestroyed) {
                 return;
             }
@@ -159,12 +173,12 @@ namespace Inner_Maps.Location_Structures {
                      npcSettlement.RemoveFromAvailableJobs(existingRepairJob);
                  }
             }
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
         }
-        protected override void AfterStructureDestruction() {
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             structureObj.OnOwnerStructureDestroyed(region.innerMap);
             Area hexTile = occupiedArea;
-            base.AfterStructureDestruction();
+            base.AfterStructureDestruction(p_responsibleCharacter);
             if (hexTile != null) {
                 hexTile.CheckIfSettlementIsStillOnArea();
             }

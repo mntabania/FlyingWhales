@@ -163,6 +163,7 @@ public class VampiricEmbrace : GoapAction {
                 targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Plagued");
 
                 if (targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", actor)) {
+                    Messenger.Broadcast(CharacterSignals.CHARACTER_BECAME_VAMPIRE, targetCharacter);
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

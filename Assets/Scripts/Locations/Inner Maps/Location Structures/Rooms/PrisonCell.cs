@@ -12,7 +12,7 @@ namespace Inner_Maps.Location_Structures {
         
         public Character currentTortureTarget { get; private set; }
         public Character currentBrainwashTarget { get; private set; }
-        public Summon skeleton { get; private set; }
+        // public Summon skeleton { get; private set; }
         private AutoDestroyParticle _particleEffect;
 
         public PrisonCell(List<LocationGridTile> tilesInRoom) : base("Prison Cell", tilesInRoom) {
@@ -35,30 +35,40 @@ namespace Inner_Maps.Location_Structures {
             } else if (!string.IsNullOrEmpty(saveData.brainwashTargetID)) {
                 currentBrainwashTarget = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.brainwashTargetID);
             }
-            if (!string.IsNullOrEmpty(saveData.skeletonID)) {
-                skeleton = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.skeletonID) as Summon;
-            }
-            if (skeleton == null) {
-                if (currentTortureTarget != null) {
-                    Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-                    Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
-                    LocationGridTile centerTile = GetCenterTile();
-                    _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
-                } else if (currentBrainwashTarget != null) {
-                    Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
-                }    
-            } else {
-                //if skeleton is not null then, listen for drop job to be finished
-                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            // if (!string.IsNullOrEmpty(saveData.skeletonID)) {
+            //     skeleton = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.skeletonID) as Summon;
+            // }
+            // if (skeleton == null) {
+            //     if (currentTortureTarget != null) {
+            //         Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+            //         Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            //         LocationGridTile centerTile = GetCenterTile();
+            //         _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
+            //     } else if (currentBrainwashTarget != null) {
+            //         Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+            //     }    
+            // } else {
+            //     //if skeleton is not null then, listen for drop job to be finished
+            //     Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            // }
+            if (currentTortureTarget != null) {
+                Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+                    Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+                LocationGridTile centerTile = GetCenterTile();
+                _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
+            } else if (currentBrainwashTarget != null) {
+                Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+                LocationGridTile centerTile = GetCenterTile();
+                _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
             }
         }
         public override void LoadAdditionalReferences(SaveDataStructureRoom saveDataStructureRoom) {
             base.LoadAdditionalReferences(saveDataStructureRoom);
-            if (skeleton != null) {
-                //if skeleton is not null then open door, just in case skeleton was saved inside room
-                DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
-                door?.Open();
-            }
+            // if (skeleton != null) {
+            //     //if skeleton is not null then open door, just in case skeleton was saved inside room
+            //     DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+            //     door?.Open();
+            // }
         }
         #endregion
         
@@ -97,13 +107,13 @@ namespace Inner_Maps.Location_Structures {
             currentTortureTarget = target;
             currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, currentTortureTarget);
             Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
             LocationGridTile centerTile = GetCenterTile();
             _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
         }
         private void StopTorture() {
             currentTortureTarget = null;
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void CheckIfTortureInterruptFinished(INTERRUPT interrupt, Character character) {
             if (character == currentTortureTarget && interrupt == INTERRUPT.Being_Tortured) {
@@ -116,37 +126,38 @@ namespace Inner_Maps.Location_Structures {
                 Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
 
                 character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
-                //open door
-                DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
-                door?.Open();
-                
-                skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, character.currentRegion, className: "Archer");
-                skeleton.SetIsVolatile(true);
-                skeleton.SetShowNotificationOnDeath(false);
-                skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
-                skeleton.SetDestroyMarkerOnDeath(true);
-                skeleton.ClearPlayerActions();
-                skeleton.movementComponent.SetEnableDigging(true);
+                StopTorture();
+                // //open door
+                // DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+                // door?.Open();
+                //
+                // skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, character.currentRegion, className: "Archer");
+                // skeleton.SetIsVolatile(true);
+                // skeleton.SetShowNotificationOnDeath(false);
+                // skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+                // skeleton.SetDestroyMarkerOnDeath(true);
+                // skeleton.ClearPlayerActions();
+                // skeleton.movementComponent.SetEnableDigging(true);
 
-                List<LocationGridTile> dropChoices = ObjectPoolManager.Instance.CreateNewGridTileList();
-                for (int i = 0; i < parentStructure.occupiedArea.gridTileComponent.gridTiles.Count; i++) {
-                    LocationGridTile tile = parentStructure.occupiedArea.gridTileComponent.gridTiles[i];
-                    if(tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                        dropChoices.Add(tile);
-                    }
-                }
-                LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);
-                ObjectPoolManager.Instance.ReturnGridTileListToPool(dropChoices);
-                
-                CharacterManager.Instance.PlaceSummonInitially(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, skeleton);
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
-                    skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
-                    chosenDropTile
-                });
-                skeleton.jobQueue.AddJobInQueue(job);
-                
-                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                // List<LocationGridTile> dropChoices = ObjectPoolManager.Instance.CreateNewGridTileList();
+                // for (int i = 0; i < parentStructure.occupiedArea.gridTileComponent.gridTiles.Count; i++) {
+                //     LocationGridTile tile = parentStructure.occupiedArea.gridTileComponent.gridTiles[i];
+                //     if(tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                //         dropChoices.Add(tile);
+                //     }
+                // }
+                // LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);
+                // ObjectPoolManager.Instance.ReturnGridTileListToPool(dropChoices);
+                //
+                // CharacterManager.Instance.PlaceSummonInitially(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
+                // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, skeleton);
+                // job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
+                //     skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
+                //     chosenDropTile
+                // });
+                // skeleton.jobQueue.AddJobInQueue(job);
+                //
+                // Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         #endregion
@@ -249,7 +260,9 @@ namespace Inner_Maps.Location_Structures {
             currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
             Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            LocationGridTile centerTile = GetCenterTile();
+            _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
         }
         public void StartBrainwash(Character p_target) {
             wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
@@ -259,96 +272,99 @@ namespace Inner_Maps.Location_Structures {
             currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
             Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void BrainwashDone() {
             currentBrainwashTarget = null;
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void CheckIfBrainwashFinished(INTERRUPT interrupt, Character chosenTarget) {
             if (interrupt == INTERRUPT.Being_Brainwashed && chosenTarget == currentBrainwashTarget) {
                 Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
             
-                DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
-                door?.Open();
+                _particleEffect.StopEmission();
+                _particleEffect = null;
+                
+                // DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+                // door?.Open();
 
                 if (chosenTarget.traitContainer.HasTrait("Cultist")) {
                     //successfully converted
-                    GameDate dueDate = GameManager.Instance.Today();
-                    dueDate.AddTicks(1);
-                    SchedulingManager.Instance.AddEntry(dueDate, () => chosenTarget.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME), chosenTarget);
+                    // GameDate dueDate = GameManager.Instance.Today();
+                    // dueDate.AddTicks(1);
+                    // SchedulingManager.Instance.AddEntry(dueDate, () => chosenTarget.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME), chosenTarget);
                     chosenTarget.traitContainer.RemoveRestrainAndImprison(chosenTarget);
                     chosenTarget.traitContainer.RemoveTrait(chosenTarget, "Unconscious");
-                    BrainwashDone();
                 } else {
                     chosenTarget.traitContainer.RestrainAndImprison(chosenTarget, null, PlayerManager.Instance.player.playerFaction);
-                    //spawn skeleton to carry target
-                    skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
-                    skeleton.SetIsVolatile(true);
-                    skeleton.SetShowNotificationOnDeath(false);
-                    skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
-                    skeleton.SetDestroyMarkerOnDeath(true);
-                    skeleton.ClearPlayerActions();
-                    skeleton.movementComponent.SetEnableDigging(true);
+                    // //spawn skeleton to carry target
+                    // skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
+                    // skeleton.SetIsVolatile(true);
+                    // skeleton.SetShowNotificationOnDeath(false);
+                    // skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+                    // skeleton.SetDestroyMarkerOnDeath(true);
+                    // skeleton.ClearPlayerActions();
+                    // skeleton.movementComponent.SetEnableDigging(true);
 
-                    List<LocationGridTile> dropChoices = ObjectPoolManager.Instance.CreateNewGridTileList();
-                    for (int i = 0; i < parentStructure.occupiedArea.gridTileComponent.gridTiles.Count; i++) {
-                        LocationGridTile tile = parentStructure.occupiedArea.gridTileComponent.gridTiles[i];
-                        if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                            dropChoices.Add(tile);
-                        }
-                    }
-                    LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);
-                    ObjectPoolManager.Instance.ReturnGridTileListToPool(dropChoices);
-
-                    CharacterManager.Instance.PlaceSummonInitially(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, chosenTarget, skeleton);
-                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
-                        skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS),
-                        chosenDropTile
-                    });
-                    job.SetCannotBePushedBack(true);
-                    skeleton.jobQueue.AddJobInQueue(job);
+                    // List<LocationGridTile> dropChoices = ObjectPoolManager.Instance.CreateNewGridTileList();
+                    // for (int i = 0; i < parentStructure.occupiedArea.gridTileComponent.gridTiles.Count; i++) {
+                    //     LocationGridTile tile = parentStructure.occupiedArea.gridTileComponent.gridTiles[i];
+                    //     if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                    //         dropChoices.Add(tile);
+                    //     }
+                    // }
+                    // LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);
+                    // ObjectPoolManager.Instance.ReturnGridTileListToPool(dropChoices);
+                    //
+                    // CharacterManager.Instance.PlaceSummonInitially(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
+                    // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, chosenTarget, skeleton);
+                    // job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
+                    //     skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS),
+                    //     chosenDropTile
+                    // });
+                    // job.SetCannotBePushedBack(true);
+                    // skeleton.jobQueue.AddJobInQueue(job);
                     
-                    Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
-                }                
+                    // Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                }
+                BrainwashDone();
             }
         }
         #endregion
 
-        #region Shared Functions
-        private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
-            if (character == skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
-                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
-                //close door
-                DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
-                door?.Close();
-                
-                //kill skeleton
-                LocationStructure deathLocation = skeleton.currentStructure;
-                skeleton.Death();
-                deathLocation?.RemoveCharacterAtLocation(skeleton);
-
-                bool isTorture = currentTortureTarget != null;
-                var targetCharacter = isTorture ? currentTortureTarget : currentBrainwashTarget;
-                
-                targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter);
-                targetCharacter.jobComponent.DisableReportStructure();
-                if (!targetCharacter.traitContainer.HasTrait("Paralyzed")) {
-                    //No need to daze paralyzed characters, because we expect that characters than cannot perform should not be dazed.
-                    targetCharacter.traitContainer.AddTrait(targetCharacter, "Dazed");    
-                }
-                
-                
-                skeleton = null;
-                if (isTorture) {
-                    StopTorture();    
-                } else {
-                    BrainwashDone();    
-                }
-            }
-        }
-        #endregion
+        // #region Shared Functions
+        // private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
+        //     if (character == skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
+        //         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+        //         //close door
+        //         DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+        //         door?.Close();
+        //         
+        //         //kill skeleton
+        //         LocationStructure deathLocation = skeleton.currentStructure;
+        //         skeleton.Death();
+        //         deathLocation?.RemoveCharacterAtLocation(skeleton);
+        //
+        //         bool isTorture = currentTortureTarget != null;
+        //         var targetCharacter = isTorture ? currentTortureTarget : currentBrainwashTarget;
+        //         
+        //         targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter);
+        //         targetCharacter.jobComponent.DisableReportStructure();
+        //         if (!targetCharacter.traitContainer.HasTrait("Paralyzed")) {
+        //             //No need to daze paralyzed characters, because we expect that characters than cannot perform should not be dazed.
+        //             targetCharacter.traitContainer.AddTrait(targetCharacter, "Dazed");    
+        //         }
+        //         
+        //         
+        //         skeleton = null;
+        //         if (isTorture) {
+        //             StopTorture();    
+        //         } else {
+        //             BrainwashDone();    
+        //         }
+        //     }
+        // }
+        // #endregion
         
         #region Destruction
         public override void OnParentStructureDestroyed() {
@@ -371,6 +387,12 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         #endregion
+
+        #region Selectable
+        public override bool CanBeSelected() {
+            return false;
+        }
+        #endregion
     }
 }
 
@@ -378,13 +400,13 @@ namespace Inner_Maps.Location_Structures {
 public class SaveDataPrisonCell : SaveDataStructureRoom {
     public string tortureID;
     public string brainwashTargetID;
-    public string skeletonID;
+    // public string skeletonID;
     public override void Save(StructureRoom data) {
         base.Save(data);
         PrisonCell prisonCell = data as PrisonCell;
         tortureID = prisonCell.currentTortureTarget == null ? string.Empty : prisonCell.currentTortureTarget.persistentID;
         brainwashTargetID = prisonCell.currentBrainwashTarget == null ? string.Empty : prisonCell.currentBrainwashTarget.persistentID;
-        skeletonID = prisonCell.skeleton == null ? string.Empty : prisonCell.skeleton.persistentID;
+        // skeletonID = prisonCell.skeleton == null ? string.Empty : prisonCell.skeleton.persistentID;
     }
 }
 #endregion

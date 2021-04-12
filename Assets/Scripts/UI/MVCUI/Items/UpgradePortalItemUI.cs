@@ -12,12 +12,15 @@ public class UpgradePortalItemUI : PooledObject {
     [SerializeField] private TextMeshProUGUI lblName;
     [SerializeField] private RectTransform _contentParent;
     [SerializeField] private CanvasGroup _canvasGroupContent;
+    //NOTE: Only 1 of these values can have value, either skill or passive skill.
     private PLAYER_SKILL_TYPE _skill;
+    private PASSIVE_SKILL _passiveSkill;
     private System.Action<UpgradePortalItemUI> _onHoverOverItem;
     private System.Action<UpgradePortalItemUI> _onHoverOutItem;
 
     #region getters
     public PLAYER_SKILL_TYPE skill => _skill;
+    public PASSIVE_SKILL passiveSkill => _passiveSkill;
     public RectTransform contentParent => _contentParent;
     public CanvasGroup canvasGroupContent => _canvasGroupContent;
     #endregion
@@ -30,7 +33,7 @@ public class UpgradePortalItemUI : PooledObject {
         locationPortrait.AddHoverOutAction(OnHoverOutItem);
     }
     public void SetData(PLAYER_SKILL_TYPE p_type) {
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
         _skill = p_type;
         if (skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
             MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(p_type);
@@ -67,5 +70,10 @@ public class UpgradePortalItemUI : PooledObject {
     }
     private void OnHoverOutItem() {
         _onHoverOutItem?.Invoke(this);
+    }
+    public override void Reset() {
+        base.Reset();
+        _skill = PLAYER_SKILL_TYPE.NONE;
+        _passiveSkill = PASSIVE_SKILL.None;
     }
 }

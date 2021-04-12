@@ -77,7 +77,7 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.ShowPlayerActionContextMenu(this, worldPos, false);
         }
         public void MiddleSelectAction() { }
-        public bool CanBeSelected() {
+        public virtual bool CanBeSelected() {
             return true;
         }
         #endregion

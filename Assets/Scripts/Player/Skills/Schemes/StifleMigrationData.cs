@@ -42,7 +42,7 @@ public class StifleMigrationData : SchemeData {
         if (targetSettlement is NPCSettlement npcSettlement && !npcSettlement.migrationComponent.IsMigrationEventAllowed()) {
             return false;
         }
-        if (PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SCHEME).charges <= 0) {
+        if (PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.SCHEME).charges <= 0) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetSettlement);

@@ -101,9 +101,26 @@ public class PartyQuestBoard {
             //Cannot post quests on faction that are not major
             return;
         }
-        RescuePartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Rescue) as RescuePartyQuest;
+        LocationStructure targetStructure = targetCharacter.currentStructure;
+        if (targetStructure != null && targetStructure.structureType.IsPlayerStructure()) {
+            CreateDemonRescuePartyQuest(questCreator, madeInLocation, targetCharacter, targetStructure as DemonicStructure);
+        } else {
+            RescuePartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Rescue) as RescuePartyQuest;
+            quest.SetMadeInLocation(madeInLocation);
+            quest.SetTargetCharacter(targetCharacter);
+            AddPartyQuest(quest, questCreator);
+        }
+
+    }
+    public void CreateDemonRescuePartyQuest(Character questCreator, BaseSettlement madeInLocation, Character targetCharacter, DemonicStructure targetDemonicStructure) {
+        if (!owner.isMajorFaction) {
+            //Cannot post quests on faction that are not major
+            return;
+        }
+        DemonRescuePartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Demon_Rescue) as DemonRescuePartyQuest;
         quest.SetMadeInLocation(madeInLocation);
         quest.SetTargetCharacter(targetCharacter);
+        quest.SetTargetDemonicStructure(targetDemonicStructure);
         AddPartyQuest(quest, questCreator);
     }
     public void CreateExterminatePartyQuest(Character questCreator, BaseSettlement madeInLocation, LocationStructure targetStructure, NPCSettlement originSettlement) {

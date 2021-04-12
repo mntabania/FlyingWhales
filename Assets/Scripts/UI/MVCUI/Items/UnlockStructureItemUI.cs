@@ -13,30 +13,31 @@ public class UnlockStructureItemUI : MonoBehaviour {
     [SerializeField] private GameObject goCover;
     
     private PLAYER_SKILL_TYPE _structureType;
-    private PlayerSkillData _skillData;
+    private PlayerSkillData _playerSkillData;
     
     public void SetStructureType(PLAYER_SKILL_TYPE p_type) {
         _structureType = p_type;
-        _skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
-        lblName.text = _skillData.name;
-        lblCosts.text = $"{_skillData.unlockCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}";
+        _playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
+        lblName.text = _playerSkillData.name;
+        lblCosts.text = $"{_playerSkillData.unlockCost}{UtilityScripts.Utilities.ManaIcon()}";
         btn.onClick.AddListener(OnClickStructureItem);
     }
     private void OnClickStructureItem() {
-        onClickUnlockStructure?.Invoke(_structureType, _skillData.unlockCost);
+        onClickUnlockStructure?.Invoke(_structureType, _playerSkillData.unlockCost);
     }
 
     public void SetCoverState(bool p_state) {
         goCover.SetActive(p_state);
     }
     public void UpdateSelectableState() {
-        if (PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Contains(_structureType)) {
-            //player already has minion type
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(_structureType);
+        if (skillData.isInUse) {
+            //player already has structure
             SetCoverState(true);
             btn.interactable = false;
         } else {
-            //player does not yet have minion type, check if player can afford to unlock this
-            bool canAfford = PlayerManager.Instance.player.mana >= _skillData.unlockCost;
+            //player does not yet have structure, check if player can afford to unlock this
+            bool canAfford = PlayerManager.Instance.player.mana >= _playerSkillData.unlockCost;
             btn.interactable = canAfford;
             SetCoverState(!canAfford);
         }

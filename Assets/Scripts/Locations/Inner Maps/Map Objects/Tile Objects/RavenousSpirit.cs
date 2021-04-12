@@ -36,8 +36,8 @@ public class RavenousSpirit : TileObject {
         return $"Ravenous Spirit {id.ToString()}";
     }
     public override void OnPlacePOI() {
-        m_skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
-        m_playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
+        m_skillData = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
+        m_playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
         base.OnPlacePOI();
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);

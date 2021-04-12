@@ -36,7 +36,7 @@ public class SaveDataPlayer {
             PlayerSkillTree currSkillTree = PlayerSkillManager.Instance.allSkillTrees[i];
             for (int j = 0; j < currSkillTree.initialLearnedSkills.Length; j++) {
                 PLAYER_SKILL_TYPE node = currSkillTree.initialLearnedSkills[j];
-                if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(node) != null) {
+                if (PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(node) != null) {
                     LearnSkill(node, currSkillTree.nodes[node]);    
                 }
             }
@@ -88,7 +88,7 @@ public class SaveDataPlayer {
 
     #region Skills
     public void LearnSkill(PLAYER_SKILL_TYPE skillType, PlayerSkillTreeNode node) {
-        PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
+        PlayerSkillData skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(skillType);
         AdjustExp(-skillData.expCost);
         learnedSkills.Add(skillType);
         //PlayerSkillDataCopy learnedSkill = new PlayerSkillDataCopy() { skill = skillType, charges = node.charges, cooldown = node.cooldown, manaCost = node.manaCost, threat = node.threat, threatPerHour = node.threatPerHour };

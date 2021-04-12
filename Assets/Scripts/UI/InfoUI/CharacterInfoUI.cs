@@ -833,7 +833,7 @@ public class CharacterInfoUI : InfoUIBase {
         List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
             PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
-            SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+            SkillData spellData = PlayerSkillManager.Instance.GetSkillData(spellType);
             afflictions.Add(spellData);
         }
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,

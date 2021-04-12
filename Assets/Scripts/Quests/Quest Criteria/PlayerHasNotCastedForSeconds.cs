@@ -10,14 +10,14 @@ namespace Quests {
             _neededSeconds = neededSeconds;
         }
         public override void Enable() {
-            Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnSpellExecuted);
-            Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_AFFLICTION, OnSpellExecuted);
-            Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecuted);
+            Messenger.AddListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, OnSpellExecuted);
+            Messenger.AddListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_AFFLICTION, OnSpellExecuted);
+            Messenger.AddListener<PlayerAction>(PlayerSkillSignals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecuted);
         }
         public override void Disable() {
-            Messenger.RemoveListener<SkillData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnSpellExecuted);
-            Messenger.RemoveListener<SkillData>(SpellSignals.ON_EXECUTE_AFFLICTION, OnSpellExecuted);
-            Messenger.RemoveListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecuted);
+            Messenger.RemoveListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, OnSpellExecuted);
+            Messenger.RemoveListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_AFFLICTION, OnSpellExecuted);
+            Messenger.RemoveListener<PlayerAction>(PlayerSkillSignals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecuted);
             StopTimer();
         }
 

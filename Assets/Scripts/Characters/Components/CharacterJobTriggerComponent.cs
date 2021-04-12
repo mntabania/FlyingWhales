@@ -101,7 +101,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 IPointOfInterest inVision = owner.marker.inVisionPOIs[i];
                 owner.marker.AddUnprocessedPOI(inVision);
             }
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
             //for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
             //    Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
             //    _owner.marker.AddUnprocessedPOI(inVisionCharacter);
@@ -134,7 +134,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (character.traitContainer.HasTrait("Unconscious")) {
                 character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
             //_owner.behaviourComponent.SetIsHarassing(false, null);
             //_owner.behaviourComponent.SetIsInvading(false, null);
             //_owner.behaviourComponent.SetIsDefending(false, null);
@@ -1325,10 +1325,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public bool CreateEatJob(IPointOfInterest target) {
+    public bool CreateFullnessRecoveryOnSight(IPointOfInterest target) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
-            JobQueueItem job = null;
-            CreateEatJob(target, false, out job);
+	        if (target is Table && target.gridTileLocation != null && target.gridTileLocation.structure == owner.homeStructure &&
+	            owner.currentJob != null && owner.currentJob.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
+		        //Do not trigger fullness recovery on sight if current job is obtain personal food and seen target is Table at home structure.
+		        //This is to solve this issue: https://trello.com/c/KZANY7sn/3973-food-pile-sa-bahay-dindrop
+		        return false;
+	        }
+	        JobQueueItem job = null;
+            CreateFullnessRecoveryOnSight(target, false, out job);
             if (job != null && owner.jobQueue.AddJobInQueue(job)) {
                 owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
                 return true;
@@ -1336,7 +1342,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public bool CreateEatJob(IPointOfInterest target, bool cancelOtherFullnessRecoveryJobs, out JobQueueItem producedJob) {
+    public bool CreateFullnessRecoveryOnSight(IPointOfInterest target, bool cancelOtherFullnessRecoveryJobs, out JobQueueItem producedJob) {
         producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
             if (owner.partyComponent.isActiveMember) {
@@ -1628,7 +1634,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Report Demonic Structure
-    public void CreateReportDemonicStructure(LocationStructure structureToReport) {
+    public bool CreateReportDemonicStructure(LocationStructure structureToReport) {
         NPCSettlement homeSettlement = owner.homeSettlement;
 	    if (canReportDemonicStructure && homeSettlement != null && homeSettlement.mainStorage != null && !owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
 		    // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Seen", 
@@ -1639,7 +1645,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             job.AddOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new object[] { structureToReport, homeSettlement.mainStorage });
             owner.jobQueue.AddJobInQueue(job);
             Messenger.Broadcast(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, owner, job);
-        }
+            return true;
+	    }
+	    return false;
     }
     /// <summary>
     /// Disable report demonic structure until this character steps foot in his/her home.
@@ -2565,6 +2573,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerReleaseJob(Character targetCharacter) {
+        JobQueueItem job = null;
+        TriggerReleaseJob(targetCharacter, out job);
+        if(job != null) {
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    public bool TriggerReleaseJob(Character targetCharacter, out JobQueueItem producedJob) {
+        producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.RELEASE_CHARACTER, targetCharacter)) {
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RELEASE_CHARACTER], owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
@@ -2572,7 +2589,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            return owner.jobQueue.AddJobInQueue(job);
+            producedJob = job;
+            return true;
         }
         return false;
     }

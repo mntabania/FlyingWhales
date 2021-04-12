@@ -20,7 +20,7 @@ public class LightningData : SkillData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
-            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetPlayerSkillData<LightningSkillData>(PLAYER_SKILL_TYPE.LIGHTNING).thunderAudioClips), 
+            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<LightningSkillData>(PLAYER_SKILL_TYPE.LIGHTNING).thunderAudioClips), 
             targetTile, 1, false
         );
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);

@@ -64,7 +64,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [NonSerialized]
     public List<PLAYER_SKILL_TYPE> constantSkills = new List<PLAYER_SKILL_TYPE> { PLAYER_SKILL_TYPE.AFFLICT, PLAYER_SKILL_TYPE.BUILD_DEMONIC_STRUCTURE/*, PLAYER_SKILL_TYPE.UNSUMMON*/, 
-        PLAYER_SKILL_TYPE.BREED_MONSTER, PLAYER_SKILL_TYPE.TORTURE, PLAYER_SKILL_TYPE.BRAINWASH, PLAYER_SKILL_TYPE.EVANGELIZE,/*, SPELL_TYPE.CULTIST_TRANSFORM,*/ PLAYER_SKILL_TYPE.CULTIST_POISON,
+        /*PLAYER_SKILL_TYPE.BREED_MONSTER,*/ PLAYER_SKILL_TYPE.TORTURE, PLAYER_SKILL_TYPE.BRAINWASH, PLAYER_SKILL_TYPE.EVANGELIZE,/*, SPELL_TYPE.CULTIST_TRANSFORM,*/ PLAYER_SKILL_TYPE.CULTIST_POISON,
         PLAYER_SKILL_TYPE.SACRIFICE, PLAYER_SKILL_TYPE.REPAIR, PLAYER_SKILL_TYPE.FOUND_CULT, PLAYER_SKILL_TYPE.SPREAD_RUMOR, PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP, PLAYER_SKILL_TYPE.UPGRADE,
         PLAYER_SKILL_TYPE.INSTIGATE_WAR, PLAYER_SKILL_TYPE.RESIGN, PLAYER_SKILL_TYPE.LEAVE_FACTION, PLAYER_SKILL_TYPE.LEAVE_HOME, PLAYER_SKILL_TYPE.LEAVE_VILLAGE, PLAYER_SKILL_TYPE.BREAK_UP,
         PLAYER_SKILL_TYPE.JOIN_FACTION, PLAYER_SKILL_TYPE.REBELLION, PLAYER_SKILL_TYPE.SCHEME, PLAYER_SKILL_TYPE.OVERTHROW_LEADER, PLAYER_SKILL_TYPE.STIFLE_MIGRATION, PLAYER_SKILL_TYPE.INDUCE_MIGRATION,
@@ -87,7 +87,7 @@ public class PlayerSkillManager : MonoBehaviour {
     [NonSerialized]
     public PLAYER_SKILL_TYPE[] allPlayerActions = { PLAYER_SKILL_TYPE.ZAP, PLAYER_SKILL_TYPE.RAISE_DEAD, PLAYER_SKILL_TYPE.DESTROY, PLAYER_SKILL_TYPE.IGNITE, PLAYER_SKILL_TYPE.POISON
             , PLAYER_SKILL_TYPE.TORTURE, PLAYER_SKILL_TYPE.SEIZE_OBJECT, PLAYER_SKILL_TYPE.SEIZE_CHARACTER, PLAYER_SKILL_TYPE.SEIZE_MONSTER
-            , PLAYER_SKILL_TYPE.BUILD_DEMONIC_STRUCTURE, PLAYER_SKILL_TYPE.AFFLICT, PLAYER_SKILL_TYPE.BREED_MONSTER //, SPELL_TYPE.ACTIVATE
+            , PLAYER_SKILL_TYPE.BUILD_DEMONIC_STRUCTURE, PLAYER_SKILL_TYPE.AFFLICT/*, PLAYER_SKILL_TYPE.BREED_MONSTER*/ //, SPELL_TYPE.ACTIVATE
             , PLAYER_SKILL_TYPE.AGITATE, PLAYER_SKILL_TYPE.HEAL/*, SPELL_TYPE.ANIMATE, SPELL_TYPE.EMPOWER*/
             , PLAYER_SKILL_TYPE.BRAINWASH/*, PLAYER_SKILL_TYPE.UNSUMMON*/, PLAYER_SKILL_TYPE.TRIGGER_FLAW/*, SPELL_TYPE.CULTIST_TRANSFORM*/, PLAYER_SKILL_TYPE.CULTIST_POISON
             , PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP, PLAYER_SKILL_TYPE.SNATCH, PLAYER_SKILL_TYPE.SACRIFICE, PLAYER_SKILL_TYPE.REPAIR, PLAYER_SKILL_TYPE.SPREAD_RUMOR, PLAYER_SKILL_TYPE.EVANGELIZE
@@ -116,7 +116,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [NonSerialized]
     public PLAYER_SKILL_TYPE[] allDemonicStructureSkills = { PLAYER_SKILL_TYPE.MEDDLER, PLAYER_SKILL_TYPE.BEHOLDER, PLAYER_SKILL_TYPE.CRYPT,
-        PLAYER_SKILL_TYPE.KENNEL, /*SPELL_TYPE.OSTRACIZER,*/ PLAYER_SKILL_TYPE.TORTURE_CHAMBERS, /*SPELL_TYPE.DEMONIC_PRISON, PLAYER_SKILL_TYPE.DEFILER,*/ PLAYER_SKILL_TYPE.BIOLAB, 
+        PLAYER_SKILL_TYPE.KENNEL, /*SPELL_TYPE.OSTRACIZER,*/ PLAYER_SKILL_TYPE.TORTURE_CHAMBERS, /*SPELL_TYPE.DEMONIC_PRISON,*/ PLAYER_SKILL_TYPE.DEFILER, PLAYER_SKILL_TYPE.BIOLAB, 
         PLAYER_SKILL_TYPE.SPIRE, PLAYER_SKILL_TYPE.MANA_PIT, PLAYER_SKILL_TYPE.MARAUD, PLAYER_SKILL_TYPE.DEFENSE_POINT, PLAYER_SKILL_TYPE.IMP_HUT,
     };
 
@@ -135,8 +135,9 @@ public class PlayerSkillManager : MonoBehaviour {
     PLAYER_SKILL_TYPE.VENGEFUL_GHOST, PLAYER_SKILL_TYPE.WURM, PLAYER_SKILL_TYPE.TROLL, PLAYER_SKILL_TYPE.REVENANT, PLAYER_SKILL_TYPE.BONE_GOLEM, PLAYER_SKILL_TYPE.SCORPION, PLAYER_SKILL_TYPE.HARPY };
 
     [NonSerialized]
-    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Prayer_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb, PASSIVE_SKILL.Spell_Damage_Chaos_Orb, PASSIVE_SKILL.Mental_Break_Chaos_Orb, 
-        PASSIVE_SKILL.Plague_Chaos_Orb, PASSIVE_SKILL.Player_Success_Raid_Chaos_Orb, PASSIVE_SKILL.Dark_Ritual_Chaos_Orb, PASSIVE_SKILL.Raid_Chaos_Orb,
+    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Prayer_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb, PASSIVE_SKILL.Spell_Damage_Chaos_Orb, PASSIVE_SKILL.Mental_Break_Chaos_Orb,
+        PASSIVE_SKILL.Plague_Chaos_Orb, PASSIVE_SKILL.Player_Success_Raid_Chaos_Orb, PASSIVE_SKILL.Dark_Ritual_Chaos_Orb, PASSIVE_SKILL.Raid_Chaos_Orb, PASSIVE_SKILL.Night_Creature_Chaos_Orb,
+        PASSIVE_SKILL.Meddler_Chaos_Orb, PASSIVE_SKILL.Trigger_Flaw_Chaos_Orb, PASSIVE_SKILL.Lycanthrope_Chaos_Orb,
     };
     
     private void Awake() {
@@ -286,7 +287,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool IsDemonicStructure(PLAYER_SKILL_TYPE type) {
         return allDemonicStructureSkills.Contains(type);
     }
-    public SkillData GetPlayerSkillData(PLAYER_SKILL_TYPE type) {
+    public SkillData GetSkillData(PLAYER_SKILL_TYPE type) {
         if (allPlayerSkillsData.ContainsKey(type)) {
             return allPlayerSkillsData[type];
         }
@@ -377,7 +378,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public void ResetSpellsInUse() {
         for (int i = 0; i < allPlayerSkillsData.Values.Count; i++) {
             SkillData spellData = allPlayerSkillsData.Values.ElementAt(i);
-            spellData.SetIsInUse(false);
+            spellData.ResetIsInUse();
         }
     }
     public void ResetSummonPlayerSkills() {
@@ -389,7 +390,7 @@ public class PlayerSkillManager : MonoBehaviour {
     #endregion
 
     #region Assets
-    public T GetPlayerSkillData<T>(PLAYER_SKILL_TYPE spellType) where T : PlayerSkillData {
+    public T GetScriptableObjPlayerSkillData<T>(PLAYER_SKILL_TYPE spellType) where T : PlayerSkillData {
         if (_playerSkillDataDictionary.ContainsKey(spellType)) {
             return _playerSkillDataDictionary[spellType] as T;    
         }
@@ -417,7 +418,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     #region utility
     public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         if (p_forcedLevel == -1) {
             return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(GetSkillData(p_skillType).currentLevel);
         } else {
@@ -426,47 +427,47 @@ public class PlayerSkillManager : MonoBehaviour {
     }
 
     public int GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetTileRangeBonusPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetChanceBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetChanceBonusPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalHpPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public int GetAdditionalAttackActualPerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetAdditionalAttackActualPerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public int GetDurationBonusPerLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         if (p_forcedLevel == -1) {
             return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(GetSkillData(p_skillType).currentLevel);
         } else {
@@ -475,76 +476,70 @@ public class PlayerSkillManager : MonoBehaviour {
     }
 
     public int GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.skillUpgradeData.GetSkillMovementSpeedPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionPiercePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetPiercePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionRateChancePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionNapsDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetNapsDurationPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionDurationPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetDurationPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetHungerRatePerLevel(GetSkillData(p_skillType).currentLevel);
     }
     public float GetAfflictionHungerRatePerLevel(PLAYER_SKILL_TYPE p_skillType, int p_level) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetHungerRatePerLevel(p_level);
     }
     public int GetAfflictionCrowdNumberPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetCrowdNumberPerLevel(GetSkillData(p_skillType).currentLevel);
     }
 
     public List<OPINIONS> GetAfflictionOpinionTriggers(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetAllOpinionsTrigger();
     }
 
     public List<AFFLICTION_SPECIFIC_BEHAVIOUR> GetAfflictionAllAddedBehaviour(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetAllAddedBehaviour();
     }
-
-    private SkillData GetSkillData(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = GetPlayerSkillData(p_skillType);
-        return skillData;
-    }
     public bool HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE p_skillType, AFFLICTION_SPECIFIC_BEHAVIOUR p_behaviour) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = GetPlayerSkillData(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetSkillData(p_skillType);
         return playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(p_behaviour, skillData.currentLevel);
     }
     public float GetTriggerRateForCurrentLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = GetPlayerSkillData(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetSkillData(p_skillType);
         return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(skillData.currentLevel);
     }
     public bool HasOpinionTriggerAtCurrentLevel(PLAYER_SKILL_TYPE p_skillType, OPINIONS p_opinion) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = GetPlayerSkillData(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetSkillData(p_skillType);
         return playerSkillData.afflictionUpgradeData.HasOpinionTriggerForLevel(p_opinion, skillData.currentLevel);
     }
     public void PopulateOpinionTriggersAtCurrentLevel(PLAYER_SKILL_TYPE p_skillType, List<OPINIONS> p_opinions) {
-        PlayerSkillData playerSkillData = GetPlayerSkillData<PlayerSkillData>(p_skillType);
-        SkillData skillData = GetPlayerSkillData(p_skillType);
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetSkillData(p_skillType);
         for (int i = 0; i < playerSkillData.afflictionUpgradeData.opinionTrigger.Count; i++) {
             if (i <= skillData.currentLevel) {
                 OPINIONS currentOpinion = playerSkillData.afflictionUpgradeData.opinionTrigger[i];

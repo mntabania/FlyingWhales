@@ -30,27 +30,27 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
-        #region Plagued Rat
-        private void ScheduleReplenishOfPlaguedRatCharge() {
-            replenishDate = GameManager.Instance.Today().AddDays(2);
-            SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
-        }
-        private void ProcessReplenishingOfPlaguedRatCharge() {
-            if(!hasBeenDestroyed && tiles.Count > 0) {
-                ReplenishPlaguedRatChargeWith3MaxCharges();
-                ScheduleReplenishOfPlaguedRatCharge();
-            }
-        }
-        private void ReplenishPlaguedRatChargeWith3MaxCharges() {
-            if(!HasMaxPlaguedRat()) {
-                PlayerManager.Instance.player.playerSkillComponent.AddCharges(PLAYER_SKILL_TYPE.PLAGUED_RAT, 1);
-            }
-        }
-        public bool HasMaxPlaguedRat() {
-            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
-            return summonPlayerSkill.charges >= 3;
-        }
-        #endregion
+        //#region Plagued Rat
+        //private void ScheduleReplenishOfPlaguedRatCharge() {
+        //    replenishDate = GameManager.Instance.Today().AddDays(2);
+        //    SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
+        //}
+        //private void ProcessReplenishingOfPlaguedRatCharge() {
+        //    if(!hasBeenDestroyed && tiles.Count > 0) {
+        //        ReplenishPlaguedRatChargeWith3MaxCharges();
+        //        ScheduleReplenishOfPlaguedRatCharge();
+        //    }
+        //}
+        //private void ReplenishPlaguedRatChargeWith3MaxCharges() {
+        //    if(!HasMaxPlaguedRat()) {
+        //        PlayerManager.Instance.player.playerSkillComponent.AddCharges(PLAYER_SKILL_TYPE.PLAGUED_RAT, 1);
+        //    }
+        //}
+        //public bool HasMaxPlaguedRat() {
+        //    SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        //    return summonPlayerSkill.charges >= 3;
+        //}
+        //#endregion
     }
 }
 

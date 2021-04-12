@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3997845
+    totalSpriteSurfaceArea: 4133013
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -414,6 +414,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 433fae477b4b93640a0390bc7bd1d061, type: 3}
   - {fileID: 21300000, guid: 0ed9a357103622241af0e691d7dcd484, type: 3}
   - {fileID: 21300000, guid: d55e1557727ed694dba17cc8f7ec30d4, type: 3}
+  - {fileID: 21300000, guid: 4da76557f3422654995b6fea0f0771a6, type: 3}
   - {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380, type: 3}
   - {fileID: 21300000, guid: 5274dc57ab8285046bed37ceb3fe073d, type: 3}
   - {fileID: 21300000, guid: 2c0dbd579f0fd1d49b5b2cf8194cb866, type: 3}
@@ -677,6 +678,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9507e9ec9a1d85548b17f92b5eaf4cfe, type: 3}
   - {fileID: 21300000, guid: 3f5abaecfa6166e4fa876bf76ef0d792, type: 3}
   - {fileID: 21300000, guid: 37de0fec9e752464dbba8d627d5d99cd, type: 3}
+  - {fileID: 21300000, guid: b7366fec44a384d4dbe2fd4a1415cde8, type: 3}
   - {fileID: 21300000, guid: d03e62fce06146a4a9df1309669441a6, type: 3}
   - {fileID: 21300000, guid: aaaa66fc3e32b2a46b309f2321d6988b, type: 3}
   - {fileID: 21300000, guid: 913c76fc6bf5a6548b1d84ac1a00a195, type: 3}
@@ -756,6 +758,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: acd0388ed4c272f4e8c094ab07ec4cba, type: 3}
   - {fileID: 21300000, guid: 0fcf0a8ed43b7774fb6983eb91e742c1, type: 3}
   - {fileID: 21300000, guid: b5c02b9ef4f2108498c7ba82f044151c, type: 3}
+  - {fileID: 21300000, guid: 05b4e4ae01a06044095ab6510bf22fbf, type: 3}
   - {fileID: 21300000, guid: 836365aef532aad46a15bbd0feab095a, type: 3}
   - {fileID: 21300000, guid: 9530e8ae20a049b4caa08d16e9218894, type: 3}
   - {fileID: 21300000, guid: f6ac7caed00cf71478c14b1e19a1572d, type: 3}
@@ -1197,6 +1200,7 @@ SpriteAtlas:
   - laidWallA00001110-00
   - demonWallA-10101111-00
   - demonWallA-00000000-01
+  - kennel_192x192
   - berryBushEmpty00
   - tundraDirt_v01
   - well05
@@ -1460,6 +1464,7 @@ SpriteAtlas:
   - wallA-0101-wall0010
   - laidWallA00001000-00
   - demonWallA-10100000-00
+  - prison_192x192
   - caveWallA-11111011-00
   - grass_h00
   - desertSand01
@@ -1539,6 +1544,7 @@ SpriteAtlas:
   - floorStone11
   - well03
   - caveWallA-0011-00
+  - defiler_192x320
   - laidWallA11101000-00
   - demonBarsVertical00
   - BIG_TREE_OBJECT#5

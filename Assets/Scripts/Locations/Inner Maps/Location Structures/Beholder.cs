@@ -40,8 +40,8 @@ namespace Inner_Maps.Location_Structures {
             }
             Messenger.AddListener<TileObject>(TileObjectSignals.DESTROY_TILE_OBJECT, OnDestroyTileObject);
         }
-        protected override void AfterStructureDestruction() {
-            base.AfterStructureDestruction();
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
+            base.AfterStructureDestruction(p_responsibleCharacter);
             PlayerAction spawnEyeWardAction = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD);
             spawnEyeWardAction.SetMaxCharges(spawnEyeWardAction.maxCharges - 3);
 

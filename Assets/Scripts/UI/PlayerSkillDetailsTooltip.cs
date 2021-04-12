@@ -27,8 +27,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         UpdateData(spellData);
         UpdatePosition(position);
     }
-    public void ShowPlayerSkillDetails(PlayerSkillData skillData, UIHoverPosition position = null) {
-        UpdateData(skillData);
+    public void ShowPlayerSkillDetails(PlayerSkillData skillData, int level = 0, UIHoverPosition position = null) {
+        UpdateData(skillData, level);
         UpdatePosition(position);
     }
     public void ShowPlayerSkillDetails(string title, string description, UIHoverPosition position = null) {
@@ -59,48 +59,48 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.anchoredPosition = Vector2.zero;
         thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 264f);
     }
-    private void UpdateData(PlayerSkillData skillData) {
-        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
-        titleText.SetText(spellData.name);
-        descriptionText.SetTextAndReplaceWithIcons(spellData.description);
-        int charges =  SpellUtilities.GetModifiedSpellCost(skillData.charges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
-        int manaCost = SpellUtilities.GetModifiedSpellCost(skillData.manaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
-        int cooldown = SpellUtilities.GetModifiedSpellCost(skillData.cooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
+    private void UpdateData(PlayerSkillData p_playerSkillData, int level) {
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_playerSkillData.skill);
+        titleText.SetText(skillData.name);
+        descriptionText.SetTextAndReplaceWithIcons(skillData.description);
+        int charges =  SpellUtilities.GetModifiedSpellCost(p_playerSkillData.charges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+        int manaCost = SpellUtilities.GetModifiedSpellCost(p_playerSkillData.manaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+        int cooldown = SpellUtilities.GetModifiedSpellCost(p_playerSkillData.cooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
         //int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
 
         //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
-        string currencyStr = GetCurrencySummary(manaCost, charges, charges, cooldown); 
+        string currencyStr = GetCurrencySummary(manaCost, charges, charges, cooldown, skillData.bonusCharges, skillData.isInUse); 
         
-        levelText.text = string.Empty;
+        levelText.text = $"Lv. {(level + 1).ToString()}";
         currenciesText.text = currencyStr;
         additionalText.text = string.Empty;
-        bonusesText.text = GetBonusesString(skillData, 1);
+        bonusesText.text = GetBonusesString(p_playerSkillData, level);
         if (charges > 0) {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
             bonusesText.text = $"{bonusesText.text}{UtilityScripts.Utilities.ColorizeSpellTitle("Charges:")} {charges.ToString()}/{charges.ToString()}";
         }
-        bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(skillData, 1)}";
+        bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(p_playerSkillData, 1)}";
     }
-    private void UpdateData(SkillData spellData) {
-        titleText.text = spellData.name;
-        string fullDescription = spellData.description;
-        int charges = spellData.charges;
-        int manaCost = spellData.manaCost;
-        int cooldown = spellData.cooldown;
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+    private void UpdateData(SkillData skillData) {
+        titleText.text = skillData.name;
+        string fullDescription = skillData.description;
+        int charges = skillData.charges;
+        int manaCost = skillData.manaCost;
+        int cooldown = skillData.cooldown;
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(skillData.type);
         
-        string currencyStr = GetCurrencySummary(manaCost, charges, spellData.maxCharges, cooldown);
-        levelText.text = playerSkillData.isNonUpgradeable ? string.Empty : $"Lv. {spellData.levelForDisplay.ToString()}";
+        string currencyStr = GetCurrencySummary(manaCost, charges, skillData.maxCharges, cooldown, skillData.bonusCharges, skillData.isInUse);
+        levelText.text = playerSkillData.isNonUpgradeable ? string.Empty : $"Lv. {skillData.levelForDisplay}";
         currenciesText.text = currencyStr;
         
-        string bonusesStr = GetBonusesString(playerSkillData, spellData.currentLevel);
-        bonusesStr = $"{bonusesStr}{GetAdditionalBonusesString(spellData, playerSkillData, spellData.currentLevel)}";
+        string bonusesStr = GetBonusesString(playerSkillData, skillData.currentLevel);
+        bonusesStr = $"{bonusesStr}{GetAdditionalBonusesString(skillData, playerSkillData, skillData.currentLevel)}";
         bonusesText.text = bonusesStr;
-        bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(playerSkillData, spellData.currentLevel)}";
+        bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(playerSkillData, skillData.currentLevel)}";
         
-        additionalText.text = GetAdditionalInfo(spellData);
+        additionalText.text = GetAdditionalInfo(skillData);
 
-        if (spellData is BrainwashData) {
+        if (skillData is BrainwashData) {
             Character targetCharacter = null;
             if (UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
                 targetCharacter = defilerRoom.charactersInRoom.First();    
@@ -128,7 +128,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         int charges = spellData.charges;
         int manaCost = spellData.manaCost;
         int cooldown = spellData.cooldown;
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(spellData.type);
         
         levelText.text = playerSkillData.isNonUpgradeable ? string.Empty : 
             $"Lv. {spellData.levelForDisplay.ToString()} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText($"Lv. {(spellData.levelForDisplay + 1).ToString()}")}";
@@ -387,13 +387,14 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     #endregion
 
     #region Currency
-    private string GetCurrencySummary(int manaCost, int charges, int maxCharges, int cooldown) {
+    private string GetCurrencySummary(int manaCost, int charges, int maxCharges, int cooldown, int bonusCharges, bool isInUse) {
         string currencies = string.Empty;
-        if (charges > 0) {
-            currencies = $"{currencies}{charges.ToString()}/{maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}    ";
+        string notCombinedChargesText = SpellUtilities.GetDisplayOfCurrentChargesWithBonusChargesNotCombined(charges, maxCharges, bonusCharges, maxCharges > 0 && isInUse);
+        if (!string.IsNullOrEmpty(notCombinedChargesText)) {
+            currencies = $"{currencies}{notCombinedChargesText}    ";
         }
         if (manaCost > 0) {
-            currencies = $"{currencies}{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
+            currencies = $"{currencies}{manaCost} {UtilityScripts.Utilities.ManaIcon()}";
         }
         // if (maxCharges > 0) {
         //     currencies = $"{currencies}{charges.ToString()}/{maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
@@ -405,14 +406,15 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     }
     private string GetCurrencyLevelUpSummary(SkillData skillData, PlayerSkillData playerSkillData) {
         string currencies = string.Empty;
-        if (skillData.hasCharges) {
-            currencies = $"{currencies}{skillData.charges.ToString()}/{skillData.maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}    ";
+        string notCombinedChargesText = skillData.displayOfCurrentChargesWithBonusChargesNotCombined;
+        if (!string.IsNullOrEmpty(notCombinedChargesText)) {
+            currencies = $"{currencies}{notCombinedChargesText}    ";
         }
-        
+
         int currentManaCost = skillData.manaCost;
         int nextLevelManaCost = playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel + 1);
         if (currentManaCost != nextLevelManaCost) {
-            currencies = $"{currencies}{currentManaCost.ToString()} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText(nextLevelManaCost.ToString())} {UtilityScripts.Utilities.ManaIcon()}";
+            currencies = $"{currencies}{currentManaCost} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText(nextLevelManaCost.ToString())} {UtilityScripts.Utilities.ManaIcon()}";
         }
         return currencies;
     }

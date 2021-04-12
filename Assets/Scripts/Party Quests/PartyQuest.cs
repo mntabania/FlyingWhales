@@ -37,6 +37,7 @@ public class PartyQuest : ISavable {
 
     #region Virtuals
     public virtual void OnAcceptQuest(Party partyThatAcceptedQuest) { }
+    public virtual void OnAcceptQuestFromSaveData(Party partyThatAcceptedQuest) { }
     public virtual void OnWaitTimeOver() {
         isWaitTimeOver = true;
     }
@@ -46,13 +47,16 @@ public class PartyQuest : ISavable {
         }
     }
     public virtual void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
-        if(fromState == PARTY_STATE.Waiting && toState == PARTY_STATE.Moving) {
+        if(fromState == PARTY_STATE.Waiting && toState == PARTY_STATE.Moving && !waitingToWorkingStateImmediately) {
+            OnWaitTimeOver();
+        } else if (fromState == PARTY_STATE.Waiting && toState == PARTY_STATE.Working && waitingToWorkingStateImmediately) {
             OnWaitTimeOver();
         }
     }
     public virtual IPartyTargetDestination GetTargetDestination() { return null; }
     public virtual void OnRemoveMemberThatJoinedQuest(Character character) { }
     public virtual string GetPartyQuestTextInLog() { return string.Empty; }
+    public virtual void OnCharacterDeath (Character p_character) { }
     #endregion
 
     #region General

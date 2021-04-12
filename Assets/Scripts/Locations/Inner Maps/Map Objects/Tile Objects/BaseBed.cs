@@ -57,6 +57,7 @@ public abstract class BaseBed : TileObject {
                 character.SetTileObjectLocation(this);
                 UpdateUsedBedAsset();
                 //disable the character's marker
+                character.marker.PlaceMarkerAt(gridTileLocation);
                 character.marker.SetVisualState(false);
                 character.tileObjectComponent.SetBedBeingUsed(this);
                 Messenger.Broadcast(TileObjectSignals.ADD_TILE_OBJECT_USER, GetBase(), character);

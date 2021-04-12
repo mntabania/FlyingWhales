@@ -163,13 +163,13 @@
             <key>scaleMode</key>
             <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
-            <uint>2</uint>
+            <uint>0</uint>
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
             <uint>15</uint>
             <key>trimMode</key>
-            <enum type="SpriteSettings::TrimMode">Polygon</enum>
+            <enum type="SpriteSettings::TrimMode">None</enum>
             <key>tracerTolerance</key>
             <int>200</int>
             <key>heuristicMask</key>
@@ -211,6 +211,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">All Icons/bonus_charges_icon.png</key>
             <key type="filename">All Icons/icon_chargesB.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -244,8 +245,11 @@
             <key type="filename">All Icons/icon_cultist.png</key>
             <key type="filename">All Icons/icon_demon.png</key>
             <key type="filename">All Icons/icon_monster.png</key>
+            <key type="filename">All Icons/icon_object.png</key>
             <key type="filename">All Icons/icon_ratvillager.png</key>
+            <key type="filename">All Icons/icon_structure.png</key>
             <key type="filename">All Icons/icon_undead.png</key>
+            <key type="filename">All Icons/icon_village.png</key>
             <key type="filename">All Icons/icon_villager.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>

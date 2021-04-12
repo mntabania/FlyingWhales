@@ -143,8 +143,9 @@ namespace Traits {
                         !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.INSPECT)) {
                         characterThatWillDoJob.jobComponent.TriggerInspect(item);
                     }
-                } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && characterThatWillDoJob.limiterComponent.canDoFullnessRecovery && !characterThatWillDoJob.traitContainer.HasTrait("Vampire") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
-                    characterThatWillDoJob.jobComponent.CreateEatJob(item);
+                } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && characterThatWillDoJob.limiterComponent.canDoFullnessRecovery && 
+                           !characterThatWillDoJob.traitContainer.HasTrait("Vampire") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
+                    characterThatWillDoJob.jobComponent.CreateFullnessRecoveryOnSight(item);
                 } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))
                     && !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
                     //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
@@ -179,6 +180,20 @@ namespace Traits {
                             characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM_PARTY, quest.targetHeirloom, quest.targetHeirloom.structureSpot, true);
                         }
                     }
+                } else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
+                    if (characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
+                        characterThatWillDoJob.homeSettlement != null && characterThatWillDoJob.necromancerTrait == null && characterThatWillDoJob.race.IsSapient() && 
+                        characterThatWillDoJob.hasMarker && characterThatWillDoJob.carryComponent.IsNotBeingCarried() && !characterThatWillDoJob.isAlliedWithPlayer && 
+                        (!characterThatWillDoJob.partyComponent.hasParty || !characterThatWillDoJob.partyComponent.currentParty.isActive || 
+                         (characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && 
+                          characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) && 
+                        (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
+                        if (characterThatWillDoJob.faction != null && characterThatWillDoJob.faction.isMajorNonPlayer && 
+                            !characterThatWillDoJob.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && 
+                            !characterThatWillDoJob.faction.HasActiveReportDemonicStructureJob(demonicStructure)) {
+                            characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
+                        }
+                    }
                 }
                 if (characterThatWillDoJob.partyComponent.hasParty && characterThatWillDoJob.partyComponent.currentParty.isActive
                     && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
@@ -196,6 +211,26 @@ namespace Traits {
             }
             if(targetPOI is Character targetCharacter) {
                 if (characterThatWillDoJob.limiterComponent.canMove && characterThatWillDoJob.limiterComponent.canPerform) {
+                    if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
+                        if (owner.partyComponent.currentParty.currentQuest is IRescuePartyQuest rescueParty) {
+                            if (rescueParty.targetCharacter == targetCharacter) {
+                                if (!targetCharacter.isDead) {
+                                    if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
+                                        if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
+                                            rescueParty.SetIsReleasing(true);
+                                        }
+                                    } else {
+                                        //rescueParty.SetIsSuccessful(true);
+                                        rescueParty.SetIsReleasing(false);
+                                        rescueParty.EndQuest("Saw target is safe");
+                                    }
+                                } else {
+                                    rescueParty.SetIsReleasing(false);
+                                    rescueParty.EndQuest("Target is already dead");
+                                }
+                            }
+                        }
+                    }
                     if (!targetCharacter.isDead) {
                         if (!targetCharacter.isNormalCharacter) {
                             string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -213,13 +248,7 @@ namespace Traits {
                         } else {
                             if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
                                 if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
-                                    if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
-                                        if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
-                                            if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
-                                                rescueParty.SetIsReleasing(true);
-                                            }
-                                        }
-                                    } else if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                                    if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                                         if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest exploreParty) {
                                             if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
                                                 if (UnityEngine.Random.Range(0, 100) < 15) {
@@ -229,20 +258,6 @@ namespace Traits {
                                                 }
                                             } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful) && !owner.faction.IsHostileWith(targetCharacter.faction)) {
                                                 owner.jobComponent.TriggerReleaseJob(targetCharacter);
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
-                                    if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty) {
-                                        if (rescueParty.targetCharacter == targetCharacter) {
-                                            //rescueParty.SetIsSuccessful(true);
-                                            rescueParty.SetIsReleasing(false);
-                                            if (rescueParty.isWaitTimeOver) {
-                                                owner.partyComponent.currentParty.GoBackHomeAndEndQuest();
-                                            } else {
-                                                rescueParty.EndQuest("Finished quest");
                                             }
                                         }
                                     }

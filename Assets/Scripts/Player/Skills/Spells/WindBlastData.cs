@@ -17,7 +17,7 @@ public class WindBlastData : SkillData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
-            PlayerSkillManager.Instance.GetPlayerSkillData<WindBlastSkillData>(PLAYER_SKILL_TYPE.WIND_BLAST).blastSound,
+            PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<WindBlastSkillData>(PLAYER_SKILL_TYPE.WIND_BLAST).blastSound,
             targetTile, 3, false
         );
 

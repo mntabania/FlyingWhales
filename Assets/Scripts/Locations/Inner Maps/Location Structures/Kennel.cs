@@ -35,10 +35,12 @@ namespace Inner_Maps.Location_Structures {
             base.SetStructureObject(structureObj);
             _markerDummy = ObjectPoolManager.Instance.InstantiateObjectFromPool("MarkerDummy", Vector3.zero, Quaternion.identity, structureObj.objectsParent).GetComponent<MarkerDummy>();
             _markerDummy.Deactivate();
+            Vector3 position = structureObj.transform.position;
+            worldPosition = position;
         }
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
             StopDrainingCharactersHere();
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
             if (_markerDummy != null) {
                 ObjectPoolManager.Instance.DestroyObject(_markerDummy.gameObject);
             }
@@ -102,6 +104,7 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(p_summon);
             _occupyingSummon = p_summon;
             occupyingSummon.eventDispatcher.SubscribeToCharacterDied(this);
+            startingSummonCount = 2;
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity, false);
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
             Debug.Log($"Set occupant of {name} to {occupyingSummon?.name}");

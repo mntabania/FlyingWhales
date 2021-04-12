@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.BEHOLDER).isInUse;
+                return PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.BEHOLDER).isInUse;
             }
             return false;
         }
@@ -26,7 +26,7 @@ namespace Tutorial {
         #region Overrides
         protected override void MakeAvailable() {
             if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BEHOLDER)) {
-                 SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.BEHOLDER);
+                 SkillData spellData = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.BEHOLDER);
                  if (spellData.charges <= 0) {
                      //if player does not yet have an eye structure and does not have an eye charge, then give them one so they can build one for this tutorial
                      spellData.AdjustCharges(1);

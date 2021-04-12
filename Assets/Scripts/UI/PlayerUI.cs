@@ -160,8 +160,8 @@ public class PlayerUI : BaseMonoBehaviour {
         //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_GAINED_SPELL, OnGainSpell);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_LOST_SPELL, OnLostSpell);
     }
 
     public void InitializeAfterGameLoaded() {
@@ -203,7 +203,7 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     public void InitializeAfterLoadOutPicked() {
         UpdateIntel();
-        CreateInitialSpells();
+        //CreateInitialSpells();
         _buildListUI.Initialize();
         cultistsList.Initialize();
         targetsList.Initialize();

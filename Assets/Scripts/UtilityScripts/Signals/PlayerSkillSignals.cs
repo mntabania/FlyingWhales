@@ -1,4 +1,4 @@
-﻿public static class SpellSignals {
+﻿public static class PlayerSkillSignals {
     public static string ADDED_PLAYER_MINION_SKILL = "OnAddPlayerMinionSkill";
     public static string ADDED_PLAYER_SUMMON_SKILL = "OnAddPlayerSummonSkill";
     public static string METEOR_FELL = "OnMeteorFell";
@@ -50,6 +50,7 @@
     /// </summary>
     public static string PLAYER_ACTION_EXECUTED_TOWARDS_POI = "OnPlayerActionExecutedTowardsPOI";
     public static string FLAW_TRIGGERED_BY_PLAYER = "OnFlawTriggeredByPlayer";
+    public static string FLAW_TRIGGER_SUCCESS = "OnFlawTriggeredSuccess";
     /// <summary>
     /// parameters (SpellData)
     /// </summary>
@@ -57,4 +58,7 @@
     public static string PLAYER_GAINED_DEMONIC_STRUCTURE = "OnPlayerGainedDemonicStructure";
     public static string PLAYER_SKILL_LEVEL_UP = "OnPlayerSkillLevelUp";
     public static string ON_PLAGUE_POISON_CLOUD_ACTIVATED = "OnPlaguePoisonCloudActivated";
+
+    public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
+    public static string BONUS_CHARGES_ADJUSTED = "OnBonusChargesAdjusted";
 }

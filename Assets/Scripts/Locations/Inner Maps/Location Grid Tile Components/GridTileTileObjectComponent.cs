@@ -105,7 +105,7 @@ namespace Inner_Maps {
                 //}
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -116,7 +116,7 @@ namespace Inner_Maps {
                 hiddenObjHere = null;
                 removedObj.RemoveTileObject(removedBy);
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -133,7 +133,7 @@ namespace Inner_Maps {
                 //    tileObject.OnRemoveTileObject(null, gridTile, false, false);
                 //}
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -153,7 +153,7 @@ namespace Inner_Maps {
                 //}
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -284,7 +284,7 @@ namespace Inner_Maps {
                 duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
             }
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
-            AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, owner, 1, false);
+            AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, owner, 1, false);
             SetHasFreezingTrap(false);
             
             triggeredBy.traitContainer.RemoveStatusAndStacks(triggeredBy, "Freezing");

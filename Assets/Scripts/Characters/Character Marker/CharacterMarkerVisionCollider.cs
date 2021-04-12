@@ -135,7 +135,8 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 if (ShouldBeConsideredInVision(poi) ||
                     (poi.mapObjectVisual != null && poi.mapObjectVisual.visionTrigger != null && poi.mapObjectVisual.visionTrigger is POIVisionTrigger poiVisionTrigger && poiVisionTrigger.IgnoresStructureDifference())) {
                     bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(poi);
-                    if (shouldAddToVisionBasedOnRoom) {
+                    if (shouldAddToVisionBasedOnRoom || 
+                        (poi.mapObjectVisual != null && poi.mapObjectVisual.visionTrigger != null && poi.mapObjectVisual.visionTrigger is POIVisionTrigger visionTrigger && visionTrigger.IgnoresRoomDifference())) {
                         NormalEnterHandling(poi);
                         return true;
                     }
@@ -236,9 +237,17 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 }
             }
 
-            if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL && character.currentActionNode.targetStructure == structure && structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
-                parentMarker.pathfindingAI.ClearAllCurrentPathData();
-                character.PerformGoapAction();
+            if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL && structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                bool isAtLocation = false;
+                if (character.currentActionNode.targetStructure == structure) {
+                    isAtLocation = true;
+                } else if (character.currentActionNode.targetStructure is DemonicStructure demonicStructure) {
+                    isAtLocation = demonicStructure.CanSeeObjectLocatedHere(character);
+                }
+                if (isAtLocation) {
+                    parentMarker.pathfindingAI.ClearAllCurrentPathData();
+                    character.PerformGoapAction();    
+                }
             }
         }
     }

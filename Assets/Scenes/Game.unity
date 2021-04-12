@@ -4395,11 +4395,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: StructureInfoUI
       objectReference: {fileID: 0}
-    - target: {fileID: 1086249575366272666, guid: af544682ce629014cbd330544a76975d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af544682ce629014cbd330544a76975d, type: 3}
 --- !u!114 &179873882 stripped
@@ -6570,7 +6565,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -110.00012}
+  m_AnchoredPosition: {x: 0, y: -110}
   m_SizeDelta: {x: 684.73926, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &290647383
@@ -9447,10 +9442,6 @@ PrefabInstance:
     - target: {fileID: 1642837813464840, guid: c38c7e75a0c6c0e46888d93ecdc69be4, type: 3}
       propertyPath: m_Name
       value: TileObjectInfoUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 1642837813464840, guid: c38c7e75a0c6c0e46888d93ecdc69be4, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224725604692175578, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
         type: 3}
@@ -19072,6 +19063,7 @@ MonoBehaviour:
   - {fileID: 374432336}
   - {fileID: 556227247}
   - {fileID: 16455712}
+  - {fileID: 1271312853}
   spellList: {fileID: 1251235325}
   customDropdownList: {fileID: 1677628230}
   cultistsList: {fileID: 1291172670}
@@ -23677,6 +23669,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RaycastTarget
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814679696776000723, guid: 192605b2e90f468409baf06dedf19376,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814679696776000723, guid: 192605b2e90f468409baf06dedf19376,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 6087129334516898824, guid: 192605b2e90f468409baf06dedf19376,
         type: 3}
@@ -34787,6 +34789,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8551588542397676883, guid: ea7bde54217c7f040bb34433f1526c1c,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -10.100098
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551588542757555382, guid: ea7bde54217c7f040bb34433f1526c1c,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -22.691895
+      objectReference: {fileID: 0}
     - target: {fileID: 8551588543820135536, guid: ea7bde54217c7f040bb34433f1526c1c,
         type: 3}
       propertyPath: m_Name
@@ -39647,7 +39659,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -110.00012}
+  m_AnchoredPosition: {x: 0, y: -110}
   m_SizeDelta: {x: 588.4303, y: 66.16171}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1455444293
@@ -43695,6 +43707,7 @@ MonoBehaviour:
     - crypt_256x192
     - defense_point_128x128
     - imp_huts_128x128
+    - kennel_256x128
     - mana_pit_128x128
     - maraud_192x256
     - meddler_256x384
@@ -43702,6 +43715,7 @@ MonoBehaviour:
     - portalBase_b
     - portalGlow00
     - portalGlow01
+    - prison_192x192
     - spire_128x384
     m_values:
     - {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
@@ -44248,6 +44262,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 1aa0f5b9c7de5ac49bbf0a62a344b74e, type: 3}
     - {fileID: 21300000, guid: efdd057fc9ca2c34b80c69e5d8b39ec6, type: 3}
     - {fileID: 21300000, guid: 3600c0dfedad24c49bcae84eee2159da, type: 3}
+    - {fileID: 21300000, guid: f6d799b91848c7e4e9d0b5c621d60732, type: 3}
     - {fileID: 21300000, guid: 750504dca338a694fbcfab5ef36c5ea5, type: 3}
     - {fileID: 21300000, guid: 1686050b44658ea469336a12621c637a, type: 3}
     - {fileID: 21300000, guid: 017bc2c4195258b42aeb81838eff4d2f, type: 3}
@@ -44255,6 +44270,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 20b70003227af2c4790023cab2b6dc60, type: 3}
     - {fileID: 21300000, guid: 0440e894fd66cf24dabd17f77ca828e2, type: 3}
     - {fileID: 21300000, guid: c4e35b7f84eb0894cb62a9d729cd744d, type: 3}
+    - {fileID: 21300000, guid: b7366fec44a384d4dbe2fd4a1415cde8, type: 3}
     - {fileID: 21300000, guid: 24a31a30f2ca2594d9b46d823c6f323e, type: 3}
   burntMaterial: {fileID: 2100000, guid: 1010dec766f2511479731f5cc07e612d, type: 2}
   defaultObjectMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
@@ -47478,11 +47494,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 308965762}
     m_Modifications:
-    - target: {fileID: 648894024448412690, guid: 65a159b014602c143bbf2126de537ad7,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4523589963864561818, guid: 65a159b014602c143bbf2126de537ad7,
         type: 3}
       propertyPath: villagersToggle
@@ -54857,11 +54868,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SettlementInfoUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 1086249575366272666, guid: 1f544488b48c3fa499e7cf2bfadfd428,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f544488b48c3fa499e7cf2bfadfd428, type: 3}
@@ -62390,10 +62396,6 @@ PrefabInstance:
     - target: {fileID: 1322962351353356, guid: 806752206f775b240af4069999713824, type: 3}
       propertyPath: m_Name
       value: CharacterInfo
-      objectReference: {fileID: 0}
-    - target: {fileID: 1322962351353356, guid: 806752206f775b240af4069999713824, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224579316077557694, guid: 806752206f775b240af4069999713824,
         type: 3}

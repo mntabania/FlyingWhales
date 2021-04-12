@@ -2,14 +2,14 @@
 using Interrupts;
 
 public class PlagueChaosOrb : PassiveSkill {
-    public override string name => "Mana Orbs from Plague";
-    public override string description => "Mana Orbs upon Acquiring plague symptom";
+    public override string name => "Chaos Orbs from Plague";
+    public override string description => "Chaos Orbs upon Acquiring plague symptom";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Plague_Chaos_Orb;
 
     public override void ActivateSkill() {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptAdded);
-        Messenger.AddListener<Character>(SpellSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, OnPoisonCloudActivated);
+        Messenger.AddListener<Character>(PlayerSkillSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, OnPoisonCloudActivated);
     }
     private void OnTraitAdded(Character character, Trait trait) {
         if (character.traitContainer.HasTrait("Depressed") ||

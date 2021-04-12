@@ -37,7 +37,7 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public PartyStructure(STRUCTURE_TYPE structure, Region location) : base(structure, location) {
-            startingSummonCount = 5;
+            startingSummonCount = 2;
             Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
@@ -61,6 +61,7 @@ namespace Inner_Maps.Location_Structures {
                 PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
                 ListenToParty();
             }
+            startingSummonCount = saveData.startingSummonCount;
         }
         #endregion
 
@@ -229,13 +230,14 @@ namespace Inner_Maps.Location_Structures {
 
     public class SaveDataPartyStructure : SaveDataDemonicStructure {
         public string partyID;
-
+        public int startingSummonCount;
         public override void Save(LocationStructure structure) {
             base.Save(structure);
             PartyStructure ps = structure as PartyStructure;
             if (ps.party != null) {
                 partyID = ps.party.persistentID;
             }
+            startingSummonCount = ps.startingSummonCount;
         }
     }
 }

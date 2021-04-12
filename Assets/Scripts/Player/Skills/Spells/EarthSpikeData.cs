@@ -16,7 +16,7 @@ public class EarthSpikeData : SkillData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
-            PlayerSkillManager.Instance.GetPlayerSkillData<EarthSpikeSkillData>(PLAYER_SKILL_TYPE.EARTH_SPIKE).blastSound,
+            PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<EarthSpikeSkillData>(PLAYER_SKILL_TYPE.EARTH_SPIKE).blastSound,
             targetTile, 3, false
         );
 

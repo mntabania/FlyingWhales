@@ -8,9 +8,13 @@ using System;
 public class DeployedMonsterItemUI : MonoBehaviour {
 
     public Action<DeployedMonsterItemUI> onDelete;
+    public Action<DeployedMonsterItemUI> onUnlockClicked;
+    public Action onAddSummonClicked;
 
     public Button btnDelete;
     public Button btnItemClick;
+    public Button btnUnlockSlot;
+    public Button btnAddSummon;
 
     public RuinarchText txtName;
     public RuinarchText txtHP;
@@ -18,18 +22,23 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     public RuinarchText txtAtkSpd;
     public RuinarchText txtStatus;
     public RuinarchText txtSummonCost;
+    public RuinarchText txtUnlockCost;
     public Image imgPortrait;
 
     public RuinarchText txtUnlockPrice;
     public GameObject lockCover;
     public GameObject emptyCover;
     public GameObject deadIcon;
+    public GameObject addSummonCover;
 
     public bool isReadyForDeploy;
     public bool isDeployed;
     public bool isMinion;
 
     public int summonCost;
+    public int unlockCost;
+
+    public HoverText hoverText;
 
     private MonsterAndDemonUnderlingCharges _monsterOrMinion;
     public MonsterAndDemonUnderlingCharges obj => _monsterOrMinion;
@@ -41,11 +50,15 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     private void OnEnable() {
         btnDelete.onClick.AddListener(OnDeleteClicked);
         btnItemClick.onClick.AddListener(OnItemClicked);
+        btnUnlockSlot.onClick.AddListener(OnUnlockClicked);
+        btnAddSummon.onClick.AddListener(OnAddSummonClicked);
 	}
 
 	private void OnDisable() {
         btnDelete.onClick.RemoveListener(OnDeleteClicked);
         btnItemClick.onClick.RemoveListener(OnItemClicked);
+        btnUnlockSlot.onClick.RemoveListener(OnUnlockClicked);
+        btnAddSummon.onClick.RemoveListener(OnAddSummonClicked);
     }
 
 	public void InitializeItem(MonsterAndDemonUnderlingCharges p_underling, bool p_isDeployed = false, bool p_hideRemoveButton = false) {
@@ -79,15 +92,18 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         } else {
             ShowRemoveButton();
         }
+        addSummonCover.SetActive(false);
         lockCover.SetActive(false);
         emptyCover.SetActive(false);
         HideDeadIcon();
     }
 
     public void MakeSlotEmpty() {
+        lockCover.SetActive(false);
         isDeployed = false;
         isReadyForDeploy = false;
         emptyCover.SetActive(true);
+        addSummonCover.SetActive(false);
     }
 
     public void ResetButton() {
@@ -96,11 +112,26 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         emptyCover.SetActive(true);
     }
 
-    public void MakeSlotLocked() {
+    public void MakeSlotLocked(bool p_isAbleToBuy) {
         isDeployed = false;
         isReadyForDeploy = false;
         emptyCover.SetActive(false);
         lockCover.SetActive(true);
+        addSummonCover.SetActive(false);
+        txtUnlockCost.text = unlockCost.ToString();
+        btnUnlockSlot.gameObject.SetActive(true);
+        if (p_isAbleToBuy) {
+            btnUnlockSlot.interactable = true;
+            hoverText.SetText("Unlock More Slot to add summon");
+        } else {
+            btnUnlockSlot.interactable = false;
+            hoverText.SetText("Not enough Mana");
+        }
+    }
+
+    public void MakeSlotLockedNoButton() {
+        MakeSlotLocked(false);
+        btnUnlockSlot.gameObject.SetActive(false);
     }
 
     public void EnableButton() {
@@ -111,7 +142,15 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     void OnDeleteClicked() {
         onDelete?.Invoke(this);
     }
-    
+
+    void OnUnlockClicked() {
+        onUnlockClicked?.Invoke(this);
+    }
+
+    void OnAddSummonClicked() {
+        onAddSummonClicked?.Invoke();
+    }
+
     void OnItemClicked() {
         if (deployedCharacter != null) {
             UIManager.Instance.OpenObjectUI(deployedCharacter);
@@ -157,5 +196,13 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 
     public void HideDeadIcon() {
         deadIcon.SetActive(false);
+    }
+
+    public void DisplayAddSummon() {
+        emptyCover.SetActive(false);
+        lockCover.SetActive(false);
+        btnUnlockSlot.gameObject.SetActive(false);
+        addSummonCover.SetActive(true);
+        btnAddSummon.gameObject.SetActive(true);
     }
 }

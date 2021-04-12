@@ -66,8 +66,8 @@ public class Sing : GoapAction {
                 if (witness.HasAfflictedByPlayerWith(trait)) {
                     PLAYER_SKILL_TYPE playerSkillType = trait.GetAfflictionSkillType();
                     if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
-                        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
-                        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(playerSkillType);
+                        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(playerSkillType);
                         if (playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Angry_Upon_Hear_Music, skillData.currentLevel)) {
                             reactions.Add(EMOTION.Anger);
                         }

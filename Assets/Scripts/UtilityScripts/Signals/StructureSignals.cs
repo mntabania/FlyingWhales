@@ -1,5 +1,6 @@
 ﻿public static class StructureSignals {
     public static string WALL_DAMAGED = "OnWallDamaged";
+    public static string WALL_DAMAGED_BY = "OnWallDamagedBy";
     public static string WALL_REPAIRED = "OnWallRepaired";
     /// <summary>
     /// parameters:
@@ -21,6 +22,10 @@
     /// Parameters: LocationStructure
     /// </summary>
     public static string STRUCTURE_DESTROYED = "OnStructureDestroyed";
+    /// <summary>
+    /// Parameters: LocationStructure, Character
+    /// </summary>
+    public static string STRUCTURE_DESTROYED_BY = "OnStructureDestroyedBy";
     /// <summary>
     /// Parameters (Table table)
     /// </summary>

@@ -285,11 +285,11 @@ public class FactionInfoHubUI : MonoBehaviour {
     public void UnFilterTrait(string traitName) {
         factionInfoUI.RemoveFilteredTrait(traitName);
     }
-    public void FilterRegion(Region region) {
-        factionInfoUI.AddFilteredRegion(region);
+    public void FilterRegion(BaseSettlement village) {
+        factionInfoUI.AddFilteredRegion(village);
     }
-    public void UnFilterRegion(Region region) {
-        factionInfoUI.RemoveFilteredRegion(region);
+    public void UnFilterRegion(BaseSettlement village) {
+        factionInfoUI.RemoveFilteredRegion(village);
     }
     #endregion
 }

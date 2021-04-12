@@ -19,7 +19,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
     public void OnIceteroidFell() {
         AudioManager.Instance.TryCreateAudioObject(
             CollectionUtilities.GetRandomElement(
-                PlayerSkillManager.Instance.GetPlayerSkillData<IceteroidSkillData>(PLAYER_SKILL_TYPE.ICETEROIDS).impactClips
+                PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<IceteroidSkillData>(PLAYER_SKILL_TYPE.ICETEROIDS).impactClips
             ), 
             targetTile, 1, false
         );

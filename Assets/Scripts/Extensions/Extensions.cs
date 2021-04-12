@@ -45,6 +45,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.MARAUD:
             case STRUCTURE_TYPE.DEFENSE_POINT:
+            case STRUCTURE_TYPE.MEDDLER:
+            case STRUCTURE_TYPE.IMP_HUT:
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
@@ -174,7 +176,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MEDDLER:
             case STRUCTURE_TYPE.KENNEL:
             case STRUCTURE_TYPE.CAVE:
-            case STRUCTURE_TYPE.DEFILER:
+            //case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.RUINED_ZOO:
             case STRUCTURE_TYPE.BIOLAB:
             case STRUCTURE_TYPE.QUARRY:
@@ -426,9 +428,40 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.RAVENOUS_SPIRIT:
             case TILE_OBJECT_TYPE.HUMAN_MEAT:
             case TILE_OBJECT_TYPE.ELF_MEAT:
+            case TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.TORTURE_CHAMBERS_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
+        }
+    }
+    public static bool IsDemonicStructureTileObject(this TILE_OBJECT_TYPE tileObjectType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.TORTURE_CHAMBERS_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
+                return true;
+            default:
+                return false;
         }
     }
     public static bool CanBeRepaired(this TILE_OBJECT_TYPE tileObjectType) {
@@ -600,6 +633,7 @@ public static class Extensions {
             case JOB_TYPE.FEED:
             case JOB_TYPE.RITUAL_KILLING:
             case JOB_TYPE.MONSTER_ABDUCT:
+            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
                 priority = 1003;
                 break;
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
@@ -718,9 +752,7 @@ public static class Extensions {
             case JOB_TYPE.STEAL_RAID:
                 priority = 530;
                 break;
-            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
-                priority = 520;
-                break;
+            
             case JOB_TYPE.TAKE_ITEM:
             case JOB_TYPE.INSPECT:
                 priority = 510;
@@ -1267,6 +1299,12 @@ public static class Extensions {
                 return true;
             default:
                 return false;
+        }
+    }
+    public static bool IsScenarioArchetype(this PLAYER_ARCHETYPE p_archetype) {
+        switch (p_archetype) {
+            default:
+                return System.Enum.TryParse(p_archetype.ToString(), out WorldSettingsData.World_Type worldType);
         }
     }
     #endregion

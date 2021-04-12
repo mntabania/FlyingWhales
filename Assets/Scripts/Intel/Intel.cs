@@ -238,6 +238,14 @@ public class ActionIntel : IIntel, IDisposable {
             return "Doesn't seem very useful, but...";   
         }
     }
+    public bool CanShareIntelTo(Character p_target) {
+        if (node.action.goapType == INTERACTION_TYPE.IS_IMPRISONED) {
+            //Do not allow share on imprisoned target
+            //Reference: https://trello.com/c/92nDGdD6/4019-blackmail-intel-recipient-issue
+            return p_target != target;
+        }
+        return true;
+    }
     #endregion
 
     #region Listeners
@@ -483,6 +491,9 @@ public class InterruptIntel : IIntel, IDisposable {
             return "Doesn't seem very useful, but...";   
         }
     }
+    public bool CanShareIntelTo(Character p_target) {
+        return true;
+    }
     #endregion
 
     #region Listeners
@@ -523,6 +534,7 @@ public interface IIntel {
     bool CanBeUsedToBlackmailCharacter(Character p_target);
     BLACKMAIL_TYPE GetBlackMailTypeConsideringTarget(Character p_target);
     string GetFullIntelTooltip();
+    bool CanShareIntelTo(Character p_target);
 }
 
 [System.Serializable]

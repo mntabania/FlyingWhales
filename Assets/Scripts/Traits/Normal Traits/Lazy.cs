@@ -34,8 +34,8 @@ namespace Traits {
             if (p_character.HasAfflictedByPlayerWith(this)) {
                 if (PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.LAZINESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Likes_To_Sleep) ||
                     PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.LAZINESS, AFFLICTION_SPECIFIC_BEHAVIOUR.Loves_To_Sleep)) {
-                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.LAZINESS);
-                    PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LAZINESS);
+                    SkillData skillData = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.LAZINESS);
+                    PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LAZINESS);
                     bool wasChanceMet = ChanceData.RollChance(skillData.currentLevel == 2 ? CHANCE_TYPE.Laziness_Nap_Level_2 : CHANCE_TYPE.Laziness_Nap_Level_3);
                     if (wasChanceMet && !p_character.jobQueue.HasJob(JOB_TYPE.LAZY_NAP)) {
                         if (p_character.tileObjectComponent.primaryBed != null) {
@@ -99,11 +99,11 @@ namespace Traits {
         }
         public float GetTriggerChance(Character p_character) {
             if (p_character.HasAfflictedByPlayerWith(this)) {
-                PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LAZINESS);
-                SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.LAZINESS);
+                PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LAZINESS);
+                SkillData skillData = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.LAZINESS);
                 return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(skillData.currentLevel);
             } else {
-                PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LAZINESS);
+                PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.LAZINESS);
                 return playerSkillData.afflictionUpgradeData.GetRateChancePerLevel(0);
             }
         }

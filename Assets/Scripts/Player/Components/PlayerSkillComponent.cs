@@ -8,7 +8,7 @@ using UtilityScripts;
 public class PlayerSkillComponent {
 
     public const int RerollCooldownInHours = 12;
-    
+
     //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
     public List<PLAYER_SKILL_TYPE> spells { get; protected set; }
     public List<PLAYER_SKILL_TYPE> afflictions { get; protected set; }
@@ -25,14 +25,14 @@ public class PlayerSkillComponent {
     public int tier1Count { get; protected set; }
     public int tier2Count { get; protected set; }
     public int tier3Count { get; protected set; }
-    
+
     //Skill Unlocking
     public PLAYER_SKILL_TYPE currentSpellBeingUnlocked { get; private set; }
     public int currentSpellUnlockCost { get; private set; }
     public RuinarchTimer timerUnlockSpell { get; private set; }
     public RuinarchTimer cooldownReroll { get; private set; }
     public List<PLAYER_SKILL_TYPE> currentSpellChoices { get; private set; }
-        
+
     public Cost[] currentPortalUpgradeCost { get; private set; }
     public RuinarchTimer timerUpgradePortal { get; private set; }
 
@@ -57,8 +57,10 @@ public class PlayerSkillComponent {
 
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.AddListener<SkillData>(PlayerSkillSignals.BONUS_CHARGES_ADJUSTED, OnBonusChargesAdjusted);
     }
 
+    #region Listeners
     void OnStructurePlaced(LocationStructure p_structure) {
         if (p_structure.structureType == STRUCTURE_TYPE.BIOLAB) {
             UnlockPlagueSkills();
@@ -67,38 +69,52 @@ public class PlayerSkillComponent {
 
     void OnStructureDestroyed(LocationStructure p_structure) {
         if (p_structure.structureType == STRUCTURE_TYPE.BIOLAB) {
-			if (!HasBiolab()) {
+            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
                 LockPlagueSkills();
             }
         }
     }
+    private void OnBonusChargesAdjusted(SkillData p_skillData) {
+        if (p_skillData.hasBonusCharges) {
+            AddAndCategorizeTemporaryPlayerSkill(p_skillData);
+        } else {
+            if (!p_skillData.isInUse) {
+                RemovePlayerSkill(p_skillData);
+            }
+        }
+    }
+    #endregion
 
     void UnlockPlagueSkills() {
-        SkillData skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        SkillData skilldata = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
         skilldata.SetIsUnlockBaseOnRequirements(true);
-        AddCharges(skilldata.type, 1);
+        //AddCharges(skilldata.type, 1);
+        AddAndCategorizePlayerSkill(skilldata);
         skilldata = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.PLAGUE);
         skilldata.SetIsUnlockBaseOnRequirements(true);
-        AddCharges(skilldata.type, 1);
-        Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        //AddCharges(skilldata.type, 1);
+        AddAndCategorizePlayerSkill(skilldata);
+        //Messenger.Broadcast(PlayerSkillSignals.PLAYER_GAINED_SPELL, PLAYER_SKILL_TYPE.PLAGUED_RAT);
     }
 
     void LockPlagueSkills() {
-        SkillData skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUE);
+        SkillData skilldata = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.PLAGUE);
         skilldata.SetIsUnlockBaseOnRequirements(false);
         skilldata.ResetData();
-        skilldata = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        RemovePlayerSkill(skilldata);
+        skilldata = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
         skilldata.SetIsUnlockBaseOnRequirements(false);
-        skilldata.ResetData();
-        Messenger.Broadcast(SpellSignals.PLAYER_LOST_SPELL, PLAYER_SKILL_TYPE.PLAGUED_RAT);
+        //skilldata.ResetData();
+        RemovePlayerSkill(skilldata);
+        //Messenger.Broadcast(PlayerSkillSignals.PLAYER_LOST_SPELL, PLAYER_SKILL_TYPE.PLAGUED_RAT);
     }
 
     #region Loading
-    public void LoadSkills(List<SaveDataPlayerSkill> data) {
-        if(data != null) {
+    public void LoadSkills(List<SaveDataSkillData> data) {
+        if (data != null) {
             for (int i = 0; i < data.Count; i++) {
-                SkillData spell = data[i].Load();
-                CategorizePlayerSkill(spell);
+                SkillData skillData = data[i].Load();
+                AddAndCategorizePlayerSkillBase(skillData); //Use Base function because we do not need to SetPlayerSkillData since it is already loaded
             }
         }
     }
@@ -125,12 +141,12 @@ public class PlayerSkillComponent {
     }
     private void OnCompleteSpellUnlockTimer() {
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUnlockSpell);
-        PlayerManager.Instance.player.playerSkillComponent.SetPlayerSkillData(currentSpellBeingUnlocked);
+        PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(currentSpellBeingUnlocked);
         ResetPlayerSpellChoices();
-        SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(currentSpellBeingUnlocked);
-        if (skillData.category == PLAYER_SKILL_CATEGORY.SPELL) {
-            Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);    
-        }
+        //SkillData skillData = PlayerSkillManager.Instance.GetSkillData(currentSpellBeingUnlocked);
+        //if (skillData.category == PLAYER_SKILL_CATEGORY.SPELL) {
+        //    Messenger.Broadcast(PlayerSkillSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);    
+        //}
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, currentSpellBeingUnlocked, currentSpellUnlockCost);
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         currentSpellUnlockCost = 0;
@@ -156,7 +172,7 @@ public class PlayerSkillComponent {
         //Refund player mana
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUpgradePortal);
         for (int i = 0; i < currentPortalUpgradeCost.Length; i++) {
-            PlayerManager.Instance.player.AddCurrency(currentPortalUpgradeCost[i]);    
+            PlayerManager.Instance.player.AddCurrency(currentPortalUpgradeCost[i]);
         }
         currentPortalUpgradeCost = null;
         timerUpgradePortal.Stop();
@@ -168,7 +184,7 @@ public class PlayerSkillComponent {
         portal.GainUpgradePowers(portal.nextTier);
         portal.IncreaseLevel();
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, portal.level);
-        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         currentPortalUpgradeCost = null;
     }
     private void ResetPlayerSpellChoices() {
@@ -181,80 +197,84 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Skill Tree
-    private void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
-        if (playerSkillData != null) {
-            spellData.SetCurrentLevel(playerSkillData.cheatedLevel);    
-            spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
-            spellData.SetCharges(charges);
-            spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
-            spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
-            spellData.SetUnlockCost(playerSkillData.unlockCost);
-            spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
-            spellData.SetThreat(threat);
-            spellData.SetThreatPerHour(threatPerHour);
-        } else {
-            spellData.SetCurrentLevel(1);
-            spellData.SetMaxCharges(charges);
-            spellData.SetCharges(charges);
-            spellData.SetCooldown(cooldown);
-            spellData.SetPierce(pierce);
-            spellData.SetUnlockCost(0);
-            spellData.SetManaCost(manaCost);
-            spellData.SetThreat(threat);
-            spellData.SetThreatPerHour(threatPerHour);
-        }
-        // Debug.LogError(spellData.name + " -- " + spellData.currentLevel + " -- " + playerSkillData.cheatedLevel);
-        CategorizePlayerSkill(spellData);
-    }
-    public void AddCharges(PLAYER_SKILL_TYPE spellType, int amount) {
-        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
-        if (spellData.isInUse) {
-            spellData.AdjustCharges(amount);
-        } else {
-            AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
-            var playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
-            if (playerSkillData != null) {
-                UpdateTierCount(playerSkillData);    
-            }
-        }
-    }
-    public void AddMaxCharges(PLAYER_SKILL_TYPE spellType, int amount) {
-        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
-        if (spellData.isInUse) {
-            spellData.AdjustMaxCharges(amount);
-            spellData.AdjustCharges(amount);
-        } else {
-            AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
-            var playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
-            if (playerSkillData != null) {
-                UpdateTierCount(playerSkillData);    
-            }
-        }
-    }
+    //private void AddPlayerSkill(SkillData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour, float pierce) {
+    //    PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(spellData.type);
+    //    if (playerSkillData != null) {
+    //        spellData.SetCurrentLevel(playerSkillData.cheatedLevel);
+    //        spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
+    //        spellData.SetCharges(charges);
+    //        spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
+    //        spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
+    //        spellData.SetUnlockCost(playerSkillData.unlockCost);
+    //        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
+    //        spellData.SetThreat(threat);
+    //        spellData.SetThreatPerHour(threatPerHour);
+    //    } else {
+    //        spellData.SetCurrentLevel(1);
+    //        spellData.SetMaxCharges(charges);
+    //        spellData.SetCharges(charges);
+    //        spellData.SetCooldown(cooldown);
+    //        spellData.SetPierce(pierce);
+    //        spellData.SetUnlockCost(0);
+    //        spellData.SetManaCost(manaCost);
+    //        spellData.SetThreat(threat);
+    //        spellData.SetThreatPerHour(threatPerHour);
+    //    }
+    //    // Debug.LogError(spellData.name + " -- " + spellData.currentLevel + " -- " + playerSkillData.cheatedLevel);
+    //    AddAndCategorizePlayerSkill(spellData);
+    //}
+    //public void AddCharges(PLAYER_SKILL_TYPE spellType, int amount) {
+    //    SkillData spellData = PlayerSkillManager.Instance.GetSkillData(spellType);
+    //    if (spellData.isInUse) {
+    //        spellData.AdjustCharges(amount);
+    //    } else {
+    //        AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
+    //        var playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(spellData.type);
+    //        if (playerSkillData != null) {
+    //            UpdateTierCount(playerSkillData);    
+    //        }
+    //    }
+    //}
+    //public void AddMaxCharges(PLAYER_SKILL_TYPE spellType, int amount) {
+    //    SkillData spellData = PlayerSkillManager.Instance.GetSkillData(spellType);
+    //    if (spellData.isInUse) {
+    //        spellData.AdjustMaxCharges(amount);
+    //        spellData.AdjustCharges(amount);
+    //    } else {
+    //        AddPlayerSkill(spellData, amount, -1, -1, 0, 0, 0);
+    //        var playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(spellData.type);
+    //        if (playerSkillData != null) {
+    //            AddTierCount(playerSkillData);
+    //        }
+    //    }
+    //}
     public void LoadPlayerSkillTreeOrLoadout(SaveDataPlayer save) {
+        ScenarioData scenarioData = null;
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
+        }
         if (PlayerSkillManager.Instance.unlockAllSkills) {
-            PopulateDevModeSkills();
+            PopulateDevModeSkills(scenarioData);
             PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();
             PopulatePassiveSkills(loadout.passiveSkills);
             // PopulatePassiveSkills(PlayerSkillManager.Instance.allPassiveSkillTypes);
         } else {
             //PopulateAllSkills(save.learnedSkills);
             PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();
-            PopulateAllSkills(loadout.spells.fixedSkills);
-            PopulateAllSkills(loadout.afflictions.fixedSkills);
-            PopulateAllSkills(loadout.minions.fixedSkills);
-            PopulateAllSkills(loadout.structures.fixedSkills);
-            PopulateAllSkills(loadout.miscs.fixedSkills);
+            PopulateAllSkills(loadout.spells.fixedSkills, scenarioData);
+            PopulateAllSkills(loadout.afflictions.fixedSkills, scenarioData);
+            PopulateAllSkills(loadout.minions.fixedSkills, scenarioData);
+            PopulateAllSkills(loadout.structures.fixedSkills, scenarioData);
+            PopulateAllSkills(loadout.miscs.fixedSkills, scenarioData);
             PopulatePassiveSkills(loadout.passiveSkills);
-            
+
             LoadoutSaveData loadoutSaveData = save.GetLoadout(PlayerSkillManager.Instance.selectedArchetype);
             if (loadoutSaveData != null) {
-                PopulateAllSkills(loadoutSaveData.extraSpells);
-                PopulateAllSkills(loadoutSaveData.extraAfflictions);
-                PopulateAllSkills(loadoutSaveData.extraMinions);
-                PopulateAllSkills(loadoutSaveData.extraStructures);
-                PopulateAllSkills(loadoutSaveData.extraMiscs);    
+                PopulateAllSkills(loadoutSaveData.extraSpells, scenarioData);
+                PopulateAllSkills(loadoutSaveData.extraAfflictions, scenarioData);
+                PopulateAllSkills(loadoutSaveData.extraMinions, scenarioData);
+                PopulateAllSkills(loadoutSaveData.extraStructures, scenarioData);
+                PopulateAllSkills(loadoutSaveData.extraMiscs, scenarioData);    
             }
 
             PopulateAllSkills(PlayerSkillManager.Instance.constantSkills);
@@ -271,67 +291,84 @@ public class PlayerSkillComponent {
     //}
     #endregion
 
-    private void UpdateTierCount(PlayerSkillData playerSkillData) {
+    public void AddTierCount(PlayerSkillData playerSkillData) {
         switch (playerSkillData.tier) {
             case 1: tier1Count++;
-            break;
+                break;
             case 2: tier2Count++;
-            break;
+                break;
             case 3: tier3Count++;
-            break;
+                break;
+        }
+    }
+    public void RemoveTierCount(PlayerSkillData playerSkillData) {
+        switch (playerSkillData.tier) {
+            case 1:
+                tier1Count--;
+                break;
+            case 2:
+                tier2Count--;
+                break;
+            case 3:
+                tier3Count--;
+                break;
         }
     }
     public int GetLevelOfSkill(SkillData p_targetSkill) {
         int currentLevel = 0;
         switch (p_targetSkill.category) {
             case PLAYER_SKILL_CATEGORY.PLAYER_ACTION:
-            playerActions.ForEach((eachSkill) => {
-                if (eachSkill == p_targetSkill.type) {
-                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
-                }
-            });
-            break;
+                playerActions.ForEach((eachSkill) => {
+                    if (eachSkill == p_targetSkill.type) {
+                        currentLevel = PlayerSkillManager.Instance.GetSkillData(eachSkill).currentLevel;
+                    }
+                });
+                break;
             case PLAYER_SKILL_CATEGORY.SPELL:
-            spells.ForEach((eachSkill) => {
-                if (eachSkill == p_targetSkill.type) {
-                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
-                }
-            });
-            break;
+                spells.ForEach((eachSkill) => {
+                    if (eachSkill == p_targetSkill.type) {
+                        currentLevel = PlayerSkillManager.Instance.GetSkillData(eachSkill).currentLevel;
+                    }
+                });
+                break;
             case PLAYER_SKILL_CATEGORY.AFFLICTION:
-            afflictions.ForEach((eachSkill) => {
-                if (eachSkill == p_targetSkill.type) {
-                    currentLevel = PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel;
-                }
-            });
-            break;
+                afflictions.ForEach((eachSkill) => {
+                    if (eachSkill == p_targetSkill.type) {
+                        currentLevel = PlayerSkillManager.Instance.GetSkillData(eachSkill).currentLevel;
+                    }
+                });
+                break;
         }
-        
+
         return currentLevel;
     }
 
     #region Utilities
     public bool CheckIfSkillIsAvailable(PLAYER_SKILL_TYPE p_targetSkill) {
-        if (spells.Contains(p_targetSkill)) {
-            return true;
-        }
-        if (playerActions.Contains(p_targetSkill)) {
-            return true;
-        }
-        if (afflictions.Contains(p_targetSkill)) {
-            return true;
-        }
-        return false;
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_targetSkill);
+        return skillData.isInUse;
+        //if (spells.Contains(p_targetSkill)) {
+        //    return true;
+        //}
+        //if (playerActions.Contains(p_targetSkill)) {
+        //    return true;
+        //}
+        //if (afflictions.Contains(p_targetSkill)) {
+        //    return true;
+        //}
+        //return false;
     }
     public bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {
-        return PlayerSkillManager.Instance.GetPlayerSkillData(type).isInUse;
+        PlayerAction data = PlayerSkillManager.Instance.GetPlayerActionData(type);
+        return data.isInUse || data.isTemporarilyInUse;
     }
     public bool CanBuildDemonicStructure(PLAYER_SKILL_TYPE type) {
-        return PlayerSkillManager.Instance.GetDemonicStructureSkillData(type).isInUse;
+        DemonicStructurePlayerSkill data = PlayerSkillManager.Instance.GetDemonicStructureSkillData(type);
+        return data.isInUse || data.isTemporarilyInUse;
     }
     public bool HasAnyAvailableAffliction() {
         for (int i = 0; i < afflictions.Count; i++) {
-            SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(afflictions[i]);
+            SkillData spellData = PlayerSkillManager.Instance.GetSkillData(afflictions[i]);
             if (spellData.hasCharges == false) {
                 return true;
             } else {
@@ -346,7 +383,7 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Skills
-    private void PopulateDevModeSkills() {
+    private void PopulateDevModeSkills(ScenarioData scenarioData = null) {
         foreach (PlayerSkillData data in PlayerSkillManager.Instance.playerSkillDataDictionary.Values) {
             bool shouldAddSpell = true;
             // if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -358,11 +395,19 @@ public class PlayerSkillComponent {
             //                      && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER
             //                      && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             // } else {
-                shouldAddSpell = PlayerSkillManager.Instance.GetPlayerSkillData(data.skill) != null 
-                && data.skill != PLAYER_SKILL_TYPE.OSTRACIZER && data.skill != PLAYER_SKILL_TYPE.SKELETON;
+            shouldAddSpell = PlayerSkillManager.Instance.GetSkillData(data.skill) != null
+            && data.skill != PLAYER_SKILL_TYPE.OSTRACIZER && data.skill != PLAYER_SKILL_TYPE.SKELETON;
             // }
             if (shouldAddSpell) {
-                SetPlayerSkillData(data);
+                AddAndCategorizePlayerSkill(data.skill, false, true);
+                if (scenarioData != null) {
+                    //set level provided by scenario data
+                    int providedLevel = scenarioData.GetLevelForPower(data.skill);
+                    SkillData skillData = PlayerSkillManager.Instance.GetSkillData(data.skill);
+                    for (int j = 0; j < providedLevel; j++) {
+                        skillData.LevelUp();
+                    }
+                }
             }
         }
         //for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
@@ -403,87 +448,127 @@ public class PlayerSkillComponent {
         //SpellData ostracizer = PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.OSTRACIZER);
         //CategorizePlayerSkill(ostracizer);    
     }
-    private void PopulateAllSkills(List<PLAYER_SKILL_TYPE> skillTypes) {
+    private void PopulateAllSkills(List<PLAYER_SKILL_TYPE> skillTypes, ScenarioData scenarioData = null) {
         if (skillTypes != null) {
             for (int i = 0; i < skillTypes.Count; i++) {
                 PLAYER_SKILL_TYPE spellType = skillTypes[i];
-                SetPlayerSkillData(spellType);
+                AddAndCategorizePlayerSkill(spellType);
+                if (scenarioData != null) {
+                    //set level provided by scenario data
+                    int providedLevel = scenarioData.GetLevelForPower(spellType);
+                    SkillData skillData = PlayerSkillManager.Instance.GetSkillData(spellType);
+                    for (int j = 0; j < providedLevel; j++) {
+                        skillData.LevelUp();
+                    }
+                }
             }
         }
     }
-    public void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType, bool testScene = false) {
-        PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
-        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
-        if (spellData == null) {
-            Debug.LogError(skillType.ToString() + " data is null!");
-        }
-        if (!testScene && WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
-            skillType == PLAYER_SKILL_TYPE.BEHOLDER) {
-            //if map is tutorial and spell is THE_EYE, Set max charges to only 1
-            spellData.SetMaxCharges(1);  
-            spellData.SetCharges(1);
+    public void AddAndCategorizePlayerSkill(PLAYER_SKILL_TYPE p_skillType, bool testScene = false, bool isDevMode = false) {
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_skillType);
+        AddAndCategorizePlayerSkill(skillData, testScene, isDevMode);
+    }
+    public void AddAndCategorizePlayerSkill(SkillData p_skillData, bool testScene = false, bool isDevMode = false) {
+        Assert.IsNotNull(p_skillData, "Given spell data in AddAndCategorizePlayerSkill is null!");
+        if (p_skillData.isTemporarilyInUse) {
+            p_skillData.SetIsInUse(true);
         } else {
-            spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
-            spellData.SetCharges(spellData.maxCharges);
+            if (!p_skillData.isInUse) {
+                p_skillData.SetIsInUse(true);
+                SetPlayerSkillData(p_skillData, testScene, isDevMode);
+                AddAndCategorizePlayerSkillBase(p_skillData);
+            }
         }
-        spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
-        spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(skillType));
-        spellData.SetUnlockCost(playerSkillData.unlockCost);
-        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
-        spellData.SetThreat(skillData.threat);
-        spellData.SetThreatPerHour(skillData.threatPerHour);
-        CategorizePlayerSkill(spellData);
     }
-    private void SetPlayerSkillData(PlayerSkillData skillData) {
-        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(spellData.type);
-        spellData.currentLevel = playerSkillData.cheatedLevel;
-        if (spellData == null) {
-            Debug.LogError(skillData.skill.ToString() + " data is null!");
+    public void AddAndCategorizeTemporaryPlayerSkill(SkillData p_skillData, bool testScene = false, bool isDevMode = false) {
+        Assert.IsNotNull(p_skillData, "Given spell data in AddAndCategorizeTemporaryPlayerSkill is null!");
+        if (!p_skillData.isTemporarilyInUse && !p_skillData.isInUse) {
+            p_skillData.SetIsTemporarilyInUse(true);
+            SetPlayerSkillData(p_skillData, testScene, isDevMode);
+            AddAndCategorizePlayerSkillBase(p_skillData);
         }
-        spellData.SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel));
-        spellData.SetCharges(spellData.maxCharges);
-        spellData.SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel));
-        spellData.SetUnlockCost(playerSkillData.unlockCost);
-        spellData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spellData.type));
-        spellData.SetManaCost(playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel));
-        spellData.SetThreat(skillData.threat);
-        spellData.SetThreatPerHour(skillData.threatPerHour);
-        CategorizePlayerSkill(spellData);
     }
-    public void CategorizePlayerSkill(SkillData spellData) {
-        Assert.IsNotNull(spellData, "Given spell data in CategorizePlayerSkill is null!");
-        spellData.SetIsInUse(true);
-        if (spellData.category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
-            afflictions.Add(spellData.type);
-        } else if (spellData.category == PLAYER_SKILL_CATEGORY.SCHEME) {
-            schemes.Add(spellData.type);
-        } else if (spellData.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
-            demonicStructuresSkills.Add(spellData.type);
-            Messenger.Broadcast(SpellSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, spellData.type);
-        } else if (spellData.category == PLAYER_SKILL_CATEGORY.MINION) {
-            minionsSkills.Add(spellData.type);
-            Messenger.Broadcast(SpellSignals.ADDED_PLAYER_MINION_SKILL, spellData.type);
-        } else if (spellData.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION) {
-            playerActions.Add(spellData.type);
-        } else if (spellData.category == PLAYER_SKILL_CATEGORY.SPELL) {
-            spells.Add(spellData.type);
-        } else if (spellData.category == PLAYER_SKILL_CATEGORY.SUMMON) {
-            summonsSkills.Add(spellData.type);
-            Messenger.Broadcast(SpellSignals.ADDED_PLAYER_SUMMON_SKILL, spellData.type);
+    public void RemovePlayerSkill(PLAYER_SKILL_TYPE p_skillType) {
+        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_skillType);
+        RemovePlayerSkill(skillData);
+    }
+    public void RemovePlayerSkill(SkillData p_skillData) {
+        Assert.IsNotNull(p_skillData, "Given spell data in RemovePlayerSkill is null!");
+        if (p_skillData.hasBonusCharges) {
+            p_skillData.SetIsInUse(false);
+            p_skillData.SetIsTemporarilyInUse(true);
+        } else {
+            RemovePlayerSkillBase(p_skillData);
+            p_skillData.ResetData();
         }
+    }
+    private void AddAndCategorizePlayerSkillBase(SkillData p_skillData) {
+        if (p_skillData.category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
+            afflictions.Add(p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.SCHEME) {
+            schemes.Add(p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
+            demonicStructuresSkills.Add(p_skillData.type);
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
+            minionsSkills.Add(p_skillData.type);
+            Messenger.Broadcast(PlayerSkillSignals.ADDED_PLAYER_MINION_SKILL, p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION) {
+            playerActions.Add(p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.SPELL) {
+            spells.Add(p_skillData.type);
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_GAINED_SPELL, p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.SUMMON) {
+            summonsSkills.Add(p_skillData.type);
+            Messenger.Broadcast(PlayerSkillSignals.ADDED_PLAYER_SUMMON_SKILL, p_skillData.type);
+        }
+    }
+    private void RemovePlayerSkillBase(SkillData p_skillData) {
+        if (p_skillData.category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
+            afflictions.Remove(p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.SCHEME) {
+            schemes.Remove(p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
+            demonicStructuresSkills.Remove(p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
+            minionsSkills.Remove(p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION) {
+            playerActions.Remove(p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.SPELL) {
+            spells.Remove(p_skillData.type);
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_LOST_SPELL, p_skillData.type);
+        } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.SUMMON) {
+            summonsSkills.Remove(p_skillData.type);
+        }
+    }
+    private void SetPlayerSkillData(SkillData p_skillData, bool testScene, bool isDevMode) {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillData.type);
+        if (playerSkillData == null) {
+            Debug.LogError(playerSkillData.skill.ToString() + " data is null!");
+        }
+        SetPlayerSkillDataBase(p_skillData, playerSkillData, testScene, isDevMode);
+    }
+    private void SetPlayerSkillDataBase(SkillData p_skillData, PlayerSkillData p_playerSkillData, bool testScene, bool isDevMode) {
+        if (p_skillData == null) {
+            Debug.LogError(p_playerSkillData.skill.ToString() + " data is null!");
+        }
+        if (!isDevMode && !testScene && WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
+            p_skillData.type == PLAYER_SKILL_TYPE.BEHOLDER) {
+            //if map is tutorial and spell is THE_EYE, Set max charges to only 1
+            p_skillData.SetMaxCharges(1);
+            p_skillData.SetCharges(1);
+        } else {
+            p_skillData.SetMaxCharges(p_playerSkillData.GetMaxChargesBaseOnLevel(p_skillData.currentLevel));
+            p_skillData.SetCharges(p_skillData.maxCharges);
+        }
+        p_skillData.SetCooldown(p_playerSkillData.GetCoolDownBaseOnLevel(p_skillData.currentLevel));
+        p_skillData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(p_skillData.type));
+        p_skillData.SetUnlockCost(p_playerSkillData.unlockCost);
+        p_skillData.SetManaCost(p_playerSkillData.GetManaCostBaseOnLevel(p_skillData.currentLevel));
+        p_skillData.SetThreat(p_playerSkillData.threat);
+        p_skillData.SetThreatPerHour(p_playerSkillData.threatPerHour);
     }
     #endregion
-
-    bool HasBiolab() {
-        for(int x = 0; x < PlayerManager.Instance.player.playerSettlement.allStructures.Count; ++x) {
-            if(PlayerManager.Instance.player.playerSettlement.allStructures[x].structureType == STRUCTURE_TYPE.BIOLAB) {
-                return true;
-			}
-		}
-        return false;
-	}
 
     #region Summons
     //public void AddSummon(Summon summon) {
@@ -608,7 +693,7 @@ public class PlayerSkillComponent {
 }
 [System.Serializable]
 public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
-    public List<SaveDataPlayerSkill> skills;
+    public List<SaveDataSkillData> skills;
     //public bool canTriggerFlaw;
     //public bool canRemoveTraits;
     //Skill Unlocking
@@ -624,46 +709,46 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
         //canTriggerFlaw = player.playerSkillComponent.canTriggerFlaw;
         //canRemoveTraits = player.playerSkillComponent.canRemoveTraits;
 
-        skills = new List<SaveDataPlayerSkill>();
+        skills = new List<SaveDataSkillData>();
         for (int i = 0; i < component.spells.Count; i++) {
             SkillData spell = PlayerSkillManager.Instance.GetSpellData(component.spells[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            SaveDataSkillData dataPlayerSkill = new SaveDataSkillData();
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);
         }
         for (int i = 0; i < component.afflictions.Count; i++) {
             SkillData spell = PlayerSkillManager.Instance.GetAfflictionData(component.afflictions[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            SaveDataSkillData dataPlayerSkill = new SaveDataSkillData();
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);
         }
         for (int i = 0; i < component.schemes.Count; i++) {
             SkillData spell = PlayerSkillManager.Instance.GetSchemeData(component.schemes[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            SaveDataSkillData dataPlayerSkill = new SaveDataSkillData();
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);
         }
         for (int i = 0; i < component.playerActions.Count; i++) {
             PlayerAction spell = PlayerSkillManager.Instance.GetPlayerActionData(component.playerActions[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            SaveDataSkillData dataPlayerSkill = new SaveDataSkillData();
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);
         }
         for (int i = 0; i < component.demonicStructuresSkills.Count; i++) {
             DemonicStructurePlayerSkill spell = PlayerSkillManager.Instance.GetDemonicStructureSkillData(component.demonicStructuresSkills[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            SaveDataSkillData dataPlayerSkill = new SaveDataSkillData();
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);
         }
         for (int i = 0; i < component.minionsSkills.Count; i++) {
             MinionPlayerSkill spell = PlayerSkillManager.Instance.GetMinionPlayerSkillData(component.minionsSkills[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            SaveDataSkillData dataPlayerSkill = new SaveDataSkillData();
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);
         }
         for (int i = 0; i < component.summonsSkills.Count; i++) {
             SummonPlayerSkill spell = PlayerSkillManager.Instance.GetSummonPlayerSkillData(component.summonsSkills[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            SaveDataSkillData dataPlayerSkill = new SaveDataSkillData();
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);
         }

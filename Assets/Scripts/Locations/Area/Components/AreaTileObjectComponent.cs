@@ -58,5 +58,11 @@ public class AreaTileObjectComponent : AreaComponent {
         }
         return false;
     }
+    public TileObject GetRandomTileObject() {
+        if (itemsInArea.Count > 0) {
+            return itemsInArea[GameUtilities.RandomBetweenTwoNumbers(0, itemsInArea.Count - 1)];
+        }
+        return null;
+    }
     #endregion
 }

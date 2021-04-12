@@ -150,6 +150,11 @@ public class InnerMapCameraMove : BaseCameraMove {
             }   
         }
     }
+    public void SetZoom(float p_zoom) {
+        float fov = p_zoom;
+        fov = Mathf.Clamp(fov, _minFov, _maxFov);
+        camera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(camera, p_zoom));
+    }
     private void SetCameraBordersForMap(InnerTileMap map) {
         float y = map.transform.localPosition.y;
         //MIN_Y = y;

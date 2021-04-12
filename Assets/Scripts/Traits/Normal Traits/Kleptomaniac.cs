@@ -41,8 +41,8 @@ namespace Traits {
                 PLAYER_SKILL_TYPE playerSkillType = GetAfflictionSkillType();
                 if (playerSkillType != PLAYER_SKILL_TYPE.NONE && characterThatWillDoJob.HasAfflictedByPlayerWith(playerSkillType)) {
                     //affliction was applied by player
-                    PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
-                    SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+                    PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(playerSkillType);
+                    SkillData skillData = PlayerSkillManager.Instance.GetSkillData(playerSkillType);
                     if (playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Do_Pick_Pocket, skillData.currentLevel)) {
                         var chanceMet = ChanceData.RollChance(skillData.currentLevel == 1 ? CHANCE_TYPE.Kleptomania_Pickpocket_Level_1 : CHANCE_TYPE.Kleptomania_Pickpocket_Level_2);
                         if (chanceMet && !characterThatWillDoJob.IsHostileWith(targetCharacter) && 

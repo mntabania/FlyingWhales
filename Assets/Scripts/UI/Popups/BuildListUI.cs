@@ -53,7 +53,7 @@ public class BuildListUI : PopupMenuBase {
     public void Initialize() {
         PopulateBuildingList();
         Messenger.AddListener(UISignals.UPDATE_BUILD_LIST, UpdateBuildList);
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, OnPlayerGainedDemonicStructure);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, OnPlayerGainedDemonicStructure);
         buildToggle.interactable = true;
     }
     private void OnPlayerGainedDemonicStructure(PLAYER_SKILL_TYPE p_structureType) {

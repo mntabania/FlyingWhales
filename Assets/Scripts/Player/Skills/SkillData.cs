@@ -7,52 +7,59 @@ using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class SkillData : IPlayerSkill {
-
     public const int MAX_SPELL_LEVEL = 3;
-    
-    public virtual PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
-    public virtual string name { get { return string.Empty; } }
-    public virtual string description { get { return string.Empty; } }
-    public virtual PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.NONE; } }
     //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public SPELL_TARGET[] targetTypes { get; protected set; }
     //public int radius { get; protected set; }
-    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, 1f);
     public int charges { get; private set; }
-    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, 1f);
-    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, 1f);
-    public int threat => 0;// SpellUtilities.GetModifiedSpellCost(baseThreat, 1f); comment out for now so no threat will be passed
     public int threatPerHour { get; private set; }
-    public bool isInUse { get; private set; }
+    public bool isInUse { get; private set; } //This means that this skill is unlocked by the player permanently
+    public bool isTemporarilyInUse { get; private set; } //This means that this skill is not unlocked in 
     public int currentCooldownTick { get; private set; }
-    public bool hasCharges => baseMaxCharges != -1;
-    public bool hasCooldown => baseCooldown != -1;
-    public bool hasManaCost => baseManaCost != -1;
-    public virtual bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
-
     public int baseMaxCharges { get; private set; }
     public int baseManaCost { get; private set; }
     public float basePierce { get; private set; }
     public int baseCooldown { get; private set; }
     public int baseThreat { get; private set; }
+    public int bonusCharges { get; private set; }
     /// <summary>
     /// Current level of this spell. This starts at 0.
     /// 0 = Level 1, 1 = Level 2, etc.
     /// </summary>
     public int currentLevel { get; set; }
-    /// <summary>
-    /// The level that should be displayed on UI. This getter is only for convenience.
-    /// </summary>
-    public int levelForDisplay => currentLevel + 1;
-    public bool isMaxLevel => currentLevel >= MAX_SPELL_LEVEL;
-
     public bool isUnlockedBaseOnRequirements { get; set; }
     
     public int unlockCost { get; set; }
     public SkillEventDispatcher skillEventDispatcher { get; }
 
+    #region getters
+    public virtual PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
+    public virtual string name { get { return string.Empty; } }
+    public virtual string description { get { return string.Empty; } }
+    public virtual PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.NONE; } }
+    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, 1f);
+    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, 1f);
+    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, 1f);
+    public int threat => 0;// SpellUtilities.GetModifiedSpellCost(baseThreat, 1f); comment out for now so no threat will be passed
+
+    /// <summary>
+    /// The level that should be displayed on UI. This getter is only for convenience.
+    /// </summary>
+    public int levelForDisplay => currentLevel + 1;
+    public bool isMaxLevel => currentLevel >= MAX_SPELL_LEVEL;
+    public bool hasCharges => baseMaxCharges != -1;
+    public bool hasCooldown => baseCooldown != -1;
+    public bool hasManaCost => baseManaCost != -1;
+    public bool hasBonusCharges => bonusCharges > 0;
+    public int totalCharges => charges + bonusCharges;
+    public virtual bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
+    public string displayOfCurrentChargesWithBonusChargesNotCombined => GetDisplayOfCurrentChargesWithBonusChargesNotCombined();
+    public string displayOfCurrentChargesWithBonusChargesCombined => GetDisplayOfCurrentChargesWithBonusChargesCombined();
+    public string displayOfCurrentChargesWithBonusChargesCombinedIconFirst => GetDisplayOfCurrentChargesWithBonusChargesCombinedIconFirst();
+    #endregion
+
     public void LevelUp() {
-        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type);
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
         currentLevel = Mathf.Clamp(++currentLevel, 0, MAX_SPELL_LEVEL);
         SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
         SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
@@ -60,15 +67,13 @@ public class SkillData : IPlayerSkill {
         SetCooldown(playerSkillData.skillUpgradeData.GetCoolDownPerLevel(currentLevel));
         SetCharges(maxCharges);
         FinishCooldown();
-        skillEventDispatcher.ExecuteLevelUpEvent(this, playerSkillData);
         if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
-            Messenger.Broadcast(name + "LevelUp", this);
+            Messenger.Broadcast($"{name}LevelUp", this);
         }
-        Messenger.Broadcast(SpellSignals.PLAYER_SKILL_LEVEL_UP, this);
+        Messenger.Broadcast(PlayerSkillSignals.PLAYER_SKILL_LEVEL_UP, this);
     }
 
     protected SkillData() {
-        skillEventDispatcher = new SkillEventDispatcher();
         ResetData();
     }
 
@@ -148,8 +153,8 @@ public class SkillData : IPlayerSkill {
         threatPerHour = 0;
         currentCooldownTick = cooldown;
         currentLevel = 0;
-        isInUse = false;
-        skillEventDispatcher.CleanUp();
+        ResetIsInUse();
+        isTemporarilyInUse = false;
     }
     public bool CanPerformAbilityTowards(IPointOfInterest poi) {
         if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -160,7 +165,7 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbility();
     }
     public bool CanPerformAbility() {
-        bool canBePerformed = (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
+        bool canBePerformed = (((!hasCharges || charges > 0) && isInUse) || hasBonusCharges) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
         if (!canBePerformed) {
             if (type == PLAYER_SKILL_TYPE.SCHEME) {
                 //This is the scheme parent, even if there are no charges, it can be performed so that the player can see the second column
@@ -217,17 +222,20 @@ public class SkillData : IPlayerSkill {
     //    Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
     //}
     public void OnLoadSpell() {
-        Messenger.Broadcast(PlayerSignals.CHARGES_ADJUSTED, this);
+        Messenger.Broadcast(PlayerSkillSignals.CHARGES_ADJUSTED, this);
         if (hasCooldown) {
             if((hasCharges && charges < maxCharges) || currentCooldownTick < cooldown) {
-                Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
+                Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, this);
                 Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
             }
         }
     }
     public void OnExecutePlayerSkill() {
         if (!PlayerSkillManager.Instance.unlimitedCast) {
-            if (hasCharges) {
+            //If there are bonus charges, decrease that first
+            if (hasBonusCharges) {
+                AdjustBonusCharges(-1);
+            } else if (hasCharges) {
                 if(charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
                     AdjustCharges(-1);
                 }
@@ -249,17 +257,17 @@ public class SkillData : IPlayerSkill {
         //PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
 
         if (category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION) {
-            Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
+            Messenger.Broadcast(PlayerSkillSignals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
         } else if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
-            Messenger.Broadcast(SpellSignals.ON_EXECUTE_AFFLICTION, this);
+            Messenger.Broadcast(PlayerSkillSignals.ON_EXECUTE_AFFLICTION, this);
         } else {
-            Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_SKILL, this);
+            Messenger.Broadcast(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, this);
         }
     }
     private void StartCooldown() {
         if (hasCooldown && currentCooldownTick == cooldown) {
             SetCurrentCooldownTick(0);
-            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
+            Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, this);
             if(cooldown > 0) {
                 Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
             } else {
@@ -298,13 +306,30 @@ public class SkillData : IPlayerSkill {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
         }
-        Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, this);
-        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+        Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, this);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public string GetManaCostChargesCooldownStr() {
         string str = "Mana Cost: " + manaCost;
         str += "\nCharges: " + charges;
         str += "\nCooldown: " + cooldown;
+        return str;
+    }
+    private string GetDisplayOfCurrentChargesWithBonusChargesNotCombined() {
+        return SpellUtilities.GetDisplayOfCurrentChargesWithBonusChargesNotCombined(charges, maxCharges, bonusCharges, hasCharges && isInUse);
+    }
+    private string GetDisplayOfCurrentChargesWithBonusChargesCombined() {
+        string str = string.Empty;
+        if (hasCharges || hasBonusCharges) {
+            str += $"{(isInUse ? totalCharges : bonusCharges)} {(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}";
+        }
+        return str;
+    }
+    private string GetDisplayOfCurrentChargesWithBonusChargesCombinedIconFirst() {
+        string str = string.Empty;
+        if (hasCharges || hasBonusCharges) {
+            str += $"{(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}{(isInUse ? totalCharges : bonusCharges)}";
+        }
         return str;
     }
     #endregion
@@ -322,13 +347,21 @@ public class SkillData : IPlayerSkill {
     public void SetCharges(int amount) {
         charges = amount;
     }
+    public void SetBonusCharges(int amount) {
+        bonusCharges = amount;
+    }
     public void AdjustCharges(int amount) {
         charges += amount;
-        Messenger.Broadcast(PlayerSignals.CHARGES_ADJUSTED, this);
+        Messenger.Broadcast(PlayerSkillSignals.CHARGES_ADJUSTED, this);
 
         if(charges < maxCharges) {
             StartCooldown();
         }
+    }
+    public void AdjustBonusCharges(int amount) {
+        bonusCharges += amount;
+        bonusCharges = Mathf.Max(bonusCharges, 0);
+        Messenger.Broadcast(PlayerSkillSignals.BONUS_CHARGES_ADJUSTED, this);
     }
 
     public void SetPierce(float amount) {
@@ -356,10 +389,28 @@ public class SkillData : IPlayerSkill {
         threatPerHour = amount;
     }
     public void SetIsInUse(bool state) {
-        isInUse = state;
+        if (isInUse != state) {
+            isInUse = state;
+            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
+            if (isInUse) {
+                SetIsTemporarilyInUse(false);
+                if (playerSkillData != null) {
+                    PlayerManager.Instance.player.playerSkillComponent.AddTierCount(playerSkillData);
+                }
+            } else {
+                if (playerSkillData != null) {
+                    PlayerManager.Instance.player.playerSkillComponent.RemoveTierCount(playerSkillData);
+                }
+            }
+        }
         // Debug.Log($"Set spell {name} in use to {isInUse.ToString()}");
     }
-
+    public void ResetIsInUse() {
+        isInUse = false;
+    }
+    public void SetIsTemporarilyInUse(bool p_state) {
+        isTemporarilyInUse = p_state;
+    }
     public void SetCurrentLevel(int amount) {
         currentLevel = amount;
     }

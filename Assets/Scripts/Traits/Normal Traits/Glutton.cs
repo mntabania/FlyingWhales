@@ -22,7 +22,9 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
                 m_owner = character;
-                CheckIfShouldListenToLevelUpEvent(character);
+                if (character.HasAfflictedByPlayerWith(this)) {
+                    character.traitComponent.SubscribeToGluttonLevelUpSignal();
+                }
                 additionalFullnessDecreaseRate = GetHungerDecreaseRate(character);
                 character.needsComponent.SetFullnessForcedTick(0);
                 character.needsComponent.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);
@@ -33,12 +35,13 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 m_owner = character;
-                CheckIfShouldListenToLevelUpEvent(character);
+                if (character.HasAfflictedByPlayerWith(this)) {
+                    character.traitComponent.SubscribeToGluttonLevelUpSignal();
+                }
                 additionalFullnessDecreaseRate = GetHungerDecreaseRate(character);
             }
         }
-        protected override void OnAfflictionLeveledUp(SkillData p_skillData, PlayerSkillData p_playerSkillData) {
-            base.OnAfflictionLeveledUp(p_skillData, p_playerSkillData);
+        public void OnGluttonLeveledUp() {
             m_owner.needsComponent.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
             additionalFullnessDecreaseRate = GetHungerDecreaseRate(m_owner);
             m_owner.needsComponent.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);
@@ -46,7 +49,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
-                UnsubscribeToLevelUpEvent(character);
+                character.traitComponent.UnsubscribeToGluttonLevelUpSignal();
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(GluttonBehaviour));

@@ -902,6 +902,10 @@ public enum TILE_OBJECT_TYPE {
     IMP_HUT_TILE_OBJECT = 176,
     MEDDLER_TILE_OBJECT = 177,
     CRYPT_TILE_OBJECT = 178,
+    DEFILER_TILE_OBJECT = 179,
+    TORTURE_CHAMBERS_TILE_OBJECT = 180,
+    DEMONIC_STRUCTURE_BLOCKER_TILE_OBJECT = 181,
+    KENNEL_TILE_OBJECT = 182,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1086,7 +1090,7 @@ public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, RELIGION }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage, Plague_Hysteria, Distraught,
 }
-public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Icalawa, Affatt }
+public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Icalawa, Affatt, Oona, Pangat_Loo, Zenko, Aneem, Pitto }
 public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action
@@ -1110,7 +1114,7 @@ public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
-public enum PARTY_QUEST_TYPE { None, Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, Demon_Defend, Demon_Snatch, Demon_Raid, }
+public enum PARTY_QUEST_TYPE { None, Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, Demon_Defend, Demon_Snatch, Demon_Raid, Demon_Rescue }
 public enum PARTY_STATE { None, Waiting, Moving, Resting, Working, }
 public enum GATHERING_TYPE { Social, Monster_Invade }
 public enum COMBAT_REACTION { None, Fight, Flight }
@@ -1123,7 +1127,8 @@ public enum OBJECT_TYPE {
     Reaction_Quest = 24, Plague_Disease = 25
 }
 public enum PASSIVE_SKILL {
-    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb, Dark_Ritual_Chaos_Orb, Raid_Chaos_Orb,
+    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb, Dark_Ritual_Chaos_Orb, Raid_Chaos_Orb, Night_Creature_Chaos_Orb, 
+    Meddler_Chaos_Orb, Trigger_Flaw_Chaos_Orb, Lycanthrope_Chaos_Orb,
 }
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important

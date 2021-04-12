@@ -16,7 +16,7 @@ public class WaterSpikeData : SkillData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
-            PlayerSkillManager.Instance.GetPlayerSkillData<WaterSpikeSkillData>(PLAYER_SKILL_TYPE.WATER_SPIKE).blastSound,
+            PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<WaterSpikeSkillData>(PLAYER_SKILL_TYPE.WATER_SPIKE).blastSound,
             targetTile, 3, false
         );
 

@@ -172,13 +172,13 @@ public class Player : ILeader, IObjectManipulator {
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
                 previousActiveAction.UnhighlightAffectedTiles();
                 UIManager.Instance.HideSmallInfo(); //This is to hide the invalid messages.
-                Messenger.Broadcast(SpellSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
                 action.OnSetAsCurrentActiveSpell();
                 PlayerManager.Instance.AddPlayerInputModule(PlayerManager.spellInputModule);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
                 Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
-                Messenger.Broadcast(SpellSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
             }
         }
     }
@@ -321,7 +321,7 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void TryExecuteCurrentActiveIntel() {
         string hoverText = string.Empty;
-        if (CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
+        if (CanShareIntelTo(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText, currentActiveIntel)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
             List<ConversationData> conversationList = ObjectPoolManager.Instance.CreateNewConversationDataList();
             ConversationData targetOpeningLine = ObjectPoolManager.Instance.CreateNewConversationData("What do you want from me?", targetCharacter, DialogItem.Position.Left);
@@ -347,7 +347,7 @@ public class Player : ILeader, IObjectManipulator {
             ObjectPoolManager.Instance.ReturnConversationDataListToPool(conversationList);
         }
     }
-    public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {
+    public bool CanShareIntelTo(IPointOfInterest poi, ref string hoverText, IIntel p_intel) {
         if(poi is Character character) {
             if (!character.isNormalCharacter) {
                 return false;
@@ -364,13 +364,16 @@ public class Player : ILeader, IObjectManipulator {
             if (!character.limiterComponent.canWitness) {
                 return false;
             }
+            if (!p_intel.CanShareIntelTo(character)) {
+                return false;
+            }
             if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
                 return true;
             }
         }
         return false;
     }
-    public bool CanShareIntel(IPointOfInterest poi) {
+    public bool CanShareIntelTo(IPointOfInterest poi, IIntel p_intel) {
         if(poi is Character character) {
             if (!character.isNormalCharacter) {
                 return false;
@@ -382,6 +385,9 @@ public class Player : ILeader, IObjectManipulator {
                 return false;
             }
             if (!character.limiterComponent.canWitness) {
+                return false;
+            }
+            if (!p_intel.CanShareIntelTo(character)) {
                 return false;
             }
             if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
@@ -611,7 +617,7 @@ public class Player : ILeader, IObjectManipulator {
         spiritEnergy += amount;
         spiritEnergy = Mathf.Clamp(spiritEnergy, 0, 100000);
         Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, amount, spiritEnergy);
-        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     #endregion
     
@@ -620,7 +626,7 @@ public class Player : ILeader, IObjectManipulator {
         mana += amount;
         mana = Mathf.Clamp(mana, 0, EditableValuesManager.Instance.maximumMana);
         Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_MANA, amount, mana);
-        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public int GetManaCostForInterventionAbility(PLAYER_SKILL_TYPE ability) {
         int tier = PlayerManager.Instance.GetSpellTier(ability);

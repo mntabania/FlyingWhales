@@ -15,10 +15,7 @@ using UnityEngine.Tilemaps;
 
 public class LocationStructureObject : PooledObject, ISelectable {
 
-    public enum Structure_Visual_Mode { Blueprint, Built,
-        Demonic_Structure_Blueprint,
-        Demonic_Structure_Placement
-    }
+    public enum Structure_Visual_Mode { Blueprint, Built, Demonic_Structure_Blueprint, Demonic_Structure_Placement }
 
     public STRUCTURE_TYPE structureType;
     
@@ -64,8 +61,9 @@ public class LocationStructureObject : PooledObject, ISelectable {
     #region Properties
     private Tilemap[] allTilemaps;
     private ThinWallGameObject[] wallVisuals;
-    public LocationGridTile[] tiles { get; private set; }
     private TilemapCollider2D _blockWallsTilemapCollider;
+    public LocationGridTile[] tiles { get; private set; }
+    public Structure_Visual_Mode currentVisualMode { get; private set; }
     #endregion
 
     #region Getters
@@ -87,6 +85,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
 
     #region Monobehaviours
     void Awake() {
+        currentVisualMode = Structure_Visual_Mode.Built;
         allTilemaps = transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = transform.GetComponentsInChildren<ThinWallGameObject>();
         _parentTemplate = GetComponentInParent<StructureTemplate>();
@@ -216,6 +215,11 @@ public class LocationStructureObject : PooledObject, ISelectable {
         } else if (structureType == STRUCTURE_TYPE.MEDDLER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);
         } else if (structureType == STRUCTURE_TYPE.CRYPT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);
+        } else if (structureType == STRUCTURE_TYPE.DEFILER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEFILER_TILE_OBJECT) {
+            structure.AddObjectAsDamageContributor(newTileObject);
+        } else if (structureType == STRUCTURE_TYPE.KENNEL && 
+                   (newTileObject.tileObjectType == TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT || newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEMONIC_STRUCTURE_BLOCKER_TILE_OBJECT)) {
             structure.AddObjectAsDamageContributor(newTileObject);
         }
     }
@@ -499,6 +503,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
     #region Visuals
     public void SetVisualMode(Structure_Visual_Mode mode, InnerTileMap innerTileMap) {
         Color color = Color.white;
+        currentVisualMode = mode;
         switch (mode) {
             case Structure_Visual_Mode.Blueprint:
                 color.a = 128f / 255f;
@@ -548,6 +553,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
     #region Object Pool
     public override void Reset() {
         base.Reset();
+        currentVisualMode = Structure_Visual_Mode.Built;
         SetPreplacedObjectsState(true);
         if (_groundTileMap != null) {
             _groundTileMap.gameObject.SetActive(true);    
@@ -1220,7 +1226,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
     public void RightSelectAction() { }
     public void MiddleSelectAction() { }
     public bool CanBeSelected() {
-        return true;
+        return currentVisualMode != Structure_Visual_Mode.Built;
     }
 }
 

@@ -17,8 +17,8 @@ public class KleptomaniacBehaviour : CharacterBehaviourComponent {
         PLAYER_SKILL_TYPE playerSkillType = PLAYER_SKILL_TYPE.KLEPTOMANIA;
         if (character.afflictionsSkillsInflictedByPlayer.Contains(playerSkillType) && !character.IsInventoryAtFullCapacity()) {
             //affliction was applied by player
-            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerSkillType);
-            SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(playerSkillType);
+            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(playerSkillType);
+            SkillData skillData = PlayerSkillManager.Instance.GetSkillData(playerSkillType);
             bool canRobAnyHouse = playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Rob_From_House, skillData.currentLevel);
             bool canRobAnyPlace = playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Rob_Any_Place, skillData.currentLevel);
             if (canRobAnyHouse || canRobAnyPlace) {

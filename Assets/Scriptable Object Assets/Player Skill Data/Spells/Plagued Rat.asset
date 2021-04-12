@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 305aa9c5df6e71e48bcf62b69ee060cc, type: 3}
-  m_Name: PlaguedRats
+  m_Name: Plagued Rat
   m_EditorClassIdentifier: 
   skill: 156
   manaCost: 25

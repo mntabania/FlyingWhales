@@ -43,6 +43,19 @@ public class CharacterTraitComponent : CharacterComponent {
     }
     #endregion
 
+    #region Glutton
+    public void SubscribeToGluttonLevelUpSignal() {
+        Messenger.AddListener<SkillData>("GluttonyLevelUp", OnGluttonLeveledUp);
+    }
+    public void UnsubscribeToGluttonLevelUpSignal() {
+        Messenger.RemoveListener<SkillData>("GluttonyLevelUp", OnGluttonLeveledUp);
+    }
+    private void OnGluttonLeveledUp(SkillData p_skillData) {
+        Glutton glutton = owner.traitContainer.GetTraitOrStatus<Glutton>("Glutton");
+        glutton?.OnGluttonLeveledUp();
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCharacterTraitComponent data) {
     }

@@ -18,7 +18,7 @@ public class SplashPoisonData : SkillData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
             CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance
-                .GetPlayerSkillData<SplashPoisonSkillData>(PLAYER_SKILL_TYPE.SPLASH_POISON).splashSounds),
+                .GetScriptableObjPlayerSkillData<SplashPoisonSkillData>(PLAYER_SKILL_TYPE.SPLASH_POISON).splashSounds),
             targetTile, 3, false
         );
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);

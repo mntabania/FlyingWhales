@@ -29,26 +29,28 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Overrides
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
             if (hasBeenDestroyed) {
                 return;
             }
             InnerMapManager.Instance.RemoveWorldKnownDemonicStructure(this);
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
         }
-        protected override void AfterStructureDestruction() {
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             structureObj.OnOwnerStructureDestroyed(region.innerMap); 
             //Area area = occupiedArea;
-            base.AfterStructureDestruction();
+            base.AfterStructureDestruction(p_responsibleCharacter);
             //area.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
             currentAttackers.Clear();
             if (structureType != STRUCTURE_TYPE.THE_PORTAL) {
                 DemonicStructurePlayerSkill skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-                PlayerManager.Instance.player.playerSkillComponent.AddCharges(skill.type, 1);    
+                if(skill.isInUse) {
+                    skill.AdjustCharges(1);
+                }
             }
             Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
@@ -71,10 +73,12 @@ namespace Inner_Maps.Location_Structures {
         #region Listeners
         protected override void SubscribeListeners() {
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int, Character>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int, Character>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         private bool DoesSnatchJobTargetThisStructure(JobQueueItem job) {
@@ -194,6 +198,28 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         #endregion
+        
+        #region IPartyTargetDestination
+        public override bool IsAtTargetDestination(Character character) {
+            bool isAtTargetDestination = base.IsAtTargetDestination(character);
+            if (!isAtTargetDestination) {
+                return CanSeeObjectLocatedHere(character);
+            }
+            return true;
+        }
+        #endregion
+
+        public bool CanSeeObjectLocatedHere(Character p_character) {
+            //since characters usually cannot directly step on a demonic structure,
+            //consider character as arrived if it has a tile object in its vision that is at the target structure
+            for (int i = 0; i < p_character.marker.inVisionTileObjects.Count; i++) {
+                TileObject tileObject = p_character.marker.inVisionTileObjects[i];
+                if (tileObject.structureLocation != null && tileObject.structureLocation == this) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
 public class SaveDataDemonicStructure : SaveDataLocationStructure

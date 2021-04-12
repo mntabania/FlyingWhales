@@ -95,7 +95,7 @@ public class SchemeData : PlayerAction {
             List<PLAYER_SKILL_TYPE> schemeTypes = PlayerManager.Instance.player.playerSkillComponent.schemes;
             for (int i = 0; i < schemeTypes.Count; i++) {
                 PLAYER_SKILL_TYPE spellType = schemeTypes[i];
-                PlayerAction spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType) as PlayerAction;
+                PlayerAction spellData = PlayerSkillManager.Instance.GetSkillData(spellType) as PlayerAction;
                 if (spellData != null && spellData.IsValid(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
                     p_contextMenuItems.Add(spellData);
                 }

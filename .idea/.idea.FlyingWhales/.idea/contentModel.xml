@@ -1084,6 +1084,7 @@
               <e p="DefendBehaviour.cs" t="Include" />
               <e p="DemonDefendBehaviour.cs" t="Include" />
               <e p="DemonRaidBehaviour.cs" t="Include" />
+              <e p="DemonRescueBehaviour.cs" t="Include" />
               <e p="DemonSnatchBehaviour.cs" t="Include" />
               <e p="DeMooderBehaviour.cs" t="Include" />
               <e p="DesiresIsolationBehaviour.cs" t="Include" />
@@ -1801,6 +1802,7 @@
             <e p="IPlayerSkill.cs" t="Include" />
             <e p="IPointOfInterest.cs" t="Include" />
             <e p="IReactable.cs" t="Include" />
+            <e p="IRescuePartyQuest.cs" t="Include" />
             <e p="ISavable.cs" t="Include" />
             <e p="ISingletonPattern.cs" t="Include" />
             <e p="ITraitable.cs" t="Include" />
@@ -2093,6 +2095,7 @@
                   <e p="FireBallMapObjectVisual.cs" t="Include" />
                   <e p="FishingSpotGameObject.cs" t="Include" />
                   <e p="FrostyFogMapObjectVisual.cs" t="Include" />
+                  <e p="KennelGameObject.cs" t="Include" />
                   <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
                   <e p="MapObject.cs" t="Include" />
                   <e p="MapObjectVisual.cs" t="Include" />
@@ -2107,6 +2110,7 @@
                   <e p="TableGameObject.cs" t="Include" />
                   <e p="TileObjectGameObject.cs" t="Include" />
                   <e p="TornadoMapObjectVisual.cs" t="Include" />
+                  <e p="TortureChambersGameObject.cs" t="Include" />
                   <e p="TreeGameObject.cs" t="Include" />
                   <e p="VaporMapObjectVisual.cs" t="Include" />
                 </e>
@@ -2164,8 +2168,10 @@
                   <e p="CultCross.cs" t="Include" />
                   <e p="CultistKit.cs" t="Include" />
                   <e p="DefensePointTileObject.cs" t="Include" />
+                  <e p="DefilerTileObject.cs" t="Include" />
                   <e p="DemonAltar.cs" t="Include" />
                   <e p="DemonCircle.cs" t="Include" />
+                  <e p="DemonicStructureBlockerTileObject.cs" t="Include" />
                   <e p="DemonRack.cs" t="Include" />
                   <e p="DesertRose.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
@@ -2212,6 +2218,7 @@
                   <e p="ImpHutTileObject.cs" t="Include" />
                   <e p="IronMaiden.cs" t="Include" />
                   <e p="Jars.cs" t="Include" />
+                  <e p="KennelTileObject.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
                   <e p="LocustSwarm.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />
@@ -2286,6 +2293,7 @@
                   <e p="Tool.cs" t="Include" />
                   <e p="Torch.cs" t="Include" />
                   <e p="Tornado.cs" t="Include" />
+                  <e p="TortureChambersTileObject.cs" t="Include" />
                   <e p="TortureTable.cs" t="Include" />
                   <e p="TrainingDummy.cs" t="Include" />
                   <e p="Trash.cs" t="Include" />
@@ -2447,6 +2455,7 @@
             <e p="CounterattackPartyQuest.cs" t="Include" />
             <e p="DemonDefendPartyQuest.cs" t="Include" />
             <e p="DemonRaidPartyQuest.cs" t="Include" />
+            <e p="DemonRescuePartyQuest.cs" t="Include" />
             <e p="DemonSnatchPartyQuest.cs" t="Include" />
             <e p="ExplorationPartyQuest.cs" t="Include" />
             <e p="ExterminationPartyQuest.cs" t="Include" />
@@ -2614,8 +2623,11 @@
                 <e p="AutoAbsorbChaosOrb.cs" t="Include" />
                 <e p="DarkRitualChaosOrb.cs" t="Include" />
                 <e p="EnemiesChaosOrb.cs" t="Include" />
+                <e p="LycanthropeChaosOrb.cs" t="Include" />
+                <e p="MeddlerChaosOrb.cs" t="Include" />
                 <e p="MentalBreakChaosOrb.cs" t="Include" />
                 <e p="MonsterChaosOrb.cs" t="Include" />
+                <e p="NightCreatureChaosOrb.cs" t="Include" />
                 <e p="PassiveManaRegen.cs" t="Include" />
                 <e p="PassiveSkill.cs" t="Include" />
                 <e p="PlagueChaosOrb.cs" t="Include" />
@@ -2623,6 +2635,7 @@
                 <e p="PrayerChaosOrb.cs" t="Include" />
                 <e p="RaidChaosOrb.cs" t="Include" />
                 <e p="SpellDamageChaosOrb.cs" t="Include" />
+                <e p="TriggerFlawChaosOrb.cs" t="Include" />
                 <e p="UndeadChaosOrb.cs" t="Include" />
               </e>
               <e p="Player Actions" t="Include">
@@ -3019,8 +3032,8 @@
             <e p="SaveDataMinion.cs" t="Include" />
             <e p="SaveDataPlayer.cs" t="Include" />
             <e p="SaveDataPlayerGame.cs" t="Include" />
-            <e p="SaveDataPlayerSkill.cs" t="Include" />
             <e p="SaveDataRegion.cs" t="Include" />
+            <e p="SaveDataSkillData.cs" t="Include" />
             <e p="SaveDataTileObject.cs" t="Include" />
             <e p="SaveDataTrait.cs" t="Include" />
             <e p="SaveUtilities.cs" t="Include" />
@@ -3677,11 +3690,11 @@
               <e p="PartySignals.cs" t="Include" />
               <e p="PlayerQuestSignals.cs" t="Include" />
               <e p="PlayerSignals.cs" t="Include" />
+              <e p="PlayerSkillSignals.cs" t="Include" />
               <e p="RegionSignals.cs" t="Include" />
               <e p="SettingsSignals.cs" t="Include" />
               <e p="SettlementSignals.cs" t="Include" />
               <e p="Signals.cs" t="Include" />
-              <e p="SpellSignals.cs" t="Include" />
               <e p="StructureSignals.cs" t="Include" />
               <e p="TileObjectSignals.cs" t="Include" />
               <e p="TraitSignals.cs" t="Include" />

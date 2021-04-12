@@ -17,7 +17,7 @@ public class IceBlastData : SkillData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
-            PlayerSkillManager.Instance.GetPlayerSkillData<IceBlastSkillData>(PLAYER_SKILL_TYPE.ICE_BLAST).blastSound,
+            PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<IceBlastSkillData>(PLAYER_SKILL_TYPE.ICE_BLAST).blastSound,
             targetTile, 3, false
         );
 

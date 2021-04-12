@@ -133,7 +133,7 @@ public class SeizeComponent {
         //PlayerUI.Instance.HideSeizedObjectUI();
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
         }
     }
     public bool CanUnseize() {
@@ -166,13 +166,16 @@ public class SeizeComponent {
                 return !kennel.HasReachedKennelCapacity() && kennel.preOccupiedBy == null && (summon.faction == null || !summon.faction.isPlayerFaction);
             }
             return false;
-        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS || tileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
+        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
             if (tileLocation.structure.IsTilePartOfARoom(tileLocation, out var room)) {
                 if (seizedPOI is Character character) {
                     return room.CanUnseizeCharacterInRoom(character) && (tileLocation.structure as DemonicStructure).preOccupiedBy == null;
                 }
+                return true;
+            } else {
+                //in torture chamber, can only unseize inside room
+                return false;
             }
-            return true;
         }
         return true;
     }

@@ -255,7 +255,7 @@ public class Minion {
 
         SubscribeListeners();
         SetIsSummoned(true);
-        Messenger.Broadcast(SpellSignals.SUMMON_MINION, this);
+        Messenger.Broadcast(PlayerSkillSignals.SUMMON_MINION, this);
     }
     private void Unsummon() {
         //if(!character.HasHealth()) {
@@ -290,7 +290,7 @@ public class Minion {
         spellData.AdjustCharges(1);
 
         //Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, spellData);
-        Messenger.Broadcast(SpellSignals.UNSUMMON_MINION, this);
+        Messenger.Broadcast(PlayerSkillSignals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
         Profiler.BeginSample($"Minion Unsummoned HP Recovery");
@@ -301,7 +301,7 @@ public class Minion {
             //minion can be summoned again
             spellData.SetCooldown(-1);
             spellData.AdjustCharges(1);
-            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, spellData);
+            Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, spellData);
             Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
         }
         Profiler.EndSample();

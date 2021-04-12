@@ -76,7 +76,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Tile_Objects;
 
     public bool isTargetted { set; get; }
-    public string iconRichText => UtilityScripts.Utilities.ThreatIcon();
+    public string iconRichText => UtilityScripts.Utilities.TileObjectIcon();
     public virtual Type serializedData => typeof(SaveDataTileObject);
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
     public virtual Vector3 worldPosition => mapVisual.transform.position;
@@ -587,7 +587,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         if (amount < 0) {
-            Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this, amount);
+            if (source is Character responsibleCharacter) {
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this, amount, responsibleCharacter);
+            } else {
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this, amount);
+            }
         } else if (amount > 0) {
             Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_REPAIRED, this, amount);
         }
@@ -1234,12 +1238,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
-            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
     public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Remove(action)) {
-            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
     }
     public void ClearPlayerActions() {
@@ -1248,7 +1252,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     #region Selectable
-    public bool IsCurrentlySelected() {
+    public virtual bool IsCurrentlySelected() {
         return UIManager.Instance.tileObjectInfoUI.isShowing &&
                UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
     }

@@ -8,6 +8,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Ruinarch.Custom_UI;
+using UtilityScripts;
 
 public class StructureInfoUI : InfoUIBase {
 
@@ -324,7 +325,11 @@ public class StructureInfoUI : InfoUIBase {
     #region For Testing
     public void ShowStructureTestingInfo() {
 #if UNITY_EDITOR
-        UIManager.Instance.ShowSmallInfo(activeStructure.GetTestingInfo());
+        if (activeStructure is CityCenter && activeStructure.settlementLocation is NPCSettlement npcSettlement) {
+            TestingUtilities.ShowLocationInfo(activeStructure.region, npcSettlement);    
+        } else {
+            UIManager.Instance.ShowSmallInfo(activeStructure.GetTestingInfo());    
+        }
 #endif
     }
     public void HideStructureTestingInfo() {

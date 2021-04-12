@@ -133,7 +133,7 @@ namespace Locations.Area_Features {
             LocationGridTile centerTile = p_area.gridTileComponent.centerGridTile;
             GameObject go = GameManager.Instance.CreateParticleEffectAt(centerTile, PARTICLE_EFFECT.Rain);
             _audioObject = AudioManager.Instance.TryCreateAudioObject(
-                PlayerSkillManager.Instance.GetPlayerSkillData<RainSkillData>(PLAYER_SKILL_TYPE.RAIN).rainSoundEffect, centerTile, 7,
+                PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<RainSkillData>(PLAYER_SKILL_TYPE.RAIN).rainSoundEffect, centerTile, 7,
                 true);
             _effect = go;
         }

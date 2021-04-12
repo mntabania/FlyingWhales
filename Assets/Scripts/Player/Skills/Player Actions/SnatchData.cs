@@ -27,9 +27,9 @@ public class SnatchData : PlayerAction {
                     portraitGetter: null, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true);
             } else {
                 List<LocationStructure> validStructures = new List<LocationStructure>();
-                if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER)) {
-                    validStructures.AddRange(PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.DEFILER));    
-                }
+                //if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER)) {
+                //    validStructures.AddRange(PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.DEFILER));    
+                //}
                 if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.TORTURE_CHAMBERS)) {
                     validStructures.AddRange(PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.TORTURE_CHAMBERS));
                 }
@@ -94,7 +94,7 @@ public class SnatchData : PlayerAction {
                 log.AddToFillers(structure, structure.nameplateName, LOG_IDENTIFIER.LANDMARK_1);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
-                Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+                Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
                 base.ActivateAbility(targetCharacter); //this is so that mana/charges/cooldown can be activated after picking structure to bring to
             }
             ObjectPoolManager.Instance.ReturnGridTileListToPool(choices);
@@ -133,9 +133,9 @@ public class SnatchData : PlayerAction {
                 reasons += "You have no Kennels that can house more Monsters,";    
             }
         } else {
-            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER) &&
+            if (/*!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER) &&*/
                 !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.TORTURE_CHAMBERS)) {
-                reasons += "You have no Defiler or Prison,";    
+                reasons += "You have no Prison,";    
             } else if (!PlayerManager.Instance.player.playerSettlement.HasAvailableDefilerForSnatch() && 
                        !PlayerManager.Instance.player.playerSettlement.HasAvailablePrisonForSnatch()) {
                 reasons += "You have no unoccupied Defiler Rooms or Prison Cells,";    

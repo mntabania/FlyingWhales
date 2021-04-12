@@ -8,7 +8,7 @@ using UnityEngine;
 public class StoreTargetButton : MonoBehaviour {
     [SerializeField] private RuinarchButton btn;
     [SerializeField] private HoverHandler hoverHandler;
-    [SerializeField] private GameObject goCover;
+    //[SerializeField] private GameObject goCover;
     [SerializeField] private GameObject effectPrefab;
     
     private IStoredTarget _target;
@@ -70,7 +70,7 @@ public class StoreTargetButton : MonoBehaviour {
             gameObject.SetActive(true);
             bool isAlreadyStored = PlayerManager.Instance.player.storedTargetsComponent.IsAlreadyStored(_target);
             btn.interactable = !isAlreadyStored;
-            goCover.SetActive(isAlreadyStored);
+            //goCover.SetActive(isAlreadyStored);
         }
     }
     private void OnHoverOver() {

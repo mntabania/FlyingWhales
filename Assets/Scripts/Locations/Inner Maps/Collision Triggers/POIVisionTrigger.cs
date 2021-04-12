@@ -16,4 +16,9 @@ public abstract class POIVisionTrigger : BaseVisionTrigger {
     /// </summary>
     /// <returns>True or false</returns>
     public abstract bool IgnoresStructureDifference();
+    /// <summary>
+    /// Does this collision trigger ignore room differences when something sees it.
+    /// </summary>
+    /// <returns>True or false</returns>
+    public abstract bool IgnoresRoomDifference();
 }

@@ -122,8 +122,9 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		List<PLAYER_SKILL_TYPE> skillToBeDisplayed = ListPoolManager.CreateNewPlayerSkillTypeList();
 		//add the available first
 		p_skillSets.ForEach((eachSkill) => {
-			if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
-			GetUpgradeCostBaseOnLevel(PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel) <= plaguePoints) {
+			SkillData skill = PlayerSkillManager.Instance.GetSkillData(eachSkill);
+			if (PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
+			GetUpgradeCostBaseOnLevel(skill.currentLevel) <= plaguePoints && skill.isInUse) {
 				if (!skillToBeDisplayed.Contains(eachSkill)) {
 					skillToBeDisplayed.Add(eachSkill);
 				}
@@ -131,8 +132,9 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		});
 		//add can't afford list
 		p_skillSets.ForEach((eachSkill) => {
-			if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
-			GetUpgradeCostBaseOnLevel(PlayerSkillManager.Instance.GetPlayerSkillData(eachSkill).currentLevel) > plaguePoints) {
+			SkillData skill = PlayerSkillManager.Instance.GetSkillData(eachSkill);
+			if (PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(eachSkill).skillUpgradeData.
+			GetUpgradeCostBaseOnLevel(skill.currentLevel) > plaguePoints && skill.isInUse) {
 				if (!skillToBeDisplayed.Contains(eachSkill)) {
 					skillToBeDisplayed.Add(eachSkill);
 				}
@@ -166,7 +168,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	private void SpawnSkillItems(List<PLAYER_SKILL_TYPE> listOfSkills) {
 		for (int x = 0; x < listOfSkills.Count; ++x) {
 			if (x < m_skillItems.Count) {
-				SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(listOfSkills[x]);
+				SkillData data = PlayerSkillManager.Instance.GetSkillData(listOfSkills[x]);
 				m_skillItems[x].gameObject.SetActive(true);
 				if (isTestScene) {
 					m_skillItems[x].InitItem(data.type, fakePlayer.currenciesComponent.Spirits);
@@ -176,7 +178,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 				m_skillItems[x].onButtonClick += OnSkillClick;
 			} else {
 				SkillUpgradeItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI);
-				SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(listOfSkills[x]);
+				SkillData data = PlayerSkillManager.Instance.GetSkillData(listOfSkills[x]);
 				if (isTestScene) {
 					go.InitItem(data.type, fakePlayer.currenciesComponent.Spirits);
 				} else {
@@ -191,8 +193,8 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	}
 
 	void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
-		PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(p_type);
-		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_type);
+		PlayerSkillData data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
+		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
 		if (isTestScene) {
 			fakePlayer.currenciesComponent.AdjustPlaguePoints(-1 * data.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel));
 		} else {
@@ -243,7 +245,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	public List<PLAYER_SKILL_TYPE> GetFilteredPlayerActions() {
 		List<PLAYER_SKILL_TYPE> skills = new List<PLAYER_SKILL_TYPE>();
 		m_skillComponent.playerActions.ForEach((eachSkill) => {
-			if (!PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).isNonUpgradeable) {
+			if (!PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(eachSkill).isNonUpgradeable) {
 				skills.Add(eachSkill);
 			}
 		});
@@ -252,7 +254,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	public List<PLAYER_SKILL_TYPE> GetFilteredSpells() {
 		List<PLAYER_SKILL_TYPE> skills = new List<PLAYER_SKILL_TYPE>();
 		m_skillComponent.spells.ForEach((eachSkill) => {
-			if (!PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(eachSkill).isNonUpgradeable) {
+			if (!PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(eachSkill).isNonUpgradeable) {
 				skills.Add(eachSkill);
 			}
 		});
@@ -262,25 +264,25 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	public void OnCloseClicked() {
 		HideUI();
 	}
-	public void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition) {
-		if (UIManager.Instance != null && PlayerManager.Instance != null) {
-			if (PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.BIOLAB) is Biolab biolab && !biolab.HasMaxPlaguedRat()) {
-				string timeDifference = GameManager.Instance.Today().GetTimeDifferenceString(biolab.replenishDate);
-				string summary = $"The Biolab produces a Plagued Rat once every 2 days up to a maximum of \n3 charges. A new Plagued Rat charge will be produced in {UtilityScripts.Utilities.ColorizeAction(timeDifference)}.";
-				UIManager.Instance.ShowSmallInfo(summary, p_hoverPosition, "Plagued Rats");
-			}
-		}
-	}
-	public void OnHoveredOutPlaguedRat() {
-		if (UIManager.Instance != null && PlayerManager.Instance != null) {
-			UIManager.Instance.HideSmallInfo();
-		}
-	}
+	//public void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition) {
+	//	if (UIManager.Instance != null && PlayerManager.Instance != null) {
+	//		if (PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.BIOLAB) is Biolab biolab && !biolab.HasMaxPlaguedRat()) {
+	//			string timeDifference = GameManager.Instance.Today().GetTimeDifferenceString(biolab.replenishDate);
+	//			string summary = $"The Biolab produces a Plagued Rat once every 2 days up to a maximum of \n3 charges. A new Plagued Rat charge will be produced in {UtilityScripts.Utilities.ColorizeAction(timeDifference)}.";
+	//			UIManager.Instance.ShowSmallInfo(summary, p_hoverPosition, "Plagued Rats");
+	//		}
+	//	}
+	//}
+	//public void OnHoveredOutPlaguedRat() {
+	//	if (UIManager.Instance != null && PlayerManager.Instance != null) {
+	//		UIManager.Instance.HideSmallInfo();
+	//	}
+	//}
 	#endregion
 
 	#region Tooltips
 	private void OnHoverOverUpgradeItem(PLAYER_SKILL_TYPE p_skillType) {
-		SkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData(p_skillType);
+		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_skillType);
 		if (skillData.isMaxLevel) {
 			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, m_skillUpgradeUIView.UIModel.tooltipPosition);
 		} else {

@@ -71,7 +71,7 @@ namespace Inner_Maps.Location_Structures {
 
         public bool isTargetted { set; get; }
 
-        public string iconRichText => UtilityScripts.Utilities.ChargesIcon();
+        public string iconRichText => UtilityScripts.Utilities.StructureIcon();
         public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
         #endregion
 
@@ -1009,7 +1009,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Destroy
-        protected virtual void DestroyStructure() {
+        protected virtual void DestroyStructure(Character p_responsibleCharacter = null) {
             if (hasBeenDestroyed) {
                 return;
             }
@@ -1070,9 +1070,9 @@ namespace Inner_Maps.Location_Structures {
                     room.OnParentStructureDestroyed();
                 }
             }
-            AfterStructureDestruction();
+            AfterStructureDestruction(p_responsibleCharacter);
         }
-        protected virtual void AfterStructureDestruction() {
+        protected virtual void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             //disable game object. Destruction of structure game object is handled by it's parent structure template.
             region.RemoveStructure(this);
             settlementLocation.RemoveStructure(this);
@@ -1080,6 +1080,9 @@ namespace Inner_Maps.Location_Structures {
             SetOccupiedArea(null);
             UnsubscribeListeners();
             Messenger.Broadcast(StructureSignals.STRUCTURE_DESTROYED, this);
+            if (p_responsibleCharacter != null) {
+                Messenger.Broadcast(StructureSignals.STRUCTURE_DESTROYED_BY, this, p_responsibleCharacter);
+            }
             eventDispatcher.ExecuteStructureDestroyed(this);
         }
         #endregion
@@ -1093,12 +1096,12 @@ namespace Inner_Maps.Location_Structures {
         public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Contains(action) == false) {
                 actions.Add(action);
-                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
             }
         }
         public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Remove(action)) {
-                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
             }
         }
         public void ClearPlayerActions() {
@@ -1141,17 +1144,26 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        protected void OnObjectDamagedBy(TileObject tileObject, int amount, Character p_responsibleCharacter) {
+            if (objectsThatContributeToDamage.Contains(tileObject)) {
+                AdjustHP(amount, p_responsibleCharacter);
+                if (!objectsThatContributeToDamage.Any(o => o.currentHP > 0)) {
+                    //if this structure no longer has any objects that have hp, then destroy this structure
+                    AdjustHP(-currentHP, p_responsibleCharacter);
+                }
+            }
+        }
         protected void OnObjectRepaired(TileObject tileObject, int amount) {
             if (objectsThatContributeToDamage.Contains(tileObject)) {
                 AdjustHP(amount);
             }
         }
-        public void AdjustHP(int amount) {
+        public void AdjustHP(int amount, Character p_responsibleCharacter = null) {
             if (hasBeenDestroyed) { return; }
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
             if (currentHP == 0) {
-                DestroyStructure();
+                DestroyStructure(p_responsibleCharacter);
             }
         }
         public void SetMaxHP(int amount) {
@@ -1314,7 +1326,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region IPartyTargetDestination
-        public bool IsAtTargetDestination(Character character) {
+        public virtual bool IsAtTargetDestination(Character character) {
             return character.currentStructure == this;
         }
         #endregion
