@@ -31,6 +31,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
         Messenger.AddListener<Prisoner>(TraitSignals.HAS_BECOME_PRISONER, OnHasBecomePrisoner);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchedFromLimbo);
         dropStructure.SetPreOccupiedBy(targetCharacter);
     }
     protected override void OnEndQuest() {
@@ -39,6 +40,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
         Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfSnatchJobIsFinished);
         Messenger.RemoveListener<Prisoner>(TraitSignals.HAS_BECOME_PRISONER, OnHasBecomePrisoner);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
+        Messenger.RemoveListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchedFromLimbo);
         dropStructure.SetPreOccupiedBy(null);
     }
     public override IPartyTargetDestination GetTargetDestination() {
@@ -127,8 +129,13 @@ public class DemonSnatchPartyQuest : PartyQuest {
         LocationGridTile dropTile = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL).GetRandomPassableTile();
         p_party.jobComponent.CreateSnatchJob(p_target, dropTile, dropTile.structure);
     }
+    private void OnCharacterSwitchedFromLimbo(Character p_inLimbo, Character p_activeCharacter) {
+        if (p_inLimbo == target && assignedParty != null) {
+            SetIsSuccessful(false);
+            EndQuest("Target disappeared");
+        }
+    }
     #endregion
-
 
     #region Loading
     public override void LoadReferences(SaveDataPartyQuest data) {

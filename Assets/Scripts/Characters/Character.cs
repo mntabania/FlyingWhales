@@ -123,13 +123,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
     #region getters / setters
-    public string bookmarkName => visuals.GetCharacterNameWithIconAndColor();
+    public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
     public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
     public STORED_TARGET_TYPE storedTargetType => this is Summon ? STORED_TARGET_TYPE.Monster : STORED_TARGET_TYPE.Character;
-
     public bool isTargetted { set; get; }
-    public string iconRichText => visuals.GetCharacterStringIcon();
+    public string iconRichText => lycanData != null ? lycanData.activeForm.visuals.GetCharacterStringIcon() : visuals.GetCharacterStringIcon();
     public virtual Type serializedData => typeof(SaveDataCharacter);
     public virtual string name => _firstName;
     public virtual string raceClassName => GetDefaultRaceClassName();
@@ -709,8 +708,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void DestroyMarker(LocationGridTile destroyedAt = null) {
         if (destroyedAt == null) {
             gridTileLocation?.RemoveCharacterHere(this);
+            gridTileLocation?.structure.RemoveCharacterAtLocation(this);
         } else {
             destroyedAt.RemoveCharacterHere(this);
+            destroyedAt.structure.RemoveCharacterAtLocation(this);
         }
         ObjectPoolManager.Instance.DestroyObject(marker);
         SetCharacterMarker(null);
@@ -1881,6 +1882,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RenameCharacter(string p_firstName, string p_lastName) {
         SetFirstAndLastName(p_firstName, p_lastName);
         UpdateCurrentLogsBasedOnUpdatedCharacter(this); //had to do this since signal order can be inconsistent and the UI Update could happen before the actual logs were updated.
+        bookmarkEventDispatcher.ExecuteBookmarkChangedNameEvent(this);
+        if (lycanData?.limboForm != null) {
+            lycanData.limboForm.SetFirstAndLastName(firstName, surName);
+            lycanData.limboForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameEvent(lycanData.limboForm);    
+        }
         Messenger.Broadcast(CharacterSignals.CHARACTER_CHANGED_NAME, this);
     }
     private string GetDefaultRaceClassName() {

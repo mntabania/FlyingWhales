@@ -46,6 +46,11 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
             LayoutRebuilder.ForceRebuildLayoutImmediate(parentOfParent);
         }
     }
+    public void OnBookmarkChangedName(IBookmarkable p_bookmarkable) {
+        if (p_bookmarkable is RuinarchProgressable progressable) {
+            lblName.text = progressable.progressableName;    
+        }
+    }
     public override void Reset() {
         base.Reset();
         _onResetAction?.Invoke();

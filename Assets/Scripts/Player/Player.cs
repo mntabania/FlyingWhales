@@ -120,6 +120,7 @@ public class Player : ILeader, IObjectManipulator {
         
         underlingsComponent.SubscribeListeners();
         bookmarkComponent.SubscribeListeners();
+        storedTargetsComponent.SubscribeListeners();
     }
     #endregion
 

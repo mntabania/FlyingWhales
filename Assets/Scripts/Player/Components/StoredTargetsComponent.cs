@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;using Characters.Components;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 
 public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, TileObjectEventDispatcher.IDestroyedListener, LocationStructureEventDispatcher.IDestroyedListener {
 
@@ -18,20 +19,43 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
         storedTileObjects = new List<IStoredTarget>();
         storedStructures = new List<IStoredTarget>();
     }
-    
+
+    public void SubscribeListeners() {
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchedFromLimbo);
+    }
+    private void OnCharacterSwitchedFromLimbo(Character p_inLimbo, Character p_active) {
+        if (IsAlreadyStored(p_inLimbo as IStoredTarget)) {
+            Remove(p_inLimbo as IStoredTarget);
+            Store(p_active as IStoredTarget);
+        }
+    }
     public void Store(IStoredTarget p_target) {
-        allStoredTargets.Add(p_target);
         switch (p_target.storedTargetType) {
             case STORED_TARGET_TYPE.Monster:
-                Store(p_target as Summon);
+                Summon summon = p_target as Summon;
+                Assert.IsNotNull(summon);
+                allStoredTargets.Add(summon);
+                Store(summon);
+                // if (summon.lycanData != null) {
+                //     //if monster is a lycanthrope then store original villager form instead
+                //     //Reference: https://trello.com/c/KxMOH9up/4039-villager-and-lycan-form-should-only-have-a-single-target-entry
+                //     allStoredTargets.Add(summon.lycanData.originalForm);
+                //     Store(summon.lycanData.originalForm);
+                // } else {
+                //     allStoredTargets.Add(summon);
+                //     Store(summon);
+                // }
                 break;
             case STORED_TARGET_TYPE.Character:
+                allStoredTargets.Add(p_target);
                 Store(p_target as Character);
                 break;
             case STORED_TARGET_TYPE.Tile_Objects:
+                allStoredTargets.Add(p_target);
                 Store(p_target as TileObject);
                 break;
             case STORED_TARGET_TYPE.Structures:
+                allStoredTargets.Add(p_target);
                 Store(p_target as LocationStructure);
                 break;
             default:
@@ -102,9 +126,31 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     public bool IsAlreadyStored(IStoredTarget p_target) {
         switch (p_target.storedTargetType) {
             case STORED_TARGET_TYPE.Monster:
-                return IsAlreadyStored(p_target as Summon);
+                Summon summon = p_target as Summon;
+                Assert.IsNotNull(summon);
+                bool isAlreadyStoredSummon = false;
+                if (summon.lycanData != null) {
+                    //if monster is a lycanthrope then check original villager form instead
+                    //Reference: https://trello.com/c/KxMOH9up/4039-villager-and-lycan-form-should-only-have-a-single-target-entry
+                    isAlreadyStoredSummon = IsAlreadyStored(summon.lycanData.originalForm);
+                }
+                if (!isAlreadyStoredSummon) {
+                    isAlreadyStoredSummon = IsAlreadyStored(summon); 
+                }
+                return isAlreadyStoredSummon;
             case STORED_TARGET_TYPE.Character:
-                return IsAlreadyStored(p_target as Character);
+                Character character = p_target as Character;
+                Assert.IsNotNull(character);
+                bool isAlreadyStoredCharacter = false;
+                if (character.lycanData != null && character.lycanData.lycanthropeForm != null) {
+                    //if monster is a lycanthrope then check original villager form instead
+                    //Reference: https://trello.com/c/KxMOH9up/4039-villager-and-lycan-form-should-only-have-a-single-target-entry
+                    isAlreadyStoredCharacter = IsAlreadyStored(character.lycanData.lycanthropeForm as Summon);
+                }
+                if (!isAlreadyStoredCharacter) {
+                    isAlreadyStoredCharacter = IsAlreadyStored(character); 
+                }
+                return isAlreadyStoredCharacter;
             case STORED_TARGET_TYPE.Tile_Objects:
                 return IsAlreadyStored(p_target as TileObject);
             case STORED_TARGET_TYPE.Structures:
