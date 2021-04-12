@@ -440,8 +440,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void OnUnlockSlotClicked(DeployedMonsterItemUI p_itemUI) {
-		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT) {
-			PlayerManager.Instance.player.AdjustMana(-p_itemUI.unlockCost);
+		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.unlockCost) {
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.unlockCost);
 			m_targetPartyStructure.startingSummonCount++;
 			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
 		}
