@@ -223,6 +223,9 @@ public class CharacterMarkerNameplate : PooledObject {
             } else {
                 SetActionIconState(false);
             }
+        } else if (character.combatComponent.isInActualCombat) {
+            //Once the character is actually in combat, do not show thought bubble action icon so that the damage numbers can be seen
+            SetActionIconState(false);
         } else if (character.stateComponent.currentState != null) {
             string actionIconString = character.stateComponent.currentState.actionIconString;
             if (actionIconString != GoapActionStateDB.No_Icon) {
