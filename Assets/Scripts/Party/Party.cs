@@ -93,10 +93,15 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
     }
 
-    public void Initialize(Character partyCreator) { //In order to create a party, there must always be a party creator
-        if (string.IsNullOrEmpty(persistentID)) {
-            persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+    public bool IsPartyTheSameAsThisParty(Party p_party) {
+        if (p_party == null) {
+            return false;
         }
+        return persistentID == p_party.persistentID;
+    }
+
+    public void Initialize(Character partyCreator) { //In order to create a party, there must always be a party creator
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         partyName = PartyManager.Instance.GetNewPartyName(partyCreator);
         if (partyCreator.faction != null && partyCreator.faction.isPlayerFaction) {
             partySettlement = PlayerManager.Instance.player.playerSettlement;
@@ -1066,16 +1071,14 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     #region Disbandment
     private void DisbandParty() {
         if (isDisbanded) { return; }
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
-        log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
-        log.AddLogToDatabase(true);
-
+        
         if (members.Count > 0) {
             for (int i = 0; i < members.Count; i++) {
                 OnRemoveMemberOnDisband(members[i]);
             }
             members.Clear();
         }
+        Debug.LogError("TEST");
         OnDisbandParty();
     }
     private void OnDisbandParty() {
@@ -1304,8 +1307,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         DatabaseManager.Instance.partyDatabase.RemoveParty(this);
     }
-    #endregion
-
+	#endregion
+        
     #region Subscribe/Unsubscribe
     public void Subscribe(PartyEventsIListener p_iListener) {
         onQuestFailed += p_iListener.OnQuestFailed;

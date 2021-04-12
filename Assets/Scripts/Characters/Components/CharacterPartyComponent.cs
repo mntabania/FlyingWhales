@@ -35,7 +35,11 @@ public class CharacterPartyComponent : CharacterComponent {
         return false;
     }
     public bool IsAMemberOfParty(Party party) {
-        return currentParty == party;
+        if (currentParty != null) {
+            return currentParty.IsPartyTheSameAsThisParty(party);
+        } else {
+            return false;
+        }
     }
     #endregion
 

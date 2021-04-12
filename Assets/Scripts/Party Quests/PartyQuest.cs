@@ -57,7 +57,9 @@ public class PartyQuest : ISavable {
 
     #region General
     public void SetAssignedParty(Party party) {
-        if(assignedParty != party) {
+        if(assignedParty == null) {
+            assignedParty = party;
+        } else if (!assignedParty.IsPartyTheSameAsThisParty(party)) {
             assignedParty = party;
         }
     }
