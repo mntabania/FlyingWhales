@@ -1040,7 +1040,7 @@ namespace UtilityScripts {
         public static string UndeadIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Undead_Icon\">";
         }
-        public static string PlagueIcon() {
+        public static string ChaoticEnergyIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Plague_Icon\">";
         }
         public static string SpiritEnergyIcon() {

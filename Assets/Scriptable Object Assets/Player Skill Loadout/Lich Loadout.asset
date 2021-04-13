@@ -15,71 +15,76 @@ MonoBehaviour:
   archetype: 2
   spells:
     extraSlots: 0
-    fixedSkills: 15000000290000009c000000
+    fixedSkills: 2a000000
   afflictions:
     extraSlots: 0
-    fixedSkills: 0c000000
+    fixedSkills: 45000000
   minions:
     extraSlots: 0
-    fixedSkills: 4f000000
+    fixedSkills: 53000000
   structures:
     extraSlots: 0
-    fixedSkills: 49000000b8000000be000000
+    fixedSkills: 490000004c000000be000000
   miscs:
     extraSlots: 0
-    fixedSkills: 2100000059000000
+    fixedSkills: 
   passiveSkills: 06000000070000000800000009000000040000000a0000000b0000000c0000000d0000000e0000000f00000010000000
-  availableSpells: 090000002c000000130000001400000015000000190000002a00000018000000200000002900000017000000ad000000
-  availableAfflictions: 6300000045000000020000000c0000004400000043000000
-  availableMinions: 4e0000004f0000005000000051000000520000005300000054000000
-  availableStructures: 480000004a00000047000000
-  availableMiscs: 32000000060000008c00000007000000aa0000005c000000ac000000ae000000af000000
+  availableSpells: 
+  availableAfflictions: 
+  availableMinions: 
+  availableStructures: 
+  availableMiscs: 
   portalUpgradeTiers:
   - name: Level 1
-    skillTypesToUnlock: 5400000048000000
-    passiveSkillsToUnlock: 080000000a000000
-    upgradeCost:
-    - name: 20 Mana
-      currency: 0
-      amount: 20
-    upgradeTime: 30
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
   - name: Level 2
-    skillTypesToUnlock: 5400000048000000
-    passiveSkillsToUnlock: 080000000a000000
+    skillTypesToUnlock: b50000004a000000030000002100000014000000
     upgradeCost:
-    - name: 20 Mana
-      currency: 0
-      amount: 20
-    upgradeTime: 30
+    - name: 100 Chaotic_Energy
+      currency: 1
+      amount: 100
+    upgradeTime: 240
   - name: Level 3
-    skillTypesToUnlock: 5400000048000000
-    passiveSkillsToUnlock: 080000000a000000
+    skillTypesToUnlock: b8000000be0000006300000034000000cc0000001e000000
     upgradeCost:
-    - name: 20 Mana
-      currency: 0
-      amount: 20
-    upgradeTime: 30
+    - name: 200 Chaotic_Energy
+      currency: 1
+      amount: 200
+    upgradeTime: 480
   - name: Level 4
-    skillTypesToUnlock: 5400000048000000
-    passiveSkillsToUnlock: 080000000a000000
+    skillTypesToUnlock: 480000004900000029000000c000000008000000af000000
     upgradeCost:
-    - name: 20 Mana
-      currency: 0
-      amount: 20
-    upgradeTime: 30
+    - name: 300 Chaotic_Energy
+      currency: 1
+      amount: 300
+    upgradeTime: 480
   - name: Level 5
-    skillTypesToUnlock: 5400000048000000
-    passiveSkillsToUnlock: 080000000a000000
+    skillTypesToUnlock: b8000000be0000009b0000004e00000016000000
     upgradeCost:
-    - name: 20 Mana
-      currency: 0
-      amount: 20
-    upgradeTime: 30
+    - name: 500 Chaotic_Energy
+      currency: 1
+      amount: 500
+    upgradeTime: 960
   - name: Level 6
-    skillTypesToUnlock: 5400000048000000
-    passiveSkillsToUnlock: 080000000a000000
+    skillTypesToUnlock: 480000004a0000004c000000b90000001f00000033000000
     upgradeCost:
-    - name: 20 Mana
-      currency: 0
-      amount: 20
-    upgradeTime: 30
+    - name: 800 Chaotic_Energy
+      currency: 1
+      amount: 800
+    upgradeTime: 960
+  - name: Level 7
+    skillTypesToUnlock: b8000000be0000004c000000520000002d00000009000000
+    upgradeCost:
+    - name: 1200 Chaotic_Energy
+      currency: 1
+      amount: 1200
+    upgradeTime: 1440
+  - name: Level 8
+    skillTypesToUnlock: 
+    upgradeCost:
+    - name: 2000 Chaotic_Energy
+      currency: 1
+      amount: 2000
+    upgradeTime: 1440

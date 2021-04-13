@@ -28,7 +28,7 @@ namespace Inner_Maps.Location_Structures {
             name = "Portal";
             SetMaxHPAndReset(5000);
             level = 1;
-            Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, StartGameAfterLoadoutSelected);
+            // Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, StartGameAfterLoadoutSelected);
         }
         public ThePortal(Region location, SaveDataDemonicStructure data) : base(location, data) {
             if (data is SaveDataThePortal portal) {
@@ -41,10 +41,10 @@ namespace Inner_Maps.Location_Structures {
             base.DestroyStructure(p_responsibleCharacter);
             PlayerUI.Instance.LoseGameOver();
         }
-        private void StartGameAfterLoadoutSelected() {
-            Messenger.RemoveListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, StartGameAfterLoadoutSelected);
-            GainUpgradePowers(currentTier);
-        }
+        // private void StartGameAfterLoadoutSelected() {
+        //     Messenger.RemoveListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, StartGameAfterLoadoutSelected);
+        //     GainUpgradePowers(currentTier);
+        // }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE_ABILITIES);
@@ -66,6 +66,10 @@ namespace Inner_Maps.Location_Structures {
             PlayerSkillLoadout skillLoadout = PlayerSkillManager.Instance.GetSelectedLoadout();
             return skillLoadout.portalUpgradeTiers.IsLastIndex(level - 1);
         }
+        public bool IsCurrentLevelUpTheLastOne() {
+            PlayerSkillLoadout skillLoadout = PlayerSkillManager.Instance.GetSelectedLoadout();
+            return skillLoadout.portalUpgradeTiers.IsLastIndex(level);
+        }
         public void IncreaseLevel() {
             level++;
         }
@@ -80,10 +84,10 @@ namespace Inner_Maps.Location_Structures {
                     PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(skill);
                 }
             }
-            for (int i = 0; i < p_tier.passiveSkillsToUnlock.Length; i++) {
-                PASSIVE_SKILL passiveSkill = p_tier.passiveSkillsToUnlock[i];
-                PlayerManager.Instance.player.playerSkillComponent.AddPassiveSkills(passiveSkill);
-            }
+            // for (int i = 0; i < p_tier.passiveSkillsToUnlock.Length; i++) {
+            //     PASSIVE_SKILL passiveSkill = p_tier.passiveSkillsToUnlock[i];
+            //     PlayerManager.Instance.player.playerSkillComponent.AddPassiveSkills(passiveSkill);
+            // }
         }
         public void PayForUpgrade(PortalUpgradeTier p_tier) {
             for (int i = 0; i < p_tier.upgradeCost.Length; i++) {

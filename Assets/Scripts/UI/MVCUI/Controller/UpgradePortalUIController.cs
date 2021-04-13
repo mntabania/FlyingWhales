@@ -38,11 +38,12 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
         m_upgradePortalUIView.UIModel.timerUpgradePortal.SetHoverOverAction(OnHoverOverUpgradePortalTimer);
         m_upgradePortalUIView.UIModel.timerUpgradePortal.SetHoverOutAction(OnHoverOutUpgradePortalTimer);
     }
-    public void ShowPortalUpgradeTier(PortalUpgradeTier p_upgradeTier, int p_level) {
+    public void ShowPortalUpgradeTier(PortalUpgradeTier p_upgradeTier, int p_level, ThePortal portal) {
         ShowUI();
-        m_upgradePortalUIView.UpdateItems(p_upgradeTier);
+        m_upgradePortalUIView.UpdateItems(p_upgradeTier, portal);
+        m_upgradePortalUIView.UpdateUpgradeChaoticEnergyItem(portal);
+        m_upgradePortalUIView.UpdateAwakenRuianrchText(portal);
         m_upgradePortalUIView.SetHeader($"Upgrade to Level {(p_level + 1).ToString()}?");
-        // m_upgradePortalUIView.SetUpgradeText($"Upgrade");
         m_upgradePortalUIView.SetUpgradeText(p_upgradeTier.GetUpgradeCostString());
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
             if (PlayerManager.Instance.player.playerSkillComponent.timerUpgradePortal.IsFinished()) {
@@ -53,6 +54,10 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
                 m_upgradePortalUIView.SetUpgradeTimerState(true);
             }
             m_upgradePortalUIView.SetUpgradeBtnInteractable(PlayerManager.Instance.player.CanAfford(p_upgradeTier.upgradeCost));    
+            
+            int newMax = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(portal.level + 1);
+            m_upgradePortalUIView.SetChaoticEnergyUpgradeText(newMax);
+            m_upgradePortalUIView.SetChaoticEnergyUpgradeGOState(true);
         }
         m_upgradePortalUIView.PlayShowAnimation();
     }
@@ -106,6 +111,14 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     public void OnHoverOutCancelUpgrade() {
         UIManager.Instance.HideSmallInfo();
     }
+    public void OnHoverOverUpgradeChaoticEnergy() {
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        int newMax = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(portal.level + 1);
+        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails("Chaotic Energy Capacity", $"Increase Chaotic energy capacity to {newMax.ToString()}", position: m_upgradePortalUIView.UIModel.tooltipHoverPos);
+    }
+    public void OnHoverOutUpgradeChaoticEnergy() {
+        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
+    }
     private void OnConfirmCancelUpgradePortal() {
         PlayerManager.Instance.player.playerSkillComponent.CancelPortalUpgrade();
     }
@@ -114,8 +127,9 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     private void OnHoverOverUpgradeItem(UpgradePortalItemUI p_item) {
         if (PlayerUI.Instance != null) {
             if (p_item.skill != PLAYER_SKILL_TYPE.NONE) {
-                PlayerSkillData skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_item.skill);
-                PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);    
+                PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_item.skill);
+                SkillData skillData = PlayerSkillManager.Instance.GetSkillData(playerSkillData.skill);
+                PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData.name, skillData.description, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);    
             } else if (p_item.passiveSkill != PASSIVE_SKILL.None) {
                 PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(p_item.passiveSkill);
                 PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(passiveSkill.name, passiveSkill.description, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);

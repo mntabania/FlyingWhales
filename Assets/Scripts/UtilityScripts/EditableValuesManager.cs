@@ -94,6 +94,10 @@ public class EditableValuesManager : MonoBehaviour {
 	}
 
 	public int GetMaxChaoticEnergyPerPortalLevel(int p_portalLevel) {
-		return currencyHoverData.maxChaoticPerValues[p_portalLevel - 1];
+		int index = p_portalLevel - 1;
+		if (currencyHoverData.maxChaoticPerValues.IsIndexInList(index)) {
+			return currencyHoverData.maxChaoticPerValues[p_portalLevel - 1];	
+		}
+		return -1; //no data was provided for current level
 	}
 }

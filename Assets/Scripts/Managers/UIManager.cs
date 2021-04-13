@@ -1956,7 +1956,7 @@ public class UIManager : BaseMonoBehaviour {
         onDefensePointClicked?.Invoke(structure);
     }
     public void ShowUpgradePortalUI(ThePortal portal) {
-        upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level);
+        upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level, portal);
     }
     public void ShowPurchaseSkillUI() {
         purchaseSkillUIController.Init(3, true);

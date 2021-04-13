@@ -31,6 +31,7 @@ public class PlayerUI : BaseMonoBehaviour {
     [Header("Mana")]
     public TextMeshProUGUI manaLbl;
     [SerializeField] private RectTransform manaContainer;
+    [SerializeField] private UIHoverPosition manaTooltipPos;
 
     [Header("Intel")]
     public GameObject intelContainer;
@@ -398,6 +399,12 @@ public class PlayerUI : BaseMonoBehaviour {
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", manaLbl.transform.position,
             Quaternion.identity, transform, true);
         effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
+    }
+    public void OnHoverOverMana() {
+        UIManager.Instance.ShowSmallInfo("Chaotic energy used by the Ruinarch in various actions. Obtained when Villagers cry out or commit crimes.", pos: manaTooltipPos,$"Mana - {PlayerManager.Instance.player.mana.ToString()}/{EditableValuesManager.Instance.maximumMana.ToString()}");
+    }
+    public void OnHoverOutMana() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -1056,7 +1063,7 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     public void OnHoverEnterPlaguePoints() {
         string text = "The amount of Chaotic Energy you've generated. You can use this to upgrade your Plague if you have a Biolab built";
-        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.PlagueIcon()} Chaotic Energy");
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.ChaoticEnergyIcon()}Chaotic Energy - {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}/{PlayerManager.Instance.player.plagueComponent.maxPlaguePoints.ToString()}");
     }
     public void OnHoverExitPlaguePoints() {
         UIManager.Instance.HideSmallInfo();

@@ -190,29 +190,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltipPos: {fileID: 1087159205}
-  tooltipHeader: Mana
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
   ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4452501}
-        m_MethodName: ShowSmallInfoInSpecificPosition
-        m_Mode: 5
+      - m_Target: {fileID: 606078598}
+        m_MethodName: OnHoverOverMana
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Chaotic energy used by the Ruinarch in various actions.
-            Obtained when Villagers cry out or commit crimes.
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4452501}
-        m_MethodName: HideSmallInfoString
+      - m_Target: {fileID: 606078598}
+        m_MethodName: OnHoverOutMana
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19032,6 +19031,7 @@ MonoBehaviour:
   spiritEnergyContainer: {fileID: 1414646974}
   manaLbl: {fileID: 2065112572}
   manaContainer: {fileID: 4452500}
+  manaTooltipPos: {fileID: 1087159205}
   intelContainer: {fileID: 2125100019}
   intelItems:
   - {fileID: 1726741769}

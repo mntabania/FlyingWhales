@@ -121,7 +121,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     }
     public void OnClickUpgradePortal() {
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
-        upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level);
+        upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level, portal);
     }
     public void OnClickCancelReleaseAbility() {
         SkillData spellData = PlayerSkillManager.Instance.GetSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
