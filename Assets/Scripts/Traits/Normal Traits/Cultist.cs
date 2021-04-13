@@ -40,6 +40,7 @@ namespace Traits {
             if (sourceCharacter is Character character) {
                 character.behaviourComponent.AddBehaviourComponent(typeof(CultistBehaviour));
                 character.AddItemAsInteresting("Cultist Kit");
+                character.isInfoUnlocked = true;
                 //character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
                 character.AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_POISON);
                 character.AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP);
