@@ -4084,7 +4084,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.CARE);
         AddAdvertisedAction(INTERACTION_TYPE.LONG_STAND_STILL);
         AddAdvertisedAction(INTERACTION_TYPE.COOK);
-
+        AddAdvertisedAction(INTERACTION_TYPE.MAKE_LOVE);
+        
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
             if (this is GiantSpider) {
@@ -4109,7 +4110,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
             AddAdvertisedAction(INTERACTION_TYPE.INVITE);
-            AddAdvertisedAction(INTERACTION_TYPE.MAKE_LOVE);
             AddAdvertisedAction(INTERACTION_TYPE.TANTRUM);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_TO_STOP_JOB);
             AddAdvertisedAction(INTERACTION_TYPE.STRANGLE);
