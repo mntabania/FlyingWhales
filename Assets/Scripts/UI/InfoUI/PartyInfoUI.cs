@@ -57,7 +57,9 @@ public class PartyInfoUI : InfoUIBase {
         logsWindow.Initialize();
     }
     public override void CloseMenu() {
-        LogPool.Release(m_log);
+        if (m_log != null) {
+            LogPool.Release(m_log);
+        }
         base.CloseMenu();
         Selector.Instance.Deselect();
         activeParty = null;
