@@ -135,7 +135,19 @@ public class PopUpScreensUI : MonoBehaviour {
         thankYouWindow.anchoredPosition = new Vector2(0f, -300f);
         thankYouWindow.DOAnchorPosY(360f, 1f).SetEase(Ease.OutQuad);
     }
-    
+
+    public void OnClickContinuePlaying() {
+        GameManager.Instance.SetPausedState(false);
+        UIManager.Instance.SetSpeedTogglesState(true);
+        DOTween.Clear(true);
+        HideScreens();
+    }
+
+    void HideScreens() {
+        summaryScreen.gameObject.SetActive(false);
+        endScreen.SetActive(false);
+    }
+
     public void OnClickReturnToMainMenu() {
         DOTween.Clear(true);
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);

@@ -224,6 +224,9 @@ namespace Quests {
         }
         private void SpawnWinConditionQuest() {
             Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                return; //we hage a return here
+            }
             switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
                 case VICTORY_CONDITION.Eliminate_All:
                 CreateEliminateAllVillagersQuest();

@@ -40,6 +40,8 @@ public class Player : ILeader, IObjectManipulator {
     private ManaRegenComponent m_manaRegenComponent { get; set; }
     public PlayerDamageAccumulator damageAccumulator { get; private set; }
 
+    public bool hasAlreadyWon { get; set; }
+
     #region getters/setters
     public int id => -645;
     public string name => "Player";
@@ -70,7 +72,7 @@ public class Player : ILeader, IObjectManipulator {
         bookmarkComponent = new BookmarkComponent();
         damageAccumulator = new PlayerDamageAccumulator();
         summonMeterComponent.Initialize();
-        
+        hasAlreadyWon = false;
 
         bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
         
@@ -96,7 +98,7 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
         
         bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
-        
+        hasAlreadyWon = data.hasAlreadyWon;
         SubscribeListeners();
     }
 
