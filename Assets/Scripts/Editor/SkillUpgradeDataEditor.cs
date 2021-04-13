@@ -155,7 +155,7 @@ public class SkillUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.requirementData.requirements.Contains(UNLOCKING_SKILL_REQUIREMENT.portal_level)) {
-                data.requirementData.tier3Count = EditorGUILayout.IntField("Portal Level", data.requirementData.portalLevel);
+                data.requirementData.portalLevel = EditorGUILayout.IntField("Portal Level", data.requirementData.portalLevel);
                 EditorGUILayout.Space();
             }
         }
