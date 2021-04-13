@@ -544,7 +544,7 @@ public class NonActionEventsComponent : CharacterComponent {
         //do not develop relationships if either actor or target is disguised
         if (!actorIsDisguised && !targetIsDisguised) { //&& disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter
             // If Opinion of Target towards Actor is already in Acquaintance range
-            if (opinionLabel == RelationshipManager.Acquaintance) {
+            if (string.IsNullOrEmpty(opinionLabel) || opinionLabel == RelationshipManager.Acquaintance) {
                 // 25% chance to develop Lover relationship if both characters have no Lover yet
                 if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
                     && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {

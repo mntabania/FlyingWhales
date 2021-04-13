@@ -33,10 +33,14 @@ namespace Inner_Maps.Location_Structures {
             base.OnUseStructureConnector(p_usedConnector);
             Assert.IsTrue(p_usedConnector.structure is Cave, $"{name} did not connect to a tile inside a cave!");
             connectedCave = p_usedConnector.structure as Cave;
-            
+            Assert.IsNotNull(connectedCave);
             //Create a path inside
             Area area = p_usedConnector.area;
             List<LocationGridTile> choices = p_usedConnector.GetTilesInRadius(10, includeTilesInDifferentStructure: true).Where(t => t.IsPassable() && t.structure == connectedCave).ToList();
+            if (choices.Count == 0) {
+                choices = connectedCave.passableTiles.Count > 0 ? connectedCave.passableTiles : connectedCave.tiles.ToList();
+            }
+            Assert.IsTrue(choices.Count > 0);
             LocationGridTile randomPassableTile = CollectionUtilities.GetRandomElement(choices);
             List<LocationGridTile> path = PathGenerator.Instance.GetPath(p_usedConnector, randomPassableTile, GRID_PATHFINDING_MODE.CAVE_INTERCONNECTION, includeFirstTile: true);
             if (path != null) {
