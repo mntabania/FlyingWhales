@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Quests.Steps {
-    public class SummonTheDemonStep : QuestStep, OonaWinConditionTracker.Listener {
+    public class SummonTheDemonStep : QuestStep, OonaWinConditionTracker.ListenerPortalUpgrade {
         private readonly Func<int, int, string> _descriptionGetter;
 
         public SummonTheDemonStep(Func<int, int, string> descriptionGetter) : base(string.Empty) {
@@ -10,10 +10,10 @@ namespace Quests.Steps {
         }
 
         protected override void SubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).Subscribe(this);
+            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).SubscribeToPortalUpgraded(this);
         }
         protected override void UnSubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).Unsubscribe(this);
+            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).SubscribeToPortalUpgraded(this);
         }
         public override void Activate() {
             base.Activate();
@@ -21,14 +21,14 @@ namespace Quests.Steps {
         }
 
         #region Listeners
-        public void OnSummonMeterUpdated(int p_currentSummonCount, int p_targetSummonCount) {
-            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).currentSummonPoints = p_currentSummonCount;
-            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).targetSummonPoints = p_targetSummonCount;
+
+        public void OnPortalLevelUpgraded(int p_newPortalLevel) {
+            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).currentLevel = p_newPortalLevel;
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
             CheckForCompletion();
         }
         private void CheckForCompletion() {
-            if ((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).currentSummonPoints >= (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).targetSummonPoints) {
+            if ((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).currentLevel >= (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).targetLevel) {
                 Complete();
                 Messenger.Broadcast(PlayerSignals.WIN_GAME, "The almighty demon has been summoned. Congratulations!");
             }
@@ -38,7 +38,7 @@ namespace Quests.Steps {
         #region Description
         protected override string GetStepDescription() {
             if (_descriptionGetter != null) {
-                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).currentSummonPoints, (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).targetSummonPoints);
+                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).currentLevel, (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).targetLevel);
             }
             return base.GetStepDescription();
         }
