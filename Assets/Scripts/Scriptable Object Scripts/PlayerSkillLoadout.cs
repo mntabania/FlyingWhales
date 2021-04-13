@@ -8,7 +8,7 @@ using UnityEngine.UI.Extensions;
 [CreateAssetMenu(fileName = "New Player Skill Loadout", menuName = "Scriptable Objects/Player Skill Loadout")]
 public class PlayerSkillLoadout : ScriptableObject {
 
-    public const int MAX_SKILLS_PER_UPGRADE_TIER = 6;
+    public const int MAX_SKILLS_PER_UPGRADE_TIER = 8;
     
     public PLAYER_ARCHETYPE archetype;
     public PlayerSkillLoadoutData spells;
@@ -35,7 +35,7 @@ public class PlayerSkillLoadout : ScriptableObject {
         }
         if (portalUpgradeTiers != null) {
             if (portalUpgradeTiers.Length == 0) {
-                Debug.LogError($"{this.name} han no portal tiers! All Archetypes should have at least 1!!");
+                Debug.LogError($"{this.name} has no portal tiers! All Archetypes should have at least 1!!");
                 return;
             }
             for (int i = 0; i < portalUpgradeTiers.Length; i++) {
@@ -48,9 +48,9 @@ public class PlayerSkillLoadout : ScriptableObject {
                 }
                 portalUpgradeTiers[i] = tier;
 
-                int passiveSkillsLength = tier.passiveSkillsToUnlock?.Length ?? 0;
+                // int passiveSkillsLength = tier.passiveSkillsToUnlock?.Length ?? 0;
                 int skillTypesLength = tier.skillTypesToUnlock?.Length ?? 0;
-                int totalThingsToUnlockInTier = passiveSkillsLength + skillTypesLength;
+                int totalThingsToUnlockInTier = skillTypesLength;
                 if (totalThingsToUnlockInTier > MAX_SKILLS_PER_UPGRADE_TIER) {
                     Debug.LogError($"{this.name} ({tier.name}) has {totalThingsToUnlockInTier.ToString()} upgrades but maximum amount should only be {MAX_SKILLS_PER_UPGRADE_TIER.ToString()}!");
                 }
@@ -68,7 +68,7 @@ public class PlayerSkillLoadoutData {
 public struct PortalUpgradeTier {
     [ReadOnly] public string name;
     public PLAYER_SKILL_TYPE[] skillTypesToUnlock;
-    public PASSIVE_SKILL[] passiveSkillsToUnlock;
+    // public PASSIVE_SKILL[] passiveSkillsToUnlock;
     public Cost[] upgradeCost;
     public int upgradeTime;
 

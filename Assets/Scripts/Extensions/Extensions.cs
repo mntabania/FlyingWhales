@@ -1375,7 +1375,7 @@ public static class Extensions {
             case CURRENCY.Mana:
                 return UtilityScripts.Utilities.ManaIcon();
             case CURRENCY.Chaotic_Energy:
-                return UtilityScripts.Utilities.PlagueIcon();
+                return UtilityScripts.Utilities.ChaoticEnergyIcon();
             case CURRENCY.Spirit_Energy:
                 return UtilityScripts.Utilities.SpiritEnergyIcon();
             default:

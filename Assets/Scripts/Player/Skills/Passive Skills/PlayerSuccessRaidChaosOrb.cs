@@ -10,6 +10,8 @@ public class PlayerSuccessRaidChaosOrb : PassiveSkill {
         Messenger.AddListener<Party>(PartySignals.PARTY_QUEST_FINISHED_SUCCESSFULLY, OnSuccessParty);
     }
     private void OnSuccessParty(Party party) {
-        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, party.members[0].worldPosition, UnityEngine.Random.Range(1, 2), party.members[0].gridTileLocation.parentMap);
+		if (party.isPlayerParty) {
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, party.members[0].worldPosition, UnityEngine.Random.Range(1, 2), party.members[0].gridTileLocation.parentMap);
+        }
     }
 }

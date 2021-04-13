@@ -11,7 +11,7 @@ public class PlagueComponent {
     #endregion
 
     public PlagueComponent() {
-        _plaguePoints = 1550;
+        _plaguePoints = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(1);
         maxPlaguePoints = EditableValuesManager.Instance.GetInitialMaxChaoticEnergy();
         Messenger.AddListener<int>(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }
@@ -23,7 +23,10 @@ public class PlagueComponent {
 
     #region Plague Points
     void OnPortalUpgraded(int p_currentPortalLevel) {
-        maxPlaguePoints = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(p_currentPortalLevel);
+        int newMaximum = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(p_currentPortalLevel);
+        if (newMaximum != -1) { //if no increase was set in data then do not override current maximum. This is because Level 8 portal does not increase maximum capacity
+            maxPlaguePoints = newMaximum;    
+        }
     }
     public void AdjustPlaguePoints(int amount) {
         if (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {

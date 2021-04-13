@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using DG.Tweening;
+using Inner_Maps.Location_Structures;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,8 @@ public class UpgradePortalUIView : MVCUIView {
         void OnClickCancelUpgrade();
         void OnHoverOverCancelUpgrade();
         void OnHoverOutCancelUpgrade();
+        void OnHoverOverUpgradeChaoticEnergy();
+        void OnHoverOutUpgradeChaoticEnergy();
     }
     #endregion
     
@@ -45,6 +48,8 @@ public class UpgradePortalUIView : MVCUIView {
         UIModel.onClickCancelUpgradePortal += p_listener.OnClickCancelUpgrade;
         UIModel.onHoverOverCancelUpgradePortal += p_listener.OnHoverOverCancelUpgrade;
         UIModel.onHoverOutCancelUpgradePortal += p_listener.OnHoverOutCancelUpgrade;
+        UIModel.onHoverOverChaoticEnergyCapacity += p_listener.OnHoverOverUpgradeChaoticEnergy;
+        UIModel.onHoverOutChaoticEnergyCapacity += p_listener.OnHoverOutUpgradeChaoticEnergy;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onClickClose -= p_listener.OnClickClose;
@@ -52,33 +57,31 @@ public class UpgradePortalUIView : MVCUIView {
         UIModel.onClickCancelUpgradePortal -= p_listener.OnClickCancelUpgrade;
         UIModel.onHoverOverCancelUpgradePortal -= p_listener.OnHoverOverCancelUpgrade;
         UIModel.onHoverOutCancelUpgradePortal -= p_listener.OnHoverOutCancelUpgrade;
+        UIModel.onHoverOverChaoticEnergyCapacity -= p_listener.OnHoverOverUpgradeChaoticEnergy;
+        UIModel.onHoverOutChaoticEnergyCapacity -= p_listener.OnHoverOutUpgradeChaoticEnergy;
     }
     #endregion
 
     #region User defined functions
-    public void UpdateItems(PortalUpgradeTier p_upgradeTier) {
-        int lastIndex = 0;
-        for (int i = 0; i < UIModel.items.Length; i++) {
-            UpgradePortalItemUI itemUI = UIModel.items[i];
-            PLAYER_SKILL_TYPE skillType = p_upgradeTier.skillTypesToUnlock.ElementAtOrDefault(i);
-            if (skillType != PLAYER_SKILL_TYPE.NONE) {
-                itemUI.SetData(skillType);
-                itemUI.gameObject.SetActive(true);
-            } else {
-                lastIndex = i;
-                break;
-            }
+    public void UpdateItems(PortalUpgradeTier p_upgradeTier, ThePortal portal) {
+        if (portal.IsCurrentLevelUpTheLastOne()) {
+            //last level up, do not show items, since will show awaken ruinarch text
+            UIModel.scrollRectContent.gameObject.SetActive(false);
+        } else {
+            UIModel.scrollRectContent.gameObject.SetActive(true);
+            for (int i = 0; i < UIModel.items.Length; i++) {
+                UpgradePortalItemUI itemUI = UIModel.items[i];
+                PLAYER_SKILL_TYPE skillType = p_upgradeTier.skillTypesToUnlock.ElementAtOrDefault(i);
+                // lastIndex = i;
+                if (skillType != PLAYER_SKILL_TYPE.NONE) {
+                    itemUI.SetData(skillType);
+                    itemUI.gameObject.SetActive(true);
+                } else {
+                    break;
+                }
+            }    
         }
-        for (int i = lastIndex; i < UIModel.items.Length; i++) {
-            UpgradePortalItemUI itemUI = UIModel.items[i];
-            PASSIVE_SKILL skillType = p_upgradeTier.passiveSkillsToUnlock.ElementAtOrDefault(i);
-            if (skillType != PASSIVE_SKILL.None) {
-                itemUI.SetData(skillType);
-                itemUI.gameObject.SetActive(true);
-            } else {
-                itemUI.gameObject.SetActive(false);
-            }
-        }
+        
     }
     public void SetHeader(string p_value) {
         UIModel.lblTitle.text = p_value;
@@ -106,6 +109,12 @@ public class UpgradePortalUIView : MVCUIView {
     public void SetUpgradeTimerState(bool p_state) {
         UIModel.goUpgradePortalTimer.SetActive(p_state);
     }
+    public void SetChaoticEnergyUpgradeText(int p_amount) {
+        UIModel.lblChaoticEnergyCapacity.text = $"{p_amount.ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()} Capacity";
+    }
+    public void SetChaoticEnergyUpgradeGOState(bool p_state) {
+        UIModel.goChaoticEnergyCapacity.SetActive(p_state);
+    }
     #endregion
 
     #region Animations
@@ -128,18 +137,38 @@ public class UpgradePortalUIView : MVCUIView {
         sequence.Join(UIModel.rectWindow.DOAnchorPos(targetPos, 0.5f));
         sequence.Join(UIModel.rectFrame.DOSizeDelta(defaultSize, 0.8f));
         sequence.AppendInterval(0.05f);
-        
-        for (int i = 0; i < UIModel.items.Length; i++) {
-            UpgradePortalItemUI upgradePortalItemUI = UIModel.items[i];
-            if (upgradePortalItemUI.gameObject.activeSelf) {
-                Vector2 defaultPos = upgradePortalItemUI.contentParent.anchoredPosition; 
-                float targetPosY = defaultPos.y;
-                upgradePortalItemUI.canvasGroupContent.alpha = 0f;
+
+        if (UIModel.scrollRectContent.gameObject.activeSelf) {
+            int lastIndex = 0;
+            for (int i = 0; i < UIModel.items.Length; i++) {
+                UpgradePortalItemUI upgradePortalItemUI = UIModel.items[i];
+                if (upgradePortalItemUI.gameObject.activeSelf) {
+                    Vector2 defaultPos = upgradePortalItemUI.contentParent.anchoredPosition; 
+                    float targetPosY = defaultPos.y;
+                    upgradePortalItemUI.canvasGroupContent.alpha = 0f;
+                    upgradePortalItemUI.SetHoverInteractionAllowedState(false);
                 
-                upgradePortalItemUI.contentParent.anchoredPosition = new Vector2(defaultPos.x, defaultPos.y + 50f);
-                sequence.Join(upgradePortalItemUI.contentParent.DOAnchorPosY(targetPosY, 0.3f).SetDelay((i + 1)/30f));
-                sequence.Join(upgradePortalItemUI.canvasGroupContent.DOFade(1f, 0.4f));
+                    upgradePortalItemUI.contentParent.anchoredPosition = new Vector2(defaultPos.x, defaultPos.y + 50f);
+                    sequence.Join(upgradePortalItemUI.contentParent.DOAnchorPosY(targetPosY, 0.3f).SetDelay((i + 1)/30f));
+                    sequence.Join(upgradePortalItemUI.canvasGroupContent.DOFade(1f, 0.4f).OnComplete(() => upgradePortalItemUI.SetHoverInteractionAllowedState(true)));
+                    lastIndex = i;
+                }
             }
+            Vector2 position = UIModel.contentChaoticEnergyUpgrade.anchoredPosition; 
+            float targetPosition = position.y;
+            UIModel.canvasGroupChaoticEnergyUpgrade.alpha = 0f;
+                
+            UIModel.contentChaoticEnergyUpgrade.anchoredPosition = new Vector2(position.x, position.y + 50f);
+            sequence.Join(UIModel.contentChaoticEnergyUpgrade.DOAnchorPosY(targetPosition, 0.3f).SetDelay((lastIndex + 1)/30f));
+            sequence.Join(UIModel.canvasGroupChaoticEnergyUpgrade.DOFade(1f, 0.4f));    
+        } else if (UIModel.lblAwakenRuinarch.gameObject.activeSelf) {
+            Vector2 position = UIModel.lblAwakenRuinarch.rectTransform.anchoredPosition; 
+            float targetPosition = position.y;
+            UIModel.canvasGroupAwakenRuinarch.alpha = 0f;
+            
+            UIModel.lblAwakenRuinarch.rectTransform.anchoredPosition = new Vector2(position.x, position.y + 50f);
+            sequence.Join(UIModel.lblAwakenRuinarch.rectTransform.DOAnchorPosY(targetPosition, 0.3f).SetDelay(1/30f));
+            sequence.Join(UIModel.canvasGroupAwakenRuinarch.DOFade(1f, 0.4f));
         }
         sequence.Append(UIModel.canvasGroupUpgradeInteraction.DOFade(1f, 0.3f));
 
@@ -158,4 +187,20 @@ public class UpgradePortalUIView : MVCUIView {
         sequence.Play();
     }
     #endregion
+
+    public void UpdateAwakenRuianrchText(ThePortal portal) {
+        if (portal.IsCurrentLevelUpTheLastOne()) {
+            UIModel.lblAwakenRuinarch.gameObject.SetActive(true);
+            UIModel.lblAwakenRuinarch.text = "Awaken Ruinarch";
+        } else {
+            UIModel.lblAwakenRuinarch.gameObject.SetActive(false);
+        }
+    }
+    public void UpdateUpgradeChaoticEnergyItem(ThePortal portal) {
+        if (portal.IsCurrentLevelUpTheLastOne()) {
+            UIModel.goChaoticEnergyCapacity.SetActive(false);
+        } else {
+            UIModel.goChaoticEnergyCapacity.SetActive(true);
+        }
+    }
 }

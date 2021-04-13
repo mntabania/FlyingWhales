@@ -30,6 +30,19 @@ public class UpgradePortalUIModel : MVCUIModel {
     public HoverHandler hoverHandlerBtnCancelUpgradePortal;
     public System.Action onHoverOverCancelUpgradePortal;
     public System.Action onHoverOutCancelUpgradePortal;
+
+    [Header("Chaotic Energy")] 
+    public GameObject goChaoticEnergyCapacity;
+    public HoverHandler hoverHandlerChaoticEnergyCapacity;
+    public RectTransform contentChaoticEnergyUpgrade;
+    public CanvasGroup canvasGroupChaoticEnergyUpgrade;
+    public TextMeshProUGUI lblChaoticEnergyCapacity;
+    public Action onHoverOverChaoticEnergyCapacity;
+    public Action onHoverOutChaoticEnergyCapacity;
+    
+    [Header("Awaken Ruinarch")] 
+    public TextMeshProUGUI lblAwakenRuinarch;
+    public CanvasGroup canvasGroupAwakenRuinarch;
     
     public Action onClickUpgrade;
     public Action onClickClose;
@@ -46,6 +59,8 @@ public class UpgradePortalUIModel : MVCUIModel {
         btnCancelUpgradePortal.onClick.AddListener(OnClickCancelUpgradePortal);
         hoverHandlerBtnCancelUpgradePortal.AddOnHoverOverAction(OnHoverOverCancelUpgradePortal);
         hoverHandlerBtnCancelUpgradePortal.AddOnHoverOutAction(OnHoverOutCancelUpgradePortal);
+        hoverHandlerChaoticEnergyCapacity.AddOnHoverOverAction(OnHoverOverUpgradeChaoticEnergyCapacity);
+        hoverHandlerChaoticEnergyCapacity.AddOnHoverOutAction(OnHoverOutUpgradeChaoticEnergyCapacity);
     }
     private void OnDisable() {
         btnUpgrade.onClick.RemoveListener(OnClickUpgrade);
@@ -53,6 +68,8 @@ public class UpgradePortalUIModel : MVCUIModel {
         btnCancelUpgradePortal.onClick.RemoveListener(OnClickCancelUpgradePortal);
         hoverHandlerBtnCancelUpgradePortal.RemoveOnHoverOverAction(OnHoverOverCancelUpgradePortal);
         hoverHandlerBtnCancelUpgradePortal.RemoveOnHoverOutAction(OnHoverOutCancelUpgradePortal);
+        hoverHandlerChaoticEnergyCapacity.RemoveOnHoverOverAction(OnHoverOverUpgradeChaoticEnergyCapacity);
+        hoverHandlerChaoticEnergyCapacity.RemoveOnHoverOutAction(OnHoverOutUpgradeChaoticEnergyCapacity);
     }
     private void OnClickUpgrade() {
         onClickUpgrade?.Invoke();
@@ -68,5 +85,11 @@ public class UpgradePortalUIModel : MVCUIModel {
     }
     private void OnHoverOutCancelUpgradePortal() {
         onHoverOutCancelUpgradePortal?.Invoke();
+    }
+    private void OnHoverOverUpgradeChaoticEnergyCapacity() {
+        onHoverOverChaoticEnergyCapacity?.Invoke();
+    }
+    private void OnHoverOutUpgradeChaoticEnergyCapacity() {
+        onHoverOutChaoticEnergyCapacity?.Invoke();
     }
 }

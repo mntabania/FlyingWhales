@@ -78,35 +78,35 @@ public class FatalityUIController : MVCUIController, FatalityUIView.IListener
 	
 	private void UpdateSepticShockData() {
 		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Septic_Shock);
-		m_fatalityUIView.UpdateSepticShockCost($"{PLAGUE_FATALITY.Septic_Shock.GetFatalityCost().ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_fatalityUIView.UpdateSepticShockCost($"{PLAGUE_FATALITY.Septic_Shock.GetFatalityCost().ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_fatalityUIView.UpdateSepticShockCostState(!hasUnlockedFatality);
 		m_fatalityUIView.UpdateSepticShockUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Septic_Shock));
 		m_fatalityUIView.UpdateSepticShockCheckmarkState(hasUnlockedFatality);
 	}
 	private void UpdateHeartAttackData() {
 		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Heart_Attack);
-		m_fatalityUIView.UpdateHeartAttackCost($"{PLAGUE_FATALITY.Heart_Attack.GetFatalityCost().ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_fatalityUIView.UpdateHeartAttackCost($"{PLAGUE_FATALITY.Heart_Attack.GetFatalityCost().ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_fatalityUIView.UpdateHeartAttackCostState(!hasUnlockedFatality);
 		m_fatalityUIView.UpdateHeartAttackUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Heart_Attack));
 		m_fatalityUIView.UpdateHeartAttackCheckmarkState(hasUnlockedFatality);
 	}
 	private void UpdateStrokeData() {
 		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Stroke);
-		m_fatalityUIView.UpdateStrokeCost($"{PLAGUE_FATALITY.Stroke.GetFatalityCost().ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_fatalityUIView.UpdateStrokeCost($"{PLAGUE_FATALITY.Stroke.GetFatalityCost().ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_fatalityUIView.UpdateStrokeCostState(!hasUnlockedFatality);
 		m_fatalityUIView.UpdateStrokeUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Stroke));
 		m_fatalityUIView.UpdateStrokeCheckmarkState(hasUnlockedFatality);
 	}
 	private void UpdateTotalOrganFailureData() {
 		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Total_Organ_Failure);
-		m_fatalityUIView.UpdateTotalOrganFailureCost($"{PLAGUE_FATALITY.Total_Organ_Failure.GetFatalityCost().ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_fatalityUIView.UpdateTotalOrganFailureCost($"{PLAGUE_FATALITY.Total_Organ_Failure.GetFatalityCost().ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_fatalityUIView.UpdateTotalOrganFailureCostState(!hasUnlockedFatality);
 		m_fatalityUIView.UpdateTotalOrganFailureUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Total_Organ_Failure));
 		m_fatalityUIView.UpdateTotalOrganFailureCheckmarkState(hasUnlockedFatality);
 	}
 	private void UpdatePneumoniaData() {
 		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Pneumonia);
-		m_fatalityUIView.UpdatePneumoniaCost($"{PLAGUE_FATALITY.Pneumonia.GetFatalityCost().ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_fatalityUIView.UpdatePneumoniaCost($"{PLAGUE_FATALITY.Pneumonia.GetFatalityCost().ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_fatalityUIView.UpdatePneumoniaCostState(!hasUnlockedFatality);
 		m_fatalityUIView.UpdatePneumoniaUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Pneumonia));
 		m_fatalityUIView.UpdatePneumoniaCheckmarkState(hasUnlockedFatality);
