@@ -321,7 +321,7 @@ public class SkillData : IPlayerSkill {
     private string GetDisplayOfCurrentChargesWithBonusChargesCombined() {
         string str = string.Empty;
         if (hasCharges || hasBonusCharges) {
-            str += $"{(isInUse ? totalCharges : bonusCharges)} {(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}";
+            str += $"{(isInUse ? totalCharges : bonusCharges)}{(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}";
         }
         return str;
     }
