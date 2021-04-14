@@ -806,6 +806,20 @@ public class CombatState : CharacterState {
     }
 
     #region Reposition
+    private void SetIsRepositioning(bool p_state) {
+        if (isRepositioning != p_state) {
+            isRepositioning = p_state;
+            if (isRepositioning) {
+                if (stateComponent.owner.hasMarker) {
+                    stateComponent.owner.marker.pathfindingAI.SetEndReachedDistance(0.05f);
+                }
+            } else {
+                if (stateComponent.owner.hasMarker) {
+                    stateComponent.owner.marker.pathfindingAI.ResetEndReachedDistance();
+                }
+            }
+        }
+    }
     private bool TryReposition() {
         string summary = $"{stateComponent.owner.name} will reposition relative to {currentClosestHostile?.name}";
         bool hasRepositioned = RepositionToAnotherUnoccupiedNodeWithinDistance(stateComponent.owner.characterClass.attackRange, currentClosestHostile, ref summary);
@@ -822,7 +836,7 @@ public class CombatState : CharacterState {
                 RuinarchListPool<LocationGridTile>.Release(alreadyCheckedTiles);
 
                 if (position != Vector3.positiveInfinity) {
-                    isRepositioning = true;
+                    SetIsRepositioning(true);
                     stateComponent.owner.marker.GoTo(position, OnArriveAfterCombatRepositioning);
                     summary += "\nWill reposition to " + position;
                 } else {
@@ -865,7 +879,7 @@ public class CombatState : CharacterState {
         return Vector3.positiveInfinity;
     }
     private void OnArriveAfterCombatRepositioning() {
-        isRepositioning = false;
+        SetIsRepositioning(false);
     }
     #endregion
 
@@ -1167,5 +1181,6 @@ public class CombatState : CharacterState {
         isFleeToHome = false;
         _timesHitCurrentTarget = 0;
         isExecutingAttack = false;
+        isRepositioning = false;
     }
 }

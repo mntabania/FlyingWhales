@@ -23,13 +23,13 @@ public class CharacterAIPath : AILerp {
     public STRUCTURE_TYPE[] onlyAllowedStructures { get; private set; }
     public STRUCTURE_TYPE[] notAllowedStructures { get; private set; }
 
-    private float Default_End_Reached_Distance; //This should only be set on the initialization of this object
+    //private float Default_End_Reached_Distance; //This should only be set on the initialization of this object
 
     #region Monobehaviours
     protected override void Start() {
         base.Start();
         //_originalRepathRate = repathRate;
-        Default_End_Reached_Distance = marker.endReachedDistance;
+        //Default_End_Reached_Distance = marker.endReachedDistance;
         blockerTraversalProvider = new BlockerTraversalProvider(marker);
     }
     private void OnDestroy() {
@@ -414,11 +414,11 @@ public class CharacterAIPath : AILerp {
         }
         return Vector3.zero;
     }
-    public void SetEndReachedDistance(float distance) {
-        endReachDistance = distance;
-    }
     public void ResetEndReachedDistance() {
-        endReachDistance = Default_End_Reached_Distance;
+        endReachDistance = marker.endReachedDistance;
+    }
+    public void SetEndReachedDistance(float amount) {
+        endReachDistance = amount;
     }
     #endregion
 }
