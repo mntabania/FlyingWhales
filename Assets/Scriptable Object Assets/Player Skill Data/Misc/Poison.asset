@@ -21,20 +21,23 @@ MonoBehaviour:
   expCost: 300
   cheatedLevel: 0
   pierce: 0
+  bonusChargeWhenUnlocked: 3
   buttonSprite: {fileID: 21300000, guid: 992919969a7c793459af04ed04633657, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: f69a4274a12a0e8449dc859b7676242c, type: 3}
   tooltipImage: {fileID: 0}
-  unlockCost: 100
+  unlockCost: 30
   tier: 1
-  baseLoadoutWeight: 200
+  baseLoadoutWeight: 100
   resistanceType: 0
   archetypeWeightedBonus: 2
   contextMenuIcon: {fileID: 21300000, guid: 98f616a5f4907024cb549bb65aea1c63, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
   isNonUpgradeable: 0
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
   requirementData:
-    requirements: 
+    requirements: 08000000
     requiredArchetype: 0
     requiredSkills: 
     actionCount: 0
@@ -43,10 +46,11 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
+    portalLevel: 1
     isOR: 0
   skillUpgradeData:
-    upgradeCosts: 6400000096000000c8000000
-    manacostPerLevel: 14000000140000001400000014000000
+    upgradeCosts: 5000000091000000d2000000
+    manacostPerLevel: 3c0000003c0000003c0000003c000000
     chargesPerLevel: 01000000010000000200000003000000
     bonuses: 010000000e0000000a000000
     additionalDamagePerLevel: 
@@ -73,3 +77,16 @@ MonoBehaviour:
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: a00000008c0000008c0000008c000000
     skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 
