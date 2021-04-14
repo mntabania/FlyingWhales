@@ -36,6 +36,8 @@ namespace Inner_Maps.Location_Structures {
             _markerDummy = ObjectPoolManager.Instance.InstantiateObjectFromPool("MarkerDummy", Vector3.zero, Quaternion.identity, structureObj.objectsParent).GetComponent<MarkerDummy>();
             _markerDummy.Deactivate();
             Vector3 position = structureObj.transform.position;
+            position.x -= 0.5f;
+            position.y -= 0.5f;
             worldPosition = position;
         }
         protected override void DestroyStructure(Character p_responsibleCharacter = null) {

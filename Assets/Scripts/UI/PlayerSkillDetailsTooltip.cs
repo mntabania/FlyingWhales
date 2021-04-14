@@ -213,8 +213,15 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 formatted = $"{formatted}{p_data.skillUpgradeData.GetSkillMovementSpeedPerLevel(p_level).ToString()}";
                 break;
             case UPGRADE_BONUS.Cooldown:
-                int cooldownInTicks = p_data.skillUpgradeData.GetCoolDownPerLevel(p_level);
-                formatted = $"{formatted}{GameManager.ConvertTicksToWholeTime(cooldownInTicks)}";
+                int cooldownInTicks = p_data.GetCoolDownBaseOnLevel(p_level);
+                if (cooldownInTicks == 0) {
+                    formatted = $"{formatted}Instant";
+                } else if (cooldownInTicks == -1) {
+                    formatted = $"{formatted}No Cooldown";
+                } else {
+                    formatted = $"{formatted}{GameManager.ConvertTicksToWholeTime(cooldownInTicks)}";    
+                }
+                
                 break;
             default:
                 formatted = string.Empty;
@@ -281,10 +288,16 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 }
                 break;
             case UPGRADE_BONUS.Cooldown:
-                intCurrentValue = p_data.skillUpgradeData.GetCoolDownPerLevel(p_level);
-                intNextValue = p_data.skillUpgradeData.GetCoolDownPerLevel(p_nextLevel);
+                intCurrentValue = p_data.GetCoolDownBaseOnLevel(p_level);
+                intNextValue = p_data.GetCoolDownBaseOnLevel(p_nextLevel);
                 if (intCurrentValue != intNextValue) {
-                    differenceStr = $"{GameManager.ConvertTicksToWholeTime(intNextValue)}";
+                    if (intNextValue == 0) {
+                        differenceStr = "Instant";
+                    } else if (intNextValue == -1) {
+                        differenceStr = "No Cooldown";
+                    } else {
+                        differenceStr = $"{GameManager.ConvertTicksToWholeTime(intNextValue)}";    
+                    }
                     // differenceStr = $" ({GameManager.GetTimeAsWholeDuration(intNextValue).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(intNextValue)})";
                 }
                 break;

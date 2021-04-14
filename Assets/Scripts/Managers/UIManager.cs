@@ -1743,7 +1743,7 @@ public class UIManager : BaseMonoBehaviour {
         string title = traitName;
         string fullDescription = trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect");
         if (string.IsNullOrEmpty(fullDescription)) {
-            fullDescription = "Flaw cannot be triggered.";
+            fullDescription = "This flaw does not have a trigger flaw effect.";
         }
         if (p_character.isInfoUnlocked) {
             int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;

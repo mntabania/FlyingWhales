@@ -286,39 +286,39 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(4, 3)
+            occupiedSize = new Point(6, 5)
         } },
         { TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(4, 4)
+            occupiedSize = new Point(6, 6)
         } },
         { TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(2, 2)
+            occupiedSize = new Point(4, 4)
         } },
         { TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(2, 2)
+            occupiedSize = new Point(4, 4)
         } },
         { TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(3, 4)
+            occupiedSize = new Point(6, 8)
         } },
         { TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(2, 6)
+            occupiedSize = new Point(4, 11)
         } },
         { TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(3, 4)
+            occupiedSize = new Point(5, 6)
         } },
         { TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(4, 6)
+            occupiedSize = new Point(6, 9)
         } }, 
         { TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
-            occupiedSize = new Point(4, 3)
+            occupiedSize = new Point(6, 4)
         } },
         { TILE_OBJECT_TYPE.DEFILER_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
