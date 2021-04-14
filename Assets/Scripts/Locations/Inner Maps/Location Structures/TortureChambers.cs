@@ -71,14 +71,14 @@ namespace Inner_Maps.Location_Structures {
         }
         
         #region Structure Object
-        #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             _tortureChamberStructureObject = structureObj as TortureChamberStructureObject;
             Vector3 position = structureObj.transform.position;
+            position.x -= 0.5f;
+            position.y -= 0.5f;
             worldPosition = position;
         }
-        #endregion
         public override void OnBuiltNewStructure() {
             base.OnBuiltNewStructure();
             _tortureChamberStructureObject.SetEntrance(region.innerMap);
