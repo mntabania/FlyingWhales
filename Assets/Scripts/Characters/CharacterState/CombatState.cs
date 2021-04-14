@@ -7,6 +7,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using UtilityScripts;
+using Pathfinding;
 
 public class CombatState : CharacterState {
 
@@ -43,7 +44,9 @@ public class CombatState : CharacterState {
     private int _timesHitCurrentTarget;
 
     public bool isExecutingAttack;
-    public bool isRepositioning { get; private set; }
+    public GridNodeBase repositioningTo { get; private set; }
+
+    public bool isRepositioning => repositioningTo != null;
 
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
@@ -796,7 +799,7 @@ public class CombatState : CharacterState {
 
     //Will be constantly checked every frame
     private void AttackOrReposition() {
-        if (stateComponent.owner.movementComponent.IsCurrentGridNodeOccupiedByOtherActiveCharacter()) {
+        if (stateComponent.owner.movementComponent.IsCurrentGridNodeOccupiedByOtherNonRepositioningActiveCharacter()) {
             if (!TryReposition()) {
                 stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
             }
@@ -806,9 +809,9 @@ public class CombatState : CharacterState {
     }
 
     #region Reposition
-    private void SetIsRepositioning(bool p_state) {
-        if (isRepositioning != p_state) {
-            isRepositioning = p_state;
+    private void SetGridNodeToReposition(GridNodeBase p_gridNode) {
+        if (repositioningTo != p_gridNode) {
+            repositioningTo = p_gridNode;
             if (isRepositioning) {
                 if (stateComponent.owner.hasMarker) {
                     stateComponent.owner.marker.pathfindingAI.SetEndReachedDistance(0.05f);
@@ -831,12 +834,13 @@ public class CombatState : CharacterState {
             LocationGridTile initialTile = stateComponent.owner.gridTileLocation;
             LocationGridTile relativeTile = p_relativePOI.gridTileLocation;
             if (initialTile != null && relativeTile != null) {
+                LocationGridTile chosenGridTile = null;
                 List<LocationGridTile> alreadyCheckedTiles = RuinarchListPool<LocationGridTile>.Claim();
-                Vector3 position = GetPositionToRepositionRecursively(initialTile, p_distanceLimit, p_relativePOI.worldPosition, alreadyCheckedTiles);
+                Vector3 position = GetPositionToRepositionRecursively(initialTile, p_distanceLimit, p_relativePOI.worldPosition, alreadyCheckedTiles, ref chosenGridTile);
                 RuinarchListPool<LocationGridTile>.Release(alreadyCheckedTiles);
-
-                if (position != Vector3.positiveInfinity) {
-                    SetIsRepositioning(true);
+                if (!position.Equals(Vector3.positiveInfinity)) {
+                    GridNodeBase gridNode = chosenGridTile.GetGridNodeByWorldPosition(position);
+                    SetGridNodeToReposition(gridNode);
                     stateComponent.owner.marker.GoTo(position, OnArriveAfterCombatRepositioning);
                     summary += "\nWill reposition to " + position;
                 } else {
@@ -851,11 +855,12 @@ public class CombatState : CharacterState {
         }
         return true;
     }
-    private Vector3 GetPositionToRepositionRecursively(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, List<LocationGridTile> checkedTiles) {
+    private Vector3 GetPositionToRepositionRecursively(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, List<LocationGridTile> checkedTiles, ref LocationGridTile p_chosenPositionGridTile) {
         if (!checkedTiles.Contains(p_gridTile)) {
             checkedTiles.Add(p_gridTile);
             Vector3 pos = p_gridTile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
-            if (pos != Vector3.positiveInfinity) {
+            if (!pos.Equals(Vector3.positiveInfinity)) {
+                p_chosenPositionGridTile = p_gridTile;
                 return pos;
             }
         }
@@ -863,23 +868,24 @@ public class CombatState : CharacterState {
             LocationGridTile neighbourTile = p_gridTile.neighbourList[i];
             if (!checkedTiles.Contains(neighbourTile)) {
                 checkedTiles.Add(neighbourTile);
-                Vector3 pos = p_gridTile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
-                if (pos != Vector3.positiveInfinity) {
+                Vector3 pos = neighbourTile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
+                if (!pos.Equals(Vector3.positiveInfinity)) {
+                    p_chosenPositionGridTile = neighbourTile;
                     return pos;
                 }
             }
         }
         for (int i = 0; i < p_gridTile.neighbourList.Count; i++) {
             LocationGridTile neighbourTile = p_gridTile.neighbourList[i];
-            Vector3 pos = GetPositionToRepositionRecursively(neighbourTile, p_distanceLimit, p_relativeToPos, checkedTiles);
-            if (pos != Vector3.positiveInfinity) {
+            Vector3 pos = GetPositionToRepositionRecursively(neighbourTile, p_distanceLimit, p_relativeToPos, checkedTiles, ref p_chosenPositionGridTile);
+            if (!pos.Equals(Vector3.positiveInfinity)) {
                 return pos;
             }
         }
         return Vector3.positiveInfinity;
     }
     private void OnArriveAfterCombatRepositioning() {
-        SetIsRepositioning(false);
+        SetGridNodeToReposition(null);
     }
     #endregion
 
@@ -1181,6 +1187,6 @@ public class CombatState : CharacterState {
         isFleeToHome = false;
         _timesHitCurrentTarget = 0;
         isExecutingAttack = false;
-        isRepositioning = false;
+        repositioningTo = null;
     }
 }

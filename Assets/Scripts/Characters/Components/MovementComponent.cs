@@ -631,10 +631,10 @@ public class MovementComponent : CharacterComponent {
     #endregion
 
     #region Combat Repositioning
-    public bool IsCurrentGridNodeOccupiedByOtherActiveCharacter() {
+    public bool IsCurrentGridNodeOccupiedByOtherNonRepositioningActiveCharacter() {
         LocationGridTile currentGridTile = owner.gridTileLocation;
         if (currentGridTile != null) {
-            return currentGridTile.IsGridNodeOccupiedByActiveCharacterOtherThan(owner);
+            return currentGridTile.IsGridNodeOccupiedByNonRepositioningActiveCharacterOtherThan(owner);
         }
         return false;
     }

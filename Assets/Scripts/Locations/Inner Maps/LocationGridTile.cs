@@ -1733,6 +1733,15 @@ namespace Inner_Maps {
         #endregion
 
         #region Node Points
+        public GridNodeBase GetGridNodeByWorldPosition(Vector3 p_worldPos) {
+            for (int i = 0; i < nodePoints.Length; i++) {
+                Vector3 pos = GetNodePointWorldLocation(nodePoints[i]);
+                if (pos.Equals(p_worldPos)) {
+                    return GetGridNodeByNodePointIndex(i);
+                }
+            }
+            return null;
+        }
         private Vector3 GetNodePointWorldLocation(PointFloat p_point) {
             float posX = centeredWorldLocation.x + p_point.X;
             float posY = centeredWorldLocation.y + p_point.Y;
@@ -1818,11 +1827,21 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public bool IsGridNodeOccupiedByActiveCharacterOtherThan(Character p_character) {
+        public bool IsGridNodeOccupiedByNonRepositioningActiveCharacterOtherThan(Character p_character) {
             GridNodeBase currentGridNode = AstarPath.active.GetNearest(p_character.worldPosition).node as GridNodeBase;
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character otherCharacter = charactersHere[i];
                 if (p_character != otherCharacter && !otherCharacter.isDead && otherCharacter.limiterComponent.canPerform && otherCharacter.limiterComponent.canMove) {
+                    if (otherCharacter.combatComponent.isInCombat) {
+                        if (otherCharacter.stateComponent.currentState is CombatState combatState) {
+                            if (combatState.isRepositioning) {
+                                if(combatState.repositioningTo != currentGridNode) {
+                                    //Do not include in checking if another character is already leaving the grid node, i.e., that character is repositioning to another grid node
+                                    continue;
+                                }
+                            }
+                        }
+                    }
                     if (AstarPath.active.GetNearest(otherCharacter.worldPosition).node is GridNodeBase grid && grid == currentGridNode) {
                         return true;
                     }
