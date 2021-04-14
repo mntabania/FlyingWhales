@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Logs;
 using Object_Pools;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class RaiseDeadData : PlayerAction {
@@ -16,10 +17,16 @@ public class RaiseDeadData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         Character target = null;
-        if (targetPOI is Character) {
-            target = targetPOI as Character;
-        } else if (targetPOI is Tombstone) {
-            target = (targetPOI as Tombstone).character;
+        if (targetPOI is Character character) {
+            target = character;
+        } else if (targetPOI is Tombstone tombstone) {
+            target = tombstone.character;
+        }
+        Assert.IsNotNull(target);
+        if (target.grave != null) {
+            if (target.grave.isBeingCarriedBy != null) {
+                target.grave.isBeingCarriedBy.UncarryPOI(target.grave);
+            }
         }
         Summon summon = CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, FactionManager.Instance.undeadFaction);
         //target.RaiseFromDeath(1, faction: PlayerManager.Instance.player.playerFaction, className: target.characterClass.className);
@@ -77,7 +84,13 @@ public class RaiseDeadData : PlayerAction {
                 return false;
             }
         }
-        return base.IsValid(target);
+        bool baseIsValid = base.IsValid(target);
+        if (!baseIsValid) {
+            if (target is Tombstone tomb && tomb.isBeingCarriedBy != null) {
+                return true; //if tombstone is being carried by someone, bypass invalidity from base IsValid because of null mapObjectVisual
+            }
+        }
+        return baseIsValid;
     }
     #endregion
 }

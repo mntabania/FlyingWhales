@@ -343,14 +343,19 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                         if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
                             additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
                         }
-                        string wholeReason = spellData
-                            .GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
+                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
                         wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
                         additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                     }
                 } else if (activeObj is TileObject activeTileObject) {
                     if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
                         additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
+                    } else if (activeTileObject is Tombstone tombstone && tombstone.character != null) {
+                        if (!spellData.CanPerformAbilityTowards(tombstone.character)) {
+                            string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(tombstone.character);
+                            wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+                        }
                     }
                 } else if (activeObj is BaseSettlement activeSettlement) {
                     if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
