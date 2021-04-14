@@ -3214,9 +3214,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.KLEPTOMANIAC_STEAL)) {
 		    List<TileObject> objects = RuinarchListPool<TileObject>.Claim();
 		    p_target.PopulateTileObjectsListWithAllTileObjects(objects);
-		    objects = objects.Where(x => !x.traitContainer.HasTrait("Immovable") && x.OccupiesTile()).ToList();
-		    if (objects.Count > 0) {
-			    TileObject targetObject = CollectionUtilities.GetRandomElement(objects);
+		    objects.Shuffle();
+		    TileObject targetObject = null;
+		    for (int i = 0; i < objects.Count; i++) {
+			    TileObject tileObject = objects[i];
+			    if (tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT && tileObject.OccupiesTile() && !tileObject.traitContainer.HasTrait("Immovable")) {
+				    targetObject = tileObject;
+				    break;
+			    }
+		    }
+		    if (targetObject != null) {
 			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KLEPTOMANIAC_STEAL, p_actionType, targetObject, owner);
 			    Assert.IsNotNull(owner.homeSettlement);
 			    job.AddPriorityLocation(INTERACTION_TYPE.STEAL_ANYTHING, owner.homeSettlement);

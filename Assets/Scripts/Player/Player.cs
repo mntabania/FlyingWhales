@@ -72,7 +72,7 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
         
 
-        bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
         
         SubscribeListeners();
         
@@ -95,7 +95,7 @@ public class Player : ILeader, IObjectManipulator {
         m_manaRegenComponent = new ManaRegenComponent(this);
         summonMeterComponent.Initialize();
         
-        bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
         
         SubscribeListeners();
     }

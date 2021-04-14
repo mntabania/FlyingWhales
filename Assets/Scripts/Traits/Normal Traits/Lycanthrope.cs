@@ -384,7 +384,7 @@ namespace Traits {
             }
             
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
-            activeForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameEvent(activeForm);
+            activeForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(activeForm);
         }
 
         public void RevertToNormal() {
@@ -411,7 +411,7 @@ namespace Traits {
             }
             
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
-            activeForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameEvent(activeForm);
+            activeForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(activeForm);
         }
         private void CopyImportantTraits(Character p_copyFrom, Character p_copyTo) {
             if (p_copyFrom.traitContainer.HasTrait("Restrained")) {

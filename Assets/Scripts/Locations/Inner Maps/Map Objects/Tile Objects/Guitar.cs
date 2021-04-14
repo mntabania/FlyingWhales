@@ -14,7 +14,7 @@ public class Guitar : TileObject {
     public Guitar(SaveDataTileObject data) {
     }
     public override string ToString() {
-        return $"Guitar {id}";
+        return $"Guitar {id.ToString()}";
     }
 
     public virtual bool CanBeReplaced() {

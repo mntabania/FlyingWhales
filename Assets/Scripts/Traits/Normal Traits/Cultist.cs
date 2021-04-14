@@ -6,7 +6,7 @@ using UtilityScripts;
 namespace Traits {
     public class Cultist : Trait {
         public override bool isSingleton => true;
-
+        public override bool affectsNameIcon => true;
         public Cultist() {
             name = "Cultist";
             description = "Worships us, but only secretly.";

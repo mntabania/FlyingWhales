@@ -18,6 +18,7 @@ namespace Traits {
         public int numOfSkeletonFollowers => GetNumOfSkeletonFollowers();
         public int numOfSkeletonFollowersInSameRegion => GetNumOfSkeletonFollowersInSameRegion();
         public override Type serializedData => typeof(SaveDataNecromancer);
+        public override bool affectsNameIcon => true;
         #endregion
 
         public Necromancer() {
