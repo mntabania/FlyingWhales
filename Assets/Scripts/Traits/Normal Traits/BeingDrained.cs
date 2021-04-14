@@ -28,7 +28,13 @@ namespace Traits {
         }
         private void DrainPerTick(Character p_character) {
             if (!p_character.isDead) {
-                int hpReduction = Mathf.RoundToInt(p_character.maxHP * ((PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.DRAIN_SPIRIT) / 100f)));
+                int hpReduction = 0;
+                if (p_character.currentStructure != null && p_character.currentStructure.structureType == STRUCTURE_TYPE.PRISON) {
+                    hpReduction = Mathf.RoundToInt(p_character.maxHP * ((PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.DRAIN_SPIRIT) / 100f)));
+                } else {
+                    hpReduction = Mathf.RoundToInt(p_character.maxHP * (((PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.DRAIN_SPIRIT) * 2f) / 100f)));
+                }
+                
                 p_character.AdjustHP(-hpReduction, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
                 int spiritEnergy = p_character is Summon ? 1 : 2;
                 //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, p_character.gridTileLocation.centeredWorldLocation, spiritEnergy, p_character.gridTileLocation.parentMap);
