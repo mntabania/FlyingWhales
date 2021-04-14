@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 971702523172866972}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.029999971, y: -0.994, z: 0}
+  m_LocalPosition: {x: -0.5, y: -2.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7731945594801276127}
@@ -55,7 +55,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.23, y: 0.5}
+  m_Size: {x: 6, y: 1}
   m_EdgeRadius: 0
 --- !u!1 &1598702285293759739
 GameObject:
@@ -82,7 +82,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1598702285293759739}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.1290001, y: 0.029999971, z: 0}
+  m_LocalPosition: {x: 2.25, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7731945594801276127}
@@ -112,7 +112,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 2.23}
+  m_Size: {x: 1, y: 6}
   m_EdgeRadius: 0
 --- !u!1 &2103178577983063533
 GameObject:
@@ -139,7 +139,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2103178577983063533}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.164, y: 0.029999971, z: 0}
+  m_LocalPosition: {x: -2.79, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7731945594801276127}
@@ -169,7 +169,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 2.23}
+  m_Size: {x: 1, y: 6}
   m_EdgeRadius: 0
 --- !u!1 &3056933010824050210
 GameObject:
@@ -196,7 +196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3056933010824050210}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.03, y: 0.99, z: 0}
+  m_LocalPosition: {x: -0.5, y: 1.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7731945594801276127}
@@ -226,7 +226,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.23, y: 0.5}
+  m_Size: {x: 6, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &3649779077002698478
 MonoBehaviour:
@@ -327,17 +327,17 @@ PrefabInstance:
     - target: {fileID: 58822086145661980, guid: d9d549510a4f590468f27e4140b34e5e,
         type: 3}
       propertyPath: m_Radius
-      value: 1.5
+      value: 3.19
       objectReference: {fileID: 0}
     - target: {fileID: 61074229831935010, guid: d9d549510a4f590468f27e4140b34e5e,
         type: 3}
       propertyPath: m_Size.x
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 61074229831935010, guid: d9d549510a4f590468f27e4140b34e5e,
         type: 3}
       propertyPath: m_Size.y
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 61518028179232044, guid: d9d549510a4f590468f27e4140b34e5e,
         type: 3}
@@ -374,12 +374,12 @@ PrefabInstance:
     - target: {fileID: 224254967257501736, guid: d9d549510a4f590468f27e4140b34e5e,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 224254967257501736, guid: d9d549510a4f590468f27e4140b34e5e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1076201862410327479, guid: d9d549510a4f590468f27e4140b34e5e,
         type: 3}

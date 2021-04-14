@@ -311,9 +311,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
 		} else {
 			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
-				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana", "Not enough Mana", autoReplaceText: false);
+				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana.", "Not enough Mana", autoReplaceText: false);
 			} else {
-				Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
+				Tooltip.Instance.ShowSmallInfo("Summon minions to defend around the Prism.", "Deploy team", autoReplaceText: false);
 			}
 		}
 	}

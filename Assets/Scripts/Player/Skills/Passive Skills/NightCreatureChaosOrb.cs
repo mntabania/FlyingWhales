@@ -22,7 +22,7 @@ public class NightCreatureChaosOrb : PassiveSkill {
             if (responsibleCharacter != null) {
                 if (responsibleCharacter.race == RACE.SKELETON || responsibleCharacter.traitContainer.HasTrait("Necromancer") || responsibleCharacter.traitContainer.HasTrait("Vampire")) {
                     orbsCount = 2;
-                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, orbsCount, p_character.gridTileLocation.parentMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, responsibleCharacter.gridTileLocation.centeredWorldLocation, orbsCount, responsibleCharacter.gridTileLocation.parentMap);
                 }
             }
         }

@@ -12,6 +12,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Flirt_Icon;
             logTags = new[] {LOG_TAG.Needs};
+            shouldShowNotif = false;
         }
 
         #region Overrides

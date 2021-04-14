@@ -25,7 +25,7 @@ namespace Inner_Maps.Location_Structures {
         }
 
         private void OnHourStarted() {
-            if(GameManager.Instance.currentTick == 72) { //6am
+            if(GameManager.Instance.currentTick == 120) { //6am
                 List<TileObject> tileObjects = ObjectPoolManager.Instance.CreateNewTileObjectList();
                 PopulateTileObjectsList(tileObjects, TILE_OBJECT_TYPE.CORN_CROP, t => t is CornCrop cornCrop && cornCrop.currentGrowthState != Crops.Growth_State.Ripe);
                 int numOfCropsToRipen = GameUtilities.RandomBetweenTwoNumbers(2, 3);
