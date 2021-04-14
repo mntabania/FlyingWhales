@@ -4,7 +4,8 @@ using UnityEngine;
 public class BiolabTileObject : TileObject {
     
     public override Vector2 selectableSize => new Vector2(4f,4f);
-
+    public override Vector3 worldPosition => mapVisual.visionTrigger.transform.position;
+    
     public BiolabTileObject() {
         Initialize(TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
