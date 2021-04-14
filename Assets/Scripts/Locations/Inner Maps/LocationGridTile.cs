@@ -27,7 +27,7 @@ namespace Inner_Maps {
         }
 
         private static readonly GridNeighbourDirection[] gridNeighbourDirections = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
-        private Dictionary<GridNeighbourDirection, Point> possibleExits => new Dictionary<GridNeighbourDirection, Point>() {
+        private Dictionary<GridNeighbourDirection, Point> possibleExits = new Dictionary<GridNeighbourDirection, Point>() {
             {GridNeighbourDirection.North, new Point(0,1) },
             {GridNeighbourDirection.South, new Point(0,-1) },
             {GridNeighbourDirection.West, new Point(-1,0) },
@@ -38,10 +38,16 @@ namespace Inner_Maps {
             {GridNeighbourDirection.South_East, new Point(1,-1) },
         };
         private PointFloat[] nodePoints = new PointFloat[] {
-            new PointFloat(0.25f, 0.25f),
-            new PointFloat(-0.25f, 0.25f),
-            new PointFloat(0.25f, -0.25f),
-            new PointFloat(-0.25f, -0.25f),
+            new PointFloat(0.25f, 0.25f), //north east
+            new PointFloat(-0.25f, 0.25f), //north west
+            new PointFloat(0.25f, -0.25f), //south east
+            new PointFloat(-0.25f, -0.25f), //south west
+        };
+        private Dictionary<GridNeighbourDirection, GridNodeBase> gridNodes = new Dictionary<GridNeighbourDirection, GridNodeBase>() {
+            {GridNeighbourDirection.North_East, null },
+            {GridNeighbourDirection.North_West, null },
+            {GridNeighbourDirection.South_East, null },
+            {GridNeighbourDirection.South_West, null },
         };
 
         public string persistentID { get; }
@@ -188,22 +194,6 @@ namespace Inner_Maps {
         #endregion
 
         #region Other Data
-        public Vector3 GetPositionWithinTileThatIsOnAWalkableNode() {
-            //Used WalkableErosion because for some reason the Walkable field always returns true
-            if (AstarPath.active.GetNearest(centeredWorldLocation).node is GridNodeBase grid && grid.WalkableErosion) {
-                return centeredWorldLocation;
-            } else {
-                for (int i = 0; i < nodePoints.Length; i++) {
-                    float posX = centeredWorldLocation.x + nodePoints[i].X;
-                    float posY = centeredWorldLocation.y + nodePoints[i].Y;
-                    Vector3 pos = new Vector3(posX, posY, centeredWorldLocation.z);
-                    if (AstarPath.active.GetNearest(pos).node is GridNodeBase gridNode && gridNode.WalkableErosion) {
-                        return pos;
-                    }
-                }
-            }
-            return centeredWorldLocation;
-        }
         public void SetTileType(Tile_Type tileType) {
             this.tileType = tileType;
         }
@@ -1739,6 +1729,106 @@ namespace Inner_Maps {
             ELEVATION previousElevation = elevationType;
             elevationType = p_elevation;
             area.elevationComponent.OnTileInAreaChangedElevation(this, previousElevation);
+        }
+        #endregion
+
+        #region Node Points
+        private Vector3 GetNodePointWorldLocation(PointFloat p_point) {
+            float posX = centeredWorldLocation.x + p_point.X;
+            float posY = centeredWorldLocation.y + p_point.Y;
+            Vector3 pos = new Vector3(posX, posY, centeredWorldLocation.z);
+            return pos;
+        }
+        private Vector3 GetNodePointWorldLocation(GridNeighbourDirection p_direction) {
+            int pointIndex = GetNodePointIndexByDirection(p_direction);
+            float posX = centeredWorldLocation.x + nodePoints[pointIndex].X;
+            float posY = centeredWorldLocation.y + nodePoints[pointIndex].Y;
+            Vector3 pos = new Vector3(posX, posY, centeredWorldLocation.z);
+            return pos;
+        }
+        private int GetNodePointIndexByDirection(GridNeighbourDirection p_direction) {
+            switch (p_direction) {
+                case GridNeighbourDirection.North_East: return 0;
+                case GridNeighbourDirection.North_West: return 1;
+                case GridNeighbourDirection.South_East: return 2;
+                case GridNeighbourDirection.South_West: return 3;
+                default: return -1;
+            }
+        }
+        private GridNeighbourDirection GetDirectionByNodePointIndex(int p_index) {
+            switch (p_index) {
+                case 0: return GridNeighbourDirection.North_East;
+                case 1: return GridNeighbourDirection.North_West;
+                case 2: return GridNeighbourDirection.South_East;
+                case 3: return GridNeighbourDirection.South_West;
+                default: return GridNeighbourDirection.North;
+            }
+        }
+        public GridNodeBase GetGridNodeByDirection(GridNeighbourDirection p_direction) {
+            if(gridNodes[p_direction] == null) {
+                Vector3 pos = GetNodePointWorldLocation(p_direction);
+                gridNodes[p_direction] = AstarPath.active.GetNearest(pos).node as GridNodeBase;
+            }
+            return gridNodes[p_direction];
+        }
+        public GridNodeBase GetGridNodeByNodePointIndex(int p_index) {
+            GridNeighbourDirection direction = GetDirectionByNodePointIndex(p_index);
+            if (gridNodes[direction] == null) {
+                Vector3 pos = GetNodePointWorldLocation(direction);
+                gridNodes[direction] = AstarPath.active.GetNearest(pos).node as GridNodeBase;
+            }
+            return gridNodes[direction];
+        }
+        public Vector3 GetPositionWithinTileThatIsOnAWalkableNode() {
+            //Used WalkableErosion because for some reason the Walkable field always returns true
+            if (AstarPath.active.GetNearest(centeredWorldLocation).node is GridNodeBase grid && grid.WalkableErosion) {
+                return centeredWorldLocation;
+            } else {
+                for (int i = 0; i < nodePoints.Length; i++) {
+                    Vector3 pos = GetNodePointWorldLocation(nodePoints[i]);
+                    GridNodeBase gridNode = GetGridNodeByNodePointIndex(i);
+                    if (gridNode.WalkableErosion) {
+                        return pos;
+                    }
+                }
+            }
+            return centeredWorldLocation;
+        }
+        public Vector3 GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(float p_distanceLimit, Vector3 p_otherPos) {
+            for (int i = 0; i < nodePoints.Length; i++) {
+                Vector3 pos = GetNodePointWorldLocation(nodePoints[i]);
+                float dist = Vector2.Distance(pos, p_otherPos);
+                if (dist <= p_distanceLimit) {
+                    GridNodeBase gridNode = GetGridNodeByNodePointIndex(i);
+                    if (gridNode.WalkableErosion && !IsGridNodeOccupiedByActiveCharacter(gridNode)) {
+                        return pos;
+                    }
+                }
+            }
+            return Vector3.positiveInfinity;
+        }
+        public bool IsGridNodeOccupiedByActiveCharacter(GridNodeBase p_gridNode) {
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                if (!character.isDead && character.limiterComponent.canPerform && character.limiterComponent.canMove) {
+                    if (AstarPath.active.GetNearest(character.worldPosition).node is GridNodeBase grid && grid == p_gridNode) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public bool IsGridNodeOccupiedByActiveCharacterOtherThan(Character p_character) {
+            GridNodeBase currentGridNode = AstarPath.active.GetNearest(p_character.worldPosition).node as GridNodeBase;
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character otherCharacter = charactersHere[i];
+                if (p_character != otherCharacter && !otherCharacter.isDead && otherCharacter.limiterComponent.canPerform && otherCharacter.limiterComponent.canMove) {
+                    if (AstarPath.active.GetNearest(otherCharacter.worldPosition).node is GridNodeBase grid && grid == currentGridNode) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
         #endregion
 

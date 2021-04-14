@@ -42,6 +42,9 @@ public class CombatState : CharacterState {
     /// </summary>
     private int _timesHitCurrentTarget;
 
+    public bool isExecutingAttack;
+    public bool isRepositioning { get; private set; }
+
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
         characterState = CHARACTER_STATE.COMBAT;
@@ -733,7 +736,7 @@ public class CombatState : CharacterState {
                 stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
             } else if (currentClosestHostile.currentRegion != stateComponent.owner.currentRegion) {
                 stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
-            } else if (isAttacking && isExecutingAttack == false) {
+            } else if (isAttacking && isExecutingAttack == false && isRepositioning == false) {
                 //If character is attacking and distance is within the attack range of this character, attack
                 //else, pursue again
                 // Profiler.BeginSample($"{stateComponent.character.name} Distance Computation");
@@ -750,7 +753,7 @@ public class CombatState : CharacterState {
                 // Debug.Log($"{stateComponent.owner.name} current attack distance {distance.ToString()}");
                 if (stateComponent.owner.characterClass.attackRange >= distance) {
                     if (stateComponent.owner.movementComponent.isStationary) {
-                        Attack();
+                        AttackOrReposition();
                     } else {
                         Profiler.BeginSample($"{stateComponent.owner.name} Line of Sight Check");
                         bool isInLineOfSight =
@@ -758,7 +761,7 @@ public class CombatState : CharacterState {
                         Profiler.EndSample();
                         // if (distance < stateComponent.character.characterClass.attackRange) {5
                         if (isInLineOfSight || stateComponent.owner.movementComponent.isStationary) {
-                            Attack();
+                            AttackOrReposition();
                         } else {
                             PursueClosestHostile();
                         }
@@ -792,6 +795,81 @@ public class CombatState : CharacterState {
     }
 
     //Will be constantly checked every frame
+    private void AttackOrReposition() {
+        if (stateComponent.owner.movementComponent.IsCurrentGridNodeOccupiedByOtherActiveCharacter()) {
+            if (!TryReposition()) {
+                stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
+            }
+        } else {
+            Attack();
+        }
+    }
+
+    #region Reposition
+    private bool TryReposition() {
+        string summary = $"{stateComponent.owner.name} will reposition relative to {currentClosestHostile?.name}";
+        bool hasRepositioned = RepositionToAnotherUnoccupiedNodeWithinDistance(stateComponent.owner.characterClass.attackRange, currentClosestHostile, ref summary);
+        stateComponent.owner.logComponent.PrintLogIfActive(summary);
+        return hasRepositioned;
+    }
+    private bool RepositionToAnotherUnoccupiedNodeWithinDistance(float p_distanceLimit, IPointOfInterest p_relativePOI, ref string summary) {
+        if (stateComponent.owner.hasMarker && !isRepositioning) {
+            LocationGridTile initialTile = stateComponent.owner.gridTileLocation;
+            LocationGridTile relativeTile = p_relativePOI.gridTileLocation;
+            if (initialTile != null && relativeTile != null) {
+                List<LocationGridTile> alreadyCheckedTiles = RuinarchListPool<LocationGridTile>.Claim();
+                Vector3 position = GetPositionToRepositionRecursively(initialTile, p_distanceLimit, p_relativePOI.worldPosition, alreadyCheckedTiles);
+                RuinarchListPool<LocationGridTile>.Release(alreadyCheckedTiles);
+
+                if (position != Vector3.positiveInfinity) {
+                    isRepositioning = true;
+                    stateComponent.owner.marker.GoTo(position, OnArriveAfterCombatRepositioning);
+                    summary += "\nWill reposition to " + position;
+                } else {
+                    summary += "\nCannot find position";
+                    return false;
+                }
+            } else {
+                summary += "\nNo initial/relative tile, skipping";
+            }
+        } else {
+            summary += "\nNo marker or is already repositioning, skipping";
+        }
+        return true;
+    }
+    private Vector3 GetPositionToRepositionRecursively(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, List<LocationGridTile> checkedTiles) {
+        if (!checkedTiles.Contains(p_gridTile)) {
+            checkedTiles.Add(p_gridTile);
+            Vector3 pos = p_gridTile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
+            if (pos != Vector3.positiveInfinity) {
+                return pos;
+            }
+        }
+        for (int i = 0; i < p_gridTile.neighbourList.Count; i++) {
+            LocationGridTile neighbourTile = p_gridTile.neighbourList[i];
+            if (!checkedTiles.Contains(neighbourTile)) {
+                checkedTiles.Add(neighbourTile);
+                Vector3 pos = p_gridTile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
+                if (pos != Vector3.positiveInfinity) {
+                    return pos;
+                }
+            }
+        }
+        for (int i = 0; i < p_gridTile.neighbourList.Count; i++) {
+            LocationGridTile neighbourTile = p_gridTile.neighbourList[i];
+            Vector3 pos = GetPositionToRepositionRecursively(neighbourTile, p_distanceLimit, p_relativeToPos, checkedTiles);
+            if (pos != Vector3.positiveInfinity) {
+                return pos;
+            }
+        }
+        return Vector3.positiveInfinity;
+    }
+    private void OnArriveAfterCombatRepositioning() {
+        isRepositioning = false;
+    }
+    #endregion
+
+    #region Attack
     private void Attack() {
         string summary = $"{stateComponent.owner.name} will attack {currentClosestHostile?.name}";
 
@@ -835,7 +913,8 @@ public class CombatState : CharacterState {
         // stateComponent.character.logComponent.PrintLogIfActive(summary);
         //Debug.Log(summary);
     }
-    public bool isExecutingAttack;
+    #endregion
+
     public void OnAttackHit(IDamageable damageable) {
         string attackSummary =
             $"{GameManager.Instance.TodayLogString()}{stateComponent.owner.name} hit {damageable?.name ?? "Nothing"}";
