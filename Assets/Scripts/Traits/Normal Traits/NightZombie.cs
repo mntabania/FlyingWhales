@@ -76,7 +76,7 @@ namespace Traits {
 
         private void HourlyCheck() {
             int todayTick = GameManager.Instance.currentTick;
-            if (todayTick == 72 || todayTick == 216) {
+            if (todayTick == 120 || todayTick == 360) {
                 if (owner.isBeingSeized || (owner.grave != null && owner.grave.isBeingSeized)) {
                     return;
                 }
@@ -85,7 +85,7 @@ namespace Traits {
                     return;
                 }
 
-                if (todayTick == 72) {
+                if (todayTick == 120) {
                     if (!owner.isDead) {
                         DropTransformingInfected();
                         owner.Death();
