@@ -77,7 +77,7 @@ public class GoapThread : Multithread {
         //removed by aaron for awareness update GridMap.Instance.UpdateAwarenessInAllRegions();
     }
     private void CreateNewPlan() {
-        log = $"-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF {actor.name} WITH TARGET {target?.name}" ??
+        log = $"-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF {actor.name} WITH TARGET {target?.nameWithID}" ??
               $"None ({actor.currentRegion.name})-----------------------";
         if (goalType != INTERACTION_TYPE.NONE) {
             log += $"\nGOAL: {goalType}";

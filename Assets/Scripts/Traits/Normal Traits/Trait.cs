@@ -44,6 +44,11 @@ namespace Traits {
         public string contextMenuName => name;
         public int contextMenuColumn => 1;
         public List<IContextMenuItem> subMenus => null;
+        /// <summary>
+        /// Does this trait affect the characters name icon?
+        /// Examples: Cultist, Necromancer
+        /// </summary>
+        public virtual bool affectsNameIcon => false;
         //public bool isPlayerDamage => playerDamageAccumulator != null;
         #endregion
         

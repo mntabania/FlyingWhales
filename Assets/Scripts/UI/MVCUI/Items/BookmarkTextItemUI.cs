@@ -10,7 +10,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
     
     public void SetBookmark(IBookmarkable p_bookmarkable) {
         lblName.text = p_bookmarkable.bookmarkName;
-        p_bookmarkable.bookmarkEventDispatcher.Subscribe(this);
+        p_bookmarkable.bookmarkEventDispatcher.Subscribe(this, p_bookmarkable);
         btnMain.onClick.AddListener(p_bookmarkable.OnSelectBookmark);
         btnRemove.onClick.AddListener(() => OnClickRemoveBookmark(p_bookmarkable));
         btnRemove.gameObject.SetActive(p_bookmarkable.bookmarkType == BOOKMARK_TYPE.Text_With_Cancel);
@@ -33,7 +33,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
             rect = rectTransform;
             parentOfParent = transform.parent.parent.parent as RectTransform;
         }
-        p_bookmarkable.bookmarkEventDispatcher.Unsubscribe(this);
+        p_bookmarkable.bookmarkEventDispatcher.Unsubscribe(this, p_bookmarkable);
         ObjectPoolManager.Instance.DestroyObject(this);
         if (rect) {
             LayoutRebuilder.ForceRebuildLayoutImmediate(rect);    

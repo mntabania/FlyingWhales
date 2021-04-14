@@ -24,6 +24,6 @@ public class GoddessStatue : TileObject {
     //    SetPOIState(POI_STATE.INACTIVE);
     //}
     public override string ToString() {
-        return $"Goddess Statue {id}";
+        return $"Goddess Statue {id.ToString()}";
     }
 }
