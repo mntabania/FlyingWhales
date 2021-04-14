@@ -278,6 +278,10 @@ namespace Traits {
 
         #region Utilities
         public void CharacterBurningProcess(Character character) {
+            if (character.isDead) {
+                //Should not process if character is dead
+                return;
+            }
             if (character.traitContainer.HasTrait("Pyrophobic")) {
                 character.traitContainer.AddTrait(character, "Traumatized");
                 character.traitContainer.AddTrait(character, "Unconscious");
