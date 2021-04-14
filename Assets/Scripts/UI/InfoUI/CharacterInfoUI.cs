@@ -216,7 +216,10 @@ public class CharacterInfoUI : InfoUIBase {
         base.OpenMenu();
         piercingAndResistancesInfo.UpdatePierceUI(_activeCharacter);
         if (_previousCharacter != null && _previousCharacter.hasMarker) {
-            _previousCharacter.marker.UpdateNameplateElementsState();
+            bool updateNameplate = _previousCharacter.grave == null || _previousCharacter.grave.isBeingCarriedBy == null;
+            if (updateNameplate) {
+                _previousCharacter.marker.UpdateNameplateElementsState();    
+            }
         }
         if (UIManager.Instance.IsConversationMenuOpen()) {
             backButton.interactable = false;
@@ -232,7 +235,12 @@ public class CharacterInfoUI : InfoUIBase {
             } else {
                 Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);
             }
-            _activeCharacter.marker.UpdateNameplateElementsState();
+            
+            //if character has no grave or grave is not being carried by anyone, then update nameplate elements
+            bool updateNameplate = _activeCharacter.grave == null || _activeCharacter.grave.isBeingCarriedBy == null; 
+            if (updateNameplate) {
+                _activeCharacter.marker.UpdateNameplateElementsState();    
+            }
         }
         btnStoreTarget.SetTarget(_activeCharacter);
         UpdateCharacterInfo();

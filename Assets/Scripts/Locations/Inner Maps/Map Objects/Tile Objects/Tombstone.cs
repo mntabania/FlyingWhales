@@ -38,6 +38,16 @@ public class Tombstone : TileObject {
         SaveDataTombstone saveDataTombstone = data as SaveDataTombstone;
         Assert.IsNotNull(saveDataTombstone);
         character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTombstone.characterID);
+        if (character.race.IsSapient()) {
+            AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
+        }
+    }
+    public override void LoadAdditionalInfo(SaveDataTileObject data) {
+        base.LoadAdditionalInfo(data);
+        if (isBeingCarriedBy != null && character != null && character.hasMarker) {
+            character.DisableMarker();
+            character.marker.SetNameState(false);    
+        }
     }
     public override void OnLoadPlacePOI() {
         DefaultProcessOnPlacePOI();
@@ -46,9 +56,6 @@ public class Tombstone : TileObject {
         character.marker.SetNameState(true);
         character.marker.TryCancelExpiry();
         character.SetGrave(this);
-        if (character.race.IsSapient()) {
-            AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
-        }
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -67,7 +74,7 @@ public class Tombstone : TileObject {
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        RemovePlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
+        // RemovePlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
         if (_respawnCorpseOnDestroy) {
             if(previousTile != null) {
                 character.EnableMarker();

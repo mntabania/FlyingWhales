@@ -214,6 +214,16 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void KleptomaniacStealAnything() {
+        //poi.traitContainer.AddTrait(poi, "Plagued");
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KLEPTOMANIAC_STEAL, INTERACTION_TYPE.STEAL_ANYTHING, poi, activeCharacter);
+            activeCharacter.jobQueue.AddJobInQueue(job);
+        } else {
+            Debug.LogError($"{poi.name} is not a tile object!");
+        }
+        HideUI();
+    }
     public void HarvestPlant() {
         if (poi is Crops) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, INTERACTION_TYPE.HARVEST_PLANT, poi, activeCharacter);
