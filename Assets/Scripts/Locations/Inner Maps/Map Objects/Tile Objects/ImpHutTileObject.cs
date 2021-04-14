@@ -4,7 +4,8 @@ using UnityEngine;
 public class ImpHutTileObject : TileObject {
     
     public override Vector2 selectableSize => new Vector2(4f,3f);
-
+    public override Vector3 worldPosition => mapVisual.visionTrigger.transform.position;
+    
     public ImpHutTileObject() {
         Initialize(TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);

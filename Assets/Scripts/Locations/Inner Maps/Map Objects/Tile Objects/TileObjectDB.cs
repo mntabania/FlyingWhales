@@ -348,6 +348,13 @@ public static class TileObjectDB {
         //Debug.LogWarning("No tile data for type " + objType.ToString() + " used default tileobject data");
         return Default;
     }
+    public static bool OccupiesMoreThan1Tile(TILE_OBJECT_TYPE objType) {
+        if (tileObjectData.ContainsKey(objType)) {
+            Point occupiedTiles = tileObjectData[objType].occupiedSize;
+            return occupiedTiles.X > 1 || occupiedTiles.Y > 1;
+        }
+        return false;
+    }
     public static bool TryGetTileObjectData(TILE_OBJECT_TYPE objType, out TileObjectData data) {
         if (tileObjectData.ContainsKey(objType)) {
             data = tileObjectData[objType];

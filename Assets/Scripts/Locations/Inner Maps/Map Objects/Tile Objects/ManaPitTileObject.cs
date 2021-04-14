@@ -4,7 +4,8 @@ using UnityEngine;
 public class ManaPitTileObject : TileObject {
     
     public override Vector2 selectableSize => new Vector2(2f,2f);
-
+    public override Vector3 worldPosition => mapVisual.visionTrigger.transform.position;
+    
     public ManaPitTileObject() {
         Initialize(TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);

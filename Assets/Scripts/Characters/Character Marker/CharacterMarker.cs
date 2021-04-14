@@ -11,6 +11,7 @@ using UnityEngine.Serialization;
 using UtilityScripts;
 using Locations.Settlements;
 using Necromancy.UI;
+using UnityEngine.Assertions;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -652,7 +653,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if (targetPOI.gridTileLocation == null) {
                         throw new Exception($"{character.name} is trying to go to a {targetPOI.ToString()} but its tile location is null");
                     }
-                    SetDestination(targetPOI.gridTileLocation.GetPositionWithinTileThatIsOnAWalkableNode(), targetPOI.gridTileLocation);
+                    LocationGridTile targetTile;
+                    if (targetPOI is TileObject tileObject && tileObject.mapObjectVisual != null && tileObject.gridTileLocation != null && TileObjectDB.OccupiesMoreThan1Tile(tileObject.tileObjectType)) {
+                        //added this checking for Demonic Structure Tile Objects, since they are technically located at the bottom left tile of where they are, but we want characters targeting them to
+                        //go to the center of the structure instead
+                        LocationGridTile tileLocationBasedOnWorldPosition = targetPOI.gridTileLocation.parentMap.GetTileFromWorldPos(targetPOI.worldPosition);
+                        targetTile = tileLocationBasedOnWorldPosition;
+                    } else {
+                        targetTile = targetPOI.gridTileLocation;
+                    }
+                    Assert.IsNotNull(targetTile);
+                    SetDestination(targetTile.GetPositionWithinTileThatIsOnAWalkableNode(), targetTile);
                 }
                 break;
         }
