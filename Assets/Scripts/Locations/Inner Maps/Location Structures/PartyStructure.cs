@@ -64,7 +64,7 @@ namespace Inner_Maps.Location_Structures {
             startingSummonCount = saveData.startingSummonCount;
         }
         #endregion
-
+        
         public void InitializeTeam() {
             m_isUndeployUserAction = false;
             if (!m_isInitialized) {
@@ -166,8 +166,8 @@ namespace Inner_Maps.Location_Structures {
 			}
         }
 
-        void OnTargetRemoved(IStoredTarget p_removedTarget) {
-            allPossibleTargets.Remove(p_removedTarget);
+        protected void OnTargetRemoved(IStoredTarget p_removedTarget) {
+            allPossibleTargets?.Remove(p_removedTarget);
             //partyData.deployedTargets.Remove(p_removedTarget);
 		}
 
