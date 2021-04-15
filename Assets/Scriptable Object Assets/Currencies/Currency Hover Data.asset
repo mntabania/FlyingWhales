@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24e0f46737cabdb4ca01ed938a5b6bd6, type: 3}
   m_Name: Currency Hover Data
   m_EditorClassIdentifier: 
-  minAmountHover: 1
-  maxAmountHover: 3
+  minAmountHover: 4
+  maxAmountHover: 5
   maxChaoticPerValues: c8000000900100005802000020030000e8030000dc050000d0070000
