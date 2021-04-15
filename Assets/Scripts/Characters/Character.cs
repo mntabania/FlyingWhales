@@ -157,7 +157,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Is this character a normal character?
     /// Characters that are not monsters or minions.
     /// </summary>
-    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction?.factionType.type != FACTION_TYPE.Undead;
+    public bool isNormalCharacter => (this is Summon) == false && minion == null && !characterClass.IsZombie(); //&& faction?.factionType.type != FACTION_TYPE.Undead; Removed this because we now want to consider the necromancer as a villager again. As per marvin, will test this to check if anything major will change.
     public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || isLycanthrope) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;

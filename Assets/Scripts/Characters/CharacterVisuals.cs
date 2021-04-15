@@ -279,10 +279,10 @@ public class CharacterVisuals {
         
     }
     public string GetCharacterStringIcon() {
-        if (!_owner.isNormalCharacter) {
-            if (_owner.characterClass.className == "Necromancer") {
-                return UtilityScripts.Utilities.UndeadIcon();        
-            } else if (_owner.minion != null || (_owner.faction != null && _owner.faction.isPlayerFaction)) {
+        if (_owner.characterClass.className == "Necromancer") {
+            return UtilityScripts.Utilities.UndeadIcon();        
+        } else if (!_owner.isNormalCharacter) {
+            if (_owner.minion != null || (_owner.faction != null && _owner.faction.isPlayerFaction)) {
                 return UtilityScripts.Utilities.DemonIcon();
             } else if (_owner.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return UtilityScripts.Utilities.UndeadIcon();
