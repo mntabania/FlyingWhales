@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class EditableValuesManager : MonoBehaviour {
 
@@ -88,7 +89,7 @@ public class EditableValuesManager : MonoBehaviour {
 	}
 
 	public int GetChaosOrbHoverAmount() {
-		return UnityEngine.Random.Range(currencyHoverData.minAmountHover, currencyHoverData.maxAmountHover);
+		return GameUtilities.RandomBetweenTwoNumbers(currencyHoverData.minAmountHover, currencyHoverData.maxAmountHover);
 	}
 
 	public int GetInitialMaxChaoticEnergy() {
