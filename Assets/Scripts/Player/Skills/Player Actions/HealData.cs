@@ -13,6 +13,7 @@
             int processedHeal = (int)(targetCharacter.maxHP * PlayerSkillManager.Instance.GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.HEAL) / 100f);
             targetCharacter.AdjustHP(processedHeal, ELEMENTAL_TYPE.Normal, showHPBar: true,
                 piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.HEAL));
+            Messenger.Broadcast(UISignals.UPDATE_CHARACTER_INFO, targetCharacter);
         }
         base.ActivateAbility(targetPOI);
     }

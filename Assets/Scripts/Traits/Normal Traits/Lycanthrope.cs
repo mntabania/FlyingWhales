@@ -8,6 +8,8 @@ namespace Traits {
     public class Lycanthrope : Trait {
         public Character owner { get; private set; }
 
+        private Collider2D[] _triggerFlawNearbyTargets;
+        
         #region getters
         public override bool isPersistent => true;
         #endregion
@@ -22,6 +24,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL };
+            _triggerFlawNearbyTargets = new Collider2D[50];
         }
 
         #region Overrides
@@ -161,7 +164,7 @@ namespace Traits {
         #endregion
 
         public override string TriggerFlaw(Character character) {
-            if (IsAlone()) {
+            if (IsAlone() || owner.lycanData.isMaster) {
                 if (!DoTriggerFlawTransform()) {
                     return "fail_no_target";
                 }
@@ -182,7 +185,8 @@ namespace Traits {
         }
 
         public void CheckIfAlone() {
-            if (IsAlone()) {
+            if (IsAlone() || owner.lycanData.isMaster) {
+                //if lycan is a master then immediately try to hunt for prey, rather than going to the wilderness
                 //alone
                 DoTriggerFlawTransform();
             } else {
@@ -220,33 +224,64 @@ namespace Traits {
         }
 
         private Character GetHuntPreyTarget() { 
-            string log = $"{GameManager.Instance.TodayLogString()} {owner.name} will try to get hunt prey target"; 
-            WeightedDictionary<Character> choices = new WeightedDictionary<Character>();
+            string log = $"{GameManager.Instance.TodayLogString()} {owner.name} will try to get hunt prey target";
             
+            WeightedDictionary<Character> choices = new WeightedDictionary<Character>();
             int animalCount = 0;
-            for (int i = 0; i < owner.currentRegion.charactersAtLocation.Count; i++) { 
-                Character otherCharacter = owner.currentRegion.charactersAtLocation[i]; 
-                if (otherCharacter != owner && !otherCharacter.isDead) { 
-                    int weight = 0; 
-                    if (otherCharacter is Animal) { 
-                        if (animalCount< 3) { 
-                            weight = 10; 
-                            animalCount++;    
-                        } else { 
-                            continue; //skip
-                        }
-                    } else if (otherCharacter.race.IsSapient()){ 
-                        if (otherCharacter.faction != owner.faction && !owner.isDead) { 
-                            if (!owner.relationshipContainer.IsFriendsWith(otherCharacter)) { 
-                                weight = 10;    
+            var size = Physics2D.OverlapCircleNonAlloc(owner.worldPosition, 20f, _triggerFlawNearbyTargets, GameUtilities.Filtered_Layer_Mask);
+            for (int i = 0; i < size; i++) {
+                Collider2D collider2D = _triggerFlawNearbyTargets[i];
+                POIVisionTrigger visionTrigger = collider2D.gameObject.GetComponent<POIVisionTrigger>();
+                if (visionTrigger != null && visionTrigger.poi is Character otherCharacter) {
+                    if (otherCharacter != owner && !otherCharacter.isDead) { 
+                        int weight = 0; 
+                        if (otherCharacter is Animal) { 
+                            if (animalCount< 3) { 
+                                weight = 10; 
+                                animalCount++;    
+                            } else { 
+                                continue; //skip
+                            }
+                        } else if (otherCharacter.race.IsSapient()){ 
+                            if (otherCharacter.faction != owner.faction && !owner.isDead) { 
+                                if (!owner.relationshipContainer.IsFriendsWith(otherCharacter)) { 
+                                    weight = 10;    
+                                }
                             }
                         }
-                    }
-                    if (weight > 0) { 
-                        choices.AddElement(otherCharacter, weight);
+                        if (weight > 0) { 
+                            choices.AddElement(otherCharacter, weight);
+                        }
                     }
                 }
             }
+            
+            
+            
+            // int animalCount = 0;
+            // for (int i = 0; i < owner.currentRegion.charactersAtLocation.Count; i++) { 
+            //     Character otherCharacter = owner.currentRegion.charactersAtLocation[i]; 
+            //     if (otherCharacter != owner && !otherCharacter.isDead) { 
+            //         int weight = 0; 
+            //         if (otherCharacter is Animal) { 
+            //             if (animalCount< 3) { 
+            //                 weight = 10; 
+            //                 animalCount++;    
+            //             } else { 
+            //                 continue; //skip
+            //             }
+            //         } else if (otherCharacter.race.IsSapient()){ 
+            //             if (otherCharacter.faction != owner.faction && !owner.isDead) { 
+            //                 if (!owner.relationshipContainer.IsFriendsWith(otherCharacter)) { 
+            //                     weight = 10;    
+            //                 }
+            //             }
+            //         }
+            //         if (weight > 0) { 
+            //             choices.AddElement(otherCharacter, weight);
+            //         }
+            //     }
+            // }
              
             log += $"\n{choices.GetWeightsSummary("Weights are:")}";
 		    if (choices.GetTotalOfWeights() > 0) {

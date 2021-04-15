@@ -71,6 +71,7 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(UISignals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Character>(UISignals.UPDATE_CHARACTER_INFO, CharacterRequestedForUpdate);
         
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
@@ -93,7 +94,12 @@ public class MonsterInfoUI : InfoUIBase {
             UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
-
+    private void CharacterRequestedForUpdate(Character p_character) {
+        if (isShowing && activeMonster == p_character) {
+            UpdateMonsterInfo();
+        }
+    }
+    
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
