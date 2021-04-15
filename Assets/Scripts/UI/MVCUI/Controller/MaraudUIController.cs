@@ -215,8 +215,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 					m_maraudUIView.HideMinionButtonShowMinionContainer();
 				} else {
 					for(int x = 0; x < m_deployedSummonsUI.Count; ++x) {
-						if (!m_deployedSummonsUI[x].gameObject.activeSelf) {
-							m_deployedSummonsUI[x].gameObject.SetActive(true);
+						if (!m_deployedSummonsUI[x].isDeployed) {
 							m_deployedSummonsUI[x].InitializeItem(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((eachMember as Summon).summonType));
 							m_deployedSummonsUI[x].ShowDeadIcon();
 							m_deployedSummonsUI[x].HideRemoveButton();
