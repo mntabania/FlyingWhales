@@ -37,6 +37,13 @@ public class PlagueComponent {
         Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
         Messenger.Broadcast(PlayerSignals.PLAGUE_POINTS_ADJUSTED, amount, _plaguePoints);
     }
+    public void AdjustPlaguePointsNoLimit(int amount) {
+        _plaguePoints += amount;
+        _plaguePoints = Mathf.Max(0, amount);
+
+        Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
+        Messenger.Broadcast(PlayerSignals.PLAGUE_POINTS_ADJUSTED, amount, _plaguePoints);
+    }
     public void GainPlaguePointFromCharacter(int amount, Character p_character) {
         return;//remove once blanacing is settled
         AdjustPlaguePoints(amount);

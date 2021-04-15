@@ -1298,8 +1298,8 @@ public class ConsoleBase : InfoUIBase {
         }
         string valueParameterStr = parameters[0];
         if (Int32.TryParse(valueParameterStr, out var value)) {
-            PlayerManager.Instance.player.AdjustMana(value);
-            AddSuccessMessage($"Adjusted mana by {value.ToString()}. New Mana is {PlayerManager.Instance.player.mana.ToString()}");
+            PlayerManager.Instance.player.AdjustManaNoLimit(value);
+            AddSuccessMessage($"Adjusted mana by {value}. New Mana is {PlayerManager.Instance.player.mana}");
         } else {
             AddErrorMessage($"Could not parse value {valueParameterStr} to an integer.");
         }
@@ -1313,8 +1313,8 @@ public class ConsoleBase : InfoUIBase {
         }
         string valueParameterStr = parameters[0];
         if (Int32.TryParse(valueParameterStr, out var value)) {
-            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(value);
-            AddSuccessMessage($"Adjusted Chaotic Energy by {value.ToString()}. New Chaotic Energy is {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}");
+            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePointsNoLimit(value);
+            AddSuccessMessage($"Adjusted Chaotic Energy by {value}. New Chaotic Energy is {PlayerManager.Instance.player.plagueComponent.plaguePoints}");
         } else {
             AddErrorMessage($"Could not parse value {valueParameterStr} to an integer.");
         }
