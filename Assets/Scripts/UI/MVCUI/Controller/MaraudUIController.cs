@@ -3,6 +3,8 @@ using Ruinarch.MVCFramework;
 using System.Collections.Generic;
 using UnityEngine;
 using Ruinarch;
+using Inner_Maps;
+
 public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	#region MVCUI
@@ -52,10 +54,13 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	private PartyStructure m_targetPartyStructure;
 	private bool m_isTeamDeployed;
 
+	private LocationGridTile m_chosenTile;
+
 	private void Start() {
 		UIManager.Instance.onMaraudClicked += OnMaraudClicked;
 		UIManager.Instance.onKennelClicked += OnKennelClicked;
 		UIManager.Instance.onTortureChamberClicked += OnTortureChambersClicked;
+		Messenger.AddListener<LocationGridTile>(PartySignals.PARTY_TILE_CHOSEN_FOR_SPAWNING, OnTileChosenForSpawning);
 	}
 
 	private void OnDestroy() {
@@ -358,15 +363,18 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 			return;
 		}
-		if (m_targetPartyStructure.partyData.readyForDeploySummonCount >= m_targetPartyStructure.startingSummonCount &&
-			m_targetPartyStructure.partyData.readyForDeployMinionCount >= 1) {
-			return;
-		}
+		
 		if (!p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeploySummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
+			if (m_targetPartyStructure.partyData.readyForDeploySummonCount >= m_targetPartyStructure.startingSummonCount) {
+				return;
+			}
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedSummonsUI, p_clickedMonster);
 			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
 		} else if (p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
+			if (m_targetPartyStructure.partyData.readyForDeployMinionCount >= 1) {
+				return;
+			}
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedMinionsUI, p_clickedMonster);
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
@@ -464,27 +472,31 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		ProcessButtonAvailability();
 	}
 
-	#region MaraudUIView implementation
-	public void OnDeployClicked() {
+	void OnTileChosenForSpawning(LocationGridTile p_chosenTile) {
 		if ((m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0 || m_targetPartyStructure.partyData.readyForDeployTargetCount <= 0) && !m_isTeamDeployed) {
 			return; //TODO: MESSAGE PLAYER THAT HE NEEDS LEADER
 		}
+		m_chosenTile = p_chosenTile;
 		if (!m_isTeamDeployed) {
 			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Deploy Party.", $"Are you sure you want to use {m_totalDeployCost.ToString()} mana and deploy the party?", OnYesDeploy, showCover: true, layer: 150);
-		} else {
-			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Disband Party.", $"Are you sure you want to disband the party?", OnYesUndeploy, showCover: true, layer: 150);
 		}
 	}
 
+	#region MaraudUIView implementation
+	public void OnDeployClicked() {
+		if (m_isTeamDeployed) {
+			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Disband Party.", $"Are you sure you want to disband the party?", OnYesUndeploy, showCover: true, layer: 150);
+		} else {
+			(PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.SPAWN_PARTY) as SpawnPartyData).Activate();
+			HideUI();
+		} 
+	}
+
 	void OnYesDeploy() {
-		LocationStructure structureToBePlaced = m_targetPartyStructure;
-		if (!structureToBePlaced.structureType.IsOpenSpace()) {
-			structureToBePlaced = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
-		}
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.obj.monsterType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement, bypassIdeologyChecking: true);
-				CharacterManager.Instance.PlaceSummonInitially(summon, structureToBePlaced.GetRandomPassableTile());
+				CharacterManager.Instance.PlaceSummonInitially(summon, m_chosenTile.GetRandomUnoccupiedNeighbor());
 				summon.OnSummonAsPlayerMonster();
 				summon.SetDeployedAtStructure(m_targetPartyStructure);
 				eachMonsterToBeDeployed.Deploy(summon);
@@ -495,7 +507,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (m_deployedMinionsUI[0].isReadyForDeploy && m_deployedMinionsUI[0].isMinion) {
 			SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(m_deployedMinionsUI[0].obj.minionType);
 			Character minion = null;
-			skillData.ActivateAbility(structureToBePlaced.GetRandomPassableTile(), ref minion);
+			skillData.ActivateAbility(m_chosenTile.GetRandomUnoccupiedNeighbor(), ref minion);
 			minion.SetDeployedAtStructure(m_targetPartyStructure);
 			m_deployedMinionsUI[0].Deploy(minion);
 			m_targetPartyStructure.AddDeployedItem(m_deployedMinionsUI[0]);
@@ -505,14 +517,15 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			m_deployedTargetItemUI[0].Deploy();
 			m_targetPartyStructure.AddTargetOnCurrentList(m_deployedTargetItemUI[0].target);
 		}
+		
 		m_targetPartyStructure.DeployParty();
 		m_isTeamDeployed = true;
 		m_maraudUIView.SetButtonDeployText("Undeploy");
 		PlayerManager.Instance.player.AdjustMana(m_totalDeployCost);
 		m_totalDeployCost = 0;
 		OnCloseClicked();
+		PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
 	}
-
 	void OnYesUndeploy() {
 		m_isTeamDeployed = false;
 		m_targetPartyStructure.ResetExistingCharges();
