@@ -37,7 +37,7 @@ MonoBehaviour:
   isAffliction: 0
   isLockedBaseOnRequirements: 0
   requirementData:
-    requirements: 
+    requirements: 08000000
     requiredArchetype: 0
     requiredSkills: 
     actionCount: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
-    portalLevel: 0
+    portalLevel: 10
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 01000000

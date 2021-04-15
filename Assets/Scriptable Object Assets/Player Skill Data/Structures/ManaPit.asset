@@ -27,7 +27,7 @@ MonoBehaviour:
   tooltipImage: {fileID: 0}
   unlockCost: 10
   tier: 1
-  baseLoadoutWeight: 50
+  baseLoadoutWeight: 2
   resistanceType: 0
   archetypeWeightedBonus: 0
   contextMenuIcon: {fileID: 0}
@@ -37,7 +37,7 @@ MonoBehaviour:
   isAffliction: 0
   isLockedBaseOnRequirements: 0
   requirementData:
-    requirements: 
+    requirements: 08000000
     requiredArchetype: 0
     requiredSkills: 
     actionCount: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
-    portalLevel: 0
+    portalLevel: 1
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 01000000

@@ -46,7 +46,7 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
-    portalLevel: 7
+    portalLevel: 10
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 01000000
