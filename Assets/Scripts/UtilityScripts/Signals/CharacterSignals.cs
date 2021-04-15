@@ -156,6 +156,7 @@
     public static string CHARACTER_TICK_ENDED = "OnCharacterTickEnded";
 
     public static string CHARACTER_INFO_REVEALED = "OnCharacterInfoRevealed";
+    public static string TOGGLE_CHARACTER_MARKER_NAMEPLATE = "OnToggleCharacterMarkerNameplate";
 
     #region used for chaotic energy generation
     public static string CHARACTER_PRAY_SUCCESS = "OnCharacterPraySuccess";

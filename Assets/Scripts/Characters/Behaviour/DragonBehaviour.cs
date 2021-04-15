@@ -17,7 +17,7 @@ public class DragonBehaviour : BaseMonsterBehaviour {
         if(character is Dragon dragon) {
             if (dragon.willLeaveWorld) {
                 log += $"\n-Will leave world";
-                if (dragon.gridTileLocation.IsAtEdgeOfMap()) {
+                if (dragon.gridTileLocation.IsAtEdgeOfWalkableMap()) {
                     Region currentRegion = dragon.currentRegion;
                     dragon.SetDestroyMarkerOnDeath(true);
                     dragon.SetShowNotificationOnDeath(false);

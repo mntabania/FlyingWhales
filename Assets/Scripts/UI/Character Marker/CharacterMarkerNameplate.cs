@@ -60,7 +60,7 @@ public class CharacterMarkerNameplate : PooledObject {
     }
     private void OnLocationMapOpened(Region location) {
         if (location == _parentMarker.character.currentRegion) {
-            SetGameObjectActiveState(true);
+            UpdateActiveState();
         }        
     }
     private void OnCharacterExitedRegion(Character character, Region region) {
@@ -70,7 +70,7 @@ public class CharacterMarkerNameplate : PooledObject {
     }
     private void OnCharacterEnteredRegion(Character character, Region region) {
         if (character == _parentMarker.character && InnerMapManager.Instance.currentlyShowingLocation == region) {
-            SetGameObjectActiveState(true);
+            UpdateActiveState();
         }
     }
     #endregion
@@ -119,7 +119,7 @@ public class CharacterMarkerNameplate : PooledObject {
 
     #region Utilities
     public void UpdateActiveState() {
-        SetGameObjectActiveState(InnerMapManager.Instance.currentlyShowingLocation == _parentMarker.character.currentRegion);
+        SetGameObjectActiveState(CharacterManager.Instance.toggleCharacterMarkerNameplate);
     }
     /// <summary>
     /// Set the active state of this game object.

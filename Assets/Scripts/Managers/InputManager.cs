@@ -52,6 +52,7 @@ namespace Ruinarch {
             {KeyCode.Alpha3, true},
             {KeyCode.Tab, true},
             {KeyCode.R, true},
+            {KeyCode.LeftAlt, true},
         };
         
         #region Monobehaviours
@@ -152,6 +153,11 @@ namespace Ruinarch {
                 if (!CanUseHotkey(KeyCode.R)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.R);
+            } else if (Input.GetKeyDown(KeyCode.LeftAlt)) {
+                if (!CanUseHotkey(KeyCode.LeftAlt)) return;
+                if (GameManager.Instance != null && GameManager.Instance.gameHasStarted) {
+                    CharacterManager.Instance.ToggleCharacterMarkerNameplate();
+                }
             }
         }
         private void BroadcastHotkeyPress(string buttonToActivate, KeyCode p_keyCode) {

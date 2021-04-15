@@ -216,7 +216,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PlaceMarkerAt(tile);
         pathfindingAI.UpdateMe();
         character.movementComponent.UpdateSpeed();
-        _nameplate.UpdateActiveState();
     }
     /// <summary>
     /// Used for placing the character for the first time after being loaded from
@@ -282,6 +281,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
         //removed by aaron for awareness update tile.structure.region.AddPendingAwareness(character);
         character.reactionComponent.UpdateHiddenState();
+        if (_nameplate) {
+            _nameplate.UpdateActiveState();
+        }
     }
     #endregion
     
@@ -390,6 +392,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.AddListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<bool>(CharacterSignals.TOGGLE_CHARACTER_MARKER_NAMEPLATE, OnToggleCharacterMarkerNameplate);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -403,6 +406,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.RemoveListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.RemoveListener<bool>(CharacterSignals.TOGGLE_CHARACTER_MARKER_NAMEPLATE, OnToggleCharacterMarkerNameplate);
     }
     private void OnCharacterChangedName(Character p_character) {
         if (p_character == character) {
@@ -451,6 +455,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 RemovePOIFromInVisionRange(carriedCharacter);
                 RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
             }
+        }
+    }
+    private void OnToggleCharacterMarkerNameplate(bool state) {
+        if (_nameplate) {
+            _nameplate.UpdateActiveState();
         }
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
@@ -1046,10 +1055,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         colorHighlight.sortingOrder = characterSortingOrder - 1;
         additionalEffectsImg.sortingOrder = characterSortingOrder + 2;
         bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;
-        hpBarGO.GetComponent<Canvas>().sortingOrder = characterSortingOrder;
+        hpBarGO.GetComponent<Canvas>().sortingOrder = characterSortingOrder - 100;
     }
     private new void SetActiveState(bool state) {
-        Debug.Log($"Set active state of {this.name} to {state.ToString()}");
+        Debug.Log($"Set active state of {this.name} to {state}");
         this.gameObject.SetActive(state);
     }
     /// <summary>
