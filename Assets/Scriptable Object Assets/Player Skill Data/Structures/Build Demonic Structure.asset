@@ -21,6 +21,7 @@ MonoBehaviour:
   expCost: 0
   cheatedLevel: 0
   pierce: 0
+  bonusChargeWhenUnlocked: 0
   buttonSprite: {fileID: 0}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
@@ -45,10 +46,11 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
+    portalLevel: 0
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 
+    manacostPerLevel: c8000000
     chargesPerLevel: 
     bonuses: 
     additionalDamagePerLevel: 
