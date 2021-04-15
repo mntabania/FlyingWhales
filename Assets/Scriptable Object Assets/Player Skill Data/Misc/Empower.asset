@@ -61,7 +61,7 @@ MonoBehaviour:
     - 150
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel:
-    - 0
+    - 25
     - 50
     - 75
     - 100

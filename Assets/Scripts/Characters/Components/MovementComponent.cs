@@ -206,6 +206,11 @@ public class MovementComponent : CharacterComponent {
             AvoidAllFactions();
         }
     }
+    public void OnChangeFactionTo(Faction newFaction) {
+        if (newFaction != null) {
+            DoNotAvoidFaction(newFaction);
+        }
+    }
     #endregion
 
     #region Go To
@@ -625,6 +630,16 @@ public class MovementComponent : CharacterComponent {
     }
     #endregion
 
+    #region Combat Repositioning
+    public bool IsCurrentGridNodeOccupiedByOtherNonRepositioningActiveCharacter() {
+        LocationGridTile currentGridTile = owner.gridTileLocation;
+        if (currentGridTile != null) {
+            return currentGridTile.IsGridNodeOccupiedByNonRepositioningActiveCharacterOtherThan(owner);
+        }
+        return false;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
         if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {
@@ -638,12 +653,6 @@ public class MovementComponent : CharacterComponent {
 
     }
     #endregion
-
-    public void OnChangeFactionTo(Faction newFaction) {
-        if (newFaction != null) {
-            DoNotAvoidFaction(newFaction);    
-        }
-    }
 }
 
 [System.Serializable]
