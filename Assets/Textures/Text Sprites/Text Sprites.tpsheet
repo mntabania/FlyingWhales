@@ -4,49 +4,49 @@
 # To import these sprites into your Unity project, download "TexturePackerImporter":
 # https://www.codeandweb.com/texturepacker/unity
 #
-# $TexturePacker:SmartUpdate:f754e529b181cde5746fb2dcf96a1668:d1631eb0ee159796649afbcd18dcb1a4:387286bc19ce74d65ce714355787f0d4$
+# $TexturePacker:SmartUpdate:d2942946bca10342b44f14a2d685abfc:d1631eb0ee159796649afbcd18dcb1a4:387286bc19ce74d65ce714355787f0d4$
 #
 :format=40300
 :texture=Text Sprites.png
-:size=128x256
+:size=256x256
 :normalmap=Text Sprites_n.png
 :pivotpoints=enabled
 :borders=disabled
 :alphahandling=KeepTransparentPixels
 
-bonus_charges_icon;0;9;21;31; 0.5;0.5; 0;0;0;0
-element_earth_icon;0;186;32;32; 0.5;0.5; 0;0;0;0
-element_electric_icon;32;160;32;32; 0.5;0.5; 0;0;0;0
-element_fire_icon;0;154;32;32; 0.5;0.5; 0;0;0;0
-element_ice_icon;64;160;32;32; 0.5;0.5; 0;0;0;0
-element_normal_icon;96;150;32;32; 0.5;0.5; 0;0;0;0
-element_poison_icon;32;128;32;32; 0.5;0.5; 0;0;0;0
-element_water_icon;0;122;32;32; 0.5;0.5; 0;0;0;0
-element_wind_icon;64;128;32;32; 0.5;0.5; 0;0;0;0
-icon_chargesB;21;9;21;31; 0.5;0.5; 0;0;0;0
-icon_cooldown;42;16;23;26; 0.5;0.5; 0;0;0;0
-icon_cultist;102;206;24;24; 0.5;0.5; 0;0;0;0
-icon_demon;102;182;24;24; 0.5;0.5; 0;0;0;0
-icon_ideology;110;74;17;14; 0.5;0.5; 0;0;0;0
-icon_leader;89;18;24;22; 0.5;0.5; 0;0;0;0
-icon_mana;102;230;26;26; 0.5;0.5; 0;0;0;0
-icon_monster;62;72;24;24; 0.5;0.5; 0;0;0;0
-icon_object;86;64;24;24; 0.5;0.5; 0;0;0;0
-icon_plague;0;218;38;38; 0.5;0.5; 0;0;0;0
-icon_ratvillager;62;48;24;24; 0.5;0.5; 0;0;0;0
-icon_structure;28;42;24;24; 0.5;0.5; 0;0;0;0
-icon_threat;0;64;28;26; 0.5;0.5; 0;0;0;0
-icon_undead;0;40;24;24; 0.5;0.5; 0;0;0;0
-icon_village;86;40;24;24; 0.5;0.5; 0;0;0;0
-icon_villager;65;16;24;24; 0.5;0.5; 0;0;0;0
-Key_A;38;224;32;32; 0.5;0.5; 0;0;0;0
-Key_D;70;224;32;32; 0.5;0.5; 0;0;0;0
-Key_S;38;192;32;32; 0.5;0.5; 0;0;0;0
-Key_W;70;192;32;32; 0.5;0.5; 0;0;0;0
-piercing_icon;96;88;30;30; 0.5;0.5; 0;0;0;0
-resistance_icon;32;66;30;30; 0.5;0.5; 0;0;0;0
-spirit_energy_icon;96;118;32;32; 0.5;0.5; 0;0;0;0
-stats_attack_icon;32;96;32;32; 0.5;0.5; 0;0;0;0
-stats_health_icon;0;90;32;32; 0.5;0.5; 0;0;0;0
-stats_speed_icon;64;96;32;32; 0.5;0.5; 0;0;0;0
-upgrade_arrow_icon;110;64;15;10; 0.5;0.5; 0;0;0;0
+bonus_charges_icon;139;90;21;31; 0.5;0.5; 0;0;0;0
+element_earth_icon;3;25;32;32; 0.5;0.5; 0;0;0;0
+element_electric_icon;41;177;32;32; 0.5;0.5; 0;0;0;0
+element_fire_icon;47;221;32;32; 0.5;0.5; 0;0;0;0
+element_ice_icon;41;139;32;32; 0.5;0.5; 0;0;0;0
+element_normal_icon;41;101;32;32; 0.5;0.5; 0;0;0;0
+element_poison_icon;41;63;32;32; 0.5;0.5; 0;0;0;0
+element_water_icon;41;25;32;32; 0.5;0.5; 0;0;0;0
+element_wind_icon;85;221;32;32; 0.5;0.5; 0;0;0;0
+icon_chargesB;109;88;21;31; 0.5;0.5; 0;0;0;0
+icon_cooldown;169;97;23;26; 0.5;0.5; 0;0;0;0
+icon_cultist;189;159;24;24; 0.5;0.5; 0;0;0;0
+icon_demon;219;159;24;24; 0.5;0.5; 0;0;0;0
+icon_ideology;3;5;17;14; 0.5;0.5; 0;0;0;0
+icon_leader;139;127;24;22; 0.5;0.5; 0;0;0;0
+icon_mana;223;189;26;26; 0.5;0.5; 0;0;0;0
+icon_monster;117;155;24;24; 0.5;0.5; 0;0;0;0
+icon_object;79;153;24;24; 0.5;0.5; 0;0;0;0
+icon_plague;3;215;38;38; 0.5;0.5; 0;0;0;0
+icon_ratvillager;147;155;24;24; 0.5;0.5; 0;0;0;0
+icon_structure;177;129;24;24; 0.5;0.5; 0;0;0;0
+icon_threat;189;189;28;26; 0.5;0.5; 0;0;0;0
+icon_undead;207;129;24;24; 0.5;0.5; 0;0;0;0
+icon_village;109;125;24;24; 0.5;0.5; 0;0;0;0
+icon_villager;79;123;24;24; 0.5;0.5; 0;0;0;0
+Key_A;3;177;32;32; 0.5;0.5; 0;0;0;0
+Key_D;3;139;32;32; 0.5;0.5; 0;0;0;0
+Key_S;3;101;32;32; 0.5;0.5; 0;0;0;0
+Key_W;3;63;32;32; 0.5;0.5; 0;0;0;0
+piercing_icon;117;185;30;30; 0.5;0.5; 0;0;0;0
+resistance_icon;153;185;30;30; 0.5;0.5; 0;0;0;0
+spirit_energy_icon;123;221;32;32; 0.5;0.5; 0;0;0;0
+stats_attack_icon;161;221;32;32; 0.5;0.5; 0;0;0;0
+stats_health_icon;199;221;32;32; 0.5;0.5; 0;0;0;0
+stats_speed_icon;79;183;32;32; 0.5;0.5; 0;0;0;0
+upgrade_arrow_icon;26;9;15;10; 0.5;0.5; 0;0;0;0

@@ -161,6 +161,7 @@ public class PlayerSkillComponent {
     }
     private void OnRerollCooldownFinished() {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "UI", "PortalUI", "reroll_available", null, LOG_TAG.Major);
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
     public void PlayerStartedPortalUpgrade(Cost[] p_upgradeCost, PortalUpgradeTier p_upgradeTier) {

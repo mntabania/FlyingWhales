@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 4b18ba5513d55364284cd64228896343, type: 3}
-    totalSpriteSurfaceArea: 10385735
+    totalSpriteSurfaceArea: 10578224
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -74,6 +74,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b936612ad53a0ce45a8c628ef99de996, type: 3}
   - {fileID: 21300000, guid: ef581cca56aaa3544add2b31eba6cba9, type: 3}
   - {fileID: 21300000, guid: 7014c75b779e87d43b6a3125ddbdce34, type: 3}
+  - {fileID: 21300000, guid: c754473c2eee1ab49b75485827ea75ac, type: 3}
   - {fileID: 21300000, guid: dbe0987dc8cc34441938f371b77893c1, type: 3}
   - {fileID: 21300000, guid: 0433fbfd2f7080943a094b3ca558c0f2, type: 3}
   - {fileID: 21300000, guid: d04c9c0e3be0b6741b590b976005a3b8, type: 3}
@@ -86,7 +87,7 @@ SpriteAtlas:
   - demonic_structure_popup_container
   - maraud_second_column
   - world_options_bg
-  - maraud_defense_point_container (1)
+  - maraud_container
   - skill_details_tooltip_container
   - actions_list_container
   - Tabs Container
@@ -97,7 +98,7 @@ SpriteAtlas:
   - intel_container
   - loadout_panel
   - unlockContainer_white_border
-  - maraud_defense_point_container
+  - maraud_container_old
   - scheme_container
   - minion_info_tooltip_container
   - corrupt_rile_up_container
@@ -109,6 +110,7 @@ SpriteAtlas:
   - world_options_empty_container
   - spell_list_container
   - minion_selector_menu
+  - prism_container
   - share_intel_container
   - subtab_container_charging
   - faction_overview_container

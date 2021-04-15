@@ -646,7 +646,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //    }
         //}
 
-        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
+        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait(vigilantCancellingTraits) == false && !target.isDead) {
             //trigger vigilant, only if character is NOT resting or unconscious
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this, LOG_TAG.Social);
             action.AddFillersToLog(log, this);
