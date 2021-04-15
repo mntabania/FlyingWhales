@@ -36,7 +36,7 @@ public class ManaRegenComponent
 
     void OnHourStared() {
         if (m_player.mana < EditableValuesManager.Instance.maximumMana) {
-            m_player.AdjustMana(40 + (10 * m_manaPitCount));
+            m_player.AdjustMana(100 + (20 * m_manaPitCount));
         }
     }
     #endregion
