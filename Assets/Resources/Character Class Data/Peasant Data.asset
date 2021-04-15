@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatBehaviourType: 0
   combatSpecialSkillType: 0
-  summonCost: 0
+  summonCost: 50
+  portraitSprite: {fileID: 0}
   defaultSprites:
     stillSprite: {fileID: 0}
     animationSprites: []

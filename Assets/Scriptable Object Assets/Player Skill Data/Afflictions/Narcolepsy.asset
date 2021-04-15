@@ -50,7 +50,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 7c0100009e020000c0030000
-    manacostPerLevel: fe010000fe010000fe010000fe010000
+    manacostPerLevel: 64000000fe010000fe010000fe010000
     chargesPerLevel: 01000000010000000200000002000000
     bonuses: 0e0000000100000009000000
     additionalDamagePerLevel: 
