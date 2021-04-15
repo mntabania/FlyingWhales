@@ -647,7 +647,6 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             targetCamp = null;
             targetDestination = null;
             SetHasChangedTargetDestination(false);
-            deadMembers.Clear();
 
             if (prevQuest.isSuccessful) {
                 Messenger.Broadcast(PartySignals.PARTY_QUEST_FINISHED_SUCCESSFULLY, this);
@@ -1222,6 +1221,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         perHourElapsedInWaiting = 0;
         bookmarkEventDispatcher.ClearAll();
         members.Clear();
+        deadMembers.Clear();
         onQuestFailed = null;
         onQuestSucceed = null;
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
