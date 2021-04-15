@@ -1064,6 +1064,14 @@ namespace Inner_Maps.Location_Structures {
                     tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
                 }
             }
+            //transfer characters here to wilderness
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                RemoveCharacterAtLocation(character);
+                character.gridTileLocation?.structure.AddCharacterAtLocation(character);
+            }
+            charactersHere.Clear();
+            
             if (rooms != null) {
                 for (int i = 0; i < rooms.Length; i++) {
                     StructureRoom room = rooms[i];

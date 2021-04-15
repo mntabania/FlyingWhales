@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
@@ -516,6 +517,12 @@ public class SaveDataNotification {
 
     public void Save(PlayerNotificationItem notif) {
         logID = notif.logPersistentID;
+        
+        Log log = DatabaseManager.Instance.mainSQLDatabase.GetLogWithPersistentID(logID);
+        if (log == null) {
+            Debug.LogError($"Log with id {logID} is not present in database. Log is {notif.currentTextDisplayed}");
+            return;
+        }
         // logID = notif.shownLog.persistentID;
         // tickShown = notif.tickShown;
         // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog);

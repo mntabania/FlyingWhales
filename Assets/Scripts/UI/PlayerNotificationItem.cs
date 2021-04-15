@@ -31,6 +31,11 @@ public class PlayerNotificationItem : PooledObject {
 
     private Action<PlayerNotificationItem> onDestroyAction;
     private bool _adjustHeightOnEnable;
+
+    #region getters
+    public string currentTextDisplayed => $"{dateLbl.text} - {logLbl.text}";
+    #endregion
+    
     private void Awake() {
         _logEventLbl.SetOnRightClickAction(OnRightClickLog);
     }
