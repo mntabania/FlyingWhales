@@ -16,4 +16,5 @@
     public static string PARTY_QUEST_FAILED = "PartyQuestFailed";
 
     public static string PARTY_RAID_DAMAGE_CHAOS_ORB = "PartyRaidDamageChaosOrb";
+    public static string PARTY_TILE_CHOSEN_FOR_SPAWNING = "PartyTileChosenForSpawning";
 }
