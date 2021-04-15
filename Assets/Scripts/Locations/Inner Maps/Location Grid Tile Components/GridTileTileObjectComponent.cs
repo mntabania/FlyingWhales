@@ -244,6 +244,9 @@ namespace Inner_Maps {
                     } else if (poi is Character character) {
                         character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
+                        if (!character.isAlliedWithPlayer) {
+                            Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, character);
+                        }
                         if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
                             //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
@@ -281,6 +284,9 @@ namespace Inner_Maps {
                     duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP, 0);
                 }
             } else {
+                if (!triggeredBy.isAlliedWithPlayer) {
+                    Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
+                }
                 duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
             }
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
@@ -315,6 +321,9 @@ namespace Inner_Maps {
             //int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
             int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
+            if (!triggeredBy.isAlliedWithPlayer) {
+                Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
+            }
         }
         #endregion
 

@@ -61,4 +61,6 @@
 
     public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
     public static string BONUS_CHARGES_ADJUSTED = "OnBonusChargesAdjusted";
+
+    public static string ON_TRAP_ACTIVATED_ON_VILLAGER = "OnTrapAvtivatedOnVillager";
 }

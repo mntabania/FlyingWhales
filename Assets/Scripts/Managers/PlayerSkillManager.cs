@@ -137,7 +137,7 @@ public class PlayerSkillManager : MonoBehaviour {
     [NonSerialized]
     public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Prayer_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb, PASSIVE_SKILL.Spell_Damage_Chaos_Orb, PASSIVE_SKILL.Mental_Break_Chaos_Orb,
         PASSIVE_SKILL.Plague_Chaos_Orb, PASSIVE_SKILL.Player_Success_Raid_Chaos_Orb, PASSIVE_SKILL.Dark_Ritual_Chaos_Orb, PASSIVE_SKILL.Raid_Chaos_Orb, PASSIVE_SKILL.Night_Creature_Chaos_Orb,
-        PASSIVE_SKILL.Meddler_Chaos_Orb, PASSIVE_SKILL.Trigger_Flaw_Chaos_Orb, PASSIVE_SKILL.Lycanthrope_Chaos_Orb,
+        PASSIVE_SKILL.Meddler_Chaos_Orb, PASSIVE_SKILL.Trigger_Flaw_Chaos_Orb, PASSIVE_SKILL.Lycanthrope_Chaos_Orb, PASSIVE_SKILL.Trap_Chaos_Orb,
     };
     
     private void Awake() {

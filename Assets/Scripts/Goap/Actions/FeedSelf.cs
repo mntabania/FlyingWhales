@@ -130,7 +130,7 @@ public class FeedSelf : GoapAction {
         if (goapNode.poiTarget is Character targetCharacter) {
             Character actor = goapNode.actor;
 
-            targetCharacter.needsComponent.AdjustFullness(34f);
+            targetCharacter.needsComponent.AdjustFullness(20f);
         }
     }
     public void AfterFeedSuccess(ActualGoapNode goapNode) {

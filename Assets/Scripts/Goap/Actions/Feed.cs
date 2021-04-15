@@ -142,7 +142,7 @@ public class Feed : GoapAction {
             if (uniqueData.usedPoisonedFood) {
                 targetCharacter.AdjustHP(-100, ELEMENTAL_TYPE.Normal, triggerDeath: true);  
             }
-            targetCharacter.needsComponent.AdjustFullness(3.5f);
+            targetCharacter.needsComponent.AdjustFullness(5f);
             targetCharacter.AdjustResource(RESOURCE.FOOD, -1);
         }
         

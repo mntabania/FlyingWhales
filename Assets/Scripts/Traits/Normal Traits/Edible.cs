@@ -34,7 +34,7 @@ namespace Traits {
         public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
-                goapNode.actor.needsComponent.AdjustFullness(3.5f);
+                goapNode.actor.needsComponent.AdjustFullness(5f);
                 //goapNode.actor.needsComponent.AdjustStamina(2f);
                 if(owner is Table) {
                     goapNode.actor.needsComponent.AdjustHappiness(0.83f);

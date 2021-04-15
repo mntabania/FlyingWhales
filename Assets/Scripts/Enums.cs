@@ -1127,7 +1127,7 @@ public enum OBJECT_TYPE {
     Reaction_Quest = 24, Plague_Disease = 25
 }
 public enum PASSIVE_SKILL {
-    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb, Dark_Ritual_Chaos_Orb, Raid_Chaos_Orb, Night_Creature_Chaos_Orb, 
+    None, Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen, Prayer_Chaos_Orb, Spell_Damage_Chaos_Orb, Mental_Break_Chaos_Orb, Plague_Chaos_Orb, Player_Success_Raid_Chaos_Orb, Dark_Ritual_Chaos_Orb, Raid_Chaos_Orb, Night_Creature_Chaos_Orb, Trap_Chaos_Orb,
     Meddler_Chaos_Orb, Trigger_Flaw_Chaos_Orb, Lycanthrope_Chaos_Orb,
 }
 public enum LOG_TAG {

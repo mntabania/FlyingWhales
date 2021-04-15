@@ -356,7 +356,7 @@ public class DrinkBlood : GoapAction {
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
 
-        actor.needsComponent.AdjustFullness(7.5f);
+        actor.needsComponent.AdjustFullness(20f);
         actor.needsComponent.AdjustHappiness(20f);
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {

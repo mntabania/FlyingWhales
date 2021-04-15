@@ -61,7 +61,7 @@
         }
     }
     public void PerTickEatSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustFullness(8.5f);
+        goapNode.actor.needsComponent.AdjustFullness(10f);
     }
     public void AfterEatSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
