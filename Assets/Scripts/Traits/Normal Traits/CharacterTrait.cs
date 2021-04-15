@@ -181,17 +181,37 @@ namespace Traits {
                         }
                     }
                 } else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
+                    bool wasReportJobCreated = false;
                     if (characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
                         characterThatWillDoJob.homeSettlement != null && characterThatWillDoJob.necromancerTrait == null && characterThatWillDoJob.race.IsSapient() && 
                         characterThatWillDoJob.hasMarker && characterThatWillDoJob.carryComponent.IsNotBeingCarried() && !characterThatWillDoJob.isAlliedWithPlayer && 
                         (!characterThatWillDoJob.partyComponent.hasParty || !characterThatWillDoJob.partyComponent.currentParty.isActive || 
                          (characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && 
-                          characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) && 
+                          !(characterThatWillDoJob.partyComponent.currentParty.currentQuest is IRescuePartyQuest))) && 
                         (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
                         if (characterThatWillDoJob.faction != null && characterThatWillDoJob.faction.isMajorNonPlayer && 
                             !characterThatWillDoJob.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && 
                             !characterThatWillDoJob.faction.HasActiveReportDemonicStructureJob(demonicStructure)) {
-                            characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
+                            wasReportJobCreated = characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
+                        }
+                    }
+                    
+                    if (!wasReportJobCreated && characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
+                        (!characterThatWillDoJob.partyComponent.hasParty || !characterThatWillDoJob.partyComponent.currentParty.isActive || 
+                         (characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && 
+                          !(characterThatWillDoJob.partyComponent.currentParty.currentQuest is IRescuePartyQuest) && 
+                          characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) && 
+                        !characterThatWillDoJob.isAlliedWithPlayer && 
+                        characterThatWillDoJob.necromancerTrait == null && 
+                        !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
+                        if (!characterThatWillDoJob.movementComponent.hasMovedOnCorruption) {
+                            if (characterThatWillDoJob.isNormalCharacter) {
+                                //Instead of fleeing when characterThatWillDoJob steps on a corrupted tile, trigger Shocked interrupt only
+                                //The reason for this is to eliminate the bug wherein the characterThatWillDoJob will flee from the corrupted tile, then after fleeing, he will again move across it, thus triggering flee again, which results in unending loop of fleeing and moving
+                                //So to eliminate this behaviour we will not let the characterThatWillDoJob flee, but will trigger Shocked interrupt only and then go on with his job/action
+                                //https://trello.com/c/yiW344Sb/2499-villagers-fleeing-from-demonic-area-can-get-stuck-repeating-it
+                                characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, characterThatWillDoJob, reason: $"saw {demonicStructure.name}");
+                            }    
                         }
                     }
                 }
