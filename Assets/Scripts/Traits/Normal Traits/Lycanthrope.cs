@@ -4,6 +4,8 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
+using Locations.Settlements;
+
 namespace Traits {
     public class Lycanthrope : Trait {
         public Character owner { get; private set; }
@@ -161,62 +163,58 @@ namespace Traits {
         #endregion
 
         public override string TriggerFlaw(Character character) {
-            if (IsAlone()) {
-                if (!DoTriggerFlawTransform()) {
-                    return "fail_no_target";
-                }
-            } else {
-                if (CanDoTriggerFlaw()) {
-                    //go to a random tile in the wilderness
-                    //then check if the character is alone, if not pick another random tile,
-                    //repeat the process until alone, then transform to wolf
-                    LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                    //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
-                    //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                    character.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new OtherData[] { new LocationStructureOtherData(wilderness),  });    
-                } else {
-                    return "fail_no_target";
-                }
+            if (!TryDoLycanBehaviour()) {
+                return "fail_no_target";
             }
             return base.TriggerFlaw(character);
         }
 
         public void CheckIfAlone() {
-            if (IsAlone()) {
-                //alone
-                DoTriggerFlawTransform();
+            TryDoLycanBehaviour();
+        }
+        private bool TryDoLycanBehaviour() {
+            if (owner.lycanData.isMaster) {
+                return TryMasterLycanHuntPrey();
             } else {
-                //go to a different tile
-                LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
-                //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                owner.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, new OtherData[] { new LocationStructureOtherData(wilderness) });
+                if (IsAlone()) {
+                    DoTriggerFlawTransform();
+                } else {
+                    GoOutsideForStealthTransform();
+                }
+                return true;
             }
         }
         private bool IsAlone() {
             return !owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf);
             // return owner.marker.inVisionCharacters.Count == 0;
         }
-        private bool DoTriggerFlawTransform() {
-            if (owner.lycanData.isMaster) {
-                Character huntPreyTarget = GetHuntPreyTarget();
-                if (huntPreyTarget != null) {
-                    owner.jobQueue.CancelAllJobs();
-                    return owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
-                }
-                return false;
-            } else {
-                owner.lycanData.Transform(owner);
-                return true;
-            }
+        private void DoTriggerFlawTransform() {
+            owner.lycanData.Transform(owner);
         }
-        private bool CanDoTriggerFlaw() {
-            if (owner.lycanData.isMaster) {
-                Character huntPreyTarget = GetHuntPreyTarget();
-                return huntPreyTarget != null;
+        private void GoOutsideForStealthTransform() {
+            //go to a random tile outside settlement or surrounding areas
+            //then check if the character is alone, if not pick another random tile,
+            //repeat the process until alone, then transform to wolf
+            OtherData[] otherData = null;
+            BaseSettlement currentSettlement = owner.currentSettlement;
+            if (currentSettlement != null && currentSettlement.locationType == LOCATION_TYPE.VILLAGE) {
+                otherData = new OtherData[] { new SettlementOtherData(currentSettlement) };
             } else {
-                return true;
+                Area chosenArea = owner.areaLocation.neighbourComponent.GetRandomAdjacentNoSettlementHextileWithinRegion();
+                if (chosenArea == null) {
+                    chosenArea = owner.areaLocation;
+                }
+                otherData = new OtherData[] { new AreaOtherData(chosenArea) };
             }
+            owner.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, otherData);
+        }
+        private bool TryMasterLycanHuntPrey() {
+            Character huntPreyTarget = GetHuntPreyTarget();
+            if (huntPreyTarget != null) {
+                owner.jobQueue.CancelAllJobs();
+                return owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
+            }
+            return false;
         }
 
         private Character GetHuntPreyTarget() { 
