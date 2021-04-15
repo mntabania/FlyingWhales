@@ -64,6 +64,7 @@ MonoBehaviour:
   _chaosOrbExpulsionThreshold: 300
   _sortingOrdersInBetweenHexTileRows: 20
   currencyHoverData: {fileID: 11400000, guid: 4554e545483287347a940b31691f1945, type: 2}
+  _initialChaoticEnergy: 50
   vaporStacks: 5
   poisonCloudStacks: 1
   frostyFogStacks: 5

@@ -244,7 +244,7 @@ namespace Inner_Maps {
                     } else if (poi is Character character) {
                         character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-                        if (!character.isAlliedWithPlayer) {
+                        if (character.isNormalAndNotAlliedWithPlayer) {
                             Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, character);
                         }
                         if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
@@ -284,7 +284,7 @@ namespace Inner_Maps {
                     duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP, 0);
                 }
             } else {
-                if (!triggeredBy.isAlliedWithPlayer) {
+                if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
                     Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
                 }
                 duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
@@ -321,7 +321,7 @@ namespace Inner_Maps {
             //int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
             int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
-            if (!triggeredBy.isAlliedWithPlayer) {
+            if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
                 Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
             }
         }

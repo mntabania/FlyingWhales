@@ -11,8 +11,8 @@ public class PlagueComponent {
     #endregion
 
     public PlagueComponent() {
-        _plaguePoints = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(1);
-        maxPlaguePoints = EditableValuesManager.Instance.GetInitialMaxChaoticEnergy();
+        _plaguePoints = EditableValuesManager.Instance.GetInitialChaoticEnergy();
+        maxPlaguePoints = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(1);
         Messenger.AddListener<int>(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }
     public PlagueComponent(SaveDataPlagueComponent p_component) {

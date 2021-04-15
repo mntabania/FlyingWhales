@@ -98,7 +98,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InstantiateUI();
 		InitializeSummons();
 		InitializeDeployedItems();
-		m_defensePointUIView.SetTitle("Defense Point");
+		m_defensePointUIView.SetTitle("Prism");
 		ProcessDeployButtonDisplay();
 		InputManager.Instance.SetAllHotkeysEnabledState(false);
 		InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);

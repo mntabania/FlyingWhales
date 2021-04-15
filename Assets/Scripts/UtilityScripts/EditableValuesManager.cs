@@ -45,6 +45,8 @@ public class EditableValuesManager : MonoBehaviour {
 	[Header("Currency Hover Values")]
 	[SerializeField] private CurrencyHoverData currencyHoverData;
 
+	[Header("Chaotic Energy")]
+	[SerializeField] private int _initialChaoticEnergy;
 
 	public int vaporStacks;
 	public int poisonCloudStacks;
@@ -89,8 +91,12 @@ public class EditableValuesManager : MonoBehaviour {
 		return UnityEngine.Random.Range(currencyHoverData.minAmountHover, currencyHoverData.maxAmountHover);
 	}
 
-	public int GetInitialMaxChaoticEnergy() { 
+	public int GetInitialMaxChaoticEnergy() {
 		return currencyHoverData.maxChaoticPerValues[0];
+	}
+
+	public int GetInitialChaoticEnergy() {
+		return _initialChaoticEnergy;
 	}
 
 	public int GetMaxChaoticEnergyPerPortalLevel(int p_portalLevel) {
