@@ -593,14 +593,14 @@ public class CharacterManager : BaseMonoBehaviour {
         saveCharacter.Save(character);
         return saveCharacter;
     }
-    public void AddNewCharacter(Character character, bool broadcastSignal = true) {
-        DatabaseManager.Instance.characterDatabase.AddCharacter(character);
+    public void AddNewCharacter(Character character, bool broadcastSignal = true, bool addToAliveVillagersList = true) {
+        DatabaseManager.Instance.characterDatabase.AddCharacter(character, addToAliveVillagersList);
         if (broadcastSignal) {
             Messenger.Broadcast(CharacterSignals.CHARACTER_CREATED, character);
         }
     }
-    public void RemoveCharacter(Character character, bool broadcastSignal = true) {
-        if (DatabaseManager.Instance.characterDatabase.RemoveCharacter(character)) {
+    public void RemoveCharacter(Character character, bool broadcastSignal = true, bool removeFromAliveVillagersList = true) {
+        if (DatabaseManager.Instance.characterDatabase.RemoveCharacter(character, removeFromAliveVillagersList)) {
             if (broadcastSignal) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED, character);
             }

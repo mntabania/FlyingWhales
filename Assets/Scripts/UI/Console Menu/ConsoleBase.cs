@@ -103,7 +103,8 @@ public class ConsoleBase : InfoUIBase {
             {"/check_tiles", CheckTiles},
             {"/reveal_all", RevealAll},
             {"/enable_dig", EnableDigging},
-            {"/bonus_charge", BonusCharges}
+            {"/bonus_charge", BonusCharges},
+            {"/log_alive_villagers", LogAliveVillagers}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1040,7 +1041,11 @@ public class ConsoleBase : InfoUIBase {
         } else {
             AddErrorMessage($"Could not find character named {nameParameterString}");
         }
-
+    }
+    private void LogAliveVillagers(string[] parameters) {
+        string message = DatabaseManager.Instance.characterDatabase.aliveVillagersList.ComafyList();
+        AddSuccessMessage(message);
+        Debug.Log(message);
     }
     #endregion
 

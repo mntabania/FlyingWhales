@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Locations.Settlements;
-
+using UtilityScripts;
 namespace Ruinarch {
     public class InputManager : MonoBehaviour {
 
@@ -147,6 +147,7 @@ namespace Ruinarch {
             else if (Input.GetKeyDown(KeyCode.Tab)) {
                 if (!CanUseHotkey(KeyCode.Tab)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
+                CharacterCenterCycle();
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Tab);
             } else if (Input.GetKeyDown(KeyCode.R)) {
                 if (!CanUseHotkey(KeyCode.R)) return;
@@ -220,6 +221,7 @@ namespace Ruinarch {
         }
         #endregion
 
+        #region Cursor
         public void SetCursorTo(Cursor_Type type) {
             if (currentCursorType == type) {
                 return; //ignore 
@@ -249,6 +251,9 @@ namespace Ruinarch {
         public void RevertToPreviousCursor() {
             SetCursorTo(previousCursorType);
         }
+        #endregion
+
+        #region Spells
         /// <summary>
         /// Cancel actions based on a hardcoded process
         /// </summary>
@@ -325,6 +330,7 @@ namespace Ruinarch {
             }
             return false;
         }
+        #endregion
         
         #region Utilities
         private void OnActiveSceneChanged(Scene current, Scene next) {
@@ -378,6 +384,33 @@ namespace Ruinarch {
         public static void RemoveOnUpdateEvent(System.Action p_event) {
             m_onUpdateEvent -= p_event;
         } 
+        #endregion
+        
+        #region Center Cycle
+        private void CharacterCenterCycle() {
+            if (DatabaseManager.Instance.characterDatabase.aliveVillagersList != null && DatabaseManager.Instance.characterDatabase.aliveVillagersList.Count > 0) {
+                //normal objects to center
+                ISelectable objToSelect = GetNextCharacterToCenter(DatabaseManager.Instance.characterDatabase.aliveVillagersList);
+                if (objToSelect != null) {
+                    Select(objToSelect);
+                }
+            }
+        }
+        private Character GetNextCharacterToCenter(List<Character> selectables) {
+            Character objToSelect = null;
+            for (int i = 0; i < selectables.Count; i++) {
+                Character currentSelectable = selectables[i];
+                if (currentSelectable.IsCurrentlySelected()) {
+                    //set next selectable in list to be selected.
+                    objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                    break;
+                }
+            }
+            if (objToSelect == null) {
+                objToSelect = selectables[0];
+            }
+            return objToSelect;
+        }
         #endregion
     }
 }

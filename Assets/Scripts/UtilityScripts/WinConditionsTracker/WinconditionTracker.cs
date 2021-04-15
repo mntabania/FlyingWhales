@@ -16,7 +16,7 @@ public abstract class WinconditionTracker {
 
     public virtual void Initialize(List<Character> p_allCharacters) {
         villagersToTrack = new List<Character>();
-        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
+        // Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
         List<Character> charactersToTrack = GetAllCharactersToBeEliminated(p_allCharacters);
         villagersToTrack.Clear();
         for (int i = 0; i < charactersToTrack.Count; i++) {
@@ -73,44 +73,42 @@ public abstract class WinconditionTracker {
         }
     }
 
-    #region Listeners
-    private void OnKeyPressed(KeyCode keyCode) {
-        if (keyCode == KeyCode.Tab) {
-            CenterCycle();
-        }
-    }
-   
-    #endregion
+    // #region Listeners
+    // private void OnKeyPressed(KeyCode keyCode) {
+    //     if (keyCode == KeyCode.Tab) {
+    //         CenterCycle();
+    //     }
+    // }
+    // #endregion
 
     #region List Maintenance
     #endregion
 
     #region Utilities
-   
-    private void CenterCycle() {
-        if (villagersToTrack != null && villagersToTrack.Count > 0) {
-            //normal objects to center
-            ISelectable objToSelect = GetNextObjectToCenter(villagersToTrack.Select(c => c as ISelectable).ToList());
-            if (objToSelect != null) {
-                InputManager.Instance.Select(objToSelect);
-            }
-        }
-    }
-    private ISelectable GetNextObjectToCenter(List<ISelectable> selectables) {
-        ISelectable objToSelect = null;
-        for (int i = 0; i < selectables.Count; i++) {
-            ISelectable currentSelectable = selectables[i];
-            if (currentSelectable.IsCurrentlySelected()) {
-                //set next selectable in list to be selected.
-                objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
-                break;
-            }
-        }
-        if (objToSelect == null) {
-            objToSelect = selectables[0];
-        }
-        return objToSelect;
-    }
+    // private void CenterCycle() {
+    //     if (villagersToTrack != null && villagersToTrack.Count > 0) {
+    //         //normal objects to center
+    //         ISelectable objToSelect = GetNextObjectToCenter(villagersToTrack.Select(c => c as ISelectable).ToList());
+    //         if (objToSelect != null) {
+    //             InputManager.Instance.Select(objToSelect);
+    //         }
+    //     }
+    // }
+    // private ISelectable GetNextObjectToCenter(List<ISelectable> selectables) {
+    //     ISelectable objToSelect = null;
+    //     for (int i = 0; i < selectables.Count; i++) {
+    //         ISelectable currentSelectable = selectables[i];
+    //         if (currentSelectable.IsCurrentlySelected()) {
+    //             //set next selectable in list to be selected.
+    //             objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+    //             break;
+    //         }
+    //     }
+    //     if (objToSelect == null) {
+    //         objToSelect = selectables[0];
+    //     }
+    //     return objToSelect;
+    // }
     #endregion
 }
 

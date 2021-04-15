@@ -468,7 +468,7 @@ namespace Traits {
             form.currentRegion?.RemoveCharacterFromLocation(form);
             form.homeRegion?.RemoveResident(form);
             CharacterManager.Instance.AddNewLimboCharacter(form);
-            CharacterManager.Instance.RemoveCharacter(form, false);
+            CharacterManager.Instance.RemoveCharacter(form, false, false);
             Messenger.AddListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeizedOrIsInLimbo);
         }
         private void ReleaseFromLimbo(Character form, LocationGridTile tileLocation, Region homeRegion) {
@@ -492,7 +492,7 @@ namespace Traits {
             //    form.marker.InitialPlaceMarkerAt(tileLocation, false);
             //}
             form.needsComponent.CheckExtremeNeeds();
-            CharacterManager.Instance.AddNewCharacter(form, false);
+            CharacterManager.Instance.AddNewCharacter(form, false, false);
             CharacterManager.Instance.RemoveLimboCharacter(form);
         }
 
