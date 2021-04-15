@@ -29,7 +29,7 @@ namespace Traits {
         private void DrainPerTick(Character p_character) {
             if (!p_character.isDead) {
                 int hpReduction = 0;
-                if (p_character.currentStructure != null && p_character.currentStructure.structureType == STRUCTURE_TYPE.PRISON) {
+                if (p_character.currentStructure != null && p_character.currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
                     hpReduction = Mathf.RoundToInt(p_character.maxHP * ((PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.DRAIN_SPIRIT) / 100f)));
                 } else {
                     hpReduction = Mathf.RoundToInt(p_character.maxHP * (((PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.DRAIN_SPIRIT) * 2f) / 100f)));
