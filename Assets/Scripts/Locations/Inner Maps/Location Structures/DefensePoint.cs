@@ -9,9 +9,10 @@ namespace Inner_Maps.Location_Structures {
             startingSummonCount = 2;
             nameWithoutID = "Prism";
             name = $"{nameWithoutID} {id.ToString()}";
+            Messenger.RemoveListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
         }
         public DefensePoint(Region location, SaveDataPartyStructure data) : base(location, data) {
-            
+            Messenger.RemoveListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
         }
 
         public override void RemoveCharacterOnList(Character p_removeSummon) {

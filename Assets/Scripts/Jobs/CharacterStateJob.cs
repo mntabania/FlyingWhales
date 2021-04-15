@@ -36,11 +36,32 @@ public class CharacterStateJob : JobQueueItem {
     //Returns true if we don't want to perform top prio, false if we want the character to perform top prio job after this
     public override bool ProcessJob() {
         if (hasBeenReset) { return true; }
-        if (targetState == CHARACTER_STATE.COMBAT && assignedCharacter.combatComponent.hostilesInRange.Count <= 0 && assignedCharacter.combatComponent.avoidInRange.Count <= 0) {
-            //Added a checker here because there are times that the combat job still persist even though the hostile/avoid list is empty
-            //So if this happens, we must cancel job
-            CancelJob(false);
-            return true;
+        if (targetState == CHARACTER_STATE.COMBAT) {
+            if (assignedCharacter.combatComponent.hostilesInRange.Count > 0) {
+                //https://trello.com/c/A3OZKxcl/4088-combat-loop-issue
+                //When a character sees a hostile but he has no path to take, the combat goes into a loop because the character will process that hostile and that hostile will be added to the hostile list.
+                //Once the character added the hostile to the list a combat job will be created.
+                //Then upon processing the combat job, the character will enter combat state.
+                //After, he will evaluate the first hostile that he will attack (see GetNearestValidHostile).
+                //Upon doing so, he will remove all invalid hostiles this includes the ones he has no path to, and since the only hostile in the list is invalid, he will remove the hostile in the list, and will exit the combat.
+                //The loop happens in the AfterExitingState.
+                //After exiting combat, the character will process all pois in vision again, thus, processing the same hostile, thus creating the loop.
+                //So we put this here so that if a hostile is not valid anymore remove it before switch to state
+                for (int i = 0; i < assignedCharacter.combatComponent.hostilesInRange.Count; i++) {
+                    IPointOfInterest poi = assignedCharacter.combatComponent.hostilesInRange[i];
+                    if (!poi.IsValidCombatTargetFor(assignedCharacter)) {
+                        if (assignedCharacter.combatComponent.RemoveHostileInRange(poi, false)) {
+                            i--;
+                        }
+                    }
+                }
+            }
+            if (assignedCharacter.combatComponent.hostilesInRange.Count <= 0 && assignedCharacter.combatComponent.avoidInRange.Count <= 0) {
+                //Added a checker here because there are times that the combat job still persist even though the hostile/avoid list is empty
+                //So if this happens, we must cancel job
+                CancelJob(false);
+                return true;
+            }
         }
         if (assignedState == null) {
             Profiler.BeginSample($"Character State Job - Process Job - Switch To State - {targetState.ToString()}");

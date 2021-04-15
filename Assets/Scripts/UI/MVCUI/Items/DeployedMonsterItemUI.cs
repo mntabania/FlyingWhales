@@ -122,7 +122,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         btnUnlockSlot.gameObject.SetActive(true);
         if (p_isAbleToBuy) {
             btnUnlockSlot.interactable = true;
-            hoverText.SetText("Unlock More Slot to add summon");
+            hoverText.SetText("Expand Capacity by 1");
         } else {
             btnUnlockSlot.interactable = false;
             hoverText.SetText("Not enough Mana");

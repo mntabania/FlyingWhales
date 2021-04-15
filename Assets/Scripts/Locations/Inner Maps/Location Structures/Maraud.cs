@@ -57,6 +57,7 @@ namespace Inner_Maps.Location_Structures {
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             Vector3 position = structureObj.transform.position;
+            position.x -= 0.5f;
             position.y -= 0.5f;
             worldPosition = position;
         }

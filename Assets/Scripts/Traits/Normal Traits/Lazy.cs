@@ -68,7 +68,7 @@ namespace Traits {
                     if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
                     }
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, character, character);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW,  new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
                     UtilityScripts.JobUtilities.PopulatePriorityLocationsForHappinessRecovery(character, job);
                     character.jobQueue.AddJobInQueue(job);
                 } else {
@@ -92,7 +92,7 @@ namespace Traits {
                 log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(job.ToString()), LOG_IDENTIFIER.STRING_1);
                 owner.logComponent.RegisterLog(log);
                 // PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-                PlayerManager.Instance.player.ShowNotificationFrom(owner, log);
+                // PlayerManager.Instance.player.ShowNotificationFrom(owner, log);
                 return true;
             }
             return false;

@@ -34,7 +34,7 @@ public class Table : TileObject {
         //}
     }
     public override string ToString() {
-        return $"Table {id}";
+        return $"Table {id.ToString()}";
     }
     public override void OnDoActionToObject(ActualGoapNode action) {
         base.OnDoActionToObject(action);

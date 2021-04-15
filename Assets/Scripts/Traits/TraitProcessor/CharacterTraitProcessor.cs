@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 namespace Traits {
     /// <summary>
     /// Functions to be used to determine what happens when a trait is added/removed to a character
@@ -9,6 +9,7 @@ namespace Traits {
     public class CharacterTraitProcessor : TraitProcessor {
         public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             Character character = traitable as Character;
+            Assert.IsNotNull(character);
             if(trait is Status status) {
                 ApplyStatusEffects(character, status);
             }
@@ -27,6 +28,12 @@ namespace Traits {
                 }
             }
             DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration);
+            if (trait.affectsNameIcon) {
+                character.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(character);
+                if (character.hasMarker) {
+                    character.marker.UpdateName();
+                }
+            }
             Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_ADDED, character, trait);
         }
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {

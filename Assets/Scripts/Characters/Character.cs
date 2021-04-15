@@ -1352,6 +1352,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _faction = newFaction;
         OnChangeFaction(prevFaction, newFaction);
         if (_faction != null) {
+            bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(this); //since characters can change name icons based on faction
             Messenger.Broadcast(FactionSignals.FACTION_SET, this);
         }
         return true;
@@ -1882,10 +1883,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RenameCharacter(string p_firstName, string p_lastName) {
         SetFirstAndLastName(p_firstName, p_lastName);
         UpdateCurrentLogsBasedOnUpdatedCharacter(this); //had to do this since signal order can be inconsistent and the UI Update could happen before the actual logs were updated.
-        bookmarkEventDispatcher.ExecuteBookmarkChangedNameEvent(this);
+        bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(this);
         if (lycanData?.limboForm != null) {
             lycanData.limboForm.SetFirstAndLastName(firstName, surName);
-            lycanData.limboForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameEvent(lycanData.limboForm);    
+            lycanData.limboForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(lycanData.limboForm);    
         }
         Messenger.Broadcast(CharacterSignals.CHARACTER_CHANGED_NAME, this);
     }
@@ -5325,6 +5326,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
         AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
         AddPlayerAction(PLAYER_SKILL_TYPE.CREATE_BLACKMAIL);
+        AddPlayerAction(PLAYER_SKILL_TYPE.EMPOWER);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {

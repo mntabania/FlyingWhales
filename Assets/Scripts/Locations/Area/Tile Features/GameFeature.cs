@@ -103,7 +103,7 @@ namespace Locations.Area_Features {
         }
 
         private void OnHourStarted() {
-            if(GameManager.Instance.currentTick == 72) { //6 am
+            if(GameManager.Instance.currentTick == 120) { //6 am
                 int defaultNumOfLivestockToBeSpawned = 2;
                 int currentNeededNumberOfLivestock = MaxAnimals - ownedAnimals.Count;
                 if(currentNeededNumberOfLivestock < 0) {
