@@ -14,14 +14,20 @@ public struct VillageSetting {
         }
     }
     
-    public int GetTileCountReservedForVillage() {
+    public int GetTileCountReservedForVillage(MAP_SIZE p_mapSize) {
         switch (villageSize) {
             case VILLAGE_SIZE.Small:
                 return 2;
             case VILLAGE_SIZE.Medium:
-                return 2;
+                if (p_mapSize == MAP_SIZE.Small) {
+                    return 2;
+                }
+                return 3;
             case VILLAGE_SIZE.Large:
-                return 2;
+                if (p_mapSize == MAP_SIZE.Small) {
+                    return 2;
+                }
+                return 3;
             default:
                 throw new ArgumentOutOfRangeException();
         }

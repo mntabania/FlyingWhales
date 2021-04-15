@@ -122,7 +122,7 @@ public class VillageGeneration : MapGenerationComponent {
 			structuresToPlace.Remove(cityCenter);	
 		}
 
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 4; i++) {
 			yield return MapGenerator.Instance.StartCoroutine(PlaceStructures(region, structuresToPlace, npcSettlement));
 			//check whole structure list to verify if all needed structures were placed.
 			unplacedStructures.Clear();
@@ -171,7 +171,7 @@ public class VillageGeneration : MapGenerationComponent {
 	}
 	public static IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
 		List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureSetting.structureType);
-		availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
+		// availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
 		List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
 		prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
 		for (int j = 0; j < prefabChoices.Count; j++) {

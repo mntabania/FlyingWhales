@@ -95,7 +95,7 @@ namespace Inner_Maps {
                 new PerlinNoiseRegion() {
                     name = "Plain",
                     color = Color.green,
-                    height = 0.65f,
+                    height = 0.7f,
                 },
                 new PerlinNoiseRegion() {
                     name = "Cave",

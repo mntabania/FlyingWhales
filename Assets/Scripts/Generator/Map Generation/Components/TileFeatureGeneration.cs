@@ -214,7 +214,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					return false; //not enough village spots 
 				}
 				VillageSetting villageSetting = factionTemplate.villageSettings[j];
-				int tilesInRange = villageSetting.GetTileCountReservedForVillage();
+				int tilesInRange = villageSetting.GetTileCountReservedForVillage(WorldSettings.Instance.worldSettingsData.mapSettings.mapSize);
 				Area chosenTile = null;
 				if (j == 0) {
 					//if no preferred tiles are available, then just choose at random from available village spots
