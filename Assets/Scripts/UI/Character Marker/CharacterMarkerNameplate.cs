@@ -211,11 +211,12 @@ public class CharacterMarkerNameplate : PooledObject {
                 SetActionIconState(false);
             }
             return;
-        } else {
-            SetActionIconState(false);
-        }
+        } 
+        //else {
+        //    SetActionIconState(false);
+        //}
         
-        if (character.currentActionNode != null) {
+        else if (character.currentActionNode != null) {
             string actionIconString = character.currentActionNode.action.GetActionIconString(character.currentActionNode);
             if (actionIconString != GoapActionStateDB.No_Icon) {
                 actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];

@@ -31,7 +31,7 @@ public class DragonBehaviour : BaseMonsterBehaviour {
                     }
                     Messenger.Broadcast(MonsterSignals.DRAGON_LEFT_WORLD, character, currentRegion);
                 } else {
-                    dragon.jobComponent.CreateGoToJob(dragon.gridTileLocation.GetNearestEdgeTileFromThis(), out producedJob);
+                    dragon.jobComponent.CreateGoToSpecificTileJob(dragon.gridTileLocation.GetNearestEdgeTileFromThis(), out producedJob);
                 }
                 return true;
             } else {
