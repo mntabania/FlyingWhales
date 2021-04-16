@@ -85,18 +85,21 @@ public class DemonRescuePartyQuest : PartyQuest, IRescuePartyQuest {
     }
     public void SetTargetDemonicStructure(DemonicStructure p_targetStructure) {
         targetDemonicStructure = p_targetStructure;
-        targetDemonicStructureTiles.Clear();
-        if (targetDemonicStructure != null) {
-            for (int i = 0; i < targetDemonicStructure.tiles.Count; i++) {
-                targetDemonicStructureTiles.Add(targetDemonicStructure.tiles.ElementAt(i));
-            }
-        }
+        UpdateDemonicStructureTiles();
     }
     public void SetIsReleasing(bool state) {
         if (isReleasing != state) {
             isReleasing = state;
             if (isReleasing) {
                 RemoveAllCombatToDemonicStructure();
+            }
+        }
+    }
+    private void UpdateDemonicStructureTiles() {
+        targetDemonicStructureTiles.Clear();
+        if (targetDemonicStructure != null) {
+            for (int i = 0; i < targetDemonicStructure.tiles.Count; i++) {
+                targetDemonicStructureTiles.Add(targetDemonicStructure.tiles.ElementAt(i));
             }
         }
     }
@@ -202,6 +205,10 @@ public class DemonRescuePartyQuest : PartyQuest, IRescuePartyQuest {
             if (!string.IsNullOrEmpty(subData.targetCharacter)) {
                 targetCharacter = CharacterManager.Instance.GetCharacterByPersistentID(subData.targetCharacter);
             }
+            if (!string.IsNullOrEmpty(subData.targetDemonicStructure)) {
+                targetDemonicStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetDemonicStructure) as DemonicStructure;
+                UpdateDemonicStructureTiles();
+            }
             //if (isWaitTimeOver && !isDisbanded) {
             //    Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
             //}
@@ -213,6 +220,7 @@ public class DemonRescuePartyQuest : PartyQuest, IRescuePartyQuest {
 [System.Serializable]
 public class SaveDataDemonRescuePartyQuest : SaveDataPartyQuest {
     public string targetCharacter;
+    public string targetDemonicStructure;
     public bool isReleasing;
     //public bool isSearching;
 
@@ -221,6 +229,7 @@ public class SaveDataDemonRescuePartyQuest : SaveDataPartyQuest {
         base.Save(data);
         if (data is DemonRescuePartyQuest subData) {
             isReleasing = subData.isReleasing;
+            targetDemonicStructure = subData.targetDemonicStructure?.persistentID;
             //isSearching = subData.isSearching;
 
             if (subData.targetCharacter != null) {

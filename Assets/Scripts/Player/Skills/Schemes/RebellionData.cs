@@ -9,6 +9,7 @@ public class RebellionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REBELLION;
     public override string name => "Rebellion";
     public override string description => "Convince a Settlement Ruler to split off their entire Village from current Faction.";
+    public override string verbName => "Rebel";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public RebellionData() : base() {
