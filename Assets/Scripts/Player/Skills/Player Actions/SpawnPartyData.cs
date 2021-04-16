@@ -10,12 +10,17 @@ public class SpawnPartyData : PlayerAction {
     public override string name => "Spawn Party";
     public override string description => $"Spawn an eye ward that will monitor all actions within its radius.";
     public override bool shouldShowOnContextMenu => false;
-    public SpawnPartyData() : base() {
+
+	public SpawnPartyData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
 
-    #region Overrides
-    public override void Activate(IPlayerActionTarget target) {
+	#region Overrides
+	public override bool IsValid(IPlayerActionTarget target) {
+        return false;
+	}
+
+	public override void Activate(IPlayerActionTarget target) {
         PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(this);
     }
 
@@ -37,7 +42,7 @@ public class SpawnPartyData : PlayerAction {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             if (targetTile.tileObjectComponent.hiddenObjHere != null || targetTile.isOccupied || targetTile.IsPartOfHumanElvenSettlement()) {
-                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Skills", "Spawn Party", "please choose unoccupied tile or wilderness");
+                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_neighbour_not_wilderness");
                 return false;
             }
             return true;

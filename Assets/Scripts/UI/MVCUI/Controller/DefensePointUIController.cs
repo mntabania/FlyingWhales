@@ -241,7 +241,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			m_targetPartyStructure.DeployParty();
 		}
 		ProcessDeployButtonDisplay();
-		PlayerManager.Instance.player.AdjustMana(m_totalDeployCost);
+		PlayerManager.Instance.player.AdjustMana(-m_totalDeployCost);
 		m_totalDeployCost = 0;
 		OnCloseClicked();
 	}
