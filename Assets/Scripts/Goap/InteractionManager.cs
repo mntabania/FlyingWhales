@@ -25,7 +25,7 @@ public partial class InteractionManager : BaseMonoBehaviour {
     public HashSet<string> actionNames { get; private set; }
 
     public HashSet<string> ignoredActionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-        "witnessed", "going", "fish", "seemed"
+        "witnessed", "going", "fish", "seemed", "Dwelling", "Healing"
     };
     public HashSet<string> forcedActionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
         "sat", "ate", "pick", "share", "sang"
