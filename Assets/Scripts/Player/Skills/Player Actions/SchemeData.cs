@@ -17,6 +17,8 @@ public class SchemeData : PlayerAction {
     public override string name => "Scheme";
     public override string description => $"This Action can be used to start various different schemes to manipulate world events.";
 
+    public virtual string verbName => name;
+
     public SchemeData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

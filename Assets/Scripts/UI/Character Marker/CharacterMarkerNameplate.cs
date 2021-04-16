@@ -211,12 +211,11 @@ public class CharacterMarkerNameplate : PooledObject {
                 SetActionIconState(false);
             }
             return;
-        } 
-        //else {
-        //    SetActionIconState(false);
-        //}
-        
-        else if (character.currentActionNode != null) {
+        } else {
+            SetActionIconState(false);
+        }
+
+        if (character.currentActionNode != null) {
             string actionIconString = character.currentActionNode.action.GetActionIconString(character.currentActionNode);
             if (actionIconString != GoapActionStateDB.No_Icon) {
                 actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];
@@ -224,6 +223,9 @@ public class CharacterMarkerNameplate : PooledObject {
             } else {
                 SetActionIconState(false);
             }
+        } else if (_parentMarker.hasFleePath) {
+            actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Flee_Icon];
+            SetActionIconState(true);
         } else if (character.combatComponent.isInActualCombat) {
             //Once the character is actually in combat, do not show thought bubble action icon so that the damage numbers can be seen
             SetActionIconState(false);
@@ -235,9 +237,6 @@ public class CharacterMarkerNameplate : PooledObject {
             } else {
                 SetActionIconState(false);
             }
-        } else if (_parentMarker.hasFleePath) {
-            actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Flee_Icon];
-            SetActionIconState(true);
         } else {
             //no action or state
             SetActionIconState(false);

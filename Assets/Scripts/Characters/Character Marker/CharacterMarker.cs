@@ -1055,7 +1055,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         colorHighlight.sortingOrder = characterSortingOrder - 1;
         additionalEffectsImg.sortingOrder = characterSortingOrder + 2;
         bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;
-        hpBarGO.GetComponent<Canvas>().sortingOrder = characterSortingOrder - 100;
+        hpBarGO.GetComponent<Canvas>().sortingOrder = InnerMapManager.DefaultCharacterSortingOrder - 1;
     }
     private new void SetActiveState(bool state) {
         Debug.Log($"Set active state of {this.name} to {state}");
