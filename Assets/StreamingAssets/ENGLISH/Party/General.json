@@ -1,1 +1,1 @@
-{"items":[{"key":"disband","value":"%05@ party has disbanded."}]}
+{"items":[{"key":"disband","value":"%05@ party has disbanded."},{"key":"invalid_build_neighbour_not_wilderness","value":"Party can only be spawned in the wilderness and unoccupied area."}]}
