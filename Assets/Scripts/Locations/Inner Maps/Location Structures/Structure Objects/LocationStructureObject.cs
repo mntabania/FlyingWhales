@@ -876,7 +876,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
     }
     private bool CanPlaceStructureOnTile(LocationGridTile tile, out string o_cannotPlaceReason) {
         if (tile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
-            Debug.Log($"Could not place {structureType} because {tile} is not part of wilderness!");
+            // Debug.Log($"Could not place {structureType} because {tile} is not part of wilderness!");
             o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_wilderness");
             return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
         }
@@ -885,12 +885,12 @@ public class LocationStructureObject : PooledObject, ISelectable {
             return false;
         }
         if (tile.hasBlueprint) {
-            Debug.Log($"Could not place {structureType} because {tile} has blueprint!");
+            // Debug.Log($"Could not place {structureType} because {tile} has blueprint!");
             o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
             return false; //This is to prevent overlapping blueprints. If any tile that will be occupied by this has a blueprint, then do not allow
         }
         if (tile.IsAtEdgeOfMap()) {
-            Debug.Log($"Could not place {structureType} because {tile} is at edge of map!");
+            // Debug.Log($"Could not place {structureType} because {tile} is at edge of map!");
             o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_edge");
             return false;
         }
@@ -931,38 +931,38 @@ public class LocationStructureObject : PooledObject, ISelectable {
         for (int j = 0; j < tilesToCheck.Count; j++) {
             LocationGridTile neighbour = tilesToCheck[j];
             if (neighbour.hasBlueprint) {
-                Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
+                // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
                 o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
             if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
-                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Cave!");
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Cave!");
                     o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
             } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
-                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Ocean!");
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Ocean!");
                     o_cannotPlaceReason = string.Empty;
                     return false;
                 }
             } else if (structureType.IsPlayerStructure()) {
                 if (neighbour.structure.structureType.IsPlayerStructure()) {
                     //Do not allow Demonic structures to be placed next to each other.
-                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is a Player Structure!");
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is a Player Structure!");
                     o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_demonic_adjacent");
                     return false;
                 }
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
-                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness!");
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness!");
                     o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_neighbour_not_wilderness");
                     return false;
                 }
             } else {
                 //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
-                    Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness and City CEnter!");
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness and City CEnter!");
                     o_cannotPlaceReason = string.Empty;
                     return false;
                 }    

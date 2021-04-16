@@ -106,7 +106,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         log += $"\n-{character.name} is Enslaved, not becoming a Vampire Lord.";
                     } else {
                         log += $"\n-{character.name} is not yet a vampire lord. Rolling for chance to check converted villagers.";
-                        if (GameUtilities.RollChance(10, ref log)) { //10
+                        if (ChanceData.RollChance(CHANCE_TYPE.Vampire_Lord_Chance, ref log)) { //10
                             log += $"\n-{character.name} converted villagers are {vampire.numOfConvertedVillagers.ToString()}.";
                             if (vampire.numOfConvertedVillagers >= 3) {
                                 //Become vampire lord

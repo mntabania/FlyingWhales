@@ -19,6 +19,8 @@ public static class ChanceData {
         {CHANCE_TYPE.Flirt_Friend_Become_Lover_Chance, 35},
         {CHANCE_TYPE.Flirt_Friend_Become_Affair_Chance, 50},
         {CHANCE_TYPE.Flirt_On_Sight_Base_Chance, 1},
+        {CHANCE_TYPE.Vampire_Lord_Chance, 10},
+        {CHANCE_TYPE.Host_Social_Party, 10},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {

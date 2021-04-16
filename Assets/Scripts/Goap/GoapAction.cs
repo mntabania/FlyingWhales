@@ -141,8 +141,9 @@ public class GoapAction {
     }
     public virtual GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         string stateName = "Target Missing";
-        bool defaultTargetMissing = IsTargetMissing(node);
+        bool defaultTargetMissing = IsTargetMissing(node, out string debug);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
+        goapActionInvalidity.AppendDebugLog(debug);
         return goapActionInvalidity;
     }
     public virtual void OnInvalidAction(ActualGoapNode node) { }
@@ -272,31 +273,38 @@ public class GoapAction {
         actor.logComponent.AppendCostLog($"+{distanceCost.ToString()}(Distance Cost)");
         return (baseCost * PreconditionCostMultiplier()) + distanceCost;
     }
-    protected bool IsTargetMissing(ActualGoapNode node) {
+    protected bool IsTargetMissing(ActualGoapNode node, out string p_targetMissingLog) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         //Action is invalid if the target is unavailable and the action cannot be advertised if target is unavailable
-        if ((poiTarget.IsAvailable() == false && !canBeAdvertisedEvenIfTargetIsUnavailable) || poiTarget.gridTileLocation == null) {
+        bool isTargetAvailable = poiTarget.IsAvailable();
+        p_targetMissingLog = $"Actor is {actor.name}. Target is {poiTarget.name}. Action is {name}";
+        p_targetMissingLog = $"{p_targetMissingLog}\nCan Be Advertised Even If Target us Unavailable?: {canBeAdvertisedEvenIfTargetIsUnavailable.ToString()}";
+        p_targetMissingLog = $"{p_targetMissingLog}\nTarget Tile Location: {poiTarget.gridTileLocation?.ToString()}";
+        p_targetMissingLog = $"{p_targetMissingLog}\nAction Location Type: {actionLocationType.ToString()}";
+        if ((!isTargetAvailable && !canBeAdvertisedEvenIfTargetIsUnavailable) || poiTarget.gridTileLocation == null) {
             return true;
         }
         if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.region) {
             return true;
         }
-        LocationGridTile targetTile = poiTarget.gridTileLocation;
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true) == false) {
+                p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target {poiTarget.name} ({poiTarget.gridTileLocation?.ToString()}) and is not neighbour.";
                 return true;
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
             //if the action type is NEAR_OTHER_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
+                p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target tile ({node.targetTile?.ToString()}) and is not neighbour.";
                 return true;
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEARBY || actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION
             || actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B || actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
             //if the action type is NEARBY, RANDOM_LOCATION, RANDOM_LOCATION_B, OVERRIDE, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
+                p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target tile ({node.targetTile?.ToString()}) and is not neighbour.";
                 return true;
             }
         }
@@ -545,17 +553,22 @@ public struct GoapActionInvalidity {
     public bool isInvalid;
     public string stateName;
     public string reason;
+    public string debugLog;
 
     public GoapActionInvalidity(bool isInvalid, string stateName, string reason = null) {
         this.isInvalid = isInvalid;
         this.stateName = stateName;
         this.reason = reason;
+        debugLog = string.Empty;
     }
     public bool IsReasonForCancellationShouldDropJob() {
         if (!string.IsNullOrEmpty(reason)) {
             return reason == "target_carried" || reason == "target_inactive" || reason == "target_dead";
         }
         return false;
+    }
+    public void AppendDebugLog(string p_log) {
+        debugLog = $"{debugLog}{p_log}";
     }
 }
 public struct GoapEffectConditionTypeAndTargetType {

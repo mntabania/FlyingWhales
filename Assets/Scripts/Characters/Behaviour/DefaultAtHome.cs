@@ -193,9 +193,9 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log = $"{log}\n-If it is Early Night, 10% chance to Host Social Party at Inn";
                 if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
                     log = $"{log}\n  -Time of Day: {strCurrentTimeOfDay}";
-                    int chance = Random.Range(0, 100);
-                    log = $"{log}\n  -RNG roll: {chance.ToString()}";
-                    if (chance < 10) {
+                    int roll = Random.Range(0, 100);
+                    log = $"{log}\n  -RNG roll: {roll.ToString()}";
+                    if (ChanceData.RollChance(CHANCE_TYPE.Host_Social_Party)) {
                         if (character.traitContainer.HasTrait("Agoraphobic")) {
                             log = $"{log}\n  -Character is agoraphobic, not hosting social party";
                         } else {

@@ -24,5 +24,11 @@ public class Patrol : GoapAction {
     public override LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
         return goapNode.otherData[0].obj as LocationGridTile;
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        string stateName = "Target Missing";
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(false, stateName, "target_unavailable");
+        //patrol action should never be invalid
+        return goapActionInvalidity;
+    }
     #endregion
 }

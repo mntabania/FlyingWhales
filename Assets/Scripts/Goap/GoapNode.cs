@@ -416,7 +416,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         bool isInvalidOnVision = action.IsInvalidOnVision(this, out invalidVisionReason);
         bool isInvalidStealth = IsInvalidStealth();
         if (goapActionInvalidity.isInvalid || isInvalidOnVision || isInvalidStealth) {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!");
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!\nDebug Log:\n {goapActionInvalidity.debugLog}");
             if (!string.IsNullOrEmpty(invalidVisionReason) && string.IsNullOrEmpty(goapActionInvalidity.reason)) {
                 //if goap action invalidity reason is empty and invalidity reason for vision is not, then copy over value of vision invalidity, so that it will be used for the invalid log.
                 goapActionInvalidity.reason = invalidVisionReason;
