@@ -521,7 +521,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_targetPartyStructure.DeployParty();
 		m_isTeamDeployed = true;
 		m_maraudUIView.SetButtonDeployText("Undeploy");
-		PlayerManager.Instance.player.AdjustMana(m_totalDeployCost);
+		PlayerManager.Instance.player.AdjustMana(-m_totalDeployCost);
 		m_totalDeployCost = 0;
 		OnCloseClicked();
 		PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
