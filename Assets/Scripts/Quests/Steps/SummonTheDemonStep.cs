@@ -13,7 +13,7 @@ namespace Quests.Steps {
             (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).SubscribeToPortalUpgraded(this);
         }
         protected override void UnSubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).SubscribeToPortalUpgraded(this);
+            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).UnsubscribeToPortalUpgraded(this);
         }
         public override void Activate() {
             base.Activate();

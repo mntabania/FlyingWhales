@@ -15,7 +15,7 @@ public class OonaWinConditionTracker : WinconditionTracker {
     }
 
     public int currentLevel;
-    public int targetLevel = 8;
+    public int targetLevel = 2;
     public override Type serializedData => typeof(SaveDataOonaWinConditionTracker);
 
     public override void Initialize(List<Character> p_allCharacters) {
