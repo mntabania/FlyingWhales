@@ -14,7 +14,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 
 	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating tile features...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Tile Features...");
 		yield return MapGenerator.Instance.StartCoroutine(GenerateFeaturesForAllTiles(data));
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			DetermineSettlementsForTutorial();

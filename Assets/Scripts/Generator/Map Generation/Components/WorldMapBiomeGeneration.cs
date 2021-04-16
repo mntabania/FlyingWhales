@@ -6,7 +6,7 @@ using UtilityScripts;
 
 public class WorldMapBiomeGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating biomes...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Biomes...");
 		// yield return MapGenerator.Instance.StartCoroutine(SetBiomePerRegion(data));
 		// yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
 		yield return null;

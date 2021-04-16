@@ -14,6 +14,7 @@ public class PsychopathUI : MonoBehaviour {
     public GameObject requirement1GO;
     public GameObject requirement2GO;
     public GameObject conjunctionGO;
+    public GameObject andGO;
 
     public RuinarchButton victimType1Button;
     public RuinarchButton victimType2Button;
@@ -21,7 +22,6 @@ public class PsychopathUI : MonoBehaviour {
     public RuinarchButton victimDescription2Button;
     public RuinarchButton clearButtonVictim1;
     public RuinarchButton clearButtonVictim2;
-    public RuinarchButton conjunctionButton;
 
     public TextMeshProUGUI victimType1Text;
     public TextMeshProUGUI victimType2Text;
@@ -76,8 +76,8 @@ public class PsychopathUI : MonoBehaviour {
     private void UpdateUIBasedOnPsychopathyAfflictionLevel() {
         requirement1GO.SetActive(true);
         requirement2GO.SetActive(psychopathyAfflictionLevel >= 2);
-        conjunctionGO.SetActive(psychopathyAfflictionLevel >= 2);
-        conjunctionButton.interactable = psychopathyAfflictionLevel >= 3;
+        conjunctionGO.SetActive(psychopathyAfflictionLevel >= 3);
+        andGO.SetActive(!conjunctionGO.activeSelf);
     }
     private void UpdateConfirmButtonState() {
         confirmButton.interactable = (victimType1 != SERIAL_VICTIM_TYPE.None && victimDescription1 != string.Empty) || (victimType2 != SERIAL_VICTIM_TYPE.None && victimDescription2 != string.Empty);
@@ -88,7 +88,7 @@ public class PsychopathUI : MonoBehaviour {
             victimType1Text.text = type.ToString();
             clearButtonVictim1.gameObject.SetActive(true);
         } else {
-            victimType1Text.text = string.Empty;
+            victimType1Text.text = "<i>Type</i>";
             clearButtonVictim1.gameObject.SetActive(false);
         }
         SetVictim1Description(string.Empty);
@@ -101,7 +101,7 @@ public class PsychopathUI : MonoBehaviour {
             victimType2Text.text = type.ToString();
             clearButtonVictim2.gameObject.SetActive(true);
         } else {
-            victimType2Text.text = string.Empty;
+            victimType2Text.text = "<i>Type</i>";
             clearButtonVictim2.gameObject.SetActive(false);
         }
         SetVictim2Description(string.Empty);
@@ -110,12 +110,12 @@ public class PsychopathUI : MonoBehaviour {
     }
     private void SetVictim1Description(string str) {
         victimDescription1 = str;
-        victimDescription1Text.text = str;
+        victimDescription1Text.text = string.IsNullOrEmpty(str) ? "<i>Criteria</i>" : str;
         UpdateConfirmButtonState();
     }
     private void SetVictim2Description(string str) {
         victimDescription2 = str;
-        victimDescription2Text.text = str;
+        victimDescription2Text.text = string.IsNullOrEmpty(str) ? "<i>Criteria</i>" : str;
         UpdateConfirmButtonState();
     }
     private void SetConjunction(string p_str) {

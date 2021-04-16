@@ -106,7 +106,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
                 //character is not yet at target village
                 Area targetArea = CollectionUtilities.GetRandomElement(character.behaviourComponent.invadeVillageTarget);
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.gridTiles);
-                return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                return character.jobComponent.CreateGoToSpecificTileJob(targetTile, out producedJob);
             }
         }
         producedJob = null;

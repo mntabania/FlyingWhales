@@ -244,18 +244,26 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
             targetTile = action.GetTargetTileToGoTo(this);
             if(targetTile == null) {
-                List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
+                List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
+                for (int i = 0; i < targetStructure.unoccupiedTiles.Count; i++) {
+                    LocationGridTile tile = targetStructure.unoccupiedTiles[i];
+                    if(tile.UnoccupiedNeighbours.Count > 0) {
+                        choices.Add(tile);
+                    }
+                }
+                //targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
                 if (choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
                 } else if(targetStructure.unoccupiedTiles.Count > 0) {
-                    targetTile = targetStructure.unoccupiedTiles.ElementAt(UtilityScripts.Utilities.Rng.Next(0, targetStructure.unoccupiedTiles.Count));
+                    targetTile = targetStructure.unoccupiedTiles[UtilityScripts.Utilities.Rng.Next(0, targetStructure.unoccupiedTiles.Count)];
                 } else if (targetStructure.tiles.Count > 0) {
                     //if all else fails return a random tile inside the target structure
                     targetTile = CollectionUtilities.GetRandomElement(targetStructure.tiles);
                 } else  if (actor.gridTileLocation != null){
                     //if even the structure has no tiles, then just return the actors current location
                     targetTile = actor.gridTileLocation;
-                } 
+                }
+                RuinarchListPool<LocationGridTile>.Release(choices);
                 //else {
                 //     throw new System.Exception(
                 //    $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");  

@@ -17,7 +17,7 @@ public class DragonBehaviour : BaseMonsterBehaviour {
         if(character is Dragon dragon) {
             if (dragon.willLeaveWorld) {
                 log += $"\n-Will leave world";
-                if (dragon.gridTileLocation.IsAtEdgeOfMap()) {
+                if (dragon.gridTileLocation.IsAtEdgeOfWalkableMap()) {
                     Region currentRegion = dragon.currentRegion;
                     dragon.SetDestroyMarkerOnDeath(true);
                     dragon.SetShowNotificationOnDeath(false);
@@ -31,7 +31,7 @@ public class DragonBehaviour : BaseMonsterBehaviour {
                     }
                     Messenger.Broadcast(MonsterSignals.DRAGON_LEFT_WORLD, character, currentRegion);
                 } else {
-                    dragon.jobComponent.CreateGoToJob(dragon.gridTileLocation.GetNearestEdgeTileFromThis(), out producedJob);
+                    dragon.jobComponent.CreateGoToSpecificTileJob(dragon.gridTileLocation.GetNearestEdgeTileFromThis(), out producedJob);
                 }
                 return true;
             } else {

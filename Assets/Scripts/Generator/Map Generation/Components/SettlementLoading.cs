@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Generator.Map_Generation.Components {
     public class SettlementLoading : MapGenerationComponent {
         public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-            LevelLoaderManager.Instance.UpdateLoadingInfo("Loading settlements...");
+            LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Settlements...");
             AddLog($"Loading settlements");
             for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
                 SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];

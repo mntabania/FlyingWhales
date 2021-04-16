@@ -72,7 +72,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
                 }
                 if(adjacentArea != null) {
                     log += $"\n-Target hex: " + adjacentArea.name;
-                    return character.jobComponent.CreateGoToJob(adjacentArea.gridTileComponent.GetRandomPassableTile(), out producedJob);
+                    return character.jobComponent.CreateGoToSpecificTileJob(adjacentArea.gridTileComponent.GetRandomPassableTile(), out producedJob);
 
                 }
             } else {
@@ -90,7 +90,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
                     }
                     if (adjacentArea != null) {
                         log += $"\n-Target hex: " + adjacentArea.name;
-                        return character.jobComponent.CreateGoToJob(adjacentArea.gridTileComponent.GetRandomPassableTile(), out producedJob);
+                        return character.jobComponent.CreateGoToSpecificTileJob(adjacentArea.gridTileComponent.GetRandomPassableTile(), out producedJob);
                     } else {
                         return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                     }
