@@ -65,7 +65,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            if (character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed || character.behaviourComponent.attackDemonicStructureTarget == null) {
+            if (character.behaviourComponent.attackDemonicStructureTarget == null || character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed) {
                 log += $"\n-Demonic structure target is already destroyed";
                 if (character is Summon summon) {
                     if (summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel) {
