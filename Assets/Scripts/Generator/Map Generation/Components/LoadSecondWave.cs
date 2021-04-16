@@ -100,7 +100,7 @@ public class LoadSecondWave : MapGenerationComponent {
         }
     }
     private IEnumerator LoadAdditionalStructureReferences(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading additional structure Data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Structure Data...");
         for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
             SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
             LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataLocationStructure.persistentID);
@@ -128,7 +128,7 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Tile Objects
     private IEnumerator LoadTileObjects(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading objects...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Objects...");
         int batchCount = 0;
         TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
         for (int i = 0; i < allTileObjects.Length; i++) {
@@ -200,7 +200,7 @@ public class LoadSecondWave : MapGenerationComponent {
         }
     }
     private IEnumerator LoadTileObjectTraits(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading object traits...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Object Traits...");
         int batchCount = 0;
         TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
         for (int i = 0; i < allTileObjects.Length; i++) {
@@ -219,7 +219,7 @@ public class LoadSecondWave : MapGenerationComponent {
         }
     }
     private IEnumerator LoadAdditionalTileObjectInfo(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading other object info...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Other Object info...");
         int batchCount = 0;
         TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
         for (int i = 0; i < allTileObjects.Length; i++) {
@@ -386,7 +386,7 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Traits
     private IEnumerator LoadTraitsSecondWave(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading more trait data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading More Trait data...");
         saveData.LoadTraitsSecondWave();
         yield return null;
     }
@@ -394,7 +394,7 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Jobs
     private IEnumerator LoadJobsSecondWave(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading more job data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading More Job data...");
         int batchCount = 0;
         for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
             JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];

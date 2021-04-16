@@ -9,7 +9,7 @@ public class FamilyTreeGeneration : MapGenerationComponent {
 
     #region Random Generation
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating families...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Families...");
         //human family trees
         for (int i = 0; i < 15; i++) {
             FamilyTree familyTree = FamilyTreeGenerator.GenerateFamilyTree(RACE.HUMANS);

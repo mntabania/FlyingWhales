@@ -10,7 +10,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
 	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating regions...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Regions...");
 		WorldMapTemplate chosenTemplate = data.chosenWorldMapTemplate;
 		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate, data));
 		CreateBiomeDivisions();
@@ -101,7 +101,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 	
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading regions...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Regions...");
 		yield return MapGenerator.Instance.StartCoroutine(LoadRegions(saveData));
 		// LoadSavedRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
 		CreateBiomeDivisions();

@@ -26,7 +26,7 @@ public partial class LandmarkManager {
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }
     public IEnumerator LoadRegionMap(Region region, MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo($"Loading {region.name} map...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo($"Loading {region.name} Map...");
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
         float xSeed = saveDataInnerMap.xSeed;

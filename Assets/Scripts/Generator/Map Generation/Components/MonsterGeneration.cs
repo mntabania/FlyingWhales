@@ -13,7 +13,7 @@ using UtilityScripts;
 public class MonsterGeneration : MapGenerationComponent {
 
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Placing monsters...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Placing Monsters...");
 		// yield return MapGenerator.Instance.StartCoroutine(RegionalMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration());

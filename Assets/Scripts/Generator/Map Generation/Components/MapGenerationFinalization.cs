@@ -18,7 +18,7 @@ using Debug = UnityEngine.Debug;
 public class MapGenerationFinalization : MapGenerationComponent {
 
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing World...");
 		Stopwatch stopwatch = new Stopwatch();
 		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
@@ -106,7 +106,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing World...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteLoadedFeatureInitialActions());
 		yield return MapGenerator.Instance.StartCoroutine(LoadWorldEvents(saveData));

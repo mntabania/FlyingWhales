@@ -11,7 +11,7 @@ using UnityEngine.Tilemaps;
 
 public class RegionInnerMapGeneration : MapGenerationComponent {
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating map...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
             yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this, data));
@@ -20,7 +20,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
 
     #region Scenario Maps
     public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating map...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
             yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateScenarioMap(region, this, data, scenarioMapData));
@@ -30,7 +30,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
 
     #region Saved World
     public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading inner maps...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Inner Maps...");
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
             region.CreateStructureList();
@@ -60,7 +60,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             // yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveDataRegion, location));
         }
         
-        LevelLoaderManager.Instance.UpdateLoadingInfo($"Loading structures...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo($"Loading Structures...");
         
         //place structures
         for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {

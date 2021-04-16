@@ -50,9 +50,12 @@ public class CharacterPartyComponent : CharacterComponent {
             if (hasParty) {
                 Character beacon = currentParty.beaconComponent.currentBeaconCharacter;
                 if (beacon != null && owner.hasMarker) {
+                    owner.marker.GoToPOI(beacon, p_arrivalActionBeforeDigging: OnArriveFollowingBeacon);
+
+                    //Set to true after GoToPOI because ClearAllCurrentPathData is called there which will set this to false
+                    //So to avoid setting to false, this is set to true after all process is done
                     isFollowingBeacon = true;
                     owner.movementComponent.UpdateSpeed();
-                    owner.marker.GoToPOI(beacon, p_arrivalActionBeforeDigging: OnArriveFollowingBeacon);
                 }
             }
         } else {
@@ -73,6 +76,8 @@ public class CharacterPartyComponent : CharacterComponent {
     public void UnfollowBeacon() {
         if (isFollowingBeacon) {
             if (hasParty && owner.hasMarker) {
+                //Set to false first before clearing all current path data because UnfollowBeacon is also called there
+                //So this is to avoid unending loop
                 isFollowingBeacon = false;
                 owner.movementComponent.UpdateSpeed();
                 owner.marker.pathfindingAI.ClearAllCurrentPathData();
