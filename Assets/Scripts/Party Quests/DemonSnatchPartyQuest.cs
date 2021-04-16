@@ -96,11 +96,15 @@ public class DemonSnatchPartyQuest : PartyQuest {
     }
     private void OnHasBecomePrisoner(Prisoner p_prisoner) {
         if (p_prisoner.owner == targetCharacter && assignedParty != null) {
-            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
-                Character member = assignedParty.membersThatJoinedQuest[i];
-                if (member.currentJob != null && member.currentJob.isThisAPartyJob
-                    && (member.currentJob.jobType == JOB_TYPE.SNATCH_RESTRAIN || member.currentJob.jobType == JOB_TYPE.GO_TO || member.currentJob.jobType == JOB_TYPE.PARTY_GO_TO)) {
-                    member.currentJob.CancelJob(false);
+            if (p_prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
+                EndQuest("Already a prisoner of demon faction");
+            } else {
+                for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                    Character member = assignedParty.membersThatJoinedQuest[i];
+                    if (member.currentJob != null && member.currentJob.isThisAPartyJob
+                        && (member.currentJob.jobType == JOB_TYPE.SNATCH_RESTRAIN || member.currentJob.jobType == JOB_TYPE.GO_TO || member.currentJob.jobType == JOB_TYPE.PARTY_GO_TO)) {
+                        member.currentJob.CancelJob(false);
+                    }
                 }
             }
         }
