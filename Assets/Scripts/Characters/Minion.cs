@@ -61,7 +61,8 @@ public class Minion {
             if (character.isBeingSeized) {
                 PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
             }
-
+            character.SetDeathLocation(character.gridTileLocation);
+            
             character.SetIsDead(true);
             character.SetPOIState(POI_STATE.INACTIVE);
 

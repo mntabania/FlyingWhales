@@ -23,6 +23,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public int doNotRecoverHP;
 
     public Vector3 worldPos;
+    public TileLocationSave deathTileLocation;
     public Quaternion rotation;
     public bool hasMarker;
     public bool hasExpiry;
@@ -151,6 +152,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
                 markerExpiryDate = data.marker.destroyDate;
             }
         }
+        
+        deathTileLocation = data.deathTilePosition != null ? new TileLocationSave(data.deathTilePosition) : new TileLocationSave();
 
         trapStructure = new SaveDataTrapStructure(); trapStructure.Save(data.trapStructure);
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
