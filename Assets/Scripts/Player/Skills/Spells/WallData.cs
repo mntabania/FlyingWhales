@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 
 public class WallData : SkillData {
@@ -31,10 +32,16 @@ public class WallData : SkillData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
+            if (targetTile.structure is DemonicStructure) {
+                return false;
+            }
             TileObject tileObject = targetTile.tileObjectComponent.objHere;
             if (tileObject != null) {
                 if (tileObject.tileObjectType.IsTileObjectImportant()) {
                     return false;    
+                }
+                if (tileObject.tileObjectType.IsDemonicStructureTileObject()) {
+                    return false;
                 }
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.DOOR_TILE_OBJECT) {
                     return false;    

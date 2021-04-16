@@ -459,6 +459,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
             case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.DEFILER_TILE_OBJECT:    
                 return true;
             default:
                 return false;

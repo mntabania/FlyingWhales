@@ -5515,7 +5515,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
-        deathTilePosition = gridTileLocation;
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
@@ -5529,12 +5528,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isBeingSeized) {
                 PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
             }
-
+            SetDeathLocation(gridTileLocation);
+            
             SetIsConversing(false);
             //SetIsFlirting(false);
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
-            LocationGridTile deathTile = gridTileLocation;
 
             List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Death_Trait);
             if (traitOverrideFunctions != null) {
@@ -5595,7 +5594,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 
-            DropAllItems(deathTile);
+            DropAllItems(deathTilePosition);
             UnownOrTransferOwnershipOfAllItems();
 
             reactionComponent.SetIsHidden(false);
@@ -5716,7 +5715,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetHP(0);
             currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
 
-            marker?.OnDeath(deathTile);
+            marker?.OnDeath(deathTilePosition);
 
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
@@ -5764,7 +5763,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if(responsibleCharacter != null) {
                 if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
                     //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, deathTile.parentMap);
-                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, deathTile.worldLocation, 1, deathTile.parentMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, deathTilePosition.worldLocation, 1, deathTilePosition.parentMap);
                 }
 			}
 
@@ -6054,6 +6053,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
+        if (data.deathTileLocation.hasValue) {
+            deathTilePosition = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(data.deathTileLocation);
+        }
+
         //Load character traits after all references and visuals and objects of character has been placed since
         LoadCharacterTraitsFromSave(data);
         SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
@@ -6141,6 +6144,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void RemoveBookmark() {
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
+    }
+    #endregion
+
+    #region Death Tile
+    public void SetDeathLocation(LocationGridTile p_tile) {
+        deathTilePosition = p_tile;
     }
     #endregion
 

@@ -78,8 +78,8 @@ public class Summon : Character {
             if (isBeingSeized) {
                 PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
             }
-
-
+            SetDeathLocation(gridTileLocation);
+        
             if (isLycanthrope) {
                 //Added this so that human and lycan form can share the same death log and prevent duplicates
                 Character humanForm = lycanData.originalForm;

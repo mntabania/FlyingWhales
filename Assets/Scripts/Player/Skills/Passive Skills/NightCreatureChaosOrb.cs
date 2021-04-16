@@ -1,5 +1,7 @@
-﻿using Traits;
+﻿using Inner_Maps;
+using Traits;
 using Interrupts;
+using UnityEngine.Assertions;
 
 public class NightCreatureChaosOrb : PassiveSkill {
     public override string name => "Chaos Orbs from Night Creatures";
@@ -22,7 +24,9 @@ public class NightCreatureChaosOrb : PassiveSkill {
             if (responsibleCharacter != null) {
                 if (responsibleCharacter.race == RACE.SKELETON || responsibleCharacter.traitContainer.HasTrait("Necromancer") || responsibleCharacter.traitContainer.HasTrait("Vampire")) {
                     orbsCount = 2;
-                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, responsibleCharacter.gridTileLocation.centeredWorldLocation, orbsCount, responsibleCharacter.gridTileLocation.parentMap);
+                    LocationGridTile chaosOrbSpawnLocation = !responsibleCharacter.hasMarker ? responsibleCharacter.deathTilePosition : responsibleCharacter.gridTileLocation;
+                    Assert.IsNotNull(chaosOrbSpawnLocation, $"Chaos orb spawn location of {responsibleCharacter.name} is null. Character that died is {p_character.name}");
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, chaosOrbSpawnLocation.centeredWorldLocation, orbsCount, chaosOrbSpawnLocation.parentMap);
                 }
             }
         }
