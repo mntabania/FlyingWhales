@@ -15,7 +15,7 @@ public class VillageGeneration : MapGenerationComponent {
 
 	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating settlements...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating Settlements...");
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			Assert.IsTrue(region.HasTileWithFeature(AreaFeatureDB.Inhabited_Feature));

@@ -125,6 +125,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
     public Character necromancerInTheWorld { get; private set; }
     public bool hasSpawnedNecromancerOnce { get; private set; }
+    public bool toggleCharacterMarkerNameplate { get; private set; }
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
     public int CHARACTER_PRESUMED_DEAD_THRESHOLD { get; private set; }
     private Dictionary<Type, CharacterBehaviourComponent> behaviourComponents;
@@ -827,6 +828,15 @@ public class CharacterManager : BaseMonoBehaviour {
             }
         }
         return _normalNameColorHex;
+    }
+    public void ToggleCharacterMarkerNameplate() {
+        SetToggleCharacterMarkerNameplate(!toggleCharacterMarkerNameplate);
+    }
+    private void SetToggleCharacterMarkerNameplate(bool p_state) {
+        if (toggleCharacterMarkerNameplate != p_state) {
+            toggleCharacterMarkerNameplate = p_state;
+            Messenger.Broadcast<bool>(CharacterSignals.TOGGLE_CHARACTER_MARKER_NAMEPLATE, toggleCharacterMarkerNameplate);
+        }
     }
     #endregion
 

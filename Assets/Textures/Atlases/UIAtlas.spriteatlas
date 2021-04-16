@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 4121025
+    totalSpriteSurfaceArea: 4144769
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -73,6 +73,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4c6a6eb03a95ec244bdc3a7ee4b661b3, type: 3}
   - {fileID: 21300000, guid: 8d587cc03c7e32d4aa2884c70b55e689, type: 3}
   - {fileID: 21300000, guid: 23ddbcc0aa979fd419f976431afeaee3, type: 3}
+  - {fileID: 21300000, guid: e15decc09bf43524c982274a6bfc3966, type: 3}
   - {fileID: 21300000, guid: 2ed6bfc080dfb3740848088e2c840c09, type: 3}
   - {fileID: 21300000, guid: 60ddcbd00e8141f4792d1f3a4278f707, type: 3}
   - {fileID: 21300000, guid: 43776ce0165108742997204fe82cf9af, type: 3}
@@ -81,6 +82,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8beebaf07d4d3ea4f95343b7293e9fda, type: 3}
   - {fileID: 21300000, guid: c57c4801b63d97b41bf0e70c501eadac, type: 3}
   - {fileID: 21300000, guid: f10dd611decbce5468d03fe0c4005559, type: 3}
+  - {fileID: 21300000, guid: b2761a1174953de4e9a110d9f35a9d4c, type: 3}
   - {fileID: 21300000, guid: 4d8d8221164601c489808fe9f532e2d1, type: 3}
   - {fileID: 21300000, guid: 08947931c34a0ac4b9cb0a631a06f10a, type: 3}
   - {fileID: 21300000, guid: ae874851ae4631f4d970b2dcf3f196d7, type: 3}
@@ -118,6 +120,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 78e32ab259a088b4c85850353c225547, type: 3}
   - {fileID: 21300000, guid: 5767b2c2db928c446b1558b601f40b9f, type: 3}
   - {fileID: 21300000, guid: b54566c2a94fb6b428dd81e65d59e65d, type: 3}
+  - {fileID: 21300000, guid: 81fc4bc292a09ab459f1ba344aea0296, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
   - {fileID: 21300000, guid: 8f8f62e29fa6aeb4d80d8917d11cd38d, type: 3}
   - {fileID: 21300000, guid: 3b5634e2dfad1964c8eb70354f6f1bbf, type: 3}
@@ -324,6 +327,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1b3ac7d9fb5eaa7499a991b953508086, type: 3}
   - {fileID: 21300000, guid: 84072ad96566ca445b953252d395ffce, type: 3}
   - {fileID: 21300000, guid: ffe6ffd9e0f5644498cde93bf53e394a, type: 3}
+  - {fileID: 21300000, guid: a72fc5e93de36c44b9d3dc69ca821ea1, type: 3}
   - {fileID: 21300000, guid: 14c4c8e94ddaffe4e9f572ca954d6964, type: 3}
   - {fileID: 21300000, guid: 3c18a4f925608f84d880b985cd5da522, type: 3}
   - {fileID: 21300000, guid: c54729f95e0d0e74a8d609b0df98161a, type: 3}
@@ -498,6 +502,7 @@ SpriteAtlas:
   - Arrow-Faction-Btn-Hover
   - button_skills_default
   - icon_undead
+  - button_psychopath_hover
   - button_scroll
   - nameplate_clicked
   - tab_items_default
@@ -506,6 +511,7 @@ SpriteAtlas:
   - spell_list_button_charging
   - button_minion_action_hover
   - button_action_hover
+  - button_psychopath_disabled
   - icon_mana
   - button_arrow2_left_hover
   - button_arrow2_left_default
@@ -543,6 +549,7 @@ SpriteAtlas:
   - icon_plus
   - event_active_button_clicked
   - icon_monster
+  - button_psychopath_default
   - White_square
   - icon_human
   - 4x_button_clicked
@@ -749,6 +756,7 @@ SpriteAtlas:
   - trait_scheme
   - spirit_energy_icon
   - FilterPopUp
+  - button_psychopath_clicked
   - minion_tab_spells_active
   - assign_button_clicked
   - button_action_clicked

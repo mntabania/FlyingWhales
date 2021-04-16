@@ -18,7 +18,7 @@ MonoBehaviour:
     fixedSkills: 2b000000
   afflictions:
     extraSlots: 0
-    fixedSkills: 630000005b000000
+    fixedSkills: 020000005b000000
   minions:
     extraSlots: 0
     fixedSkills: 50000000
@@ -68,7 +68,7 @@ MonoBehaviour:
       amount: 500
     upgradeTime: 960
   - name: Level 6
-    skillTypesToUnlock: 4c000000220000000c000000020000004300000011000000
+    skillTypesToUnlock: 4c000000220000000c000000630000004300000011000000
     upgradeCost:
     - name: 800 Chaotic_Energy
       currency: 1

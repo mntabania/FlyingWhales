@@ -728,8 +728,7 @@ namespace Locations.Settlements {
             //default to true even if there are no unoccupied tiles in settlement 
             return hasPath;
         }
-        public List<Area> GetSurroundingAreas() {
-            List<Area> areas = new List<Area>();
+        public void PopulateSurroundingAreas(List<Area> areas) {
             for (int i = 0; i < this.areas.Count; i++) {
                 Area area = this.areas[i];
                 if (this is NPCSettlement npcSettlement && area.region != npcSettlement.region) {
@@ -742,7 +741,6 @@ namespace Locations.Settlements {
                     }
                 }
             }
-            return areas;
         }
         public void PopulateSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(List<Area> areas, Region region, int numOfFreezingTraps) {
             for (int i = 0; i < this.areas.Count; i++) {
@@ -760,20 +758,7 @@ namespace Locations.Settlements {
                 }
             }
         }
-        public void PopulateSurroundingAreas(List<Area> areas) {
-            for (int i = 0; i < this.areas.Count; i++) {
-                Area area = this.areas[i];
-                if (this is NPCSettlement npcSettlement && area.region != npcSettlement.region) {
-                    continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
-                }
-                for (int j = 0; j < area.neighbourComponent.neighbours.Count; j++) {
-                    Area neighbour = area.neighbourComponent.neighbours[j];
-                    if (neighbour.settlementOnArea == null || neighbour.settlementOnArea != this) {
-                        areas.Add(neighbour);
-                    }
-                }
-            }
-        }
+
         #endregion
 
         #region Tile Object

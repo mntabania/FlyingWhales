@@ -86,7 +86,7 @@ public class AreaGeneration : MapGenerationComponent {
 
 	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating World Map...");
 		WorldMapTemplate chosenTemplate;
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			chosenTemplate = new WorldMapTemplate() {
@@ -257,7 +257,7 @@ public class AreaGeneration : MapGenerationComponent {
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading world map...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading World Map...");
 		data.chosenWorldMapTemplate = scenarioMapData.worldMapSave.worldMapTemplate;
 		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
 		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data, scenarioMapData));
