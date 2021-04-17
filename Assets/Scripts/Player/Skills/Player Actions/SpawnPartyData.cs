@@ -41,10 +41,22 @@ public class SpawnPartyData : PlayerAction {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            if (targetTile.tileObjectComponent.hiddenObjHere != null || targetTile.isOccupied || targetTile.IsPartOfHumanElvenSettlement()) {
-                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_neighbour_not_wilderness");
+            if (targetTile.structure.structureType == STRUCTURE_TYPE.CAVE) {
+                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_cave");
                 return false;
             }
+            if (targetTile.groundType == LocationGridTile.Ground_Type.Water) {
+                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_water");
+                return false;
+            }
+            if (targetTile.IsPartOfHumanElvenSettlement()) {
+                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_structure");
+                return false;
+            }
+            /*if (targetTile.structure) {
+                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_structure");
+                return false;
+            }*/
             return true;
         }
         return canPerform;

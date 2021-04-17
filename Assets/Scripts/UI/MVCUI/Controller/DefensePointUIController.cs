@@ -113,7 +113,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			m_deployedSummonsUI[x].ShowManaCost();
 			m_deployedSummonsUI[x].gameObject.SetActive(false);
 		}
-		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
+		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		m_targetPartyStructure.partyData.ResetAllReadyCounts();
 	}
 
@@ -124,7 +124,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedSummonUnderlings[x], true, false);
 			m_deployedSummonsUI[x].Deploy(m_targetPartyStructure.partyData.deployedSummons[x], true);
 		}
-		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
+		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 	}
 
 	void InitializeDeployedItems() {
@@ -150,7 +150,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 				m_summonList.Add(item);
 			}
 		}
-		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
+		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 	}
 
 	void OnAvailableMonsterClicked(MonsterAndDemonUnderlingCharges p_clickedMonster, MonsterUnderlingQuantityNameplateItem p_item) {
@@ -161,7 +161,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		if (!p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeploySummonCount < m_targetPartyStructure.partyData.maxSummonLimitDeployCount) {
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedSummonsUI, p_clickedMonster);
-			m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
+			m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		}
 		ProcessDeployButtonDisplay();
 	}
@@ -199,7 +199,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
 		if (!p_itemUI.isMinion) {
 			ProcessAvailableItemFromClickingDeployedItem(m_summonList, p_itemUI);
-			m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
+			m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		} 
 		ProcessDeployButtonDisplay();
 	}
@@ -208,7 +208,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.unlockCost) {
 			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.unlockCost);
 			m_targetPartyStructure.startingSummonCount++;
-			m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
+			m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		}
 	}
 
@@ -260,7 +260,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		m_targetPartyStructure.ResetExistingCharges();
 		m_targetPartyStructure.UnDeployAll();
 		Init();
-		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.mana);
+		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		ProcessDeployButtonDisplay();
 	}
 	

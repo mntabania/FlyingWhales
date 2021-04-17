@@ -165,7 +165,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		HideDeployedItems();
 		DisplayDeployedItems();
 		DisplayDeployedDeadMembers();
-		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.mana);
+		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 	}
 	void HideDeployedItems() {
 		int x = 0;
@@ -369,7 +369,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			}
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedSummonsUI, p_clickedMonster);
-			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.mana);
+			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		} else if (p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount >= 1) {
 				return;
@@ -449,7 +449,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.unlockCost) {
 			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.unlockCost);
 			m_targetPartyStructure.startingSummonCount++;
-			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.mana);
+			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		}
 	}
 
@@ -461,7 +461,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		if (!p_itemUI.isMinion) {
 			ProcessAvailableItemFromClickingDeployedItem(m_summonList, p_itemUI);
-			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.mana);
+			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		} else {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
 				m_maraudUIView.ShowMinionButtonHideMinionContainer();
@@ -545,7 +545,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		});
 		m_maraudUIView.ShowMinionButtonHideMinionContainer();
 		m_maraudUIView.ShowTargetButtonHideTargetContainer();
-		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.mana);
+		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		Init();
 	}
 
