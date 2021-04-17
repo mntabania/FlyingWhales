@@ -33,7 +33,6 @@ public class PlagueComponent {
             return;
         }
         _plaguePoints = Mathf.Clamp(_plaguePoints + amount, 0, maxPlaguePoints);
-
         Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
         Messenger.Broadcast(PlayerSignals.PLAGUE_POINTS_ADJUSTED, amount, _plaguePoints);
     }

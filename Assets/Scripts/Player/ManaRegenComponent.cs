@@ -19,14 +19,14 @@ public class ManaRegenComponent
     #region structure event listener(FOR MANA_PIT)
     void OnStructurePlaced(LocationStructure p_structure) {
         if (p_structure.structureType == STRUCTURE_TYPE.MANA_PIT) {
-            EditableValuesManager.Instance.maximumMana += 250;
+            EditableValuesManager.Instance.maximumMana += EditableValuesManager.Instance.GetAdditionalMaxManaPerManaPit();
             m_manaPitCount++;
         }
     }
 
     void OnStructureDestroyed(LocationStructure p_structure, Area p_area) {
         if (p_structure.structureType == STRUCTURE_TYPE.MANA_PIT) {
-            EditableValuesManager.Instance.maximumMana -= 250;
+            EditableValuesManager.Instance.maximumMana -= EditableValuesManager.Instance.GetAdditionalMaxManaPerManaPit();
             if (m_player.mana > EditableValuesManager.Instance.maximumMana) {
                 m_player.AdjustMana(EditableValuesManager.Instance.maximumMana - m_player.mana);
             }
@@ -34,9 +34,13 @@ public class ManaRegenComponent
         }
     }
 
+    public int GetManaPitCount() {
+        return m_manaPitCount;
+    }
+
     void OnHourStared() {
         if (m_player.mana < EditableValuesManager.Instance.maximumMana) {
-            m_player.AdjustMana(100 + (20 * m_manaPitCount));
+            m_player.AdjustMana(EditableValuesManager.Instance.GetManaRegenPerHour() + (EditableValuesManager.Instance.GetManaRegenPerManaPit() * m_manaPitCount));
         }
     }
     #endregion

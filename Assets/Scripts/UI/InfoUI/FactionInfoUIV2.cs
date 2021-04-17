@@ -622,8 +622,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #endregion
 
     public void RevealInfo() {
-        if (PlayerManager.Instance.player.mana >= 50) {
-            PlayerManager.Instance.player.AdjustMana(-50);
+        if (PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
+            PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.GetRevealCharacterInfoCost());
             activeFaction.isInfoUnlocked = true;
             ProcessDisplay();
         }

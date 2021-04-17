@@ -91,30 +91,35 @@ public class MaraudUIView : MVCUIView {
 		UIModel.scrollViewDeployedTargets.gameObject.SetActive(false);
 	}
 
-	public void ProcessSummonDisplay(int p_currentCount, int p_maxCount, int p_currentMana) {
-		int lastAvailIndex = -1;
+	public void ProcessSummonDisplay(int p_currentCount, int p_maxCount, Party p_party, int p_currentMana) {
+		int targetIndex = -1;
+		for (int x = 0; x < p_currentCount; ++x) {
+			UIModel.deployedItemSummonsUI[x].gameObject.SetActive(true);
+		}
 		for (int x = 0; x < p_currentCount; ++x) {
 			if (!UIModel.deployedItemSummonsUI[x].isDeployed && !UIModel.deployedItemSummonsUI[x].isReadyForDeploy) {
-				UIModel.deployedItemSummonsUI[x].gameObject.SetActive(true);
 				UIModel.deployedItemSummonsUI[x].MakeSlotEmpty();
-				if (lastAvailIndex == -1) {
-					lastAvailIndex = x;
+				if (targetIndex == -1) {
+					targetIndex = x;
 				}
 			}
 		}
-
-		if (lastAvailIndex != -1) {
-			UIModel.deployedItemSummonsUI[lastAvailIndex].gameObject.SetActive(true);
-			UIModel.deployedItemSummonsUI[lastAvailIndex].DisplayAddSummon();
+		if (targetIndex == -1) {
+			targetIndex = p_currentCount;
 		}
-		if (p_currentCount < p_maxCount) {
-			UIModel.deployedItemSummonsUI[p_currentCount].gameObject.SetActive(true);
-			UIModel.deployedItemSummonsUI[p_currentCount].MakeSlotLocked(p_currentMana >= UIModel.deployedItemSummonsUI[p_currentCount].unlockCost);
+		if (targetIndex < p_currentCount - 1) {
+			UIModel.deployedItemSummonsUI[targetIndex].gameObject.SetActive(true);
+			UIModel.deployedItemSummonsUI[targetIndex].DisplayAddSummon();
 		}
-		
-		for (int x = p_currentCount + 1; x < UIModel.deployedItemSummonsUI.Count; ++x) {
-			UIModel.deployedItemSummonsUI[x].gameObject.SetActive(true);
-			UIModel.deployedItemSummonsUI[x].MakeSlotLockedNoButton();
+		targetIndex = p_currentCount;
+		if (targetIndex < p_maxCount) {
+			UIModel.deployedItemSummonsUI[targetIndex].gameObject.SetActive(true);
+			UIModel.deployedItemSummonsUI[targetIndex].MakeSlotLocked(p_currentMana >= UIModel.deployedItemSummonsUI[targetIndex].unlockCost);
+			targetIndex++;
+			for (int x = targetIndex; x < p_maxCount; ++x) {
+				UIModel.deployedItemSummonsUI[x].gameObject.SetActive(true);
+				UIModel.deployedItemSummonsUI[x].MakeSlotLockedNoButton();
+			}
 		}
 	}
 

@@ -109,4 +109,8 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             }    
         }
     }
+
+    public void SetToolTipPosition(UIHoverPosition p_pos) {
+        tooltipPos = p_pos;
+    }
 }

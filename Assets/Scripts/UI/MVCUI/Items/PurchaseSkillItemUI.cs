@@ -39,7 +39,7 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	private PLAYER_SKILL_TYPE m_skillType;
 
 	PlayerSkillData m_data;
-
+	public RuinarchText bonusCharges;
 	[SerializeField] private AnimationCurve _animationCurve;
 	
 	private void OnEnable() {
@@ -80,6 +80,7 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 			imgIcon.sprite = passive;
 			break;
 		}
+		bonusCharges.text = "x" + m_data.bonusChargeWhenUnlocked.ToString();
 		txtLevel.text = "Level 0";
 		txtCost.text = m_data.unlockCost.ToString();
 		m_skillType = p_type;
