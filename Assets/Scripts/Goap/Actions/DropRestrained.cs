@@ -165,43 +165,44 @@ public class DropRestrained : GoapAction {
                     Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     criminalTrait.SetIsImprisoned(true);
                 }    
-            } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
-                //snatcher specific behaviour
-                Area areaLocation = targetCharacter.areaLocation;
-                if(areaLocation != null) {
-                    LocationStructure structure = areaLocation.structureComponent.GetMostImportantStructureOnTile();
-                    if (structure is DemonicStructure) {
-                        if (structure is Kennel) {
-                            List<LocationGridTile> choices = structure.passableTiles.Where(t => t.tileObjectComponent.objHere == null || t.IsPassable()).ToList();
-                            if (choices.Count > 0) {
-                                LocationGridTile randomTile = CollectionUtilities.GetRandomElement(choices);
-                                targetCharacter.marker.PlaceMarkerAt(randomTile);
-                            } else {
-                                Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room in kennel, because no valid tiles could be found.");
-                            }
-                        } else if (structure.rooms != null && structure.rooms.Length > 0) {
-                            //place target in a random room
-                            List<StructureRoom> roomChoices = structure.rooms.Where(r => r.CanUnseizeCharacterInRoom(targetCharacter)).ToList();
-                            if (roomChoices.Count > 0) {
-                                StructureRoom randomRoom = CollectionUtilities.GetRandomElement(roomChoices);
-                                List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => t.tileObjectComponent.objHere == null || t.IsPassable()).ToList();
-                                if (choices.Count > 0) {
-                                    LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(choices);
-                                    targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);
-                                    DoorTileObject door = randomRoom.GetTileObjectInRoom<DoorTileObject>(); //close door in room
-                                    door?.Close();
-                                } else {
-                                    Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room, because no valid tiles in room could be found.");
-                                }
+            } 
+            //else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
+            //    //snatcher specific behaviour
+            //    Area areaLocation = targetCharacter.areaLocation;
+            //    if(areaLocation != null) {
+            //        LocationStructure structure = areaLocation.structureComponent.GetMostImportantStructureOnTile();
+            //        if (structure is DemonicStructure) {
+            //            if (structure is Kennel) {
+            //                List<LocationGridTile> choices = structure.passableTiles.Where(t => t.tileObjectComponent.objHere == null || t.IsPassable()).ToList();
+            //                if (choices.Count > 0) {
+            //                    LocationGridTile randomTile = CollectionUtilities.GetRandomElement(choices);
+            //                    targetCharacter.marker.PlaceMarkerAt(randomTile);
+            //                } else {
+            //                    Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room in kennel, because no valid tiles could be found.");
+            //                }
+            //            } else if (structure.rooms != null && structure.rooms.Length > 0) {
+            //                //place target in a random room
+            //                List<StructureRoom> roomChoices = structure.rooms.Where(r => r.CanUnseizeCharacterInRoom(targetCharacter)).ToList();
+            //                if (roomChoices.Count > 0) {
+            //                    StructureRoom randomRoom = CollectionUtilities.GetRandomElement(roomChoices);
+            //                    List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => t.tileObjectComponent.objHere == null || t.IsPassable()).ToList();
+            //                    if (choices.Count > 0) {
+            //                        LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(choices);
+            //                        targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);
+            //                        DoorTileObject door = randomRoom.GetTileObjectInRoom<DoorTileObject>(); //close door in room
+            //                        door?.Close();
+            //                    } else {
+            //                        Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room, because no valid tiles in room could be found.");
+            //                    }
 
-                            } else {
-                                Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room, because no valid rooms could be found.");
-                            }
-                        }
-                    }
-                }
-                goapNode.actor.behaviourComponent.SetIsSnatching(false);
-            }
+            //                } else {
+            //                    Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room, because no valid rooms could be found.");
+            //                }
+            //            }
+            //        }
+            //    }
+            //    goapNode.actor.behaviourComponent.SetIsSnatching(false);
+            //}
             if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
                 if (goapNode.actor.deployedAtStructure != null && !goapNode.actor.deployedAtStructure.hasBeenDestroyed) {
                     LocationGridTile chosenTile = goapNode.actor.deployedAtStructure.GetRandomPassableTile();
@@ -209,6 +210,12 @@ public class DropRestrained : GoapAction {
                         CharacterManager.Instance.Teleport(targetCharacter, chosenTile);
                         if (targetCharacter.hasMarker) {
                             targetCharacter.marker.UpdatePosition();
+                        }
+                    }
+                    Party party = goapNode.actor.partyComponent.currentParty;
+                    if (party != null && party.isActive && party.currentQuest is DemonSnatchPartyQuest quest) {
+                        if (quest.targetCharacter == goapNode.poiTarget) {
+                            party.currentQuest.EndQuest("Finished quest");
                         }
                     }
                 }

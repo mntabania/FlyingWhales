@@ -96,7 +96,8 @@ public class DemonSnatchPartyQuest : PartyQuest {
     }
     private void OnHasBecomePrisoner(Prisoner p_prisoner) {
         if (p_prisoner.owner == targetCharacter && assignedParty != null) {
-            if (p_prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
+            LocationStructure currentStructure = p_prisoner.owner.currentStructure;
+            if (p_prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction) && currentStructure != null && currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
                 EndQuest("Already a prisoner of demon faction");
             } else {
                 for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {

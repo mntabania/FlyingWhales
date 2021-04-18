@@ -46,23 +46,8 @@ public class PartyBehaviour : CharacterBehaviourComponent {
             } else {
                 if (party.membersThatJoinedQuest.Contains(character)) {
                     if (party.IsMemberActive(character)) {
-                        bool stillProcess = true;
-                        if (character.limiterComponent.canTakeJobs) {
-                            JobQueueItem jobToAssign = party.jobBoard.GetFirstJobBasedOnVision(character);
-                            if (jobToAssign != null) {
-                                producedJob = jobToAssign;
-                                hasJob = true;
-                                stillProcess = false;
-                            } else {
-                                jobToAssign = party.jobBoard.GetFirstUnassignedJobToCharacterJob(character);
-                                if (jobToAssign != null) {
-                                    producedJob = jobToAssign;
-                                    hasJob = true;
-                                    stillProcess = false;
-                                }
-                            }
-                        }
-                        if (stillProcess) {
+                        hasJob = DoPartyJobsInPartyJobBoard(character, party, ref producedJob);
+                        if (!hasJob) { //If no job is assigned from job board continue doing behaviour
                             if (party.partyState == PARTY_STATE.Moving) {
                                 log += $"\n-Party is moving";
                                 if (party.targetDestination != null && !party.targetDestination.hasBeenDestroyed) {

@@ -139,4 +139,23 @@ public abstract class CharacterBehaviourComponent {
     }
     #endregion
 
+    #region Party
+    //Returns true or false if the job is produced
+    protected bool DoPartyJobsInPartyJobBoard(Character p_character, Party p_party, ref JobQueueItem producedJob) {
+        if (p_character.limiterComponent.canTakeJobs) {
+            JobQueueItem jobToAssign = p_party.jobBoard.GetFirstJobBasedOnVision(p_character);
+            if (jobToAssign != null) {
+                producedJob = jobToAssign;
+                return true;
+            } else {
+                jobToAssign = p_party.jobBoard.GetFirstUnassignedJobToCharacterJob(p_character);
+                if (jobToAssign != null) {
+                    producedJob = jobToAssign;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    #endregion
 }
