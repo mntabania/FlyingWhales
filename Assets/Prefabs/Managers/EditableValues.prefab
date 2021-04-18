@@ -65,6 +65,11 @@ MonoBehaviour:
   _sortingOrdersInBetweenHexTileRows: 20
   currencyHoverData: {fileID: 11400000, guid: 4554e545483287347a940b31691f1945, type: 2}
   _initialChaoticEnergy: 50
+  _revealInfoCharacterCost: 50
+  _revealInfoFactionCost: 50
+  _manaRegenPerHr: 100
+  _manaRegenPerManapit: 20
+  _additionalMaxManaPerPit: 250
   vaporStacks: 5
   poisonCloudStacks: 1
   frostyFogStacks: 5

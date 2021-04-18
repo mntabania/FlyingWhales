@@ -56,6 +56,7 @@ public class TileObjectInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnReceiveKeyCodeSignal);
 
         ownerEventLbl.SetOnLeftClickAction(OnLeftClickOwner);
         ownerEventLbl.SetOnRightClickAction(OnRightClickOwner);
@@ -145,6 +146,12 @@ public class TileObjectInfoUI : InfoUIBase {
         }
     }
     #endregion
+
+    private void OnReceiveKeyCodeSignal(KeyCode p_key) {
+        if (p_key == KeyCode.Mouse1) {
+            CloseMenu();
+        }
+    }
 
     #region General
     public void UpdateTileObjectInfo() {

@@ -125,7 +125,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
             hoverText.SetText("Expand Capacity by 1");
         } else {
             btnUnlockSlot.interactable = false;
-            hoverText.SetText("Not enough Mana");
+            hoverText.SetText("Not enough Chaotic Energy");
         }
     }
 
@@ -191,6 +191,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     }
 
     public void ShowDeadIcon() {
+        isDeployed = true;
         deadIcon.SetActive(true);
     }
 
