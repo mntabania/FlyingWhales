@@ -44,6 +44,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isWanderer;
     public bool hasBeenRaisedFromDead;
     public bool isPreplaced;
+    public bool isStoredAsTarget;
     public List<string> interestedItemNames;
 
     public POI_STATE state;
@@ -141,6 +142,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
         afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
+        isStoredAsTarget = data.isStoredAsTarget;
 
         if (data.marker) {
             hasMarker = true;

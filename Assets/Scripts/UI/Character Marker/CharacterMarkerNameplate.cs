@@ -34,10 +34,10 @@ public class CharacterMarkerNameplate : PooledObject {
         UpdateName();
         UpdateSizeBasedOnZoom();
         Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
-        Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
-        Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
+        //Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        //Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.AddListener(UISignals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
         Messenger.AddListener<Character>(FactionSignals.FACTION_SET, OnCharacterSetFaction);
     }
@@ -53,26 +53,26 @@ public class CharacterMarkerNameplate : PooledObject {
             UpdateSizeBasedOnZoom();
         }
     }
-    private void OnLocationMapClosed(Region location) {
-        if (location == _parentMarker.character.currentRegion) {
-            SetGameObjectActiveState(false);
-        }        
-    }
-    private void OnLocationMapOpened(Region location) {
-        if (location == _parentMarker.character.currentRegion) {
-            UpdateActiveState();
-        }        
-    }
-    private void OnCharacterExitedRegion(Character character, Region region) {
-        if (character == _parentMarker.character && character.isDead == false) { //added checking for isDead so nameplate is not deactivated when a character dies.
-            SetGameObjectActiveState(false);
-        }
-    }
-    private void OnCharacterEnteredRegion(Character character, Region region) {
-        if (character == _parentMarker.character && InnerMapManager.Instance.currentlyShowingLocation == region) {
-            UpdateActiveState();
-        }
-    }
+    //private void OnLocationMapClosed(Region location) {
+    //    if (location == _parentMarker.character.currentRegion) {
+    //        SetGameObjectActiveState(false);
+    //    }        
+    //}
+    //private void OnLocationMapOpened(Region location) {
+    //    if (location == _parentMarker.character.currentRegion) {
+    //        UpdateActiveState();
+    //    }        
+    //}
+    //private void OnCharacterExitedRegion(Character character, Region region) {
+    //    if (character == _parentMarker.character && character.isDead == false) { //added checking for isDead so nameplate is not deactivated when a character dies.
+    //        SetGameObjectActiveState(false);
+    //    }
+    //}
+    //private void OnCharacterEnteredRegion(Character character, Region region) {
+    //    if (character == _parentMarker.character && InnerMapManager.Instance.currentlyShowingLocation == region) {
+    //        UpdateActiveState();
+    //    }
+    //}
     #endregion
 
     #region Monobehaviours
@@ -108,18 +108,19 @@ public class CharacterMarkerNameplate : PooledObject {
         SetHighlighterState(false);
         _parentMarker = null;
         Messenger.RemoveListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
-        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
-        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
-        Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
-        Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        //Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
+        //Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
+        //Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        //Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.RemoveListener(UISignals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
         Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, OnCharacterSetFaction);
     }
     #endregion
 
     #region Utilities
-    public void UpdateActiveState() {
-        SetGameObjectActiveState(CharacterManager.Instance.toggleCharacterMarkerNameplate);
+    public void UpdateNameActiveState() {
+        nameLbl.gameObject.SetActive(CharacterManager.Instance.toggleCharacterMarkerName
+            || (_parentMarker != null && _parentMarker.character != null && (_parentMarker.character.isStoredAsTarget || InnerMapManager.Instance.currentlyHoveredPoi == _parentMarker.character)));
     }
     /// <summary>
     /// Set the active state of this game object.

@@ -26,6 +26,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     public BaseSettlement parentSettlement; //NOTE: This is only used in Fishing Spot, Ore Vein, Rock and Tree Object //TODO: either use this in all TileObjects or refactor
     public bool isPreplaced { get; private set; }
+    public bool isStoredAsTarget { get; private set; }
+
     /// <summary>
     /// All currently in progress jobs targeting this.
     /// </summary>
@@ -74,7 +76,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
     public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Tile_Objects;
-
     public bool isTargetted { set; get; }
     public string iconRichText => UtilityScripts.Utilities.TileObjectIcon();
     public virtual Type serializedData => typeof(SaveDataTileObject);
@@ -150,6 +151,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         currentHP = data.currentHP;
         isPreplaced = data.isPreplaced;
         isDamageContributorToStructure = data.isDamageContributorToStructure;
+        isStoredAsTarget = data.isStoredAsTarget;
         SetPOIState(data.poiState);
         CreateTraitContainer();
         LoadResources(data);
@@ -1284,6 +1286,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return mapVisual != null;
+    }
+    public void SetAsStoredTarget(bool p_state) {
+        isStoredAsTarget = p_state;
     }
     #endregion
 
