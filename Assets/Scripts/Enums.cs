@@ -1200,7 +1200,7 @@ public enum OMNIPOTENT_MODE {
     Disabled, Enabled 
 }
 public enum VICTORY_CONDITION {
-    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Summon_Ruinarch, Sandbox, 
+    Eliminate_All = 0, Wipe_Out_Village_On_Day = 2, Wipe_Elven_Kingdom_Survive_Humans = 3, Kill_By_Plague = 5, Create_Demon_Cult = 6, Summon_Ruinarch = 7, Sandbox = 8, 
 }
 public enum RESISTANCE {
     None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
@@ -1240,7 +1240,7 @@ public enum COMBAT_SPECIAL_SKILL_TARGET {
 }
 
 public enum BOOKMARK_CATEGORY {
-    None, Portal, Player_Parties, Targets
+    None, Win_Condition, Portal, Player_Parties, Targets
 }
 
 public enum BOOKMARK_TYPE {

@@ -26,7 +26,7 @@ public class CharacterDatabase {
 
     #region Villagers List
     private void OnCharacterNoLongerSummonOrMinion(Character p_character) {
-        if (p_character.isNormalCharacter) {
+        if (IsConsideredVillager(p_character)) {
             AddToAliveVillagersList(p_character);
         }
     }
@@ -37,7 +37,7 @@ public class CharacterDatabase {
         RemoveFromAliveVillagersList(p_character);
     }
     private void OnCharacterChangedClass(Character p_character, CharacterClass p_previousClass, CharacterClass p_newClass) {
-        if (p_character.isNormalCharacter) {
+        if (IsConsideredVillager(p_character)) {
             AddToAliveVillagersList(p_character);
         } else {
             RemoveFromAliveVillagersList(p_character);
@@ -53,6 +53,9 @@ public class CharacterDatabase {
             aliveVillagersList.Add(p_character);
             Debug.Log($"Added {p_character.name} to alive villagers list. All alive villagers are {aliveVillagersList.ComafyList()}");
         }
+    }
+    private bool IsConsideredVillager(Character p_character) {
+        return p_character.isNormalCharacter && p_character.race != RACE.RATMAN;
     }
     #endregion
     

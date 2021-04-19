@@ -5,17 +5,9 @@ using Ruinarch;
 using UnityEngine;
 using UtilityScripts;
 
-public class AffattWinConditionTracker : WinconditionTracker {
+public class HumansSurviveAndElvesWipedOutWinConditionTracker : WinConditionTracker {
 
     public const int MinimumHumans = 5;
-    
-    private System.Action<Character, int, int> _characterEliminatedAction;
-    private System.Action<Character, int, int> _characterAddedAsTargetAction;
-
-    public interface Listener {
-        void OnCharacterEliminated(Character p_character, int p_elvenCount, int p_humanCount);
-        void OnCharacterAddedAsTarget(Character p_character, int p_elvenCount, int p_humanCount);
-    }
 
     public List<Character> elvenToEliminate { get; private set; }
     public List<Character> humans { get; private set; }
@@ -55,67 +47,71 @@ public class AffattWinConditionTracker : WinconditionTracker {
     #region List Maintenance
     private void EliminateVillager(Character p_character) {
         if (elvenToEliminate.Remove(p_character)) {
-            RemoveCharacterFromTrackList(p_character);
-            _characterEliminatedAction?.Invoke(p_character, elvenToEliminate.Count, humans.Count);
+            OnElvenCharacterEliminated(p_character);
         }
         if (humans.Remove(p_character)) {
-            RemoveCharacterFromTrackList(p_character);
-            _characterEliminatedAction?.Invoke(p_character, elvenToEliminate.Count, humans.Count);
+            OnHumanCharacterEliminated(p_character);
             CheckLoseCondition();
         }
     }
     private void AddVillagerToEliminate(Character p_character) {
         if (p_character.faction != null && !elvenToEliminate.Contains(p_character) && !p_character.isDead && p_character.faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
             elvenToEliminate.Add(p_character);
-            AddCharacterToTrackList(p_character);
-            _characterAddedAsTargetAction?.Invoke(p_character, elvenToEliminate.Count, humans.Count);
         } else if (p_character.faction != null && !humans.Contains(p_character) && p_character.faction.factionType.type == FACTION_TYPE.Human_Empire) {
             humans.Add(p_character);
             totalHumansToProtect = humans.Count;
         }
+        UpdateStepsChangedNameEvent();
     }
     #endregion
+
+    private void OnHumanCharacterEliminated(Character p_character) {
+        UpdateStepsChangedNameEvent();
+        CheckLoseCondition();
+    }
+    private void OnElvenCharacterEliminated(Character p_character) {
+        UpdateStepsChangedNameEvent();
+        CheckWinCondition();
+    }
 
     private void OnCharacterRemovedFromFaction(Character p_character, Faction p_faction) {
         if (p_faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
             if (elvenToEliminate.Contains(p_character)) {
                 elvenToEliminate.Remove(p_character);
-                RemoveCharacterFromTrackList(p_character);
-                _characterEliminatedAction?.Invoke(p_character, elvenToEliminate.Count, humans.Count);
+                OnElvenCharacterEliminated(p_character);
             }
         } else if(p_faction.factionType.type == FACTION_TYPE.Human_Empire){
             if (humans.Contains(p_character)) {
                 humans.Remove(p_character);
-                RemoveCharacterFromTrackList(p_character);
-                _characterEliminatedAction?.Invoke(p_character, elvenToEliminate.Count, humans.Count);
+                OnHumanCharacterEliminated(p_character);
             }
         }
-        CheckLoseCondition();
     }
     private void CheckLoseCondition() {
         if (humans.Count < MinimumHumans) {
             PlayerUI.Instance.LoseGameOver("Humans out numbered. You failed");
         }
     }
+    private void CheckWinCondition() {
+        if (elvenToEliminate.Count <= 0 && humans.Count >= MinimumHumans) {
+            Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You managed to wipe out {GetMainElvenFaction().name}. Congratulations!");
+        }
+    }
     private void OnCharacterAddedToFaction(Character p_character, Faction p_faction) {
         if (p_faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
             if (!elvenToEliminate.Contains(p_character)) {
                 elvenToEliminate.Add(p_character);
-                AddCharacterToTrackList(p_character);
-                _characterAddedAsTargetAction?.Invoke(p_character, elvenToEliminate.Count, humans.Count);
             }
         } else if (p_faction.factionType.type == FACTION_TYPE.Human_Empire) {
             if (!humans.Contains(p_character)) {
                 humans.Add(p_character);
-                AddCharacterToTrackList(p_character);
-                _characterAddedAsTargetAction?.Invoke(p_character, elvenToEliminate.Count, humans.Count);
             }
         }
+        UpdateStepsChangedNameEvent();
     }
     private void CheckIfCharacterIsEliminated(Character p_character) {
         if (ShouldConsiderCharacterAsEliminated(p_character)) {
             EliminateVillager(p_character);
-            RemoveCharacterFromTrackList(p_character);
         }
     }
     private void OnNewVillagerArrived(Character newVillager) {
@@ -142,24 +138,32 @@ public class AffattWinConditionTracker : WinconditionTracker {
         }
         throw new Exception("No elven faction for Affatt Map!");
     }
-    
-    public void Subscribe(Listener p_listener) {
-        _characterEliminatedAction += p_listener.OnCharacterEliminated;
-        _characterAddedAsTargetAction += p_listener.OnCharacterAddedAsTarget;
+
+    #region Win Conditions Steps
+    protected override IBookmarkable[] CreateWinConditionSteps() {
+        GenericTextBookmarkable wipeOutBookmarkable = new GenericTextBookmarkable(GetWipeOutText, () => BOOKMARK_TYPE.Text, null, null);
+        GenericTextBookmarkable protectHumansBookmarkable = new GenericTextBookmarkable(GetProtectHumansText, () => BOOKMARK_TYPE.Text, null, null);
+        IBookmarkable[] bookmarkables = new[] {
+            wipeOutBookmarkable, protectHumansBookmarkable
+        };
+        return bookmarkables;
     }
-    public void Unsubscribe(Listener p_listener) {
-        _characterEliminatedAction -= p_listener.OnCharacterEliminated;
-        _characterAddedAsTargetAction -= p_listener.OnCharacterAddedAsTarget;
+    private string GetWipeOutText() {
+        return $"Wipe Out {GetMainElvenFaction().nameWithColor}. Remaining {elvenToEliminate.Count.ToString()}";
     }
+    private string GetProtectHumansText() {
+        return $"Protect the humans. Remaining {humans.Count.ToString()}/{MinimumHumans.ToString()}";
+    }
+    #endregion
 }
 
 public class SaveDataAffattWinConditionTracker : SaveDataWinConditionTracker {
     public List<string> elvensToEliminate;
     public List<string> humans;
-    public override void Save(WinconditionTracker data) {
+    public override void Save(WinConditionTracker data) {
         base.Save(data);
-        AffattWinConditionTracker affattWinConditionTracker = data as AffattWinConditionTracker;
-        elvensToEliminate = SaveUtilities.ConvertSavableListToIDs(affattWinConditionTracker.elvenToEliminate);
-        humans = SaveUtilities.ConvertSavableListToIDs(affattWinConditionTracker.humans);
+        HumansSurviveAndElvesWipedOutWinConditionTracker humansSurviveAndElvesWipedOutWinConditionTracker = data as HumansSurviveAndElvesWipedOutWinConditionTracker;
+        elvensToEliminate = SaveUtilities.ConvertSavableListToIDs(humansSurviveAndElvesWipedOutWinConditionTracker.elvenToEliminate);
+        humans = SaveUtilities.ConvertSavableListToIDs(humansSurviveAndElvesWipedOutWinConditionTracker.humans);
     }
 }
