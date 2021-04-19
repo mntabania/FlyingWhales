@@ -15,10 +15,11 @@ public class OonaWinConditionTracker : WinconditionTracker {
     }
 
     public int currentLevel;
-    public int targetLevel = 2;
+    public int targetLevel;
     public override Type serializedData => typeof(SaveDataOonaWinConditionTracker);
 
     public override void Initialize(List<Character> p_allCharacters) {
+        targetLevel = EditableValuesManager.Instance.GetTargetPortalLevel();
         base.Initialize(p_allCharacters);
         Messenger.AddListener<int>(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }

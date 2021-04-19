@@ -59,7 +59,7 @@ MonoBehaviour:
   _summonMinionManaCost: 80
   _corruptTileManaCost: 0
   _triggerFlawManaCost: 25
-  _buildStructureManaCost: 0
+  _buildStructureManaCost: 8
   _chaosOrbExpulsionThresholdFromRaid: 250
   _chaosOrbExpulsionThreshold: 300
   _sortingOrdersInBetweenHexTileRows: 20
@@ -70,6 +70,7 @@ MonoBehaviour:
   _manaRegenPerHr: 100
   _manaRegenPerManapit: 20
   _additionalMaxManaPerPit: 250
+  _targetPortalLevel: 0
   vaporStacks: 5
   poisonCloudStacks: 1
   frostyFogStacks: 5

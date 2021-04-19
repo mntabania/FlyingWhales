@@ -8,6 +8,6 @@
     }
 
     void OnTriggerFlawSuccess(Character p_character) {
-        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, UnityEngine.Random.Range(1, 3), p_character.gridTileLocation.parentMap);
+        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 4, p_character.gridTileLocation.parentMap);
     }
 }

@@ -65,6 +65,10 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _additionalMaxManaPerPit;
 	[Space]
 
+	[Header("Win target portal level")]
+	[SerializeField] private int _targetPortalLevel;
+	[Space]
+
 	public int vaporStacks;
 	public int poisonCloudStacks;
 	public int frostyFogStacks;
@@ -134,6 +138,10 @@ public class EditableValuesManager : MonoBehaviour {
 
 	public int GetAdditionalMaxManaPerManaPit() {
 		return _additionalMaxManaPerPit;
+	}
+
+	public int GetTargetPortalLevel() {
+		return _targetPortalLevel;
 	}
 
 	public int GetMaxChaoticEnergyPerPortalLevel(int p_portalLevel) {
