@@ -99,7 +99,7 @@ namespace Traits {
                         //Pickpocket only from characters inside Settlement, if not inside a settlement, cannot target anyone
                         for (int i = 0; i < character.currentSettlement.SettlementResources.characters.Count; i++) {
                             Character otherCharacter = character.currentSettlement.SettlementResources.characters[i];
-                            if (otherCharacter.HasItem()) {
+                            if (character != otherCharacter && otherCharacter.HasItem()) {
                                 choices.Add(otherCharacter);
                             }
                         }    

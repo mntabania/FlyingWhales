@@ -39,6 +39,7 @@ public class ThreatComponent {
         AdjustThreat(amount);
     }
     public void AdjustThreat(int amount) {
+        return; //disabled threat for now.
         if(!Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials && 
            WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             //Threat does not increase until Tutorial is over, and since the last tutorial is Invade a village, it should be the checker
