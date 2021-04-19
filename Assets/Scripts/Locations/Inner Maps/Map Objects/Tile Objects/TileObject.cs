@@ -540,6 +540,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
+
+        Character responsibleCharacter = source as Character;
+        if (responsibleCharacter != null && responsibleCharacter.faction != null && responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons) {
+            //If responsible character is part of player faction, tag this as Player Source also
+            isPlayerSource = true;
+        }
+
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
 
         if ((amount < 0  && CanBeDamaged()) || amount > 0) {
@@ -566,28 +573,20 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         
         if (amount < 0) {
-            Character responsibleCharacter = null;
-            if (source is Character character) {
-                responsibleCharacter = character;
-            }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
             //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
         LocationGridTile tile = gridTileLocation;
         if (currentHP <= 0) {
             //object has been destroyed
-            Character removed = null;
-            if (source is Character character) {
-                removed = character;
-            }
             if (tile != null && tile.structure != null) {
-                tile.structure.RemovePOI(this, removed);    
+                tile.structure.RemovePOI(this, responsibleCharacter);    
             } else if (isBeingCarriedBy != null) {
                 isBeingCarriedBy.UncarryPOI(this, addToLocation: false);
             }
         }
         if (amount < 0) {
-            if (source is Character responsibleCharacter) {
+            if (responsibleCharacter != null) {
                 Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this, amount, responsibleCharacter);
             } else {
                 Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this, amount);

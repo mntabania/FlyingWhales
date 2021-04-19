@@ -2686,7 +2686,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //Adjust current HP based on specified parameter, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
-        
+
+        Character responsibleCharacter = source as Character;
+        if (responsibleCharacter != null && responsibleCharacter.faction != null && responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons) {
+            //If responsible character is part of player faction, tag this as Player Source also
+            isPlayerSource = true;
+        }
+
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         
         if ((amount < 0 && CanBeDamaged()) || amount > 0) {
@@ -2730,10 +2736,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (amount < 0) {
             //hp was reduced
             jobComponent.OnHPReduced();
-            Character responsibleCharacter = null;
-            if (source is Character character) {
-                responsibleCharacter = character;
-            }
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
         } else {
             //hp was increased
@@ -2742,8 +2744,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!HasHealth()) { //triggerDeath && 
             if (triggerDeath) {
                 if (source != null && source != this) {
-                    if (source is Character character) {
-                        Death("attacked", responsibleCharacter: character);
+                    if (responsibleCharacter != null) {
+                        Death("attacked", responsibleCharacter: responsibleCharacter);
                     } else {
                         string cause = "attacked";
                         cause += $"_{source}";

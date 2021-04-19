@@ -4,15 +4,19 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UtilityScripts;
 
 public class CharacterTraitComponent : CharacterComponent {
 
     public bool hasAgoraphobicReactedThisTick { get; private set; }
-
+    public bool willProcessPlayerSourceChaosOrb { get; private set; }
+    public bool isOtherTick { get; private set; }
     public CharacterTraitComponent() {
     }
     public CharacterTraitComponent(SaveDataCharacterTraitComponent data) {
         hasAgoraphobicReactedThisTick = data.hasAgoraphobicReactedThisTick;
+        willProcessPlayerSourceChaosOrb = data.willProcessPlayerSourceChaosOrb;
+        isOtherTick = data.isOtherTick;
     }
 
     #region Agoraphobia
@@ -56,8 +60,44 @@ public class CharacterTraitComponent : CharacterComponent {
     }
     #endregion
 
+    #region Player Source Chaos Orb
+    public void SetWillProcessPlayerSourceChaosOrb(bool p_state) {
+        if (willProcessPlayerSourceChaosOrb != p_state) {
+            willProcessPlayerSourceChaosOrb = p_state;
+            if (willProcessPlayerSourceChaosOrb) {
+                Messenger.AddListener(Signals.TICK_STARTED, TickStartedProcessPlayerSourceChaosOrb);
+            } else {
+                if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+                    Messenger.RemoveListener(Signals.TICK_STARTED, TickStartedProcessPlayerSourceChaosOrb);
+                }
+            }
+        }
+    }
+    private void TickStartedProcessPlayerSourceChaosOrb() {
+        if (!isOtherTick) {
+            isOtherTick = true;
+        } else {
+            ProcessPlayerSourceChaosOrb();
+        }
+    }
+    private void ProcessPlayerSourceChaosOrb() {
+        if (GameUtilities.RollChance(20)) {
+            LocationGridTile gridTile = owner.gridTileLocation;
+            if (owner.isDead) {
+                gridTile = owner.deathTilePosition;
+            }
+            if (gridTile != null) {
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, 1, gridTile.parentMap);
+            }
+        }
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCharacterTraitComponent data) {
+        if (willProcessPlayerSourceChaosOrb) {
+            Messenger.AddListener(Signals.TICK_STARTED, TickStartedProcessPlayerSourceChaosOrb);
+        }
     }
     #endregion
 }
@@ -65,10 +105,14 @@ public class CharacterTraitComponent : CharacterComponent {
 [System.Serializable]
 public class SaveDataCharacterTraitComponent : SaveData<CharacterTraitComponent> {
     public bool hasAgoraphobicReactedThisTick;
+    public bool willProcessPlayerSourceChaosOrb;
+    public bool isOtherTick;
 
     #region Overrides
     public override void Save(CharacterTraitComponent data) {
         hasAgoraphobicReactedThisTick = data.hasAgoraphobicReactedThisTick;
+        willProcessPlayerSourceChaosOrb = data.willProcessPlayerSourceChaosOrb;
+        isOtherTick = data.isOtherTick;
     }
 
     public override CharacterTraitComponent Load() {

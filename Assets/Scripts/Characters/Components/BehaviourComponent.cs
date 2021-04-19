@@ -815,12 +815,12 @@ public class BehaviourComponent : CharacterComponent {
         isCurrentlySnatching = state;
     }
     public void OnBecomeSnatcher() {
-        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
+        //Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
+        //Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
     }
     public void OnNoLongerSnatcher() {
-        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
+        //Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
+        //Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
     }
     private void OnSnatcherAddedJobToQueue(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.SNATCH && character.combatComponent.combatMode != COMBAT_MODE.Defend) {

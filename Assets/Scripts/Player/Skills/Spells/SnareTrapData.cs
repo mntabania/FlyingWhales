@@ -14,7 +14,7 @@ public class SnareTrapData : SkillData {
         targetTypes = new[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        targetTile.tileObjectComponent.SetHasSnareTrap(true);
+        targetTile.tileObjectComponent.SetHasSnareTrap(true, true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

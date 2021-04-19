@@ -7,7 +7,9 @@ using Inner_Maps;
 using Traits;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
+
 namespace Traits {
     public class TraitContainer : ITraitContainer {
 
@@ -214,6 +216,7 @@ namespace Traits {
             bool shouldAddTrait = true;
             if (traitName == "Freezing") {
                 if (HasTrait("Frozen")) {
+                    //Add Frozen trait again to reset the duration
                     AddTrait(addTo, "Frozen");
                     shouldAddTrait = false;
                 }
@@ -223,8 +226,14 @@ namespace Traits {
         private void ProcessAfterSuccessfulAddingElementalTrait(ITraitable traitable, Status status) {
             if (status.name == "Freezing") {
                 if (stacks[status.name] >= status.stackLimit) {
+                    bool isPlayerSource = false;
+                    if (status is IElementalTrait et) {
+                        isPlayerSource = et.isPlayerSource;
+                    }
                     RemoveStatusAndStacks(traitable, status.name);
                     AddTrait(traitable, "Frozen");
+                    Frozen frozen = GetTraitOrStatus<Frozen>("Frozen");
+                    frozen.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
@@ -898,7 +907,7 @@ namespace Traits {
             //}
         }
         #endregion
-        
+
         #region Clean Up
         public void CleanUp() {
             allTraitsAndStatuses?.Clear();

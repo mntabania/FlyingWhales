@@ -22,6 +22,7 @@ namespace Traits {
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
         public bool canBeTriggered;
         public ELEMENTAL_TYPE elementalType;
+        public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
         /// <summary>
         /// Persistent ID of this trait. NOTE: Only instanced traits use this.
         /// </summary>
@@ -29,7 +30,6 @@ namespace Traits {
         public OBJECT_TYPE objectType => OBJECT_TYPE.Trait;
         public List<Character> responsibleCharacters { get; protected set; }
         public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
-        public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
         //public PlayerDamageAccumulator playerDamageAccumulator { get; private set; }
 
         #region Getters

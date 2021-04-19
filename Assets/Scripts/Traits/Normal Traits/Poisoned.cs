@@ -107,6 +107,8 @@ namespace Traits {
             }
             if (traitable is GenericTileObject genericTileObject) {
                 genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.CLEANSE_TILE);
+            } else if (traitable is Character character) {
+                DisablePlayerSourceChaosOrb(character);
             }
             awareCharacters.Clear();
             responsibleCharacters?.Clear(); //Cleared list, for garbage collection
@@ -239,7 +241,16 @@ namespace Traits {
 
         #region IElementalTrait
         public void SetIsPlayerSource(bool p_state) {
-            isPlayerSource = p_state;
+            if (isPlayerSource != p_state) {
+                isPlayerSource = p_state;
+                if (traitable is Character character) {
+                    if (isPlayerSource) {
+                        EnablePlayerSourceChaosOrb(character);
+                    } else {
+                        DisablePlayerSourceChaosOrb(character);
+                    }
+                }
+            }
         }
         #endregion
 

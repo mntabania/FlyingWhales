@@ -13,6 +13,9 @@ namespace Inner_Maps {
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
         public bool isSeenByEyeWard { get; private set; }
+        public bool isFreezingTrapPlayerSource { get; private set; }
+        public bool isSnareTrapPlayerSource { get; private set; }
+
         public RACE[] freezingTrapExclusions { get; private set; }
 
         private GameObject _landmineEffect;
@@ -28,6 +31,8 @@ namespace Inner_Maps {
             hasSnareTrap = data.hasSnareTrap;
             freezingTrapExclusions = data.freezingTrapExclusions;
             isSeenByEyeWard = data.isSeenByEyeWard;
+            isFreezingTrapPlayerSource = data.isFreezingTrapPlayerSource;
+            isSnareTrapPlayerSource = data.isSnareTrapPlayerSource;
         }
 
         #region Object Here
@@ -261,7 +266,8 @@ namespace Inner_Maps {
         #endregion
 
         #region Freezing Trap
-        public void SetHasFreezingTrap(bool state, params RACE[] freezingTrapExclusions) {
+        public void SetHasFreezingTrap(bool state, bool isPlayerSource, params RACE[] freezingTrapExclusions) {
+            isFreezingTrapPlayerSource = isPlayerSource;
             if (hasFreezingTrap != state) {
                 owner.SetIsDefault(false);
                 hasFreezingTrap = state;
@@ -291,19 +297,22 @@ namespace Inner_Maps {
             }
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
             AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, owner, 1, false);
-            SetHasFreezingTrap(false);
+
+            bool isFreezingTrapPlayerSource = this.isFreezingTrapPlayerSource;
+            SetHasFreezingTrap(false, false);
             
             triggeredBy.traitContainer.RemoveStatusAndStacks(triggeredBy, "Freezing");
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Frozen", bypassElementalChance: true, overrideDuration: duration);
             Frozen frozen = triggeredBy.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
             if (frozen != null) {
-                frozen.SetIsPlayerSource(true);
+                frozen.SetIsPlayerSource(isFreezingTrapPlayerSource);
             }
         }
         #endregion
 
         #region Snare Trap
-        public void SetHasSnareTrap(bool state) {
+        public void SetHasSnareTrap(bool state, bool isPlayerSource) {
+            isSnareTrapPlayerSource = isPlayerSource;
             if (hasSnareTrap != state) {
                 owner.SetIsDefault(false);
                 hasSnareTrap = state;
@@ -317,10 +326,15 @@ namespace Inner_Maps {
         }
         public void TriggerSnareTrap(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
-            SetHasSnareTrap(false);
+            bool isSnareTrapPlayerSource = this.isSnareTrapPlayerSource;
+            SetHasSnareTrap(false, false);
             //int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
             int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
+            Ensnared ensnared = triggeredBy.traitContainer.GetTraitOrStatus<Ensnared>("Ensnared");
+            if (ensnared != null) {
+                ensnared.SetIsPlayerSource(isSnareTrapPlayerSource);
+            }
             if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
                 Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
             }
@@ -335,11 +349,11 @@ namespace Inner_Maps {
             }
             if (hasFreezingTrap) {
                 hasFreezingTrap = false; //Set to false first so that the SetHasFreezingTrap will be called
-                SetHasFreezingTrap(true, freezingTrapExclusions);
+                SetHasFreezingTrap(true, isFreezingTrapPlayerSource, freezingTrapExclusions);
             }
             if (hasSnareTrap) {
                 hasSnareTrap = false; //Set to false first so that the SetHasSnareTrap will be called
-                SetHasSnareTrap(true);
+                SetHasSnareTrap(true, isSnareTrapPlayerSource);
             }
         }
         #endregion
@@ -365,6 +379,8 @@ namespace Inner_Maps {
         public bool hasFreezingTrap;
         public bool hasSnareTrap;
         public bool isSeenByEyeWard;
+        public bool isFreezingTrapPlayerSource;
+        public bool isSnareTrapPlayerSource;
         public RACE[] freezingTrapExclusions;
         public override void Save(GridTileTileObjectComponent data) {
             base.Save(data);
@@ -374,6 +390,8 @@ namespace Inner_Maps {
             hasSnareTrap = data.hasSnareTrap;
             freezingTrapExclusions = data.freezingTrapExclusions;
             isSeenByEyeWard = data.isSeenByEyeWard;
+            isFreezingTrapPlayerSource = data.isFreezingTrapPlayerSource;
+            isSnareTrapPlayerSource = data.isSnareTrapPlayerSource;
         }
         public override GridTileTileObjectComponent Load() {
             GridTileTileObjectComponent component = new GridTileTileObjectComponent(this);

@@ -21,7 +21,7 @@
     #region State Effects
     public void AfterPlaceSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
-            genericTileObject.gridTileLocation.tileObjectComponent.SetHasFreezingTrap(true, RACE.KOBOLD);
+            genericTileObject.gridTileLocation.tileObjectComponent.SetHasFreezingTrap(true, false, RACE.KOBOLD);
         }
     }
     #endregion

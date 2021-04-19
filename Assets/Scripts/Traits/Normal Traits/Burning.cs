@@ -119,6 +119,7 @@ namespace Traits {
                 if (removedFrom is Character character) {
                     // character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
                     character.AdjustDoNotRecoverHP(-1);
+                    DisablePlayerSourceChaosOrb(character);
                 } else {
                     if(obj is Bed bed) {
                         if (bed.IsSlotAvailable()) {
@@ -298,7 +299,16 @@ namespace Traits {
 
         #region IElementalTrait
         public void SetIsPlayerSource(bool p_state) {
-            isPlayerSource = p_state;
+            if (isPlayerSource != p_state) {
+                isPlayerSource = p_state;
+                if (owner is Character character) {
+                    if (isPlayerSource) {
+                        EnablePlayerSourceChaosOrb(character);
+                    } else {
+                        DisablePlayerSourceChaosOrb(character);
+                    }
+                }
+            }
         }
         #endregion
 
