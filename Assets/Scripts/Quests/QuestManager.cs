@@ -48,12 +48,16 @@ namespace Quests {
         
         public void LoadWinConditionTracker(SaveDataWinConditionTracker data) {
             InitializeWinConditionTracker();
-            winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);
+            winConditionTracker?.Initialize(CharacterManager.Instance.allCharacters);
             winConditionTracker?.LoadReferences(data);
         }
 
         #region Win Condition
         private void InitializeWinConditionTracker() {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                //if player has already won the game, do not spawn win condition any more to save processing power.
+                return;
+            }
             switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
                 case VICTORY_CONDITION.Eliminate_All:
                     winConditionTracker = new WipeOutAllVillagersWinConditionTracker();

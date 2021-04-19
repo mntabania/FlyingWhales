@@ -45,6 +45,9 @@ public class PlagueDeathWinConditionTracker : WinConditionTracker {
             }
         }
         if (totalCharactersToEliminate > villagersToEliminate.Count) {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                return;
+            }
             PlayerUI.Instance.LoseGameOver($"You were not able to plague {Elimination_Requirement.ToString()} villagers. You failed");
         }
     }

@@ -89,6 +89,9 @@ public class HumansSurviveAndElvesWipedOutWinConditionTracker : WinConditionTrac
     }
     private void CheckLoseCondition() {
         if (humans.Count < MinimumHumans) {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                return;
+            }
             PlayerUI.Instance.LoseGameOver("Humans out numbered. You failed");
         }
     }

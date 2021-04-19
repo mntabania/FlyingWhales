@@ -76,6 +76,9 @@ public class WipeOutAllUntilDayWinConditionTracker : WinConditionTracker {
     private void OnDayChanged(int p_currentDay) {
         UpdateStepsChangedNameEvent();
         if (p_currentDay > DueDay && villagersToEliminate.Count > 0) {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                return;
+            }
             PlayerUI.Instance.LoseGameOver("You failed to eliminate all the villagers!");
         }
     }

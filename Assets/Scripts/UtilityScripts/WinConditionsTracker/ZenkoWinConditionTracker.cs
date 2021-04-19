@@ -56,6 +56,9 @@ public class ZenkoWinConditionTracker : WinConditionTracker {
 
     private void CheckFailCondition() {
         if (remainingFactions.Count < 3) {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                return;
+            }
             PlayerUI.Instance.LoseGameOver("Mission failed, war declaration requirement not met");
         }
     }

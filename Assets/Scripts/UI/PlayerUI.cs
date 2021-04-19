@@ -545,6 +545,9 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver(string winMessage) {
+        if (PlayerManager.Instance.player.hasAlreadyWon) {
+            return;
+        }
         PlayerManager.Instance.player.hasAlreadyWon = true;
         SaveManager.Instance.currentSaveDataPlayer.OnWorldCompleted(WorldSettings.Instance.worldSettingsData.worldType);
         UIManager.Instance.ShowEndDemoScreen(winMessage);

@@ -41,6 +41,9 @@ public class RecruitCultistsWinConditionTracker : WinConditionTracker {
     }
     private void OnFactionDisbanded(Faction p_disbandedFaction) {
         if (createdFaction != null && createdFaction == p_disbandedFaction) {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                return;
+            }
             PlayerUI.Instance.LoseGameOver("Your demon cult has been wiped out. Mission Failed");
         }
     }
@@ -86,6 +89,9 @@ public class RecruitCultistsWinConditionTracker : WinConditionTracker {
             EliminateVillager(p_character);
         }
         if (GetFactionCount() <= 0) {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                return;
+            }
             PlayerUI.Instance.LoseGameOver("You fail to recruit 15 cultists. Mission Failed");
         }
     }
