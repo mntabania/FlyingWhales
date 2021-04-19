@@ -21,13 +21,13 @@ MonoBehaviour:
   expCost: 300
   cheatedLevel: 0
   pierce: 0
-  bonusChargeWhenUnlocked: 4
+  bonusChargeWhenUnlocked: 6
   buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 7052e15c383a67a4c82e06ca0e890d0e, type: 3}
   tooltipImage: {fileID: 0}
-  unlockCost: 60
+  unlockCost: 80
   tier: 1
-  baseLoadoutWeight: 200
+  baseLoadoutWeight: 250
   resistanceType: 0
   archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 0}
@@ -46,11 +46,11 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
-    portalLevel: 2
+    portalLevel: 3
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 6400000096000000c8000000
-    manacostPerLevel: 3c0000003c0000003c0000003c000000
+    manacostPerLevel: 32000000320000003200000032000000
     chargesPerLevel: 0a0000000c0000000e00000010000000
     bonuses: 0e0000000a000000
     additionalDamagePerLevel: 
