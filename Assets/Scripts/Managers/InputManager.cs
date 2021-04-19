@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Locations.Settlements;
 using UtilityScripts;
+
 namespace Ruinarch {
     public class InputManager : MonoBehaviour {
 
@@ -90,6 +91,9 @@ namespace Ruinarch {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse0);
             } else if (Input.GetMouseButtonDown(1)) {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse1);
+                if (!EventSystem.current.IsPointerOverGameObject()) {
+                    Messenger.Broadcast(ControlsSignals.KEY_DOWN_EMPTY_SPACE, KeyCode.Mouse1);
+                }
                 CancelSpellsByPriority();
             } else if (Input.GetMouseButtonDown(2)) {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse2);

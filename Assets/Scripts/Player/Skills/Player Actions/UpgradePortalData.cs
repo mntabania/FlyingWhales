@@ -3,7 +3,7 @@
 public class UpgradePortalData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.UPGRADE_PORTAL;
     public override string name => "Upgrade";
-    public override string description => $"Upgrade your portal";
+    public override string description => $"Upgrade the Portal to permanently unlock new Powers.";
     public UpgradePortalData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.STRUCTURE };
     }

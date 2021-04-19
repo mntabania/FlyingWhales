@@ -54,10 +54,11 @@ namespace Traits {
 
         #region Overrides
         public override string GetTestingData(ITraitable traitable = null) {
+            string data = base.GetTestingData(traitable);
             if (traitable != null && traitable.traitContainer.stacks.ContainsKey(this.name)) {
-                return $"Stacks: {traitable.traitContainer.stacks[this.name].ToString()}/{stackLimit.ToString()}";
+                return $"{data}Stacks: {traitable.traitContainer.stacks[this.name].ToString()}/{stackLimit.ToString()}";
             }
-            return string.Empty;
+            return data;
         }
         public override string GetNameInUI(ITraitable traitable) {
             Dictionary<string, int> stacks = traitable.traitContainer.stacks;

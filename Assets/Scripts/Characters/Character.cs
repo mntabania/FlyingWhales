@@ -2717,11 +2717,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             if (source is Character character) {
                 if (character.partyComponent.hasParty && character.partyComponent.currentParty.isPlayerParty) {
-                    int damageDone = amount;
-                    if (currentHP == 0) {
-                        damageDone = prevHP;
+                    if (character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Demon_Raid){
+                        int damageDone = amount;
+                        if (currentHP == 0) {
+                            damageDone = prevHP;
+                        }
+                        character.partyComponent.currentParty.damageAccumulator.AccumulateDamage(damageDone, character);
                     }
-                    character.partyComponent.currentParty.damageAccumulator.AccumulateDamage(damageDone, character);
                 }
             }
             if(amount < 0 && isPlayerSource) {

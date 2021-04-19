@@ -19,6 +19,8 @@ public class ConsoleBase : InfoUIBase {
 
     private Dictionary<string, Action<string[]>> _consoleActions;
 
+    public static bool showPOIHoverData = true;
+    
     private List<string> commandHistory;
     //private int currentHistoryIndex;
 
@@ -34,6 +36,7 @@ public class ConsoleBase : InfoUIBase {
     [SerializeField] private TextMeshProUGUI fullDebug2Lbl;
 
     [SerializeField] private Toggle tglAlwaysSuccessScheme;
+    [SerializeField] private Toggle tglShowPOIHoverData;
     [SerializeField] private ChanceTheWrapper chanceTheWrapper;
 
     void Awake() {
@@ -104,7 +107,8 @@ public class ConsoleBase : InfoUIBase {
             {"/reveal_all", RevealAll},
             {"/enable_dig", EnableDigging},
             {"/bonus_charge", BonusCharges},
-            {"/log_alive_villagers", LogAliveVillagers}
+            {"/log_alive_villagers", LogAliveVillagers},
+            {"/kill_villagers", KillAllVillagers}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -112,6 +116,10 @@ public class ConsoleBase : InfoUIBase {
         tglAlwaysSuccessScheme.onValueChanged.RemoveAllListeners();
         tglAlwaysSuccessScheme.onValueChanged.AddListener(OnToggleAlwaysSuccessScheme);
         chanceTheWrapper.Initialize();
+        
+        tglShowPOIHoverData.SetIsOnWithoutNotify(showPOIHoverData);
+        tglShowPOIHoverData.onValueChanged.RemoveAllListeners();
+        tglShowPOIHoverData.onValueChanged.AddListener(OnToggleShowPOIHoverData);
     }
     private void Update() {
         if (!isShowing) {
@@ -1047,6 +1055,18 @@ public class ConsoleBase : InfoUIBase {
         AddSuccessMessage(message);
         Debug.Log(message);
     }
+    private void KillAllVillagers(string[] obj) {
+        int count = 0;
+        for (int i = 0; i < DatabaseManager.Instance.characterDatabase.aliveVillagersList.Count; i++) {
+            Character villager = DatabaseManager.Instance.characterDatabase.aliveVillagersList[i];
+            if (!villager.isDead) {
+                villager.Death();
+                count++;
+                i--;    
+            }
+        }
+        AddSuccessMessage($"Killed {count} villagers!");
+    }
     #endregion
 
     #region Faction
@@ -1646,6 +1666,12 @@ public class ConsoleBase : InfoUIBase {
     #region Scheme
     private void OnToggleAlwaysSuccessScheme(bool p_isOn) {
         SchemeData.alwaysSuccessScheme = p_isOn;
+    }
+    #endregion
+    
+    #region Hover Data
+    private void OnToggleShowPOIHoverData(bool p_isOn) {
+        showPOIHoverData = p_isOn;
     }
     #endregion
 }

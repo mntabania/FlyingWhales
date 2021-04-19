@@ -373,6 +373,9 @@ namespace Inner_Maps {
 
         #region For Testing
         public void ShowTileData(LocationGridTile tile, Character character = null) {
+            if (!ConsoleBase.showPOIHoverData) {
+                return;
+            }
             if (tile == null) {
                 return;
             }

@@ -33,6 +33,10 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 		InstantiateUI();
 		HideUI();
 	}
+
+	private void Start() {
+		Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
+	}
 	public void SetOnHoverOverAction(System.Action<IContextMenuItem, UIHoverPosition> p_onHoverOverAction) {
 		_onHoverOverAction = p_onHoverOverAction;
 	}
@@ -132,5 +136,10 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	public void OnHoverOutParentDisplay() {
 		// m_contextMenuUIView.HideColumn(1);
 	}
-	
+
+	private void OnReceiveKeyCodeSignal(KeyCode p_key) {
+		if (p_key == KeyCode.Mouse1) {
+			HideUI();
+		}
+	}
 }

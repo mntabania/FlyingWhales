@@ -66,6 +66,9 @@ namespace Traits {
             if (!string.IsNullOrEmpty(p_saveDataTrait.gainedFromDoing)) {
                 gainedFromDoing = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(p_saveDataTrait.gainedFromDoing);    
             }
+            if (p_saveDataTrait.responsibleCharacters != null) {
+                responsibleCharacters = SaveUtilities.ConvertIDListToCharacters(p_saveDataTrait.responsibleCharacters);    
+            }
         }
         #endregion
 
@@ -132,7 +135,11 @@ namespace Traits {
         /// <param name="character">The character that returned to life.</param>
         //public virtual void OnReturnToLife(Character character) { } //Removed temporarily since this is not being used
         public virtual string GetTestingData(ITraitable traitable = null) {
-            return string.Empty;
+            string data = string.Empty;
+            if (responsibleCharacters != null) {
+                data = $"Responsible Characters: {responsibleCharacters.ComafyList()}\n";
+            }
+            return data;
         }
         public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
         public virtual bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) { return false; }

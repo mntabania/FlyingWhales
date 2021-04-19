@@ -65,6 +65,7 @@ public class StructureInfoUI : InfoUIBase {
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, UpdatePrisonersFromSignal);
         Messenger.AddListener<Beholder>(StructureSignals.UPDATE_EYE_WARDS, UpdateEyeWardsFromSignal);
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
         ListenToPlayerActionSignals();
 
         villageEventLbl.SetOnLeftClickAction(OnLeftClickVillage);
@@ -248,6 +249,12 @@ public class StructureInfoUI : InfoUIBase {
             item.SetObject(eyeWard);
             item.SetAsButton();
             item.AddOnClickAction(OnClickEye);
+        }
+    }
+
+    private void OnReceiveKeyCodeSignal(KeyCode p_key) {
+        if (p_key == KeyCode.Mouse1) {
+            CloseMenu();
         }
     }
 
