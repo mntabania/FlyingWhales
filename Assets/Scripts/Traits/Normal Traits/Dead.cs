@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Dead : Status {
-        public override bool isSingleton => true;
+        // public override bool isSingleton => true; //Removed because responsible characters need to be per instance
 
         public Dead() {
             name = "Dead";
