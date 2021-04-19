@@ -70,7 +70,7 @@ MonoBehaviour:
   _manaRegenPerHr: 100
   _manaRegenPerManapit: 20
   _additionalMaxManaPerPit: 250
-  _targetPortalLevel: 0
+  _targetPortalLevel: 8
   vaporStacks: 5
   poisonCloudStacks: 1
   frostyFogStacks: 5
