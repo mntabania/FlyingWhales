@@ -2711,7 +2711,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             if (source is Character character) {
                 if (character.partyComponent.hasParty && character.partyComponent.currentParty.isPlayerParty) {
-                    character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Demon_Raid){
+                    if (character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Demon_Raid){
                         int damageDone = amount;
                         if (currentHP == 0) {
                             damageDone = prevHP;
