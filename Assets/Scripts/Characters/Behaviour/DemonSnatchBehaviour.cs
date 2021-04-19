@@ -42,8 +42,13 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
                         }
                         hasJob = DoPartyJobsInPartyJobBoard(character, party, ref producedJob);
                         if (!hasJob) {
+                            int radius = 3;
+                            if (!quest.targetCharacter.carryComponent.IsNotBeingCarried()) {
+                                //If target is being carried
+                                radius = 1;
+                            }
                             List<LocationGridTile> tilesToGoTo = RuinarchListPool<LocationGridTile>.Claim();
-                            quest.targetCharacter.gridTileLocation.PopulateTilesInRadius(tilesToGoTo, 3, includeImpassable: false);
+                            quest.targetCharacter.gridTileLocation.PopulateTilesInRadius(tilesToGoTo, radius, includeImpassable: false);
                             if (tilesToGoTo.Count > 0) {
                                 LocationGridTile chosenTile = tilesToGoTo[GameUtilities.RandomBetweenTwoNumbers(0, tilesToGoTo.Count - 1)];
                                 hasJob = character.jobComponent.CreateGoToSpecificTileJob(chosenTile, out producedJob);
