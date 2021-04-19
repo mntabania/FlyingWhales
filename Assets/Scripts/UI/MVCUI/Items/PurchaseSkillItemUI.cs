@@ -39,7 +39,7 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	private PLAYER_SKILL_TYPE m_skillType;
 
 	PlayerSkillData m_data;
-
+	public RuinarchText bonusCharges;
 	[SerializeField] private AnimationCurve _animationCurve;
 	
 	private void OnEnable() {
@@ -57,7 +57,8 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	public void InitItem(PLAYER_SKILL_TYPE p_type, int p_currentMana) {
 		m_data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
-		txtSkillName.text = m_data.name;
+		string name = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{m_data.name}")} {("x" + $"{m_data.bonusChargeWhenUnlocked}")}";
+		txtSkillName.text = name;
 		txtDescription.text = skillData.description;
 		switch (skillData.category) {
 			case PLAYER_SKILL_CATEGORY.AFFLICTION:
@@ -80,6 +81,7 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 			imgIcon.sprite = passive;
 			break;
 		}
+		bonusCharges.text = "x" + m_data.bonusChargeWhenUnlocked.ToString();
 		txtLevel.text = "Level 0";
 		txtCost.text = m_data.unlockCost.ToString();
 		m_skillType = p_type;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Music Hater
   m_EditorClassIdentifier: 
   skill: 95
-  manaCost: 20
+  manaCost: 50
   charges: 1
   cooldown: 160
   threat: 0
@@ -25,9 +25,9 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
-  unlockCost: 30
+  unlockCost: 50
   tier: 1
-  baseLoadoutWeight: 100
+  baseLoadoutWeight: 150
   resistanceType: 9
   archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 21300000, guid: 35c1ae7007a4c904aadb02eafa75d83a, type: 3}
@@ -50,7 +50,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 5000000091000000d2000000
-    manacostPerLevel: 64000000b4000000b4000000b4000000
+    manacostPerLevel: 32000000320000003200000032000000
     chargesPerLevel: 01000000010000000200000002000000
     bonuses: 0e0000000100000009000000
     additionalDamagePerLevel: 
@@ -79,7 +79,7 @@ MonoBehaviour:
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 080000000000000002000000
-    cooldown: e0010000e0010000e0010000e0010000
+    cooldown: a0000000a0000000a0000000a0000000
     additionalPiercePerLevel:
     - 0
     - 50

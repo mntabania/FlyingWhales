@@ -209,9 +209,23 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         if (isSuccessful) {
             //Process all activate temptations also
             Messenger.Broadcast(CharacterSignals.CHARACTER_MEDDLER_SCHEME_SUCCESSFUL, _targetCharacter);
-            for (int i = 0; i < _chosenTemptations.Count; i++) {
-                TEMPTATION temptation = _chosenTemptations[i];
-                ActivateTemptationEffect(temptation);
+            if (_chosenTemptations.Count > 0) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Schemes", "General", "tempted", null, LOG_TAG.Player);
+                string temptations = string.Empty;
+                for (int i = 0; i < _chosenTemptations.Count; i++) {
+                    TEMPTATION temptation = _chosenTemptations[i];
+                    if (i == _chosenTemptations.Count - 1) {
+                        temptations += ", and ";
+                    } else if (i > 0) {
+                        temptations += ", ";
+                    }
+                    temptations += UtilityScripts.Utilities.NotNormalizedConversionEnumToString(temptation.ToString());
+                    ActivateTemptationEffect(temptation);
+                }
+                log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, temptations, LOG_IDENTIFIER.STRING_1);
+                _targetCharacter.logComponent.RegisterLog(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             }
         }
     }

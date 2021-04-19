@@ -37,8 +37,10 @@ public class Player : ILeader, IObjectManipulator {
     public StoredTargetsComponent storedTargetsComponent { get; }
     public BookmarkComponent bookmarkComponent { get; }
     public SummonMeterComponent summonMeterComponent { get; private set; }
-    private ManaRegenComponent m_manaRegenComponent { get; set; }
+    public ManaRegenComponent manaRegenComponent { get; set; }
     public PlayerDamageAccumulator damageAccumulator { get; private set; }
+
+    public bool hasAlreadyWon { get; set; }
 
     #region getters/setters
     public int id => -645;
@@ -64,16 +66,16 @@ public class Player : ILeader, IObjectManipulator {
         plagueComponent = new PlagueComponent();
         underlingsComponent = new PlayerUnderlingsComponent();
         storedTargetsComponent = new StoredTargetsComponent();
-        m_manaRegenComponent = new ManaRegenComponent(this);
+        manaRegenComponent = new ManaRegenComponent(this);
         tileObjectComponent = new PlayerTileObjectComponent();
         summonMeterComponent = new SummonMeterComponent();
         bookmarkComponent = new BookmarkComponent();
         damageAccumulator = new PlayerDamageAccumulator();
         summonMeterComponent.Initialize();
-        
 
+        hasAlreadyWon = false;
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
-        
+
         SubscribeListeners();
         
     }
@@ -92,11 +94,11 @@ public class Player : ILeader, IObjectManipulator {
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         storedTargetsComponent = new StoredTargetsComponent();
-        m_manaRegenComponent = new ManaRegenComponent(this);
+        manaRegenComponent = new ManaRegenComponent(this);
         summonMeterComponent.Initialize();
-        
+
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
-        
+        hasAlreadyWon = data.hasAlreadyWon;
         SubscribeListeners();
     }
 

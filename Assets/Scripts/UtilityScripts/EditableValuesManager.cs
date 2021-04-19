@@ -49,6 +49,26 @@ public class EditableValuesManager : MonoBehaviour {
 	[Header("Chaotic Energy")]
 	[SerializeField] private int _initialChaoticEnergy;
 
+	[Header("Reveal Info Character")]
+	[SerializeField] private int _revealInfoCharacterCost;
+
+	[Header("Reveal Info Faction")]
+	[SerializeField] private int _revealInfoFactionCost;
+
+	[Header("Mana regen per hour")]
+	[SerializeField] private int _manaRegenPerHr;
+
+	[Header("Mana regen gain per manapit")]
+	[SerializeField] private int _manaRegenPerManapit;
+
+	[Header("Additional Max Mana per pit")]
+	[SerializeField] private int _additionalMaxManaPerPit;
+	[Space]
+
+	[Header("Win target portal level")]
+	[SerializeField] private int _targetPortalLevel;
+	[Space]
+
 	public int vaporStacks;
 	public int poisonCloudStacks;
 	public int frostyFogStacks;
@@ -88,6 +108,14 @@ public class EditableValuesManager : MonoBehaviour {
 		Instance = this;
 	}
 
+	public int GetRevealCharacterInfoCost() {
+		return _revealInfoCharacterCost;
+	}
+
+	public int GetRevealCharacterFactionCost() {
+		return _revealInfoFactionCost;
+	}
+
 	public int GetChaosOrbHoverAmount() {
 		return GameUtilities.RandomBetweenTwoNumbers(currencyHoverData.minAmountHover, currencyHoverData.maxAmountHover);
 	}
@@ -98,6 +126,22 @@ public class EditableValuesManager : MonoBehaviour {
 
 	public int GetInitialChaoticEnergy() {
 		return _initialChaoticEnergy;
+	}
+
+	public int GetManaRegenPerHour() {
+		return _manaRegenPerHr;
+	}
+
+	public int GetManaRegenPerManaPit() {
+		return _manaRegenPerManapit;
+	}
+
+	public int GetAdditionalMaxManaPerManaPit() {
+		return _additionalMaxManaPerPit;
+	}
+
+	public int GetTargetPortalLevel() {
+		return _targetPortalLevel;
 	}
 
 	public int GetMaxChaoticEnergyPerPortalLevel(int p_portalLevel) {

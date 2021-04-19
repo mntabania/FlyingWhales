@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.UI;
 using Traits;
 using UtilityScripts;
-
+using Inner_Maps;
 public class CharacterInfoUI : InfoUIBase {
 
     private enum VIEW_MODE { None = 0, Info, Mood, Relationship, Logs, }
@@ -137,6 +137,7 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
         Messenger.AddListener<Character>(UISignals.UPDATE_CHARACTER_INFO, CharacterRequestedForUpdate);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
 
         actionEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
         relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
@@ -194,12 +195,31 @@ public class CharacterInfoUI : InfoUIBase {
         _dictMoodSummary = new Dictionary<string, MoodSummaryEntry>();
 
         piercingAndResistancesInfo.Initialize();
+    }
 
+    private void InitializeRevealHoverText() {
+        if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Not Enough Mana");
+            btnRevealLogs.GetComponent<HoverText>()?.SetText("Not Enough Mana");
+            btnRevealMood.GetComponent<HoverText>()?.SetText("Not Enough Mana");
+            btnRevealRelationship.GetComponent<HoverText>()?.SetText("Not Enough Mana");
+        } else {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealLogs.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealMood.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealRelationship.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+        }
     }
 
     private void CharacterRequestedForUpdate(Character p_character) {
         if (isShowing && _activeCharacter == p_character) {
             UpdateCharacterInfo();
+        }
+    }
+
+    private void OnReceiveKeyCodeSignal(KeyCode p_key) {
+        if (p_key == KeyCode.Mouse1) {
+            CloseMenu();
         }
     }
 
@@ -221,6 +241,7 @@ public class CharacterInfoUI : InfoUIBase {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
+        InitializeRevealHoverText();
         piercingAndResistancesInfo.UpdatePierceUI(_activeCharacter);
         if (_previousCharacter != null && _previousCharacter.hasMarker) {
             bool updateNameplate = _previousCharacter.grave == null || _previousCharacter.grave.isBeingCarriedBy == null;
@@ -1070,10 +1091,10 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region Tabs
     public void OnRevealInfoclicked() {
-        if (GameManager.Instance.gameHasStarted && PlayerManager.Instance.player.mana >= 50) {
+        if (GameManager.Instance.gameHasStarted && PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
             if (!activeCharacter.isInfoUnlocked) {
                 activeCharacter.isInfoUnlocked = true;
-                PlayerManager.Instance.player.AdjustMana(-50);
+                PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.GetRevealCharacterInfoCost());
                 ProcessDisplay();
                 Messenger.Broadcast(CharacterSignals.CHARACTER_INFO_REVEALED);
             }

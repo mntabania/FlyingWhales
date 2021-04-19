@@ -325,25 +325,18 @@ namespace Traits {
             return chance;
         }
         public bool RestrainAndImprison(ITraitable addTo, Character characterResponsible = null, Faction factionThatImprisoned = null, Character characterThatImprisoned = null) {
-            bool hasAddedRestrained = false;
-            bool hasAddedPrisoner = false;
-
-            hasAddedRestrained = AddTrait(addTo, "Restrained", characterResponsible);
-
-            Trait trait = null;
-            hasAddedPrisoner = AddTrait(addTo, "Prisoner", out trait, characterResponsible);
-            if(hasAddedPrisoner && trait != null && trait is Prisoner prisoner) {
+            bool hasAddedRestrained = AddTrait(addTo, "Restrained", characterResponsible);
+            bool hasAddedPrisoner = AddTrait(addTo, "Prisoner", characterResponsible);
+            Prisoner prisoner = GetTraitOrStatus<Prisoner>("Prisoner");
+            if (prisoner != null) {
                 prisoner.SetPrisonerOfFaction(factionThatImprisoned);
                 prisoner.SetPrisonerOfCharacter(characterThatImprisoned);
             }
             return hasAddedRestrained && hasAddedPrisoner;
         }
         public bool RemoveRestrainAndImprison(ITraitable removedFrom, Character removedBy = null) {
-            bool hasRemovedRestrained = false;
-            bool hasRemovedPrisoner = false;
-
-            hasRemovedRestrained = RemoveTrait(removedFrom, "Restrained", removedBy);
-            hasRemovedPrisoner = RemoveTrait(removedFrom, "Prisoner", removedBy);
+            bool hasRemovedRestrained = RemoveTrait(removedFrom, "Restrained", removedBy);
+            bool hasRemovedPrisoner = RemoveTrait(removedFrom, "Prisoner", removedBy);
             return hasRemovedRestrained && hasRemovedPrisoner;
         }
 

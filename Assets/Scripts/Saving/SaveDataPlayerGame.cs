@@ -13,6 +13,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
     public PLAYER_ARCHETYPE archetype;
 
+    public bool hasAlreadyWon;
     //public List<string> minionIDs;
     //public List<string> summonIDs;
 
@@ -44,7 +45,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
         mana = player.mana;
         portalTileXCoordinate = player.portalArea.areaData.xCoordinate;
         portalTileYCoordinate = player.portalArea.areaData.yCoordinate;
-
+        hasAlreadyWon = player.hasAlreadyWon;
         archetype = PlayerSkillManager.Instance.selectedArchetype;
 
         //minionIDs = new List<string>();

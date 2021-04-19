@@ -161,15 +161,15 @@ public class SeizeComponent {
                 return false;
             }
         }
-        if (tileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL && tileLocation.structure is Kennel kennel) {
+        if (tileLocation.structure is Kennel kennel) {
             if (seizedPOI is Summon summon) {
-                return !kennel.HasReachedKennelCapacity() && kennel.preOccupiedBy == null && (summon.faction == null || !summon.faction.isPlayerFaction);
+                return !kennel.HasReachedKennelCapacity() && (kennel.preOccupiedBy == null || kennel.preOccupiedBy == seizedPOI) && (summon.faction == null || !summon.faction.isPlayerFaction);
             }
             return false;
-        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+        } else if (tileLocation.structure is TortureChambers prison) {
             if (tileLocation.structure.IsTilePartOfARoom(tileLocation, out var room)) {
                 if (seizedPOI is Character character) {
-                    return room.CanUnseizeCharacterInRoom(character) && (tileLocation.structure as DemonicStructure).preOccupiedBy == null;
+                    return room.CanUnseizeCharacterInRoom(character) && (prison.preOccupiedBy == null || prison.preOccupiedBy == seizedPOI);
                 }
                 return true;
             } else {

@@ -3,6 +3,7 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
+using UtilityScripts;
 
 public class DemonSnatchBehaviour : CharacterBehaviourComponent {
     public DemonSnatchBehaviour () {
@@ -21,22 +22,46 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
                     quest.EndQuest("Target is dead");
                     return true;
                 }
-                Prisoner prisoner = quest.targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                if (prisoner != null && prisoner.IsFactionPrisonerOf(character.faction)) {
-                    party.GoBackHomeAndEndQuest();
-                    quest.CreateSnatchJobFor(quest.targetCharacter, party);
+                if (!quest.targetCharacter.hasMarker) {
+                    quest.EndQuest("Target is unavailable");
                     return true;
+                }
+                if (quest.targetCharacter.isBeingSeized) {
+                    if (quest.targetCharacter.marker.previousGridTile == character.gridTileLocation) {
+                        quest.EndQuest("Target is unavailable");
+                        return true;
+                    } else {
+                        hasJob = character.jobComponent.CreateGoToSpecificTileJob(quest.targetCharacter.marker.previousGridTile, out producedJob);
+                    }
                 } else {
-                    if (quest.targetCharacter.isBeingSeized) {
-                        if(quest.targetCharacter.marker.previousGridTile == character.gridTileLocation) {
-                            quest.EndQuest("Target is unavailable");
-                        } else {
-                            hasJob = character.jobComponent.CreateGoToSpecificTileJob(quest.targetCharacter.marker.previousGridTile, out producedJob);
+                    Prisoner prisoner = quest.targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                    if (prisoner != null && prisoner.IsFactionPrisonerOf(character.faction)) {
+                        //party.GoBackHomeAndEndQuest();
+                         if (!party.jobBoard.HasJob(JOB_TYPE.SNATCH)) {
+                            quest.CreateSnatchJobFor(quest.targetCharacter, party);
+                        }
+                        hasJob = DoPartyJobsInPartyJobBoard(character, party, ref producedJob);
+                        if (!hasJob) {
+                            int radius = 3;
+                            if (!quest.targetCharacter.carryComponent.IsNotBeingCarried()) {
+                                //If target is being carried
+                                radius = 1;
+                            }
+                            List<LocationGridTile> tilesToGoTo = RuinarchListPool<LocationGridTile>.Claim();
+                            quest.targetCharacter.gridTileLocation.PopulateTilesInRadius(tilesToGoTo, radius, includeImpassable: false);
+                            if (tilesToGoTo.Count > 0) {
+                                LocationGridTile chosenTile = tilesToGoTo[GameUtilities.RandomBetweenTwoNumbers(0, tilesToGoTo.Count - 1)];
+                                hasJob = character.jobComponent.CreateGoToSpecificTileJob(chosenTile, out producedJob);
+                            } else {
+                                hasJob = character.jobComponent.CreateGoToSpecificTileJob(quest.targetCharacter.gridTileLocation, out producedJob);
+                            }
+                            RuinarchListPool<LocationGridTile>.Release(tilesToGoTo);
                         }
                     } else {
                         hasJob = character.jobComponent.TriggerRestrainJob(quest.targetCharacter, JOB_TYPE.SNATCH_RESTRAIN, out producedJob);
                     }
                 }
+                
             }
         }
         if (producedJob != null) {

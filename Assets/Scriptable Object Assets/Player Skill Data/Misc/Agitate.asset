@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Agitate
   m_EditorClassIdentifier: 
   skill: 89
-  manaCost: 20
+  manaCost: 100
   charges: 1
   cooldown: 160
   threat: 0
@@ -25,9 +25,9 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
-  unlockCost: 90
+  unlockCost: 50
   tier: 1
-  baseLoadoutWeight: 300
+  baseLoadoutWeight: 250
   resistanceType: 9
   archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 21300000, guid: 0e0660d7121fbec41ab7b927d1bea4c9, type: 3}
@@ -46,11 +46,11 @@ MonoBehaviour:
     tier1Count: 6
     tier2Count: 0
     tier3Count: 0
-    portalLevel: 3
+    portalLevel: 2
     isOR: 0
   skillUpgradeData:
     upgradeCosts: be0000004f010000e0010000
-    manacostPerLevel: 96000000960000009600000096000000
+    manacostPerLevel: 64000000640000006400000064000000
     chargesPerLevel: 01000000010000000200000003000000
     bonuses: 0e000000010000000600000004000000
     additionalDamagePerLevel: 190000001900000019000000

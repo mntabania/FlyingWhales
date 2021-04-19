@@ -401,11 +401,12 @@ public class PlayerUI : BaseMonoBehaviour {
         effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
     }
     public void OnHoverOverMana() {
-        string header = "Mana";
+        string header = $"{UtilityScripts.Utilities.ManaIcon()}Mana";
         if (PlayerManager.Instance.player != null) {
-            header = $"{header} - {PlayerManager.Instance.player.mana.ToString()}/{EditableValuesManager.Instance.maximumMana.ToString()}";
+            header = $"{header} - {PlayerManager.Instance.player.mana.ToString()}/{EditableValuesManager.Instance.maximumMana.ToString()} (+{(EditableValuesManager.Instance.GetManaRegenPerHour() + (PlayerManager.Instance.player.manaRegenComponent.GetManaPitCount() * (EditableValuesManager.Instance.GetManaRegenPerManaPit())))}/hour)";
+            //header += " (+" + (EditableValuesManager.Instance.GetManaRegenPerHour() + (PlayerManager.Instance.player.manaRegenComponent.GetManaPitCount() * (EditableValuesManager.Instance.GetManaRegenPerManaPit())) + "/hour)");
         }
-        UIManager.Instance.ShowSmallInfo("Chaotic energy used by the Ruinarch in various actions. Obtained when Villagers cry out or commit crimes.", pos: manaTooltipPos, header);
+        UIManager.Instance.ShowSmallInfo("Mana is spent whenever you use any of your Powers, summon Minions or build Demonic Structures. It is easy to deplete but also quickly replenishes every hour. Build more Mana Pits to expand maximum capacity and increase hourly replenish.", pos: manaTooltipPos, header, autoReplaceText: false);
     }
     public void OnHoverOutMana() {
         UIManager.Instance.HideSmallInfo();
@@ -544,6 +545,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver(string winMessage) {
+        PlayerManager.Instance.player.hasAlreadyWon = true;
         SaveManager.Instance.currentSaveDataPlayer.OnWorldCompleted(WorldSettings.Instance.worldSettingsData.worldType);
         UIManager.Instance.ShowEndDemoScreen(winMessage);
         // if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -1070,8 +1072,8 @@ public class PlayerUI : BaseMonoBehaviour {
         if (PlayerManager.Instance.player != null) {
             header = $"{header} - {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}/{PlayerManager.Instance.player.plagueComponent.maxPlaguePoints.ToString()}";
         }
-        string text = "The amount of Chaotic Energy you've generated. You can use this to upgrade your Plague if you have a Biolab built";
-        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, header);
+        string text = "Chaotic Energy is used for long term improvements. Use it to upgrade your Portal and unlock more Powers, or upgrade your other Demonic Structures. Gain more Chaotic Energy from Chaos Orbs that are produced through different interactions with the world.";
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, header, autoReplaceText: false);
     }
     public void OnHoverExitPlaguePoints() {
         UIManager.Instance.HideSmallInfo();
