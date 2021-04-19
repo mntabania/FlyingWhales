@@ -25,7 +25,7 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 51e39c49a21f99843a71a864d6f1467f, type: 3}
   tooltipImage: {fileID: 0}
-  unlockCost: 90
+  unlockCost: 50
   tier: 2
   baseLoadoutWeight: 250
   resistanceType: 2
@@ -50,7 +50,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: d2000000860100003a020000
-    manacostPerLevel: 46000000460000004600000046000000
+    manacostPerLevel: 32000000320000003200000032000000
     chargesPerLevel: 01000000010000000200000003000000
     bonuses: 00000000010000000e000000
     additionalDamagePerLevel: f4010000ee020000e8030000e2040000

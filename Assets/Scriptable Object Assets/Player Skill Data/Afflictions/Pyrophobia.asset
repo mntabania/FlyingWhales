@@ -25,9 +25,9 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
-  unlockCost: 90
+  unlockCost: 50
   tier: 2
-  baseLoadoutWeight: 400
+  baseLoadoutWeight: 150
   resistanceType: 9
   archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 21300000, guid: 322efa28f960f9248adcb0def018a2fc, type: 3}
@@ -46,11 +46,11 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
-    portalLevel: 5
+    portalLevel: 1
     isOR: 1
   skillUpgradeData:
     upgradeCosts: 2c0100000d020000ee020000
-    manacostPerLevel: 64000000b8010000b8010000b8010000
+    manacostPerLevel: 32000000320000003200000032000000
     chargesPerLevel: 01000000010000000200000002000000
     bonuses: 0e0000000100000009000000
     additionalDamagePerLevel: 
@@ -79,7 +79,7 @@ MonoBehaviour:
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 080000000200000000000000
-    cooldown: c0030000c0030000c0030000c0030000
+    cooldown: f0000000f0000000f0000000f0000000
     additionalPiercePerLevel:
     - 0
     - 50

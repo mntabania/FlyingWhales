@@ -13,23 +13,23 @@ MonoBehaviour:
   m_Name: Maraud
   m_EditorClassIdentifier: 
   skill: 185
-  manaCost: -1
-  charges: 2
-  cooldown: 576
+  manaCost: 200
+  charges: 1
+  cooldown: 480
   threat: 0
   threatPerHour: 0
   expCost: 300
   cheatedLevel: 0
   pierce: 0
-  bonusChargeWhenUnlocked: 0
+  bonusChargeWhenUnlocked: 1
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
-  unlockCost: 10
-  tier: 1
-  baseLoadoutWeight: 50
+  unlockCost: 100
+  tier: 0
+  baseLoadoutWeight: 30
   resistanceType: 0
-  archetypeWeightedBonus: 0
+  archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
@@ -46,13 +46,13 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
-    portalLevel: 10
+    portalLevel: 3
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 01000000
     manacostPerLevel: c8000000
     chargesPerLevel: 01000000
-    bonuses: 
+    bonuses: 0e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel: []
     additionalHpPercentagePerLevel: []
@@ -67,7 +67,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 
+    cooldownPerLevel: e0010000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 

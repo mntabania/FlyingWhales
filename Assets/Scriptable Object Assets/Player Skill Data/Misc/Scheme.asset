@@ -21,6 +21,7 @@ MonoBehaviour:
   expCost: 0
   cheatedLevel: 0
   pierce: 0
+  bonusChargeWhenUnlocked: 0
   buttonSprite: {fileID: 0}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
@@ -28,11 +29,13 @@ MonoBehaviour:
   tier: 0
   baseLoadoutWeight: 0
   resistanceType: 0
-  archetypeWeightedBonus: 0
+  archetypeWeightedBonus: 3
   contextMenuIcon: {fileID: 21300000, guid: 1b3ac7d9fb5eaa7499a991b953508086, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
   isNonUpgradeable: 1
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
   requirementData:
     requirements: 
     requiredArchetype: 0
@@ -43,6 +46,7 @@ MonoBehaviour:
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
+    portalLevel: 0
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
@@ -65,3 +69,16 @@ MonoBehaviour:
     decreaseMovementSpeedPerLevel: 
     cooldownPerLevel: 
     skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

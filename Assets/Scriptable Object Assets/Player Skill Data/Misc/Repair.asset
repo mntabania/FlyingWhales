@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Repair
   m_EditorClassIdentifier: 
   skill: 150
-  manaCost: 20
+  manaCost: 50
   charges: 1
   cooldown: 240
   threat: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 64000000
+    manacostPerLevel: 32000000
     chargesPerLevel: 01000000
     bonuses: 0e000000
     additionalDamagePerLevel: 

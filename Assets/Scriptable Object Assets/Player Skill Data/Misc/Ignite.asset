@@ -27,7 +27,7 @@ MonoBehaviour:
   tooltipImage: {fileID: 0}
   unlockCost: 30
   tier: 1
-  baseLoadoutWeight: 100
+  baseLoadoutWeight: 150
   resistanceType: 2
   archetypeWeightedBonus: 1
   contextMenuIcon: {fileID: 21300000, guid: 3026bb2d2f440b841898d958712340a3, type: 3}
@@ -50,7 +50,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 5000000091000000d2000000
-    manacostPerLevel: 3c0000003c0000003c0000003c000000
+    manacostPerLevel: 64000000640000006400000064000000
     chargesPerLevel: 01000000010000000200000003000000
     bonuses: 0e000000010000000a000000
     additionalDamagePerLevel: 
