@@ -19,7 +19,7 @@ public class SnatchVillagerData : PlayerAction {
 
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
-        reasons += $"Can't build snatch party, Prison is occupied\n";
+        reasons += $"Can't snatch because Prison is occupied\n";
         return reasons;
     }
 

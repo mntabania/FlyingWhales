@@ -21,7 +21,7 @@ public class SnatchMonsterData : PlayerAction {
 
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
-        reasons += $"Can't build snatch party, Kennel is occupied\n";
+        reasons += $"Can't snatch because Kennel is occupied\n";
         return reasons;
     }
     public override void ActivateAbility(LocationStructure structure) {
