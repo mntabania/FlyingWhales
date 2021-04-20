@@ -139,7 +139,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Lich);
     }
     private void SetAffattWorldSettings() {
         Debug.Log("Set world settings as Affatt");
@@ -180,7 +180,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Lich);
     }
     private void SetPittoWorldSettings() {
         Debug.Log("Set world settings as Pitto");
