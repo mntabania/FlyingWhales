@@ -83,7 +83,7 @@ public class CharacterTraitComponent : CharacterComponent {
     private void ProcessPlayerSourceChaosOrb() {
         if (GameUtilities.RollChance(20)) {
             LocationGridTile gridTile = owner.gridTileLocation;
-            if (owner.isDead) {
+            if (gridTile == null && owner.isDead) {
                 gridTile = owner.deathTilePosition;
             }
             if (gridTile != null) {
