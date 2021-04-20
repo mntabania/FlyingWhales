@@ -15,13 +15,13 @@ MonoBehaviour:
   skill: 42
   manaCost: 20
   charges: 1
-  cooldown: 160
+  cooldown: 80
   threat: 0
   threatPerHour: 0
   expCost: 300
   cheatedLevel: 0
   pierce: 0
-  bonusChargeWhenUnlocked: 3
+  bonusChargeWhenUnlocked: 2
   buttonSprite: {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 2a59907804a32e9469e0d8125ec3a388, type: 3}
   tooltipImage: {fileID: 0}
@@ -75,7 +75,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: a00000008c0000008c0000008c000000
+    cooldownPerLevel: 5000000046000000460000003c000000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 
