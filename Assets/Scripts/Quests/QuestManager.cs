@@ -100,13 +100,13 @@ namespace Quests {
             Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
+        }
+        public void InitializeAfterLoadoutPicked(){
             if (!SaveManager.Instance.useSaveData) {
                 InitializeWinConditionTracker();
                 //TODO: Try to remove checking
                 winConditionTracker?.Initialize(CharacterManager.Instance.allCharacters);    
             }
-        }
-        public void InitializeAfterLoadoutPicked(){
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
                 TryCreateWinConditionQuest();
                 InstantiatePendingSpecialPopups();    

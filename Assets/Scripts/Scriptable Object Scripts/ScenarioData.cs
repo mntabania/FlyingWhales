@@ -14,6 +14,14 @@ public class ScenarioData : ScriptableObject {
     public PowerAndLevelDictionary structures;
     public PowerAndLevelDictionary skills;
 
+    [Header("Loadouts")] 
+    public List<ScenarioLoadoutData> loadoutData;
+    public PlayerSkillLoadout puppetmasterOverride;
+    public PlayerSkillLoadout lichOverride;
+    public PlayerSkillLoadout ravagerOverride;
+    
+    
+
     /// <summary>
     /// Get 0 based starting level of a given power for this scenario
     /// </summary>
@@ -33,4 +41,38 @@ public class ScenarioData : ScriptableObject {
         }
         return 0;
     }
+
+    // public ScenarioLoadoutData GetScenarioLoadoutDataForArchetype(PLAYER_ARCHETYPE p_archetype) {
+    //     for (int i = 0; i < loadoutData.Count; i++) {
+    //         ScenarioLoadoutData data = loadoutData[i];
+    //         if (data.archetype == p_archetype) {
+    //             return data;
+    //         }
+    //     }
+    //     return null;
+    // }
+}
+
+[System.Serializable]
+public class ScenarioLoadoutData {
+    public PLAYER_ARCHETYPE archetype;
+    [Header("Spells")]
+    public int spellExtraSlots;
+    public List<PLAYER_SKILL_TYPE> spellAvailableSkills;
+    [Space(10)]
+    [Header("Afflictions")]
+    public int afflictionExtraSlots;
+    public List<PLAYER_SKILL_TYPE> afflictionAvailableSkills;
+    [Space(10)]
+    [Header("Minions")]
+    public int minionExtraSlots;
+    public List<PLAYER_SKILL_TYPE> minionAvailableSkills;
+    [Space(10)]
+    [Header("Structures")]
+    public int structureExtraSlots;
+    public List<PLAYER_SKILL_TYPE> structureAvailableSkills;
+    [Space(10)]
+    [Header("Miscs")]
+    public int miscExtraSlots;
+    public List<PLAYER_SKILL_TYPE> miscAvailableSkills;
 }

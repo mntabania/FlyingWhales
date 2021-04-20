@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40ee7df74a7f1344b807bb806c238de7, type: 3}
+  m_Name: Lich Loadout
+  m_EditorClassIdentifier: 
+  archetype: 2
+  spells:
+    extraSlots: 0
+    fixedSkills: 2a000000
+  afflictions:
+    extraSlots: 0
+    fixedSkills: 45000000
+  minions:
+    extraSlots: 0
+    fixedSkills: 53000000
+  structures:
+    extraSlots: 0
+    fixedSkills: 490000004c000000be000000
+  miscs:
+    extraSlots: 0
+    fixedSkills: 
+  passiveSkills: 04000000060000000700000008000000090000000b0000000c0000000d0000000e0000000f0000001000000011000000
+  availableSpells: 
+  availableAfflictions: 
+  availableMinions: 
+  availableStructures: 
+  availableMiscs: 
+  portalUpgradeTiers:
+  - name: Level 1
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 2
+    skillTypesToUnlock: b50000004a000000030000002100000014000000
+    upgradeCost:
+    - name: 100 Chaotic_Energy
+      currency: 1
+      amount: 100
+    upgradeTime: 240
+  - name: Level 3
+    skillTypesToUnlock: b8000000be0000006300000034000000cc0000001e000000
+    upgradeCost:
+    - name: 200 Chaotic_Energy
+      currency: 1
+      amount: 200
+    upgradeTime: 480
+  - name: Level 4
+    skillTypesToUnlock: 480000004900000029000000c000000008000000af000000
+    upgradeCost:
+    - name: 300 Chaotic_Energy
+      currency: 1
+      amount: 300
+    upgradeTime: 480
+  - name: Level 5
+    skillTypesToUnlock: b8000000be0000009b0000004e00000016000000
+    upgradeCost:
+    - name: 500 Chaotic_Energy
+      currency: 1
+      amount: 500
+    upgradeTime: 960
+  - name: Level 6
+    skillTypesToUnlock: 480000004a0000004c000000b90000001f00000033000000
+    upgradeCost:
+    - name: 800 Chaotic_Energy
+      currency: 1
+      amount: 800
+    upgradeTime: 960
+  - name: Level 7
+    skillTypesToUnlock: b8000000be0000004c000000520000002d00000009000000
+    upgradeCost:
+    - name: 1200 Chaotic_Energy
+      currency: 1
+      amount: 1200
+    upgradeTime: 1440
+  - name: Level 8
+    skillTypesToUnlock: 
+    upgradeCost:
+    - name: 2000 Chaotic_Energy
+      currency: 1
+      amount: 2000
+    upgradeTime: 1440

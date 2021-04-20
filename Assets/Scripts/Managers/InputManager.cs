@@ -194,11 +194,12 @@ namespace Ruinarch {
             List<KeyCode> keys = allowedHotKeys.Keys.ToList();
             for (int i = 0; i < keys.Count; i++) {
                 KeyCode key = keys[i];
-                allowedHotKeys[key] = p_state;
+                SetSpecificHotkeyEnabledState(key, p_state);
             }
         }
         public void SetSpecificHotkeyEnabledState(KeyCode p_keyCode, bool p_state) {
             allowedHotKeys[p_keyCode] = p_state;
+            Debug.Log($"Set hot key state of {p_keyCode.ToString()} to {p_state.ToString()}");
         }
         #endregion
 

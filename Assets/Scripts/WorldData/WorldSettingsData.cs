@@ -100,7 +100,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Puppet_Master, PLAYER_ARCHETYPE.Old_Lich, PLAYER_ARCHETYPE.Old_Ravager);
     }
     private void SetOonaWorldSettings() {
         Debug.Log("Set world settings as Second World");
@@ -113,7 +113,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Puppet_Master, PLAYER_ARCHETYPE.Old_Lich, PLAYER_ARCHETYPE.Old_Ravager);
     }
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
@@ -167,7 +167,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Puppet_Master, PLAYER_ARCHETYPE.Old_Lich, PLAYER_ARCHETYPE.Old_Ravager);
     }
     private void SetAneemWorldSettings() {
         Debug.Log("Set world settings as Aneem");
@@ -193,7 +193,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Puppet_Master, PLAYER_ARCHETYPE.Old_Lich, PLAYER_ARCHETYPE.Old_Ravager);
     }
     public void ApplyCustomWorldSettings() {
         mapSettings.AllowMonsterMigrations();
@@ -202,7 +202,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(null);
     }
     #endregion
 
