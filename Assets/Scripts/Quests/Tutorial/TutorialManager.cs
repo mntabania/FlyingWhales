@@ -14,6 +14,16 @@ namespace Tutorial {
         public static TutorialManager Instance;
         private const int MaxActiveTutorials = 1;
 
+        public enum Tutorial_Type {
+            Unlocking_Bonus_Powers,
+            Upgrading_Portal,
+            Mana,
+            Chaotic_Energy,
+            Storing_Targets,
+            Prism,
+            Maraud,
+            Intel
+        }
         public enum Tutorial {
             Basic_Controls = 0,
             Build_A_Kennel = 1,
