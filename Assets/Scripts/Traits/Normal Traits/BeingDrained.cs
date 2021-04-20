@@ -36,7 +36,7 @@ namespace Traits {
                 }
                 
                 p_character.AdjustHP(-hpReduction, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
-                int spiritEnergy = p_character is Summon ? 1 : 2;
+                int spiritEnergy = p_character is Summon ? 1 : 1;
                 //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, p_character.gridTileLocation.centeredWorldLocation, spiritEnergy, p_character.gridTileLocation.parentMap);
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, spiritEnergy, p_character.gridTileLocation.parentMap);
             }

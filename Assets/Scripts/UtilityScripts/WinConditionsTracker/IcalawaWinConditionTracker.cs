@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Traits;
 
-public class IcalawaWinConditionTracker : WinconditionTracker {
+public class IcalawaWinConditionTracker : WinConditionTracker {
 
     public const int TotalCharactersToKill = 5;
     
@@ -42,6 +42,9 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
         }
         totalCharactersToEliminate = 5;
     }
+    protected override IBookmarkable[] CreateWinConditionSteps() {
+        return null;
+    }
 
     #region Loading
     public override void LoadReferences(SaveDataWinConditionTracker data) {
@@ -71,7 +74,6 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
     private void AddVillagerToEliminate(Character p_character) {
         if (!villagersToEliminate.Contains(p_character)) {
             villagersToEliminate.Add(p_character);
-            AddCharacterToTrackList(p_character);
             _characterAddedAsTargetAction?.Invoke(p_character);
         }
     }
@@ -103,7 +105,6 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
     private void CheckIfCharacterIsEliminated(Character p_character) {
         if (ShouldConsiderCharacterAsEliminated(p_character)) {
             EliminateVillager(p_character);
-            RemoveCharacterFromTrackList(p_character);
         }
     }
     private void OnNewVillagerArrived(Character newVillager) {
@@ -131,7 +132,7 @@ public class SaveDataIcalawaWinConditionTracker : SaveDataWinConditionTracker {
     public string psychopath;
     public List<string> villagersToEliminate;
     public int totalCharactersToEliminate;
-    public override void Save(WinconditionTracker data) {
+    public override void Save(WinConditionTracker data) {
         base.Save(data);
         IcalawaWinConditionTracker tracker = data as IcalawaWinConditionTracker;
         if (tracker.psychoPath != null) {

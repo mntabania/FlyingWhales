@@ -31,13 +31,13 @@ namespace Events.World_Events {
         #region Listeners
         private void OnDayStarted() {
             int p_currentDay = GameManager.Instance.continuousDays;
-            if (p_currentDay == PangatLooWinConditionTracker.DueDay) {
+            if (p_currentDay == WipeOutAllUntilDayWinConditionTracker.DueDay) {
                 StartUndeadAttack();
             }
         }
         private void OnCharacterAddedFaction(Character p_character, Faction p_faction) {
             int p_currentDay = GameManager.Instance.continuousDays;
-            if (p_currentDay >= PangatLooWinConditionTracker.DueDay) {
+            if (p_currentDay >= WipeOutAllUntilDayWinConditionTracker.DueDay) {
                 bool shouldBeInvader = false;
                 if (p_faction.factionType.type == FACTION_TYPE.Undead) {
                     shouldBeInvader = true;

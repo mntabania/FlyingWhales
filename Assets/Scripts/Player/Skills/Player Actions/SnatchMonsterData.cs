@@ -9,6 +9,21 @@ public class SnatchMonsterData : PlayerAction {
     }
 
     #region Overrides
+    public override bool CanPerformAbilityTowards(LocationStructure target) {
+        bool canPerform = false;
+        if (target is PartyStructure partyStructure) {
+            if (partyStructure.IsAvailableForTargeting()) {
+                canPerform = true;
+            }
+        }
+        return base.CanPerformAbilityTowards(target) && canPerform;
+    }
+
+    public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
+        reasons += $"Can't snatch because Kennel is occupied\n";
+        return reasons;
+    }
     public override void ActivateAbility(LocationStructure structure) {
         UIManager.Instance.ShowSnatchMonsterUI(structure);
         base.ActivateAbility(structure);

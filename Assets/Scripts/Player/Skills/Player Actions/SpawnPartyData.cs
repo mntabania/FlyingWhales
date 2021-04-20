@@ -4,6 +4,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Inner_Maps;
+using Ruinarch;
 
 public class SpawnPartyData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPAWN_PARTY;
@@ -41,15 +42,34 @@ public class SpawnPartyData : PlayerAction {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            if (targetTile.structure.structureType == STRUCTURE_TYPE.CAVE) {
+            List<LocationGridTile> tiles = targetTile.GetTilesInRadius(2);
+            bool isWilderness = true;
+            tiles.ForEach((eachTile) => {
+                if (eachTile.structure.structureType == STRUCTURE_TYPE.CAVE) {
+                    isWilderness = false;
+                }
+            });
+            if (!isWilderness) {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_cave");
                 return false;
             }
-            if (targetTile.groundType == LocationGridTile.Ground_Type.Water) {
+            tiles.ForEach((eachTile) => {
+                if (eachTile.groundType == LocationGridTile.Ground_Type.Water) {
+                    isWilderness = false;
+                }
+            });
+            if (!isWilderness) {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_water");
                 return false;
             }
-            if (targetTile.IsPartOfHumanElvenSettlement()) {
+            tiles = targetTile.GetTilesInRadius(2, includeTilesInDifferentStructure: true, includeCenterTile: true);
+            tiles.ForEach((eachTile) => {
+                if (eachTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    isWilderness = false;
+                }
+            });
+
+            if (!isWilderness) {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_structure");
                 return false;
             }
@@ -60,6 +80,19 @@ public class SpawnPartyData : PlayerAction {
             return true;
         }
         return canPerform;
+    }
+    public override void OnNoLongerCurrentActiveSpell() {
+        base.OnNoLongerCurrentActiveSpell();
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
+        PlayerUI.Instance.EnableTopMenuButtons();
+        UIManager.Instance.SetSpeedTogglesState(true);
+    }
+    public override void OnSetAsCurrentActiveSpell() {
+        base.OnSetAsCurrentActiveSpell();
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
+        PlayerUI.Instance.CloseAllTopMenus();
+        PlayerUI.Instance.DisableTopMenuButtons();
+        UIManager.Instance.SetSpeedTogglesState(false);
     }
     #endregion
 }

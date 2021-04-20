@@ -46,6 +46,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isPreplaced;
     public List<string> interestedItemNames;
 
+    public bool isRaisedByNecro;
+
     public POI_STATE state;
     public INTERACTION_TYPE causeOfDeath;
     public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer;

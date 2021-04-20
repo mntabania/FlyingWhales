@@ -36,7 +36,7 @@ public class UpgradePortalData : PlayerAction {
     public override bool IsValid(IPlayerActionTarget target) {
         bool isValid = base.IsValid(target);
         if (isValid) {
-            return WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom || PlayerSkillManager.Instance.unlockAllSkills;
+            return WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom;
         }
         return false;
     }

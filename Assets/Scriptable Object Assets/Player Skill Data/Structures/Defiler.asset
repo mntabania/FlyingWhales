@@ -15,7 +15,7 @@ MonoBehaviour:
   skill: 96
   manaCost: -1
   charges: 1
-  cooldown: 576
+  cooldown: 480
   threat: 0
   threatPerHour: 0
   expCost: 300
@@ -27,7 +27,7 @@ MonoBehaviour:
   tooltipImage: {fileID: 0}
   unlockCost: 10
   tier: 1
-  baseLoadoutWeight: 50
+  baseLoadoutWeight: 0
   resistanceType: 0
   archetypeWeightedBonus: 0
   contextMenuIcon: {fileID: 0}
@@ -52,7 +52,7 @@ MonoBehaviour:
     upgradeCosts: 01000000
     manacostPerLevel: c8000000
     chargesPerLevel: 01000000
-    bonuses: 
+    bonuses: 0e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel: []
     additionalHpPercentagePerLevel: []
@@ -67,7 +67,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 
+    cooldownPerLevel: e0010000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 
