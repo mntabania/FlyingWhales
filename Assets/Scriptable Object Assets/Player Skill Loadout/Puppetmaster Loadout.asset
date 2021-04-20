@@ -47,35 +47,35 @@ MonoBehaviour:
       amount: 100
     upgradeTime: 240
   - name: Level 3
-    skillTypesToUnlock: b800000048000000be0000005a0000005d00000017000000
+    skillTypesToUnlock: b800000011000000be0000005a0000005d00000017000000
     upgradeCost:
     - name: 200 Chaotic_Energy
       currency: 1
       amount: 200
     upgradeTime: 480
   - name: Level 4
-    skillTypesToUnlock: bf0000004c00000052000000ae0000005e0000005c000000
+    skillTypesToUnlock: bf0000004800000052000000ae0000005e0000005c000000
     upgradeCost:
     - name: 300 Chaotic_Energy
       currency: 1
       amount: 300
     upgradeTime: 480
   - name: Level 5
-    skillTypesToUnlock: b8000000be00000047000000ad00000004000000aa000000
+    skillTypesToUnlock: b8000000be000000470000000f00000004000000aa000000
     upgradeCost:
     - name: 500 Chaotic_Energy
       currency: 1
       amount: 500
     upgradeTime: 960
   - name: Level 6
-    skillTypesToUnlock: 4c000000220000000c000000630000004300000011000000
+    skillTypesToUnlock: 4c000000220000000c0000006300000043000000ac000000
     upgradeCost:
     - name: 800 Chaotic_Energy
       currency: 1
       amount: 800
     upgradeTime: 960
   - name: Level 7
-    skillTypesToUnlock: b8000000be00000048000000530000000f00000023000000
+    skillTypesToUnlock: b8000000be0000004800000053000000ad00000023000000
     upgradeCost:
     - name: 1200 Chaotic_Energy
       currency: 1
