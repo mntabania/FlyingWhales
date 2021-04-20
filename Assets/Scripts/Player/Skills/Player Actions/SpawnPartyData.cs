@@ -41,7 +41,7 @@ public class SpawnPartyData : PlayerAction {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1);
+            List<LocationGridTile> tiles = targetTile.GetTilesInRadius(2);
             bool isWilderness = true;
             tiles.ForEach((eachTile) => {
                 if (eachTile.structure.structureType == STRUCTURE_TYPE.CAVE) {
@@ -61,7 +61,7 @@ public class SpawnPartyData : PlayerAction {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_water");
                 return false;
             }
-            tiles = targetTile.GetTilesInRadius(3, includeTilesInDifferentStructure: true, includeCenterTile: true);
+            tiles = targetTile.GetTilesInRadius(2, includeTilesInDifferentStructure: true, includeCenterTile: true);
             tiles.ForEach((eachTile) => {
                 if (eachTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
                     isWilderness = false;
