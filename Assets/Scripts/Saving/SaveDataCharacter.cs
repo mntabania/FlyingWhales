@@ -46,6 +46,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isPreplaced;
     public List<string> interestedItemNames;
 
+    public bool isRaisedByNecro;
+
     public POI_STATE state;
     public INTERACTION_TYPE causeOfDeath;
     public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer;
@@ -183,6 +185,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
 
         isInfoUnlocked = data.isInfoUnlocked;
+        isRaisedByNecro = data.isRaisedByNecro;
 
         if (data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;

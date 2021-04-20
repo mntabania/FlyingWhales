@@ -73,7 +73,9 @@ public class RaiseCorpse : GoapAction {
             target = (targetPOI as Tombstone).character;
         }
         if (target != null && target.hasMarker) {
-            CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, goapNode.actor.faction);    
+            Summon summon = CharacterManager.Instance.RaiseFromDeadReplaceCharacterWithSkeleton(target, goapNode.actor.faction);
+            summon.isRaisedByNecro = true;
+            Messenger.Broadcast(CharacterSignals.ON_CHARACTER_RAISE_DEAD_BY_NECRO, summon);
         } else {
             Debug.LogWarning($"Could not raise {target?.name} because it's marker is null!");
         }

@@ -158,6 +158,8 @@
     public static string CHARACTER_INFO_REVEALED = "OnCharacterInfoRevealed";
     public static string TOGGLE_CHARACTER_MARKER_NAMEPLATE = "OnToggleCharacterMarkerNameplate";
 
+    public static string ON_CHARACTER_RAISE_DEAD_BY_NECRO = "OnCharacterRaiseDeadByNecro";
+
     #region used for chaotic energy generation
     public static string CHARACTER_PRAY_SUCCESS = "OnCharacterPraySuccess";
     public static string CHARACTER_BECAME_VAMPIRE = "OnCharacterBecameVampire";
