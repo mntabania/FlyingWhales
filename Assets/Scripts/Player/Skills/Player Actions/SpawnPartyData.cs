@@ -41,15 +41,34 @@ public class SpawnPartyData : PlayerAction {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            if (targetTile.structure.structureType == STRUCTURE_TYPE.CAVE) {
+            List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1);
+            bool isWilderness = true;
+            tiles.ForEach((eachTile) => {
+                if (eachTile.structure.structureType == STRUCTURE_TYPE.CAVE) {
+                    isWilderness = false;
+                }
+            });
+            if (!isWilderness) {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_cave");
                 return false;
             }
-            if (targetTile.groundType == LocationGridTile.Ground_Type.Water) {
+            tiles.ForEach((eachTile) => {
+                if (eachTile.groundType == LocationGridTile.Ground_Type.Water) {
+                    isWilderness = false;
+                }
+            });
+            if (!isWilderness) {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_water");
                 return false;
             }
-            if (targetTile.IsPartOfHumanElvenSettlement()) {
+            tiles = targetTile.GetTilesInRadius(3, includeTilesInDifferentStructure: true, includeCenterTile: true);
+            tiles.ForEach((eachTile) => {
+                if (eachTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    isWilderness = false;
+                }
+            });
+
+            if (!isWilderness) {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_structure");
                 return false;
             }
