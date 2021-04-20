@@ -27,7 +27,7 @@ public class NightCreatureChaosOrb : PassiveSkill {
             int orbsCount = 0;
             Character responsibleCharacter = p_character.traitContainer.GetTraitOrStatus<Trait>("Dead").responsibleCharacter;
             if (responsibleCharacter != null) {
-                if ((responsibleCharacter.race == RACE.SKELETON && responsibleCharacter.faction.factionType.type == FACTION_TYPE.Undead && CharacterManager.Instance.necromancerInTheWorld != null && responsibleCharacter.isRaisedByNecro) || responsibleCharacter.traitContainer.HasTrait("Necromancer") || responsibleCharacter.traitContainer.HasTrait("Vampire")) {
+                if ((responsibleCharacter.race == RACE.SKELETON && responsibleCharacter.faction.factionType.type == FACTION_TYPE.Undead && CharacterManager.Instance.necromancerInTheWorld != null) || responsibleCharacter.traitContainer.HasTrait("Necromancer") || responsibleCharacter.traitContainer.HasTrait("Vampire")) {
                     orbsCount = 2;
                     LocationGridTile chaosOrbSpawnLocation = !responsibleCharacter.hasMarker ? responsibleCharacter.deathTilePosition : responsibleCharacter.gridTileLocation;
                     Assert.IsNotNull(chaosOrbSpawnLocation, $"Chaos orb spawn location of {responsibleCharacter.name} is null. Character that died is {p_character.name}");

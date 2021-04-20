@@ -122,8 +122,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public PLAYER_SKILL_TYPE skillCauseOfDeath { set; get; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
-    public bool isRaisedByNecro { set; get; }
-
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
     public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
@@ -262,7 +260,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.UpdateBasicData(true);
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
-        isRaisedByNecro = false;
     }
     public Character(string className, RACE race, GENDER gender) : this() {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -278,7 +275,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.UpdateBasicData(true);
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
-        isRaisedByNecro = false;
     }
     private Character() {
         SetIsDead(false);
@@ -331,7 +327,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
 
         needsComponent.ResetSleepTicks();
-        isRaisedByNecro = false;
     }
     public Character(SaveDataCharacter data) {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -413,8 +408,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             _minion = data.minion.Load(this);
             visuals.CreateWholeImageMaterial(visuals.portraitSettings);
         }
-
-        isRaisedByNecro = data.isRaisedByNecro;
 
         //if (data.hasMarker) {
         //    //Create marker in first wave loading, so that when loading references of character in second wave we can put carried characters/objects because the marker is already created
