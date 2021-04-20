@@ -77,6 +77,7 @@ public class CharacterTraitComponent : CharacterComponent {
         if (!isOtherTick) {
             isOtherTick = true;
         } else {
+            isOtherTick = false;
             ProcessPlayerSourceChaosOrb();
         }
     }
