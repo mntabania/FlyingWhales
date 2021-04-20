@@ -10,81 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 40ee7df74a7f1344b807bb806c238de7, type: 3}
-  m_Name: Ravager Loadout 1
+  m_Name: Old Ravager Loadout
   m_EditorClassIdentifier: 
-  archetype: 1
+  archetype: 12
   spells:
-    extraSlots: 0
-    fixedSkills: 280000002c000000
+    extraSlots: 4
+    fixedSkills: 0900000012000000170000001d0000002800000016000000
   afflictions:
-    extraSlots: 0
-    fixedSkills: 5a000000
+    extraSlots: 2
+    fixedSkills: 
   minions:
     extraSlots: 0
-    fixedSkills: 4e000000
+    fixedSkills: 4e00000051000000520000004f00000054000000
   structures:
-    extraSlots: 0
-    fixedSkills: bf00000049000000be000000b9000000
+    extraSlots: 2
+    fixedSkills: 4a00000048000000
   miscs:
-    extraSlots: 0
-    fixedSkills: 
+    extraSlots: 1
+    fixedSkills: 0a000000340000000700000059000000
   passiveSkills: 04000000060000000700000008000000090000000b0000000c0000000d0000000e0000000f0000001000000011000000
-  availableSpells: 
-  availableAfflictions: 
+  availableSpells: 5d0000002a0000001f000000180000001900000022000000230000002c000000260000002e000000ad000000
+  availableAfflictions: 0f000000440000000e0000005a0000005f00000043000000
   availableMinions: 
-  availableStructures: 
-  availableMiscs: 
+  availableStructures: 9b0000004c00000047000000
+  availableMiscs: 330000008c0000000800000006000000aa0000005c000000ac000000ae000000af000000
   portalUpgradeTiers:
   - name: Level 1
     skillTypesToUnlock: 
     upgradeCost: []
     upgradeTime: 0
-  - name: Level 2
-    skillTypesToUnlock: b50000004a000000ae00000017000000160000002e000000
-    upgradeCost:
-    - name: 100 Chaotic_Energy
-      currency: 1
-      amount: 100
-    upgradeTime: 240
-  - name: Level 3
-    skillTypesToUnlock: b8000000be0000004a0000004f0000001d00000019000000
-    upgradeCost:
-    - name: 200 Chaotic_Energy
-      currency: 1
-      amount: 200
-    upgradeTime: 480
-  - name: Level 4
-    skillTypesToUnlock: 4a000000b900000026000000c00000003400000001000000
-    upgradeCost:
-    - name: 300 Chaotic_Energy
-      currency: 1
-      amount: 300
-    upgradeTime: 480
-  - name: Level 5
-    skillTypesToUnlock: 4c000000be0000005000000007000000090000000a000000
-    upgradeCost:
-    - name: 500 Chaotic_Energy
-      currency: 1
-      amount: 500
-    upgradeTime: 960
-  - name: Level 6
-    skillTypesToUnlock: 1800000033000000
-    upgradeCost:
-    - name: 800 Chaotic_Energy
-      currency: 1
-      amount: 800
-    upgradeTime: 960
-  - name: Level 7
-    skillTypesToUnlock: b8000000be0000009b00000054000000
-    upgradeCost:
-    - name: 1200 Chaotic_Energy
-      currency: 1
-      amount: 1200
-    upgradeTime: 1440
-  - name: Level 8
-    skillTypesToUnlock: 
-    upgradeCost:
-    - name: 2000 Chaotic_Energy
-      currency: 1
-      amount: 2000
-    upgradeTime: 1440
