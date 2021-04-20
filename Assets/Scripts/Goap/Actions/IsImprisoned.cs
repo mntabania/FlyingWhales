@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
-
+using Traits;
 public class IsImprisoned : GoapAction {
     public IsImprisoned() : base(INTERACTION_TYPE.IS_IMPRISONED) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
@@ -32,8 +32,20 @@ public class IsImprisoned : GoapAction {
         } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {
             reactions.Add(EMOTION.Scorn);
         } else if (witness.relationshipContainer.GetOpinionLabel(actor) == RelationshipManager.Acquaintance) {
-            reactions.Add(EMOTION.Disgust);
-            reactions.Add(EMOTION.Fear);
+            Prisoner prisoner = actor.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            bool isPrisonerOfHostileFaction = false;
+            if (prisoner != null && witness.faction != null) {
+                Faction factionThatImprisoned = prisoner.GetFactionThatImprisoned();
+                if (factionThatImprisoned != null && witness.faction.IsHostileWith(factionThatImprisoned)) {
+                    isPrisonerOfHostileFaction = true;
+                }
+            }
+            if (isPrisonerOfHostileFaction) {
+                reactions.Add(EMOTION.Concern);
+            } else {
+                reactions.Add(EMOTION.Disgust);
+                reactions.Add(EMOTION.Fear);
+            }
         }
     }
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
