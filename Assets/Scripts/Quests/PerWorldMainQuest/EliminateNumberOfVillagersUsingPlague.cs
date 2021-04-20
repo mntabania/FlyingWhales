@@ -10,10 +10,10 @@ namespace Quests {
         public override Type serializedData => typeof(SaveDataEliminateNumberOfVillagersUsingPlague);
         #endregion
 
-        public EliminateNumberOfVillagersUsingPlague() : base($"Kill {AneemWinConditionTracker.Elimination_Requirement.ToString()} Villagers through Plague") { }
+        public EliminateNumberOfVillagersUsingPlague() : base($"Kill {PlagueDeathWinConditionTracker.Elimination_Requirement.ToString()} Villagers through Plague") { }
         protected override void ConstructSteps() {
             var eliminateVillagerStep = new EliminateNumberOfVillagersUsingPlagueStep(GetEliminateAllVillagersDescription);
-            var aneemWinConditionTracker = QuestManager.Instance.GetWinConditionTracker<AneemWinConditionTracker>();
+            var aneemWinConditionTracker = QuestManager.Instance.GetWinConditionTracker<PlagueDeathWinConditionTracker>();
             eliminateVillagerStep.SetObjectsToCenter(aneemWinConditionTracker.villagersToEliminate.Count > 0
                 ? aneemWinConditionTracker.villagersToEliminate.Select(x => x as ISelectable).ToList()
                 : new List<ISelectable>());
@@ -24,7 +24,7 @@ namespace Quests {
 
         #region Step Helpers
         private string GetEliminateAllVillagersDescription(List<Character> remainingTargets, int totalCharactersToEliminate) {
-            return $"Plague Fatality deaths: {(AneemWinConditionTracker.Elimination_Requirement - totalCharactersToEliminate).ToString()}/{AneemWinConditionTracker.Elimination_Requirement.ToString()}";
+            return $"Plague Fatality deaths: {(PlagueDeathWinConditionTracker.Elimination_Requirement - totalCharactersToEliminate).ToString()}/{PlagueDeathWinConditionTracker.Elimination_Requirement.ToString()}";
         }
         #endregion
     }

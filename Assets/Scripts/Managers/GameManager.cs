@@ -133,7 +133,7 @@ public class GameManager : BaseMonoBehaviour {
             string message = LocalizationManager.Instance.GetLocalizedValue("Scenarios", $"{WorldSettings.Instance.worldSettingsData.worldType.ToString()}_Text", "popup_text");
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
                 message = UtilityScripts.Utilities.StringReplacer(message, new List<LogFillerStruct>() {
-                    new LogFillerStruct(null, PangatLooWinConditionTracker.DueDay.ToString(), LOG_IDENTIFIER.STRING_1)
+                    new LogFillerStruct(null, WipeOutAllUntilDayWinConditionTracker.DueDay.ToString(), LOG_IDENTIFIER.STRING_1)
                 });
             }
             if (!string.IsNullOrEmpty(message)) {

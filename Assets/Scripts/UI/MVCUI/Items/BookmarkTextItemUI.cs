@@ -9,7 +9,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
     [SerializeField] private Button btnRemove;
     
     public void SetBookmark(IBookmarkable p_bookmarkable) {
-        lblName.text = p_bookmarkable.bookmarkName;
+        SetBookmarkItemText(p_bookmarkable.bookmarkName);
         p_bookmarkable.bookmarkEventDispatcher.Subscribe(this, p_bookmarkable);
         btnMain.onClick.AddListener(p_bookmarkable.OnSelectBookmark);
         btnRemove.onClick.AddListener(() => OnClickRemoveBookmark(p_bookmarkable));
@@ -43,6 +43,10 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
         }
     }
     public void OnBookmarkChangedName(IBookmarkable p_bookmarkable) {
-        lblName.text = p_bookmarkable.bookmarkName;
+        SetBookmarkItemText(p_bookmarkable.bookmarkName);
+    }
+
+    private void SetBookmarkItemText(string p_text) {
+        lblName.text = p_text;
     }
 }

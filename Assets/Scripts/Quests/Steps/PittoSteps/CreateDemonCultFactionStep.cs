@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 
 namespace Quests.Steps {
-    public class CreateDemonFactionStep : QuestStep, PittoWinConditionTracker.IListenerFactionEvents {
+    public class CreateDemonFactionStep : QuestStep {
         private readonly Func<string> _descriptionGetter;
 
         public CreateDemonFactionStep(Func<string> descriptionGetter) : base(string.Empty) {
             _descriptionGetter = descriptionGetter;
         }
 
-        protected override void SubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).SubscribeToFactionEvents(this);
-        }
-        protected override void UnSubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).UnsubscribeToFactionEvents(this);
-        }
+        protected override void SubscribeListeners() { }
+        protected override void UnSubscribeListeners() { }
         protected override bool CheckIfStepIsAlreadyCompleted() {
             if (DatabaseManager.Instance.factionDatabase.GetFactionsWithFactionType(FACTION_TYPE.Demon_Cult)?.Count > 0) {
                 return true;
