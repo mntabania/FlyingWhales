@@ -99,16 +99,16 @@ public class PlayerUnderlingsComponent {
     #endregion
 
     #region Monster Underlings
-    public void AddMonsterUnderlingEntry(SUMMON_TYPE p_monsterType, int currentCharges, int maxCharges, CharacterClass p_characterClass) {
+    public void AddMonsterUnderlingEntry(SUMMON_TYPE p_monsterType, int currentCharges, int maxCharges, string p_characterClassName) {
         if (!HasMonsterUnderlingEntry(p_monsterType)) {
-            MonsterAndDemonUnderlingCharges m_underlingCharges = new MonsterAndDemonUnderlingCharges() { monsterType = p_monsterType, currentCharges = currentCharges, maxCharges = maxCharges, characterClass = p_characterClass };
+            MonsterAndDemonUnderlingCharges m_underlingCharges = new MonsterAndDemonUnderlingCharges() { monsterType = p_monsterType, currentCharges = currentCharges, maxCharges = maxCharges, characterClassName = p_characterClassName };
             monsterUnderlingCharges.Add(p_monsterType, m_underlingCharges);
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
     }
-    public void AddDemonUnderlingEntry(MINION_TYPE p_demonType, int currentCharges, int maxCharges, CharacterClass p_characterClass) {
+    public void AddDemonUnderlingEntry(MINION_TYPE p_demonType, int currentCharges, int maxCharges, string p_characterClassName) {
         if (!HasDemonUnderlingEntry(p_demonType)) {
-            MonsterAndDemonUnderlingCharges m_underlingCharges = new MonsterAndDemonUnderlingCharges() { minionType = p_demonType, currentCharges = currentCharges, maxCharges = maxCharges, characterClass = p_characterClass, isDemon = true };
+            MonsterAndDemonUnderlingCharges m_underlingCharges = new MonsterAndDemonUnderlingCharges() { minionType = p_demonType, currentCharges = currentCharges, maxCharges = maxCharges, characterClassName = p_characterClassName, isDemon = true };
             demonUnderlingCharges.Add(p_demonType, m_underlingCharges);
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
@@ -137,7 +137,7 @@ public class PlayerUnderlingsComponent {
             m_underlingCharges.currentCharges = charge;
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         } else {
-            AddMonsterUnderlingEntry(p_monsterType, amount, amount, GetSummonCharacterClass(p_monsterType));
+            AddMonsterUnderlingEntry(p_monsterType, amount, amount, CharacterManager.Instance.GetSummonSettings(p_monsterType).className);
         }
     }
     public void SetMonsterUnderlingCharge(SUMMON_TYPE p_monsterType, int amount) {
@@ -150,7 +150,7 @@ public class PlayerUnderlingsComponent {
             m_underlingCharges.currentCharges = charge;
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         } else {
-            AddMonsterUnderlingEntry(p_monsterType, amount, amount, GetSummonCharacterClass(p_monsterType));
+            AddMonsterUnderlingEntry(p_monsterType, amount, amount, CharacterManager.Instance.GetSummonSettings(p_monsterType).className);
         }
     }
     public void AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE p_monsterType, int amount, bool adjustCurrentCharges = true) {
@@ -168,7 +168,7 @@ public class PlayerUnderlingsComponent {
                 Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
             }
         } else {
-            AddMonsterUnderlingEntry(p_monsterType, adjustCurrentCharges ? amount : 0, amount, GetSummonCharacterClass(p_monsterType));
+            AddMonsterUnderlingEntry(p_monsterType, adjustCurrentCharges ? amount : 0, amount, CharacterManager.Instance.GetSummonSettings(p_monsterType).className);
         }
     }
     public void SetMonsterUnderlingMaxCharge(SUMMON_TYPE p_monsterType, int amount, bool includeCurrentCharges = true) {
@@ -184,7 +184,7 @@ public class PlayerUnderlingsComponent {
             }
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         } else {
-            AddMonsterUnderlingEntry(p_monsterType, includeCurrentCharges ? amount : 0, amount, GetSummonCharacterClass(p_monsterType));
+            AddMonsterUnderlingEntry(p_monsterType, includeCurrentCharges ? amount : 0, amount, CharacterManager.Instance.GetSummonSettings(p_monsterType).className);
         }
     }
     public void SetDemonUnderlingData(MINION_TYPE p_demonType, int charge, int maxCharge) {
@@ -194,22 +194,22 @@ public class PlayerUnderlingsComponent {
             m_underlingCharges.maxCharges = maxCharge;
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         } else {
-            AddDemonUnderlingEntry(p_demonType, charge, maxCharge, GetMinionCharacterClass(p_demonType));
+            AddDemonUnderlingEntry(p_demonType, charge, maxCharge, CharacterManager.Instance.GetMinionSettings(p_demonType).className);
+        }
+    }
+    public void DecreaseMonsterUnderlingCharge(SUMMON_TYPE p_monsterType) {
+        if (HasMonsterUnderlingEntry(p_monsterType)) {
+            MonsterAndDemonUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
+            m_underlingCharges.currentCharges--;
+            if (m_underlingCharges.currentCharges < 0) {
+                m_underlingCharges.currentCharges = 0;
+            }
+            m_underlingCharges.chargesToReplenish++;
+            m_underlingCharges.StartMonsterReplenish();
+            Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
     }
     #endregion
-
-    public CharacterClass GetSummonCharacterClass(SUMMON_TYPE p_type) {
-        SummonSettings ss = CharacterManager.Instance.GetSummonSettings(p_type);
-        CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(ss.className);
-        return cClass;
-    }
-
-    public CharacterClass GetMinionCharacterClass(MINION_TYPE p_type) {
-        MinionSettings ms = CharacterManager.Instance.GetMinionSettings(p_type);
-        CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(ms.className);
-        return cClass;
-    }
 
     public MonsterAndDemonUnderlingCharges GetSummonUnderlingChargesBySummonType(SUMMON_TYPE p_type) {
         return monsterUnderlingCharges[p_type];
@@ -241,8 +241,40 @@ public class MonsterAndDemonUnderlingCharges {
     public MINION_TYPE minionType;
     public int currentCharges;
     public int maxCharges;
-    public CharacterClass characterClass;
+    public string characterClassName;
     public bool isDemon;
+    public bool isReplenishing;
+    public GameDate replenishDate;
+    public int chargesToReplenish;
 
     public bool hasMaxCharge => maxCharges > 0;
+
+    #region Monster Replenish
+    public void StartMonsterReplenish() {
+        if (!isReplenishing) {
+            isReplenishing = true;
+            replenishDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+            SchedulingManager.Instance.AddEntry(replenishDate, DoneMonsterReplenish, null);
+        }
+    }
+    private void DoneMonsterReplenish() {
+        if (isReplenishing) {
+            isReplenishing = false;
+            ReplenishCharges();
+        }
+    }
+    private void ReplenishCharges() {
+        if (PlayerManager.Instance.player.underlingsComponent.HasMonsterUnderlingEntry(monsterType)) {
+            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(monsterType, chargesToReplenish);
+        }
+    }
+    #endregion
+
+    #region Loading
+    public void LoadMonsterReplenish() {
+        if (isReplenishing) {
+            SchedulingManager.Instance.AddEntry(replenishDate, DoneMonsterReplenish, null);
+        }
+    }
+    #endregion
 }

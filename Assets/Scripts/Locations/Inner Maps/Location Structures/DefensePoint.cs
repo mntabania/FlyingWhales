@@ -21,7 +21,8 @@ namespace Inner_Maps.Location_Structures {
             if (p_removeSummon.partyComponent.IsAMemberOfParty(party)) {
                 party.RemoveMember(p_removeSummon);
                 party.RemoveMemberThatJoinedQuest(p_removeSummon);
-                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_removeSummon as Summon).summonType, 1);
+                //Removed this because replenish of charge is done with a cooldown now. See MonsterAndDemonUnderlingCharges
+                //PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_removeSummon as Summon).summonType, 1);
             }
             p_removeSummon.SetDestroyMarkerOnDeath(true);
             p_removeSummon.Death();
@@ -33,7 +34,8 @@ namespace Inner_Maps.Location_Structures {
             }
             for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
                 if (p_deadMonster == partyData.deployedSummons[x]) {
-                    PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
+                    //Removed this because replenish of charge is done with a cooldown now. See MonsterAndDemonUnderlingCharges
+                    //PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
                     partyData.deployedSummons.RemoveAt(x);
                     partyData.deployedSummonUnderlings.RemoveAt(x);
                 }
