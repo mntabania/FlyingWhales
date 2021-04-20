@@ -701,9 +701,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ArrivedAtTarget(ref bool shouldRecomputePath) {
         StopMovement();
 
-        LocationGridTile actualDestinationTile = GetDestinationTile();
-        LocationGridTile attainedDestinationTile = character.gridTileLocation;
-        //ProcessDestinationAndAttainedDestinationTile(ref actualDestinationTile, ref attainedDestinationTile);
+        LocationGridTile actualDestinationTile = null;
+        LocationGridTile attainedDestinationTile = null;
+        ProcessDestinationAndAttainedDestinationTile(ref actualDestinationTile, ref attainedDestinationTile);
 
         Action actionBeforeDigging = arrivalActionBeforeDigging;
         //set arrival action to null, because some arrival actions set it

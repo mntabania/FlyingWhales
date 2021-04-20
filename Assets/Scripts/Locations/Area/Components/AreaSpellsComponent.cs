@@ -275,7 +275,7 @@ public class AreaSpellsComponent : AreaComponent {
                 continue;
             }
             int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
-            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE), isPlayerSource: true); //right now, earthquake is always player source because we do not have any other way to create earthquake
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
