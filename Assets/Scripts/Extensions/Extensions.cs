@@ -440,6 +440,9 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
             case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.ANIMAL_MEAT:
+            case TILE_OBJECT_TYPE.VEGETABLES:
+            case TILE_OBJECT_TYPE.RAT_MEAT:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();

@@ -4,6 +4,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Inner_Maps;
+using Ruinarch;
 
 public class SpawnPartyData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPAWN_PARTY;
@@ -79,6 +80,19 @@ public class SpawnPartyData : PlayerAction {
             return true;
         }
         return canPerform;
+    }
+    public override void OnNoLongerCurrentActiveSpell() {
+        base.OnNoLongerCurrentActiveSpell();
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
+        PlayerUI.Instance.EnableTopMenuButtons();
+        UIManager.Instance.SetSpeedTogglesState(true);
+    }
+    public override void OnSetAsCurrentActiveSpell() {
+        base.OnSetAsCurrentActiveSpell();
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
+        PlayerUI.Instance.CloseAllTopMenus();
+        PlayerUI.Instance.DisableTopMenuButtons();
+        UIManager.Instance.SetSpeedTogglesState(false);
     }
     #endregion
 }

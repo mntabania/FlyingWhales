@@ -19239,6 +19239,8 @@ MonoBehaviour:
   - {fileID: 556227247}
   - {fileID: 16455712}
   - {fileID: 1271312853}
+  - {fileID: 2098413511}
+  - {fileID: 647452716}
   spellList: {fileID: 1251235325}
   customDropdownList: {fileID: 1677628230}
   cultistsList: {fileID: 1291172670}
@@ -47240,11 +47242,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1538653385}
-    - target: {fileID: 224362300656238626, guid: bb062f8c3be91104299ceda438b731f4,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.000015258789
-      objectReference: {fileID: 0}
     - target: {fileID: 224632036395511240, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -47358,11 +47355,6 @@ PrefabInstance:
     - target: {fileID: 224657538717953538, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224657538717953538, guid: bb062f8c3be91104299ceda438b731f4,
-        type: 3}
-      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5887194569051060141, guid: bb062f8c3be91104299ceda438b731f4,

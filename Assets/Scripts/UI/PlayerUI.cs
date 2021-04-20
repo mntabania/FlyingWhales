@@ -1030,6 +1030,11 @@ public class PlayerUI : BaseMonoBehaviour {
             topMenuButtons[i].interactable = false;
         }
     }
+    public void CloseAllTopMenus() {
+        for (int i = 0; i < topMenuButtons.Length; i++) {
+            topMenuButtons[i].isOn = false;
+        }
+    }
     #endregion
 
     #region Build List
