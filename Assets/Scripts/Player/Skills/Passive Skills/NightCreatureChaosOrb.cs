@@ -15,8 +15,11 @@ public class NightCreatureChaosOrb : PassiveSkill {
     }
 
     void OnCharacterRaiseDeadByNecro(Summon p_character) {
-        LocationGridTile chaosOrbSpawnLocation = !p_character.hasMarker ? p_character.deathTilePosition : p_character.gridTileLocation;
-        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, chaosOrbSpawnLocation.centeredWorldLocation, 1, chaosOrbSpawnLocation.parentMap);
+        if (CharacterManager.Instance.necromancerInTheWorld != null && CharacterManager.Instance.necromancerInTheWorld.faction.factionType.type == FACTION_TYPE.Undead) {
+            LocationGridTile chaosOrbSpawnLocation = !p_character.hasMarker ? p_character.deathTilePosition : p_character.gridTileLocation;
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, chaosOrbSpawnLocation.centeredWorldLocation, 1, chaosOrbSpawnLocation.parentMap);
+        }
+        
     }
     void OnCharacterBecameVampire(Character p_character) {
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 3, p_character.gridTileLocation.parentMap);
@@ -24,11 +27,10 @@ public class NightCreatureChaosOrb : PassiveSkill {
 
     void OnCharacterDied(Character p_character) {
         if (p_character.race.IsSapient()) {
-            int orbsCount = 0;
             Character responsibleCharacter = p_character.traitContainer.GetTraitOrStatus<Trait>("Dead").responsibleCharacter;
             if (responsibleCharacter != null) {
-                if ((responsibleCharacter.race == RACE.SKELETON && responsibleCharacter.faction.factionType.type == FACTION_TYPE.Undead && CharacterManager.Instance.necromancerInTheWorld != null) || responsibleCharacter.traitContainer.HasTrait("Necromancer") || responsibleCharacter.traitContainer.HasTrait("Vampire")) {
-                    orbsCount = 2;
+                if ((responsibleCharacter.race == RACE.SKELETON && responsibleCharacter.faction.factionType.type == FACTION_TYPE.Undead && CharacterManager.Instance.necromancerInTheWorld != null && CharacterManager.Instance.necromancerInTheWorld.faction == responsibleCharacter.faction) || responsibleCharacter.traitContainer.HasTrait("Necromancer") || responsibleCharacter.traitContainer.HasTrait("Vampire")) {
+                    int orbsCount = 2;
                     LocationGridTile chaosOrbSpawnLocation = !responsibleCharacter.hasMarker ? responsibleCharacter.deathTilePosition : responsibleCharacter.gridTileLocation;
                     Assert.IsNotNull(chaosOrbSpawnLocation, $"Chaos orb spawn location of {responsibleCharacter.name} is null. Character that died is {p_character.name}");
                     Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, chaosOrbSpawnLocation.centeredWorldLocation, orbsCount, chaosOrbSpawnLocation.parentMap);
