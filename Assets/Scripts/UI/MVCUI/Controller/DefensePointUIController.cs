@@ -182,7 +182,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	void ProcessAvailableItemFromClickingDeployedItem(List<MonsterUnderlingQuantityNameplateItem> availItems, DeployedMonsterItemUI p_itemUI) {
 		availItems.ForEach((availableSummons) => {
-			if (availableSummons.obj.characterClass == p_itemUI.obj.characterClass) {
+			if (availableSummons.obj.characterClassName == p_itemUI.obj.characterClassName) {
 				availableSummons.IncreaseOneChargeForDisplayPurpose();
 				if (p_itemUI.isDeployed) {
 					m_targetPartyStructure.RemoveCharacterOnList(p_itemUI.deployedCharacter);
@@ -233,7 +233,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 				eachSummonToBeDeployed.HideManaCost();
 				eachSummonToBeDeployed.Deploy(summon, true);
 				m_targetPartyStructure.AddDeployedItem(eachSummonToBeDeployed);
-				PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachSummonToBeDeployed.obj.monsterType, -1);
+				PlayerManager.Instance.player.underlingsComponent.DecreaseMonsterUnderlingCharge(eachSummonToBeDeployed.obj.monsterType);
 				newDeployedCount++;
 			}
 		});
