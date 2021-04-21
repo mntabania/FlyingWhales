@@ -285,7 +285,7 @@ public class Minion {
         //int missingHealth = character.maxHP - character.currentHP;
         int cooldown = GameManager.Instance.GetTicksBasedOnHour(4); //Mathf.CeilToInt((float) missingHealth / 7);
         spellData.SetCooldown(cooldown);
-        spellData.SetCurrentCooldownTick(0);
+        //spellData.SetCurrentCooldownTick(0);
         spellData.StartCooldown();
         //SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         //spellData.SetCooldown(-1);
