@@ -269,11 +269,22 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		});
 	}
 
-	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
+	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges p_monsterAndDemonUnderlingCharges) {
 		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 			UIManager.Instance.ShowSmallInfo("You cant add a team member bacause the structure is occupied", "Structure Occupied", true);
+		} else {
+			MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
+			if (minionPlayerSkill != null) {
+				CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(minionPlayerSkill.className);
+				if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
+					CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
+					UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_maraudUIView.UIModel.hoverPosition, combatBehaviour.name);
+				}
+			}
+			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
 		}
 	}
+
 
 	void OnHoverExitItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
 		UIManager.Instance.HideSmallInfo();
@@ -463,7 +474,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			ProcessAvailableItemFromClickingDeployedItem(m_summonList, p_itemUI);
 			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		} else {
-			if (m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
+			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0) {
+				ProcessAvailableItemFromClickingDeployedItem(m_minionList, p_itemUI);
 				m_maraudUIView.ShowMinionButtonHideMinionContainer();
 			}
 		}

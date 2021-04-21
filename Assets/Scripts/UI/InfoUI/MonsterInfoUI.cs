@@ -17,6 +17,7 @@ public class MonsterInfoUI : InfoUIBase {
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
+    [SerializeField] private TextMeshProUGUI roleLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private EventLabel plansEventLabel;
@@ -51,6 +52,8 @@ public class MonsterInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Store Target")] 
     [SerializeField] private StoreTargetButton btnStoreTarget;
+
+    private HoverText m_roleHoverText;
     
     private Character _activeMonster;
 
@@ -83,6 +86,8 @@ public class MonsterInfoUI : InfoUIBase {
         itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
         
         logsWindow.Initialize();
+
+        m_roleHoverText = roleLbl.GetComponent<HoverText>();
     }
     
     private void OnRightClickThoughtBubble(object obj) {
@@ -186,6 +191,12 @@ public class MonsterInfoUI : InfoUIBase {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = $"<b>{_activeMonster.firstNameWithColor}</b>";
+
+        CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(_activeMonster.characterClass.className);
+        CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
+        roleLbl.text = $"<b>{combatBehaviour.name}</b>";
+        m_roleHoverText.SetText(combatBehaviour.description);
+
         subLbl.text = _activeMonster.characterClass.className;
         UpdateThoughtBubble();
     }
