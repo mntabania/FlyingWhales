@@ -7,6 +7,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Traits {
     public class Burning : Status, IElementalTrait {
@@ -248,9 +249,15 @@ namespace Traits {
             _burningSpreadChoices.Clear();
             if (ShouldSpreadFire()) {
                 LocationGridTile origin = owner.gridTileLocation;
-                List<LocationGridTile> affectedTiles = origin.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+                origin.PopulateTilesInRadius(affectedTiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < affectedTiles.Count; i++) {
-                    _burningSpreadChoices.AddRange(affectedTiles[i].GetTraitablesOnTileThatCanHaveElementalTrait("Burning", true));
+                    List<ITraitable> traitablesOnTile = RuinarchListPool<ITraitable>.Claim();
+                    affectedTiles[i].PopulateTraitablesOnTileThatCanHaveElementalTrait(traitablesOnTile, "Burning", true);
+                    for (int j = 0; j < traitablesOnTile.Count; j++) {
+                        _burningSpreadChoices.Add(traitablesOnTile[j]);
+                    }
+                    RuinarchListPool<ITraitable>.Release(traitablesOnTile);
                 }
                 if (_burningSpreadChoices.Count > 0) {
                     ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
@@ -260,7 +267,8 @@ namespace Traits {
                         Burning burning = chosen.traitContainer.GetTraitOrStatus<Burning>("Burning");
                         burning?.SetIsPlayerSource(isPlayerSource);
                     }
-                }    
+                }
+                RuinarchListPool<LocationGridTile>.Release(affectedTiles);
             }
             Profiler.EndSample();
 

@@ -129,7 +129,7 @@ public sealed class PoisonCloud : MovingTileObject {
                     poisoned.SetIsPlayerSource(isPlayerSource);
                 }
             } else {
-                List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                List<LocationGridTile> tiles = gridTileLocation.PopulateTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < tiles.Count; i++) {
                     tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Poisoned", bypassElementalChance: true);
                     Poisoned poisoned = tiles[i].tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");

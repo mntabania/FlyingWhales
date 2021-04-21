@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public class FrostyFog : MovingTileObject {
 
     private FrostyFogMapObjectVisual _frostyFogMapVisual;
@@ -61,10 +61,12 @@ public class FrostyFog : MovingTileObject {
         }
         if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
             //Wet
-            List<LocationGridTile> tiles = tileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            tileLocation.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 tiles[i].AddTraitToAllPOIsOnTile("Wet");
             }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
             _frostyFogMapVisual.Expire();
         } else if (elementalDamageType == ELEMENTAL_TYPE.Electric) {
             //2 Ball Lightnings

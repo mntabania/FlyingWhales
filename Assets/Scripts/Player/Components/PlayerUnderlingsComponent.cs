@@ -13,14 +13,12 @@ public class PlayerUnderlingsComponent {
         //summons = new List<Summon>();
         monsterUnderlingCharges = new Dictionary<SUMMON_TYPE, MonsterAndDemonUnderlingCharges>();
         demonUnderlingCharges = new Dictionary<MINION_TYPE, MonsterAndDemonUnderlingCharges>();
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
     public PlayerUnderlingsComponent(SaveDataPlayerUnderlingsComponent data) {
         //minions = new List<Minion>();
         //summons = new List<Summon>();
         monsterUnderlingCharges = data.monsterUnderlingCharges;
         demonUnderlingCharges = data.demonUnderlingCharges;
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
 
     #region Utilities
@@ -50,6 +48,7 @@ public class PlayerUnderlingsComponent {
         Messenger.AddListener<Minion>(PlayerSkillSignals.SUMMON_MINION, OnSummonMinion);
         Messenger.AddListener<Minion>(PlayerSkillSignals.UNSUMMON_MINION, OnUnsummonMinion);
         Messenger.AddListener<SkillData>(PlayerSkillSignals.CHARGES_ADJUSTED, OnSkillChargesAdjusted);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
     private void OnSkillChargesAdjusted(SkillData data) {
         if (data is MinionPlayerSkill demonPlayerSkill) {
@@ -209,15 +208,21 @@ public class PlayerUnderlingsComponent {
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
     }
-    #endregion
-
     public MonsterAndDemonUnderlingCharges GetSummonUnderlingChargesBySummonType(SUMMON_TYPE p_type) {
         return monsterUnderlingCharges[p_type];
     }
-
     public MonsterAndDemonUnderlingCharges GetMinionUnderlingChargesByMinionType(MINION_TYPE p_type) {
         return demonUnderlingCharges[p_type];
     }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataPlayerUnderlingsComponent data) {
+        foreach (MonsterAndDemonUnderlingCharges item in monsterUnderlingCharges.Values) {
+            item.LoadMonsterReplenish();
+        }
+    }
+    #endregion
 }
 
 public class SaveDataPlayerUnderlingsComponent : SaveData<PlayerUnderlingsComponent> {

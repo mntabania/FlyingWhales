@@ -37,12 +37,14 @@ public class BuryCharacter : GoapAction {
         if (goapNode.associatedJobType == JOB_TYPE.BURY_IN_ACTIVE_PARTY) {
             Character actor = goapNode.actor;
             if (actor.limiterComponent.canMove && !actor.movementComponent.isStationary) {
-                List<LocationGridTile> choices = actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
-                if (choices != null && choices.Count > 0) {
-                    return choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
-                } else {
-                    return actor.gridTileLocation;
+                List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim(); 
+                actor.gridTileLocation.PopulateTilesInRadius(choices, 3, includeImpassable: false);
+                LocationGridTile chosenTile = actor.gridTileLocation;
+                if (choices.Count > 0) {
+                    chosenTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
                 }
+                RuinarchListPool<LocationGridTile>.Release(choices);
+                return chosenTile;
             } else {
                 return actor.gridTileLocation;
             }
