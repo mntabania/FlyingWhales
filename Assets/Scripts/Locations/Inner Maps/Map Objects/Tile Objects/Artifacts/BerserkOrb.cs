@@ -26,7 +26,8 @@ public class BerserkOrb : Artifact {
     }
     private IEnumerator BerserkOrbEffect(LocationGridTile tileLocation) {
         yield return new WaitForSeconds(0.5f);
-        List<LocationGridTile> tilesInRange = tileLocation.GetTilesInRadius(3);
+        List<LocationGridTile> tilesInRange = RuinarchListPool<LocationGridTile>.Claim();
+        tileLocation.PopulateTilesInRadius(tilesInRange, 3);
         for (int i = 0; i < tilesInRange.Count; i++) {
             LocationGridTile currTile = tilesInRange[i];
             if (currTile.charactersHere.Count > 0) {
@@ -36,6 +37,7 @@ public class BerserkOrb : Artifact {
                 }
             }
         }
+        RuinarchListPool<LocationGridTile>.Release(tilesInRange);
         //tileLocation.structure.RemovePOI(this);
     }
     public override void OnInspect(Character inspector) {

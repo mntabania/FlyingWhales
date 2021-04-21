@@ -5,6 +5,7 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -78,8 +79,10 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #endregion
 
     private void GoToRandomTileInRadius() {
-        List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(8, 6, false, true);
+        List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
+        gridTileLocation.PopulateTilesInRadius(tilesInRadius, 8, 6, false, true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
+        RuinarchListPool<LocationGridTile>.Release(tilesInRadius);
         Assert.IsNotNull(chosen, $"Tornado at {gridTileLocation} cannot find a tile to go to!");
         GoTo(chosen);
     }
@@ -252,11 +255,13 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
         Profiler.BeginSample($"Tornado Per Tick");
         int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
-        List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        gridTileLocation.PopulateTilesInRadius(tiles, _radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             tile.tileObjectComponent.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO), isPlayerSource: _tornado.isPlayerSource);
         }
+        RuinarchListPool<LocationGridTile>.Release(tiles);
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
             if (damageable.mapObjectVisual != null) {

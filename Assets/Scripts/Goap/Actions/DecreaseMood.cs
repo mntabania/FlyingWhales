@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Traits;
-
+using UtilityScripts;
 public class DecreaseMood : GoapAction {
     public DecreaseMood() : base(INTERACTION_TYPE.DECREASE_MOOD) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
@@ -29,14 +29,15 @@ public class DecreaseMood : GoapAction {
         GameManager.Instance.CreateParticleEffectAt(goapNode.actor.gridTileLocation, PARTICLE_EFFECT.Demooder);
     }
     public void AfterDecreaseSuccess(ActualGoapNode goapNode) {
-        List<LocationGridTile> tilesInRange =
-            goapNode.actor.gridTileLocation.GetTilesInRadius(3, includeCenterTile: true,
+        List<LocationGridTile> tilesInRange = RuinarchListPool<LocationGridTile>.Claim();
+        goapNode.actor.gridTileLocation.PopulateTilesInRadius(tilesInRange, 3, includeCenterTile: true,
                 includeTilesInDifferentStructure: true);
 
         for (int i = 0; i < tilesInRange.Count; i++) {
             LocationGridTile tile = tilesInRange[i];
             tile.PerformActionOnTraitables(traitable =>  DecreaseEffect(traitable, goapNode.actor));
         }
+        RuinarchListPool<LocationGridTile>.Release(tilesInRange);
         goapNode.actor.AdjustHP(-goapNode.actor.maxHP, ELEMENTAL_TYPE.Normal, true);
     }
     private void DecreaseEffect(ITraitable traitable, Character actor) {

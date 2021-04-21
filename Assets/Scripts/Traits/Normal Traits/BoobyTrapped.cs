@@ -5,6 +5,8 @@ using UnityEngine;
 using Inner_Maps;
 using Traits;
 using UnityEngine.Assertions;
+using UtilityScripts;
+
 namespace Traits {
     public class BoobyTrapped : Status {
         private ELEMENTAL_TYPE _element;
@@ -119,11 +121,13 @@ namespace Traits {
             List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
-                List<IPointOfInterest> pois = currTile.GetPOIsOnTile();
+                List<IPointOfInterest> pois = RuinarchListPool<IPointOfInterest>.Claim();
+                currTile.PopulatePOIsOnTile(pois);
                 for (int j = 0; j < pois.Count; j++) {
                     IPointOfInterest currPOI = pois[j];
                     currPOI.AdjustHP(-800, element, true);
                 }
+                RuinarchListPool<IPointOfInterest>.Release(pois);
             }
             target.traitContainer.RemoveTrait(target, this);
             actor.traitContainer.AddTrait(actor, "Unconscious");    

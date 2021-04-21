@@ -13,14 +13,12 @@ public class CombatComponent : CharacterComponent {
     public int maxHPModification { get; private set; }
     public int attackSpeed { get; private set; }  //in milliseconds, The lower the amount the faster the attack rate
     public int numOfKilledCharacters { get; private set; }
-
     public COMBAT_MODE combatMode { get; private set; }
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public List<Character> bannedFromHostileList { get; private set; }
     public Dictionary<IPointOfInterest, CombatData> combatDataDictionary { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
-
     public CharacterCombatBehaviourParent combatBehaviourParent { get; private set; }
     public CombatSpecialSkillWrapper specialSkillParent { get; private set; }
     public bool willProcessCombat { get; private set; }

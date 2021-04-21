@@ -1325,8 +1325,7 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public List<ITraitable> GetTraitablesOnTile() {
-            List<ITraitable> traitables = new List<ITraitable>();
+        public void PopulateTraitablesOnTile(List<ITraitable> traitables) {
             traitables.Add(tileObjectComponent.genericTileObject);
             for (int i = 0; i < tileObjectComponent.walls.Count; i++) {
                 ThinWall structureWallObject = tileObjectComponent.walls[i];
@@ -1341,7 +1340,6 @@ namespace Inner_Maps {
                 Character character = charactersHere[i];
                 traitables.Add(character);
             }
-            return traitables;
         }
         public void PerformActionOnTraitables(TraitableCallback callback) {
             callback.Invoke(tileObjectComponent.genericTileObject);
@@ -1375,8 +1373,7 @@ namespace Inner_Maps {
             }
             Messenger.Broadcast(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, this, callback);
         }
-        public List<IPointOfInterest> GetPOIsOnTile() {
-            List<IPointOfInterest> pois = new List<IPointOfInterest>();
+        public void PopulatePOIsOnTile(List<IPointOfInterest> pois) {
             pois.Add(tileObjectComponent.genericTileObject);
             if (tileObjectComponent.objHere != null) {
                 if (tileObjectComponent.objHere.mapObjectState == MAP_OBJECT_STATE.BUILT) {
@@ -1387,7 +1384,6 @@ namespace Inner_Maps {
                 Character character = charactersHere[i];
                 pois.Add(character);
             }
-            return pois;
         }
         public void AddTraitToAllPOIsOnTile(string traitName) {
             tileObjectComponent.genericTileObject.traitContainer.AddTrait(tileObjectComponent.genericTileObject, traitName);

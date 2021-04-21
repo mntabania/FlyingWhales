@@ -6,6 +6,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -135,12 +136,13 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Profiler.BeginSample($"Poison Cloud Per Tick");
         choices.Clear();
         int size = _size / 2;
-        List<LocationGridTile> tiles =
-            gridTileLocation.GetTilesInRadius(size, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        gridTileLocation.PopulateTilesInRadius(tiles, size, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(traitable => choices.Add(traitable));
         }
+        RuinarchListPool<LocationGridTile>.Release(tiles);
         Assert.IsTrue(choices.Count > 0);
         string summary = $"{GameManager.Instance.TodayLogString()}Per tick check of poison cloud.";
         ITraitable chosenTraitable = UtilityScripts.CollectionUtilities.GetRandomElement(choices);
@@ -158,12 +160,13 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _cloudEffect.TriggerSubEmitter(0);
         _poisonCloud.SetDoExpireEffect(false);
         Expire();
-        List<LocationGridTile> affectedTiles =
-            gridTileLocation.GetTilesInRadius(_size, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+        gridTileLocation.PopulateTilesInRadius(affectedTiles, _size, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             tile.PerformActionOnTraitables(ApplyExplosionEffect);
         }
+        RuinarchListPool<LocationGridTile>.Release(affectedTiles);
     }
     private void ApplyExplosionEffect(ITraitable traitable) {
         traitable.AdjustHP(-350, ELEMENTAL_TYPE.Fire, true, showHPBar: true, isPlayerSource : _poisonCloud.isPlayerSource);

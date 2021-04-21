@@ -90,8 +90,8 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
     }
     private List<TileObject> GetArsonTargetChoices(Character arson) {
         List<TileObject> choices = null;
-        List<LocationGridTile> area =
-            arson.gridTileLocation.GetTilesInRadius(2, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> area = RuinarchListPool<LocationGridTile>.Claim();
+        arson.gridTileLocation.PopulateTilesInRadius(area, 2, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < area.Count; i++) {
             LocationGridTile tile = area[i];
             TileObject tileObject = tile.tileObjectComponent.objHere;
@@ -104,6 +104,7 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
                 choices.Add(tileObject);
             }
         }
+        RuinarchListPool<LocationGridTile>.Release(area);
         return choices;
     }
 }
