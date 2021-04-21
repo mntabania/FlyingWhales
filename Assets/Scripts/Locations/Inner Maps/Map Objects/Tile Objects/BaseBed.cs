@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Inner_Maps;
 using Traits;
-
+using UnityEngine;
 public abstract class BaseBed : TileObject {
     private Character[] bedUsers; //array of characters, currently using the bed
 
@@ -57,7 +57,11 @@ public abstract class BaseBed : TileObject {
                 character.SetTileObjectLocation(this);
                 UpdateUsedBedAsset();
                 //disable the character's marker
-                character.marker.pathfindingAI.Teleport(gridTileLocation.centeredWorldLocation);
+
+                //Put character marker on a walkable node when he enters a bed so that when another character targets the character it will always be reachable
+                //https://trello.com/c/pLXVewRw/4162-combat-not-starting-when-character-is-targeting-someone-on-bed-near-wall-corner
+                Vector3 pos = gridTileLocation.GetPositionWithinTileThatIsOnAWalkableNode();
+                character.marker.pathfindingAI.Teleport(pos);
                 // character.marker.PlaceMarkerAt(gridTileLocation);
                 character.marker.SetVisualState(false);
                 character.tileObjectComponent.SetBedBeingUsed(this);
