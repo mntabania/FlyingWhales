@@ -1950,6 +1950,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TriggerBuryMe() {
 	    if (owner.minion == null && !(owner is Animal) && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
 	        && settlement is NPCSettlement npcSettlement) {
+            if (owner is Summon summon) {
+                if (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Vengeful_Ghost) {
+                    return;
+                }
+            }
 		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE) ??
                                                 npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? 
 		                                        npcSettlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);

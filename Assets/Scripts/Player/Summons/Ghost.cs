@@ -23,6 +23,12 @@ public class Ghost : Summon {
     }
 
     #region Overrides
+    public override void Initialize() {
+        base.Initialize();
+        movementComponent.SetIsFlying(true);
+        RemoveAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
+    }
+
     public override void SubscribeToSignals() {
         if (hasSubscribedToSignals) {
             return;
