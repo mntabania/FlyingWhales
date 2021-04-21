@@ -25,6 +25,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public bool isInterior;
     public SaveDataStructureRoom[] structureRoomSaveData;
     public bool hasBeenDestroyed;
+    public bool isStoredAsTarget;
     public List<string> tileObjectDamageContributors;
 
     public override void Save(LocationStructure structure) {
@@ -35,7 +36,8 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         structureType = structure.structureType;
         regionLocationID = structure.region.persistentID;
         settlementLocationID = structure.settlementLocation?.persistentID ?? string.Empty;
-        
+        isStoredAsTarget = structure.isStoredAsTarget;
+
         //structure tags
         structureTags = new STRUCTURE_TAG[structure.structureTags.Count];
         for (int i = 0; i < structure.structureTags.Count; i++) {

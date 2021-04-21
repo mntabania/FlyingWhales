@@ -19,6 +19,7 @@ namespace Locations.Settlements {
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
         public string name { get; private set; }
+        public bool isStoredAsTarget { get; private set; }
         public Faction owner { get; private set; }
         public List<Area> areas { get; }
         public List<Character> residents { get; protected set; }
@@ -27,9 +28,7 @@ namespace Locations.Settlements {
         public List<LocationStructure> allStructures { get; protected set; }
         public List<Party> parties { get; protected set; }
         public List<PLAYER_SKILL_TYPE> actions { get; private set; }
-
         public virtual SettlementResources SettlementResources { get; protected set; }
-
         public string bookmarkName => $"{iconRichText} {name}";
         public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
         public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
@@ -37,7 +36,6 @@ namespace Locations.Settlements {
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
         public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Village;
-
         public bool isTargetted { set; get; }
 
         public string iconRichText => UtilityScripts.Utilities.VillageIcon();
@@ -65,10 +63,11 @@ namespace Locations.Settlements {
             StartListeningForFires();
             ConstructDefaultActions();
         }
-        protected BaseSettlement(SaveDataBaseSettlement saveDataBaseSettlement) {
-            persistentID = saveDataBaseSettlement._persistentID;
-            SetName(saveDataBaseSettlement.name);
-            id = UtilityScripts.Utilities.SetID(this, saveDataBaseSettlement.id);
+        protected BaseSettlement(SaveDataBaseSettlement data) {
+            persistentID = data._persistentID;
+            SetName(data.name);
+            id = UtilityScripts.Utilities.SetID(this, data.id);
+            isStoredAsTarget = data.isStoredAsTarget;
             areas = new List<Area>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
@@ -76,7 +75,7 @@ namespace Locations.Settlements {
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-            SetLocationType(saveDataBaseSettlement.locationType);
+            SetLocationType(data.locationType);
             StartListeningForFires();
             ConstructDefaultActions();
         }
@@ -904,6 +903,9 @@ namespace Locations.Settlements {
         #region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return true;
+        }
+        public void SetAsStoredTarget(bool p_state) {
+            isStoredAsTarget = p_state;
         }
         #endregion
 

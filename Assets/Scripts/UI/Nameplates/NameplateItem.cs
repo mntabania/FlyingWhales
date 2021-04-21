@@ -107,10 +107,10 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     #region UI Player Update
     void ProcessButtonBaseOnChargeDisplay() {
         if (m_displayRemainingChargeText <= 0) {
-            SetAsDisplayOnly();
+            //SetAsDisplayOnly();
             SetInteractableState(false);
         } else {
-            SetAsButton();
+            //SetAsButton();
             SetInteractableState(true);
         }
     }

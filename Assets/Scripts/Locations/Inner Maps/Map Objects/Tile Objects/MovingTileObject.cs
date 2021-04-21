@@ -4,7 +4,7 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public abstract class MovingTileObject : TileObject {
     public sealed override LocationGridTile gridTileLocation => TryGetGridTileLocation(out var tile) ? tile : base.gridTileLocation;
     public override MapObjectVisual<TileObject> mapVisual => _mapVisual;
@@ -55,11 +55,13 @@ public abstract class MovingTileObject : TileObject {
                 action.Invoke(this);
             }  
         } else {
-            List<LocationGridTile> affectedTiles = gridTileLocation.GetTilesInRadius(affectedRange, includeCenterTile: true,
+            List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim(); 
+            gridTileLocation.PopulateTilesInRadius(affectedTiles, affectedRange, includeCenterTile: true,
                 includeTilesInDifferentStructure: true);
             if (affectedTiles.Contains(tile)) {
                 action.Invoke(this);
-            }    
+            }
+            RuinarchListPool<LocationGridTile>.Release(affectedTiles);
         }
         
     }

@@ -113,7 +113,8 @@ public class HarvestPlant : GoapAction {
         if (poiTarget is Crops crop) {
             crop.SetGrowthState(Crops.Growth_State.Growing);
             
-            List<LocationGridTile> choices = poiTarget.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true, includeImpassable: false);
+            List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
+            poiTarget.gridTileLocation.PopulateTilesInRadius(choices, 1, includeTilesInDifferentStructure: true, includeImpassable: false);
             if (choices.Count > 0) {
                 FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, CollectionUtilities.GetRandomElement(choices));
                 if(goapNode.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
@@ -128,7 +129,8 @@ public class HarvestPlant : GoapAction {
                     }
                 }
             }
-        }else {
+            RuinarchListPool<LocationGridTile>.Release(choices);
+        } else {
             LocationGridTile tile = poiTarget.gridTileLocation;
             tile.structure.RemovePOI(poiTarget);
             
