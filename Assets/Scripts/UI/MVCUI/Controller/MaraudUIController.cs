@@ -244,7 +244,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClassName).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower);
+				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost
+					&& CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClassName).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower
+					&& entry.Value.currentCharges > 0);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}
