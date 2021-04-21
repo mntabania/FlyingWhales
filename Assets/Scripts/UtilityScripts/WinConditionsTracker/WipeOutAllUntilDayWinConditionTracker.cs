@@ -85,8 +85,8 @@ public class WipeOutAllUntilDayWinConditionTracker : WinConditionTracker {
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable undeadInvasion = new GenericTextBookmarkable(GetUndeadInvasionText, () => BOOKMARK_TYPE.Text, null, null);
-        GenericTextBookmarkable remainingVillagers = new GenericTextBookmarkable(GetRemainingVillagers, () => BOOKMARK_TYPE.Text, null, null);
+        GenericTextBookmarkable undeadInvasion = new GenericTextBookmarkable(GetUndeadInvasionText, () => BOOKMARK_TYPE.Text, null, null, null, null);
+        GenericTextBookmarkable remainingVillagers = new GenericTextBookmarkable(GetRemainingVillagers, () => BOOKMARK_TYPE.Text, null, null, null, null);
         IBookmarkable[] bookmarkables = new[] {
             undeadInvasion, remainingVillagers
         };

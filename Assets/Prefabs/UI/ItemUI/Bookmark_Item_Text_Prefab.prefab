@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 2264857275298465849}
   - component: {fileID: 8511119287902750258}
   - component: {fileID: 1349870091036904229}
+  - component: {fileID: 8295217290797107165}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -238,6 +239,28 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8295217290797107165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4920504897377516576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &7572147956438921712
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,6 +315,7 @@ MonoBehaviour:
   lblName: {fileID: 7572147957243166603}
   btnMain: {fileID: 1349870091036904229}
   btnRemove: {fileID: 9113909443806329406}
+  hoverHandler: {fileID: 8295217290797107165}
 --- !u!1 &7572147957243166601
 GameObject:
   m_ObjectHideFlags: 0

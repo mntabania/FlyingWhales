@@ -78,7 +78,7 @@ public class PlagueDeathWinConditionTracker : WinConditionTracker {
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable plagueFatality = new GenericTextBookmarkable(GetPlagueFatalityText, () => BOOKMARK_TYPE.Text, null, null);
+        GenericTextBookmarkable plagueFatality = new GenericTextBookmarkable(GetPlagueFatalityText, () => BOOKMARK_TYPE.Text, null, null, null, null);
         IBookmarkable[] bookmarkables = new[] {
             plagueFatality
         };

@@ -89,6 +89,8 @@ namespace UtilityScripts {
         public void RemoveBookmark() {
             PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
         }
+        public void OnHoverOverBookmarkItem() { }
+        public void OnHoverOutBookmarkItem() { }
         #endregion
     }
 }

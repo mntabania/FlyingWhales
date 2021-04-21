@@ -73,7 +73,7 @@ public class WipeOutAllVillagersWinConditionTracker : WinConditionTracker {
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable eliminateVillagers = new GenericTextBookmarkable(GetEliminateVillagersText, () => BOOKMARK_TYPE.Text, null, null);
+        GenericTextBookmarkable eliminateVillagers = new GenericTextBookmarkable(GetEliminateVillagersText, () => BOOKMARK_TYPE.Text, null, null, null, null);
         IBookmarkable[] bookmarkables = new[] {
             eliminateVillagers
         };

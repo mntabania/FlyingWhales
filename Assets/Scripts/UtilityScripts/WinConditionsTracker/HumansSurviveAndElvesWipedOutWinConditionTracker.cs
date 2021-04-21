@@ -144,8 +144,9 @@ public class HumansSurviveAndElvesWipedOutWinConditionTracker : WinConditionTrac
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable wipeOutBookmarkable = new GenericTextBookmarkable(GetWipeOutText, () => BOOKMARK_TYPE.Text, null, null);
-        GenericTextBookmarkable protectHumansBookmarkable = new GenericTextBookmarkable(GetProtectHumansText, () => BOOKMARK_TYPE.Text, null, null);
+        GenericTextBookmarkable wipeOutBookmarkable = new GenericTextBookmarkable(GetWipeOutText, () => BOOKMARK_TYPE.Text, null, null, null, null);
+        GenericTextBookmarkable protectHumansBookmarkable = new GenericTextBookmarkable(GetProtectHumansText, () => BOOKMARK_TYPE.Text, null, null, 
+            OnHoverProtectHumans, UIManager.Instance.HideSmallInfo);
         IBookmarkable[] bookmarkables = new[] {
             wipeOutBookmarkable, protectHumansBookmarkable
         };
@@ -156,6 +157,17 @@ public class HumansSurviveAndElvesWipedOutWinConditionTracker : WinConditionTrac
     }
     private string GetProtectHumansText() {
         return $"Protect the humans. Remaining {humans.Count.ToString()}/{MinimumHumans.ToString()}";
+    }
+    #endregion
+
+    #region Tooltips
+    private void OnHoverProtectHumans() {
+        UIManager.Instance.ShowSmallInfo(
+            $"Keep at least {MinimumHumans.ToString()} humans alive and part of {GetMainHumanFaction().nameWithColor}.\n" +
+            $"Important Notes:\n " +
+            $"\t- Human vagrants do not count!\n" +
+            $"\t- Human Villagers cannot be replenished, while Elven Villagers can.\n" +
+            $"\t- Elven vagrants are considered as eliminated.", pos: UIManager.Instance.bookmarkUIController.GetHoverPosition());
     }
     #endregion
 }

@@ -18,7 +18,7 @@ public class UpgradePortalWinConditionTracker : WinConditionTracker {
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable upgradePortal = new GenericTextBookmarkable(GetUpgradePortalText, () => BOOKMARK_TYPE.Text, null, null);
+        GenericTextBookmarkable upgradePortal = new GenericTextBookmarkable(GetUpgradePortalText, () => BOOKMARK_TYPE.Text, null, null, null, null);
         IBookmarkable[] bookmarkables = new[] {
             upgradePortal
         };
