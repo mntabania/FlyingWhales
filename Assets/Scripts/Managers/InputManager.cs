@@ -129,22 +129,21 @@ namespace Ruinarch {
             } else if (Input.GetKeyDown(KeyCode.F1)) {
                 BroadcastHotkeyPress("Spells Tab", KeyCode.F1);
             } else if (Input.GetKeyDown(KeyCode.F2)) {
-                BroadcastHotkeyPress("Demons Tab", KeyCode.F2);
+                BroadcastHotkeyPress("Structures Tab", KeyCode.F2);
             } else if (Input.GetKeyDown(KeyCode.F3)) {
-                BroadcastHotkeyPress("Monsters Tab", KeyCode.F3);
+                BroadcastHotkeyPress("Demons Tab", KeyCode.F3);
             } else if (Input.GetKeyDown(KeyCode.F4)) {
-                BroadcastHotkeyPress("Intel Tab", KeyCode.F4);
+                BroadcastHotkeyPress("Monsters Tab", KeyCode.F4);
             } else if (Input.GetKeyDown(KeyCode.F5)) {
-                BroadcastHotkeyPress("Targets Tab", KeyCode.F5);
+                BroadcastHotkeyPress("Intel Tab", KeyCode.F5);
             } else if (Input.GetKeyDown(KeyCode.F6)) {
-                BroadcastHotkeyPress("Villagers Tab", KeyCode.F6);
+                BroadcastHotkeyPress("Targets Tab", KeyCode.F6);
             } else if (Input.GetKeyDown(KeyCode.F7)) {
-                BroadcastHotkeyPress("Build Tab", KeyCode.F7);
+                BroadcastHotkeyPress("Villagers Tab", KeyCode.F7);
             } else if (Input.GetKeyDown(KeyCode.F8)) {
-                BroadcastHotkeyPress("Cultist Tab", KeyCode.F7);
+                BroadcastHotkeyPress("Cultist Tab", KeyCode.F8);
             } else if (Input.GetKeyDown(KeyCode.F9)) {
-                if (!CanUseHotkey(KeyCode.F9)) return;
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F9);
+                BroadcastHotkeyPress("Tutorials Tab", KeyCode.F9);
             } 
             // else if (Input.GetKeyDown(KeyCode.M)) {
             //     BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);

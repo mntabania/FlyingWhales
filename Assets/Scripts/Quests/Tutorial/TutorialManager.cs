@@ -14,6 +14,16 @@ namespace Tutorial {
         public static TutorialManager Instance;
         private const int MaxActiveTutorials = 1;
 
+        public enum Tutorial_Type {
+            Unlocking_Bonus_Powers,
+            Upgrading_The_Portal,
+            Mana,
+            Chaotic_Energy,
+            Storing_Targets,
+            Prism,
+            Maraud,
+            Intel
+        }
         public enum Tutorial {
             Basic_Controls = 0,
             Build_A_Kennel = 1,
@@ -119,6 +129,7 @@ namespace Tutorial {
         #region Monobehaviours
         private void Awake() {
             Instance = this;
+            _loadedTutorialData = new Dictionary<Tutorial_Type, TutorialScriptableObjectData>();
             _activeImportantTutorials = new List<ImportantTutorial>();
             _waitingImportantTutorials = new List<ImportantTutorial>();
             _activeBonusTutorials = new List<BonusTutorial>();
@@ -128,9 +139,10 @@ namespace Tutorial {
         protected override void OnDestroy() {
             base.OnDestroy();
             Instance = null;
+            _loadedTutorialData = null;
         }
         private void LateUpdate() {
-            if (GameManager.Instance.gameHasStarted) {
+            if (GameManager.Instance != null && GameManager.Instance.gameHasStarted) {
                 CheckIfNewTutorialCanBeActivated();    
             }
         }
@@ -141,7 +153,7 @@ namespace Tutorial {
             hasCompletedImportantTutorials = WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial;
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
                 // Instantiate all pending bonus tutorials. NOTE: In tutorial world this is called after Start Popup is hidden
-                InstantiatePendingBonusTutorials();    
+                // InstantiatePendingBonusTutorials();    
             }
         }
         /// <summary>
@@ -160,6 +172,7 @@ namespace Tutorial {
                 InstantiateTutorial(tutorial);
             }
         }
+        [System.Obsolete("This should no longer used.")]
         public void InstantiatePendingBonusTutorials() {
             if (SettingsManager.Instance.settings.skipAdvancedTutorials) {
                 return; //do not create tutorials if skip advanced tutorials switch is on.
@@ -323,6 +336,30 @@ namespace Tutorial {
                 UIManager.Instance.questUI.HideQuestDelayed(tutorialQuest);
             }
             tutorialQuest.Deactivate();
+        }
+        #endregion
+
+        #region Tutorial Data
+        private Dictionary<Tutorial_Type, TutorialScriptableObjectData> _loadedTutorialData;
+        public TutorialScriptableObjectData GetTutorialData(Tutorial_Type p_type) {
+            if (_loadedTutorialData.ContainsKey(p_type)) {
+                return _loadedTutorialData[p_type];
+            }
+            TutorialScriptableObjectData loadedData = Resources.Load<TutorialScriptableObjectData>($"Tutorial Data/{p_type.ToString()}");
+            _loadedTutorialData.Add(p_type, loadedData);
+            return loadedData;
+        }
+        public void UnloadTutorialDataAndAssets() {
+            foreach (var kvp in _loadedTutorialData) {
+                for (int i = 0; i < kvp.Value.pages.Count; i++) {
+                    TutorialPage page = kvp.Value.pages[i];
+                    Resources.UnloadAsset(page.imgTutorial);       
+                }
+            }
+        }
+        public void UnlockTutorial(Tutorial_Type p_type) {
+            SaveManager.Instance.currentSaveDataPlayer.UnlockTutorial(p_type);
+            SaveManager.Instance.savePlayerManager.SavePlayerData();
         }
         #endregion
 
