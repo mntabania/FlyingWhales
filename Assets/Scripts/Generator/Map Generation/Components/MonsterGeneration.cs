@@ -58,7 +58,7 @@ public class MonsterGeneration : MapGenerationComponent {
 	}
     private void CreateCharacter(RACE race, string className, GENDER gender, BaseSettlement settlementOnTile, LocationStructure structure, Faction faction = null) {
         Character character = CharacterManager.Instance.CreateNewCharacter(className, race, gender, faction ?? FactionManager.Instance.neutralFaction, settlementOnTile, settlementOnTile.region, structure);
-        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structure.passableTiles);
+        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structure.passableTiles) ?? CollectionUtilities.GetRandomElement(structure.tiles);
         character.CreateMarker();
         character.InitialCharacterPlacement(targetTile);
     }
@@ -158,7 +158,7 @@ public class MonsterGeneration : MapGenerationComponent {
 							continue;
 						}
 						BiomeDivision biomeDivision = cave.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(cave.tiles.First());
-						if (GameUtilities.RollChance(70)) {
+						if (!GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(2, 5), 10) && GameUtilities.RollChance(70)) {
 							locationChoices.Clear();
 							locationChoices.AddRange(cave.passableTiles);
 					
@@ -211,7 +211,7 @@ public class MonsterGeneration : MapGenerationComponent {
 
 	#region Icalawa
 	private void IcalawaCaveMonsterGeneration(List<LocationStructure> caves) {
-		List<LocationStructure> shuffledCaves = CollectionUtilities.Shuffle(caves);
+		List<LocationStructure> shuffledCaves = CollectionUtilities.Shuffle(caves.Where(c => c.unoccupiedTiles.Count > 0).ToList());
 		if (shuffledCaves.Count > 0) {
 			LocationStructure ratmenCave = shuffledCaves[0];
 			shuffledCaves.Remove(ratmenCave);
