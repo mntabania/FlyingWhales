@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
+using UtilityScripts;
 
 namespace Inner_Maps {
     public class GridTileTileObjectComponent : LocationGridTileComponent {
@@ -230,10 +231,12 @@ namespace Inner_Maps {
             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
             yield return new WaitForSeconds(0.5f);
             SetHasLandmine(false);
-            List<LocationGridTile> tiles = owner.GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            owner.PopulateTilesInRadius(tiles, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
-                List<IPointOfInterest> pois = tile.GetPOIsOnTile();
+                List<IPointOfInterest> pois = RuinarchListPool<IPointOfInterest>.Claim();
+                tile.PopulatePOIsOnTile(pois);
                 for (int j = 0; j < pois.Count; j++) {
                     IPointOfInterest poi = pois[j];
                     if (poi.gridTileLocation == null) {
@@ -261,7 +264,9 @@ namespace Inner_Maps {
                         poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
                     }
                 }
+                RuinarchListPool<IPointOfInterest>.Release(pois);
             }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
         }
         #endregion
 

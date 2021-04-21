@@ -216,7 +216,13 @@ public class Eat : GoapAction {
                     if (!actor.faction.IsHostileWith(settlement.owner)) {
                         if (target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN) {
                             cost = UtilityScripts.Utilities.Rng.Next(600, 651);
-                            costLog += $" +{cost}(Target is inside of tavern owned by a different faction)";    
+                            costLog += $" +{cost}(Target is inside of tavern owned by a non hostile faction)";    
+                        } else if (target.gridTileLocation.structure.structureType.IsSpecialStructure()) {
+                            cost = UtilityScripts.Utilities.Rng.Next(700, 751);
+                            costLog += $" +{cost}(Target is inside a special structure owned by a non hostile faction)";
+                        } else if (actor.needsComponent.isStarving) {
+                            cost = UtilityScripts.Utilities.Rng.Next(970, 981);
+                            costLog += $" +{cost}(Actor is starving and is inside a structure owned by a non hostile faction)";
                         } else {
                             cost += 2000;
                             costLog += $" +{cost}(Target is inside settlement owned by a non hostile faction)";

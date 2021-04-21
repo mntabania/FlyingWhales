@@ -36,12 +36,27 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(connectedCave);
             //Create a path inside
             Area area = p_usedConnector.area;
-            List<LocationGridTile> choices = p_usedConnector.GetTilesInRadius(10, includeTilesInDifferentStructure: true).Where(t => t.IsPassable() && t.structure == connectedCave).ToList();
-            if (choices.Count == 0) {
-                choices = connectedCave.passableTiles.Count > 0 ? connectedCave.passableTiles : connectedCave.tiles.ToList();
+            List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
+            List<LocationGridTile> filteredChoices = RuinarchListPool<LocationGridTile>.Claim();
+            p_usedConnector.PopulateTilesInRadius(choices, 10, includeTilesInDifferentStructure: true); //.Where(t => t.IsPassable() && t.structure == connectedCave).ToList();
+            for (int i = 0; i < choices.Count; i++) {
+                LocationGridTile t = choices[i];
+                if (t.IsPassable() && t.structure == connectedCave) {
+                    filteredChoices.Add(t);
+                }
             }
-            Assert.IsTrue(choices.Count > 0);
-            LocationGridTile randomPassableTile = CollectionUtilities.GetRandomElement(choices);
+            RuinarchListPool<LocationGridTile>.Release(choices);
+            LocationGridTile randomPassableTile = null;
+            if (filteredChoices.Count > 0) {
+                randomPassableTile = CollectionUtilities.GetRandomElement(filteredChoices);
+            } else if (connectedCave.passableTiles.Count > 0) {
+                randomPassableTile = CollectionUtilities.GetRandomElement(connectedCave.passableTiles);
+            } else if (connectedCave.tiles.Count > 0) {
+                randomPassableTile = CollectionUtilities.GetRandomElement(connectedCave.tiles);
+            } else {
+                throw new Exception("No random passable tile");
+            }
+            RuinarchListPool<LocationGridTile>.Release(filteredChoices);
             List<LocationGridTile> path = PathGenerator.Instance.GetPath(p_usedConnector, randomPassableTile, GRID_PATHFINDING_MODE.CAVE_INTERCONNECTION, includeFirstTile: true);
             if (path != null) {
                 for (int i = 0; i < path.Count; i++) {

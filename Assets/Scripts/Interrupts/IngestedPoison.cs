@@ -20,7 +20,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
 	        ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
 			if (UnityEngine.Random.Range(0, 2) == 0) {
-				if(interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Poisoned")) {
+				if(interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Poisoned", bypassElementalChance: true)) {
                     Poisoned addedPoisoned = interruptHolder.actor.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
 					Poisoned poisoned = interruptHolder.target.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
 					if (poisoned.responsibleCharacters != null) {
@@ -28,6 +28,7 @@ namespace Interrupts {
 							addedPoisoned.AddCharacterResponsibleForTrait(poisoned.responsibleCharacters[i]);
 						}
 					}
+					addedPoisoned.SetIsPlayerSource(poisoned.isPlayerSource);
 					//if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
 					overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Ingested Poison", "sick", null, logTags);
 					overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

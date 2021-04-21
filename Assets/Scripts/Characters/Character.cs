@@ -70,6 +70,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasSubscribedToSignals { get; private set; }
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public bool isPreplaced { get; private set; }
+    public bool isStoredAsTarget { get; private set; }
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; private set; }
     public string previousClassName { get; private set; }
@@ -158,7 +159,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Characters that are not monsters or minions.
     /// </summary>
     public bool isNormalCharacter => (this is Summon) == false && minion == null && !characterClass.IsZombie(); //&& faction?.factionType.type != FACTION_TYPE.Undead; Removed this because we now want to consider the necromancer as a villager again. As per marvin, will test this to check if anything major will change.
-    public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
+    public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !isAlliedWithPlayer;
     public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || isLycanthrope) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;
     public bool isNotSummonAndDemonAndZombie => (this is Summon) == false && minion == null && characterClass.IsZombie();
@@ -370,6 +371,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         causeOfDeath = data.causeOfDeath;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
+        isStoredAsTarget = data.isStoredAsTarget;
+
         if (data.afflictionsSkillsInflictedByPlayer != null) {
             afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;    
         } else {
@@ -626,7 +629,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //https://trello.com/c/xDiItiDG/2026-ignite-food-vegetable-while-being-eaten-didnt-ignite
                 StopCurrentActionNode(reason: "Object is burning");
                 traitContainer.AddTrait(this, "Burning", out var addedTrait, bypassElementalChance: true);
-                (addedTrait as Burning)?.SetSourceOfBurning(burning.sourceOfBurning, this);   
+                (addedTrait as Burning)?.SetSourceOfBurning(burning.sourceOfBurning, this);
+                Burning currentBurning = traitContainer.GetTraitOrStatus<Burning>("Burning");
+                currentBurning.SetIsPlayerSource(burning.isPlayerSource);
             }
         }
     }
@@ -1390,11 +1395,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         movementComponent.OnChangeFactionTo(newFaction);
         movementComponent.RedetermineFactionsToAvoid(this);
 
-        if(prevFaction != null && prevFaction.factionType.type == FACTION_TYPE.Demons) {
-            if(this is Summon summon) {
-                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(summon.summonType, 1);
-            }
-        }
+        //When a monster underling by player becomes a part of another faction, add new monster underling charge because this means that the active monster is no longer an underling
+        //It's as if the monster underling died, so, add the charge again
+        //UPDATE: Removed this because the replenishing of charge now comes with a cooldown
+        //if(prevFaction != null && prevFaction.factionType.type == FACTION_TYPE.Demons) {
+        //    if(this is Summon summon) {
+        //        PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(summon.summonType, 1);
+        //    }
+        //}
         // if (newFaction != null && newFaction.isMajorFaction) {
         //     //if character is now part of a faction, then set its movement to not avoid that faction
         //     movementComponent.DoNotAvoidFaction(newFaction);    
@@ -4807,9 +4815,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (isNormalCharacter && !traitContainer.HasTrait("Burning")) {
             if (tileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Burning")) {
+                Burning burningSource = tileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Burning>("Burning");
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
+                Burning burning = traitContainer.GetTraitOrStatus<Burning>("Burning");
+                burning.SetIsPlayerSource(burningSource.isPlayerSource);
             } else if (tileLocation.tileObjectComponent.objHere != null && tileLocation.tileObjectComponent.objHere.traitContainer.HasTrait("Burning")) {
+                Burning burningSource = tileLocation.tileObjectComponent.objHere.traitContainer.GetTraitOrStatus<Burning>("Burning");
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
+                Burning burning = traitContainer.GetTraitOrStatus<Burning>("Burning");
+                burning.SetIsPlayerSource(burningSource.isPlayerSource);
             }
         }
 
@@ -5929,6 +5943,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return !isDead && PlayerManager.Instance.player != null && faction != PlayerManager.Instance.player.playerFaction;
+    }
+    public void SetAsStoredTarget(bool p_state) {
+        isStoredAsTarget = p_state;
     }
     #endregion
 

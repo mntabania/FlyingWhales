@@ -254,6 +254,8 @@ public static class Extensions {
         switch (structureType) {
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
                 return "Prison";
+            case STRUCTURE_TYPE.DEFENSE_POINT:
+                return "Prism";
             default:
                 return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
@@ -1401,8 +1403,10 @@ public static class Extensions {
                 return 3;
             case UPGRADE_BONUS.Skill_Movement_Speed:
                 return 4;
-            case UPGRADE_BONUS.Cooldown:
+            case UPGRADE_BONUS.Atk_Percentage:
                 return 5;
+            case UPGRADE_BONUS.Cooldown:
+                return 6;
             default:
                 return Int32.MaxValue;
         }

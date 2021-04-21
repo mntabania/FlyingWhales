@@ -49,7 +49,7 @@ MonoBehaviour:
     portalLevel: 3
     isOR: 0
   skillUpgradeData:
-    upgradeCosts: 400100004402000048030000
+    upgradeCosts: 140000003200000050000000
     manacostPerLevel: 64000000640000006400000064000000
     chargesPerLevel: 01000000010000000100000001000000
     bonuses: 0e00000001000000

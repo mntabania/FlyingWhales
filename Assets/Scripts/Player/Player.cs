@@ -808,6 +808,7 @@ public class Player : ILeader, IObjectManipulator {
         playerSkillComponent.LoadReferences(data.playerSkillComponent);
         storedTargetsComponent.LoadReferences(data.storedTargetsComponent);
         summonMeterComponent.LoadReferences(data.summonMeterComponent);
+        underlingsComponent.LoadReferences(data.underlingsComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion

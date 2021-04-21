@@ -310,7 +310,13 @@ namespace Traits {
                             if (owner.partyComponent.isActiveMember) {
                                 owner.jobComponent.TriggerPersonalBuryInActivePartyJob(targetCharacter);
                             } else {
-                                owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
+                                if (owner.traitContainer.HasTrait("Necromancer")) {
+                                    if (owner.faction.factionType.type != FACTION_TYPE.Undead) {
+                                        owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
+                                    }
+                                } else {
+                                    owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
+                                }
                             }
                         }
                     }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using UtilityScripts;
 
 [ExecuteInEditMode]
 public class CharacterMarkerAnimationListener : MonoBehaviour {
@@ -94,22 +95,26 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             }
             if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
                 if (projectile.isAOE) {
-                    List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, 0, true, true); //radius
+                    List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                    target.gridTileLocation.PopulateTilesInRadius(tiles, 1, 0, true, true); //radius
                     for (int i = 0; i < tiles.Count; i++) {
                         LocationGridTile tile = tiles[i];
                         tile.PerformActionOnTraitables((traitable) => combatState.OnAttackHit(traitable == parentMarker.character ? null : traitable));
                     }
+                    RuinarchListPool<LocationGridTile>.Release(tiles);
                 } else {
                     combatState.OnAttackHit(target);
                 }
             } else if (target != null) {
                 string attackSummary = $"{parentMarker.character.name} hit {target.name}, outside of combat state";
                 if (projectile.isAOE) {
-                    List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, 0, true, true); //radius
+                    List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                    target.gridTileLocation.PopulateTilesInRadius(tiles, 1, 0, true, true); //radius
                     for (int i = 0; i < tiles.Count; i++) {
                         LocationGridTile tile = tiles[i];
                         tile.PerformActionOnTraitables((traitable) => traitable.OnHitByAttackFrom(traitable == parentMarker.character ? null : parentMarker.character, fromState, ref attackSummary));
                     }
+                    RuinarchListPool<LocationGridTile>.Release(tiles);
                 } else {
                     target.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
                 }

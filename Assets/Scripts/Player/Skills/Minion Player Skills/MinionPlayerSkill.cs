@@ -56,4 +56,8 @@ public class MinionPlayerSkill : SkillData {
         }
         return false;
     }
+    public override void FinishCooldown() {
+        base.FinishCooldown();
+        SetCooldown(-1);
+    }
 }

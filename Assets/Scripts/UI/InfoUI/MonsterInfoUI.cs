@@ -17,6 +17,7 @@ public class MonsterInfoUI : InfoUIBase {
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
+    [SerializeField] private TextMeshProUGUI roleLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private EventLabel plansEventLabel;
@@ -51,7 +52,10 @@ public class MonsterInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Store Target")] 
     [SerializeField] private StoreTargetButton btnStoreTarget;
-    
+
+    private HoverText m_roleHoverText;
+    private HoverHandler m_hoverHandler;
+
     private Character _activeMonster;
 
     public Character activeMonster => _activeMonster;
@@ -83,6 +87,9 @@ public class MonsterInfoUI : InfoUIBase {
         itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
         
         logsWindow.Initialize();
+
+        m_hoverHandler = roleLbl.GetComponent<HoverHandler>();
+        m_roleHoverText = roleLbl.GetComponent<HoverText>();
     }
     
     private void OnRightClickThoughtBubble(object obj) {
@@ -186,6 +193,17 @@ public class MonsterInfoUI : InfoUIBase {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = $"<b>{_activeMonster.firstNameWithColor}</b>";
+        if (_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour != null) {
+            roleLbl.text = $"<b>{_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour.name}</b>";
+            m_roleHoverText.SetText(_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour.description);
+            m_hoverHandler.enabled = true;
+        } else {
+            roleLbl.text = $"<b>None</b>";
+            m_hoverHandler.enabled = false;
+            m_roleHoverText.SetText("");
+        }
+        
+
         subLbl.text = _activeMonster.characterClass.className;
         UpdateThoughtBubble();
     }

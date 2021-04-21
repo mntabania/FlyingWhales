@@ -146,7 +146,8 @@ namespace Inner_Maps.Location_Structures {
             }
             for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
                 if (p_deadMonster == partyData.deployedSummons[x]) {
-                    PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
+                    //Removed this because replenish of charge is done with a cooldown now. See MonsterAndDemonUnderlingCharges
+                    //PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
                     partyData.deployedSummons.RemoveAt(x);
                     partyData.deployedSummonUnderlings.RemoveAt(x);
                     break;
@@ -204,9 +205,11 @@ namespace Inner_Maps.Location_Structures {
             //partyData.deployedMinions.ForEach((eachMinion) => {
             //    PlayerSkillManager.Instance.GetMinionPlayerSkillData(eachMinion.minion.minionPlayerSkillType).AdjustCharges(1);
             //});
-            partyData.deployedSummons.ForEach((eachSummon) => {
-                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
-            });
+
+            //Removed this because replenish of charge is done with a cooldown now. See MonsterAndDemonUnderlingCharges
+            //partyData.deployedSummons.ForEach((eachSummon) => {
+            //    PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
+            //});
         }
         #region Party.EventsIListener
         public void OnQuestSucceed() {

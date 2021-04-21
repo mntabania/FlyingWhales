@@ -152,8 +152,16 @@ public class PlayerSkillComponent {
         //    Messenger.Broadcast(PlayerSkillSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);    
         //}
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, currentSpellBeingUnlocked, currentSpellUnlockCost);
+        ProduceLogForUnlockedSkills(skillData);
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         currentSpellUnlockCost = 0;
+    }
+    void ProduceLogForUnlockedSkills(SkillData p_skillData) {
+        Log m_log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Skills", "Unlock Skill", "skill_unlocked", providedTags: LOG_TAG.Player);
+        m_log.AddTag(LOG_TAG.Major);
+        m_log.AddToFillers(null, p_skillData.name, LOG_IDENTIFIER.STRING_1);
+        m_log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(m_log, true);
     }
     public void OnRerollUsed() {
         ResetPlayerSpellChoices();
@@ -188,10 +196,20 @@ public class PlayerSkillComponent {
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         portal.GainUpgradePowers(portal.nextTier);
         portal.IncreaseLevel();
+        ProduceLogForPortalUpgrade(portal.level);
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, portal.level);
         Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         currentPortalUpgradeCost = null;
     }
+
+    void ProduceLogForPortalUpgrade(int level) {
+        Log m_log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_portal_upgraded", providedTags: LOG_TAG.Player);
+        m_log.AddTag(LOG_TAG.Major);
+        m_log.AddToFillers(null, "Level " + level.ToString(), LOG_IDENTIFIER.STRING_1);
+        m_log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(m_log, true);
+    }
+
     private void ResetPlayerSpellChoices() {
         currentSpellChoices.Clear();
         Debug.Log("Reset player spell choices.");

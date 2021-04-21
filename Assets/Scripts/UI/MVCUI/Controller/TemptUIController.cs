@@ -80,15 +80,15 @@ public class TemptUIController : MVCUIController, TemptUIView.IListener {
     }
     public void OnHoverDarkBlessing() {
         string text = $"Offer to grant Dark Blessing to {_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} - a promise to protect them from further interferences.";
-        UIManager.Instance.ShowSmallInfo(text);
+        UIManager.Instance.ShowSmallInfo(text, autoReplaceText: false);
     }
     public void OnHoverEmpower() {
         string text = $"Offer to make {_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} mighty - increasing HP and Strength.";
-        UIManager.Instance.ShowSmallInfo(text);
+        UIManager.Instance.ShowSmallInfo(text, autoReplaceText: false);
     }
     public void OnHoverCleanseFlaws() {
         string text = $"Offer to remove all Flaws of {_targetCharacter.visuals.GetCharacterNameWithIconAndColor()}.";
-        UIManager.Instance.ShowSmallInfo(text);
+        UIManager.Instance.ShowSmallInfo(text, autoReplaceText: false);
     }
     public void OnHoverOutTemptation() {
         UIManager.Instance.HideSmallInfo();

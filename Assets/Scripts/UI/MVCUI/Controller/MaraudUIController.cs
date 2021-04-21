@@ -244,7 +244,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClass.className).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower);
+				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost
+					&& CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClassName).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower
+					&& entry.Value.currentCharges > 0);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}
@@ -269,11 +271,22 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		});
 	}
 
-	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
+	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges p_monsterAndDemonUnderlingCharges) {
 		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 			UIManager.Instance.ShowSmallInfo("You cant add a team member bacause the structure is occupied", "Structure Occupied", true);
+		} else {
+			MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
+			if (minionPlayerSkill != null) {
+				CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(minionPlayerSkill.className);
+				if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
+					CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
+					UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_maraudUIView.UIModel.hoverPosition, combatBehaviour.name);
+				}
+			}
+			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
 		}
 	}
+
 
 	void OnHoverExitItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
 		UIManager.Instance.HideSmallInfo();
@@ -401,7 +414,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void ProcessAvailableItemFromClickingDeployedItem(List<MonsterUnderlingQuantityNameplateItem> availItems, DeployedMonsterItemUI p_itemUI) {
 		availItems.ForEach((availableSummons) => {
-			if (availableSummons.obj.characterClass == p_itemUI.obj.characterClass) {
+			if (availableSummons.obj.characterClassName == p_itemUI.obj.characterClassName) {
 				availableSummons.IncreaseOneChargeForDisplayPurpose();
 				p_itemUI.ResetButton();
 				p_itemUI.gameObject.SetActive(false);
@@ -463,7 +476,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			ProcessAvailableItemFromClickingDeployedItem(m_summonList, p_itemUI);
 			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		} else {
-			if (m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
+			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0) {
+				ProcessAvailableItemFromClickingDeployedItem(m_minionList, p_itemUI);
 				m_maraudUIView.ShowMinionButtonHideMinionContainer();
 			}
 		}
@@ -494,18 +508,18 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.obj.monsterType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement, bypassIdeologyChecking: true);
-				CharacterManager.Instance.PlaceSummonInitially(summon, m_chosenTile.GetRandomUnoccupiedNeighbor());
+				CharacterManager.Instance.PlaceSummonInitially(summon, m_chosenTile.GetRandomNeighborWithoutCharacters());
 				summon.OnSummonAsPlayerMonster();
 				summon.SetDeployedAtStructure(m_targetPartyStructure);
 				eachMonsterToBeDeployed.Deploy(summon);
 				m_targetPartyStructure.AddDeployedItem(eachMonsterToBeDeployed);
-				PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachMonsterToBeDeployed.obj.monsterType, -1);
+				PlayerManager.Instance.player.underlingsComponent.DecreaseMonsterUnderlingCharge(eachMonsterToBeDeployed.obj.monsterType);
 			}
 		});
 		if (m_deployedMinionsUI[0].isReadyForDeploy && m_deployedMinionsUI[0].isMinion) {
 			SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(m_deployedMinionsUI[0].obj.minionType);
 			Character minion = null;
-			skillData.ActivateAbility(m_chosenTile.GetRandomUnoccupiedNeighbor(), ref minion);
+			skillData.ActivateAbility(m_chosenTile.GetRandomNeighborWithoutCharacters(), ref minion);
 			minion.SetDeployedAtStructure(m_targetPartyStructure);
 			m_deployedMinionsUI[0].Deploy(minion);
 			m_targetPartyStructure.AddDeployedItem(m_deployedMinionsUI[0]);

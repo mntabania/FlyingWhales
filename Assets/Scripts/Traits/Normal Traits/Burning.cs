@@ -7,6 +7,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Traits {
     public class Burning : Status, IElementalTrait {
@@ -158,8 +159,10 @@ namespace Traits {
             base.ExecuteActionPreEffects(action, goapNode);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 if (Random.Range(0, 100) < 10) { //5
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait, bypassElementalChance: true);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
+                    Burning burning = goapNode.actor.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                    burning?.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
@@ -167,8 +170,10 @@ namespace Traits {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 if (Random.Range(0, 100) < 10) { //5
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait, bypassElementalChance: true);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
+                    Burning burning = goapNode.actor.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                    burning?.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
@@ -244,17 +249,26 @@ namespace Traits {
             _burningSpreadChoices.Clear();
             if (ShouldSpreadFire()) {
                 LocationGridTile origin = owner.gridTileLocation;
-                List<LocationGridTile> affectedTiles = origin.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+                origin.PopulateTilesInRadius(affectedTiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < affectedTiles.Count; i++) {
-                    _burningSpreadChoices.AddRange(affectedTiles[i].GetTraitablesOnTile());
+                    List<ITraitable> traitablesOnTile = RuinarchListPool<ITraitable>.Claim();
+                    affectedTiles[i].PopulateTraitablesOnTileThatCanHaveElementalTrait(traitablesOnTile, "Burning", true);
+                    for (int j = 0; j < traitablesOnTile.Count; j++) {
+                        _burningSpreadChoices.Add(traitablesOnTile[j]);
+                    }
+                    RuinarchListPool<ITraitable>.Release(traitablesOnTile);
                 }
                 if (_burningSpreadChoices.Count > 0) {
                     ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
                     if (chosen.gridTileLocation != null) {
                         chosen.traitContainer.AddTrait(chosen, "Burning", out var trait, bypassElementalChance: true);
-                        (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);    
+                        (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
+                        Burning burning = chosen.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                        burning?.SetIsPlayerSource(isPlayerSource);
                     }
-                }    
+                }
+                RuinarchListPool<LocationGridTile>.Release(affectedTiles);
             }
             Profiler.EndSample();
 

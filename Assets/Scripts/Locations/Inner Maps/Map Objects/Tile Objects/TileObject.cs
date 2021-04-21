@@ -26,6 +26,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     public BaseSettlement parentSettlement; //NOTE: This is only used in Fishing Spot, Ore Vein, Rock and Tree Object //TODO: either use this in all TileObjects or refactor
     public bool isPreplaced { get; private set; }
+    public bool isStoredAsTarget { get; private set; }
+
     /// <summary>
     /// All currently in progress jobs targeting this.
     /// </summary>
@@ -74,7 +76,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
     public STORED_TARGET_TYPE storedTargetType => STORED_TARGET_TYPE.Tile_Objects;
-
     public bool isTargetted { set; get; }
     public string iconRichText => UtilityScripts.Utilities.TileObjectIcon();
     public virtual Type serializedData => typeof(SaveDataTileObject);
@@ -150,6 +151,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         currentHP = data.currentHP;
         isPreplaced = data.isPreplaced;
         isDamageContributorToStructure = data.isDamageContributorToStructure;
+        isStoredAsTarget = data.isStoredAsTarget;
         SetPOIState(data.poiState);
         CreateTraitContainer();
         LoadResources(data);
@@ -312,9 +314,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         gridTileLocation.area.OnPlacePOIInHex(this);
         SubscribeListeners();
         if (gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Poisoned")) {
+            Poisoned poisonedSource = gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
             //add poisoned to floor
             //Reference: https://trello.com/c/mzPmP1Qv/1933-if-you-drop-food-on-a-poisoned-tile-it-should-also-get-poisoned
             traitContainer.AddTrait(this, "Poisoned");
+            Poisoned poisoned = traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+            if (poisoned != null) {
+                poisoned.SetIsPlayerSource(poisonedSource.isPlayerSource);
+            }
         }
     }
     public virtual void RemoveTileObject(Character removedBy) {
@@ -664,7 +671,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         tileLocation.structure.AddPOI(this, tileLocation);
         if (!traitContainer.HasTrait("Burning")) {
             if (tileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Burning")) {
+                Burning burningSource = tileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Burning>("Burning");
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
+                Burning burning = traitContainer.GetTraitOrStatus<Burning>("Burning");
+                burning.SetIsPlayerSource(burningSource.isPlayerSource);
             }
             //Commented out because this should not happen since you can only unseize a tile object on a tile that has no object
             //else if (tileLocation.tileObjectComponent.objHere != null && tileLocation.tileObjectComponent.objHere.traitContainer.HasTrait("Burning")) {
@@ -1283,6 +1293,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return mapVisual != null;
+    }
+    public void SetAsStoredTarget(bool p_state) {
+        isStoredAsTarget = p_state;
     }
     #endregion
 

@@ -112,6 +112,8 @@ namespace Inner_Maps {
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> CaveInterconnectionTiles { get { return FourNeighbours().Where(o => o.structure == structure).ToList() ; } } //&& !o.HasDifferentStructureNeighbour()
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbourList.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
+        public List<LocationGridTile> unoccupiedOfCharactersNeighbours { get { return neighbourList.Where(o => o.charactersHere.Count <= 0 && o.structure == structure).ToList(); } }
+        
         public List<LocationGridTile> UnoccupiedNeighboursWithinHex {
             get {
                 return neighbourList.Where(o =>
@@ -1289,6 +1291,10 @@ namespace Inner_Maps {
         public LocationGridTile GetRandomNeighbor() {
             return neighbourList[Random.Range(0, neighbourList.Count)];
         }
+
+        public LocationGridTile GetRandomNeighborWithoutCharacters() {
+            return unoccupiedOfCharactersNeighbours[Random.Range(0, unoccupiedOfCharactersNeighbours.Count)];
+        }
         public LocationGridTile GetFirstNeighbor(bool sameStructure = true) {
             for (int i = 0; i < neighbourList.Count; i++) {
                 LocationGridTile neighbour = neighbourList[i];
@@ -1325,8 +1331,7 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public List<ITraitable> GetTraitablesOnTile() {
-            List<ITraitable> traitables = new List<ITraitable>();
+        public void PopulateTraitablesOnTile(List<ITraitable> traitables) {
             traitables.Add(tileObjectComponent.genericTileObject);
             for (int i = 0; i < tileObjectComponent.walls.Count; i++) {
                 ThinWall structureWallObject = tileObjectComponent.walls[i];
@@ -1341,7 +1346,31 @@ namespace Inner_Maps {
                 Character character = charactersHere[i];
                 traitables.Add(character);
             }
-            return traitables;
+        }
+        public void PopulateTraitablesOnTileThatCanHaveElementalTrait(List<ITraitable> traitables, string traitName, bool bypassElementalChance) {
+            if (tileObjectComponent.genericTileObject.traitContainer.GetElementalTraitChanceToBeAdded(traitName, tileObjectComponent.genericTileObject, bypassElementalChance) > 0
+                && tileObjectComponent.genericTileObject.CanBeAffectedByElementalStatus(traitName)) {
+                traitables.Add(tileObjectComponent.genericTileObject);    
+            }
+            for (int i = 0; i < tileObjectComponent.walls.Count; i++) {
+                ThinWall structureWallObject = tileObjectComponent.walls[i];
+                if (structureWallObject.traitContainer.GetElementalTraitChanceToBeAdded(traitName, structureWallObject, bypassElementalChance) > 0) {
+                    traitables.Add(structureWallObject);    
+                }
+            }
+            if (tileObjectComponent.objHere != null) {
+                if (tileObjectComponent.objHere.mapObjectState == MAP_OBJECT_STATE.BUILT && 
+                    tileObjectComponent.objHere.traitContainer.GetElementalTraitChanceToBeAdded(traitName, tileObjectComponent.objHere, bypassElementalChance) > 0
+                    && tileObjectComponent.objHere.CanBeAffectedByElementalStatus(traitName)) {//|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
+                    traitables.Add(tileObjectComponent.objHere);
+                }
+            }
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                if (character.traitContainer.GetElementalTraitChanceToBeAdded(traitName, character, bypassElementalChance) > 0) {
+                    traitables.Add(character);    
+                }
+            }
         }
         public void PerformActionOnTraitables(TraitableCallback callback) {
             callback.Invoke(tileObjectComponent.genericTileObject);
@@ -1375,8 +1404,7 @@ namespace Inner_Maps {
             }
             Messenger.Broadcast(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, this, callback);
         }
-        public List<IPointOfInterest> GetPOIsOnTile() {
-            List<IPointOfInterest> pois = new List<IPointOfInterest>();
+        public void PopulatePOIsOnTile(List<IPointOfInterest> pois) {
             pois.Add(tileObjectComponent.genericTileObject);
             if (tileObjectComponent.objHere != null) {
                 if (tileObjectComponent.objHere.mapObjectState == MAP_OBJECT_STATE.BUILT) {
@@ -1387,7 +1415,6 @@ namespace Inner_Maps {
                 Character character = charactersHere[i];
                 pois.Add(character);
             }
-            return pois;
         }
         public void AddTraitToAllPOIsOnTile(string traitName) {
             tileObjectComponent.genericTileObject.traitContainer.AddTrait(tileObjectComponent.genericTileObject, traitName);

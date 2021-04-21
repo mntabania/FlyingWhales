@@ -82,13 +82,12 @@ public class CharacterTraitComponent : CharacterComponent {
         }
     }
     private void ProcessPlayerSourceChaosOrb() {
-        if (GameUtilities.RollChance(20)) {
-            LocationGridTile gridTile = owner.gridTileLocation;
-            if (gridTile == null && owner.isDead) {
-                gridTile = owner.deathTilePosition;
-            }
-            if (gridTile != null) {
-                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, 1, gridTile.parentMap);
+        if (!owner.isDead && owner.isNormalAndNotAlliedWithPlayer) {
+            if (GameUtilities.RollChance(20)) {
+                LocationGridTile gridTile = owner.gridTileLocation;
+                if (gridTile != null) {
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, 1, gridTile.parentMap);
+                }
             }
         }
     }

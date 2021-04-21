@@ -97,6 +97,10 @@ public class Poison : GoapAction {
         //NOTE: Added poison trait to pre effect so that anyone that can react to this action, can access that trait, 
         //even though the action has not yet been completed
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Poisoned", goapNode.actor);
+        Poisoned poisoned = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+        if (poisoned != null) {
+            poisoned.SetIsPlayerSource(goapNode.associatedJobType == JOB_TYPE.CULTIST_POISON);
+        }
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.TOOL);
     }
     #endregion

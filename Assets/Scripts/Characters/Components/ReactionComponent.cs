@@ -610,7 +610,8 @@ public class ReactionComponent : CharacterComponent {
                         }
                     } else {
                         //If the target is already unconscious/restrained (it cannot fight back), attack it again only if this character's top priority job is considered lethal
-                        if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
+                        //Should not fight/flight if carrying a poi, they will only fight/flight when already attacked. Reason is that snatching characters will not be distracted when carrying the snatch victim
+                        if ((!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) && !actor.carryComponent.isCarryingAnyPOI) {
                             //Determine whether to fight or flight.
                             CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
                             if (combatReaction.reaction != COMBAT_REACTION.None) {
@@ -1283,7 +1284,7 @@ public class ReactionComponent : CharacterComponent {
         }
         if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
             if(actor.race != RACE.TRITON) {
-                if (GameUtilities.RollChance(0.5f)) {
+                if (GameUtilities.RollChance(0.05f)) {
                     if (actor.canBeTargetedByLandActions) {
                         if (!actor.traitContainer.HasTrait("Sturdy", "Hibernating") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
                             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: targetTileObject.currentRegion, bypassIdeologyChecking: true);

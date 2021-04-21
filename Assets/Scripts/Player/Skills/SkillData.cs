@@ -264,7 +264,7 @@ public class SkillData : IPlayerSkill {
             Messenger.Broadcast(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, this);
         }
     }
-    private void StartCooldown() {
+    public void StartCooldown() {
         if (hasCooldown && currentCooldownTick == cooldown) {
             SetCurrentCooldownTick(0);
             Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, this);
@@ -282,7 +282,9 @@ public class SkillData : IPlayerSkill {
         if(currentCooldownTick >= cooldown) {
             //SetCharges(maxCharges);
             currentCooldownTick = cooldown;
-            if(hasCharges && charges < maxCharges) {
+            FinishCooldown();
+
+            if (hasCharges && charges < maxCharges) {
                 AdjustCharges(1);
             } else {
                 //Special Case for Schemes
@@ -294,20 +296,19 @@ public class SkillData : IPlayerSkill {
                     }
                 }
             }
-            FinishCooldown();
-
-            if (hasCharges && charges < maxCharges) {
-                StartCooldown();
-            }
+            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            //Cooldown is started already in AdjustCharges
+            //if (hasCharges && charges < maxCharges) {
+            //    StartCooldown();
+            //}
         }
         Profiler.EndSample();
     }
-    public void FinishCooldown() {
+    public virtual void FinishCooldown() {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
         }
         Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, this);
-        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public string GetManaCostChargesCooldownStr() {
         string str = "Mana Cost: " + manaCost;
