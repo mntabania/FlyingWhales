@@ -70,6 +70,7 @@ namespace Traits {
 
         #region Inquiry
         bool HasTangibleTrait();
+        int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo, bool bypassElementalChance);
         #endregion
 
         #region Loading
