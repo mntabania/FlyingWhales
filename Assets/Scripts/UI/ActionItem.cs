@@ -58,8 +58,10 @@ public class ActionItem : PooledObject {
     public void UnToggleHighlight() {
         if (button.interactable) {
             bool toggle = false;
-            if (playerAction.type == PLAYER_SKILL_TYPE.SPAWN_EYE_WARD) {
-                toggle = PlayerManager.Instance.player.currentActivePlayerSpell == playerAction;
+            if (playerAction != null) {
+                if (playerAction.type == PLAYER_SKILL_TYPE.SPAWN_EYE_WARD) {
+                    toggle = PlayerManager.Instance.player.currentActivePlayerSpell == playerAction;
+                }
             }
             SetHighlightState(toggle);    
         }
