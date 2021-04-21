@@ -30,6 +30,7 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
         }
     }
     public void Store(IStoredTarget p_target) {
+        p_target.SetAsStoredTarget(true);
         switch (p_target.storedTargetType) {
             case STORED_TARGET_TYPE.Monster:
                 Summon summon = p_target as Summon;
@@ -73,10 +74,12 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     }
     private void Store(Summon p_monster) {
         storedMonsters.Add(p_monster);
+        Messenger.Broadcast(PlayerSignals.PLAYER_STORED_CHARACTER, p_monster as Character);
         p_monster.eventDispatcher.SubscribeToCharacterDied(this);
     }
     private void Store(Character p_character) {
         storedVillagers.Add(p_character);
+        Messenger.Broadcast(PlayerSignals.PLAYER_STORED_CHARACTER, p_character);
         p_character.eventDispatcher.SubscribeToCharacterDied(this);
     }
     private void Store(TileObject p_tileObject) {
@@ -89,6 +92,7 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
     }
     public void Remove(IStoredTarget p_target) {
         allStoredTargets.Remove(p_target);
+        p_target.SetAsStoredTarget(false);
         switch (p_target.storedTargetType) {
             case STORED_TARGET_TYPE.Monster:
                 Remove(p_target as Summon);
@@ -108,11 +112,15 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
         Messenger.Broadcast(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, p_target);
     }
     private void Remove(Summon p_monster) {
-        storedMonsters.Remove(p_monster);
+        if (storedMonsters.Remove(p_monster)) {
+            Messenger.Broadcast(PlayerSignals.PLAYER_REMOVED_STORED_CHARACTER, p_monster as Character);
+        }
         p_monster.eventDispatcher.UnsubscribeToCharacterDied(this);
     }
     private void Remove(Character p_character) {
-        storedVillagers.Remove(p_character);
+        if (storedVillagers.Remove(p_character)) {
+            Messenger.Broadcast(PlayerSignals.PLAYER_REMOVED_STORED_CHARACTER, p_character);
+        }
         p_character.eventDispatcher.UnsubscribeToCharacterDied(this);
     }
     private void Remove(TileObject p_tileObject) {
@@ -160,16 +168,16 @@ public class StoredTargetsComponent : CharacterEventDispatcher.IDeathListener, T
         }
     }
     private bool IsAlreadyStored(Character p_character) {
-        return storedVillagers.Contains(p_character);
+        return p_character.isStoredAsTarget; //storedVillagers.Contains(p_character);
     }
     private bool IsAlreadyStored(Summon p_monster) {
-        return storedMonsters.Contains(p_monster);
+        return p_monster.isStoredAsTarget; //storedMonsters.Contains(p_monster);
     }
     private bool IsAlreadyStored(TileObject p_tileObject) {
-        return storedTileObjects.Contains(p_tileObject);
+        return p_tileObject.isStoredAsTarget; //storedTileObjects.Contains(p_tileObject);
     }
     private bool IsAlreadyStored(LocationStructure p_structure) {
-        return storedStructures.Contains(p_structure);
+        return p_structure.isStoredAsTarget; //storedStructures.Contains(p_structure);
     }
 
     #region Loading
@@ -215,8 +223,9 @@ public interface IStoredTarget : IBookmarkable {
     string iconRichText { get; }
 
     bool isTargetted { get; set; }
-
+    bool isStoredAsTarget { get; }
     bool CanBeStoredAsTarget();
+    void SetAsStoredTarget(bool p_state);
 }
 
 [Serializable]

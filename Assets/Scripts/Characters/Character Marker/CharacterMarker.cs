@@ -282,7 +282,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //removed by aaron for awareness update tile.structure.region.AddPendingAwareness(character);
         character.reactionComponent.UpdateHiddenState();
         if (_nameplate) {
-            _nameplate.UpdateActiveState();
+            _nameplate.UpdateNameActiveState();
         }
     }
     #endregion
@@ -345,6 +345,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 _nameplate.ShowIntelHelper(message);
             }
         }
+        if (_nameplate) {
+            _nameplate.UpdateNameActiveState();
+        }
     }
     private bool HasRelationshipWithIntel(IIntel intel) {
         if (intel.actor != character) {
@@ -374,7 +377,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             HideThoughtsAndNameplate();
         }
         if (_nameplate != null) {
-            _nameplate.HideIntelHelper();    
+            _nameplate.HideIntelHelper();
+            _nameplate.UpdateNameActiveState();
         }
     }
     #endregion
@@ -393,6 +397,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         Messenger.AddListener<bool>(CharacterSignals.TOGGLE_CHARACTER_MARKER_NAMEPLATE, OnToggleCharacterMarkerNameplate);
+        Messenger.AddListener<Character>(PlayerSignals.PLAYER_STORED_CHARACTER, OnPlayerStoredCharacterAsTarget);
+        Messenger.AddListener<Character>(PlayerSignals.PLAYER_REMOVED_STORED_CHARACTER, OnPlayerRemoveStoredCharacterAsTarget);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -407,7 +413,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         Messenger.RemoveListener<bool>(CharacterSignals.TOGGLE_CHARACTER_MARKER_NAMEPLATE, OnToggleCharacterMarkerNameplate);
+        Messenger.RemoveListener<Character>(PlayerSignals.PLAYER_STORED_CHARACTER, OnPlayerStoredCharacterAsTarget);
+        Messenger.RemoveListener<Character>(PlayerSignals.PLAYER_REMOVED_STORED_CHARACTER, OnPlayerRemoveStoredCharacterAsTarget);
     }
+
     private void OnCharacterChangedName(Character p_character) {
         if (p_character == character) {
             UpdateName();
@@ -459,7 +468,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void OnToggleCharacterMarkerNameplate(bool state) {
         if (_nameplate) {
-            _nameplate.UpdateActiveState();
+            _nameplate.UpdateNameActiveState();
         }
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
@@ -516,6 +525,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void OnActiveIntelRemoved() {
         _nameplate.HideIntelHelper();
         _nameplate.SetHighlighterState(false);
+    }
+    private void OnPlayerStoredCharacterAsTarget(Character p_character) {
+        if (character != null && _nameplate) {
+            _nameplate.UpdateNameActiveState();
+        }
+    }
+    private void OnPlayerRemoveStoredCharacterAsTarget(Character p_character) {
+        if (character != null && _nameplate) {
+            _nameplate.UpdateNameActiveState();
+        }
     }
     #endregion
 

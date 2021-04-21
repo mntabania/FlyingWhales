@@ -130,10 +130,12 @@
     /// Parameters: IStoredTarget
     /// </summary>
     public static string PLAYER_STORED_TARGET = "OnPlayerStoredTarget";
+    public static string PLAYER_STORED_CHARACTER = "OnPlayerStoredCharacter";
     /// <summary>
     /// Parameters: IStoredTarget
     /// </summary>
     public static string PLAYER_REMOVED_STORED_TARGET = "OnPlayerRemovedStoredTarget";
+    public static string PLAYER_REMOVED_STORED_CHARACTER = "OnPlayerRemovedStoredCharacter";
 
     public static string PLAYER_SUMMON_METER_UPDATE = "OnPlayerSummonMeterUpdate";
     /// <summary>

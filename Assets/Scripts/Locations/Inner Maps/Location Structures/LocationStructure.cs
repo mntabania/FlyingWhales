@@ -31,6 +31,8 @@ namespace Inner_Maps.Location_Structures {
         public List<LocationGridTile> unoccupiedTiles { get; private set; }
         public bool isInterior { get; private set; }
         public bool hasBeenDestroyed { get; private set; }
+        public bool isStoredAsTarget { get; private set; }
+
         //HP
         public int maxHP { get; protected set; }
         public int currentHP { get; protected set; }
@@ -102,12 +104,6 @@ namespace Inner_Maps.Location_Structures {
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
-            persistentID = data.persistentID;
-            this.region = location;
-            id = UtilityScripts.Utilities.SetID(this, data.id);
-            structureType = data.structureType;
-            name = data.name;
-            nameWithoutID = data.nameWithoutID;
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
@@ -118,6 +114,14 @@ namespace Inner_Maps.Location_Structures {
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
             occupiedAreas = new List<Area>();
+
+            persistentID = data.persistentID;
+            this.region = location;
+            id = UtilityScripts.Utilities.SetID(this, data.id);
+            structureType = data.structureType;
+            name = data.name;
+            nameWithoutID = data.nameWithoutID;
+            isStoredAsTarget = data.isStoredAsTarget;
             maxHP = data.maxHP;
             currentHP = data.currentHP;
             SetInteriorState(data.isInterior);
@@ -1416,6 +1420,9 @@ namespace Inner_Maps.Location_Structures {
         #region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return !hasBeenDestroyed;
+        }
+        public void SetAsStoredTarget(bool p_state) {
+            isStoredAsTarget = p_state;
         }
         #endregion
 

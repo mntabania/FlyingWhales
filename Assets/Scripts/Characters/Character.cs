@@ -70,6 +70,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasSubscribedToSignals { get; private set; }
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public bool isPreplaced { get; private set; }
+    public bool isStoredAsTarget { get; private set; }
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; private set; }
     public string previousClassName { get; private set; }
@@ -370,6 +371,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         causeOfDeath = data.causeOfDeath;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
+        isStoredAsTarget = data.isStoredAsTarget;
+
         if (data.afflictionsSkillsInflictedByPlayer != null) {
             afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;    
         } else {
@@ -5940,6 +5943,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return !isDead && PlayerManager.Instance.player != null && faction != PlayerManager.Instance.player.playerFaction;
+    }
+    public void SetAsStoredTarget(bool p_state) {
+        isStoredAsTarget = p_state;
     }
     #endregion
 
