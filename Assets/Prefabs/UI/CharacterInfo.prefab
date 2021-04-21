@@ -772,7 +772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Poison
+  hoverDisplayText: Poison Resistance
 --- !u!114 &817339632345451207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11882,7 +11882,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Physical
+  hoverDisplayText: Physical Resistance
 --- !u!114 &4206704560929559006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12165,7 +12165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Wind
+  hoverDisplayText: Wind Resistance
 --- !u!114 &3203187618992415646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12627,7 +12627,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Fire
+  hoverDisplayText: Fire Resistance
 --- !u!114 &8019415555770706219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12910,7 +12910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Electric
+  hoverDisplayText: Electric Resistance
 --- !u!114 &4493439920482778182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13059,7 +13059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Ice
+  hoverDisplayText: Ice Resistance
 --- !u!114 &818862090635011089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13610,7 +13610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Mental
+  hoverDisplayText: Mental Resistance
 --- !u!114 &119325782455247517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14027,7 +14027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Water
+  hoverDisplayText: Water Resistance
 --- !u!114 &1382713926469532377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14176,7 +14176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Normal
+  hoverDisplayText: Normal Resistance
 --- !u!114 &1910790016073428839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14593,7 +14593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab401f6684a0ba241af09f3cf5aa1b53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDisplayText: Earth
+  hoverDisplayText: Earth Resistance
 --- !u!114 &5523462901068595339
 MonoBehaviour:
   m_ObjectHideFlags: 0
