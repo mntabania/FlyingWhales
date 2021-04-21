@@ -244,7 +244,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClass.className).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower);
+				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClassName).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}
@@ -412,7 +412,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void ProcessAvailableItemFromClickingDeployedItem(List<MonsterUnderlingQuantityNameplateItem> availItems, DeployedMonsterItemUI p_itemUI) {
 		availItems.ForEach((availableSummons) => {
-			if (availableSummons.obj.characterClass == p_itemUI.obj.characterClass) {
+			if (availableSummons.obj.characterClassName == p_itemUI.obj.characterClassName) {
 				availableSummons.IncreaseOneChargeForDisplayPurpose();
 				p_itemUI.ResetButton();
 				p_itemUI.gameObject.SetActive(false);
@@ -511,7 +511,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				summon.SetDeployedAtStructure(m_targetPartyStructure);
 				eachMonsterToBeDeployed.Deploy(summon);
 				m_targetPartyStructure.AddDeployedItem(eachMonsterToBeDeployed);
-				PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(eachMonsterToBeDeployed.obj.monsterType, -1);
+				PlayerManager.Instance.player.underlingsComponent.DecreaseMonsterUnderlingCharge(eachMonsterToBeDeployed.obj.monsterType);
 			}
 		});
 		if (m_deployedMinionsUI[0].isReadyForDeploy && m_deployedMinionsUI[0].isMinion) {

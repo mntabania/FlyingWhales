@@ -1283,7 +1283,7 @@ public class ReactionComponent : CharacterComponent {
         }
         if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
             if(actor.race != RACE.TRITON) {
-                if (GameUtilities.RollChance(0.5f)) {
+                if (GameUtilities.RollChance(0.05f)) {
                     if (actor.canBeTargetedByLandActions) {
                         if (!actor.traitContainer.HasTrait("Sturdy", "Hibernating") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
                             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: targetTileObject.currentRegion, bypassIdeologyChecking: true);

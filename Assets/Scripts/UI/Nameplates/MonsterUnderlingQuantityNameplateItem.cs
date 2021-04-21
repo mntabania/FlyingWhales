@@ -37,13 +37,14 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDem
         }
     }
     private void UpdateMainText() {
-        txtHp.text = obj.characterClass.baseHP.ToString();
-        txtAttack.text = obj.characterClass.baseAttackPower.ToString();
-        txtAttackSpeed.text = obj.characterClass.baseAttackSpeed.ToString();
-        summonCost = CharacterManager.Instance.GetOrCreateCharacterClassData(obj.characterClass.className).summonCost;
+        CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(obj.characterClassName);
+        txtHp.text = cClass.baseHP.ToString();
+        txtAttack.text = cClass.baseAttackPower.ToString();
+        txtAttackSpeed.text = cClass.baseAttackSpeed.ToString();
+        summonCost = CharacterManager.Instance.GetOrCreateCharacterClassData(cClass.className).summonCost;
         txtManaCost.text = summonCost.ToString();
         if (_monsterOrMinion.isDemon) {
-            mainLbl.text = obj.characterClass.className;
+            mainLbl.text = cClass.className;
         } else if (_monsterOrMinion.monsterType != SUMMON_TYPE.None) {
             mainLbl.text = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(_monsterOrMinion.monsterType.ToString());
         }

@@ -312,9 +312,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         gridTileLocation.area.OnPlacePOIInHex(this);
         SubscribeListeners();
         if (gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Poisoned")) {
+            Poisoned poisonedSource = gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
             //add poisoned to floor
             //Reference: https://trello.com/c/mzPmP1Qv/1933-if-you-drop-food-on-a-poisoned-tile-it-should-also-get-poisoned
             traitContainer.AddTrait(this, "Poisoned");
+            Poisoned poisoned = traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+            if (poisoned != null) {
+                poisoned.SetIsPlayerSource(poisonedSource.isPlayerSource);
+            }
         }
     }
     public virtual void RemoveTileObject(Character removedBy) {
@@ -664,7 +669,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         tileLocation.structure.AddPOI(this, tileLocation);
         if (!traitContainer.HasTrait("Burning")) {
             if (tileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Burning")) {
+                Burning burningSource = tileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Burning>("Burning");
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
+                Burning burning = traitContainer.GetTraitOrStatus<Burning>("Burning");
+                burning.SetIsPlayerSource(burningSource.isPlayerSource);
             }
             //Commented out because this should not happen since you can only unseize a tile object on a tile that has no object
             //else if (tileLocation.tileObjectComponent.objHere != null && tileLocation.tileObjectComponent.objHere.traitContainer.HasTrait("Burning")) {

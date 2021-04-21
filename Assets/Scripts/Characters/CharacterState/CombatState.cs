@@ -93,8 +93,8 @@ public class CombatState : CharacterState {
     //    }
     //}
     protected override void StartState() {
-        stateComponent.owner.logComponent.PrintLogIfActive(
-            $"Starting combat state for {stateComponent.owner.name}");
+        stateComponent.owner.isBeingCarriedBy?.StopCurrentActionNode(false);
+        stateComponent.owner.logComponent.PrintLogIfActive($"Starting combat state for {stateComponent.owner.name}");
         //stateComponent.character.DecreaseCanWitness();
         stateComponent.owner.marker.ShowHPBar(stateComponent.owner);
         stateComponent.owner.marker.SetAnimationBool("InCombat", true);

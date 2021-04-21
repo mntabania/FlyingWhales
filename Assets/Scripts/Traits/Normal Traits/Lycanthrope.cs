@@ -26,7 +26,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL };
-            _triggerFlawNearbyTargets = new Collider2D[50];
+            _triggerFlawNearbyTargets = new Collider2D[100];
         }
 
         #region Overrides
@@ -241,8 +241,8 @@ namespace Traits {
                             }
                         } else if (otherCharacter.race.IsSapient()){ 
                             if (otherCharacter.faction != owner.faction && !owner.isDead) { 
-                                if (!owner.relationshipContainer.IsFriendsWith(otherCharacter)) { 
-                                    weight = 10;    
+                                if (!owner.relationshipContainer.IsFriendsWith(otherCharacter) && owner.movementComponent.HasPathToEvenIfDiffRegion(otherCharacter.gridTileLocation)) {
+                                    weight = 10;
                                 }
                             }
                         }

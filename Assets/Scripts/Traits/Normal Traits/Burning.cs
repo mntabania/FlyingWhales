@@ -160,6 +160,8 @@ namespace Traits {
                 if (Random.Range(0, 100) < 10) { //5
                     goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
+                    Burning burning = goapNode.actor.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                    burning.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
@@ -169,6 +171,8 @@ namespace Traits {
                 if (Random.Range(0, 100) < 10) { //5
                     goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
+                    Burning burning = goapNode.actor.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                    burning.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
@@ -252,7 +256,9 @@ namespace Traits {
                     ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
                     if (chosen.gridTileLocation != null) {
                         chosen.traitContainer.AddTrait(chosen, "Burning", out var trait, bypassElementalChance: true);
-                        (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);    
+                        (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
+                        Burning burning = chosen.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                        burning.SetIsPlayerSource(isPlayerSource);
                     }
                 }    
             }

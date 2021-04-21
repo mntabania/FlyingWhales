@@ -262,7 +262,7 @@ public class Minion {
         //if(!character.HasHealth()) {
         //    character.SetHP(0);
         //}
-        //Messenger.AddListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
+        //Messenger.AddListener(Signals.TICK_STARTED, UnsummonedCooldown);
 
         UnSubscribeListeners();
         SetIsSummoned(false);
@@ -280,20 +280,21 @@ public class Minion {
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
 
-        //SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
 
         //int missingHealth = character.maxHP - character.currentHP;
-        //int cooldown = Mathf.CeilToInt((float)missingHealth / 7);
-        //spellData.SetCooldown(cooldown);
-        //spellData.SetCurrentCooldownTick(0);
-        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
-        spellData.SetCooldown(-1);
-        spellData.AdjustCharges(1);
+        int cooldown = GameManager.Instance.GetTicksBasedOnHour(4); //Mathf.CeilToInt((float) missingHealth / 7);
+        spellData.SetCooldown(cooldown);
+        spellData.SetCurrentCooldownTick(0);
+        spellData.StartCooldown();
+        //SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        //spellData.SetCooldown(-1);
+        //spellData.AdjustCharges(1);
 
         //Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, spellData);
         Messenger.Broadcast(PlayerSkillSignals.UNSUMMON_MINION, this);
     }
-    private void UnsummonedHPRecovery() {
+    private void UnsummonedCooldown() {
         Profiler.BeginSample($"Minion Unsummoned HP Recovery");
         this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
         SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
@@ -303,7 +304,7 @@ public class Minion {
             spellData.SetCooldown(-1);
             spellData.AdjustCharges(1);
             Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, spellData);
-            Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
+            Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedCooldown);
         }
         Profiler.EndSample();
     }
