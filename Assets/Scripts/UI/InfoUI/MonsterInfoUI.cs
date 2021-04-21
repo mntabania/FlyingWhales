@@ -54,7 +54,8 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private StoreTargetButton btnStoreTarget;
 
     private HoverText m_roleHoverText;
-    
+    private HoverHandler m_hoverHandler;
+
     private Character _activeMonster;
 
     public Character activeMonster => _activeMonster;
@@ -87,6 +88,7 @@ public class MonsterInfoUI : InfoUIBase {
         
         logsWindow.Initialize();
 
+        m_hoverHandler = roleLbl.GetComponent<HoverHandler>();
         m_roleHoverText = roleLbl.GetComponent<HoverText>();
     }
     
@@ -191,11 +193,16 @@ public class MonsterInfoUI : InfoUIBase {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = $"<b>{_activeMonster.firstNameWithColor}</b>";
-
-        CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(_activeMonster.characterClass.className);
-        CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
-        roleLbl.text = $"<b>{combatBehaviour.name}</b>";
-        m_roleHoverText.SetText(combatBehaviour.description);
+        if (_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour != null) {
+            roleLbl.text = $"<b>{_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour.name}</b>";
+            m_roleHoverText.SetText(_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour.description);
+            m_hoverHandler.enabled = true;
+        } else {
+            roleLbl.text = $"<b>None</b>";
+            m_hoverHandler.enabled = false;
+            m_roleHoverText.SetText("");
+        }
+        
 
         subLbl.text = _activeMonster.characterClass.className;
         UpdateThoughtBubble();
