@@ -19,6 +19,9 @@ public class SaveDataPlayer {
     public List<QuestManager.Special_Popup> completedSpecialPopups;
     public List<WorldSettingsData.World_Type> unlockedWorlds;
 
+    public List<TutorialManager.Tutorial_Type> unlockedTutorials;
+    public List<TutorialManager.Tutorial_Type> readTutorials;
+    
     //Loadouts
     public LoadoutSaveData ravagerLoadoutSaveData;
     public LoadoutSaveData puppetmasterLoadoutSaveData;
@@ -58,6 +61,7 @@ public class SaveDataPlayer {
         //learnedSkills.Add(buildDemonicStructure);
         //PlayerSkillTreeNodeData breedMonster = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BREED_MONSTER, charges = -1, cooldown = 48, manaCost = 10 };
         //learnedSkills.Add(breedMonster);
+        CreateInitialUnlockedTutorials();
         InitializeTutorialData();
         completedSpecialPopups = new List<QuestManager.Special_Popup>();
         InitializeUnlockedWorlds();
@@ -187,6 +191,27 @@ public class SaveDataPlayer {
             completedBonusTutorials.Clear();    
         }
         
+    }
+    private void CreateInitialUnlockedTutorials() {
+        unlockedTutorials = new List<TutorialManager.Tutorial_Type>() {
+            TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers, TutorialManager.Tutorial_Type.Upgrading_Portal, TutorialManager.Tutorial_Type.Mana, TutorialManager.Tutorial_Type.Chaotic_Energy,
+            TutorialManager.Tutorial_Type.Storing_Targets, TutorialManager.Tutorial_Type.Prism, TutorialManager.Tutorial_Type.Maraud, TutorialManager.Tutorial_Type.Intel
+        };
+    }
+    public void UnlockTutorial(TutorialManager.Tutorial_Type p_type) {
+        if (!unlockedTutorials.Contains(p_type)) {
+            unlockedTutorials.Add(p_type);
+            Messenger.Broadcast(TutorialSignals.TUTORIAL_UNLOCKED, p_type);    
+        }
+    }
+    public void SetTutorialAsRead(TutorialManager.Tutorial_Type p_type) {
+        if (!readTutorials.Contains(p_type)) {
+            readTutorials.Add(p_type);
+            Messenger.Broadcast(TutorialSignals.TUTORIAL_READ, p_type);    
+        }
+    }
+    public bool HasTutorialBeenRead(TutorialManager.Tutorial_Type p_type) {
+        return readTutorials.Contains(p_type);
     }
     #endregion
 
@@ -634,6 +659,12 @@ public class SaveDataPlayer {
         } 
         if (oldRavagerLoadoutSaveData == null) {
             oldRavagerLoadoutSaveData = new LoadoutSaveData();
+        }
+        if (unlockedTutorials == null) {
+            CreateInitialUnlockedTutorials();
+        }
+        if (readTutorials == null) {
+            readTutorials = new List<TutorialManager.Tutorial_Type>();
         }
     }
     #endregion

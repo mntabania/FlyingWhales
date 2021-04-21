@@ -6,8 +6,6 @@ using UnityEngine;
 public class TutorialScriptableObjectData : ScriptableObject {
     public TutorialManager.Tutorial_Type tutorialType;
     public string tutorialNameKey;
-    public bool hasBeenRead;
-    public bool hasBeenUnlocked;
     public List<TutorialPage> pages;
 }
 

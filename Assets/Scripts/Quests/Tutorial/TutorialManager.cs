@@ -129,6 +129,7 @@ namespace Tutorial {
         #region Monobehaviours
         private void Awake() {
             Instance = this;
+            _loadedTutorialData = new Dictionary<Tutorial_Type, TutorialScriptableObjectData>();
             _activeImportantTutorials = new List<ImportantTutorial>();
             _waitingImportantTutorials = new List<ImportantTutorial>();
             _activeBonusTutorials = new List<BonusTutorial>();
@@ -138,6 +139,7 @@ namespace Tutorial {
         protected override void OnDestroy() {
             base.OnDestroy();
             Instance = null;
+            _loadedTutorialData = null;
         }
         private void LateUpdate() {
             if (GameManager.Instance.gameHasStarted) {
@@ -333,6 +335,26 @@ namespace Tutorial {
                 UIManager.Instance.questUI.HideQuestDelayed(tutorialQuest);
             }
             tutorialQuest.Deactivate();
+        }
+        #endregion
+
+        #region Tutorial Data
+        private Dictionary<Tutorial_Type, TutorialScriptableObjectData> _loadedTutorialData;
+        public TutorialScriptableObjectData GetTutorialData(Tutorial_Type p_type) {
+            if (_loadedTutorialData.ContainsKey(p_type)) {
+                return _loadedTutorialData[p_type];
+            }
+            TutorialScriptableObjectData loadedData = Resources.Load<TutorialScriptableObjectData>($"Tutorial Data/{p_type.ToString()}");
+            _loadedTutorialData.Add(p_type, loadedData);
+            return loadedData;
+        }
+        public void UnloadTutorialDataAndAssets() {
+            _loadedTutorialData.Clear();
+            Resources.UnloadUnusedAssets();
+        }
+        public void UnlockTutorial(Tutorial_Type p_type) {
+            SaveManager.Instance.currentSaveDataPlayer.UnlockTutorial(p_type);
+            SaveManager.Instance.savePlayerManager.SavePlayerData();
         }
         #endregion
 
