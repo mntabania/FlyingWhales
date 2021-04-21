@@ -5,7 +5,7 @@ using UnityEngine;
 public class SnatchVillagerData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SNATCH_VILLAGER;
     public override string name => "Snatch Villager";
-    public override string description => "Snatch a villager and bring them to this structure.";
+    public override string description => "Capture and imprison a Villager. It is easier to Snatch a Villager while it is alone and sleeping.";
 
     public override bool CanPerformAbilityTowards(LocationStructure target) {
         bool canPerform = false;
