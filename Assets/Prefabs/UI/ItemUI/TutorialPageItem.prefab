@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 7942791494427235956}
   - component: {fileID: 7910250753526513488}
   - component: {fileID: 6162904136918242202}
+  - component: {fileID: 6357561309015068374}
   m_Layer: 5
   m_Name: TutorialPageItem
   m_TagString: Untagged
@@ -172,11 +173,11 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 713.6086, y: -39.181427}
-  m_SizeDelta: {x: 1125.223, y: 837.0371}
-  m_Pivot: {x: 0, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1125.2231, y: 837.0371}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7910250753526513488
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -214,6 +215,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6357561309015068374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251532191672241234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c050926e3be4053865d700ea663e4b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
+  imgMain: {fileID: 6548179786777368167}
+  lblDescription: {fileID: 7240304532566113396}
 --- !u!1 &2488511947593031504
 GameObject:
   m_ObjectHideFlags: 0

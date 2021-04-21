@@ -1,6 +1,7 @@
 ﻿using System;
 using Ruinarch.Custom_UI;
 using Ruinarch.MVCFramework;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
@@ -10,6 +11,8 @@ public class TutorialUIModel : MVCUIModel {
     public RuinarchButton btnClose;
     public ToggleGroup toggleGroupTutorialItems;
     public HorizontalScrollSnap tutorialPagesScrollSnap;
+    public RectTransform tutorialPaginationParent;
+    public GameObject goTutorialPages;
 
     public System.Action onClickClose;
     

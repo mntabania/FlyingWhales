@@ -11,4 +11,8 @@ public class TutorialPageItem : PooledObject {
         imgMain.sprite = p_page.imgTutorial;
         lblDescription.text = p_page.description;
     }
+    public override void Reset() {
+        base.Reset();
+        imgMain.sprite = null;
+    }
 }

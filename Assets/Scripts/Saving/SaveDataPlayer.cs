@@ -195,7 +195,7 @@ public class SaveDataPlayer {
     }
     private void CreateInitialUnlockedTutorials() {
         unlockedTutorials = new List<TutorialManager.Tutorial_Type>() {
-            TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers, TutorialManager.Tutorial_Type.Upgrading_Portal, TutorialManager.Tutorial_Type.Mana, TutorialManager.Tutorial_Type.Chaotic_Energy,
+            TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers, TutorialManager.Tutorial_Type.Upgrading_The_Portal, TutorialManager.Tutorial_Type.Mana, TutorialManager.Tutorial_Type.Chaotic_Energy,
             TutorialManager.Tutorial_Type.Storing_Targets, TutorialManager.Tutorial_Type.Prism, TutorialManager.Tutorial_Type.Maraud, TutorialManager.Tutorial_Type.Intel
         };
     }

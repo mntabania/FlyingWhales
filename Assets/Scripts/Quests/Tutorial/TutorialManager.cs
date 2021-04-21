@@ -16,7 +16,7 @@ namespace Tutorial {
 
         public enum Tutorial_Type {
             Unlocking_Bonus_Powers,
-            Upgrading_Portal,
+            Upgrading_The_Portal,
             Mana,
             Chaotic_Energy,
             Storing_Targets,
@@ -153,7 +153,7 @@ namespace Tutorial {
             hasCompletedImportantTutorials = WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial;
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
                 // Instantiate all pending bonus tutorials. NOTE: In tutorial world this is called after Start Popup is hidden
-                InstantiatePendingBonusTutorials();    
+                // InstantiatePendingBonusTutorials();    
             }
         }
         /// <summary>
@@ -172,6 +172,7 @@ namespace Tutorial {
                 InstantiateTutorial(tutorial);
             }
         }
+        [System.Obsolete("This should no longer used.")]
         public void InstantiatePendingBonusTutorials() {
             if (SettingsManager.Instance.settings.skipAdvancedTutorials) {
                 return; //do not create tutorials if skip advanced tutorials switch is on.
@@ -349,8 +350,12 @@ namespace Tutorial {
             return loadedData;
         }
         public void UnloadTutorialDataAndAssets() {
-            _loadedTutorialData.Clear();
-            Resources.UnloadUnusedAssets();
+            foreach (var kvp in _loadedTutorialData) {
+                for (int i = 0; i < kvp.Value.pages.Count; i++) {
+                    TutorialPage page = kvp.Value.pages[i];
+                    Resources.UnloadAsset(page.imgTutorial);       
+                }
+            }
         }
         public void UnlockTutorial(Tutorial_Type p_type) {
             SaveManager.Instance.currentSaveDataPlayer.UnlockTutorial(p_type);

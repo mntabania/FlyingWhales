@@ -225,9 +225,9 @@ public class PlayerUI : BaseMonoBehaviour {
     //    UpdateRegionNameState();
     //}
     private void OnKeyPressed(KeyCode pressedKey) {
-        if (pressedKey == KeyCode.F9) {
-            UIManager.Instance.optionsMenu.QuickSave();
-        }
+        // if (pressedKey == KeyCode.F9) {
+        //     UIManager.Instance.optionsMenu.QuickSave();
+        // }
     }
     private void OnCharacterDied(Character character) {
         TransferCharacterFromActiveToInactive(character);
@@ -1117,6 +1117,8 @@ public class PlayerUI : BaseMonoBehaviour {
     public void OnToggleTutorialTab(bool p_isOn) {
         if (p_isOn) {
             _tutorialUIController.ShowUI();
+        } else {
+            _tutorialUIController.HideUI();
         }
     }
     public void OnCloseTutorialUI() {
