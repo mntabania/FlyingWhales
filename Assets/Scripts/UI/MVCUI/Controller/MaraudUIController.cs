@@ -506,7 +506,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
 				Summon summon = CharacterManager.Instance.CreateNewSummon(eachMonsterToBeDeployed.obj.monsterType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement, bypassIdeologyChecking: true);
-				CharacterManager.Instance.PlaceSummonInitially(summon, m_chosenTile.GetRandomUnoccupiedNeighbor());
+				CharacterManager.Instance.PlaceSummonInitially(summon, m_chosenTile.GetRandomNeighborWithoutCharacters());
 				summon.OnSummonAsPlayerMonster();
 				summon.SetDeployedAtStructure(m_targetPartyStructure);
 				eachMonsterToBeDeployed.Deploy(summon);
@@ -517,7 +517,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (m_deployedMinionsUI[0].isReadyForDeploy && m_deployedMinionsUI[0].isMinion) {
 			SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(m_deployedMinionsUI[0].obj.minionType);
 			Character minion = null;
-			skillData.ActivateAbility(m_chosenTile.GetRandomUnoccupiedNeighbor(), ref minion);
+			skillData.ActivateAbility(m_chosenTile.GetRandomNeighborWithoutCharacters(), ref minion);
 			minion.SetDeployedAtStructure(m_targetPartyStructure);
 			m_deployedMinionsUI[0].Deploy(minion);
 			m_targetPartyStructure.AddDeployedItem(m_deployedMinionsUI[0]);

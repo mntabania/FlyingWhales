@@ -112,6 +112,8 @@ namespace Inner_Maps {
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> CaveInterconnectionTiles { get { return FourNeighbours().Where(o => o.structure == structure).ToList() ; } } //&& !o.HasDifferentStructureNeighbour()
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbourList.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
+        public List<LocationGridTile> unoccupiedOfCharactersNeighbours { get { return neighbourList.Where(o => o.charactersHere.Count <= 0 && o.structure == structure).ToList(); } }
+        
         public List<LocationGridTile> UnoccupiedNeighboursWithinHex {
             get {
                 return neighbourList.Where(o =>
@@ -1288,6 +1290,10 @@ namespace Inner_Maps {
         }
         public LocationGridTile GetRandomNeighbor() {
             return neighbourList[Random.Range(0, neighbourList.Count)];
+        }
+
+        public LocationGridTile GetRandomNeighborWithoutCharacters() {
+            return unoccupiedOfCharactersNeighbours[Random.Range(0, unoccupiedOfCharactersNeighbours.Count)];
         }
         public LocationGridTile GetFirstNeighbor(bool sameStructure = true) {
             for (int i = 0; i < neighbourList.Count; i++) {
