@@ -52,7 +52,7 @@ namespace Inner_Maps {
             //int mouseOnUIOrMapObjectValue = UIManager.Instance.GetMouseOnUIOrMapObjectValue();
             if (!UIManager.Instance.IsMouseOnUIOrMapObject()) { // mouseOnUIOrMapObjectValue == -1
                 if (owner.corruptionComponent.CanCorruptTile()) {
-                    owner.corruptionComponent.StartCorruption();
+                    owner.corruptionComponent.StartCorruption(true);
                 } else if (owner.corruptionComponent.CanDisruptCorruptionOfTile()) {
                     owner.corruptionComponent.DisruptCorruption();
                 } else if (owner.corruptionComponent.CanBuildDemonicWall()) {

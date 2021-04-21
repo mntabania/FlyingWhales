@@ -158,7 +158,7 @@ public class MonsterGeneration : MapGenerationComponent {
 							continue;
 						}
 						BiomeDivision biomeDivision = cave.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(cave.tiles.First());
-						if (!GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(2, 5), 10) && GameUtilities.RollChance(70)) {
+						if (GameUtilities.RollChance(70)) {
 							locationChoices.Clear();
 							locationChoices.AddRange(cave.passableTiles);
 					

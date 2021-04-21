@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Inner_Maps {
     public class GridTileCorruptionComponent : LocationGridTileComponent {
         private const int corruptionDurationInTicks = 5;
         private const int buildOrDestroyWallDurationInTicks = 5;
         public bool isCorrupted => owner.groundType == LocationGridTile.Ground_Type.Corrupted;
         public bool isCurrentlyBeingCorrupted { get; private set; }
+        public bool willGenerateDemonicDecorOnCorruptionFinish { get; private set; }
         public bool wallIsBeingBuilt { get; private set; }
         public bool wallIsBeingDestroyed { get; private set; }
         public GameDate corruptDate { get; private set; }
@@ -25,17 +26,20 @@ namespace Inner_Maps {
             wallIsBeingBuilt = data.wallIsBeingBuilt;
             wallIsBeingDestroyed = data.wallIsBeingDestroyed;
             wallBuildOrDestroyDate = data.wallBuildOrDestroyDate;
+            willGenerateDemonicDecorOnCorruptionFinish = data.willGenerateDemonicDecorOnCorruptionFinish;
         }
 
         #region Utilities
-        public void StartCorruption() {
+        public void StartCorruption(bool randomGenerateDemonicDecor = false) {
             if (!isCurrentlyBeingCorrupted && !isCorrupted) {
                 if (!_buildSmokeEffect) {
                     _buildSmokeEffect = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Build_Grid_Tile_Smoke);
                 }
                 isCurrentlyBeingCorrupted = true;
+                willGenerateDemonicDecorOnCorruptionFinish = randomGenerateDemonicDecor;
                 corruptDate = GameManager.Instance.Today().AddTicks(corruptionDurationInTicks);
-                _corruptionScheduleID = SchedulingManager.Instance.AddEntry(corruptDate, CorruptTile, null);
+                _corruptionScheduleID = randomGenerateDemonicDecor ? SchedulingManager.Instance.AddEntry(corruptDate, CorruptTileAndRandomlyGenerateDemonicObject, null) : 
+                    SchedulingManager.Instance.AddEntry(corruptDate, CorruptTile, null);
                 owner.mouseEventsComponent.OnHoverExit();
             }
         }
@@ -72,9 +76,44 @@ namespace Inner_Maps {
                         }
                         if (!tileObject.tileObjectType.IsTileObjectImportant() && !tileObject.traitContainer.HasTrait("Indestructible")) {
                             owner.structure.RemovePOI(tileObject);
+                            
                         }
-                        //structure.RemovePOI(objHere);
                     }
+                }
+                owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
+                owner.mouseEventsComponent.OnHoverExit();
+            }
+        }
+        public void CorruptTileAndRandomlyGenerateDemonicObject() {
+            isCurrentlyBeingCorrupted = false;
+            if (_buildSmokeEffect) {
+                ObjectPoolManager.Instance.DestroyObject(_buildSmokeEffect);
+                _buildSmokeEffect = null;
+            }
+            if (!isCorrupted) {
+                owner.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
+                owner.CreateSeamlessEdgesForSelfAndNeighbours();
+                TileObject tileObject = owner.tileObjectComponent.objHere;
+                if (tileObject != null) {
+                    if (tileObject is TreeObject tree) {
+                        (tree.mapObjectVisual as TileObjectGameObject).UpdateTileObjectVisual(tree);
+                    } else if (tileObject is BlockWall blockWall) {
+                        blockWall.SetWallType(WALL_TYPE.Demon_Stone);
+                        blockWall.UpdateVisual(owner);
+                    } else {
+                        if (tileObject is Tombstone tombstone) {
+                            tombstone.SetRespawnCorpseOnDestroy(false);
+                        }
+                        if (!tileObject.tileObjectType.IsTileObjectImportant() && !tileObject.traitContainer.HasTrait("Indestructible")) {
+                            owner.structure.RemovePOI(tileObject);
+                        }
+                    }
+                }
+                if (ChanceData.RollChance(CHANCE_TYPE.Demonic_Decor_On_Corrupt)) {
+                    TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(GameUtilities.corruptionTileObjectChoices);
+                    TileObject createdDecor = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
+                    owner.structure.AddPOI(createdDecor, owner);
+                    Debug.Log($"Placed random demonic decor {createdDecor.name} at {owner.ToString()}");
                 }
                 owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
                 owner.mouseEventsComponent.OnHoverExit();
@@ -188,7 +227,7 @@ namespace Inner_Maps {
                 if (!_buildSmokeEffect) {
                     _buildSmokeEffect = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Build_Grid_Tile_Smoke);
                 }
-                _corruptionScheduleID = SchedulingManager.Instance.AddEntry(corruptDate, CorruptTile, null);
+                _corruptionScheduleID = willGenerateDemonicDecorOnCorruptionFinish ? SchedulingManager.Instance.AddEntry(corruptDate, CorruptTileAndRandomlyGenerateDemonicObject, null) : SchedulingManager.Instance.AddEntry(corruptDate, CorruptTile, null);
             } else if (wallIsBeingBuilt) {
                 if (!_buildSmokeEffect) {
                     _buildSmokeEffect = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Build_Grid_Tile_Smoke);
@@ -214,6 +253,7 @@ namespace Inner_Maps {
         public bool wallIsBeingBuilt;
         public bool wallIsBeingDestroyed;
         public GameDate wallBuildOrDestroyDate;
+        public bool willGenerateDemonicDecorOnCorruptionFinish;
 
         public override void Save(GridTileCorruptionComponent data) {
             base.Save(data);
@@ -222,6 +262,7 @@ namespace Inner_Maps {
             wallIsBeingBuilt = data.wallIsBeingBuilt;
             wallIsBeingDestroyed = data.wallIsBeingDestroyed;
             wallBuildOrDestroyDate = data.wallBuildOrDestroyDate;
+            willGenerateDemonicDecorOnCorruptionFinish = data.willGenerateDemonicDecorOnCorruptionFinish;
         }
         public override GridTileCorruptionComponent Load() {
             GridTileCorruptionComponent component = new GridTileCorruptionComponent(this);
