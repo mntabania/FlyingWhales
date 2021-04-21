@@ -158,10 +158,10 @@ namespace Traits {
             base.ExecuteActionPreEffects(action, goapNode);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 if (Random.Range(0, 100) < 10) { //5
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait, bypassElementalChance: true);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
                     Burning burning = goapNode.actor.traitContainer.GetTraitOrStatus<Burning>("Burning");
-                    burning.SetIsPlayerSource(isPlayerSource);
+                    burning?.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
@@ -169,10 +169,10 @@ namespace Traits {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 if (Random.Range(0, 100) < 10) { //5
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait, bypassElementalChance: true);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
                     Burning burning = goapNode.actor.traitContainer.GetTraitOrStatus<Burning>("Burning");
-                    burning.SetIsPlayerSource(isPlayerSource);
+                    burning?.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
