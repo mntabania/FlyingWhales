@@ -62,6 +62,7 @@ public class SaveDataPlayer {
         //PlayerSkillTreeNodeData breedMonster = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BREED_MONSTER, charges = -1, cooldown = 48, manaCost = 10 };
         //learnedSkills.Add(breedMonster);
         CreateInitialUnlockedTutorials();
+        readTutorials = new List<TutorialManager.Tutorial_Type>();
         InitializeTutorialData();
         completedSpecialPopups = new List<QuestManager.Special_Popup>();
         InitializeUnlockedWorlds();

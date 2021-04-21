@@ -142,7 +142,7 @@ namespace Tutorial {
             _loadedTutorialData = null;
         }
         private void LateUpdate() {
-            if (GameManager.Instance.gameHasStarted) {
+            if (GameManager.Instance != null && GameManager.Instance.gameHasStarted) {
                 CheckIfNewTutorialCanBeActivated();    
             }
         }

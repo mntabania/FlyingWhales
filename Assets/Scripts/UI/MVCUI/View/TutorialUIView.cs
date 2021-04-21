@@ -5,7 +5,7 @@ using UnityEngine;
 public class TutorialUIView : MVCUIView {
     #region interface for listener
     public interface IListener {
-        
+        void OnClickClose();
     }
     #endregion
     
@@ -31,7 +31,11 @@ public class TutorialUIView : MVCUIView {
     #endregion
     
     #region Subscribe/Unsubscribe for IListener
-    public void Subscribe(IListener p_listener) { }
-    public void Unsubscribe(IListener p_listener) { }
+    public void Subscribe(IListener p_listener) {
+        UIModel.onClickClose += p_listener.OnClickClose;
+    }
+    public void Unsubscribe(IListener p_listener) {
+        UIModel.onClickClose -= p_listener.OnClickClose;
+    }
     #endregion
 }

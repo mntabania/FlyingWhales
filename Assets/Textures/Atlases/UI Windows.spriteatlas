@@ -43,14 +43,13 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 4b18ba5513d55364284cd64228896343, type: 3}
-    totalSpriteSurfaceArea: 10578224
+    totalSpriteSurfaceArea: 8504624
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: baaca0a0715a3844183d8fadb56ded82, type: 3}
   - {fileID: 21300000, guid: ae43244188953b94ca4bfbb6e53e17b1, type: 3}
   - {fileID: 21300000, guid: aee89f91e27b7ea4fb6082333a3ed6ee, type: 3}
-  - {fileID: 21300000, guid: 3ad825620f90e104ba9787f50b283e46, type: 3}
   - {fileID: 21300000, guid: 210cb0a2957d55444964ebaecb2d2ecf, type: 3}
   - {fileID: 21300000, guid: ad0ba403edcb24941bfe8c77517193b9, type: 3}
   - {fileID: 21300000, guid: 3a17d623ca130c644a1e81eac1474f7d, type: 3}
@@ -86,7 +85,6 @@ SpriteAtlas:
   - Skill_Portrait_Border
   - demonic_structure_popup_container
   - maraud_second_column
-  - world_options_bg
   - maraud_container
   - skill_details_tooltip_container
   - actions_list_container

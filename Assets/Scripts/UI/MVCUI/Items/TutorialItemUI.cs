@@ -1,5 +1,6 @@
 ﻿using System;
 using EZObjectPools;
+using Ruinarch.Custom_UI;
 using TMPro;
 using Tutorial;
 using UnityEngine;
@@ -11,14 +12,16 @@ public class TutorialItemUI : PooledObject {
     
     [SerializeField] private TextMeshProUGUI tutorialName;
     [SerializeField] private GameObject unreadTutorialGO;
-    [SerializeField] private Button btnMain;
+    [SerializeField] private RuinarchToggle toggleMain;
 
     private TutorialManager.Tutorial_Type _tutorialType;
     private void Awake() {
-        btnMain.onClick.AddListener(OnClickItem);
+        toggleMain.onValueChanged.AddListener(OnClickItem);
     }
-    public void Initialize(TutorialManager.Tutorial_Type p_type) {
+    public void Initialize(TutorialManager.Tutorial_Type p_type, ToggleGroup p_group) {
         _tutorialType = p_type;
+        tutorialName.text = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_type.ToString());
+        toggleMain.group = p_group;
         UpdateReadObject();
         Messenger.AddListener<TutorialManager.Tutorial_Type>(TutorialSignals.TUTORIAL_READ, OnTutorialRead);
     }
@@ -32,10 +35,14 @@ public class TutorialItemUI : PooledObject {
     #endregion
     
     private void UpdateReadObject() {
-        unreadTutorialGO.SetActive(SaveManager.Instance.savePlayerManager.currentSaveDataPlayer.HasTutorialBeenRead(_tutorialType));
+        if (SaveManager.Instance != null) {
+            unreadTutorialGO.SetActive(!SaveManager.Instance.savePlayerManager.currentSaveDataPlayer.HasTutorialBeenRead(_tutorialType));    
+        }
     }
-    private void OnClickItem() {
-        onClickTutorialItem?.Invoke(_tutorialType);
+    private void OnClickItem(bool p_isOn) {
+        if (p_isOn) {
+            onClickTutorialItem?.Invoke(_tutorialType);    
+        }
     }
     public override void Reset() {
         base.Reset();
