@@ -154,13 +154,15 @@ public class UpgradePortalUIView : MVCUIView {
                     lastIndex = i;
                 }
             }
-            Vector2 position = UIModel.contentChaoticEnergyUpgrade.anchoredPosition; 
-            float targetPosition = position.y;
-            UIModel.canvasGroupChaoticEnergyUpgrade.alpha = 0f;
+            if (UIModel.contentChaoticEnergyUpgrade.gameObject.activeInHierarchy) {
+                Vector2 position = UIModel.contentChaoticEnergyUpgrade.anchoredPosition; 
+                float targetPosition = position.y;
+                UIModel.canvasGroupChaoticEnergyUpgrade.alpha = 0f;
                 
-            UIModel.contentChaoticEnergyUpgrade.anchoredPosition = new Vector2(position.x, position.y + 50f);
-            sequence.Join(UIModel.contentChaoticEnergyUpgrade.DOAnchorPosY(targetPosition, 0.3f).SetDelay((lastIndex + 1)/30f));
-            sequence.Join(UIModel.canvasGroupChaoticEnergyUpgrade.DOFade(1f, 0.4f));    
+                UIModel.contentChaoticEnergyUpgrade.anchoredPosition = new Vector2(position.x, position.y + 50f);
+                sequence.Join(UIModel.contentChaoticEnergyUpgrade.DOAnchorPosY(targetPosition, 0.3f).SetDelay((lastIndex + 1)/30f));
+                sequence.Join(UIModel.canvasGroupChaoticEnergyUpgrade.DOFade(1f, 0.4f));    
+            }
         } else if (UIModel.lblAwakenRuinarch.gameObject.activeSelf) {
             Vector2 position = UIModel.lblAwakenRuinarch.rectTransform.anchoredPosition; 
             float targetPosition = position.y;
@@ -197,10 +199,11 @@ public class UpgradePortalUIView : MVCUIView {
         }
     }
     public void UpdateUpgradeChaoticEnergyItem(ThePortal portal) {
-        if (portal.IsCurrentLevelUpTheLastOne()) {
-            UIModel.goChaoticEnergyCapacity.SetActive(false);
-        } else {
-            UIModel.goChaoticEnergyCapacity.SetActive(true);
-        }
+        UIModel.goChaoticEnergyCapacity.SetActive(false);
+        // if (portal.IsCurrentLevelUpTheLastOne()) {
+        //     UIModel.goChaoticEnergyCapacity.SetActive(false);
+        // } else {
+        //     UIModel.goChaoticEnergyCapacity.SetActive(true);
+        // }
     }
 }
