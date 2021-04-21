@@ -133,7 +133,7 @@ public abstract class InfoUIBase : MonoBehaviour {
         activeActionItems.Add(item);
         return item;
     }
-    private ActionItem GetActionItem(PlayerAction action) {
+    public ActionItem GetActionItem(PlayerAction action) {
         for (int i = 0; i < activeActionItems.Count; i++) {
             ActionItem item = activeActionItems[i];
             if (item.playerAction == action) {

@@ -51,15 +51,22 @@ public class ActionItem : PooledObject {
     }
     public void ToggleHighlight() {
         if (button.interactable) {
-	        highlightImg.gameObject.SetActive(true);    
+            SetHighlightState(true);    
         }
         OnHover();
     }
     public void UnToggleHighlight() {
         if (button.interactable) {
-	        highlightImg.gameObject.SetActive(false);    
+            bool toggle = false;
+            if (playerAction.type == PLAYER_SKILL_TYPE.SPAWN_EYE_WARD) {
+                toggle = PlayerManager.Instance.player.currentActivePlayerSpell == playerAction;
+            }
+            SetHighlightState(toggle);    
         }
         OnHoverOut();
+    }
+    public void SetHighlightState(bool p_state) {
+        highlightImg.gameObject.SetActive(p_state);
     }
     public void OnClickThis() {
         if (playerAction != null) {
