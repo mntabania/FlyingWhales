@@ -250,7 +250,7 @@ namespace Traits {
                 LocationGridTile origin = owner.gridTileLocation;
                 List<LocationGridTile> affectedTiles = origin.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < affectedTiles.Count; i++) {
-                    _burningSpreadChoices.AddRange(affectedTiles[i].GetTraitablesOnTile());
+                    _burningSpreadChoices.AddRange(affectedTiles[i].GetTraitablesOnTileThatCanHaveElementalTrait("Burning", true));
                 }
                 if (_burningSpreadChoices.Count > 0) {
                     ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
@@ -258,7 +258,7 @@ namespace Traits {
                         chosen.traitContainer.AddTrait(chosen, "Burning", out var trait, bypassElementalChance: true);
                         (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
                         Burning burning = chosen.traitContainer.GetTraitOrStatus<Burning>("Burning");
-                        burning.SetIsPlayerSource(isPlayerSource);
+                        burning?.SetIsPlayerSource(isPlayerSource);
                     }
                 }    
             }

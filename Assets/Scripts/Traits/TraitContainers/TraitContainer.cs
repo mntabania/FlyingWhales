@@ -292,7 +292,7 @@ namespace Traits {
             }
             return true;
         }
-        private int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo, bool bypassElementalChance) {
+        public int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo, bool bypassElementalChance) {
             int chance = 100;
             if (traitName == "Burning") {
                 chance = bypassElementalChance ? 100 : 15;
