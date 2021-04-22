@@ -2,7 +2,7 @@
 
 public class ReleaseAbilitiesData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RELEASE_ABILITIES;
-    public override string name => "Release Abilities";
+    public override string name => "Release Powers";
     public override string description => "Gain consumable Bonus Charges for one of three random Powers.";
     public ReleaseAbilitiesData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.STRUCTURE };
