@@ -68,4 +68,9 @@
     public static string START_MONSTER_UNDERLING_COOLDOWN = "OnStartMonsterUnderlingCooldown";
     public static string STOP_MONSTER_UNDERLING_COOLDOWN = "OnStopMonsterUnderlingCooldown";
 
+    //chaos orb passive skills
+    public static string ZAP_ACTIVATED = "OnZapActivated";
+    public static string AGITATE_ACTIVATED = "OnAgitateActivated";
+    public static string EXPEL_ACTIVATED = "OnExpelActivated";
+    public static string REMOVE_BUFF_ACTIVATED = "OnRemoveBuffActivated";
 }

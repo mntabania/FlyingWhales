@@ -24,6 +24,7 @@ public class ZapData : PlayerAction {
         log.AddToFillers(null, "zapped", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+        Messenger.Broadcast(PlayerSkillSignals.ZAP_ACTIVATED, targetPOI);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {

@@ -21,6 +21,7 @@ public class ExpelData : PlayerAction {
             if (targetCharacter.homeSettlement != null && targetCharacter.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                 targetCharacter.MigrateHomeStructureTo(null);
             }
+            Messenger.Broadcast(PlayerSkillSignals.EXPEL_ACTIVATED, targetPOI);
         }
         base.ActivateAbility(targetPOI);
     }
