@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
+using UtilityScripts;
 
 [CreateAssetMenu(fileName = "New Player Skill Data", menuName = "Scriptable Objects/Player Skills/Player Skill Data")]
 public class PlayerSkillData : ScriptableObject {
@@ -45,19 +46,19 @@ public class PlayerSkillData : ScriptableObject {
     public AfflictionUpgradeData afflictionUpgradeData;
 
     public int GetManaCostBaseOnLevel(int level) {
-        return skillUpgradeData.GetManaCostPerLevel(level);
+        return SpellUtilities.GetModifiedSpellCost(skillUpgradeData.GetManaCostPerLevel(level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
     }
 
     public int GetCoolDownBaseOnLevel(int level) {
         if (!isAffliction) {
-            return skillUpgradeData.GetCoolDownPerLevel(level);
+            return SpellUtilities.GetModifiedSpellCost(skillUpgradeData.GetCoolDownPerLevel(level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
         } else {
-            return afflictionUpgradeData.GetCoolDownPerLevel(level);
+            return SpellUtilities.GetModifiedSpellCost(afflictionUpgradeData.GetCoolDownPerLevel(level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
         }
     }
 
     public int GetMaxChargesBaseOnLevel(int level) {
-        return skillUpgradeData.GetChargesBaseOnLevel(level);
+        return SpellUtilities.GetModifiedSpellCost(skillUpgradeData.GetChargesBaseOnLevel(level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
     }
 }
 
