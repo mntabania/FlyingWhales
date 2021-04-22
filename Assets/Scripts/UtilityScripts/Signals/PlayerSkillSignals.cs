@@ -62,5 +62,10 @@
     public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
     public static string BONUS_CHARGES_ADJUSTED = "OnBonusChargesAdjusted";
 
-    public static string ON_TRAP_ACTIVATED_ON_VILLAGER = "OnTrapAvtivatedOnVillager";
+    public static string ON_TRAP_ACTIVATED_ON_VILLAGER = "OnTrapActivatedOnVillager";
+    public static string PER_TICK_DEMON_COOLDOWN = "OnPerTickDemonCooldown";
+    public static string PER_TICK_MONSTER_UNDERLING_COOLDOWN = "OnPerTickMonsterUnderlingCooldown";
+    public static string START_MONSTER_UNDERLING_COOLDOWN = "OnStartMonsterUnderlingCooldown";
+    public static string STOP_MONSTER_UNDERLING_COOLDOWN = "OnStopMonsterUnderlingCooldown";
+
 }

@@ -221,7 +221,10 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 } else {
                     formatted = $"{formatted}{GameManager.ConvertTicksToWholeTime(cooldownInTicks)}";    
                 }
-                
+                break;
+            case UPGRADE_BONUS.Atk_Percentage:
+                formatted = UtilityScripts.Utilities.ColorizeSpellTitle("Strength Increase: ");
+                formatted = $"{formatted}{p_data.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(p_level).ToString(CultureInfo.InvariantCulture)}%";
                 break;
             default:
                 formatted = string.Empty;
@@ -260,8 +263,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 fltDifference = fltNextValue - fltCurrentValue;
                 if (fltDifference > 0) {
                     differenceStr = $"{fltNextValue.ToString()}";    
-                }    
-                
+                }
                 break;
             case UPGRADE_BONUS.Duration:
                 intCurrentValue = p_data.skillUpgradeData.GetDurationBonusPerLevel(p_level);
@@ -301,6 +303,14 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                     // differenceStr = $" ({GameManager.GetTimeAsWholeDuration(intNextValue).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(intNextValue)})";
                 }
                 break;
+            case UPGRADE_BONUS.Atk_Percentage:
+                fltCurrentValue = p_data.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(p_level);
+                fltNextValue = p_data.skillUpgradeData.GetAdditionalAttackPercentagePerLevelBaseOnLevel(p_nextLevel);
+                fltDifference = fltNextValue - fltCurrentValue;
+                if (fltDifference > 0) {
+                    differenceStr = $"{fltNextValue.ToString()}%";    
+                }    
+                break;
             default:
                 differenceStr = string.Empty;
                 break;
@@ -320,15 +330,15 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                     formatted = $"{formatted} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText($"{differenceString}")}";
                 }
                 bonuses = $"{bonuses}{formatted}";
-                if (!orderedBonuses.IsLastIndex(i)) {
+                // if (!orderedBonuses.IsLastIndex(i)) {
                     bonuses = $"{bonuses}\n";
-                }
+                // }
             } else {
                 bonuses = bonuses.TrimEnd();
             }
         }
         RuinarchListPool<UPGRADE_BONUS>.Release(orderedBonuses);
-        return bonuses;
+        return bonuses.TrimEnd();
     }
     private string GetAdditionalBonusesLevelUpString(SkillData spellData, PlayerSkillData p_data, int p_level) {
         int nextLevel = p_level + 1;

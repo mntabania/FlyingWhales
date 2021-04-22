@@ -21,6 +21,7 @@ public static class ChanceData {
         {CHANCE_TYPE.Flirt_On_Sight_Base_Chance, 1},
         {CHANCE_TYPE.Vampire_Lord_Chance, 10},
         {CHANCE_TYPE.Host_Social_Party, 10},
+        {CHANCE_TYPE.Demonic_Decor_On_Corrupt, 15},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {

@@ -60,4 +60,10 @@ public class MinionPlayerSkill : SkillData {
         base.FinishCooldown();
         SetCooldown(-1);
     }
+    protected override void PerTickCooldown() {
+        base.PerTickCooldown();
+        if (currentCooldownTick < cooldown) {
+            Messenger.Broadcast(PlayerSkillSignals.PER_TICK_DEMON_COOLDOWN, this);
+        }
+    }
 }

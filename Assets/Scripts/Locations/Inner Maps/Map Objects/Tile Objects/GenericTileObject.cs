@@ -342,7 +342,7 @@ public class GenericTileObject : TileObject {
                 for (int k = 0; k < tile.neighbourList.Count; k++) {
                     LocationGridTile neighbour = tile.neighbourList[k];
                     if (neighbour.structure is Cave || neighbour.structure is Ocean) { continue; } //do not corrupt cave tiles.
-                    neighbour.corruptionComponent.CorruptTile();
+                    neighbour.corruptionComponent.CorruptTileAndRandomlyGenerateDemonicObject();
                 }
             }
         }

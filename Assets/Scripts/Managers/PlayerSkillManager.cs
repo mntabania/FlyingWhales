@@ -554,7 +554,7 @@ public class PlayerSkillManager : MonoBehaviour {
         if (afflictionsNameSkillTypeDictionary.ContainsKey(p_traitName)) {
             return afflictionsNameSkillTypeDictionary[p_traitName];
         }
-        Debug.LogWarning($"No affliction skill type with name {p_traitName}");
+        // Debug.LogWarning($"No affliction skill type with name {p_traitName}");
         return PLAYER_SKILL_TYPE.NONE;
     }
     #endregion

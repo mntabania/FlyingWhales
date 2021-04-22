@@ -275,7 +275,7 @@ public class SkillData : IPlayerSkill {
             }
         }
     }
-    private void PerTickCooldown() {
+    protected virtual void PerTickCooldown() {
         Profiler.BeginSample($"{name} Per Tick Cooldown");
         currentCooldownTick++;
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
