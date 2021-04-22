@@ -61,10 +61,10 @@ public class SkillData : IPlayerSkill {
     public void LevelUp() {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
         currentLevel = Mathf.Clamp(++currentLevel, 0, MAX_SPELL_LEVEL);
-        SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
-        SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
+        SetManaCost(SpellUtilities.GetModifiedSpellCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()));
+        SetMaxCharges(SpellUtilities.GetModifiedSpellCost(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification()));
         SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
-        SetCooldown(playerSkillData.skillUpgradeData.GetCoolDownPerLevel(currentLevel));
+        SetCooldown(SpellUtilities.GetModifiedSpellCost(playerSkillData.GetCoolDownBaseOnLevel(currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification()));
         SetCharges(maxCharges);
         FinishCooldown();
         if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {

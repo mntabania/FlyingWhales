@@ -213,7 +213,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 formatted = $"{formatted}{p_data.skillUpgradeData.GetSkillMovementSpeedPerLevel(p_level).ToString()}";
                 break;
             case UPGRADE_BONUS.Cooldown:
-                int cooldownInTicks = p_data.GetCoolDownBaseOnLevel(p_level);
+                int cooldownInTicks = SpellUtilities.GetModifiedSpellCost(p_data.GetCoolDownBaseOnLevel(p_level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification()); 
                 if (cooldownInTicks == 0) {
                     formatted = $"{formatted}Instant";
                 } else if (cooldownInTicks == -1) {
@@ -290,9 +290,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 }
                 break;
             case UPGRADE_BONUS.Cooldown:
-                intCurrentValue = p_data.GetCoolDownBaseOnLevel(p_level);
-                intNextValue = p_data.GetCoolDownBaseOnLevel(p_nextLevel);
-                if (intCurrentValue != intNextValue) {
+            intCurrentValue = SpellUtilities.GetModifiedSpellCost(p_data.GetCoolDownBaseOnLevel(p_level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
+            intNextValue = SpellUtilities.GetModifiedSpellCost(p_data.GetCoolDownBaseOnLevel(p_nextLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
+            if (intCurrentValue != intNextValue) {
                     if (intNextValue == 0) {
                         differenceStr = "Instant";
                     } else if (intNextValue == -1) {
@@ -439,8 +439,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             currencies = $"{currencies}{notCombinedChargesText}    ";
         }
 
-        int currentManaCost = skillData.manaCost;
-        int nextLevelManaCost = playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel + 1);
+        int currentManaCost = SpellUtilities.GetModifiedSpellCost(playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+        int nextLevelManaCost = SpellUtilities.GetModifiedSpellCost(playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel + 1), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
         if (currentManaCost != nextLevelManaCost) {
             currencies = $"{currencies}{currentManaCost} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText(nextLevelManaCost.ToString())} {UtilityScripts.Utilities.ManaIcon()}";
         }

@@ -581,13 +581,13 @@ public class PlayerSkillComponent {
             p_skillData.SetMaxCharges(1);
             p_skillData.SetCharges(1);
         } else {
-            p_skillData.SetMaxCharges(p_playerSkillData.GetMaxChargesBaseOnLevel(p_skillData.currentLevel));
+            p_skillData.SetMaxCharges(SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetMaxChargesBaseOnLevel(p_skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification()));
             p_skillData.SetCharges(p_skillData.maxCharges);
         }
-        p_skillData.SetCooldown(p_playerSkillData.GetCoolDownBaseOnLevel(p_skillData.currentLevel));
+        p_skillData.SetCooldown(SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetCoolDownBaseOnLevel(p_skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification()));
         p_skillData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(p_skillData.type));
         p_skillData.SetUnlockCost(p_playerSkillData.unlockCost);
-        p_skillData.SetManaCost(p_playerSkillData.GetManaCostBaseOnLevel(p_skillData.currentLevel));
+        p_skillData.SetManaCost(SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetManaCostBaseOnLevel(p_skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()));
         p_skillData.SetThreat(p_playerSkillData.threat);
         p_skillData.SetThreatPerHour(p_playerSkillData.threatPerHour);
     }

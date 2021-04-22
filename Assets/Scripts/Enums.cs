@@ -1188,7 +1188,7 @@ public enum SKILL_COOLDOWN_SPEED {
     None, Half, Normal, Double 
 }
 public enum SKILL_COST_AMOUNT {
-    None, Half, Normal, Double 
+    None, Half, Normal, 
 }
 public enum SKILL_CHARGE_AMOUNT {
     Unlimited, Half, Normal, Double 
