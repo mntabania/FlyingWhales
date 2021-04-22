@@ -24,7 +24,9 @@ public class PlayerSkillData : ScriptableObject {
     public int baseLoadoutWeight;
     public RESISTANCE resistanceType;
     public PLAYER_ARCHETYPE archetypeWeightedBonus;
-
+    [Tooltip("If true, this power will show up in the release ability menu even if it is already learned by the player")]
+    public bool canBeReleasedEvenIfLearned;
+    
     [Header("Context Menu")]
     public Sprite contextMenuIcon;
     public int contextMenuColumn;

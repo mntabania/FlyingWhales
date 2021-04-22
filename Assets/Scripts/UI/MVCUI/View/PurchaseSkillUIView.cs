@@ -73,6 +73,9 @@ public class PurchaseSkillUIView : MVCUIView {
 			UIModel.timerReleaseAbility.RefreshName();
 		}
 	}
+	public void SetCurrentChaoticEnergyText(int p_amount) {
+		UIModel.lblChaoticEnergy.text = $"Current Chaotic Energy: {UtilityScripts.Utilities.ChaoticEnergyIcon()}{p_amount.ToString()}";
+	}
 	#endregion
 
 	#region Subscribe/Unsubscribe for IListener

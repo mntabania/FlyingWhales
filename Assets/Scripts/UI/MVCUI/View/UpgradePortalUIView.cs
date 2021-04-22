@@ -115,6 +115,9 @@ public class UpgradePortalUIView : MVCUIView {
     public void SetChaoticEnergyUpgradeGOState(bool p_state) {
         UIModel.goChaoticEnergyCapacity.SetActive(p_state);
     }
+    public void SetCurrentSpiritEnergyText(int p_amount) {
+        UIModel.lblSpiritEnergy.text = $"Current Spirit Energy: {UtilityScripts.Utilities.SpiritEnergyIcon()}{p_amount.ToString()}";
+    }
     #endregion
 
     #region Animations
