@@ -7,18 +7,34 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
     [SerializeField] private TextMeshProUGUI lblName;
     [SerializeField] private Button btnMain;
     [SerializeField] private Button btnRemove;
+    [SerializeField] private HoverHandler hoverHandler;
+
+    private System.Action _onHoverOverAction;
+    private System.Action _onHoverOutAction;
     
     public void SetBookmark(IBookmarkable p_bookmarkable) {
-        lblName.text = p_bookmarkable.bookmarkName;
+        SetBookmarkItemText(p_bookmarkable.bookmarkName);
         p_bookmarkable.bookmarkEventDispatcher.Subscribe(this, p_bookmarkable);
         btnMain.onClick.AddListener(p_bookmarkable.OnSelectBookmark);
         btnRemove.onClick.AddListener(() => OnClickRemoveBookmark(p_bookmarkable));
         btnRemove.gameObject.SetActive(p_bookmarkable.bookmarkType == BOOKMARK_TYPE.Text_With_Cancel);
+        _onHoverOverAction = p_bookmarkable.OnHoverOverBookmarkItem;
+        _onHoverOutAction = p_bookmarkable.OnHoverOutBookmarkItem;
+        hoverHandler.AddOnHoverOverAction(OnHoverOverBookmark);
+        hoverHandler.AddOnHoverOutAction(OnHoverOutBookmark);
     }
     public override void Reset() {
         base.Reset();
+        _onHoverOverAction = null;
+        _onHoverOutAction = null;
+        hoverHandler.RemoveOnHoverOutAction(OnHoverOverBookmark);
+        hoverHandler.RemoveOnHoverOverAction(OnHoverOutBookmark);
         btnMain.onClick.RemoveAllListeners();
         btnRemove.onClick.RemoveAllListeners();
+    }
+    public void SetHoverActions(System.Action p_onHoverOverAction, System.Action p_onHoverOutAction) {
+        _onHoverOverAction = p_onHoverOverAction;
+        _onHoverOutAction = p_onHoverOutAction;
     }
     private void OnClickRemoveBookmark(IBookmarkable p_bookmarkable) {
         p_bookmarkable.RemoveBookmark();
@@ -43,6 +59,16 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
         }
     }
     public void OnBookmarkChangedName(IBookmarkable p_bookmarkable) {
-        lblName.text = p_bookmarkable.bookmarkName;
+        SetBookmarkItemText(p_bookmarkable.bookmarkName);
+    }
+
+    private void SetBookmarkItemText(string p_text) {
+        lblName.text = p_text;
+    }
+    private void OnHoverOverBookmark() {
+        _onHoverOverAction?.Invoke();
+    }
+    private void OnHoverOutBookmark() {
+        _onHoverOutAction?.Invoke();
     }
 }

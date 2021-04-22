@@ -25,12 +25,12 @@ public class SkillTreeSelector : MonoBehaviour {
             playerLoadoutUI[i].Initialize();
             playerLoadoutUI[i].SetMoreLoadoutOptions(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions, false);
         }
-        if (WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetype != PLAYER_ARCHETYPE.Normal) {
+        if (WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetypes != null) {
             //world settings has a forced archetype, disable all other archetypes except forced archetype
             for (int i = 0; i < archetypeToggles.Length; i++) {
                 Toggle toggle = archetypeToggles[i];
                 PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
-                if (loadoutUI.loadout.archetype != WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetype) {
+                if (!WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetypes.Contains(loadoutUI.loadout.archetype)) {
                     toggle.gameObject.SetActive(false);
                     loadoutUI.gameObject.SetActive(false);
                     _horizontalScrollSnap.RemoveChild(loadoutUI.transform.GetSiblingIndex(), out var removed);

@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 namespace Quests.Steps {
-    public class ProtectHumansStep : QuestStep, AffattWinConditionTracker.Listener {
+    public class ProtectHumansStep : QuestStep {
         private readonly Func<List<Character>, int, string> _descriptionGetter;
 
         public ProtectHumansStep(Func<List<Character>, int, string> descriptionGetter) : base(string.Empty) {
             _descriptionGetter = descriptionGetter;
         }
 
-        protected override void SubscribeListeners() {
-            QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().Subscribe(this);
-        }
-        protected override void UnSubscribeListeners() {
-            QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().Unsubscribe(this);
-        }
+        protected override void SubscribeListeners() { }
+        protected override void UnSubscribeListeners() { }
         private void CheckForCompletion() {
-            if (QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().humans.Count < AffattWinConditionTracker.MinimumHumans) {
+            if (QuestManager.Instance.GetWinConditionTracker<HumansSurviveAndElvesWipedOutWinConditionTracker>().humans.Count < HumansSurviveAndElvesWipedOutWinConditionTracker.MinimumHumans) {
                 FailStep();
             }
         }
@@ -37,8 +33,8 @@ namespace Quests.Steps {
         #region Description
         protected override string GetStepDescription() {
             if (_descriptionGetter != null) {
-                return _descriptionGetter.Invoke(QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().humans, 
-                    QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().totalHumansToProtect);
+                return _descriptionGetter.Invoke(QuestManager.Instance.GetWinConditionTracker<HumansSurviveAndElvesWipedOutWinConditionTracker>().humans, 
+                    QuestManager.Instance.GetWinConditionTracker<HumansSurviveAndElvesWipedOutWinConditionTracker>().totalHumansToProtect);
             }
             return base.GetStepDescription();
         }

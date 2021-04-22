@@ -30,8 +30,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7572147956438921713}
-  m_RootOrder: 2
+  m_Father: {fileID: 2423933211937359592}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 2264857275298465849}
   - component: {fileID: 8511119287902750258}
   - component: {fileID: 1349870091036904229}
+  - component: {fileID: 8295217290797107165}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -148,7 +149,8 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 8266243953379497229}
   m_Father: {fileID: 7572147956438921713}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -237,6 +239,28 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8295217290797107165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4920504897377516576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &7572147956438921712
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,7 +272,7 @@ GameObject:
   - component: {fileID: 7572147956438921713}
   - component: {fileID: 5565422450568841589}
   m_Layer: 5
-  m_Name: BookmarkTextUIItem
+  m_Name: Bookmark_Item_Text_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -267,7 +291,6 @@ RectTransform:
   m_Children:
   - {fileID: 2423933211937359592}
   - {fileID: 7572147957243166602}
-  - {fileID: 8266243953379497229}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -292,6 +315,7 @@ MonoBehaviour:
   lblName: {fileID: 7572147957243166603}
   btnMain: {fileID: 1349870091036904229}
   btnRemove: {fileID: 9113909443806329406}
+  hoverHandler: {fileID: 8295217290797107165}
 --- !u!1 &7572147957243166601
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,6 +327,7 @@ GameObject:
   - component: {fileID: 7572147957243166602}
   - component: {fileID: 7572147957243166604}
   - component: {fileID: 7572147957243166603}
+  - component: {fileID: 4798578626463263420}
   m_Layer: 5
   m_Name: Name
   m_TagString: Untagged
@@ -426,3 +451,17 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4798578626463263420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7572147957243166601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
