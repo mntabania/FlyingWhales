@@ -52,7 +52,7 @@ MonoBehaviour:
     upgradeCosts: 0a000000
     manacostPerLevel: 
     chargesPerLevel: 01000000
-    bonuses: 0e000000
+    bonuses: 
     additionalDamagePerLevel: 
     additionalPiercePerLevel: []
     additionalHpPercentagePerLevel: []

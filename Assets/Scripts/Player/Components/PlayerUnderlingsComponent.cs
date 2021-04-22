@@ -7,16 +7,18 @@ public class PlayerUnderlingsComponent {
     //public List<Summon> summons { get; private set; }
     public Dictionary<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> monsterUnderlingCharges { get; private set; }
     public Dictionary<MINION_TYPE, MonsterAndDemonUnderlingCharges> demonUnderlingCharges { get; private set; }
-
+    public readonly int cooldown = GameManager.Instance.GetTicksBasedOnHour(4);
     public PlayerUnderlingsComponent() {
         //minions = new List<Minion>();
         //summons = new List<Summon>();
+        cooldown = GameManager.Instance.GetTicksBasedOnHour(4);
         monsterUnderlingCharges = new Dictionary<SUMMON_TYPE, MonsterAndDemonUnderlingCharges>();
         demonUnderlingCharges = new Dictionary<MINION_TYPE, MonsterAndDemonUnderlingCharges>();
     }
     public PlayerUnderlingsComponent(SaveDataPlayerUnderlingsComponent data) {
         //minions = new List<Minion>();
         //summons = new List<Summon>();
+        cooldown = GameManager.Instance.GetTicksBasedOnHour(4);
         monsterUnderlingCharges = data.monsterUnderlingCharges;
         demonUnderlingCharges = data.demonUnderlingCharges;
     }
@@ -249,23 +251,38 @@ public class MonsterAndDemonUnderlingCharges {
     public string characterClassName;
     public bool isDemon;
     public bool isReplenishing;
-    public GameDate replenishDate;
+    //public GameDate replenishDate;
     public int chargesToReplenish;
 
+    public int currentCooldownTick;
+
     public bool hasMaxCharge => maxCharges > 0;
+    public int cooldown => PlayerManager.Instance.player.underlingsComponent.cooldown;
 
     #region Monster Replenish
     public void StartMonsterReplenish() {
         if (!isReplenishing) {
             isReplenishing = true;
-            replenishDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
-            SchedulingManager.Instance.AddEntry(replenishDate, DoneMonsterReplenish, null);
+            currentCooldownTick = 0;
+            Messenger.AddListener(Signals.TICK_STARTED, PerTickReplenish);
+            Messenger.Broadcast(PlayerSkillSignals.START_MONSTER_UNDERLING_COOLDOWN, this);
+            //replenishDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+            //SchedulingManager.Instance.AddEntry(replenishDate, DoneMonsterReplenish, null);
+        }
+    }
+    private void PerTickReplenish() {
+        currentCooldownTick++;
+        Messenger.Broadcast(PlayerSkillSignals.PER_TICK_MONSTER_UNDERLING_COOLDOWN, this);
+        if (currentCooldownTick >= cooldown) {
+            DoneMonsterReplenish();
         }
     }
     private void DoneMonsterReplenish() {
         if (isReplenishing) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickReplenish);
             isReplenishing = false;
             ReplenishCharges();
+            Messenger.Broadcast(PlayerSkillSignals.STOP_MONSTER_UNDERLING_COOLDOWN, this);
         }
     }
     private void ReplenishCharges() {
@@ -278,7 +295,8 @@ public class MonsterAndDemonUnderlingCharges {
     #region Loading
     public void LoadMonsterReplenish() {
         if (isReplenishing) {
-            SchedulingManager.Instance.AddEntry(replenishDate, DoneMonsterReplenish, null);
+            //Messenger.Broadcast(PlayerSkillSignals.START_MONSTER_UNDERLING_COOLDOWN, this);
+            Messenger.AddListener(Signals.TICK_STARTED, PerTickReplenish);
         }
     }
     #endregion

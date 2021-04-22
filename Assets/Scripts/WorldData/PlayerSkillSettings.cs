@@ -52,8 +52,10 @@ public class PlayerSkillSettings {
                 return 0.5f;
             case SKILL_COST_AMOUNT.Normal:
                 return 1f;
+            /*
             case SKILL_COST_AMOUNT.Double:
-                return 2f;
+                return 2f; //remove for now
+            */
             default:
                 throw new ArgumentOutOfRangeException();
         }

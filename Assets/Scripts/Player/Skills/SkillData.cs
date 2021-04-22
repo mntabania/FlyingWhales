@@ -37,9 +37,9 @@ public class SkillData : IPlayerSkill {
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
     public virtual PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.NONE; } }
-    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, 1f);
-    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, 1f);
-    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, 1f);
+    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
     public int threat => 0;// SpellUtilities.GetModifiedSpellCost(baseThreat, 1f); comment out for now so no threat will be passed
 
     /// <summary>
@@ -61,10 +61,10 @@ public class SkillData : IPlayerSkill {
     public void LevelUp() {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
         currentLevel = Mathf.Clamp(++currentLevel, 0, MAX_SPELL_LEVEL);
-        SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
-        SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
+        SetManaCost(SpellUtilities.GetModifiedSpellCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()));
+        SetMaxCharges(SpellUtilities.GetModifiedSpellCost(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification()));
         SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
-        SetCooldown(playerSkillData.skillUpgradeData.GetCoolDownPerLevel(currentLevel));
+        SetCooldown(SpellUtilities.GetModifiedSpellCost(playerSkillData.GetCoolDownBaseOnLevel(currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification()));
         SetCharges(maxCharges);
         FinishCooldown();
         if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
@@ -275,7 +275,7 @@ public class SkillData : IPlayerSkill {
             }
         }
     }
-    private void PerTickCooldown() {
+    protected virtual void PerTickCooldown() {
         Profiler.BeginSample($"{name} Per Tick Cooldown");
         currentCooldownTick++;
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");

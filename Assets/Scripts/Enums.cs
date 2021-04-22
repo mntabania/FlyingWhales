@@ -1188,7 +1188,7 @@ public enum SKILL_COOLDOWN_SPEED {
     None, Half, Normal, Double 
 }
 public enum SKILL_COST_AMOUNT {
-    None, Half, Normal, Double 
+    None, Half, Normal, 
 }
 public enum SKILL_CHARGE_AMOUNT {
     Unlimited, Half, Normal, Double 
@@ -1275,5 +1275,6 @@ public enum CHANCE_TYPE {
     Flirt_Friend_Become_Affair_Chance,
     Flirt_On_Sight_Base_Chance,
     Vampire_Lord_Chance,
-    Host_Social_Party
+    Host_Social_Party,
+    Demonic_Decor_On_Corrupt
 }

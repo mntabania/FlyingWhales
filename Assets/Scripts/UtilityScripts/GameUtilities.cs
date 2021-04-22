@@ -36,6 +36,8 @@ namespace UtilityScripts {
 
         public static BIOMES[] customWorldBiomeChoices = new[] {BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.DESERT, BIOMES.SNOW};
         public static FACTION_TYPE[] customWorldFactionTypeChoices = new[] {FACTION_TYPE.Human_Empire, FACTION_TYPE.Elven_Kingdom, FACTION_TYPE.Demon_Cult, FACTION_TYPE.Vampire_Clan, FACTION_TYPE.Lycan_Clan};
+        public static TILE_OBJECT_TYPE[] corruptionTileObjectChoices = new[]
+            {TILE_OBJECT_TYPE.CORRUPTED_TENDRIL, TILE_OBJECT_TYPE.CORRUPTED_SPIKE, TILE_OBJECT_TYPE.DEMON_CIRCLE, TILE_OBJECT_TYPE.SPAWNING_PIT, TILE_OBJECT_TYPE.SIGIL, TILE_OBJECT_TYPE.TREE_OBJECT};
         
         public static string GetNormalizedSingularRace(RACE race) {
             switch (race) {

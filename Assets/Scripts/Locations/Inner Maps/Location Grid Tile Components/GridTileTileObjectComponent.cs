@@ -227,6 +227,11 @@ namespace Inner_Maps {
             }
         }
         public IEnumerator TriggerLandmine(Character triggeredBy) {
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Landmine", "trap_activated", null, LOG_TAG.Player);
+            log.AddToFillers(triggeredBy, triggeredBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
+            
             GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Landmine_Explosion);
             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
             yield return new WaitForSeconds(0.5f);
@@ -312,6 +317,10 @@ namespace Inner_Maps {
             if (frozen != null) {
                 frozen.SetIsPlayerSource(isFreezingTrapPlayerSource);
             }
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Freezing Trap", "trap_activated", null, LOG_TAG.Player);
+            log.AddToFillers(triggeredBy, triggeredBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
         }
         #endregion
 
@@ -343,6 +352,10 @@ namespace Inner_Maps {
             if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
                 Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
             }
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Snare Trap", "trap_activated", null, LOG_TAG.Player);
+            log.AddToFillers(triggeredBy, triggeredBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
         }
         #endregion
 

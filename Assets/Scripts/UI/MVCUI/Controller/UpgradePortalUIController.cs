@@ -57,7 +57,8 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
             
             int newMax = EditableValuesManager.Instance.GetMaxChaoticEnergyPerPortalLevel(portal.level + 1);
             m_upgradePortalUIView.SetChaoticEnergyUpgradeText(newMax);
-            m_upgradePortalUIView.SetChaoticEnergyUpgradeGOState(true);
+            // m_upgradePortalUIView.SetChaoticEnergyUpgradeGOState(true);
+            m_upgradePortalUIView.SetChaoticEnergyUpgradeGOState(false);
         }
         m_upgradePortalUIView.PlayShowAnimation();
     }

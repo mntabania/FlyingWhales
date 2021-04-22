@@ -60,7 +60,7 @@ namespace Inner_Maps {
         
         [Header("Corrupted Tiles")] 
         public TileBase corruptedTile;
-        
+
         [Header("Demon Tiles")] 
         public TileBase demonicWallTile;
         

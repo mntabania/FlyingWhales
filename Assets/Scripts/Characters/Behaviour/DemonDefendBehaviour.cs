@@ -22,6 +22,25 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
             DemonDefendPartyQuest quest = party.currentQuest as DemonDefendPartyQuest;
             LocationStructure targetStructure = quest.targetStructure;
             Area targetArea = quest.targetArea;
+
+            Character memberInCombat = party.GetMemberInCombatExcept(character);
+             if (memberInCombat != null) {
+                log += $"\n-{memberInCombat.name} is in combat, will try to combat also";
+                bool hasFought = false;
+                CombatState combatState = memberInCombat.stateComponent.currentState as CombatState;
+                if (combatState.currentClosestHostile != null) {
+                    if (IsPOIInPlayerSettlementOrCorruptedTile(combatState.currentClosestHostile) || IsPOIInPlayerSettlementOrCorruptedTile(memberInCombat)) {
+                        CombatData combatData = memberInCombat.combatComponent.GetCombatData(combatState.currentClosestHostile);
+                        character.combatComponent.Fight(combatState.currentClosestHostile, combatData.reasonForCombat, combatData.connectedAction, combatData.isLethal);
+                        hasFought = true;
+                    }
+                }
+                if (hasFought) {
+                    producedJob = null;
+                    return true;
+                }
+            }
+
             if (targetStructure != null && !targetStructure.hasBeenDestroyed) {
                 if(character.currentStructure != targetStructure) {
                     LocationGridTile tile = targetStructure.GetRandomPassableTile();
@@ -56,6 +75,15 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
             producedJob.SetIsThisAPartyJob(true);
         }
         return hasJob;
+    }
+    private bool IsPOIInPlayerSettlementOrCorruptedTile(IPointOfInterest p_poi) {
+        LocationGridTile gridTile = p_poi.gridTileLocation;
+        if (gridTile != null) {
+            BaseSettlement settlement;
+            gridTile.IsPartOfSettlement(out settlement);
+            return settlement == PlayerManager.Instance.player.playerSettlement || gridTile.corruptionComponent.isCorrupted;
+        }
+        return false;
     }
     private Character GetFirstHostileIntruderOf(Character actor, LocationStructure p_structure) {
         for (int i = 0; i < p_structure.charactersHere.Count; i++) {

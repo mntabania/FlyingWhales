@@ -188,7 +188,8 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAGUE_POINTS_ADJUSTED, OnPlaguePointsAdjusted);
-        
+        Messenger.AddListener(PlayerSignals.CHAOS_ORB_COLLECTED, OnSpiritEnergyAdjustedByOne);
+
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
 #if UNITY_EDITOR
@@ -335,22 +336,25 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     #endregion
 
-//    private void UpdateRegionNameState() {
-//        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-//            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
-//            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
-//            regionNameTopMenuText.text = location.name;
-//            regionNameTopMenuGO.SetActive(true);
-//#if UNITY_EDITOR || DEVELOPMENT_BUILD
-//            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
-//            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
-//#endif
-//        } else {
-//            regionNameTopMenuGO.SetActive(false);
-//        }
-//    }
+    //    private void UpdateRegionNameState() {
+    //        if (InnerMapManager.Instance.isAnInnerMapShowing) {
+    //            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
+    //            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
+    //            regionNameTopMenuText.text = location.name;
+    //            regionNameTopMenuGO.SetActive(true);
+    //#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    //            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
+    //            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
+    //#endif
+    //        } else {
+    //            regionNameTopMenuGO.SetActive(false);
+    //        }
+    //    }
 
     #region SpiritEnergy
+    private void OnSpiritEnergyAdjustedByOne() { //this one is attached to chaos orb gain
+        PlayerManager.Instance.player.AdjustSpiritEnergy(1);
+    }
     private void OnSpiritEnergyAdjusted(int adjustedAmount, int spiritEnergy) {
         if (adjustedAmount != 0) {
             UpdateSpiritEnergy();
