@@ -454,10 +454,24 @@ public class CombatState : CharacterState {
             //When attacking, a Mastered Lycanthrope will transform to werewolf first
             if (stateComponent.owner.isLycanthrope && stateComponent.owner.lycanData.isMaster) {
                 if (!stateComponent.owner.isInWerewolfForm) {
-                    if (!stateComponent.owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf)) {
+                    if (!stateComponent.owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf, currentClosestHostile as Character)) {
                         if(stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner)) {
                             stateComponent.owner.combatComponent.SetWillProcessCombat(true);
                             return;
+                        }
+                    } else {
+                        bool shouldProcess = true;
+                        string log = string.Empty;
+                        SetClosestHostileProcessing(ref shouldProcess, ref log);
+                        if (currentClosestHostile is Character hostileCharacter) {
+                            CombatData data = stateComponent.owner.combatComponent.GetCombatData(hostileCharacter);
+                            if (data != null && data.connectedAction != null && data.connectedAction.associatedJobType == JOB_TYPE.LYCAN_HUNT_PREY) {
+                                //If hostile character is the target of lycan hunt, always transform to wolf when attacking it, do not check criminilaty of werewolf anymore
+                                if (stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner)) {
+                                    stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+                                    return;
+                                }
+                            }
                         }
                     }
                 }
@@ -540,6 +554,48 @@ public class CombatState : CharacterState {
     //    DoCombatBehavior();
     //}
     //Returns true if there is a hostile left, otherwise, returns false
+    private void SetClosestHostileProcessing(ref bool shouldStillProcessAfterwards, ref string log) {
+        shouldStillProcessAfterwards = true;
+        if (forcedTarget != null) {
+            log = $"{log}\n{stateComponent.owner.name} has a forced target. Setting {forcedTarget.name} as target.";
+            SetClosestHostile(forcedTarget);
+            SetForcedTarget(null);
+        } else if (currentClosestHostile != null && !stateComponent.owner.combatComponent.IsHostileInRange(currentClosestHostile)) {
+            log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
+            SetClosestHostile();
+        } else if (currentClosestHostile != null && currentClosestHostile.isDead) {
+            log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
+            stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
+            SetClosestHostile();
+        } else if (currentClosestHostile != null && (!currentClosestHostile.mapObjectVisual || !currentClosestHostile.mapObjectVisual.gameObject)) {
+            log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
+            stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
+            SetClosestHostile();
+        } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter && targetCharacter.combatComponent.isInCombat &&
+                (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
+            if (stateComponent.owner.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
+                log = $"{log}\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
+                stateComponent.owner.combatComponent.RemoveHostileInRange(targetCharacter, false);
+                SetClosestHostile();
+            } else {
+                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
+                SetClosestHostilePriorityNotFleeing();
+            }
+        } else if (currentClosestHostile == null) {
+            log = $"{log}\nNo current closest hostile, setting one...";
+            SetClosestHostile();
+        } else {
+            log = $"{log}\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
+            IPointOfInterest newClosestHostile = stateComponent.owner.combatComponent.GetNearestValidHostile();
+            if (newClosestHostile != null && currentClosestHostile != newClosestHostile) {
+                SetClosestHostile(newClosestHostile);
+            } else if (stateComponent.owner.marker && stateComponent.owner.marker.isMoving && currentClosestHostile != null && stateComponent.owner.marker.targetPOI == currentClosestHostile) {
+                log = $"{log}\nAlready in pursuit of current closest hostile: {currentClosestHostile.name}";
+                stateComponent.owner.logComponent.PrintLogIfActive(log);
+                shouldStillProcessAfterwards = false;
+            }
+        }
+    }
     private void DoCombatBehavior() {
         if(stateComponent.currentState != this) {
             return;
@@ -555,44 +611,11 @@ public class CombatState : CharacterState {
             } else if (!stateComponent.owner.marker) {
                 log = $"{log}\n-Has no marker!";
             }
-            if (forcedTarget != null) {
-                log = $"{log}\n{stateComponent.owner.name} has a forced target. Setting {forcedTarget.name} as target.";
-                SetClosestHostile(forcedTarget);
-                SetForcedTarget(null);
-            } else if (currentClosestHostile != null && !stateComponent.owner.combatComponent.IsHostileInRange(currentClosestHostile)) {
-                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
-                SetClosestHostile();
-            } else if (currentClosestHostile != null && currentClosestHostile.isDead) {
-                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
-                stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
-                SetClosestHostile();
-            } else if (currentClosestHostile != null && (!currentClosestHostile.mapObjectVisual || !currentClosestHostile.mapObjectVisual.gameObject)) {
-                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
-                stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
-                SetClosestHostile();
-            } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter && targetCharacter.combatComponent.isInCombat &&
-                    (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
-                if (stateComponent.owner.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
-                    log = $"{log}\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
-                    stateComponent.owner.combatComponent.RemoveHostileInRange(targetCharacter, false);
-                    SetClosestHostile();
-                } else {
-                    log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
-                    SetClosestHostilePriorityNotFleeing();
-                }
-            } else if (currentClosestHostile == null) {
-                log = $"{log}\nNo current closest hostile, setting one...";
-                SetClosestHostile();
-            } else {
-                log = $"{log}\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
-                IPointOfInterest newClosestHostile = stateComponent.owner.combatComponent.GetNearestValidHostile();
-                if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
-                    SetClosestHostile(newClosestHostile);
-                } else if (stateComponent.owner.marker && stateComponent.owner.marker.isMoving && currentClosestHostile != null && stateComponent.owner.marker.targetPOI == currentClosestHostile) {
-                    log = $"{log}\nAlready in pursuit of current closest hostile: {currentClosestHostile.name}";
-                    stateComponent.owner.logComponent.PrintLogIfActive(log);
-                    return;
-                }
+            bool shouldProcessAfterwards = true;
+            SetClosestHostileProcessing(ref shouldProcessAfterwards, ref log);
+            if (!shouldProcessAfterwards) {
+                stateComponent.owner.logComponent.PrintLogIfActive(log);
+                return;
             }
             if (currentClosestHostile == null) {
                 log = $"{log}\nNo more hostile characters, exiting combat state...";
