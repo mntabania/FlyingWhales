@@ -21,6 +21,7 @@ public class PurchaseSkillUIModel : MVCUIModel {
 	
 	public Image imgCooldown;
 	public GameObject goCover;
+	public RuinarchText lblChaoticEnergy;
 
 	[Header("Timer")] 
 	public GameObject goReleaseAbilityTimer;

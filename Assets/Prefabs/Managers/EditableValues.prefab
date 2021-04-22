@@ -64,9 +64,9 @@ MonoBehaviour:
   _chaosOrbExpulsionThreshold: 300
   _sortingOrdersInBetweenHexTileRows: 20
   currencyHoverData: {fileID: 11400000, guid: 4554e545483287347a940b31691f1945, type: 2}
-  _initialChaoticEnergy: 50
-  _revealInfoCharacterCost: 50
-  _revealInfoFactionCost: 50
+  _initialChaoticEnergy: 1000
+  _revealInfoCharacterCost: 15
+  _revealInfoFactionCost: 40
   _manaRegenPerHr: 100
   _manaRegenPerManapit: 20
   _additionalMaxManaPerPit: 250

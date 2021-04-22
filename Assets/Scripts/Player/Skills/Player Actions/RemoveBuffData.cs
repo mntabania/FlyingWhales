@@ -15,7 +15,12 @@ public class RemoveBuffData : PlayerAction {
     }
 
     #region Overrides
-    public override bool IsValid(IPlayerActionTarget target) {
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        base.ActivateAbility(targetPOI);
+        Messenger.Broadcast(PlayerSkillSignals.REMOVE_BUFF_ACTIVATED, targetPOI);
+    }
+
+	public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
             if (character.isDead) {
                 return false;

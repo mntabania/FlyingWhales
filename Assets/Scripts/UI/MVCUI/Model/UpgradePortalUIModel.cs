@@ -3,6 +3,7 @@ using Ruinarch.Custom_UI;
 using Ruinarch.MVCFramework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class UpgradePortalUIModel : MVCUIModel {
@@ -22,6 +23,7 @@ public class UpgradePortalUIModel : MVCUIModel {
     public CanvasGroup canvasGroupFrameGlow;
     public CanvasGroup canvasGroupFrame;
     public UIHoverPosition tooltipHoverPos;
+    [FormerlySerializedAs("lblChaoticEnergy")] public RuinarchText lblSpiritEnergy;
 
     [Header("Timer")] 
     public GameObject goUpgradePortalTimer;

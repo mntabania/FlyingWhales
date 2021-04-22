@@ -63,9 +63,10 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_playerSkillData.skill);
         titleText.SetText(skillData.name);
         descriptionText.SetTextAndReplaceWithIcons(skillData.description);
-        int charges =  SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetMaxChargesBaseOnLevel(skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
-        int manaCost = SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
-        int cooldown = SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetCoolDownBaseOnLevel(skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
+        UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
+        int charges = skillData.maxCharges;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+        int manaCost = skillData.manaCost;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+        int cooldown = skillData.cooldown;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
         //int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
 
         //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
@@ -82,6 +83,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(p_playerSkillData, 1)}";
     }
     private void UpdateData(SkillData skillData) {
+        // UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
         titleText.text = skillData.name;
         string fullDescription = skillData.description;
         int charges = skillData.charges;
@@ -213,7 +215,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 formatted = $"{formatted}{p_data.skillUpgradeData.GetSkillMovementSpeedPerLevel(p_level).ToString()}";
                 break;
             case UPGRADE_BONUS.Cooldown:
-                int cooldownInTicks = SpellUtilities.GetModifiedSpellCost(p_data.GetCoolDownBaseOnLevel(p_level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification()); 
+                int cooldownInTicks = p_data.GetCoolDownBaseOnLevel(p_level);
                 if (cooldownInTicks == 0) {
                     formatted = $"{formatted}Instant";
                 } else if (cooldownInTicks == -1) {
@@ -290,9 +292,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 }
                 break;
             case UPGRADE_BONUS.Cooldown:
-            intCurrentValue = SpellUtilities.GetModifiedSpellCost(p_data.GetCoolDownBaseOnLevel(p_level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
-            intNextValue = SpellUtilities.GetModifiedSpellCost(p_data.GetCoolDownBaseOnLevel(p_nextLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
-            if (intCurrentValue != intNextValue) {
+                intCurrentValue = p_data.GetCoolDownBaseOnLevel(p_level);
+                intNextValue = p_data.GetCoolDownBaseOnLevel(p_nextLevel);
+                if (intCurrentValue != intNextValue) {
                     if (intNextValue == 0) {
                         differenceStr = "Instant";
                     } else if (intNextValue == -1) {
@@ -433,14 +435,15 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         return currencies;
     }
     private string GetCurrencyLevelUpSummary(SkillData skillData, PlayerSkillData playerSkillData) {
+        UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
         string currencies = string.Empty;
         string notCombinedChargesText = skillData.displayOfCurrentChargesWithBonusChargesNotCombined;
         if (!string.IsNullOrEmpty(notCombinedChargesText)) {
             currencies = $"{currencies}{notCombinedChargesText}    ";
         }
 
-        int currentManaCost = SpellUtilities.GetModifiedSpellCost(playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
-        int nextLevelManaCost = SpellUtilities.GetModifiedSpellCost(playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel + 1), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+        int currentManaCost = skillData.manaCost;
+        int nextLevelManaCost = playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel + 1);
         if (currentManaCost != nextLevelManaCost) {
             currencies = $"{currencies}{currentManaCost} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText(nextLevelManaCost.ToString())} {UtilityScripts.Utilities.ManaIcon()}";
         }

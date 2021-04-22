@@ -31,6 +31,10 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     private void SubscribeListeners() {
         Messenger.AddListener(PlayerSignals.PLAYER_STARTED_PORTAL_UPGRADE, OnPlayerChosePortalUpgrade);
         Messenger.AddListener(PlayerSignals.PORTAL_UPGRADE_CANCELLED, OnPlayerCancelledPortalUpgrade);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
+    }
+    private void OnSpiritEnergyAdjusted(int p_amount, int p_spiritEnergy) {
+        m_upgradePortalUIView.SetCurrentSpiritEnergyText(PlayerManager.Instance.player.spiritEnergy);
     }
     public void InitializeAfterLoadoutSelected() {
         m_tooltipCancelUpgradePortal = LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "cancel_upgrade_portal");
@@ -67,6 +71,7 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     }
     public override void ShowUI() {
         base.ShowUI();
+        m_upgradePortalUIView.SetCurrentSpiritEnergyText(PlayerManager.Instance.player.spiritEnergy);
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         InputManager.Instance.SetAllHotkeysEnabledState(false);

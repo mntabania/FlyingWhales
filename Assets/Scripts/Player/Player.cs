@@ -52,6 +52,7 @@ public class Player : ILeader, IObjectManipulator {
     public string persistentID => string.Empty;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Player;
     public System.Type serializedData => typeof(SaveDataPlayer);
+    public int chaoticEnergy => plagueComponent.plaguePoints;
     #endregion
 
     public Player() {

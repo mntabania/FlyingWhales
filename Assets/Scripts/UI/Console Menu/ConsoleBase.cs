@@ -108,7 +108,8 @@ public class ConsoleBase : InfoUIBase {
             {"/enable_dig", EnableDigging},
             {"/bonus_charge", BonusCharges},
             {"/log_alive_villagers", LogAliveVillagers},
-            {"/kill_villagers", KillAllVillagers}
+            {"/kill_villagers", KillAllVillagers},
+            {"/adjust_se", AdjustSpiritEnergy}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1344,6 +1345,20 @@ public class ConsoleBase : InfoUIBase {
             AddErrorMessage($"Could not parse value {valueParameterStr} to an integer.");
         }
 
+    }
+    private void AdjustSpiritEnergy(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AdjustSpiritEnergy");
+            return;
+        }
+        string valueParameterStr = parameters[0];
+        if (Int32.TryParse(valueParameterStr, out var value)) {
+            PlayerManager.Instance.player.AdjustSpiritEnergy(value);
+            AddSuccessMessage($"Adjusted spirit energy by {value.ToString()}. New Spirit Energy is {PlayerManager.Instance.player.spiritEnergy.ToString()}");
+        } else {
+            AddErrorMessage($"Could not parse value {valueParameterStr} to an integer.");
+        }
     }
     private void RevealAll(string[] parameters) {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

@@ -98,7 +98,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     }
     private void OnPlayerFinishedSkillUnlock(PLAYER_SKILL_TYPE p_skill, int p_unlockCost) {
         m_portalUIView.ShowUnlockAbilityButtonAndHideTimer();
-        purchaseSkillUIController.OnFinishSkillUnlock();
+        // purchaseSkillUIController.OnFinishSkillUnlock();
     }
     private void OnPlayerCancelledSkillUnlock() {
         m_portalUIView.ShowUnlockAbilityButtonAndHideTimer();

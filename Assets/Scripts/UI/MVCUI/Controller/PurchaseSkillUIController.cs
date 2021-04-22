@@ -6,6 +6,7 @@ using System.Linq;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
 using Ruinarch;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IListener {
@@ -71,6 +72,10 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		Messenger.AddListener<PLAYER_SKILL_TYPE, int>(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, OnPlayerFinishedSkillUnlock);
 		Messenger.AddListener<SkillData, int>(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, OnPlayerChoseSkillToUnlock);
 		Messenger.AddListener(PlayerSignals.PLAYER_SKILL_UNLOCK_CANCELLED, OnPlayerCancelledSkillUnlock);
+		Messenger.AddListener<int, int>(PlayerSignals.PLAGUE_POINTS_ADJUSTED, OnPlaguePointsAdjusted);
+	}
+	private void OnPlaguePointsAdjusted(int p_amount, int p_plaguePoints) {
+		m_purchaseSkillUIView.SetCurrentChaoticEnergyText(PlayerManager.Instance.player.chaoticEnergy);
 	}
 	private void OnPlayerFinishedSkillUnlock(PLAYER_SKILL_TYPE p_skill, int p_unlockCost) {
 		OnFinishSkillUnlock();
@@ -125,7 +130,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		m_purchaseSkillUIView.SetTimerState(!PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell.IsFinished());
 	}
 	private void SpawnItems() {
-		if (m_weightedList.Count <= 0) {
+		if (m_weightedList.Count <= 0 && PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count <= 0) {
 			m_purchaseSkillUIView.HideSkills();
 			m_purchaseSkillUIView.DisableRerollButton();
 			m_purchaseSkillUIView.SetMessage("All Skills Unlocked");
@@ -145,19 +150,31 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 					PlayerManager.Instance.player.playerSkillComponent.AddCurrentPlayerSpellChoice(data.type);
 				}
 			}
-			
-			if (m_purchaseSkillUIView.UIModel.skillItems.Count <= 0) {
-				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
-					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
-					SkillData data = PlayerSkillManager.Instance.GetSkillData(skillType);
+			//instantiate missing items
+			int missingItems = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count - m_purchaseSkillUIView.UIModel.skillItems.Count;
+			if (missingItems > 0) {
+				for (int i = 0; i < missingItems; i++) {
 					PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_purchaseSkillUIView.GetSkillsParent(), true);
-					go.InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 					go.onButtonClick += OnSkillClick;
 					go.onHoverOver += OnHoverOverSkill;
 					go.onHoverOut += OnHoverOutSkill;
 					m_purchaseSkillUIView.UIModel.skillItems.Add(go);
 				}
-			} else {
+			}
+			
+			// if (m_purchaseSkillUIView.UIModel.skillItems.Count <= 0) {
+			// 	for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
+			// 		PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
+			// 		SkillData data = PlayerSkillManager.Instance.GetSkillData(skillType);
+			// 		PurchaseSkillItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_purchaseSkillUIView.GetSkillsParent(), true);
+			// 		go.InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
+			// 		go.onButtonClick += OnSkillClick;
+			// 		go.onHoverOver += OnHoverOverSkill;
+			// 		go.onHoverOut += OnHoverOutSkill;
+			// 		m_purchaseSkillUIView.UIModel.skillItems.Add(go);
+			// 	}
+			// } else {
+			Assert.IsTrue(m_purchaseSkillUIView.UIModel.skillItems.Count >= PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count);
 				for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count; i++) {
 					PLAYER_SKILL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices[i];
 					SkillData data = PlayerSkillManager.Instance.GetSkillData(skillType);
@@ -165,7 +182,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 					skillItem.gameObject.SetActive(true);
 					skillItem.InitItem(data.type, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 				}
-			}
+			// }
 			m_weightedList.Clear();
 		}
 	}
@@ -184,9 +201,10 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	private WeightedDictionary<SkillData> TryGetWeightedSpellChoicesList() {
 		WeightedDictionary<SkillData> weights = new WeightedDictionary<SkillData>();
 		foreach (KeyValuePair<PLAYER_SKILL_TYPE, SkillData> entry in PlayerSkillManager.Instance.allPlayerSkillsData) {
-			if (!entry.Value.isInUse) {
-				if (entry.Value.category == PLAYER_SKILL_CATEGORY.AFFLICTION || entry.Value.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION || entry.Value.category == PLAYER_SKILL_CATEGORY.SPELL || entry.Value.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
-					PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(entry.Value.type);
+			if (entry.Value.category == PLAYER_SKILL_CATEGORY.AFFLICTION || entry.Value.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION || entry.Value.category == PLAYER_SKILL_CATEGORY.SPELL || entry.Value.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
+				PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(entry.Value.type);
+				bool isLearned = entry.Value.isInUse;
+				if (!isLearned || playerSkillData.canBeReleasedEvenIfLearned) {
 					if (playerSkillData != null) {
 						if (m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, entry.Value.type) != -1) {
 							int processedWeight = playerSkillData.baseLoadoutWeight;
@@ -234,6 +252,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			m_purchaseSkillUIView.ShowSkills();
 			UpdateRerollBtn();
 			SpawnItems();
+			m_purchaseSkillUIView.SetCurrentChaoticEnergyText(PlayerManager.Instance.player.chaoticEnergy);
 			UIManager.Instance.Pause();
 			UIManager.Instance.SetSpeedTogglesState(false);
 			InputManager.Instance.SetAllHotkeysEnabledState(false);
@@ -244,27 +263,27 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	private void DisplayMenu() {
 		if (GetIsAvailable()) {
 			if (!m_isDrawn) {
-				UpdateRerollBtn();
+				// UpdateRerollBtn();
 				MakeListForAvailableSkills();
+				// SpawnItems();
+				// m_purchaseSkillUIView.ShowSkills();
+				// UpdateItems();
+			} 
+			if (m_weightedList.Count > 0 || PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count > 0) {
+				UpdateRerollBtn();
 				SpawnItems();
 				m_purchaseSkillUIView.ShowSkills();
-				UpdateItems();
+				UpdateItems();	
 			} else {
-				if (m_weightedList.Count > 0 || PlayerManager.Instance.player.playerSkillComponent.currentSpellChoices.Count > 0) {
-					UpdateRerollBtn();
-					m_purchaseSkillUIView.ShowSkills();
-					UpdateItems();	
-				} else {
-					m_purchaseSkillUIView.HideSkills();
-					m_purchaseSkillUIView.DisableRerollButton();
-					m_purchaseSkillUIView.SetMessage("All Skills Unlocked");
-				}
-				
+				m_purchaseSkillUIView.HideSkills();
+				m_purchaseSkillUIView.DisableRerollButton();
+				m_purchaseSkillUIView.SetMessage("All Skills Unlocked");
 			}
 		} else {
 			m_purchaseSkillUIView.HideSkills();
 			m_purchaseSkillUIView.SetMessage("New Abilities will be available after " + (GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased)) + " ticks");
 		}
+		m_purchaseSkillUIView.SetCurrentChaoticEnergyText(PlayerManager.Instance.player.chaoticEnergy);
 		UIManager.Instance.Pause();
 		UIManager.Instance.SetSpeedTogglesState(false);
 		InputManager.Instance.SetAllHotkeysEnabledState(false);
@@ -358,7 +377,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	public void OnFinishSkillUnlock() {
 		MakeListForAvailableSkills();
-		m_isDrawn = false;
+		// m_isDrawn = false;
 	}
 	#endregion
 

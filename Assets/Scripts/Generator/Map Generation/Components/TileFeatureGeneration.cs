@@ -116,6 +116,18 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}	
 		}
 	}
+	private bool IsAreaAtCorner(Area p_area) {
+		if (p_area.areaData.xCoordinate == 0) {
+			if (p_area.areaData.yCoordinate == 0 || p_area.areaData.yCoordinate == GridMap.Instance.height - 1) {
+				return true;
+			}
+		} else if (p_area.areaData.xCoordinate == GridMap.Instance.width - 1) {
+			if (p_area.areaData.yCoordinate == 0 || p_area.areaData.yCoordinate == GridMap.Instance.height - 1) {
+				return true;
+			}
+		}
+		return false;
+	}
 	private IEnumerator ComputeHabitabilityValues(MapGenerationData data) {
 		data.habitabilityValues = new int[data.width, data.height];
 		
@@ -124,7 +136,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			for (int y = 0; y < data.height; y++) {
 				Area area = GridMap.Instance.map[x, y];
 				int habitability = 0;
-				if (area.elevationComponent.IsFully(ELEVATION.PLAIN)) {
+				bool isAtCorner = IsAreaAtCorner(area);
+				bool isFullyPlain = area.elevationComponent.IsFully(ELEVATION.PLAIN);
+				if (isFullyPlain && !isAtCorner) {
 					int adjacentWaterTiles = 0;
 					int adjacentFlatTiles = 0;
 					int adjacentCaveTiles = 0;

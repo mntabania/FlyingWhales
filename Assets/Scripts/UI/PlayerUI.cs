@@ -360,7 +360,7 @@ public class PlayerUI : BaseMonoBehaviour {
             UpdateSpiritEnergy();
             ShowSpiritEnergyAdjustEffect(adjustedAmount);
             DoSpiritEnergyPunchEffect();
-            AudioManager.Instance.PlayParticleMagnet();
+            // AudioManager.Instance.PlayParticleMagnet();
         }
     }
     private void UpdateSpiritEnergy() {
@@ -386,7 +386,7 @@ public class PlayerUI : BaseMonoBehaviour {
             UpdateMana();
             ShowManaAdjustEffect(adjustedAmount);
             DoManaPunchEffect();
-            AudioManager.Instance.PlayParticleMagnet();    
+            // AudioManager.Instance.PlayParticleMagnet();    
         }
     }
     private void UpdateMana() {
@@ -1058,11 +1058,13 @@ public class PlayerUI : BaseMonoBehaviour {
     private Tweener _currentPlaguePointPunchTween;
     private void OnPlaguePointsAdjusted(int p_adjustedAmount, int p_totalAmount) {
         if (p_adjustedAmount != 0) {
-            OnSpiritEnergyAdjustedByOne();
+            if (p_adjustedAmount > 0) {
+                OnSpiritEnergyAdjustedByOne();
+            }
             UpdatePlaguePointsAmount(p_totalAmount);
             ShowPlaguePointsGainedEffect(p_adjustedAmount);
             DoPlaguePointPunchEffect();
-            AudioManager.Instance.PlayParticleMagnet();    
+            // AudioManager.Instance.PlayParticleMagnet();    
         }
     }
     private void DoPlaguePointPunchEffect() {

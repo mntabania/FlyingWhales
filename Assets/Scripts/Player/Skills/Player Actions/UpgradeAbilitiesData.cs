@@ -13,12 +13,12 @@ public class UpgradeAbilitiesData : PlayerAction {
         UIManager.Instance.ShowUpgradeAbilitiesUI();
         base.ActivateAbility(structure);
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        bool isValid = base.IsValid(target);
-        if (isValid) {
-            return WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom || PlayerSkillManager.Instance.unlockAllSkills;
-        }
-        return false;
-    }
+    // public override bool IsValid(IPlayerActionTarget target) {
+    //     bool isValid = base.IsValid(target);
+    //     if (isValid) {
+    //         return WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom || PlayerSkillManager.Instance.unlockAllSkills;
+    //     }
+    //     return false;
+    // }
     #endregion
 }
