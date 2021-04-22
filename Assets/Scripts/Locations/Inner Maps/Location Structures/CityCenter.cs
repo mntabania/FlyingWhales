@@ -39,7 +39,9 @@ namespace Inner_Maps.Location_Structures {
         #region IPlayerActionTarget
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
+            AddPlayerAction(PLAYER_SKILL_TYPE.INDUCE_MIGRATION);
+            AddPlayerAction(PLAYER_SKILL_TYPE.STIFLE_MIGRATION);
+            //AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
         }
         #endregion
 

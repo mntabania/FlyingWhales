@@ -171,73 +171,101 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                WorldSettings.Instance.worldSettingsData.villageSettings.IsMigrationAllowedForFaction(owner.owner.factionType.type) &&  
                (owner.owner.factionType.type == FACTION_TYPE.Human_Empire || owner.owner.factionType.type == FACTION_TYPE.Elven_Kingdom);
     }
+    public void InduceMigrationEvent() {
+        if (owner.owner != null) {
+            VillageMigrationEvent();
+        } else {
+            VillageMigrationEventOnEmptySettlement();
+        }
+    }
     private void VillageMigrationEvent() {
         string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";
 
         if (IsMigrationEventAllowed()) {
-            List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharactersThatFitFaction(owner.owner.race, owner.owner);
+            List<PreCharacterData> unspawnedCharacters = RuinarchListPool<PreCharacterData>.Claim();
+            DatabaseManager.Instance.familyTreeDatabase.ForcePopulateAllUnspawnedCharactersThatFitFaction(unspawnedCharacters, owner.owner.race, owner.owner);
             if (unspawnedCharacters.Count > 0) {
-                AdjustLongTermModifier(-1);
-                int randomAmount = UnityEngine.Random.Range(2, 6);
-                List<LocationGridTile> edgeTileChoices = null;
-                for (int i = 0; i < owner.region.innerMap.allEdgeTiles.Count; i++) {
-                    LocationGridTile tile = owner.region.innerMap.allEdgeTiles[i];
-                    //Area connectedAreaOrNearestArea = tile.area;
-                    if (!tile.corruptionComponent.isCorrupted && tile.IsPassable()) { //&& !connectedAreaOrNearestArea.isCorrupted
-                        if (edgeTileChoices == null) { edgeTileChoices = new List<LocationGridTile>(); }
-                        edgeTileChoices.Add(tile);
-                    }
-                }
-                if (edgeTileChoices == null) {
-                    edgeTileChoices = owner.region.innerMap.allEdgeTiles;
-                }
-                
-                LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(edgeTileChoices);
-                debugLog += $"\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
-                for (int i = 0; i < randomAmount; i++) {
-                    if (unspawnedCharacters.Count <= 0) { break; }
-                    PreCharacterData characterToSpawn = CollectionUtilities.GetRandomElement(unspawnedCharacters);
-                    characterToSpawn.hasBeenSpawned = true;
-                    unspawnedCharacters.Remove(characterToSpawn);
-
-                    string classToCreate;
-                    if (owner.settlementClassTracker.GetCurrentResidentClassAmount("Peasant") > 0) {
-                        //village already has at least 1 peasant
-                        classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
-                    } else {
-                        if (i == 0) {
-                            //one of the migrants should always be a peasant
-                            classToCreate = "Peasant";
-                        } else {
-                            classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
-                        }    
-                    }
-                    
-                    Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, classToCreate, owner.owner, owner);
-                    RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
-                    newCharacter.CreateRandomInitialTraits();
-                    if (WorldSettings.Instance.worldSettingsData.villageSettings.blessedMigrants) {
-                        newCharacter.traitContainer.AddTrait(newCharacter, "Blessed");
-                    }
-                    newCharacter.CreateMarker();
-                    newCharacter.InitialCharacterPlacement(edgeTile);
-                    newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
-                    debugLog += $"\nSpawned new character {newCharacter.name} at {edgeTile}";
-                    newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-                    newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
-                    Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
-
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "WorldEvents", "VillagerMigration", "new_villager", providedTags: LOG_TAG.Major);
-                    log.AddToFillers(newCharacter, newCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(newCharacter.homeRegion, newCharacter.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                    log.AddLogToDatabase();
-                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
-                }
+                Migrate(unspawnedCharacters, owner.owner, ref debugLog);
             } else {
                 debugLog += $"\nNo unspawned character to spawn for {owner.owner.race.ToString()}/{owner.owner.name}";
             }
+            RuinarchListPool<PreCharacterData>.Release(unspawnedCharacters);
         }
         Debug.Log(debugLog);
+    }
+    private void VillageMigrationEventOnEmptySettlement() {
+        string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for Empty Settlement is triggered";
+        List<PreCharacterData> unspawnedCharacters = RuinarchListPool<PreCharacterData>.Claim();
+        RACE migrationRace = RACE.HUMANS;
+        if (GameUtilities.RollChance(50)) {
+            migrationRace = RACE.ELVES;
+        }
+        DatabaseManager.Instance.familyTreeDatabase.ForcePopulateAllUnspawnedCharactersThatFitRace(unspawnedCharacters, migrationRace);
+        if (unspawnedCharacters.Count > 0) {
+            Migrate(unspawnedCharacters, FactionManager.Instance.vagrantFaction, ref debugLog);
+        } else {
+            debugLog += $"\nNo unspawned character to spawn for {migrationRace}/Vagrants";
+        }
+        RuinarchListPool<PreCharacterData>.Release(unspawnedCharacters);
+        Debug.Log(debugLog);
+    }
+    private void Migrate(List<PreCharacterData> unspawnedCharacters, Faction faction, ref string debugLog) {
+        AdjustLongTermModifier(-1);
+        int randomAmount = UnityEngine.Random.Range(2, 6);
+        List<LocationGridTile> edgeTileChoices = null;
+        for (int i = 0; i < owner.region.innerMap.allEdgeTiles.Count; i++) {
+            LocationGridTile tile = owner.region.innerMap.allEdgeTiles[i];
+            //Area connectedAreaOrNearestArea = tile.area;
+            if (!tile.corruptionComponent.isCorrupted && tile.IsPassable()) { //&& !connectedAreaOrNearestArea.isCorrupted
+                if (edgeTileChoices == null) { edgeTileChoices = new List<LocationGridTile>(); }
+                edgeTileChoices.Add(tile);
+            }
+        }
+        if (edgeTileChoices == null) {
+            edgeTileChoices = owner.region.innerMap.allEdgeTiles;
+        }
+
+        LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(edgeTileChoices);
+        debugLog += $"\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
+        for (int i = 0; i < randomAmount; i++) {
+            if (unspawnedCharacters.Count <= 0) { break; }
+            PreCharacterData characterToSpawn = CollectionUtilities.GetRandomElement(unspawnedCharacters);
+            characterToSpawn.hasBeenSpawned = true;
+            unspawnedCharacters.Remove(characterToSpawn);
+
+            string classToCreate;
+            if (owner.settlementClassTracker.GetCurrentResidentClassAmount("Peasant") > 0) {
+                //village already has at least 1 peasant
+                classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
+            } else {
+                if (i == 0) {
+                    //one of the migrants should always be a peasant
+                    classToCreate = "Peasant";
+                } else {
+                    classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
+                }
+            }
+
+            Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, classToCreate, faction, owner);
+            RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
+            newCharacter.CreateRandomInitialTraits();
+            if (WorldSettings.Instance.worldSettingsData.villageSettings.blessedMigrants) {
+                newCharacter.traitContainer.AddTrait(newCharacter, "Blessed");
+            }
+            newCharacter.CreateMarker();
+            newCharacter.InitialCharacterPlacement(edgeTile);
+            newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
+            debugLog += $"\nSpawned new character {newCharacter.name} at {edgeTile}";
+            newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
+            Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
+
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "WorldEvents", "VillagerMigration", "new_villager", providedTags: LOG_TAG.Major);
+            log.AddToFillers(newCharacter, newCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(newCharacter.homeRegion, newCharacter.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+        }
     }
     #endregion
 

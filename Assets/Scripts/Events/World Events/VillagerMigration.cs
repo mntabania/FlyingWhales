@@ -39,7 +39,8 @@ namespace Events.World_Events {
                         int availableCapacity = unoccupiedDwellings; //to get available capacity, get all unoccupied dwellings multiplied by the maximum number of residents per dwelling (2)
                         int randomAmount = UnityEngine.Random.Range(1, 4);
                         randomAmount = Mathf.Min(randomAmount, availableCapacity);
-                        List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharactersThatFitFaction(randomSettlement.owner.race, randomSettlement.owner);
+                        List<PreCharacterData> unspawnedCharacters = RuinarchListPool<PreCharacterData>.Claim();
+                        DatabaseManager.Instance.familyTreeDatabase.ForcePopulateAllUnspawnedCharactersThatFitFaction(unspawnedCharacters, randomSettlement.owner.race, randomSettlement.owner);
                         LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(randomSettlement.region.innerMap.allEdgeTiles);
                         debugLog = $"{debugLog}\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
                         for (int i = 0; i < randomAmount; i++) {
@@ -81,6 +82,7 @@ namespace Events.World_Events {
                             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                             LogPool.Release(log);
                         }
+                        RuinarchListPool<PreCharacterData>.Release(unspawnedCharacters);
                     }
                 }
                 Debug.Log(debugLog);
