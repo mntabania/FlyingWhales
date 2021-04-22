@@ -24,7 +24,7 @@ MonoBehaviour:
     fixedSkills: 540000005300000052000000
   structures:
     extraSlots: 2
-    fixedSkills: 4c0000009b000000
+    fixedSkills: 4c0000009b000000b5000000
   miscs:
     extraSlots: 1
     fixedSkills: 3300000094000000590000000800000021000000
