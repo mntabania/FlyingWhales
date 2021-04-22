@@ -188,7 +188,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAGUE_POINTS_ADJUSTED, OnPlaguePointsAdjusted);
-        Messenger.AddListener(PlayerSignals.CHAOS_ORB_COLLECTED, OnSpiritEnergyAdjustedByOne);
+        //Messenger.AddListener(PlayerSignals.CHAOS_ORB_COLLECTED, OnSpiritEnergyAdjustedByOne);
 
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
@@ -1058,6 +1058,7 @@ public class PlayerUI : BaseMonoBehaviour {
     private Tweener _currentPlaguePointPunchTween;
     private void OnPlaguePointsAdjusted(int p_adjustedAmount, int p_totalAmount) {
         if (p_adjustedAmount != 0) {
+            OnSpiritEnergyAdjustedByOne();
             UpdatePlaguePointsAmount(p_totalAmount);
             ShowPlaguePointsGainedEffect(p_adjustedAmount);
             DoPlaguePointPunchEffect();
