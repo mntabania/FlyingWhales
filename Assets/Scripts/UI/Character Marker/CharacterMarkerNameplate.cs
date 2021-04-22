@@ -103,7 +103,7 @@ public class CharacterMarkerNameplate : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        HideThoughtsAndNameplate();
+        HideThoughts();
         HideIntelHelper();
         SetHighlighterState(false);
         _parentMarker = null;
@@ -119,8 +119,11 @@ public class CharacterMarkerNameplate : PooledObject {
 
     #region Utilities
     public void UpdateNameActiveState() {
-        nameLbl.gameObject.SetActive(CharacterManager.Instance.toggleCharacterMarkerName
-            || (_parentMarker != null && _parentMarker.character != null && (_parentMarker.character.isStoredAsTarget || InnerMapManager.Instance.currentlyHoveredPoi == _parentMarker.character)));
+        SetNameActiveState(CharacterManager.Instance.toggleCharacterMarkerName
+            || (_parentMarker != null && _parentMarker.character != null && (_parentMarker.character.isStoredAsTarget || InnerMapManager.Instance.IsPOIConsideredTheCurrentHoveredPOI(_parentMarker.character))));
+    }
+    public void SetNameActiveState(bool state) {
+        nameLbl.gameObject.SetActive(state);
     }
     /// <summary>
     /// Set the active state of this game object.
@@ -133,9 +136,6 @@ public class CharacterMarkerNameplate : PooledObject {
     /// </summary>
     public void SetVisualsState(bool state) {
         visualsParent.gameObject.SetActive(state);
-    }
-    public void SetNameState(bool state) {
-        nameLbl.gameObject.SetActive(state);
     }
     private void UpdateSizeBasedOnZoom() {
         float fovDiff = InnerMapCameraMove.Instance.currentFOV - InnerMapCameraMove.Instance.minFOV;
@@ -157,20 +157,21 @@ public class CharacterMarkerNameplate : PooledObject {
         if (UIManager.Instance.gameObject.activeSelf) {
             //if UI is shown
             if (shownCharacter == _parentMarker.character) {
-                SetNameState(true);
-                ShowThoughtsAndNameplate();
+                //Removed this because nameplate state is now controlled by pressing Left Alt button
+                //SetNameState(true);
+                ShowThoughts();
             } else {
-                SetNameState(true);
-                HideThoughtsAndNameplate();
+                //SetNameState(true);
+                HideThoughts();
             }
         } else {
             //if UI is not shown
             if (shownCharacter == _parentMarker.character) {
-                SetNameState(true);
-                ShowThoughtsAndNameplate();
+                //SetNameState(true);
+                ShowThoughts();
             } else {
-                SetNameState(false);
-                HideThoughtsAndNameplate();
+                //SetNameState(false);
+                HideThoughts();
             }    
         }
         
@@ -251,12 +252,12 @@ public class CharacterMarkerNameplate : PooledObject {
     #endregion
 
     #region Thoughts
-    public void ShowThoughtsAndNameplate() {
+    public void ShowThoughts() {
         //nameLbl.gameObject.SetActive(true);
         thoughtGO.SetActive(true);
         UpdateThoughtText();
     }
-    public void HideThoughtsAndNameplate() {
+    public void HideThoughts() {
         //nameLbl.gameObject.SetActive(false);
         thoughtGO.SetActive(false);
         thoughtLbl.text = string.Empty;

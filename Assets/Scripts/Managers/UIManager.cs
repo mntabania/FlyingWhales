@@ -1695,17 +1695,22 @@ public class UIManager : BaseMonoBehaviour {
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
         if (!_allowContextMenuInteractions) { return; }
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
+        List<IContextMenuItem> contextMenuItems = RuinarchListPool<IContextMenuItem>.Claim();
+        PopulatePlayerActionContextMenuItems(contextMenuItems, p_target);
         contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
         contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+        RuinarchListPool<IContextMenuItem>.Release(contextMenuItems);
     }
     public void RefreshPlayerActionContextMenuWithNewTarget(IPlayerActionTarget p_target) {
         if (!_allowContextMenuInteractions) { return; }
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
+        List<IContextMenuItem> contextMenuItems = RuinarchListPool<IContextMenuItem>.Claim();
+        PopulatePlayerActionContextMenuItems(contextMenuItems, p_target);
+        //List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
         contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+        RuinarchListPool<IContextMenuItem>.Release(contextMenuItems);
     }
     public void DisableContextMenuInteractions() {
         _allowContextMenuInteractions = false;
@@ -1863,19 +1868,16 @@ public class UIManager : BaseMonoBehaviour {
         //if skill has no charges then always has enough charges
         return true;
     }
-    private List<IContextMenuItem> GetPlayerActionContextMenuItems(IPlayerActionTarget p_target) {
-        List<IContextMenuItem> contextMenuItems = null;
+    private void PopulatePlayerActionContextMenuItems(List<IContextMenuItem> contextMenuItems, IPlayerActionTarget p_target) {
         for (int i = 0; i < p_target.actions.Count; i++) {
             PLAYER_SKILL_TYPE skillType = p_target.actions[i];
             PlayerAction playerAction = PlayerSkillManager.Instance.GetSkillData(skillType) as PlayerAction;
             if(playerAction != null && playerAction.shouldShowOnContextMenu) {
                 if (playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
-                    if (contextMenuItems == null) { contextMenuItems = new List<IContextMenuItem>(); }
                     contextMenuItems.Add(playerAction);
                 }
             }
         }
-        return contextMenuItems;
     }
     private void AddPlayerActionContextMenuSignals() {
         Messenger.AddListener<IPlayerActionTarget>(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
@@ -1910,12 +1912,15 @@ public class UIManager : BaseMonoBehaviour {
         }
     }
     private void UpdatePlayerActionContextMenuItems(IPlayerActionTarget p_target) {
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
+        List<IContextMenuItem> contextMenuItems = RuinarchListPool<IContextMenuItem>.Claim();
+        PopulatePlayerActionContextMenuItems(contextMenuItems, p_target);
+        //List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
         // if (contextMenuItems == null) {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
         contextMenuUIController.UpdateContextMenuItems(contextMenuItems);
+        RuinarchListPool<IContextMenuItem>.Release(contextMenuItems);
     }
     private bool IsMouseOnContextMenu() {
         if (_pointer != null) {

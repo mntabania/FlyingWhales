@@ -84,7 +84,7 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDem
     #region Listeners
     private void OnSpellCooldownStarted(SkillData data) {
         if (_demonPlayerSkill == data) {
-            StartCooldownFill();
+            StartCooldownFillDemon();
         }
     }
     private void OnSpellCooldownFinished(SkillData data) {
@@ -94,7 +94,7 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDem
     }
     private void OnStartMonsterUnderlingCooldown(MonsterAndDemonUnderlingCharges data) {
         if (_monsterOrMinion == data) {
-            StartCooldownFill();
+            StartCooldownFillMonster();
         }
     }
     private void OnStopMonsterUnderlingCooldown(MonsterAndDemonUnderlingCharges data) {
@@ -117,17 +117,19 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDem
     #region Cooldown
     private void UpdateCooldownState() {
         if (_monsterOrMinion.isReplenishing) {
-            StartCooldownFill();
-            PerTickCooldownMonster();
+            StartCooldownFillMonster();
         } else if (_demonPlayerSkill != null && _demonPlayerSkill.isInCooldown) {
-            StartCooldownFill();
-            PerTickCooldownDemon();
+            StartCooldownFillDemon();
         } else {
             StopCooldownFill();
         }
     }
-    private void StartCooldownFill() {
-        cooldownCoverImage.fillAmount = 0f;
+    private void StartCooldownFillDemon() {
+        cooldownCoverImage.fillAmount = ((float) _demonPlayerSkill.currentCooldownTick / _demonPlayerSkill.cooldown);
+        cooldownCoverImage.gameObject.SetActive(true);
+    }
+    private void StartCooldownFillMonster() {
+        cooldownCoverImage.fillAmount = ((float) _monsterOrMinion.currentCooldownTick / _monsterOrMinion.cooldown);
         cooldownCoverImage.gameObject.SetActive(true);
     }
     private void PerTickCooldownDemon() {
@@ -147,6 +149,7 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDem
     public override void Reset() {
         base.Reset();
         _monsterOrMinion = null;
+        _demonPlayerSkill = null;
         StopCooldownFill();
         UnsubscribeToSignals();
     }

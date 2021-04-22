@@ -753,6 +753,14 @@ namespace Inner_Maps {
         public void SetCurrentlyHoveredPOI(IPointOfInterest poi) {
             currentlyHoveredPoi = poi;
         }
+        public bool IsPOIConsideredTheCurrentHoveredPOI(IPointOfInterest poi) {
+            if (currentlyHoveredPoi == poi) {
+                return true;
+            } else if (currentlyHoveredPoi is Tombstone tombstone) {
+                return tombstone.character == poi;
+            }
+            return false;
+        }
         #endregion
 
         #region POI

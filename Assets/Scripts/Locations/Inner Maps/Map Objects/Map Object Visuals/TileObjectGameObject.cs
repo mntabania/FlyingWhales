@@ -95,21 +95,33 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             //            }
         }
     }
-    protected override void OnPointerEnter(TileObject character) {
-        if (character.mapObjectState == MAP_OBJECT_STATE.UNBUILT) { return; }
-        if (character.CanBeSelected() == false) { return; }
-        base.OnPointerEnter(character);
-        InnerMapManager.Instance.SetCurrentlyHoveredPOI(character);
-        InnerMapManager.Instance.ShowTileData(character.gridTileLocation);
+    protected override void OnPointerEnter(TileObject to) {
+        if (to.mapObjectState == MAP_OBJECT_STATE.UNBUILT) { return; }
+        if (to.CanBeSelected() == false) { return; }
+        base.OnPointerEnter(to);
+        InnerMapManager.Instance.SetCurrentlyHoveredPOI(to);
+        InnerMapManager.Instance.ShowTileData(to.gridTileLocation);
+
+        if (to is Tombstone tombstone && tombstone.character != null) {
+            if (tombstone.character.hasMarker && tombstone.character.marker.nameplate) {
+                tombstone.character.marker.nameplate.UpdateNameActiveState();
+            }
+        }
     }
-    protected override void OnPointerExit(TileObject poi) {
-        if (poi.mapObjectState == MAP_OBJECT_STATE.UNBUILT) { return; }
-        if (poi.CanBeSelected() == false) { return; }
-        base.OnPointerExit(poi);
-        if (InnerMapManager.Instance.currentlyHoveredPoi == poi) {
+    protected override void OnPointerExit(TileObject to) {
+        if (to.mapObjectState == MAP_OBJECT_STATE.UNBUILT) { return; }
+        if (to.CanBeSelected() == false) { return; }
+        base.OnPointerExit(to);
+        if (InnerMapManager.Instance.currentlyHoveredPoi == to) {
             InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
         }
         UIManager.Instance?.HideSmallInfo();
+
+        if (to is Tombstone tombstone && tombstone.character != null) {
+            if (tombstone.character.hasMarker && tombstone.character.marker.nameplate) {
+                tombstone.character.marker.nameplate.UpdateNameActiveState();
+            }
+        }
     }
     #endregion
 
