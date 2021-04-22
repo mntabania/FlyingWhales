@@ -196,9 +196,11 @@ public class SaveDataCurrentProgress {
         }
     }
     public void SaveWinConditionTracker() {
-        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Win Conditions...");
-        saveDataWinConditionTracker = CreateNewSaveDataForWinConditionTracker(QuestManager.Instance.winConditionTracker);
-        saveDataWinConditionTracker.Save(QuestManager.Instance.winConditionTracker);
+        if (QuestManager.Instance.winConditionTracker != null) {
+            UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Win Conditions...");
+            saveDataWinConditionTracker = CreateNewSaveDataForWinConditionTracker(QuestManager.Instance.winConditionTracker);
+            saveDataWinConditionTracker.Save(QuestManager.Instance.winConditionTracker);    
+        }
     }
     private SaveDataWinConditionTracker CreateNewSaveDataForWinConditionTracker(WinConditionTracker winConditionTracker) {
         SaveDataWinConditionTracker obj = System.Activator.CreateInstance(winConditionTracker.serializedData) as SaveDataWinConditionTracker;

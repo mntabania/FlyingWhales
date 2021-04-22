@@ -6068,11 +6068,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
             carryComponent.LoadCarryReference(data.carryComponent);
 
-            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                if(currentActionNode.poiTarget is TileObject target) {
-                    target.OnDoActionToObject(currentActionNode);
-                }
-            }
+            // if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
+            //     if(currentActionNode.poiTarget is TileObject target) {
+            //         target.OnDoActionToObject(currentActionNode);
+            //     }
+            // }
         }
         if (data.deathTileLocation.hasValue) {
             deathTilePosition = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(data.deathTileLocation);
@@ -6106,6 +6106,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
                 SetCurrentActionNode(null, null, null);
             } else if (currentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                if(currentActionNode.poiTarget is TileObject target) {
+                    target.OnDoActionToObject(currentActionNode);
+                }
                 if (currentActionNode.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                     Character actor = currentActionNode.actor;
                     Character targetCharacter = currentActionNode.poiTarget as Character;
