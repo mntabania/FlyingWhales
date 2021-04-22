@@ -226,9 +226,9 @@ public class PlayerUI : BaseMonoBehaviour {
     //    UpdateRegionNameState();
     //}
     private void OnKeyPressed(KeyCode pressedKey) {
-        if (pressedKey == KeyCode.F9) {
-            UIManager.Instance.optionsMenu.QuickSave();
-        }
+        // if (pressedKey == KeyCode.F9) {
+        //     UIManager.Instance.optionsMenu.QuickSave();
+        // }
     }
     private void OnCharacterDied(Character character) {
         TransferCharacterFromActiveToInactive(character);
@@ -549,6 +549,9 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver(string winMessage) {
+        if (PlayerManager.Instance.player.hasAlreadyWon) {
+            return;
+        }
         PlayerManager.Instance.player.hasAlreadyWon = true;
         SaveManager.Instance.currentSaveDataPlayer.OnWorldCompleted(WorldSettings.Instance.worldSettingsData.worldType);
         UIManager.Instance.ShowEndDemoScreen(winMessage);
@@ -1111,6 +1114,22 @@ public class PlayerUI : BaseMonoBehaviour {
     #region Accumulated Damage
     public void UpdateAccumulatedDamageText(int amount) {
         accumulatedDamageLbl.text = amount.ToString();
+    }
+    #endregion
+
+    #region Tutorial
+    [Header("Tutorial")]
+    [SerializeField] private TutorialUIController _tutorialUIController;
+    [SerializeField] private Toggle _tutorialToggle;
+    public void OnToggleTutorialTab(bool p_isOn) {
+        if (p_isOn) {
+            _tutorialUIController.ShowUI();
+        } else {
+            _tutorialUIController.HideUI();
+        }
+    }
+    public void OnCloseTutorialUI() {
+        _tutorialToggle.SetIsOnWithoutNotify(false);
     }
     #endregion
 }

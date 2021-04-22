@@ -36,4 +36,7 @@ public class BookmarkUIController : MVCUIController, BookmarkUIView.IListener {
     public void OnClickShow() {
         m_bookmarkUIView.Show();
     }
+    public UIHoverPosition GetHoverPosition() {
+        return m_bookmarkUIView.UIModel.tooltipHoverPosition;
+    }
 }

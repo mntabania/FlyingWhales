@@ -46,14 +46,18 @@ public class Tombstone : TileObject {
         base.LoadAdditionalInfo(data);
         if (isBeingCarriedBy != null && character != null && character.hasMarker) {
             character.DisableMarker();
-            character.marker.SetNameState(false);    
+            if (character.marker.nameplate) {
+                character.marker.nameplate.UpdateNameActiveState();
+            }
         }
     }
     public override void OnLoadPlacePOI() {
         DefaultProcessOnPlacePOI();
         character.marker.PlaceMarkerAt(gridTileLocation);
         character.DisableMarker();
-        character.marker.SetNameState(true);
+        if (character.marker.nameplate) {
+            character.marker.nameplate.UpdateNameActiveState();
+        }
         character.marker.TryCancelExpiry();
         character.SetGrave(this);
     }
@@ -61,7 +65,9 @@ public class Tombstone : TileObject {
         base.OnPlacePOI();
         character.marker.PlaceMarkerAt(gridTileLocation);
         character.DisableMarker();
-        character.marker.SetNameState(true);
+        if (character.marker.nameplate) {
+            character.marker.nameplate.UpdateNameActiveState();
+        }
         character.marker.TryCancelExpiry();
         character.SetGrave(this);
         if(character.traitContainer.HasTrait("Plagued")) {
@@ -109,8 +115,10 @@ public class Tombstone : TileObject {
     public override void SetInventoryOwner(Character p_newOwner) {
         base.SetInventoryOwner(p_newOwner);
         if (p_newOwner != null) {
-            if (this.character.hasMarker) {
-                this.character.marker.SetNameState(false);
+            if (character.hasMarker) {
+                if (character.marker.nameplate) {
+                    character.marker.nameplate.SetNameActiveState(false);
+                }
             }
         }
         

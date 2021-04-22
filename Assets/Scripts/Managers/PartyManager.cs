@@ -18,8 +18,10 @@ public class PartyManager : MonoBehaviour {
     public PartyNameDeclarations partyNameDeclarations;
     public PartyNameTargets partyNameTargets;
 
+    private List<string> _nounsOriginalPool;
     void Awake() {
         Instance = this;
+        _nounsOriginalPool = new List<string>(partyNameNouns.nouns);
     }
 
     #region General
@@ -86,6 +88,9 @@ public class PartyManager : MonoBehaviour {
         string newWord = filler;
         List<string> poolToChoose = null;
         if(filler == "[Noun]") {
+            if (partyNameNouns.nouns.Count <= 0) {
+                partyNameNouns.nouns.AddRange(_nounsOriginalPool);
+            }
             poolToChoose = partyNameNouns.nouns;
         } else if (filler == "[Adjective]") {
             poolToChoose = partyNameAdjectives.adjectives;

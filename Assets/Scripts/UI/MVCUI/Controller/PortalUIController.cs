@@ -20,7 +20,6 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
 
     private ThePortal _portal;
     
-    
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
     [ContextMenu("Instantiate UI")]
     public override void InstantiateUI() {

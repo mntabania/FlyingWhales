@@ -36,9 +36,9 @@ namespace UnityEngine.UI.Extensions
                 return;
             }
 
-            // dont want the scroll snap pagination
-            if (scrollSnap.Pagination)
-                scrollSnap.Pagination = null;
+            // // dont want the scroll snap pagination
+            // if (scrollSnap.Pagination)
+            //     scrollSnap.Pagination = null;
 
             // set scroll snap listeners
             scrollSnap.OnSelectionPageChangedEvent.AddListener(SetToggleGraphics);

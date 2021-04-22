@@ -1183,8 +1183,15 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.ShowStructureInfo(this);
         }
         public void RightSelectAction() {
-            Vector3 worldPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(Input.mousePosition);
-            UIManager.Instance.ShowPlayerActionContextMenu(this, worldPos, false);
+            if(structureType.IsPlayerStructure() || structureType == STRUCTURE_TYPE.CITY_CENTER) {
+                Vector3 worldPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(Input.mousePosition);
+                IPlayerActionTarget target = this;
+                if (structureType == STRUCTURE_TYPE.CITY_CENTER) {
+                    //Right clicking on the city center should show right click actions for the settlement instead of the structure
+                    target = settlementLocation;
+                }
+                UIManager.Instance.ShowPlayerActionContextMenu(target, worldPos, false);
+            }
         }
         public void MiddleSelectAction() { }
         public bool CanBeSelected() {
@@ -1433,6 +1440,8 @@ namespace Inner_Maps.Location_Structures {
         public void RemoveBookmark() {
             PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
         }
+        public void OnHoverOverBookmarkItem() { }
+        public void OnHoverOutBookmarkItem() { }
         #endregion
     }
 }

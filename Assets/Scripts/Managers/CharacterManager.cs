@@ -440,7 +440,8 @@ public class CharacterManager : BaseMonoBehaviour {
         //_allCharacterAvatars = new List<CharacterAvatar>();
     }
 
-    public void Initialize() { 
+    public void Initialize() {
+        toggleCharacterMarkerName = true;
         _summonNameColorHex = ColorUtility.ToHtmlStringRGB(summonNameColor);
         _demonNameColorHex = ColorUtility.ToHtmlStringRGB(demonNameColor);
         _undeadNameColorHex = ColorUtility.ToHtmlStringRGB(undeadNameColor);

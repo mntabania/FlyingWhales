@@ -553,9 +553,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void UpdateName() {
         _nameplate.UpdateName();
     }
-    public void SetNameState(bool state) {
-        _nameplate.SetNameState(state);
-    }
+    //public void SetNameState(bool state) {
+    //    _nameplate.SetNameState(state);
+    //}
     private void CreateNameplate() {
         GameObject nameplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarkerNameplate", transform.position,
             Quaternion.identity, UIManager.Instance.characterMarkerNameplateParent);
@@ -2095,13 +2095,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (!_nameplate) {
             return;
         }
-        _nameplate.ShowThoughtsAndNameplate();
+        _nameplate.ShowThoughts();
     }
     public void HideThoughtsAndNameplate() {
         if (!_nameplate) {
             return;
         }
-        _nameplate.HideThoughtsAndNameplate();
+        _nameplate.HideThoughts();
     }
     public void UpdateNameplateElementsState() {
         if (!_nameplate) {
