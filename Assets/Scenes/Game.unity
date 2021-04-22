@@ -29293,6 +29293,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FactionInfoUI
       objectReference: {fileID: 0}
+    - target: {fileID: 1266018885605978, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 224325019918282922, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -39411,7 +39415,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -278, y: 396}
+  m_AnchoredPosition: {x: -638, y: -0}
   m_SizeDelta: {x: 178, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1414646975
