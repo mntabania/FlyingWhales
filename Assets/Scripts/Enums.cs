@@ -1090,7 +1090,7 @@ public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, RELIGION }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage, Plague_Hysteria, Distraught,
 }
-public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Icalawa, Affatt, Oona, Pangat_Loo, Zenko, Aneem, Pitto }
+public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Icalawa, Affatt, Oona, Pangat_Loo, Zenko, Aneem, Pitto, Old_Ravager, Old_Lich, Old_Puppet_Master }
 public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action
@@ -1188,7 +1188,7 @@ public enum SKILL_COOLDOWN_SPEED {
     None, Half, Normal, Double 
 }
 public enum SKILL_COST_AMOUNT {
-    None, Half, Normal, Double 
+    None, Half, Normal, 
 }
 public enum SKILL_CHARGE_AMOUNT {
     Unlimited, Half, Normal, Double 
@@ -1200,7 +1200,7 @@ public enum OMNIPOTENT_MODE {
     Disabled, Enabled 
 }
 public enum VICTORY_CONDITION {
-    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Summon_Ruinarch, Sandbox, 
+    Eliminate_All = 0, Wipe_Out_Village_On_Day = 2, Wipe_Elven_Kingdom_Survive_Humans = 3, Kill_By_Plague = 5, Create_Demon_Cult = 6, Summon_Ruinarch = 7, Sandbox = 8, 
 }
 public enum RESISTANCE {
     None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
@@ -1240,7 +1240,7 @@ public enum COMBAT_SPECIAL_SKILL_TARGET {
 }
 
 public enum BOOKMARK_CATEGORY {
-    None, Portal, Player_Parties, Targets
+    None, Win_Condition, Portal, Player_Parties, Targets
 }
 
 public enum BOOKMARK_TYPE {

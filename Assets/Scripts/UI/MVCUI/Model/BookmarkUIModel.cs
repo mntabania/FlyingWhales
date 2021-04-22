@@ -16,6 +16,7 @@ public class BookmarkUIModel : MVCUIModel {
     public System.Action onClickShow;
 
     public GameObject goBookmarkCategoryPrefab;
+    public UIHoverPosition tooltipHoverPosition;
     
     private void OnEnable() {
         btnHide.onClick.AddListener(ClickHide);

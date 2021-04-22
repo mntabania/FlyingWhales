@@ -5,7 +5,7 @@ using Ruinarch;
 using UnityEngine;
 using UtilityScripts;
 
-public class OonaWinConditionTracker : WinconditionTracker {
+public class OonaWinConditionTracker : WinConditionTracker {
 
     private System.Action<int, int> _OnSummonMeterUpdated;
     private System.Action<int> _OnPortalLevelUpgraded;
@@ -23,7 +23,7 @@ public class OonaWinConditionTracker : WinconditionTracker {
         base.Initialize(p_allCharacters);
         Messenger.AddListener<int>(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, OnPortalUpgraded);
     }
-
+    protected override IBookmarkable[] CreateWinConditionSteps() { return null; }
     public void OnPortalUpgraded(int p_newLevel) {
         _OnPortalLevelUpgraded?.Invoke(p_newLevel);
     }
@@ -48,7 +48,7 @@ public class OonaWinConditionTracker : WinconditionTracker {
 public class SaveDataOonaWinConditionTracker : SaveDataWinConditionTracker {
     public int currentLevel;
     public int targetLevel;
-    public override void Save(WinconditionTracker data) {
+    public override void Save(WinConditionTracker data) {
         base.Save(data);
         OonaWinConditionTracker tracker = data as OonaWinConditionTracker;
         currentLevel = tracker.currentLevel;

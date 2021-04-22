@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fe33fc91848c68ab8d6bd0b390d79, type: 3}
+  m_Name: Upgrading_The_Portal
+  m_EditorClassIdentifier: 
+  tutorialType: 1
+  tutorialNameKey: upgrading_the_portal
+  pages:
+  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+    description: Upgrade your Portal level to permanently unlock new Powers.
+  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+    description: It takes a significant amount of Chaotic Energy to level up the
+      Portal.
+  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+    description: Reaching Portal Level 8 will essentially summon the Ruinarch and
+      win the game!

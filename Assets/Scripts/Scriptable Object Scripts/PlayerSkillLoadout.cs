@@ -28,11 +28,11 @@ public class PlayerSkillLoadout : ScriptableObject {
     public PortalUpgradeTier[] portalUpgradeTiers;
     
     private void OnValidate() {
-        if (archetype.IsScenarioArchetype()) {
-            if (availableStructures.Contains(PLAYER_SKILL_TYPE.SPIRE) || structures.fixedSkills.Contains(PLAYER_SKILL_TYPE.SPIRE)) {
-                Debug.LogError($"{this.name} should not have Spire available in loadout! Since it is a scenario loadout. Reference: https://trello.com/c/PVEd5Ti8/3993-fixed-loadouts-for-custom-scenarios");
-            }
-        }
+        // if (archetype.IsScenarioArchetype()) {
+        //     if (availableStructures.Contains(PLAYER_SKILL_TYPE.SPIRE) || structures.fixedSkills.Contains(PLAYER_SKILL_TYPE.SPIRE)) {
+        //         Debug.LogError($"{this.name} should not have Spire available in loadout! Since it is a scenario loadout. Reference: https://trello.com/c/PVEd5Ti8/3993-fixed-loadouts-for-custom-scenarios");
+        //     }
+        // }
         if (portalUpgradeTiers != null) {
             if (portalUpgradeTiers.Length == 0) {
                 Debug.LogError($"{this.name} has no portal tiers! All Archetypes should have at least 1!!");

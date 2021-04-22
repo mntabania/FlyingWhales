@@ -37,7 +37,7 @@ namespace UnityEngine.UI.Extensions
             else if (_lerp)
             {
                 _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * Time.deltaTime);
-                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.1f)
+                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) <= 0.1f)
                 {
                     _screensContainer.localPosition = _lerp_target;
                     _lerp = false;
@@ -45,7 +45,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            CurrentPage = GetPageforPosition(_screensContainer.localPosition);
+            // CurrentPage = GetPageforPosition(_screensContainer.localPosition);
 
             //If the container is moving check if it needs to settle on a page
             if (!_pointerDown)

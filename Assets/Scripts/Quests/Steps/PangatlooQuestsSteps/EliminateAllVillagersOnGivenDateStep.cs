@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Quests.Steps {
-    public class EliminateAllVillagersOnGivenDateStep : QuestStep, PangatLooWinConditionTracker.Listener {
+    public class EliminateAllVillagersOnGivenDateStep : QuestStep {
         private readonly Func<List<Character>, int, string> _descriptionGetter;
 
         public EliminateAllVillagersOnGivenDateStep(Func<List<Character>, int, string> descriptionGetter) : base(string.Empty) {
@@ -10,16 +10,16 @@ namespace Quests.Steps {
         }
 
         protected override void SubscribeListeners() {
-            QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>().Subscribe(this);
+            // QuestManager.Instance.GetWinConditionTracker<WipeOutAllUntilDayWinConditionTracker>().Subscribe(this);
         }
         protected override void UnSubscribeListeners() {
-            QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>().Unsubscribe(this);
+            // QuestManager.Instance.GetWinConditionTracker<WipeOutAllUntilDayWinConditionTracker>().Unsubscribe(this);
         }
 
         private void CheckForCompletion(int p_villagersCount) {
             if (p_villagersCount <= 0) {
                 Complete();
-                Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You've successfully wiped out all villagers before Day {(PangatLooWinConditionTracker.DueDay + 1).ToString()}. Congratulations!");
+                Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You've successfully wiped out all villagers before Day {(WipeOutAllUntilDayWinConditionTracker.DueDay + 1).ToString()}. Congratulations!");
             }
         }
 
@@ -40,12 +40,12 @@ namespace Quests.Steps {
        #endregion
 
         #region Description
-        protected override string GetStepDescription() {
-            if (_descriptionGetter != null) {
-                return _descriptionGetter.Invoke(QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>().villagersToEliminate, QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>().totalCharactersToEliminate);
-            }
-            return base.GetStepDescription();
-        }
+        // protected override string GetStepDescription() {
+        //     if (_descriptionGetter != null) {
+        //         return _descriptionGetter.Invoke(QuestManager.Instance.GetWinConditionTracker<WipeOutAllUntilDayWinConditionTracker>().villagersToEliminate, QuestManager.Instance.GetWinConditionTracker<WipeOutAllUntilDayWinConditionTracker>().totalCharactersToEliminate);
+        //     }
+        //     return base.GetStepDescription();
+        // }
         #endregion
     }
 }

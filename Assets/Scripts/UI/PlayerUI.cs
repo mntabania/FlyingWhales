@@ -188,7 +188,8 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAGUE_POINTS_ADJUSTED, OnPlaguePointsAdjusted);
-        
+        //Messenger.AddListener(PlayerSignals.CHAOS_ORB_COLLECTED, OnSpiritEnergyAdjustedByOne);
+
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
 #if UNITY_EDITOR
@@ -225,9 +226,9 @@ public class PlayerUI : BaseMonoBehaviour {
     //    UpdateRegionNameState();
     //}
     private void OnKeyPressed(KeyCode pressedKey) {
-        if (pressedKey == KeyCode.F9) {
-            UIManager.Instance.optionsMenu.QuickSave();
-        }
+        // if (pressedKey == KeyCode.F9) {
+        //     UIManager.Instance.optionsMenu.QuickSave();
+        // }
     }
     private void OnCharacterDied(Character character) {
         TransferCharacterFromActiveToInactive(character);
@@ -335,22 +336,25 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     #endregion
 
-//    private void UpdateRegionNameState() {
-//        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-//            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
-//            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
-//            regionNameTopMenuText.text = location.name;
-//            regionNameTopMenuGO.SetActive(true);
-//#if UNITY_EDITOR || DEVELOPMENT_BUILD
-//            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
-//            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
-//#endif
-//        } else {
-//            regionNameTopMenuGO.SetActive(false);
-//        }
-//    }
+    //    private void UpdateRegionNameState() {
+    //        if (InnerMapManager.Instance.isAnInnerMapShowing) {
+    //            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
+    //            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
+    //            regionNameTopMenuText.text = location.name;
+    //            regionNameTopMenuGO.SetActive(true);
+    //#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    //            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
+    //            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
+    //#endif
+    //        } else {
+    //            regionNameTopMenuGO.SetActive(false);
+    //        }
+    //    }
 
     #region SpiritEnergy
+    private void OnSpiritEnergyAdjustedByOne() { //this one is attached to chaos orb gain
+        PlayerManager.Instance.player.AdjustSpiritEnergy(1);
+    }
     private void OnSpiritEnergyAdjusted(int adjustedAmount, int spiritEnergy) {
         if (adjustedAmount != 0) {
             UpdateSpiritEnergy();
@@ -545,6 +549,9 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver(string winMessage) {
+        if (PlayerManager.Instance.player.hasAlreadyWon) {
+            return;
+        }
         PlayerManager.Instance.player.hasAlreadyWon = true;
         SaveManager.Instance.currentSaveDataPlayer.OnWorldCompleted(WorldSettings.Instance.worldSettingsData.worldType);
         UIManager.Instance.ShowEndDemoScreen(winMessage);
@@ -1051,6 +1058,7 @@ public class PlayerUI : BaseMonoBehaviour {
     private Tweener _currentPlaguePointPunchTween;
     private void OnPlaguePointsAdjusted(int p_adjustedAmount, int p_totalAmount) {
         if (p_adjustedAmount != 0) {
+            OnSpiritEnergyAdjustedByOne();
             UpdatePlaguePointsAmount(p_totalAmount);
             ShowPlaguePointsGainedEffect(p_adjustedAmount);
             DoPlaguePointPunchEffect();
@@ -1104,6 +1112,22 @@ public class PlayerUI : BaseMonoBehaviour {
     #region Accumulated Damage
     public void UpdateAccumulatedDamageText(int amount) {
         accumulatedDamageLbl.text = amount.ToString();
+    }
+    #endregion
+
+    #region Tutorial
+    [Header("Tutorial")]
+    [SerializeField] private TutorialUIController _tutorialUIController;
+    [SerializeField] private Toggle _tutorialToggle;
+    public void OnToggleTutorialTab(bool p_isOn) {
+        if (p_isOn) {
+            _tutorialUIController.ShowUI();
+        } else {
+            _tutorialUIController.HideUI();
+        }
+    }
+    public void OnCloseTutorialUI() {
+        _tutorialToggle.SetIsOnWithoutNotify(false);
     }
     #endregion
 }

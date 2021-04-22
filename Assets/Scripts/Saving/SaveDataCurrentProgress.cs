@@ -200,8 +200,8 @@ public class SaveDataCurrentProgress {
         saveDataWinConditionTracker = CreateNewSaveDataForWinConditionTracker(QuestManager.Instance.winConditionTracker);
         saveDataWinConditionTracker.Save(QuestManager.Instance.winConditionTracker);
     }
-    private SaveDataWinConditionTracker CreateNewSaveDataForWinConditionTracker(WinconditionTracker winconditionTracker) {
-        SaveDataWinConditionTracker obj = System.Activator.CreateInstance(winconditionTracker.serializedData) as SaveDataWinConditionTracker;
+    private SaveDataWinConditionTracker CreateNewSaveDataForWinConditionTracker(WinConditionTracker winConditionTracker) {
+        SaveDataWinConditionTracker obj = System.Activator.CreateInstance(winConditionTracker.serializedData) as SaveDataWinConditionTracker;
         return obj;
     }
     #endregion

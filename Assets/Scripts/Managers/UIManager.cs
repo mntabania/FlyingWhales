@@ -129,6 +129,10 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
+    
+    [Space(10)]
+    [Header("Bookmark UI")]
+    public BookmarkUIController bookmarkUIController;
 
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;

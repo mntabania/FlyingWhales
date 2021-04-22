@@ -73,7 +73,7 @@ public class PopUpScreensUI : MonoBehaviour {
 
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             TutorialManager.Instance.InstantiateImportantTutorials();
-            TutorialManager.Instance.InstantiatePendingBonusTutorials();
+            // TutorialManager.Instance.InstantiatePendingBonusTutorials();
             QuestManager.Instance.InitializeAfterStartTutorial();    
         }
     }

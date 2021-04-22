@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public interface IBookmarkable {
     string bookmarkName { get; }
@@ -7,6 +8,48 @@ public interface IBookmarkable {
 
     void OnSelectBookmark();
     void RemoveBookmark();
+    void OnHoverOverBookmarkItem();
+    void OnHoverOutBookmarkItem();
+}
+
+public class GenericTextBookmarkable : IBookmarkable {
+    
+    private System.Func<string> _nameGetter;
+    private System.Func<BOOKMARK_TYPE> _bookmarkTypeGetter;
+    private System.Action _onSelectAction;
+    private System.Action _removeBookmarkAction;
+    
+    private System.Action _onHoverOverAction;
+    private System.Action _onHoverOutAction;
+    
+    public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
+
+    #region getters
+    public string bookmarkName => _nameGetter?.Invoke() ?? string.Empty;
+    public BOOKMARK_TYPE bookmarkType => _bookmarkTypeGetter?.Invoke() ?? BOOKMARK_TYPE.Text;
+    #endregion
+
+    public GenericTextBookmarkable(System.Func<string> p_nameGetter, System.Func<BOOKMARK_TYPE> p_bookmarkTypeGetter, System.Action p_onSelectAction, System.Action p_removeBookmarkAction, Action p_onHoverOverAction, Action p_onHoverOutAction) {
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+        _nameGetter = p_nameGetter;
+        _bookmarkTypeGetter = p_bookmarkTypeGetter;
+        _onSelectAction = p_onSelectAction;
+        _removeBookmarkAction = p_removeBookmarkAction;
+        _onHoverOverAction = p_onHoverOverAction;
+        _onHoverOutAction = p_onHoverOutAction;
+    }
+    public void OnSelectBookmark() {
+        _onSelectAction?.Invoke();
+    }
+    public void RemoveBookmark() {
+        _removeBookmarkAction?.Invoke();
+    }
+    public void OnHoverOverBookmarkItem() {
+        _onHoverOverAction?.Invoke();
+    }
+    public void OnHoverOutBookmarkItem() {
+        _onHoverOutAction?.Invoke();
+    }
 }
 
 public class BookmarkableEventDispatcher {

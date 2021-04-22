@@ -7,6 +7,7 @@ using EZObjectPools;
 using TMPro;
 using UnityEngine.Profiling;
 using UnityEngine.UI;
+using UtilityScripts;
 
 public class SpellItem : NameplateItem<SkillData> {
     [SerializeField] private Image cooldownImage;
@@ -47,7 +48,7 @@ public class SpellItem : NameplateItem<SkillData> {
         this.spellData = updatedSkillData;
         if (playerSkillData != null) {
             if (playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel) > 0) {
-                currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel)} ";
+                currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{SpellUtilities.GetModifiedSpellCost(playerSkillData.GetManaCostBaseOnLevel(updatedSkillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification())} ";
             }
             //if (playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel) > 0) {
             //    currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel)}  ";
