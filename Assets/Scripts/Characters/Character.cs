@@ -930,7 +930,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void ForceCancelAllActionsTargetingPOI(IPointOfInterest target, string reason) {
-        if(currentActionNode != null && currentActionNode.associatedJob != null && currentActionNode.poiTarget == target) {
+        if(currentActionNode != null && currentActionNode.associatedJob != null && currentActionNode.poiTarget == target && currentActionNode.associatedJob.poiTarget == target) {
             //if target is main target of the job, stop the whole job
             currentActionNode.associatedJob.ForceCancelJob(false, reason);
         }

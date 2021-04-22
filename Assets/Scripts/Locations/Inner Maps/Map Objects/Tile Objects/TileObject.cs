@@ -1224,6 +1224,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         storedResources[resourceType] += amount;
         storedResources[resourceType] = Mathf.Max(storedResources[resourceType], 0);
     }
+    public void ClearAllResources() {
+        foreach (var kvp in storedResources) {
+            storedResources[kvp.Key] = 0;
+        }
+    }
     public bool HasResourceAmount(RESOURCE resourceType, int amount) {
         return storedResources[resourceType] >= amount;
     }

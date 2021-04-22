@@ -83,7 +83,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(p_playerSkillData, 1)}";
     }
     private void UpdateData(SkillData skillData) {
-        UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
+        // UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
         titleText.text = skillData.name;
         string fullDescription = skillData.description;
         int charges = skillData.charges;

@@ -35,25 +35,36 @@ public class RepairStructure : GoapAction {
         //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
         //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
         //p.AddRange(baseP);
-
         Precondition p = null;
 
-        StructureTileObject structureTileObject = target as StructureTileObject;
-        if (structureTileObject.structureParent is ManMadeStructure manMadeStructure) {
-            switch (manMadeStructure.wallsAreMadeOf) {
-                case RESOURCE.WOOD:
-                    p = _woodPrecondition;
-                    break;
-                case RESOURCE.STONE:
-                    p = _stonePrecondition;
-                    break;
-                case RESOURCE.METAL:
-                    p = _metalPrecondition;
-                    break;
-                default:
-                    p = _woodPrecondition;
-                    break;
+        if (actor.homeSettlement != null) {
+            //if actor has a home settlement then check for available resource piles. Any will do
+            //Reference: https://trello.com/c/efBw7BWE/4166-repair-can-use-both-stone-and-wood-and-metal-for-structures-and-objects
+            if (actor.homeSettlement.mainStorage.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE)) {
+                p = _woodPrecondition;
+            } else if (actor.homeSettlement.mainStorage.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE)) {
+                p = _stonePrecondition;
+            } else if (actor.homeSettlement.mainStorage.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.METAL_PILE)) {
+                p = _metalPrecondition;
             }
+        } else {
+            StructureTileObject structureTileObject = target as StructureTileObject;
+            if (structureTileObject.structureParent is ManMadeStructure manMadeStructure) {
+                switch (manMadeStructure.wallsAreMadeOf) {
+                    case RESOURCE.WOOD:
+                        p = _woodPrecondition;
+                        break;
+                    case RESOURCE.STONE:
+                        p = _stonePrecondition;
+                        break;
+                    case RESOURCE.METAL:
+                        p = _metalPrecondition;
+                        break;
+                    default:
+                        p = _woodPrecondition;
+                        break;
+                }
+            }   
         }
         isOverridden = true;
         return p;
@@ -92,21 +103,34 @@ public class RepairStructure : GoapAction {
         RESOURCE neededResourceType = manMadeStructure.wallsAreMadeOf;
         
         if (poiTarget.HasResourceAmount(neededResourceType, manMadeStructure.structureObj.repairCost)) {
-            return true;
+            return true; //if structure tile object already has needed resources then precondition is met
         }
-        
-        if (actor.carryComponent.isCarryingAnyPOI) {
-            switch (neededResourceType) {
-                case RESOURCE.WOOD:
-                    return actor.carryComponent.carriedPOI is WoodPile;
-                case RESOURCE.METAL:
-                    return actor.carryComponent.carriedPOI is MetalPile;
-                case RESOURCE.STONE:
-                    return actor.carryComponent.carriedPOI is StonePile;
-            }
-            return false;
-        }
-        return false;
+        //allow precondition if actor is already carrying any resource pile that is not food pile.
+        //Reference: https://trello.com/c/efBw7BWE/4166-repair-can-use-both-stone-and-wood-and-metal-for-structures-and-objects
+        return actor.carryComponent.carriedPOI is ResourcePile && !(actor.carryComponent.carriedPOI is FoodPile); 
+        // StructureTileObject tileObj = poiTarget as StructureTileObject;
+        // Assert.IsNotNull(tileObj, $"Target of repair is not Structure Tile Object! {poiTarget}");
+        //
+        // ManMadeStructure manMadeStructure = tileObj.structureParent as ManMadeStructure;
+        // Assert.IsNotNull(manMadeStructure, $"Parent structure is not Man Made structure! {tileObj.structureParent}");
+        // RESOURCE neededResourceType = manMadeStructure.wallsAreMadeOf;
+        //
+        // if (poiTarget.HasResourceAmount(neededResourceType, manMadeStructure.structureObj.repairCost)) {
+        //     return true;
+        // }
+        //
+        // if (actor.carryComponent.isCarryingAnyPOI) {
+        //     switch (neededResourceType) {
+        //         case RESOURCE.WOOD:
+        //             return actor.carryComponent.carriedPOI is WoodPile;
+        //         case RESOURCE.METAL:
+        //             return actor.carryComponent.carriedPOI is MetalPile;
+        //         case RESOURCE.STONE:
+        //             return actor.carryComponent.carriedPOI is StonePile;
+        //     }
+        //     return false;
+        // }
+        // return false;
     }
     #endregion
 

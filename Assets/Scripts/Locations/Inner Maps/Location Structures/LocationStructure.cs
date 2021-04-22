@@ -452,6 +452,12 @@ namespace Inner_Maps.Location_Structures {
             //}
             //return false;
         }
+        public bool HasBuiltTileObjectOfType(TILE_OBJECT_TYPE type) {
+            if (groupedTileObjects.ContainsKey(type)) {
+                return groupedTileObjects[type].Any(t => t.mapObjectState == MAP_OBJECT_STATE.BUILT);
+            }
+            return false;
+        }
         public bool HasTileObjectThatMeetCriteria(Func<TileObject, bool> criteria) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);

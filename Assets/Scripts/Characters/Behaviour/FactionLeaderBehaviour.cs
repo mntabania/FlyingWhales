@@ -114,6 +114,8 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                             if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
                                 log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
                                 return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, connectorTile, out producedJob);    
+                            } else {
+                                log += $"\n-Could not find location to place facility {targetFacility.ToString()}";
                             }
                         }
                     }
