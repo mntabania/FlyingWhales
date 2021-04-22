@@ -195,14 +195,22 @@ public class CharacterInfoUI : InfoUIBase {
         _dictMoodSummary = new Dictionary<string, MoodSummaryEntry>();
 
         piercingAndResistancesInfo.Initialize();
+        SetButtonRevealPriceDisplay();
+    }
+
+    void SetButtonRevealPriceDisplay() {
+        btnRevealInfo.transform.Find("Chaotic").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealCharacterInfoCost().ToString();
+        btnRevealLogs.transform.Find("Chaotic").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealCharacterInfoCost().ToString();
+        btnRevealMood.transform.Find("Chaotic").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealCharacterInfoCost().ToString();
+        btnRevealRelationship.transform.Find("Chaotic").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealCharacterInfoCost().ToString();
     }
 
     private void InitializeRevealHoverText() {
-        if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
-            btnRevealInfo.GetComponent<HoverText>()?.SetText("Not Enough Mana");
-            btnRevealLogs.GetComponent<HoverText>()?.SetText("Not Enough Mana");
-            btnRevealMood.GetComponent<HoverText>()?.SetText("Not Enough Mana");
-            btnRevealRelationship.GetComponent<HoverText>()?.SetText("Not Enough Mana");
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints < EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealLogs.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealMood.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealRelationship.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
         } else {
             btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Character Info");
             btnRevealLogs.GetComponent<HoverText>()?.SetText("Reveal Character Info");
@@ -1094,7 +1102,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (GameManager.Instance.gameHasStarted && PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
             if (!activeCharacter.isInfoUnlocked) {
                 activeCharacter.isInfoUnlocked = true;
-                PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.GetRevealCharacterInfoCost());
+                PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetRevealCharacterInfoCost());
                 ProcessDisplay();
                 Messenger.Broadcast(CharacterSignals.CHARACTER_INFO_REVEALED);
             }

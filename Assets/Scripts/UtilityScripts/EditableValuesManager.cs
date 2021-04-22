@@ -112,7 +112,7 @@ public class EditableValuesManager : MonoBehaviour {
 		return _revealInfoCharacterCost;
 	}
 
-	public int GetRevealCharacterFactionCost() {
+	public int GetRevealFactionInfoCost() {
 		return _revealInfoFactionCost;
 	}
 

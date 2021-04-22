@@ -113,7 +113,13 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
         Messenger.AddListener<Faction>(FactionSignals.UPDATED_SUCCESSORS, OnFactionUpdatedSuccessors);
         logsWindow.Initialize();
+        SetButtonRevealPriceDisplay();
     }
+
+    void SetButtonRevealPriceDisplay() {
+        btnRevealInfo.transform.Find("icon").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealFactionInfoCost().ToString();
+    }
+
     public void SetFaction(Faction faction) {
         activeFaction = faction;
         if(activeFaction != null) {
@@ -622,8 +628,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #endregion
 
     public void RevealInfo() {
-        if (PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
-            PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.GetRevealCharacterInfoCost());
+        if (PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.GetRevealFactionInfoCost()) {
+            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetRevealFactionInfoCost());
             activeFaction.isInfoUnlocked = true;
             ProcessDisplay();
         }
