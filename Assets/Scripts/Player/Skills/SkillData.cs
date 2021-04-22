@@ -37,9 +37,9 @@ public class SkillData : IPlayerSkill {
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
     public virtual PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.NONE; } }
-    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, 1f);
-    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, 1f);
-    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, 1f);
+    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
     public int threat => 0;// SpellUtilities.GetModifiedSpellCost(baseThreat, 1f); comment out for now so no threat will be passed
 
     /// <summary>

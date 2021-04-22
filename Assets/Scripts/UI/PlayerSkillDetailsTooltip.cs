@@ -63,9 +63,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_playerSkillData.skill);
         titleText.SetText(skillData.name);
         descriptionText.SetTextAndReplaceWithIcons(skillData.description);
-        int charges =  SpellUtilities.GetModifiedSpellCost(p_playerSkillData.charges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
-        int manaCost = SpellUtilities.GetModifiedSpellCost(p_playerSkillData.manaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
-        int cooldown = SpellUtilities.GetModifiedSpellCost(p_playerSkillData.cooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
+        int charges =  SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetMaxChargesBaseOnLevel(skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+        int manaCost = SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+        int cooldown = SpellUtilities.GetModifiedSpellCost(p_playerSkillData.GetCoolDownBaseOnLevel(skillData.currentLevel), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
         //int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
 
         //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
