@@ -133,7 +133,7 @@ public class PlayerSkillComponent {
     }
     public void CancelCurrentPlayerSkillUnlock() {
         //Refund player mana
-        PlayerManager.Instance.player.AdjustMana(currentSpellUnlockCost);
+        PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(currentSpellUnlockCost);
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         currentSpellUnlockCost = 0;
         timerUnlockSpell.Stop();

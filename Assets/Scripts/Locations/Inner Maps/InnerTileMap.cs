@@ -847,18 +847,20 @@ namespace Inner_Maps {
             //trees and shrubs
             if (currTile.tileObjectComponent.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
                 if (sampleDetail < 0.55f) {
-                    if (Random.Range(0, 100) < 50) {
-                        //shrubs
-                        if (currTile.groundType == LocationGridTile.Ground_Type.Grass && currTile.biomeType != BIOMES.SNOW && currTile.biomeType != BIOMES.TUNDRA && currTile.biomeType != BIOMES.DESERT) {
-                            Assert.IsNotNull(currTile.structure);
-                            TileBase tileBase = null;
-                            //plant or herb plant
-
-                            //35
-                            tileBase = UtilityScripts.GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
-                            if (currTile.biomeType == BIOMES.FOREST || currTile.biomeType == BIOMES.GRASSLAND) {
+                    if (GameUtilities.RollChance(50)) {
+                        if (currTile.biomeType == BIOMES.TUNDRA || currTile.biomeType == BIOMES.DESERT || currTile.biomeType == BIOMES.SNOW) {
+                            TileBase tileBase = GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
+                            if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
+                                if (GameUtilities.RollChance(10)) {
+                                    TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
+                                    currTile.structure.AddPOI(obj, currTile);
+                                }
+                            }
+                        } else if (currTile.biomeType == BIOMES.GRASSLAND || currTile.biomeType == BIOMES.FOREST) {
+                            if (currTile.groundType == LocationGridTile.Ground_Type.Grass) {
+                                TileBase tileBase = GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                                 if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
-                                    if (UtilityScripts.GameUtilities.RollChance(10)) {
+                                    if (GameUtilities.RollChance(10)) {
                                         TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
                                         currTile.structure.AddPOI(obj, currTile);
                                     }
@@ -869,8 +871,27 @@ namespace Inner_Maps {
                                     }
                                 }
                             }
-                            return;
                         }
+                        return;
+                        //shrubs
+                        // if (currTile.groundType == LocationGridTile.Ground_Type.Grass && currTile.biomeType != BIOMES.SNOW && currTile.biomeType != BIOMES.TUNDRA && currTile.biomeType != BIOMES.DESERT) {
+                        //     Assert.IsNotNull(currTile.structure);
+                        //     TileBase tileBase = null;
+                        //     tileBase = UtilityScripts.GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
+                        //     if (currTile.biomeType == BIOMES.FOREST || currTile.biomeType == BIOMES.GRASSLAND) {
+                        //         if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
+                        //             if (UtilityScripts.GameUtilities.RollChance(10)) {
+                        //                 TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
+                        //                 currTile.structure.AddPOI(obj, currTile);
+                        //             } else {
+                        //                 detailsTilemap.SetTile(currTile.localPlace, tileBase);
+                        //                 //place tile object
+                        //                 ConvertDetailToTileObject(currTile);
+                        //             }
+                        //         }
+                        //     }
+                        //     return;
+                        // }
                     }
                 }
 
