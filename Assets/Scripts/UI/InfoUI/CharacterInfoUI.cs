@@ -1099,7 +1099,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region Tabs
     public void OnRevealInfoclicked() {
-        if (GameManager.Instance.gameHasStarted && PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints >= EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
             if (!activeCharacter.isInfoUnlocked) {
                 activeCharacter.isInfoUnlocked = true;
                 PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetRevealCharacterInfoCost());
