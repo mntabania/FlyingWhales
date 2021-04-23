@@ -30,6 +30,7 @@ MonoBehaviour:
   baseLoadoutWeight: 350
   resistanceType: 2
   archetypeWeightedBonus: 1
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
@@ -75,7 +76,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 40010000000100000001000000010000
+    cooldownPerLevel: 400100002c0100001801000004010000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 
