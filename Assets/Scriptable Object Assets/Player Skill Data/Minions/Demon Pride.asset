@@ -30,6 +30,7 @@ MonoBehaviour:
   baseLoadoutWeight: 0
   resistanceType: 0
   archetypeWeightedBonus: 0
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
@@ -50,7 +51,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 
-    manacostPerLevel: 
+    manacostPerLevel: 64000000
     chargesPerLevel: 01000000
     bonuses: 
     additionalDamagePerLevel: 
