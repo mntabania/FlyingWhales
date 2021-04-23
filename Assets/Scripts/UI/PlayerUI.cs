@@ -163,6 +163,19 @@ public class PlayerUI : BaseMonoBehaviour {
         
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_GAINED_SPELL, OnGainSpell);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_LOST_SPELL, OnLostSpell);
+        AdjustUIDisplayBaseOnGameMode();
+    }
+
+    public void AdjustUIDisplayBaseOnGameMode() {
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            spiritEnergyContainer.transform.position = new Vector3(0, 10000f, 0f);
+            Vector3 pos = manaContainer.transform.localPosition;
+            pos.x += 140f;
+            manaContainer.transform.localPosition = pos;
+            pos = plaguePointsContainer.transform.localPosition;
+            pos.x += 140f;
+            plaguePointsContainer.transform.localPosition = pos;
+        }
     }
 
     public void InitializeAfterGameLoaded() {
