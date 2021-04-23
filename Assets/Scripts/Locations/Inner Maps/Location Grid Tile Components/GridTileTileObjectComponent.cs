@@ -314,9 +314,7 @@ namespace Inner_Maps {
             triggeredBy.traitContainer.RemoveStatusAndStacks(triggeredBy, "Freezing");
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Frozen", bypassElementalChance: true, overrideDuration: duration);
             Frozen frozen = triggeredBy.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
-            if (frozen != null) {
-                frozen.SetIsPlayerSource(isFreezingTrapPlayerSource);
-            }
+            frozen?.SetIsPlayerSource(isFreezingTrapPlayerSource);
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Freezing Trap", "trap_activated", null, LOG_TAG.Player);
             log.AddToFillers(triggeredBy, triggeredBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToDatabase();
@@ -346,9 +344,7 @@ namespace Inner_Maps {
             int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
             Ensnared ensnared = triggeredBy.traitContainer.GetTraitOrStatus<Ensnared>("Ensnared");
-            if (ensnared != null) {
-                ensnared.SetIsPlayerSource(isSnareTrapPlayerSource);
-            }
+            ensnared?.SetIsPlayerSource(isSnareTrapPlayerSource);
             if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
                 Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
             }

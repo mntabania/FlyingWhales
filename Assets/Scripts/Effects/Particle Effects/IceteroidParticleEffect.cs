@@ -36,9 +36,7 @@ public class IceteroidParticleEffect : BaseParticleEffect {
             character.traitContainer.RemoveStatusAndStacks(character, "Freezing");
             character.traitContainer.AddTrait(character, "Frozen", bypassElementalChance: true);
             Frozen frozen = traitable.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
-            if (frozen != null) {
-                frozen.SetIsPlayerSource(true);
-            }
+            frozen?.SetIsPlayerSource(true);
             if (Random.Range(0, 100) < 25) {
                 character.traitContainer.AddTrait(character, "Injured");
             }

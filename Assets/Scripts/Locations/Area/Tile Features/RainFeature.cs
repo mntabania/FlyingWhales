@@ -155,18 +155,14 @@ namespace Locations.Area_Features {
                 Character character = _charactersOutside[i];
                 character.traitContainer.AddTrait(character, "Wet");
                 Wet wet = character.traitContainer.GetTraitOrStatus<Wet>("Wet");
-                if(wet != null) {
-                    wet.SetIsPlayerSource(isPlayerSource);
-                }
+                wet?.SetIsPlayerSource(isPlayerSource);
             }
             for (int i = 0; i < p_area.gridTileComponent.gridTiles.Count; i++) {
                 LocationGridTile gridTile = p_area.gridTileComponent.gridTiles[i];
                 if (!gridTile.structure.isInterior) {
                     gridTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTile.tileObjectComponent.genericTileObject, "Wet");
                     Wet wet = gridTile.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
-                    if (wet != null) {
-                        wet.SetIsPlayerSource(isPlayerSource);
-                    }
+                    wet?.SetIsPlayerSource(isPlayerSource);
                     if (gridTile.tileObjectComponent.objHere != null) {
                         gridTile.tileObjectComponent.objHere.traitContainer.AddTrait(gridTile.tileObjectComponent.objHere, "Wet");
                         Wet wetObjHere = gridTile.tileObjectComponent.objHere.traitContainer.GetTraitOrStatus<Wet>("Wet");

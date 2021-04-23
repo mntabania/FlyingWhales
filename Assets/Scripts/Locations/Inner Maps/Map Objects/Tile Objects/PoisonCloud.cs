@@ -125,18 +125,14 @@ public sealed class PoisonCloud : MovingTileObject {
             if (radius <= 0) {
                 gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTileLocation.tileObjectComponent.genericTileObject, "Poisoned", bypassElementalChance: true);
                 Poisoned poisoned = gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
-                if (poisoned != null) {
-                    poisoned.SetIsPlayerSource(isPlayerSource);
-                }
+                poisoned?.SetIsPlayerSource(isPlayerSource);
             } else {
                 List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
                 gridTileLocation.PopulateTilesInRadius(tiles, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < tiles.Count; i++) {
                     tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Poisoned", bypassElementalChance: true);
                     Poisoned poisoned = tiles[i].tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
-                    if (poisoned != null) {
-                        poisoned.SetIsPlayerSource(isPlayerSource);
-                    }
+                    poisoned?.SetIsPlayerSource(isPlayerSource);
                 }
                 RuinarchListPool<LocationGridTile>.Release(tiles);
             }

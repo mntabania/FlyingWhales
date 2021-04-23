@@ -631,7 +631,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 traitContainer.AddTrait(this, "Burning", out var addedTrait, bypassElementalChance: true);
                 (addedTrait as Burning)?.SetSourceOfBurning(burning.sourceOfBurning, this);
                 Burning currentBurning = traitContainer.GetTraitOrStatus<Burning>("Burning");
-                currentBurning.SetIsPlayerSource(burning.isPlayerSource);
+                currentBurning?.SetIsPlayerSource(burning.isPlayerSource);
             }
         }
     }
@@ -4818,12 +4818,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Burning burningSource = tileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Burning>("Burning");
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
                 Burning burning = traitContainer.GetTraitOrStatus<Burning>("Burning");
-                burning.SetIsPlayerSource(burningSource.isPlayerSource);
+                burning?.SetIsPlayerSource(burningSource.isPlayerSource);
             } else if (tileLocation.tileObjectComponent.objHere != null && tileLocation.tileObjectComponent.objHere.traitContainer.HasTrait("Burning")) {
                 Burning burningSource = tileLocation.tileObjectComponent.objHere.traitContainer.GetTraitOrStatus<Burning>("Burning");
                 traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
                 Burning burning = traitContainer.GetTraitOrStatus<Burning>("Burning");
-                burning.SetIsPlayerSource(burningSource.isPlayerSource);
+                burning?.SetIsPlayerSource(burningSource.isPlayerSource);
             }
         }
 

@@ -145,17 +145,13 @@ public class Vapor : MovingTileObject {
             if (radius <= 0) {
                 gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTileLocation.tileObjectComponent.genericTileObject, "Wet");
                 Wet wet = gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
-                if (wet != null) {
-                    wet.SetIsPlayerSource(isPlayerSource);
-                }
+                wet?.SetIsPlayerSource(isPlayerSource);
             } else {
                 List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < tiles.Count; i++) {
                     tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Wet");
                     Wet wet = tiles[i].tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
-                    if (wet != null) {
-                        wet.SetIsPlayerSource(isPlayerSource);
-                    }
+                    wet?.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }

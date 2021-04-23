@@ -337,7 +337,7 @@ public class CombatManager : BaseMonoBehaviour {
             traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric", characterResponsible: characterResponsible);
             ChainedElectric chainedElectric = traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<ChainedElectric>("Chained Electric");
             chainedElectric.SetDamage(damage);
-            chainedElectric.SetIsPlayerSource(setAsPlayerSource);
+            chainedElectric?.SetIsPlayerSource(setAsPlayerSource);
         }
 
         //if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
