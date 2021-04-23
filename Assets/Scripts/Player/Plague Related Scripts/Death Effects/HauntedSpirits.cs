@@ -29,9 +29,9 @@ namespace Plague.Death_Effect {
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {
                 case 1:
-                    return 20;
+                    return 50;
                 case 2:
-                    return 40;
+                    return 75;
                 default:
                     return -1; //Max Level
             }

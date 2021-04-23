@@ -271,7 +271,8 @@ namespace Traits {
                 job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                 job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
             }
-            //job.SetIsStealth(true);
+            //job.SetIsStealth(true
+            job.isTriggeredFlaw = true;
             character.jobQueue.AddJobInQueue(job);
             return true;
         }

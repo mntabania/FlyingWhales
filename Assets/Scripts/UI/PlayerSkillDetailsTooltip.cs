@@ -63,7 +63,6 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_playerSkillData.skill);
         titleText.SetText(skillData.name);
         descriptionText.SetTextAndReplaceWithIcons(skillData.description);
-        UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
         int charges = skillData.maxCharges;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
         int manaCost = skillData.manaCost;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
         int cooldown = skillData.cooldown;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());

@@ -25,11 +25,12 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
-  unlockCost: 50
+  unlockCost: 100
   tier: 3
   baseLoadoutWeight: 250
   resistanceType: 6
   archetypeWeightedBonus: 3
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}

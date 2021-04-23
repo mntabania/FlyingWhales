@@ -18,15 +18,22 @@ public class PartyManager : MonoBehaviour {
     public PartyNameDeclarations partyNameDeclarations;
     public PartyNameTargets partyNameTargets;
 
+    [Space]
+    public PartyNameLayouts partyNameLayoutsPlayerParty;
+    public PartyNameNouns partyNameNounsForPlayerParty;
+
     private List<string> _nounsOriginalPool;
+    private List<string> _nounsPlayerPartyPool;
     void Awake() {
         Instance = this;
         _nounsOriginalPool = new List<string>(partyNameNouns.nouns);
+        _nounsPlayerPartyPool = new List<string>(partyNameNounsForPlayerParty.nouns);
     }
 
     #region General
-    public Party CreateNewParty(Character partyCreator) {
+    public Party CreateNewParty(Character partyCreator, PARTY_QUEST_TYPE p_plannedPartyType = PARTY_QUEST_TYPE.None) {
         Party newParty = ObjectPoolManager.Instance.CreateNewParty();
+        newParty.plannedPartyType = p_plannedPartyType;
         newParty.Initialize(partyCreator);
         return newParty;
     }
@@ -56,6 +63,27 @@ public class PartyManager : MonoBehaviour {
     #endregion
 
     #region Party Name Generator
+    public string GetNewPartyNameForPlayerParty(Character partyCreator, PARTY_QUEST_TYPE p_type) {
+        string layout = CollectionUtilities.GetRandomElement(partyNameLayoutsPlayerParty.layouts);
+        string newPartyName = PartyNameFillerReplacerForPlayerParty(layout, partyCreator);
+        Debug.LogError(p_type);
+        switch (p_type) {
+            case PARTY_QUEST_TYPE.Demon_Raid:
+            newPartyName += " Raid Party";
+            break;
+            case PARTY_QUEST_TYPE.Demon_Snatch:
+            newPartyName += " Snatch Party";
+            break;
+            case PARTY_QUEST_TYPE.Demon_Rescue:
+            newPartyName += " Snatch Party";
+            break;
+            case PARTY_QUEST_TYPE.Demon_Defend:
+            newPartyName += " Defend Party";
+            break;
+        }
+        return newPartyName;
+    }
+
     public string GetNewPartyName(Character partyCreator) {
         string layout = CollectionUtilities.GetRandomElement(partyNameLayouts.layouts);
         string newPartyName = PartyNameLayoutReplacer(layout, partyCreator);
@@ -102,6 +130,25 @@ public class PartyManager : MonoBehaviour {
             if(partyCreator.currentRegion != null) {
                 newWord = partyCreator.currentRegion.name;
             }
+        }
+        if (poolToChoose != null) {
+            int index = CollectionUtilities.GetRandomIndexInList(poolToChoose);
+            newWord = poolToChoose[index];
+            if (filler == "[Noun]") {
+                poolToChoose.RemoveAt(index);
+            }
+        }
+        return newWord;
+    }
+
+    private string PartyNameFillerReplacerForPlayerParty(string filler, Character partyCreator) {
+        string newWord = filler;
+        List<string> poolToChoose = null;
+        if (filler == "[Noun]") {
+            if (partyNameNounsForPlayerParty.nouns.Count <= 0) {
+                partyNameNounsForPlayerParty.nouns.AddRange(_nounsPlayerPartyPool);
+            }
+            poolToChoose = partyNameNounsForPlayerParty.nouns;
         }
         if (poolToChoose != null) {
             int index = CollectionUtilities.GetRandomIndexInList(poolToChoose);

@@ -54,13 +54,13 @@ namespace Plague.Death_Effect {
         public static int GetUnlockCost(this PLAGUE_DEATH_EFFECT p_deathEffect) {
             switch (p_deathEffect) {
                 case PLAGUE_DEATH_EFFECT.Explosion:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Zombie:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Chaos_Generator:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 default:
                     throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
             }
