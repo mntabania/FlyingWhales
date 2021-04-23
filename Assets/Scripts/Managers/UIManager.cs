@@ -172,7 +172,7 @@ public class UIManager : BaseMonoBehaviour {
         }
         openedPopups = new List<PopupMenuBase>();
         questUI.Initialize();
-        _biolabUIController.Init(OnCloseBiolabUI);
+        biolabUIController.Init(OnCloseBiolabUI);
         Messenger.AddListener<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
@@ -1660,13 +1660,14 @@ public class UIManager : BaseMonoBehaviour {
     #endregion
 
     #region Biolab UI
-    [Header("Biolab")] 
-    [SerializeField] private BiolabUIController _biolabUIController;
+    [FormerlySerializedAs("_biolabUIController")] [Header("Biolab")] 
+    public BiolabUIController biolabUIController;
     public void ShowBiolabUI() {
         Pause();
         SetSpeedTogglesState(false);
-        _biolabUIController.Open();
+        biolabUIController.Open();
         InputManager.Instance.SetAllHotkeysEnabledState(false);
+        InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
     }
     private void OnCloseBiolabUI() {
         SetSpeedTogglesState(true);
@@ -1942,8 +1943,8 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Demonic Structures")]
     [SerializeField] private PortalUIController _portalUIController;
-    [SerializeField] private UpgradePortalUIController upgradePortalUIController;
-    [SerializeField] private PurchaseSkillUIController purchaseSkillUIController;
+    public UpgradePortalUIController upgradePortalUIController;
+    public PurchaseSkillUIController purchaseSkillUIController;
     public void ShowUnlockAbilitiesUI(ThePortal portal) {
         _portalUIController.ShowUI(portal);
         SetSpeedTogglesState(false);

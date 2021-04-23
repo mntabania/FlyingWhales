@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ruinarch;
 using Ruinarch.MVCFramework;
 using Tutorial;
 using UnityEngine;
@@ -11,6 +12,8 @@ public class TutorialUIController : MVCUIController, TutorialUIView.IListener {
     private TutorialUIView m_tutorialUIView;
 
     private List<TutorialItemUI> _items;
+
+    public bool isShowing { get; private set; }
     
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
     [ContextMenu("Instantiate UI")]
@@ -25,11 +28,11 @@ public class TutorialUIController : MVCUIController, TutorialUIView.IListener {
         _items = new List<TutorialItemUI>();
         TutorialItemUI.onTutorialItemToggledOn = OnTutorialItemSelected;
         TutorialItemUI.onTutorialItemToggledOff = OnTutorialItemDeselected;
+    }
+    private void Start() {
         InstantiateUI();
         HideUI();
         m_tutorialUIView.UIModel.goTutorialPages.SetActive(false);
-    }
-    private void Start() {
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
     public void OnGameLoaded() {
@@ -96,11 +99,27 @@ public class TutorialUIController : MVCUIController, TutorialUIView.IListener {
         m_tutorialUIView.UIModel.goTutorialPages.SetActive(false);
         UtilityScripts.Utilities.DestroyChildren(m_tutorialUIView.UIModel.tutorialPaginationParent);
         base.HideUI();
+        isShowing = false;
         if (PlayerUI.Instance != null) {
             PlayerUI.Instance.OnCloseTutorialUI();    
         }
         if (TutorialManager.Instance != null) {
-            TutorialManager.Instance.UnloadTutorialDataAndAssets();    
+            TutorialManager.Instance.UnloadTutorialAssets();    
         }
+        UIManager.Instance.ResumeLastProgressionSpeed();
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
+        InnerMapCameraMove.Instance.EnableMovement();
+    }
+    public override void ShowUI() {
+        base.ShowUI();
+        isShowing = true;
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
+        InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
+        InnerMapCameraMove.Instance.DisableMovement();
+    }
+    public void HideViaShortcutKey() {
+        HideUI();
     }
 }

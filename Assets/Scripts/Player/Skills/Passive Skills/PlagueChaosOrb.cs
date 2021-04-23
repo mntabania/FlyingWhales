@@ -12,10 +12,7 @@ public class PlagueChaosOrb : PassiveSkill {
         Messenger.AddListener<Character>(PlayerSkillSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, OnPoisonCloudActivated);
     }
     private void OnTraitAdded(Character character, Trait trait) {
-        if (character.traitContainer.HasTrait("Depressed") ||
-            character.traitContainer.HasTrait("Insomnia") ||
-            character.traitContainer.HasTrait("Lethargic") ||
-            character.traitContainer.HasTrait("Paralyzed")) {
+        if (trait.name == "Depressed" || trait.name == "Insomnia" || trait.name == "Lethargic" || trait.name == "Paralyzed") {
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
         }
     }

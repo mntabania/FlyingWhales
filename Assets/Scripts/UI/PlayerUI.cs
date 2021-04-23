@@ -1118,14 +1118,14 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
 
     #region Tutorial
-    [Header("Tutorial")]
-    [SerializeField] private TutorialUIController _tutorialUIController;
+    [FormerlySerializedAs("_tutorialUIController")] [Header("Tutorial")]
+    public TutorialUIController tutorialUIController;
     [SerializeField] private Toggle _tutorialToggle;
     public void OnToggleTutorialTab(bool p_isOn) {
         if (p_isOn) {
-            _tutorialUIController.ShowUI();
+            tutorialUIController.ShowUI();
         } else {
-            _tutorialUIController.HideUI();
+            tutorialUIController.HideUI();
         }
     }
     public void OnCloseTutorialUI() {
