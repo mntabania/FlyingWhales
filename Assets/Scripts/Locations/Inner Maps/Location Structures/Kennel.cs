@@ -84,7 +84,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public override void DeployParty() {
             base.DeployParty();
-            party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0]);
+            party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0], PARTY_QUEST_TYPE.Demon_Snatch);
             partyData.deployedMinions[0].combatComponent.SetCombatMode(COMBAT_MODE.Defend);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
             partyData.deployedSummons.ForEach((eachSummon) => eachSummon.combatComponent.SetCombatMode(COMBAT_MODE.Defend));

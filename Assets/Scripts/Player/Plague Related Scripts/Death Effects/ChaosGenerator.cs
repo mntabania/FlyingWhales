@@ -15,10 +15,10 @@ namespace Plague.Death_Effect {
                     CreateChaosOrbs(1, p_character);
                     break;
                 case 2:
-                    CreateChaosOrbs(GameUtilities.RandomBetweenTwoNumbers(2, 3), p_character);
+                    CreateChaosOrbs(2, p_character);
                     break;
                 case 3:
-                    CreateChaosOrbs(GameUtilities.RandomBetweenTwoNumbers(3, 5), p_character);
+                    CreateChaosOrbs(3, p_character);
                     break;
             }
             Debug.Log("Activated Chaos Generator Effect");
@@ -26,9 +26,9 @@ namespace Plague.Death_Effect {
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {
                 case 1:
-                    return 20;
+                    return 50;
                 case 2:
-                    return 30;
+                    return 75;
                 default:
                     return -1; //Max Level
             }
@@ -38,9 +38,9 @@ namespace Plague.Death_Effect {
                 case 1:
                     return "1 Orbs";
                 case 2:
-                    return "2-3 Orbs";
+                    return "2 Orbs";
                 case 3:
-                    return "3-5 Orbs";
+                    return "3 Orbs";
                 default:
                     return string.Empty;
             }

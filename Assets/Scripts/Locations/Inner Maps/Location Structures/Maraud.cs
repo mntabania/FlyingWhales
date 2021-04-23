@@ -16,7 +16,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public override void DeployParty() {
             base.DeployParty();
-            party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0]);
+            party = PartyManager.Instance.CreateNewParty(partyData.deployedMinions[0], PARTY_QUEST_TYPE.Demon_Raid);
             partyData.deployedSummons.ForEach((eachSummon) => party.AddMember(eachSummon));
             partyData.deployedMinions[0].faction.partyQuestBoard.CreateDemonRaidPartyQuest(partyData.deployedMinions[0],
                     partyData.deployedMinions[0].homeSettlement, partyData.deployedTargets[0] as Locations.Settlements.BaseSettlement);
