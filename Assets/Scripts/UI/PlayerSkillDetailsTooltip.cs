@@ -434,7 +434,6 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         return currencies;
     }
     private string GetCurrencyLevelUpSummary(SkillData skillData, PlayerSkillData playerSkillData) {
-        UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
         string currencies = string.Empty;
         string notCombinedChargesText = skillData.displayOfCurrentChargesWithBonusChargesNotCombined;
         if (!string.IsNullOrEmpty(notCombinedChargesText)) {
