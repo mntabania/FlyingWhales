@@ -39,3 +39,27 @@ MonoBehaviour:
     skillTypesToUnlock: 
     upgradeCost: []
     upgradeTime: 0
+  - name: Level 2
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 3
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 4
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 5
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 6
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 7
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0

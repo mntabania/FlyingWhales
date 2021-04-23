@@ -27,7 +27,11 @@ namespace Inner_Maps.Location_Structures {
         public ThePortal(Region location) : base(STRUCTURE_TYPE.THE_PORTAL, location){
             name = "Portal";
             SetMaxHPAndReset(5000);
-            level = 1;
+            if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+                level = PlayerSkillLoadout.MAX_SKILLS_PER_UPGRADE_TIER - 1; //start portal at max level - 1 for scenarios. This is so that release abilities can show most powers
+            } else {
+                level = 1;    
+            }
             // Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, StartGameAfterLoadoutSelected);
         }
         public ThePortal(Region location, SaveDataDemonicStructure data) : base(location, data) {
@@ -50,7 +54,12 @@ namespace Inner_Maps.Location_Structures {
             AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE_ABILITIES);
             AddPlayerAction(PLAYER_SKILL_TYPE.UPGRADE_PORTAL);
         }
-        
+        public override string GetTestingInfo() {
+            string info = base.GetTestingInfo();
+            info = $"{info}\nLevel: {level.ToString()}";
+            return info;
+        }
+
         #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);

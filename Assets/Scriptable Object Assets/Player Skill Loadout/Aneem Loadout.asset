@@ -36,44 +36,30 @@ MonoBehaviour:
   availableMiscs: 
   portalUpgradeTiers:
   - name: Level 1
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 2
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 3
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 4
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 5
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 6
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 7
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
