@@ -34,7 +34,7 @@ MonoBehaviour:
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
-  isNonUpgradeable: 0
+  isNonUpgradeable: 1
   isAffliction: 0
   isLockedBaseOnRequirements: 0
   requirementData:
