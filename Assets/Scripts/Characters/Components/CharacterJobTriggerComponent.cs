@@ -1947,13 +1947,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     //#endregion
 
     #region Bury
+    bool IsCharacterGhost(Character p_character) {
+        if (p_character is Summon summon) {
+            if (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Vengeful_Ghost) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void TriggerBuryMe() {
 	    if (owner.minion == null && !(owner is Animal) && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
 	        && settlement is NPCSettlement npcSettlement) {
-            if (owner is Summon summon) {
-                if (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Vengeful_Ghost) {
-                    return;
-                }
+            if (IsCharacterGhost(owner)) {
+                return;
             }
 		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE) ??
                                                 npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? 
@@ -1968,6 +1974,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TriggerPersonalBuryJob(Character targetCharacter) {
         if (owner.gridTileLocation != null && !owner.jobQueue.HasJob(JOB_TYPE.BURY, targetCharacter)) {
             LocationStructure targetStructure = null;
+            if (IsCharacterGhost(owner)) {
+                return;
+            }
             if (owner.homeSettlement != null) {
                 targetStructure = owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE) ??
                                     owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
@@ -1985,6 +1994,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public void TriggerPersonalBuryInActivePartyJob(Character targetCharacter) {
         if (owner.gridTileLocation != null && !owner.jobQueue.HasJob(JOB_TYPE.BURY_IN_ACTIVE_PARTY, targetCharacter)) {
+            if (IsCharacterGhost(owner)) {
+                return;
+            }
             GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_IN_ACTIVE_PARTY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, owner);
             buryJob.SetStillApplicableChecker(JobManager.Bury_Applicability);
             owner.jobQueue.AddJobInQueue(buryJob);
@@ -3135,7 +3147,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerHuntPreyJob(Character target, bool p_isFlawTriggered = false) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.LYCAN_HUNT_PREY)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.LYCAN_HUNT_PREY, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
-			if (p_isFlawTriggered) {
+            job.SetCancelOnDeath(false);
+            if (p_isFlawTriggered) {
                 job.isTriggeredFlaw = true;
 			}
             job.SetDoNotRecalculate(true);

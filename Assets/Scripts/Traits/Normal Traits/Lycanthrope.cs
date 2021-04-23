@@ -177,7 +177,7 @@ namespace Traits {
         }
         private bool TryDoLycanBehaviour(bool p_isFlawTriggered = false) {
             if (owner.lycanData.isMaster) {
-                return TryMasterLycanHuntPrey(true);
+                return TryMasterLycanHuntPrey(p_isFlawTriggered);
             } else {
                 if (IsAlone()) {
                     DoTriggerFlawTransform();
