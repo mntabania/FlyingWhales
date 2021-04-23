@@ -95,7 +95,7 @@ public class Butcher : GoapAction {
                                 costLog += $" +{currCost}(Cannibal, Malnourished, Friend/Close)";
                             }
                             if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
-                                cost += 300;
+                                cost += 100;
                                 costLog += " +300(Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
                             }
                         } else {
@@ -104,7 +104,7 @@ public class Butcher : GoapAction {
                                 costLog += " +2000(Cannibal, Friend/Close)";
                             }
                             if ((targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) && !actor.needsComponent.isStarving) {
-                                cost += 400;
+                                cost += 200;
                                 costLog += " +2000(Cannibal, Human/Elf/Sapient Ratman, not Starving)";
                             }
                         }
@@ -117,8 +117,8 @@ public class Butcher : GoapAction {
                                 costLog += $" +{currCost}(not Cannibal, Malnourished, Friend/Close)";
                             }
                             if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
-                                cost += 500;
-                                costLog += " +500(not Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
+                                cost += 200;
+                                costLog += " +200(not Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
                             }
                         } else {
                             if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
