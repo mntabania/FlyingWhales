@@ -206,7 +206,6 @@ public class CharacterInfoUI : InfoUIBase {
     }
 
     private void InitializeRevealHoverText() {
-        Debug.LogError(PlayerManager.Instance.player.plagueComponent.plaguePoints + " -- " + EditableValuesManager.Instance.GetRevealCharacterInfoCost());
         if (PlayerManager.Instance.player.plagueComponent.plaguePoints < EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
             btnRevealInfo.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
             btnRevealLogs.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
