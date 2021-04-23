@@ -851,7 +851,7 @@ namespace Inner_Maps {
                         if (currTile.biomeType == BIOMES.TUNDRA || currTile.biomeType == BIOMES.DESERT || currTile.biomeType == BIOMES.SNOW) {
                             TileBase tileBase = GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                             if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
-                                if (GameUtilities.RollChance(10)) {
+                                if (GameUtilities.RollChance(5)) {
                                     TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
                                     currTile.structure.AddPOI(obj, currTile);
                                 }
