@@ -309,7 +309,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -460, y: 0}
+  m_AnchoredPosition: {x: -627.5, y: 0}
   m_SizeDelta: {x: 200, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &4452501
@@ -39520,7 +39520,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -638, y: -0}
+  m_AnchoredPosition: {x: -274.4, y: -0}
   m_SizeDelta: {x: 178, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1414646975
@@ -43063,7 +43063,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -273, y: 0}
+  m_AnchoredPosition: {x: -440.5, y: 0}
   m_SizeDelta: {x: 200, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1533776042
@@ -49009,6 +49009,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 308965762}
     m_Modifications:
+    - target: {fileID: 648894024448412690, guid: 65a159b014602c143bbf2126de537ad7,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4523589963864561818, guid: 65a159b014602c143bbf2126de537ad7,
         type: 3}
       propertyPath: villagersToggle
