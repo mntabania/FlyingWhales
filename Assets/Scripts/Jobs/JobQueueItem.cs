@@ -31,6 +31,8 @@ public abstract class JobQueueItem : ISavable {
     public bool isInMultithread { get; protected set; }
     public bool shouldForceCancelUponReceiving { get; protected set; }
 
+    public bool isTriggeredFlaw { set; get; }
+
     //object pool
     /// <summary>
     /// Has this job been returned to the pool?
@@ -352,6 +354,7 @@ public abstract class JobQueueItem : ISavable {
         canTakeJobChecker = null;
         assignedCharacter = null;
         stillApplicable = null;
+        isTriggeredFlaw = false;
         SetIsStealth(false);
         SetPriority(-1);
         SetCannotBePushedBack(false);

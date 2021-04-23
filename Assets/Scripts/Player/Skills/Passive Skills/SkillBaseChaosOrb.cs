@@ -14,6 +14,7 @@ public class SkillBaseChaosOrb : PassiveSkill {
         Messenger.AddListener<IPointOfInterest>(PlayerSkillSignals.REMOVE_BUFF_ACTIVATED, OnRemoveBuffDone);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedAction);
     }
     private void OnZapDone(IPointOfInterest p_character) {
         Character character = p_character as Character;
@@ -51,6 +52,19 @@ public class SkillBaseChaosOrb : PassiveSkill {
     }
 
     private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
+        Character character = p_traitable as Character;
+        if (character != null && character.race.IsSapient() && character.isNormalAndNotAlliedWithPlayer) {
+            if (p_trait.name == "Starving" || p_trait.name == "Sulking" || p_trait.name == "Exhausted") {
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
+            }
+        }
+    }
+
+    private void OnCharacterFinishedAction(Character p_character, GoapPlanJob p_job) {
+        if (p_job.isTriggeredFlaw) {
+            Debug.LogError(p_job.name);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap);
+        }
 
     }
 }

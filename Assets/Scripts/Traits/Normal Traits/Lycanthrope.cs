@@ -166,7 +166,7 @@ namespace Traits {
         #endregion
 
         public override string TriggerFlaw(Character character) {
-            if (!TryDoLycanBehaviour()) {
+            if (!TryDoLycanBehaviour(true)) {
                 return "fail_no_target";
             }
             return base.TriggerFlaw(character);
@@ -175,9 +175,9 @@ namespace Traits {
         public void CheckIfAlone() {
             TryDoLycanBehaviour();
         }
-        private bool TryDoLycanBehaviour() {
+        private bool TryDoLycanBehaviour(bool p_isFlawTriggered = false) {
             if (owner.lycanData.isMaster) {
-                return TryMasterLycanHuntPrey();
+                return TryMasterLycanHuntPrey(true);
             } else {
                 if (IsAlone()) {
                     DoTriggerFlawTransform();
@@ -211,11 +211,11 @@ namespace Traits {
             }
             owner.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, otherData);
         }
-        private bool TryMasterLycanHuntPrey() {
+        private bool TryMasterLycanHuntPrey(bool p_isFlawTriggered = false) {
             Character huntPreyTarget = GetHuntPreyTarget();
             if (huntPreyTarget != null) {
                 owner.jobQueue.CancelAllJobs();
-                return owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
+                return owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget, p_isFlawTriggered);
             }
             return false;
         }

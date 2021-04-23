@@ -19757,6 +19757,51 @@ MonoBehaviour:
   accumulatedDamageGO: {fileID: 1578830539}
   _tutorialUIController: {fileID: 534072421}
   _tutorialToggle: {fileID: 197558549}
+--- !u!1 &606416310
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 606416311}
+  - component: {fileID: 606416312}
+  m_Layer: 0
+  m_Name: PlayerPartyLayOuts
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &606416311
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606416310}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1327213143}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &606416312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606416310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbec5ddbcff88444ca887a4c2aec8c08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layouts:
+  - '[Noun]'
 --- !u!1001 &607353879
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37118,6 +37163,8 @@ Transform:
   - {fileID: 469780947}
   - {fileID: 818146977}
   - {fileID: 1658935794}
+  - {fileID: 606416311}
+  - {fileID: 1391932131}
   m_Father: {fileID: 2080112258}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -37138,6 +37185,8 @@ MonoBehaviour:
   partyNameAdjectives: {fileID: 1510955351}
   partyNameDeclarations: {fileID: 469780948}
   partyNameTargets: {fileID: 1658935795}
+  partyNameLayoutsPlayerParty: {fileID: 606416312}
+  partyNameNounsForPlayerParty: {fileID: 1391932132}
 --- !u!1 &1333819174
 GameObject:
   m_ObjectHideFlags: 0
@@ -38818,6 +38867,60 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1389792244}
   m_CullTransparentMesh: 0
+--- !u!1 &1391932130
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1391932131}
+  - component: {fileID: 1391932132}
+  m_Layer: 0
+  m_Name: PlayerPartyNouns
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1391932131
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391932130}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1327213143}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1391932132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391932130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aabc48b6c584a964dae45fe6d7df2c17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nouns:
+  - Evildoers
+  - Wrekt
+  - Baddest
+  - Clownz
+  - Jokers
+  - Goons of the underground
+  - Illest
+  - The real deal
+  - Sad boy's
+  - Niggaz Wit Attitudes
 --- !u!1 &1395490770
 GameObject:
   m_ObjectHideFlags: 0

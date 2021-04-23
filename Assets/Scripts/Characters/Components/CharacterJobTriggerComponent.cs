@@ -3132,10 +3132,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Werewolf Hunt for Prey
-    public bool TriggerHuntPreyJob(Character target) {
+    public bool TriggerHuntPreyJob(Character target, bool p_isFlawTriggered = false) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.LYCAN_HUNT_PREY)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.LYCAN_HUNT_PREY, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
-		    job.SetDoNotRecalculate(true);
+			if (p_isFlawTriggered) {
+                job.isTriggeredFlaw = true;
+			}
+            job.SetDoNotRecalculate(true);
 		    owner.jobQueue.AddJobInQueue(job);
 		    return true;
 	    }

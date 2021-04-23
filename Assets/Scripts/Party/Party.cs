@@ -37,6 +37,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public PARTY_QUEST_TYPE prevQuestType { get; private set; }
     public float partyWalkSpeed { get; private set; } //Do not save this because this is updated once all members in the party is loaded from save data. see LoadReferences
 
+    public PARTY_QUEST_TYPE plannedPartyType { get; set; }
     //public Character campSetter { get; private set; }
     //public Character foodProducer { get; private set; }
 
@@ -100,9 +101,20 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         return persistentID == p_party.persistentID;
     }
 
+	void InitializePartyName(Character partyCreator) {
+        if (plannedPartyType == PARTY_QUEST_TYPE.Demon_Snatch || plannedPartyType == PARTY_QUEST_TYPE.Demon_Defend ||
+                plannedPartyType == PARTY_QUEST_TYPE.Demon_Raid ||
+                plannedPartyType == PARTY_QUEST_TYPE.Demon_Rescue) {
+            partyName = PartyManager.Instance.GetNewPartyNameForPlayerParty(partyCreator, plannedPartyType);
+        } else {
+            partyName = PartyManager.Instance.GetNewPartyName(partyCreator);
+        }
+    }
+
     public void Initialize(Character partyCreator) { //In order to create a party, there must always be a party creator
+        
+        InitializePartyName(partyCreator);
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
-        partyName = PartyManager.Instance.GetNewPartyName(partyCreator);
         if (partyCreator.faction != null && partyCreator.faction.isPlayerFaction) {
             partySettlement = PlayerManager.Instance.player.playerSettlement;
         } else {

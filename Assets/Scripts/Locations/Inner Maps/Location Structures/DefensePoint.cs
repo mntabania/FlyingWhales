@@ -44,7 +44,7 @@ namespace Inner_Maps.Location_Structures {
 
 		public override void DeployParty() {
             if (party == null) {
-                party = PartyManager.Instance.CreateNewParty(partyData.deployedSummons[0]);
+                party = PartyManager.Instance.CreateNewParty(partyData.deployedSummons[0], PARTY_QUEST_TYPE.Demon_Defend);
                 partyData.deployedSummons[0].faction.partyQuestBoard.CreateDemonDefendPartyQuest(partyData.deployedSummons[0],
                         partyData.deployedSummons[0].homeSettlement, this);
                 party.TryAcceptQuest();

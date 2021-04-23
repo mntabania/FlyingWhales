@@ -144,6 +144,9 @@ public class JobQueue {
         //    //    }
         //    //}
         //}
+        if (job.jobType == JOB_TYPE.TRIGGER_FLAW) {
+            job.isTriggeredFlaw = true;
+        }
         return true;
     }
     public bool RemoveJobInQueue(JobQueueItem job, bool shouldDoAfterEffect = true, string reason = "") {
