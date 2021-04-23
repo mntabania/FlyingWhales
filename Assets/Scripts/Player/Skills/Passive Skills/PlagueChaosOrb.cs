@@ -13,7 +13,7 @@ public class PlagueChaosOrb : PassiveSkill {
     }
     private void OnTraitAdded(Character character, Trait trait) {
         if (GameUtilities.RollChance(50)) {
-        if (trait.name == "Depressed" || trait.name == "Insomnia" || trait.name == "Lethargic") { //|| trait.name == "Paralyzed"
+            if (trait.name == "Depressed" || trait.name == "Insomnia" || trait.name == "Lethargic") { //|| trait.name == "Paralyzed"
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
             }
         }
