@@ -349,7 +349,7 @@ namespace Tutorial {
             _loadedTutorialData.Add(p_type, loadedData);
             return loadedData;
         }
-        public void UnloadTutorialDataAndAssets() {
+        public void UnloadTutorialAssets() {
             foreach (var kvp in _loadedTutorialData) {
                 for (int i = 0; i < kvp.Value.pages.Count; i++) {
                     TutorialPage page = kvp.Value.pages[i];

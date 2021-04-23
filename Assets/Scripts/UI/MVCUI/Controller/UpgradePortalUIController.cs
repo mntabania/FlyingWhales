@@ -11,6 +11,7 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     private UpgradePortalUIView m_upgradePortalUIView;
     
     private string m_tooltipCancelUpgradePortal;
+    public bool isShowing { get; private set; }
     
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
     [ContextMenu("Instantiate UI")]
@@ -71,14 +72,17 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     }
     public override void ShowUI() {
         base.ShowUI();
+        isShowing = true;
         m_upgradePortalUIView.SetCurrentSpiritEnergyText(PlayerManager.Instance.player.spiritEnergy);
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         InputManager.Instance.SetAllHotkeysEnabledState(false);
+        InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
         InnerMapCameraMove.Instance.DisableMovement();
     }
     public override void HideUI() {
         base.HideUI();
+        isShowing = false;
         UIManager.Instance.ResumeLastProgressionSpeed();
         InputManager.Instance.SetAllHotkeysEnabledState(true);
         InnerMapCameraMove.Instance.EnableMovement();
@@ -154,5 +158,8 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
     }
     private void OnHoverOutUpgradePortalTimer() {
         UIManager.Instance.HideSmallInfo();
+    }
+    public void HideViaShortcutKey() {
+        AnimatedHideUI();
     }
 }

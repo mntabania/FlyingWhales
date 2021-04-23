@@ -32,6 +32,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	private bool m_isDrawn;
 	private string m_tooltipCancelReleaseAbility;
 	
+	public bool isShowing { get; private set; }
+	
 	#region getters
 	private PlayerSkillComponent skillComponentToUse {
 		get {
@@ -93,6 +95,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	public override void HideUI() {
 		base.HideUI();
+		isShowing = false;
 		UIManager.Instance.SetSpeedTogglesState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 		InputManager.Instance.SetAllHotkeysEnabledState(true);
@@ -100,6 +103,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	public override void ShowUI() {
 		m_mvcUIView.ShowUI();
+		isShowing = true;
 	}
 	bool GetIsAvailable() { 
 		return GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased) <= 0;
@@ -256,6 +260,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			UIManager.Instance.Pause();
 			UIManager.Instance.SetSpeedTogglesState(false);
 			InputManager.Instance.SetAllHotkeysEnabledState(false);
+			InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
 			InnerMapCameraMove.Instance.DisableMovement();
 		});
 	}
@@ -281,12 +286,13 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			}
 		} else {
 			m_purchaseSkillUIView.HideSkills();
-			m_purchaseSkillUIView.SetMessage("New Abilities will be available after " + (GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased)) + " ticks");
+			m_purchaseSkillUIView.SetMessage("New Abilities will be available after " + (GameManager.Instance.Today().GetTickDifferenceNonAbsoluteOrZeroIfReached(m_nextPurchased).ToString()) + " ticks");
 		}
 		m_purchaseSkillUIView.SetCurrentChaoticEnergyText(PlayerManager.Instance.player.chaoticEnergy);
 		UIManager.Instance.Pause();
 		UIManager.Instance.SetSpeedTogglesState(false);
 		InputManager.Instance.SetAllHotkeysEnabledState(false);
+		InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
 		InnerMapCameraMove.Instance.DisableMovement();
 	}
 
@@ -401,4 +407,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		UIManager.Instance.HideSmallInfo();
 	}
 	#endregion
+	
+	public void HideViaShortcutKey() {
+		m_purchaseSkillUIView.PlayHideAnimation(HideUI);
+	}
 }
