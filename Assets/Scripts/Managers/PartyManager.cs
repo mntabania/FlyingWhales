@@ -66,7 +66,6 @@ public class PartyManager : MonoBehaviour {
     public string GetNewPartyNameForPlayerParty(Character partyCreator, PARTY_QUEST_TYPE p_type) {
         string layout = CollectionUtilities.GetRandomElement(partyNameLayoutsPlayerParty.layouts);
         string newPartyName = PartyNameFillerReplacerForPlayerParty(layout, partyCreator);
-        Debug.LogError(p_type);
         switch (p_type) {
             case PARTY_QUEST_TYPE.Demon_Raid:
             newPartyName += " Raid Party";
