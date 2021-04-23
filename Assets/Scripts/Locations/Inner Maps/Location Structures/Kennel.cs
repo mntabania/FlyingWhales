@@ -12,6 +12,9 @@ namespace Inner_Maps.Location_Structures {
         public Summon occupyingSummon => _occupyingSummon;
         public override Type serializedData => typeof(SaveDataKennel);
         public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
+
+        public override SUMMON_TYPE housedMonsterType => occupyingSummon != null ? occupyingSummon.summonType : SUMMON_TYPE.None;
+
         private MarkerDummy _markerDummy;
         private Summon _occupyingSummon;
 

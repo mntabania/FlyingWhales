@@ -18,6 +18,7 @@ namespace Inner_Maps.Location_Structures {
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
         public override Type serializedData => typeof(SaveDataDemonicStructure);
+        public virtual SUMMON_TYPE housedMonsterType => SUMMON_TYPE.None;
         #endregion
 
         protected DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {

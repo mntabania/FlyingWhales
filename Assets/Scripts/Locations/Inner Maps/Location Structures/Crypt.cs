@@ -5,6 +5,7 @@ using Inner_Maps;
 namespace Inner_Maps.Location_Structures {
     public class Crypt : DemonicStructure {
 
+        public override SUMMON_TYPE housedMonsterType => SUMMON_TYPE.Skeleton;
         public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){ }
         public Crypt(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 

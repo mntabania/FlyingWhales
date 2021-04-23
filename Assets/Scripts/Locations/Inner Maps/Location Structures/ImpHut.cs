@@ -4,7 +4,7 @@ using Inner_Maps;
 
 namespace Inner_Maps.Location_Structures {
     public class ImpHut : DemonicStructure {
-
+        public override SUMMON_TYPE housedMonsterType => SUMMON_TYPE.Imp;
         public ImpHut(Region location) : base(STRUCTURE_TYPE.IMP_HUT, location){ }
         public ImpHut(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 

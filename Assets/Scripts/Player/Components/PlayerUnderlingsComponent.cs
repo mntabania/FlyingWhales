@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Inner_Maps.Location_Structures;
 public class PlayerUnderlingsComponent {
     //public List<Minion> minions { get; private set; }
     //public List<Summon> summons { get; private set; }
@@ -134,6 +134,8 @@ public class PlayerUnderlingsComponent {
             charge += amount;
             if (charge > m_underlingCharges.maxCharges) {
                 charge = m_underlingCharges.maxCharges;
+            } else if (charge < 0) {
+                charge = 0;
             }
             m_underlingCharges.currentCharges = charge;
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
@@ -205,7 +207,6 @@ public class PlayerUnderlingsComponent {
             if (m_underlingCharges.currentCharges < 0) {
                 m_underlingCharges.currentCharges = 0;
             }
-            m_underlingCharges.chargesToReplenish++;
             m_underlingCharges.StartMonsterReplenish();
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
@@ -252,7 +253,6 @@ public class MonsterAndDemonUnderlingCharges {
     public bool isDemon;
     public bool isReplenishing;
     //public GameDate replenishDate;
-    public int chargesToReplenish;
 
     public int currentCooldownTick;
 
@@ -281,14 +281,30 @@ public class MonsterAndDemonUnderlingCharges {
         if (isReplenishing) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickReplenish);
             isReplenishing = false;
-            ReplenishCharges();
             Messenger.Broadcast(PlayerSkillSignals.STOP_MONSTER_UNDERLING_COOLDOWN, this);
+            ReplenishCharges();
         }
     }
     private void ReplenishCharges() {
         if (PlayerManager.Instance.player.underlingsComponent.HasMonsterUnderlingEntry(monsterType)) {
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(monsterType, chargesToReplenish);
+            int chargesToReplenish = GetChargesToReplenishFor(monsterType);
+            if (chargesToReplenish > 0) {
+                PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(monsterType, chargesToReplenish);
+                if (currentCharges < maxCharges && hasMaxCharge) {
+                    StartMonsterReplenish();
+                }
+            }
         }
+    }
+    private int GetChargesToReplenishFor(SUMMON_TYPE p_monsterType) {
+        int count = 0;
+        for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.allStructures.Count; i++) {
+            DemonicStructure structure = PlayerManager.Instance.player.playerSettlement.allStructures[i] as DemonicStructure;
+            if (structure != null && structure.housedMonsterType == p_monsterType) {
+                count++;
+            }
+        }
+        return count;
     }
     #endregion
 
