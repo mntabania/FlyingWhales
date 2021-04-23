@@ -72,12 +72,11 @@ public class UpgradePortalUIView : MVCUIView {
             for (int i = 0; i < UIModel.items.Length; i++) {
                 UpgradePortalItemUI itemUI = UIModel.items[i];
                 PLAYER_SKILL_TYPE skillType = p_upgradeTier.skillTypesToUnlock.ElementAtOrDefault(i);
-                // lastIndex = i;
                 if (skillType != PLAYER_SKILL_TYPE.NONE) {
                     itemUI.SetData(skillType);
                     itemUI.gameObject.SetActive(true);
                 } else {
-                    break;
+                    itemUI.gameObject.SetActive(false);
                 }
             }    
         }
