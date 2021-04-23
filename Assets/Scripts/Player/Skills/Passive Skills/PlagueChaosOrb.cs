@@ -7,7 +7,7 @@ public class PlagueChaosOrb : PassiveSkill {
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Plague_Chaos_Orb;
 
     public override void ActivateSkill() {
-        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
+        //Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptAdded);
         //Messenger.AddListener<Character>(PlayerSkillSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, OnPoisonCloudActivated); remove for now
     }
