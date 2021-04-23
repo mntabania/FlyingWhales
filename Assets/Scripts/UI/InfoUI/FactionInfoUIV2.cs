@@ -628,7 +628,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #endregion
 
     public void RevealInfo() {
-        if (PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.GetRevealFactionInfoCost()) {
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints >= EditableValuesManager.Instance.GetRevealFactionInfoCost()) {
             PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetRevealFactionInfoCost());
             activeFaction.isInfoUnlocked = true;
             ProcessDisplay();
