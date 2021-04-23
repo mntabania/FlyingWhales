@@ -19755,7 +19755,7 @@ MonoBehaviour:
   plaguePointsContainer: {fileID: 1533776041}
   accumulatedDamageLbl: {fileID: 558547291}
   accumulatedDamageGO: {fileID: 1578830539}
-  _tutorialUIController: {fileID: 534072421}
+  tutorialUIController: {fileID: 534072421}
   _tutorialToggle: {fileID: 197558549}
 --- !u!1 &606416310
 GameObject:
@@ -38917,8 +38917,12 @@ MonoBehaviour:
   - Clownz
   - Jokers
   - Illest
-  - The real deal
-  - Sad boy's
+  - 'lookout '
+  - 'nippers '
+  - noodle
+  - 'flapper '
+  - 'squeeze '
+  - 'dewdropper '
 --- !u!1 &1395490770
 GameObject:
   m_ObjectHideFlags: 0
@@ -45894,7 +45898,7 @@ MonoBehaviour:
   popUpScreensUI: {fileID: 1747130002}
   initialWorldSetupMenu: {fileID: 85761050}
   bottomNotification: {fileID: 1455444294}
-  _biolabUIController: {fileID: 1658988109}
+  biolabUIController: {fileID: 1658988109}
   _schemeUIController: {fileID: 1496807649}
   contextMenuUIController: {fileID: 142246406}
   _portalUIController: {fileID: 187911616}
