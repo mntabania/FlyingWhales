@@ -30,7 +30,7 @@ MonoBehaviour:
   baseLoadoutWeight: 0
   resistanceType: 0
   archetypeWeightedBonus: 0
-  canBeReleasedEvenIfLearned: 1
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
