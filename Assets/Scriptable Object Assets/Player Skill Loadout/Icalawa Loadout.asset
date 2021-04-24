@@ -24,7 +24,7 @@ MonoBehaviour:
     fixedSkills: 50000000530000005200000051000000
   structures:
     extraSlots: 0
-    fixedSkills: 9b0000004a00000048000000b5000000
+    fixedSkills: 9b0000004a00000048000000b500000049000000
   miscs:
     extraSlots: 0
     fixedSkills: 0600000034000000320000005c0000008c000000
@@ -36,44 +36,30 @@ MonoBehaviour:
   availableMiscs: 
   portalUpgradeTiers:
   - name: Level 1
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 2
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 3
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 4
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 5
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0
   - name: Level 6
-    skillTypesToUnlock: 4a0000004f000000
-    upgradeCost:
-    - name: 10 Mana
-      currency: 0
-      amount: 10
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 7
+    skillTypesToUnlock: 
+    upgradeCost: []
     upgradeTime: 0

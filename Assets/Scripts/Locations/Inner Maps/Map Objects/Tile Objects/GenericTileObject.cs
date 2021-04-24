@@ -336,13 +336,21 @@ public class GenericTileObject : TileObject {
             }
         }
 
-        if (structure is DemonicStructure) {
+        if (structure is DemonicStructure dStructure) {
+            //corrupt border tiles
             for (int j = 0; j < structure.tiles.Count; j++) {
                 LocationGridTile tile = structure.tiles.ElementAt(j);
                 for (int k = 0; k < tile.neighbourList.Count; k++) {
                     LocationGridTile neighbour = tile.neighbourList[k];
                     if (neighbour.structure is Cave || neighbour.structure is Ocean) { continue; } //do not corrupt cave tiles.
-                    neighbour.corruptionComponent.CorruptTileAndRandomlyGenerateDemonicObject();
+                    if (neighbour.structure != dStructure) {
+                        neighbour.corruptionComponent.CorruptTileAndRandomlyGenerateDemonicObject();
+                        if (structure is TortureChambers tortureChambers) {
+                            tortureChambers.AddBorderTile(neighbour);
+                        } else if (structure is Kennel kennel) {
+                            kennel.AddBorderTile(neighbour);
+                        }
+                    }
                 }
             }
         }

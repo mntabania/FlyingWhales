@@ -150,9 +150,7 @@ namespace Locations.Area_Features {
                         $"{summary}\n\tChance met for {character.name}. Adding Freezing trait...";
                     character.traitContainer.AddTrait(character, "Freezing", bypassElementalChance: true);
                     Freezing freezing = character.traitContainer.GetTraitOrStatus<Freezing>("Freezing");
-                    if (freezing != null) {
-                        freezing.SetIsPlayerSource(isPlayerSource);
-                    }
+                    freezing?.SetIsPlayerSource(isPlayerSource);
                     //character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice,
                     //    piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), showHPBar: true);
                 }

@@ -24,7 +24,7 @@ MonoBehaviour:
     fixedSkills: 500000005100000053000000
   structures:
     extraSlots: 2
-    fixedSkills: 4800000047000000b5000000
+    fixedSkills: 4800000047000000b5000000bf000000
   miscs:
     extraSlots: 1
     fixedSkills: 3300000032000000060000008c000000
@@ -36,6 +36,30 @@ MonoBehaviour:
   availableMiscs: 3400000059000000080000000a000000aa0000005c000000ac000000ae000000af000000
   portalUpgradeTiers:
   - name: Level 1
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 2
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 3
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 4
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 5
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 6
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 7
     skillTypesToUnlock: 
     upgradeCost: []
     upgradeTime: 0

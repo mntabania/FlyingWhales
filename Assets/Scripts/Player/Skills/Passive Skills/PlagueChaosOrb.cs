@@ -7,16 +7,13 @@ public class PlagueChaosOrb : PassiveSkill {
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Plague_Chaos_Orb;
 
     public override void ActivateSkill() {
-        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
+        //Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptAdded);
         //Messenger.AddListener<Character>(PlayerSkillSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, OnPoisonCloudActivated); remove for now
     }
     private void OnTraitAdded(Character character, Trait trait) {
         if (GameUtilities.RollChance(50)) {
-            if (character.traitContainer.HasTrait("Depressed") ||
-                character.traitContainer.HasTrait("Insomnia") ||
-                character.traitContainer.HasTrait("Lethargic") ||
-                character.traitContainer.HasTrait("Paralyzed")) {
+            if (trait.name == "Depressed" || trait.name == "Insomnia" || trait.name == "Lethargic") { //|| trait.name == "Paralyzed"
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
             }
         }

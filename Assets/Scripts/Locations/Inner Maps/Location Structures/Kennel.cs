@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Characters.Components;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -12,13 +13,16 @@ namespace Inner_Maps.Location_Structures {
         public Summon occupyingSummon => _occupyingSummon;
         public override Type serializedData => typeof(SaveDataKennel);
         public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedMonsters;
+        public List<LocationGridTile> borderTiles { get; private set; }
 
         public override SUMMON_TYPE housedMonsterType => occupyingSummon != null ? occupyingSummon.summonType : SUMMON_TYPE.None;
 
         private MarkerDummy _markerDummy;
         private Summon _occupyingSummon;
 
-        public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location){ }
+        public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location) {
+            borderTiles = new List<LocationGridTile>();
+        }
         public Kennel(Region location, SaveDataKennel data) : base(location, data) { }
 
         #region Loading
@@ -29,7 +33,14 @@ namespace Inner_Maps.Location_Structures {
                 _occupyingSummon = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataKennel.occupyingSummonID) as Summon;
                 _occupyingSummon?.eventDispatcher.SubscribeToCharacterDied(this);
             }
-            
+            if (saveDataKennel.borderTiles != null) {
+                borderTiles = new List<LocationGridTile>();
+                for (int i = 0; i < saveDataKennel.borderTiles.Length; i++) {
+                    TileLocationSave saveData = saveDataKennel.borderTiles[i];
+                    LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);
+                    borderTiles.Add(tile);
+                }
+            }
         }
         #endregion
         
@@ -80,6 +91,7 @@ namespace Inner_Maps.Location_Structures {
             if (occupyingSummon != null) {
                 info = $"{info}\nOccupying Summon: {occupyingSummon.name}";
             }
+            info = $"{info}\nBorder Tiles({borderTiles.Count.ToString()}): {borderTiles.ComafyList()}";
             return info;
         }
         public override void DeployParty() {
@@ -151,18 +163,35 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsTrue(p_character == occupyingSummon, $"{name} is subscribed to death event of non occupying summon {p_character?.name}! Occupying summon is {occupyingSummon?.name}");
             UnOccupyKennelAndCheckForNewOccupant();
         }
+        
+        #region Border Tiles
+        public void AddBorderTile(LocationGridTile p_tile) {
+            if (!borderTiles.Contains(p_tile)) {
+                borderTiles.Add(p_tile);    
+            }
+        }
+        public void RemoveBorderTile(LocationGridTile p_tile) {
+            borderTiles.Remove(p_tile);
+        }
+        #endregion
+        
     }
 }
 
 #region Save Data
 public class SaveDataKennel : SaveDataPartyStructure {
     public string occupyingSummonID;
-
+    public TileLocationSave[] borderTiles;
     public override void Save(LocationStructure structure) {
         base.Save(structure);
         Kennel kennel = structure as Kennel;
         if (kennel.occupyingSummon != null) {
             occupyingSummonID = kennel.occupyingSummon.persistentID;
+        }
+        borderTiles = new TileLocationSave[kennel.borderTiles.Count];
+        for (int i = 0; i < kennel.borderTiles.Count; i++) {
+            LocationGridTile tile = kennel.borderTiles[i];
+            borderTiles[i] = new TileLocationSave(tile);
         }
     }
 }

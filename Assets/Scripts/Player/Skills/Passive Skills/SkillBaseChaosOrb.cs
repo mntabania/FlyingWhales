@@ -62,7 +62,6 @@ public class SkillBaseChaosOrb : PassiveSkill {
 
     private void OnCharacterFinishedAction(Character p_character, GoapPlanJob p_job) {
         if (p_job.isTriggeredFlaw) {
-            Debug.LogError(p_job.name);
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap);
         }
 

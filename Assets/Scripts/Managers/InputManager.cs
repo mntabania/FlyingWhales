@@ -298,7 +298,22 @@ namespace Ruinarch {
                     UIManager.Instance.HidePlayerActionContextMenu();
                     return true;
                 }
-            
+                if (UIManager.Instance.biolabUIController.isShowing) {
+                    UIManager.Instance.biolabUIController.HideViaShortcutKey();
+                    return true;
+                }
+                if (UIManager.Instance.upgradePortalUIController.isShowing) {
+                    UIManager.Instance.upgradePortalUIController.HideViaShortcutKey();
+                    return true;
+                }
+                if (UIManager.Instance.purchaseSkillUIController.isShowing) {
+                    UIManager.Instance.purchaseSkillUIController.HideViaShortcutKey();
+                    return true;
+                }
+                if (PlayerUI.Instance.tutorialUIController.isShowing) {
+                    PlayerUI.Instance.tutorialUIController.HideViaShortcutKey();
+                    return true;
+                }
                 CustomStandaloneInputModule customModule = EventSystem.current.currentInputModule as CustomStandaloneInputModule;
                 if (ignoreCursor || !EventSystem.current.IsPointerOverGameObject() || customModule.GetPointerData().pointerEnter.GetComponent<Button>() == null) {
                     if (UIManager.Instance.openedPopups.Count > 0) {

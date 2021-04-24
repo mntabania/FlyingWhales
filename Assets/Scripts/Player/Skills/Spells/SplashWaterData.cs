@@ -31,9 +31,7 @@ public class SplashWaterData : SkillData {
         int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SPLASH_WATER);
         traitable.traitContainer.AddTrait(traitable, "Wet", bypassElementalChance: true, overrideDuration: duration);
         Wet wet = traitable.traitContainer.GetTraitOrStatus<Wet>("Wet");
-        if (wet != null) {
-            wet.SetIsPlayerSource(true);
-        }
+        wet?.SetIsPlayerSource(true);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);

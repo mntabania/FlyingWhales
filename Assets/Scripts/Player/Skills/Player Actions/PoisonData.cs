@@ -19,7 +19,7 @@ public class PoisonData : PlayerAction {
         int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.POISON); 
         targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned", overrideDuration: duration);
         Poisoned poisoned = targetPOI.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
-        poisoned.SetIsPlayerSource(true);
+        poisoned?.SetIsPlayerSource(true);
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToDatabase();

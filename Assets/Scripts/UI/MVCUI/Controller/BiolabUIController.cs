@@ -18,6 +18,8 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 
 	private Action onCloseBiolabUI;
 
+	public bool isShowing { get; private set; }
+
 	public void Init(Action p_onCloseBiolabUI = null) {
 		InstantiateUI();
 		HideUI();
@@ -39,12 +41,14 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 	
 	public override void ShowUI() {
 		base.ShowUI();
+		isShowing = true;
 		UpdateTopMenuSummary();
 		ShowUI(transmissionUIController);
 		m_biolabUIView.SetTransmissionTabIsOnWithoutNotify(true);
 	}
 	public override void HideUI() {
 		base.HideUI();
+		isShowing = false;
 		onCloseBiolabUI?.Invoke();
 		Messenger.RemoveListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}
@@ -131,6 +135,9 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 		}
 	}
 	public void OnCloseClicked() {
+		HideUI();
+	}
+	public void HideViaShortcutKey() {
 		HideUI();
 	}
 	//public void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition) {

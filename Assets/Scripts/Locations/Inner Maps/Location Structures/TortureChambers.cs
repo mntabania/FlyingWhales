@@ -1,18 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class TortureChambers : PartyStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         public override string nameplateName => name;
+        public List<LocationGridTile> borderTiles { get; private set; }
+        public override Type serializedData => typeof(SaveDataTortureChambers);
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             nameWithoutID = "Prison";
             startingSummonCount = 2;
             name = $"{nameWithoutID} {id.ToString()}";
+            borderTiles = new List<LocationGridTile>();
         }
-        public TortureChambers(Region location, SaveDataPartyStructure data) : base(location, data) { }
+        public TortureChambers(Region location, SaveDataTortureChambers data) : base(location, data) { }
 
         #region Overrides
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            SaveDataTortureChambers saveDataTortureChambers = saveDataLocationStructure as SaveDataTortureChambers;
+            if (saveDataTortureChambers.borderTiles != null) {
+                borderTiles = new List<LocationGridTile>();
+                for (int i = 0; i < saveDataTortureChambers.borderTiles.Length; i++) {
+                    TileLocationSave saveData = saveDataTortureChambers.borderTiles[i];
+                    LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);
+                    borderTiles.Add(tile);
+                }
+            }
+        }
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {
                 if (character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room)) {
@@ -69,7 +87,11 @@ namespace Inner_Maps.Location_Structures {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH_VILLAGER);
         }
-        
+        public override string GetTestingInfo() {
+            string summary = base.GetTestingInfo();
+            return $"{summary}\nBorder Tiles({borderTiles.Count.ToString()}): {borderTiles.ComafyList()}";
+        }
+
         #region Structure Object
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
@@ -93,6 +115,17 @@ namespace Inner_Maps.Location_Structures {
             return new PrisonCell(tilesInRoom);
         }
         #endregion
+
+        #region Border Tiles
+        public void AddBorderTile(LocationGridTile p_tile) {
+            if (!borderTiles.Contains(p_tile)) {
+                borderTiles.Add(p_tile);    
+            }
+        }
+        public void RemoveBorderTile(LocationGridTile p_tile) {
+            borderTiles.Remove(p_tile);
+        }
+        #endregion
         
         private void StopDrainingCharactersHere() {
             for (int i = 0; i < charactersHere.Count; i++) {
@@ -102,3 +135,19 @@ namespace Inner_Maps.Location_Structures {
         }
     }
 }
+
+#region Save Data
+public class SaveDataTortureChambers : SaveDataPartyStructure {
+    public TileLocationSave[] borderTiles;
+    public override void Save(LocationStructure locationStructure) {
+        base.Save(locationStructure);
+        TortureChambers tortureChambers = locationStructure as TortureChambers;
+        borderTiles = new TileLocationSave[tortureChambers.borderTiles.Count];
+        for (int i = 0; i < tortureChambers.borderTiles.Count; i++) {
+            LocationGridTile tile = tortureChambers.borderTiles[i];
+            borderTiles[i] = new TileLocationSave(tile);
+        }
+
+    }
+}
+#endregion
