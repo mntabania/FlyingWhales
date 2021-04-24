@@ -122,7 +122,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public SUMMON_TYPE[] summonsPool { get; private set; }
     public COMBAT_MODE[] combatModes { get; private set; }
     public List<string> rumorWorthyActions { get; private set; }
-    public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
+    //public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
     public Character necromancerInTheWorld { get; private set; }
     public bool hasSpawnedNecromancerOnce { get; private set; }
     public bool toggleCharacterMarkerName { get; private set; }
@@ -1035,22 +1035,22 @@ public class CharacterManager : BaseMonoBehaviour {
             character.CenterOnCharacter();
         }
     }
-    public void SetCurrentDemonicStructureTargetOfAngels(DemonicStructure demonicStructure) {
-        currentDemonicStructureTargetOfAngels = demonicStructure;
-    }
-    public void SetNewCurrentDemonicStructureTargetOfAngels() {
-        LocationStructure targetDemonicStructure = null;
-        if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
-            targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
-        } else {
-            targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
-        }
-        if(targetDemonicStructure != null) {
-            SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
-        } else {
-            SetCurrentDemonicStructureTargetOfAngels(null);
-        }
-    }
+    //public void SetCurrentDemonicStructureTargetOfAngels(DemonicStructure demonicStructure) {
+    //    currentDemonicStructureTargetOfAngels = demonicStructure;
+    //}
+    //public void SetNewCurrentDemonicStructureTargetOfAngels() {
+    //    LocationStructure targetDemonicStructure = null;
+    //    if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
+    //        targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
+    //    } else {
+    //        targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
+    //    }
+    //    if(targetDemonicStructure != null) {
+    //        SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
+    //    } else {
+    //        SetCurrentDemonicStructureTargetOfAngels(null);
+    //    }
+    //}
     public TILE_OBJECT_TYPE GetEggType(SUMMON_TYPE summonType) {
         switch (summonType) {
             case SUMMON_TYPE.Giant_Spider:

@@ -62,7 +62,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	public void SubscribeToVillageListeners() {
 		Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
 		Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
-		Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
+		Messenger.AddListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
 		Messenger.AddListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
 		Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
 		Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
@@ -81,7 +81,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	public void UnsubscribeFromVillageListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
 		Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
-		Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
+		Messenger.RemoveListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
 		Messenger.RemoveListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
 		Messenger.RemoveListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
 		Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
@@ -153,7 +153,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
             }
         }
     }
-    private void OnTileObjectDamaged(TileObject tileObject, int amount) {
+    private void OnTileObjectDamaged(TileObject tileObject, int amount, bool isPlayerSource) {
 		if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
 			TryCreateRepairTileObjectJob(tileObject);
 		}

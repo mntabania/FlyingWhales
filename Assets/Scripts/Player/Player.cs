@@ -39,6 +39,7 @@ public class Player : ILeader, IObjectManipulator {
     public SummonMeterComponent summonMeterComponent { get; private set; }
     public ManaRegenComponent manaRegenComponent { get; set; }
     public PlayerDamageAccumulator damageAccumulator { get; private set; }
+    public PlayerRetaliationComponent retaliationComponent { get; private set; }
 
     public bool hasAlreadyWon { get; set; }
 
@@ -72,6 +73,7 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent = new SummonMeterComponent();
         bookmarkComponent = new BookmarkComponent();
         damageAccumulator = new PlayerDamageAccumulator();
+        retaliationComponent = new PlayerRetaliationComponent();
         summonMeterComponent.Initialize();
 
         hasAlreadyWon = false;
@@ -89,6 +91,7 @@ public class Player : ILeader, IObjectManipulator {
         tileObjectComponent = data.tileObjectComponent.Load();
         summonMeterComponent = data.summonMeterComponent.Load();
         damageAccumulator = data.damageAccumulator.Load();
+        retaliationComponent = data.retaliationComponent.Load();
         bookmarkComponent = new BookmarkComponent();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);

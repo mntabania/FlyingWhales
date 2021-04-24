@@ -29,9 +29,9 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             StopDrainingCharactersHere();
-            base.DestroyStructure(p_responsibleCharacter);
+            base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
         }
         public override void DeployParty() {
             base.DeployParty();

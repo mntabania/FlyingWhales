@@ -1301,6 +1301,8 @@ public class ReactionComponent : CharacterComponent {
             if (structure != null && structure.structureType.IsPlayerStructure()) {
                 if (actor.partyComponent.isMemberThatJoinedQuest && actor.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Counterattack) {
                     actor.combatComponent.Fight(targetTileObject, CombatManager.Clear_Demonic_Intrusion);
+                } else if (actor.behaviourComponent.isAttackingDemonicStructure && actor.race == RACE.ANGEL) {
+                    actor.combatComponent.Fight(targetTileObject, CombatManager.Clear_Demonic_Intrusion);
                 }
             }
         }

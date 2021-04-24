@@ -443,8 +443,8 @@ namespace Inner_Maps {
             //        break;
             //}
         }
-        public void RemoveObject(LocationGridTile tile, Character removedBy = null) {
-            tile.tileObjectComponent.RemoveObjectHere(removedBy);
+        public void RemoveObject(LocationGridTile tile, Character removedBy = null, bool isPlayerSource = false) {
+            tile.tileObjectComponent.RemoveObjectHere(removedBy, isPlayerSource);
         }
         public void RemoveObjectWithoutDestroying(LocationGridTile tile) {
             tile.tileObjectComponent.RemoveObjectHereWithoutDestroying();

@@ -42,7 +42,7 @@ namespace Quests {
             Instance = null;
             Messenger.RemoveListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
-            Messenger.RemoveListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
+            //Messenger.RemoveListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.RemoveListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
         }
         
@@ -97,7 +97,7 @@ namespace Quests {
         public void InitializeAfterGameLoaded() {
             Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
-            Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
+            //Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
         }

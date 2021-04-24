@@ -65,74 +65,63 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            if (character.behaviourComponent.attackDemonicStructureTarget == null || character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed) {
+            LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
+            if (targetStructure == null || targetStructure.hasBeenDestroyed) {
                 log += $"\n-Demonic structure target is already destroyed";
-                if (character is Summon summon) {
-                    if (summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel) {
-                        log += $"\n-Character is angel, will check if there is more demonic structure to be attacked";
-                        if (CharacterManager.Instance.currentDemonicStructureTargetOfAngels == null
-                            || CharacterManager.Instance.currentDemonicStructureTargetOfAngels == character.behaviourComponent.attackDemonicStructureTarget) {
-                            log += $"\n-No current structure target of angels, will try to set one";
-                            CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
-                        }
-                        if (CharacterManager.Instance.currentDemonicStructureTargetOfAngels != null) {
-                            log += $"\n-New target demonic structure is set: " + CharacterManager.Instance.currentDemonicStructureTargetOfAngels.structureType.ToString();
-                            character.behaviourComponent.SetDemonicStructureTarget(CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
-                            return true;
-                        } else {
-                            log += $"\n-Still no target structure";
-                        }
-                    }
-                }
+                //if (character is Summon summon) {
+                //    if (summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel) {
+                //        log += $"\n-Character is angel, will check if there is more demonic structure to be attacked";
+                //        //if (CharacterManager.Instance.currentDemonicStructureTargetOfAngels == null
+                //        //    || CharacterManager.Instance.currentDemonicStructureTargetOfAngels == character.behaviourComponent.attackDemonicStructureTarget) {
+                //        //    log += $"\n-No current structure target of angels, will try to set one";
+                //        //    CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+                //        //}
+                //        if (CharacterManager.Instance.currentDemonicStructureTargetOfAngels != null) {
+                //            log += $"\n-New target demonic structure is set: " + CharacterManager.Instance.currentDemonicStructureTargetOfAngels.structureType.ToString();
+                //            character.behaviourComponent.SetDemonicStructureTarget(CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
+                //            return true;
+                //        } else {
+                //            log += $"\n-Still no target structure";
+                //        }
+                //    }
+                //}
                 log += $"\n-No more demonic structure to be attacked, will remove this behaviour";
-                character.marker.visionCollider.VoteToFilterVision();
+                //character.marker.visionCollider.VoteToFilterVision();
                 character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
                 return true;
             } else {
                 //The checking that the character must be on the target structure first before attacking is removed because sometimes the structure is in a closed space, and if the character cannot dig, he can't attack forever because he cannot go to the structure first
                 //That is why we bypassed the checking, we immediately added the structure objects to the hostile list
-
-                LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
-                if (targetStructure.region == character.currentRegion) {
-                    //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
-                    if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
-                        log += "\n-Has tile object that contribute damage";
-                        log += "\n-Adding tile object as hostile";
-                        TileObject chosenTileObject = null;
-                        IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
-                        if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
-                            chosenTileObject = tileObject;
-                        }
-                        if (chosenTileObject != null) {
-                            character.combatComponent.Fight(chosenTileObject, CombatManager.Clear_Demonic_Intrusion);
-                            return true;
-                        } else {
-                            log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
-                            character.behaviourComponent.SetDemonicStructureTarget(null);
-                            return true;
-                        }
+                if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
+                    log += "\n-Has tile object that contribute damage";
+                    log += "\n-Adding tile object as hostile";
+                    TileObject chosenTileObject = null;
+                    IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
+                    if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
+                        chosenTileObject = tileObject;
+                    }
+                    if (chosenTileObject != null) {
+                        character.combatComponent.Fight(chosenTileObject, CombatManager.Clear_Demonic_Intrusion);
+                        return true;
                     } else {
                         log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
-                        character.behaviourComponent.SetDemonicStructureTarget(null);
+                        character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
                         return true;
                     }
                 } else {
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.occupiedArea.gridTileComponent.gridTiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)));
-                    return character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                    log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+                    character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
+                    return true;
                 }
-
-
-                //if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                //    && character.gridTileLocation.collectionOwner.partOfHextile == character.behaviourComponent.attackDemonicStructureTarget.occupiedHexTile) {
-                //    character.marker.visionCollider.VoteToUnFilterVision();
-                //    log += "\n-Already in the target demonic structure";
-
+                //LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
+                //if (targetStructure.region == character.currentRegion) {
+                //    //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
+                    
                 //} else {
-                //    log += "\n-Is not in the target demonic structure";
-                //    log += "\n-Roam there";
-                //    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(character.behaviourComponent.attackDemonicStructureTarget.passableTiles);
-                //    character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                //    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.occupiedArea.gridTileComponent.gridTiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)));
+                //    return character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
                 //}
+
             }
         }
         return false;

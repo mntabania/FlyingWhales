@@ -37,8 +37,8 @@ namespace Inner_Maps.Location_Structures {
                 level = 1;    
             }
         }
-        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
-            base.DestroyStructure(p_responsibleCharacter);
+        protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
+            base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
             PlayerUI.Instance.LoseGameOver();
         }
         // private void StartGameAfterLoadoutSelected() {

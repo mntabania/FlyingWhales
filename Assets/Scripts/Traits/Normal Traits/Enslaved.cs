@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Enslaved : Status {
-        public override bool isSingleton => true;
+        //Not singleton for responsible characters
+        //public override bool isSingleton => true;
 
         public Enslaved() {
             name = "Enslaved";

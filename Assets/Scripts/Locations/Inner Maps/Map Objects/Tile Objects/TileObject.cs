@@ -594,9 +594,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         if (amount < 0) {
             if (responsibleCharacter != null) {
-                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this, amount, responsibleCharacter);
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this, amount, responsibleCharacter, isPlayerSource);
             } else {
-                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this, amount);
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this, amount, isPlayerSource);
             }
         } else if (amount > 0) {
             Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_REPAIRED, this, amount);
@@ -655,7 +655,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
         //Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
         //OnRemoveTileObject(null, gridTileLocation, false, false);
+        if (this is ResourcePile) {
+            PlayerManager.Instance?.player?.retaliationComponent.ResourcePileRetaliation(this, gridTileLocation);
+        }
         gridTileLocation.structure.RemovePOIWithoutDestroying(this);
+
         //DestroyGameObject();
         //SetPOIState(POI_STATE.INACTIVE);
         if (TileObjectDB.TryGetTileObjectData(tileObjectType, out var objData)) {
