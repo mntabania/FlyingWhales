@@ -58,6 +58,9 @@ public class PlayerRetaliationComponent {
             DespawnAllAngels();
             ResetAngelDestroyedStructuresCounter();
             Messenger.Broadcast(PlayerSignals.STOP_THREAT_EFFECT);
+
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "stop_retaliation", null, LOG_TAG.Player, LOG_TAG.Major);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
     }
     private void MaxRetaliationCounterReached() {
@@ -99,6 +102,9 @@ public class PlayerRetaliationComponent {
         //Messenger.Broadcast(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
         isRetaliating = true;
         Messenger.Broadcast(PlayerSignals.START_THREAT_EFFECT);
+
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation", null, LOG_TAG.Player, LOG_TAG.Major);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
     #endregion
 
