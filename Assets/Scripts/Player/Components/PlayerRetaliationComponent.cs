@@ -12,19 +12,24 @@ public class PlayerRetaliationComponent {
     public int destroyedStructuresByAngelCounter { get; private set; }
     public List<Character> spawnedAngels { get; private set; }
     public bool isRetaliating { get; private set; }
+    public RuinarchBasicProgress retaliationProgress { get; private set; }
 
     public PlayerRetaliationComponent() {
         spawnedAngels = new List<Character>();
         SetAngelCount(2);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
+        retaliationProgress = new RuinarchBasicProgress("Retaliation");
+        retaliationProgress.Initialize(0, MAX_RETALIATION_COUNTER);
     }
     public PlayerRetaliationComponent(SaveDataPlayerRetaliationComponent data) {
-        spawnedAngels = new List<Character>();
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
+        retaliationCounter = data.retaliationCounter;
+        angelCount = data.angelCount;
+        destroyedStructuresByAngelCounter = data.destroyedStructuresByAngelCounter;
+        isRetaliating = data.isRetaliating;
+        retaliationProgress = data.retaliationProgress;
     }
 
     #region Listeners
-    private void OnCharacterDeath(Character p_character) {
+    public void OnCharacterDeath(Character p_character) {
         if (p_character.race == RACE.ANGEL) {
             if (spawnedAngels.Remove(p_character)) {
                 CheckAngels();
@@ -39,6 +44,7 @@ public class PlayerRetaliationComponent {
             return false;
         }
         retaliationCounter++;
+        retaliationProgress.SetProgress(retaliationCounter);
         if (retaliationCounter >= MAX_RETALIATION_COUNTER) {
             MaxRetaliationCounterReached();
         }
@@ -48,6 +54,7 @@ public class PlayerRetaliationComponent {
         if (isRetaliating) {
             isRetaliating = false;
             retaliationCounter = 0;
+            retaliationProgress.SetProgress(retaliationCounter);
             DespawnAllAngels();
             ResetAngelDestroyedStructuresCounter();
             Messenger.Broadcast(PlayerSignals.STOP_THREAT_EFFECT);
@@ -179,9 +186,31 @@ public class PlayerRetaliationComponent {
         }
     }
     #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataPlayerRetaliationComponent data) {
+        spawnedAngels = SaveUtilities.ConvertIDListToCharacters(data.spawnedAngels);
+    }
+    #endregion
 }
 
 public class SaveDataPlayerRetaliationComponent : SaveData<PlayerRetaliationComponent> {
+    public int retaliationCounter;
+    public int angelCount;
+    public int destroyedStructuresByAngelCounter;
+    public List<string> spawnedAngels;
+    public bool isRetaliating;
+    public RuinarchBasicProgress retaliationProgress;
+
+    public override void Save(PlayerRetaliationComponent data) {
+        base.Save(data);
+        retaliationCounter = data.retaliationCounter;
+        angelCount = data.angelCount;
+        destroyedStructuresByAngelCounter = data.destroyedStructuresByAngelCounter;
+        spawnedAngels = SaveUtilities.ConvertSavableListToIDs(data.spawnedAngels);
+        isRetaliating = data.isRetaliating;
+        retaliationProgress = data.retaliationProgress;
+    }
     public override PlayerRetaliationComponent Load() {
         PlayerRetaliationComponent component = new PlayerRetaliationComponent(this);
         return component;

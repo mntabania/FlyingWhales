@@ -78,6 +78,7 @@ public class Player : ILeader, IObjectManipulator {
 
         hasAlreadyWon = false;
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
 
         SubscribeListeners();
         
@@ -102,6 +103,7 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
 
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
         hasAlreadyWon = data.hasAlreadyWon;
         SubscribeListeners();
     }
@@ -714,6 +716,7 @@ public class Player : ILeader, IObjectManipulator {
         if(p_character.faction == playerFaction) {
             underlingsComponent.OnFactionMemberDied(p_character);
         }
+        retaliationComponent.OnCharacterDeath(p_character);
     }
     #endregion
 
@@ -813,6 +816,7 @@ public class Player : ILeader, IObjectManipulator {
         storedTargetsComponent.LoadReferences(data.storedTargetsComponent);
         summonMeterComponent.LoadReferences(data.summonMeterComponent);
         underlingsComponent.LoadReferences(data.underlingsComponent);
+        retaliationComponent.LoadReferences(data.retaliationComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion

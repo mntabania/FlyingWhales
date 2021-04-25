@@ -1240,7 +1240,7 @@ public enum COMBAT_SPECIAL_SKILL_TARGET {
 }
 
 public enum BOOKMARK_CATEGORY {
-    None, Win_Condition, Portal, Player_Parties, Targets
+    None, Major_Events, Portal, Player_Parties, Targets
 }
 
 public enum BOOKMARK_TYPE {
