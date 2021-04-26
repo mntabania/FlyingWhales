@@ -230,9 +230,16 @@ public class Butcher : GoapAction {
         return new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
     }
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
-        return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
-              || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) 
-              || (poiTarget is Character character && !character.isDead) || poiTarget.numOfActionsBeingPerformedOnThis > 0 || poiTarget.isBeingCarriedBy != null || (poiTarget is Character c && c.grave?.isBeingCarriedBy != null);
+        if (poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
+              || (poiTarget is Character character && !character.isDead) || poiTarget.numOfActionsBeingPerformedOnThis > 0 || poiTarget.isBeingCarriedBy != null || (poiTarget is Character c && c.grave?.isBeingCarriedBy != null)) {
+            return true;
+        } else if (actor.gridTileLocation != poiTarget.gridTileLocation && !actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) {
+            if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);

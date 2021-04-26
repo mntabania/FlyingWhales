@@ -291,7 +291,7 @@ public class GoapAction {
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true) == false) {
-                if (actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
                     return false;
                 }
                 p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target {poiTarget.name} ({poiTarget.gridTileLocation?.ToString()}) and is not neighbour.";
@@ -300,9 +300,6 @@ public class GoapAction {
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
             //if the action type is NEAR_OTHER_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
-                if (actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
-                    return false;
-                }
                 p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target tile ({node.targetTile?.ToString()}) and is not neighbour.";
                 return true; // means invalid
             }
