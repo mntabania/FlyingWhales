@@ -77,7 +77,9 @@ public class ReportCorruptedStructure : GoapAction {
         }
         PlayerManager.Instance.player.threatComponent.AdjustThreatAndApplyModification(20); //15
         PlayerManager.Instance.player.retaliationComponent.ReportDemonicStructureRetaliation(goapNode.actor);
-        TriggerCounterattack(goapNode.actor, structureToReport);
+
+        //Remove counter attack temporarily, since we now have retaliation
+        //TriggerCounterattack(goapNode.actor, structureToReport);
     }
     #endregion
     

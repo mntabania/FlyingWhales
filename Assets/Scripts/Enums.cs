@@ -1276,5 +1276,6 @@ public enum CHANCE_TYPE {
     Flirt_On_Sight_Base_Chance,
     Vampire_Lord_Chance,
     Host_Social_Party,
-    Demonic_Decor_On_Corrupt
+    Demonic_Decor_On_Corrupt,
+    Retaliation,
 }

@@ -15,5 +15,9 @@ namespace UtilityScripts {
         public void Initialize(int p_minValue, int p_maxValue) {
             Setup(p_minValue, p_maxValue);
         }
+        public void SetName(string p_name) {
+            name = p_name;
+            bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(this);
+        }
     }
 }
