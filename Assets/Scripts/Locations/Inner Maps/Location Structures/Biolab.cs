@@ -8,6 +8,8 @@ namespace Inner_Maps.Location_Structures {
     public class Biolab : DemonicStructure {
         public GameDate replenishDate { get; private set; }
 
+        public override string description => "The Biolab allows the player to afflict Villagers with a customizable Plague. You can customize your Plague's transmission, symptoms and other effects by spending Chaotic Energy.\n\nIf the Biolab is built, the player also has access to the Plagued Rats spell.This spell spawns 2 Plagued Rats that may be able to spread the Plague to the world.";
+
         #region getters
         public override System.Type serializedData => typeof(SaveDataBiolab);
         #endregion

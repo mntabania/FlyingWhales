@@ -6,6 +6,8 @@ namespace Inner_Maps.Location_Structures {
     public class Beholder : DemonicStructure {
         public List<EyeWard> eyeWards { get; private set; }
 
+        public override string description => "The Beholder allows you to place Eyes on unoccupied tiles in the map. The Eye logs most events and actions that occur around it, allowing the player to store some of them as Intel. Intel can then be used for various purposes. You can share it with other Villagers and watch them react or you may even use one as Blackmail material if you have the Meddler.";
+
         #region getters
         public override System.Type serializedData => typeof(SaveDataBeholder);
         #endregion

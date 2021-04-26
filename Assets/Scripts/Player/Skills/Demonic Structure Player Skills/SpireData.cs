@@ -6,7 +6,7 @@ using UnityEngine;
 public class SpireData : DemonicStructurePlayerSkill {
     public override string name => "Spire";
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPIRE;
-    public override string description => "This Structure let the player upgrade skills";
+    public override string description => "This Structure allows the Player to upgrade their Powers.";
     public SpireData() {
         structureType = STRUCTURE_TYPE.SPIRE;
     }

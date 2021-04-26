@@ -4,7 +4,9 @@ using System.Collections.Generic;
 namespace Inner_Maps.Location_Structures {
     public class Maraud : PartyStructure {
         public override List<IStoredTarget> allPossibleTargets => _allVillages;
-        
+
+        public override string description => "The Maraud allows the player to summon Raid Parties. Raid Parties harass Villages and is primarily used to generate some Chaos Orbs. A Raid Party needs a Lesser Demon as its leader";
+
         private List<IStoredTarget> _allVillages;
         public Maraud(Region location) : base(STRUCTURE_TYPE.MARAUD, location) {
             _allVillages = new List<IStoredTarget>();

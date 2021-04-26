@@ -31,6 +31,7 @@ public class StructureInfoUI : InfoUIBase {
     [Header("Info")]
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI villageLbl;
+    [SerializeField] private TextMeshProUGUI descriptionLbl;
     [SerializeField] private EventLabel villageEventLbl;
     [SerializeField] private GameObject villageParentGO;
 
@@ -189,6 +190,7 @@ public class StructureInfoUI : InfoUIBase {
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeStructure.currentHP}/{activeStructure.maxHP}";
+        descriptionLbl.text = activeStructure.description;
         if(activeStructure.settlementLocation != null && activeStructure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE) {
             villageLbl.text = $"<link=\"village\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeStructure.settlementLocation.name)}</link>";
             villageParentGO.SetActive(true);

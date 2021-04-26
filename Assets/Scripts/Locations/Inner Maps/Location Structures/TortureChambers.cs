@@ -6,6 +6,8 @@ using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class TortureChambers : PartyStructure {
+        public override string description => "This Structure allows the Player to spawn a Snatch Party to abduct and imprison a Villager.\n\nImprisoned Villagers may be tortured, brainwashed or drained to produce Chaos Orbs.";
+
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public override List<IStoredTarget> allPossibleTargets => PlayerManager.Instance.player.storedTargetsComponent.storedVillagers;
         public override string nameplateName => name;
