@@ -4,7 +4,7 @@
 # To import these sprites into your Unity project, download "TexturePackerImporter":
 # https://www.codeandweb.com/texturepacker/unity
 #
-# $TexturePacker:SmartUpdate:a5549ef9294f245f2cfab501381fa4d2:d1631eb0ee159796649afbcd18dcb1a4:387286bc19ce74d65ce714355787f0d4$
+# $TexturePacker:SmartUpdate:c955c892b3bc2e92c1c9dc761ce93ca9:8117c0ad0463db8093ad7eb139a7e947:387286bc19ce74d65ce714355787f0d4$
 #
 :format=40300
 :texture=Text Sprites.png
@@ -14,7 +14,7 @@
 :borders=disabled
 :alphahandling=KeepTransparentPixels
 
-bonus_charges_icon;196;133;21;31; 0.5;0.5; 0;0;0;0
+bonus_charges_icon;138;187;31;31; 0.5;0.5; 0;0;0;0
 element_earth_icon;2;36;32;32; 0.5;0.5; 0;0;0;0
 element_electric_icon;38;180;32;32; 0.5;0.5; 0;0;0;0
 element_fire_icon;44;222;32;32; 0.5;0.5; 0;0;0;0
@@ -23,22 +23,22 @@ element_normal_icon;38;108;32;32; 0.5;0.5; 0;0;0;0
 element_poison_icon;38;72;32;32; 0.5;0.5; 0;0;0;0
 element_water_icon;38;36;32;32; 0.5;0.5; 0;0;0;0
 element_wind_icon;102;222;32;32; 0.5;0.5; 0;0;0;0
-icon_chargesB;166;131;21;31; 0.5;0.5; 0;0;0;0
-icon_cooldown;224;164;23;26; 0.5;0.5; 0;0;0;0
+icon_chargesB;231;157;21;31; 0.5;0.5; 0;0;0;0
+icon_cooldown;231;192;23;26; 0.5;0.5; 0;0;0;0
 icon_cultist;74;194;24;24; 0.5;0.5; 0;0;0;0
 icon_demon;74;166;24;24; 0.5;0.5; 0;0;0;0
 icon_ideology;80;240;17;14; 0.5;0.5; 0;0;0;0
-icon_leader;196;168;24;22; 0.5;0.5; 0;0;0;0
-icon_mana;138;192;26;26; 0.5;0.5; 0;0;0;0
-icon_monster;168;194;24;24; 0.5;0.5; 0;0;0;0
-icon_object;196;194;24;24; 0.5;0.5; 0;0;0;0
+icon_leader;194;112;24;22; 0.5;0.5; 0;0;0;0
+icon_mana;173;192;26;26; 0.5;0.5; 0;0;0;0
+icon_monster;203;194;24;24; 0.5;0.5; 0;0;0;0
+icon_object;203;166;24;24; 0.5;0.5; 0;0;0;0
 icon_plague;2;216;38;38; 0.5;0.5; 0;0;0;0
-icon_ratvillager;224;194;24;24; 0.5;0.5; 0;0;0;0
-icon_structure;168;166;24;24; 0.5;0.5; 0;0;0;0
+icon_ratvillager;173;164;24;24; 0.5;0.5; 0;0;0;0
+icon_structure;201;138;24;24; 0.5;0.5; 0;0;0;0
 icon_threat;70;6;28;26; 0.5;0.5; 0;0;0;0
-icon_undead;138;164;24;24; 0.5;0.5; 0;0;0;0
-icon_village;102;158;24;24; 0.5;0.5; 0;0;0;0
-icon_villager;74;138;24;24; 0.5;0.5; 0;0;0;0
+icon_undead;229;129;24;24; 0.5;0.5; 0;0;0;0
+icon_village;138;159;24;24; 0.5;0.5; 0;0;0;0
+icon_villager;166;136;24;24; 0.5;0.5; 0;0;0;0
 Key_A;2;180;32;32; 0.5;0.5; 0;0;0;0
 Key_D;2;144;32;32; 0.5;0.5; 0;0;0;0
 Key_S;2;108;32;32; 0.5;0.5; 0;0;0;0

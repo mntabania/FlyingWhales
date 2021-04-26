@@ -85,8 +85,10 @@ public class WipeOutAllUntilDayWinConditionTracker : WinConditionTracker {
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable undeadInvasion = new GenericTextBookmarkable(GetUndeadInvasionText, () => BOOKMARK_TYPE.Text, null, null, null, null);
-        GenericTextBookmarkable remainingVillagers = new GenericTextBookmarkable(GetRemainingVillagers, () => BOOKMARK_TYPE.Text, null, null, null, null);
+        GenericTextBookmarkable undeadInvasion = new GenericTextBookmarkable(GetUndeadInvasionText, () => BOOKMARK_TYPE.Text, CharacterCenterCycle, null, 
+            OnHoverOverUndeadInvasion, OnHoverOutUndeadInvasion);
+        GenericTextBookmarkable remainingVillagers = new GenericTextBookmarkable(GetRemainingVillagers, () => BOOKMARK_TYPE.Text, CharacterCenterCycle, 
+            null, OnHoverOverEliminateVillagers, OnHoverOutEliminateVillagers);
         IBookmarkable[] bookmarkables = new[] {
             undeadInvasion, remainingVillagers
         };
@@ -97,6 +99,48 @@ public class WipeOutAllUntilDayWinConditionTracker : WinConditionTracker {
     }
     private string GetRemainingVillagers() {
         return $"Remaining villagers : {villagersToEliminate.Count.ToString()}";
+    }
+    private void OnHoverOverEliminateVillagers(UIHoverPosition p_pos) {
+        UIManager.Instance.ShowSmallInfo($"You have until Day {(DueDay + 1).ToString()} to eliminate all villagers! Use the upcoming Undead Invasion to your advantage. " +
+                                         $"To eliminate a Villager, either kill it or turn it into a Cultist by brainwashing it in your Prison.", 
+            pos: p_pos);
+    }
+    private void OnHoverOutEliminateVillagers() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private void OnHoverOverUndeadInvasion(UIHoverPosition p_pos) {
+        UIManager.Instance.ShowSmallInfo($"The undead are coming! Amass a number of undead characters and they will all attack villagers on Day {DueDay.ToString()}", 
+            pos: p_pos);
+    }
+    private void OnHoverOutUndeadInvasion() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+    
+    #region Center Cycle
+    private void CharacterCenterCycle() {
+        if (villagersToEliminate != null && villagersToEliminate.Count > 0) {
+            //normal objects to center
+            ISelectable objToSelect = GetNextCharacterToCenter(villagersToEliminate);
+            if (objToSelect != null) {
+                InputManager.Instance.Select(objToSelect);
+            }
+        }
+    }
+    private Character GetNextCharacterToCenter(List<Character> selectables) {
+        Character objToSelect = null;
+        for (int i = 0; i < selectables.Count; i++) {
+            Character currentSelectable = selectables[i];
+            if (currentSelectable.IsCurrentlySelected()) {
+                //set next selectable in list to be selected.
+                objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                break;
+            }
+        }
+        if (objToSelect == null) {
+            objToSelect = selectables[0];
+        }
+        return objToSelect;
     }
     #endregion
 }

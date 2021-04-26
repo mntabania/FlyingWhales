@@ -167,11 +167,11 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     }
     private void OnHoverOverReleaseAbilityTimer() {
         string message = $"Remaining time: {PlayerManager.Instance.player.playerSkillComponent.timerUnlockSpell.GetRemainingTimeString()}";
-        if (PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.IsFinished()) {
-            message = $"{message}\nReroll Available!";  
-        } else {
-            message = $"{message}\nRemaining time until reroll: {PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.GetRemainingTimeString()}";
-        }
+        // if (PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.IsFinished()) {
+        //     message = $"{message}\nReroll Available!";  
+        // } else {
+        //     message = $"{message}\nRemaining time until reroll: {PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.GetRemainingTimeString()}";
+        // }
         UIManager.Instance.ShowSmallInfo(message, autoReplaceText: false);
     }
     private void OnHoverOutReleaseAbilityTimer() {

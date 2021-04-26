@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 
 public class UpgradePortalWinConditionTracker : WinConditionTracker {
     private const int TargetLevel = 8;
@@ -18,7 +19,8 @@ public class UpgradePortalWinConditionTracker : WinConditionTracker {
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable upgradePortal = new GenericTextBookmarkable(GetUpgradePortalText, () => BOOKMARK_TYPE.Text, null, null, null, null);
+        GenericTextBookmarkable upgradePortal = new GenericTextBookmarkable(GetUpgradePortalText, () => BOOKMARK_TYPE.Text, OnSelectWinCondition, 
+            null, OnHoverOverAction, OnHoverOutAction);
         IBookmarkable[] bookmarkables = new[] {
             upgradePortal
         };
@@ -26,6 +28,17 @@ public class UpgradePortalWinConditionTracker : WinConditionTracker {
     }
     private string GetUpgradePortalText() {
         return $"Upgrade Portal to Level {TargetLevel.ToString()}";
+    }
+    private void OnSelectWinCondition() {
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        UIManager.Instance.ShowUpgradePortalUI(portal);
+    }
+    private void OnHoverOverAction(UIHoverPosition position) {
+        UIManager.Instance.ShowSmallInfo("Gather enough Spirit Energy by producing Chaos Orbs and then spend them to upgrade your Portal to unlock new Powers. " +
+                                         "You win the game if you upgrade your Portal to Level 8.", pos: position);
+    }
+    private void OnHoverOutAction() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 }

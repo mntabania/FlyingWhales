@@ -14,6 +14,7 @@ public class MaraudUIView : MVCUIView {
 		void OnCloseTargetSubContainer();
 		void OnHoverOver();
 		void OnHoverOut();
+		void OnClickNoTargetsTip();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -71,6 +72,16 @@ public class MaraudUIView : MVCUIView {
 		UIModel.subTargetContainer.SetActive(true);
 	}
 
+	public void ShowNoTargetsUI(string p_text) {
+		UIModel.txtEmptyTargetList.gameObject.SetActive(true);
+		UIModel.txtEmptyTargetList.text = p_text;
+		UIModel.btnNoTargetsTip.gameObject.SetActive(true);
+	}
+	public void HideNoTargetsUI() {
+		UIModel.txtEmptyTargetList.gameObject.SetActive(false);
+		UIModel.btnNoTargetsTip.gameObject.SetActive(false);
+	}
+	
 	public void HideMinionButtonShowMinionContainer() {
 		UIModel.btnAddMinion.gameObject.SetActive(false);
 		UIModel.scrollViewDeployedMinions.gameObject.SetActive(true);
@@ -171,6 +182,7 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseTargetSubContainer += p_listener.OnCloseTargetSubContainer;
 		UIModel.onHoverOver += p_listener.OnHoverOver;
 		UIModel.onHoverOut += p_listener.OnHoverOut;
+		UIModel.onNoTargetsTipClicked += p_listener.OnClickNoTargetsTip;
 	}
 
 	public void Unsubscribe(IListener p_listener) {
@@ -183,6 +195,7 @@ public class MaraudUIView : MVCUIView {
 		UIModel.onCloseTargetSubContainer -= p_listener.OnCloseTargetSubContainer;
 		UIModel.onHoverOver -= p_listener.OnHoverOver;
 		UIModel.onHoverOut -= p_listener.OnHoverOut;
+		UIModel.onNoTargetsTipClicked -= p_listener.OnClickNoTargetsTip;
 	}
 	#endregion
 }

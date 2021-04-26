@@ -22,7 +22,9 @@ namespace Tutorial {
             Storing_Targets,
             Prism,
             Maraud,
-            Intel
+            Intel,
+            Spirit_Energy,
+            Migration_Controls
         }
         public enum Tutorial {
             Basic_Controls = 0,

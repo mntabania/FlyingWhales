@@ -166,6 +166,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
 
         prevQuestType = data.prevQuestType;
+        plannedPartyType = data.plannedPartyType;
 
         jobBoard.InitializeFromSaveData(data.jobBoard);
         beaconComponent.Initialize(data.beaconComponent);
@@ -1193,8 +1194,20 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public void RemoveBookmark() {
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
     }
-    public void OnHoverOverBookmarkItem() { }
-    public void OnHoverOutBookmarkItem() { }
+    public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) {
+        string text = string.Empty;
+        if (currentQuest is DemonSnatchPartyQuest demonSnatchPartyQuest) {
+            text = $"{partyName} has been assigned to snatch {demonSnatchPartyQuest.targetCharacter?.bookmarkName}";
+        } else if (currentQuest is DemonRaidPartyQuest demonRaidPartyQuest) {
+            text = $"{partyName} has been assigned to harass {demonRaidPartyQuest.targetSettlement?.bookmarkName}";
+        } else if (currentQuest is DemonDefendPartyQuest defendPartyQuest) {
+            text = $"{partyName} has been assigned to defend {defendPartyQuest.targetStructure?.bookmarkName}";
+        }
+        UIManager.Instance.ShowSmallInfo(text, pos: p_pos, autoReplaceText: false);
+    }
+    public void OnHoverOutBookmarkItem() {
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 
     #region Utilities
@@ -1288,6 +1301,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public PARTY_TARGET_DESTINATION_TYPE targetDestinationType;
     public string currentQuest;
     public PARTY_QUEST_TYPE prevQuestType;
+    public PARTY_QUEST_TYPE plannedPartyType;
     //public bool hasStartedAcceptingQuests;
     public GameDate nextQuestCheckDate;
     public bool canAcceptQuests;
@@ -1360,6 +1374,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         waitingEndDate = data.waitingEndDate;
 
         prevQuestType = data.prevQuestType;
+        plannedPartyType = data.plannedPartyType;
 
         members = SaveUtilities.ConvertSavableListToIDs(data.members);
         membersThatJoinedQuest = SaveUtilities.ConvertSavableListToIDs(data.membersThatJoinedQuest);

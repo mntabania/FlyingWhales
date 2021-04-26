@@ -18,6 +18,7 @@ public class TutorialItemUI : PooledObject {
 
     #region getters
     public RuinarchToggle toggle => toggleMain;
+    public TutorialManager.Tutorial_Type tutorialType => _tutorialType;
     #endregion
     
     private TutorialManager.Tutorial_Type _tutorialType;
@@ -64,6 +65,11 @@ public class TutorialItemUI : PooledObject {
         } else {
             onTutorialItemToggledOff?.Invoke(_tutorialType);
         }
+    }
+    public void ManualSelect() {
+        toggle.SetIsOnWithoutNotify(true);
+        toggle.group.NotifyToggleOn(toggle, false);
+        onTutorialItemToggledOn?.Invoke(_tutorialType);
     }
     // private void PlayUnreadGameObjectAnimation() {
     //     unreadTutorialGO.transform.DOScale(2f, 0.2f).SetLoops(-1, LoopType.Yoyo);

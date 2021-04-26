@@ -163,4 +163,7 @@ public class EditableValuesManager : MonoBehaviour {
 		}
 		return -1; //no data was provided for current level
 	}
+	public Cost GetReleaseAbilitiesRerollCost() {
+		return currencyHoverData.releaseAbilitiesRerollCost;
+	}
 }

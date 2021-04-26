@@ -104,7 +104,7 @@ public class RecruitCultistsWinConditionTracker : WinConditionTracker {
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable startDemonCult = new GenericTextBookmarkable(GetStartDemonCultText, () => BOOKMARK_TYPE.Text, null, null, OnHoverOverStartDemonCult, UIManager.Instance.HideSmallInfo);
+        GenericTextBookmarkable startDemonCult = new GenericTextBookmarkable(GetStartDemonCultText, () => BOOKMARK_TYPE.Text, OnSelectCreateCultFaction, null, OnHoverOverStartDemonCult, UIManager.Instance.HideSmallInfo);
         IBookmarkable[] bookmarkables = new[] {
             startDemonCult
         };
@@ -116,11 +116,16 @@ public class RecruitCultistsWinConditionTracker : WinConditionTracker {
     #endregion
 
     #region Tooltips
-    private void OnHoverOverStartDemonCult() {
+    private void OnHoverOverStartDemonCult(UIHoverPosition position) {
         UIManager.Instance.ShowSmallInfo(
             "HINT: After recruiting enough cultists, one may eventually become a Cult Leader. You can directly order a Cult Leader to start its own Demon Cult faction.", 
-            pos: UIManager.Instance.bookmarkUIController.GetHoverPosition(), "Cult Faction"
+            pos: position
         );
+    }
+    private void OnSelectCreateCultFaction() {
+        if (createdFaction != null) {
+            UIManager.Instance.ShowFactionInfo(createdFaction);    
+        }
     }
     #endregion
 }

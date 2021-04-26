@@ -922,7 +922,7 @@ namespace Locations.Settlements {
         public void RemoveBookmark() {
             PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
         }
-        public void OnHoverOverBookmarkItem() { }
+        public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) { }
         public void OnHoverOutBookmarkItem() { }
         #endregion
 

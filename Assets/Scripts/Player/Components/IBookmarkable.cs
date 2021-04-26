@@ -8,7 +8,7 @@ public interface IBookmarkable {
 
     void OnSelectBookmark();
     void RemoveBookmark();
-    void OnHoverOverBookmarkItem();
+    void OnHoverOverBookmarkItem(UIHoverPosition p_pos);
     void OnHoverOutBookmarkItem();
 }
 
@@ -19,7 +19,7 @@ public class GenericTextBookmarkable : IBookmarkable {
     private System.Action _onSelectAction;
     private System.Action _removeBookmarkAction;
     
-    private System.Action _onHoverOverAction;
+    private System.Action<UIHoverPosition> _onHoverOverAction;
     private System.Action _onHoverOutAction;
     
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
@@ -29,7 +29,7 @@ public class GenericTextBookmarkable : IBookmarkable {
     public BOOKMARK_TYPE bookmarkType => _bookmarkTypeGetter?.Invoke() ?? BOOKMARK_TYPE.Text;
     #endregion
 
-    public GenericTextBookmarkable(System.Func<string> p_nameGetter, System.Func<BOOKMARK_TYPE> p_bookmarkTypeGetter, System.Action p_onSelectAction, System.Action p_removeBookmarkAction, Action p_onHoverOverAction, Action p_onHoverOutAction) {
+    public GenericTextBookmarkable(System.Func<string> p_nameGetter, System.Func<BOOKMARK_TYPE> p_bookmarkTypeGetter, System.Action p_onSelectAction, System.Action p_removeBookmarkAction, Action<UIHoverPosition> p_onHoverOverAction, Action p_onHoverOutAction) {
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         _nameGetter = p_nameGetter;
         _bookmarkTypeGetter = p_bookmarkTypeGetter;
@@ -44,8 +44,8 @@ public class GenericTextBookmarkable : IBookmarkable {
     public void RemoveBookmark() {
         _removeBookmarkAction?.Invoke();
     }
-    public void OnHoverOverBookmarkItem() {
-        _onHoverOverAction?.Invoke();
+    public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) {
+        _onHoverOverAction?.Invoke(p_pos);
     }
     public void OnHoverOutBookmarkItem() {
         _onHoverOutAction?.Invoke();

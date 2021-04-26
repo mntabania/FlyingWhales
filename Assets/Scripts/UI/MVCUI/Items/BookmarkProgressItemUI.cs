@@ -8,6 +8,8 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
     [SerializeField] private TextMeshProUGUI lblName;
     [SerializeField] private Slider sliderProgress;
     [SerializeField] private Button btnMain;
+    [SerializeField] private HoverHandler hoverHandler;
+    [SerializeField] private UIHoverPosition hoverPosition;
 
     private System.Action _onResetAction;
     
@@ -18,6 +20,8 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
         lblName.text = p_progressable.progressableName;
         UpdateProgressBar(p_progressable);
         p_progressable.bookmarkEventDispatcher.Subscribe(this, p_progressable);
+        hoverHandler.AddOnHoverOverAction(() => p_progressable.OnHoverOverBookmarkItem(hoverPosition));
+        hoverHandler.AddOnHoverOutAction(p_progressable.OnHoverOutBookmarkItem);
         
     }
     public void OnCurrentProgressChanged(RuinarchProgressable p_progressable) {
@@ -56,5 +60,6 @@ public class BookmarkProgressItemUI : PooledObject, RuinarchProgressable.IListen
         _onResetAction?.Invoke();
         _onResetAction = null;
         btnMain.onClick.RemoveAllListeners();
+        hoverHandler.ClearHoverActions();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ruinarch;
 using Ruinarch.MVCFramework;
 using Tutorial;
@@ -46,8 +47,9 @@ public class TutorialUIController : MVCUIController, TutorialUIView.IListener {
                 CreateTutorialItem(tutorialType);
             }    
         } else {
-            for (int i = 0; i < SaveManager.Instance.currentSaveDataPlayer.unlockedTutorials.Count; i++) {
-                TutorialManager.Tutorial_Type tutorialType = SaveManager.Instance.currentSaveDataPlayer.unlockedTutorials[i];
+            List<TutorialManager.Tutorial_Type> unlockedTutorials = SaveManager.Instance.currentSaveDataPlayer.unlockedTutorials.OrderBy(t => t.GetTutorialOrder()).ToList();
+            for (int i = 0; i < unlockedTutorials.Count; i++) {
+                TutorialManager.Tutorial_Type tutorialType = unlockedTutorials[i];
                 CreateTutorialItem(tutorialType);
             }    
         }
@@ -121,5 +123,20 @@ public class TutorialUIController : MVCUIController, TutorialUIView.IListener {
     }
     public void HideViaShortcutKey() {
         HideUI();
+    }
+    public void JumpToSpecificTutorial(TutorialManager.Tutorial_Type p_type) {
+        TutorialItemUI tutorialItemUI = GetTutorialItem(p_type);
+        if (tutorialItemUI != null) {
+            tutorialItemUI.ManualSelect();
+        }
+    }
+    private TutorialItemUI GetTutorialItem(TutorialManager.Tutorial_Type p_type) {
+        for (int i = 0; i < _items.Count; i++) {
+            TutorialItemUI tutorialItemUI = _items[i];
+            if (tutorialItemUI.tutorialType == p_type) {
+                return tutorialItemUI;
+            }
+        }
+        return null;
     }
 }

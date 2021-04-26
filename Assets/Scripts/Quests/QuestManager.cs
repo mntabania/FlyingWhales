@@ -112,10 +112,7 @@ namespace Quests {
                 InstantiatePendingSpecialPopups();    
             }
             if (winConditionTracker != null) {
-                for (int i = 0; i < winConditionTracker.winConditionSteps.Length; i++) {
-                    IBookmarkable winConditionStep = winConditionTracker.winConditionSteps[i];
-                    PlayerManager.Instance.player.bookmarkComponent.AddBookmark(winConditionStep, BOOKMARK_CATEGORY.Major_Events);    
-                }
+                winConditionTracker.AddStepsToBookmark();
             }
         }
         public void InitializeAfterStartTutorial(){

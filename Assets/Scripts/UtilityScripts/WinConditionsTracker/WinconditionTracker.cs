@@ -57,6 +57,18 @@ public abstract class WinConditionTracker {
             }    
         }
     }
+    public void AddStepsToBookmark() {
+        for (int i = 0; i < winConditionSteps.Length; i++) {
+            IBookmarkable winConditionStep = winConditionSteps[i];
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(winConditionStep, BOOKMARK_CATEGORY.Major_Events);    
+        }
+    }
+    public void RemoveStepsFromBookmark() {
+        for (int i = 0; i < winConditionSteps.Length; i++) {
+            IBookmarkable winConditionStep = winConditionSteps[i];
+            PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(winConditionStep, BOOKMARK_CATEGORY.Major_Events);    
+        }
+    }
     #endregion
 }
 

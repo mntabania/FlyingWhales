@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
@@ -11,4 +12,10 @@ public class CurrencyHoverData : ScriptableObject {
 
     [Header("Max Chaotic Per Portal Level")]
     public List<int> maxChaoticPerValues = new List<int>();
+
+    [Header("Portal")] 
+    public Cost releaseAbilitiesRerollCost;
+    private void OnValidate() {
+        releaseAbilitiesRerollCost.name = releaseAbilitiesRerollCost.ToString();
+    }
 }

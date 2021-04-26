@@ -8,6 +8,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
     [SerializeField] private Button btnMain;
     [SerializeField] private Button btnRemove;
     [SerializeField] private HoverHandler hoverHandler;
+    [SerializeField] private UIHoverPosition hoverPosition;
 
     private System.Action _onHoverOverAction;
     private System.Action _onHoverOutAction;
@@ -18,7 +19,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
         btnMain.onClick.AddListener(p_bookmarkable.OnSelectBookmark);
         btnRemove.onClick.AddListener(() => OnClickRemoveBookmark(p_bookmarkable));
         btnRemove.gameObject.SetActive(p_bookmarkable.bookmarkType == BOOKMARK_TYPE.Text_With_Cancel);
-        _onHoverOverAction = p_bookmarkable.OnHoverOverBookmarkItem;
+        _onHoverOverAction = () => p_bookmarkable.OnHoverOverBookmarkItem(hoverPosition);
         _onHoverOutAction = p_bookmarkable.OnHoverOutBookmarkItem;
         hoverHandler.AddOnHoverOverAction(OnHoverOverBookmark);
         hoverHandler.AddOnHoverOutAction(OnHoverOutBookmark);
@@ -31,10 +32,6 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
         hoverHandler.RemoveOnHoverOverAction(OnHoverOutBookmark);
         btnMain.onClick.RemoveAllListeners();
         btnRemove.onClick.RemoveAllListeners();
-    }
-    public void SetHoverActions(System.Action p_onHoverOverAction, System.Action p_onHoverOutAction) {
-        _onHoverOverAction = p_onHoverOverAction;
-        _onHoverOutAction = p_onHoverOutAction;
     }
     private void OnClickRemoveBookmark(IBookmarkable p_bookmarkable) {
         p_bookmarkable.RemoveBookmark();

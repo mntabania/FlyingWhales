@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ruinarch;
+using UtilityScripts;
 
 public class PlagueDeathWinConditionTracker : WinConditionTracker {
 
@@ -78,7 +80,8 @@ public class PlagueDeathWinConditionTracker : WinConditionTracker {
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable plagueFatality = new GenericTextBookmarkable(GetPlagueFatalityText, () => BOOKMARK_TYPE.Text, null, null, null, null);
+        GenericTextBookmarkable plagueFatality = new GenericTextBookmarkable(GetPlagueFatalityText, () => BOOKMARK_TYPE.Text, CharacterCenterCycle, 
+            null, OnHoverEliminate, UIManager.Instance.HideSmallInfo);
         IBookmarkable[] bookmarkables = new[] {
             plagueFatality
         };
@@ -86,6 +89,39 @@ public class PlagueDeathWinConditionTracker : WinConditionTracker {
     }
     private string GetPlagueFatalityText() {
         return $"Plague Fatality deaths: {(Elimination_Requirement - totalCharactersToEliminate).ToString()}/{Elimination_Requirement.ToString()}";
+    }
+    #endregion
+    
+    #region Tooltips
+    private void OnHoverEliminate(UIHoverPosition position) {
+        UIManager.Instance.ShowSmallInfo($"Eliminate {Elimination_Requirement.ToString()} villagers using the Plague. You can upgrade your Plague by using The Biolab.", pos: position);
+    }
+    #endregion
+    
+    #region Center Cycle
+    private void CharacterCenterCycle() {
+        if (villagersToEliminate != null && villagersToEliminate.Count > 0) {
+            //normal objects to center
+            ISelectable objToSelect = GetNextCharacterToCenter(villagersToEliminate);
+            if (objToSelect != null) {
+                InputManager.Instance.Select(objToSelect);
+            }
+        }
+    }
+    private Character GetNextCharacterToCenter(List<Character> selectables) {
+        Character objToSelect = null;
+        for (int i = 0; i < selectables.Count; i++) {
+            Character currentSelectable = selectables[i];
+            if (currentSelectable.IsCurrentlySelected()) {
+                //set next selectable in list to be selected.
+                objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                break;
+            }
+        }
+        if (objToSelect == null) {
+            objToSelect = selectables[0];
+        }
+        return objToSelect;
     }
     #endregion
 }

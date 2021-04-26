@@ -16,6 +16,7 @@ public class MaraudUIModel : MVCUIModel {
 	public Action onCloseTargetSubContainer;
 	public Action onHoverOver;
 	public Action onHoverOut;
+	public Action onNoTargetsTipClicked;
 
 	[Space]
 	[Header("Deployed Items")]
@@ -33,6 +34,8 @@ public class MaraudUIModel : MVCUIModel {
 	public RuinarchButton btnCloseSummonSubContainer;
 	public RuinarchButton btnCloseMinionSubContainer;
 	public RuinarchButton btnCloseTargetSubContainer;
+	[Space]
+	public RuinarchButton btnNoTargetsTip;
 	[Space]
 	public HoverHandler btnDeployHover;
 
@@ -53,6 +56,7 @@ public class MaraudUIModel : MVCUIModel {
 	public GameObject subTargetContainer;
 
 	public RuinarchText txtTitle;
+	public RuinarchText txtEmptyTargetList;
 
 	public UIHoverPosition hoverPosition;
 
@@ -66,6 +70,7 @@ public class MaraudUIModel : MVCUIModel {
 		btnCloseTargetSubContainer.onClick.AddListener(ClickCloseTargetSubContainer);
 		btnDeployHover.AddOnHoverOverAction(OnHoverOverDeployCursor);
 		btnDeployHover.AddOnHoverOutAction(OnHoverOutDeployCursor);
+		btnNoTargetsTip.onClick.AddListener(OnNoTargetsTipClicked);
 	}
 
 	private void OnDisable() {
@@ -78,6 +83,7 @@ public class MaraudUIModel : MVCUIModel {
 		btnCloseTargetSubContainer.onClick.RemoveListener(ClickCloseTargetSubContainer);
 		btnDeployHover.RemoveOnHoverOverAction(OnHoverOverDeployCursor);
 		btnDeployHover.RemoveOnHoverOutAction(OnHoverOutDeployCursor);
+		btnNoTargetsTip.onClick.RemoveListener(OnNoTargetsTipClicked);
 	}
 
 	#region Buttons OnClick trigger
@@ -115,6 +121,9 @@ public class MaraudUIModel : MVCUIModel {
 
 	void OnHoverOutDeployCursor() {
 		onHoverOut?.Invoke();
+	}
+	void OnNoTargetsTipClicked() {
+		onNoTargetsTipClicked?.Invoke();
 	}
 	#endregion
 }

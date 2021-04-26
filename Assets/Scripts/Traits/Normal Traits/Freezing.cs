@@ -71,12 +71,13 @@ namespace Traits {
             } else if (addedTo is IPointOfInterest poi) {
                 _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing_Object);
             }
-            
-            if (addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Grass || 
-                addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
-                addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
-                //Desert Biomes should immediately remove freezing and frozen status
-                ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(3);
+            if (addedTo.gridTileLocation != null) {
+                if (addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Grass || 
+                    addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
+                    addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
+                    //Desert Biomes should immediately remove freezing and frozen status
+                    ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(3);
+                }    
             }
         }
         public override void OnStackStatus(ITraitable addedTo) {

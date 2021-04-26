@@ -23,5 +23,8 @@ public class TileObjectNameplateItem : NameplateItem<TileObject> {
     private void OnRightClickPortrait(TileObject p_tileObject) {
         UIManager.Instance.ShowPlayerActionContextMenu(p_tileObject, Input.mousePosition, true);
     }
+    public void SetPosition(UIHoverPosition position) {
+        UIManager.Instance.PositionTooltip(position, gameObject, this.transform as RectTransform);
+    }
 }
 

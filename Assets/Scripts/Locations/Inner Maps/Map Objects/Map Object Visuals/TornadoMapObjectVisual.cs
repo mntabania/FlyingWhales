@@ -133,6 +133,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         RecalculatePathingValues();
     }
     private void OnGamePaused(bool paused) {
+        if (!isSpawned) {
+            return; //tornado has already been reset
+        }
         if (paused) {
             PauseTornadoParticle();
         } else {

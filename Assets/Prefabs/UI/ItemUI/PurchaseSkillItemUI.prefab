@@ -1311,7 +1311,6 @@ GameObject:
   - component: {fileID: 1714778857368029508}
   - component: {fileID: 4833260140364228273}
   - component: {fileID: 1891374405138359978}
-  - component: {fileID: 8774114326527793305}
   - component: {fileID: 5015735039607515806}
   - component: {fileID: 5566367310510568125}
   - component: {fileID: 2743410387246210736}
@@ -1421,46 +1420,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &8774114326527793305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6813569549401116266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5290cff1cbd0eb2489d476ad31aa7daa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  btnSkill: {fileID: 1891374405138359978}
-  txtSkillName: {fileID: 0}
-  txtDescription: {fileID: 0}
-  txtLevel: {fileID: 0}
-  txtCost: {fileID: 0}
-  imgIcon: {fileID: 0}
-  affliction: {fileID: 21300000, guid: 68d43a4826fefdf47b39441ee51a5686, type: 3}
-  spell: {fileID: 21300000, guid: 1f3f2f7afbe6b2c4dabd22ed1c065e6a, type: 3}
-  playerAction: {fileID: 21300000, guid: ff51b89a370e711428ef7ecfb2d07439, type: 3}
-  minion: {fileID: 21300000, guid: bbac829faec6b7d45836f5a188753091, type: 3}
-  passive: {fileID: 21300000, guid: 164305e52750d9741b15e01be34432be, type: 3}
-  structure: {fileID: 21300000, guid: c796fec1a02b4b34f9a32dea8af032bc, type: 3}
-  disabler: {fileID: 0}
-  hoverHandler: {fileID: 5015735039607515806}
-  borderShineEffect: {fileID: 0}
-  rectTransformContent: {fileID: 0}
-  canvasGroupContent: {fileID: 2743410387246210736}
-  canvasGroupPortrait: {fileID: 0}
-  canvasGroupSpellText: {fileID: 0}
-  canvasGroupCurrencies: {fileID: 0}
-  mainShineEffect: {fileID: 0}
-  bonusCharges: {fileID: 0}
-  _animationCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!114 &5015735039607515806
 MonoBehaviour:
   m_ObjectHideFlags: 0

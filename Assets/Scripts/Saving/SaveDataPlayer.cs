@@ -8,6 +8,13 @@ using Tutorial;
 
 [System.Serializable]
 public class SaveDataPlayer {
+    private TutorialManager.Tutorial_Type[] defaultUnlockedTutorials = new[] {
+        TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers, TutorialManager.Tutorial_Type.Upgrading_The_Portal, TutorialManager.Tutorial_Type.Mana, TutorialManager.Tutorial_Type.Chaotic_Energy,
+        TutorialManager.Tutorial_Type.Storing_Targets, TutorialManager.Tutorial_Type.Prism, TutorialManager.Tutorial_Type.Maraud, TutorialManager.Tutorial_Type.Intel,
+        TutorialManager.Tutorial_Type.Spirit_Energy,
+        TutorialManager.Tutorial_Type.Migration_Controls
+    };
+    
     public string gameVersion;
     public int exp;
     //public List<PlayerSkillDataCopy> learnedSkills;
@@ -194,10 +201,7 @@ public class SaveDataPlayer {
         
     }
     private void CreateInitialUnlockedTutorials() {
-        unlockedTutorials = new List<TutorialManager.Tutorial_Type>() {
-            TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers, TutorialManager.Tutorial_Type.Upgrading_The_Portal, TutorialManager.Tutorial_Type.Mana, TutorialManager.Tutorial_Type.Chaotic_Energy,
-            TutorialManager.Tutorial_Type.Storing_Targets, TutorialManager.Tutorial_Type.Prism, TutorialManager.Tutorial_Type.Maraud, TutorialManager.Tutorial_Type.Intel
-        };
+        unlockedTutorials = new List<TutorialManager.Tutorial_Type>(defaultUnlockedTutorials);
     }
     public void UnlockTutorial(TutorialManager.Tutorial_Type p_type) {
         if (!unlockedTutorials.Contains(p_type)) {
@@ -663,6 +667,14 @@ public class SaveDataPlayer {
         }
         if (unlockedTutorials == null) {
             CreateInitialUnlockedTutorials();
+        } else {
+            //check if there are any new default tutorials that need to be unlocked. 
+            for (int i = 0; i < defaultUnlockedTutorials.Length; i++) {
+                TutorialManager.Tutorial_Type type = defaultUnlockedTutorials[i];
+                if (!unlockedTutorials.Contains(type)) {
+                    unlockedTutorials.Add(type);
+                }
+            }
         }
         if (readTutorials == null) {
             readTutorials = new List<TutorialManager.Tutorial_Type>();
