@@ -289,7 +289,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Characters
-        public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
+        public virtual void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
             bool wasAdded = false;
             if (!charactersHere.Contains(character)) {
                 wasAdded = true;

@@ -673,10 +673,16 @@ namespace Locations.Settlements {
         private void StartListeningForFires() {
             Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
             Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+            Messenger.AddListener<TileObject>(TileObjectSignals.DESTROY_TILE_OBJECT, OnTileObjectDestroyed);
+        }
+        private void OnTileObjectDestroyed(TileObject p_tileObject) {
+            if (firesInSettlement.Contains(p_tileObject)) {
+                RemoveObjectOnFire(p_tileObject);
+            }
         }
         private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
             //added checker for null so that if an object has been destroyed and lost the burning trait, it will still be removed from the list
-            if (trait is Burning && (traitable.gridTileLocation == null || traitable.gridTileLocation.IsPartOfSettlement(this))) {
+            if (trait is Burning && firesInSettlement.Contains(traitable)) {
                 RemoveObjectOnFire(traitable);
             }
         }

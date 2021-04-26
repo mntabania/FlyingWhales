@@ -114,6 +114,23 @@ namespace Inner_Maps.Location_Structures {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH_MONSTER);
         }
+        public override void OnBuiltNewStructure() {
+            base.OnBuiltNewStructure();
+            if (_occupyingSummon != null) {
+                Character characterToTeleport = _occupyingSummon;
+                if (!IsValidOccupant(_occupyingSummon)) {
+                    UnOccupyKennelAndCheckForNewOccupant();
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
+                    if (targetTile != null) {
+                        CharacterManager.Instance.Teleport(characterToTeleport, targetTile);
+                        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                    }
+                }
+            }
+        }
+        // public override bool IsAvailableForTargeting() {
+        //     return _occupyingSummon == null;
+        // }
         #endregion
 
         private void OccupyKennel(Summon p_summon) {
@@ -146,6 +163,11 @@ namespace Inner_Maps.Location_Structures {
                     return false;
                 }
                 if (summon.faction != null && summon.faction.isPlayerFaction) {
+                    return false;
+                }
+                if (!summon.isBeingSeized && summon.gridTileLocation != null && !summon.gridTileLocation.IsPassable()) {
+                    //needed to check for impassable tile placements
+                    //Reference: https://trello.com/c/EFAyp5Vn/4223-demonic-structure-appears-occupied
                     return false;
                 }
                 return true;

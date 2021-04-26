@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class TortureChambers : PartyStructure {
         private TortureChamberStructureObject _tortureChamberStructureObject;
@@ -67,6 +68,29 @@ namespace Inner_Maps.Location_Structures {
             ListenToParty();
             PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
         }
+        // private bool IsPartyStructureOccupied() {
+        //     //only check room occupants, since we do not want to count occupants in unpassable parts of the structure
+        //     //Reference: https://trello.com/c/EFAyp5Vn/4223-demonic-structure-appears-occupied
+        //     if (rooms.Length > 0) {
+        //         return rooms[0].charactersInRoom.Count > 0;    
+        //     }
+        //     return charactersHere.Count > 0;
+        // }
+        // public override bool IsAvailableForTargeting() {
+        //     bool isOccupied = IsPartyStructureOccupied();
+        //     var charactersToCheck = rooms.Length > 0 ? rooms[0].charactersInRoom : charactersHere;
+        //     
+        //     int deadCount = 0;
+        //     charactersToCheck.ForEach((eachCharacter) => {
+        //         if (eachCharacter.isDead) {
+        //             deadCount++;
+        //         }
+        //     });
+        //     if (charactersToCheck.Count > deadCount) {
+        //         isOccupied = true;
+        //     }
+        //     return !isOccupied;
+        // }
         #endregion
 
         protected override void AfterCharacterAddedToLocation(Character p_character) {
@@ -104,6 +128,30 @@ namespace Inner_Maps.Location_Structures {
         public override void OnBuiltNewStructure() {
             base.OnBuiltNewStructure();
             _tortureChamberStructureObject.SetEntrance(region.innerMap);
+            List<Character> charactersToTeleport = RuinarchListPool<Character>.Claim();
+            charactersToTeleport.AddRange(charactersHere);
+            bool alreadyTeleportedCharacterInside = false;
+            for (int i = 0; i < charactersToTeleport.Count; i++) {
+                Character character = charactersToTeleport[i];
+                if (!alreadyTeleportedCharacterInside && character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room) && room.parentStructure == this &&
+                    room is PrisonCell prisonCell && prisonCell.IsValidOccupant(character)) {
+                    //teleport character to center of room
+                    LocationGridTile targetTile = room.GetCenterTile();
+                    if (targetTile != null) {
+                        alreadyTeleportedCharacterInside = true; //if already teleported character inside, then flag as true, so that other characters will be teleported outside
+                        CharacterManager.Instance.Teleport(character, targetTile);
+                        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                    }
+                } else {
+                    //teleport character to outside
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
+                    if (targetTile != null) {
+                        CharacterManager.Instance.Teleport(character, targetTile);
+                        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                    }
+                }
+            }
+            RuinarchListPool<Character>.Release(charactersToTeleport);
         }
         public override void OnDoneLoadStructure() {
             _tortureChamberStructureObject.SetEntrance(region.innerMap);
