@@ -5,7 +5,8 @@ public class KennelTileObject : TileObject {
     
     public override Vector2 selectableSize => new Vector2(3f,3f);
     public override Vector3 worldPosition => mapVisual.visionTrigger.transform.position;
-    
+    public override Vector3 attackRangePosition => GetAttackRangePosForDemonicStructureTileObject();
+
     public KennelTileObject() {
         Initialize(TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);

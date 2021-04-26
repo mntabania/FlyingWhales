@@ -5,7 +5,8 @@ public class DefensePointTileObject : TileObject {
     
     public override Vector2 selectableSize => new Vector2(2f,2f);
     public override Vector3 worldPosition => mapVisual.visionTrigger.transform.position;
-    
+    public override Vector3 attackRangePosition => GetAttackRangePosForDemonicStructureTileObject();
+
     public DefensePointTileObject() {
         Initialize(TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);

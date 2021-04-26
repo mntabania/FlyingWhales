@@ -5,7 +5,8 @@ public class MeddlerTileObject : TileObject {
     
     public override Vector2 selectableSize => new Vector2(4f,6f);
     public override Vector3 worldPosition => mapVisual.visionTrigger.transform.position;
-    
+    public override Vector3 attackRangePosition => GetAttackRangePosForDemonicStructureTileObject();
+
     public MeddlerTileObject() {
         Initialize(TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);

@@ -5,7 +5,8 @@ public class DefilerTileObject : TileObject {
     
     public override Vector2 selectableSize => new Vector2(3f,5f);
     public override Vector3 worldPosition => mapVisual.visionTrigger.transform.position;
-    
+    public override Vector3 attackRangePosition => GetAttackRangePosForDemonicStructureTileObject();
+
     public DefilerTileObject() {
         Initialize(TILE_OBJECT_TYPE.DEFILER_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);

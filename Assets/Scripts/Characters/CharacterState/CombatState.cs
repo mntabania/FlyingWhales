@@ -768,7 +768,11 @@ public class CombatState : CharacterState {
                 // Profiler.BeginSample($"{stateComponent.character.name} Distance Computation");
                 // float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 // Profiler.EndSample();
-                float distance = Vector2.Distance(stateComponent.owner.worldPosition, currentClosestHostile.worldPosition);
+
+                //We use attackRangePosition instead of worldPosition when calculating distance if attacker can already reach target with his attack range
+                //because there are now differences between the two
+                //One major difference is the demonic structure tile object, see GetAttackRangePosForDemonicStructureTileObject in TileObject
+                float distance = Vector2.Distance(stateComponent.owner.worldPosition, currentClosestHostile.attackRangePosition);
                 if (stateComponent.owner.characterClass.rangeType == RANGE_TYPE.MELEE) {
                     if (currentClosestHostile.IsUnpassable()) {
                         distance -= Wall_Attack_Range_Tolerance; //because sometimes melee characters cannot reach wall/door    
