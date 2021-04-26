@@ -190,7 +190,12 @@ public class StructureInfoUI : InfoUIBase {
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeStructure.currentHP}/{activeStructure.maxHP}";
-        descriptionLbl.text = activeStructure.description;
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            descriptionLbl.text = activeStructure.scenarioDescription;
+        } else {
+            descriptionLbl.text = activeStructure.customDescription;
+        }
+        
         if(activeStructure.settlementLocation != null && activeStructure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE) {
             villageLbl.text = $"<link=\"village\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeStructure.settlementLocation.name)}</link>";
             villageParentGO.SetActive(true);

@@ -5,7 +5,7 @@ using Inner_Maps;
 namespace Inner_Maps.Location_Structures {
     public class Crypt : DemonicStructure {
 
-        public override string description => "Each Crypt can produce up to 3 Skeleton minions. You may use these Skeletons to spawn monster parties using your Maraud, Prism, Kennel or Prison.";
+        public override string scenarioDescription => "Each Crypt can produce up to 3 Skeleton minions. You may use these Skeletons to spawn monster parties using your Maraud, Prism, Kennel or Prison.";
 
         public override SUMMON_TYPE housedMonsterType => SUMMON_TYPE.Skeleton;
         public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){ }

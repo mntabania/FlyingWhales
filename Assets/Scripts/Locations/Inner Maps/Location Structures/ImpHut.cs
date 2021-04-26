@@ -5,7 +5,7 @@ using Inner_Maps;
 namespace Inner_Maps.Location_Structures {
     public class ImpHut : DemonicStructure {
 
-        public override string description => "Each Imp Hut can produce up to 3 Imp minions. You may use these Imps to spawn monster parties using your Maraud, Prism, Kennel or Prison.";
+        public override string scenarioDescription => "Each Imp Hut can produce up to 3 Imp minions. You may use these Imps to spawn monster parties using your Maraud, Prism, Kennel or Prison.";
         public override SUMMON_TYPE housedMonsterType => SUMMON_TYPE.Imp;
         public ImpHut(Region location) : base(STRUCTURE_TYPE.IMP_HUT, location){ }
         public ImpHut(Region location, SaveDataDemonicStructure data) : base(location, data) { }
