@@ -586,7 +586,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (currentHP <= 0) {
             //object has been destroyed
             if (tile != null && tile.structure != null) {
-                tile.structure.RemovePOI(this, responsibleCharacter);    
+                tile.structure.RemovePOI(this, responsibleCharacter, isPlayerSource: isPlayerSource);    
             } else if (isBeingCarriedBy != null) {
                 isBeingCarriedBy.UncarryPOI(this, addToLocation: false);
             }

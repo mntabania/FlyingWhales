@@ -7,7 +7,7 @@ using Logs;
 public class ExpelData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EXPEL;
     public override string name => "Expel";
-    public override string description => "This Action kicks out a character from its current Village and Faction. Available only on characters whose Faction is allied with you.";
+    public override string description => "This Action kicks out a character from its current Village and Faction.";
     public ExpelData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
@@ -27,7 +27,7 @@ public class ExpelData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
-            return targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer && targetCharacter.faction.IsFriendlyWith(PlayerManager.Instance.player.playerFaction);
+            return targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer/* && targetCharacter.faction.IsFriendlyWith(PlayerManager.Instance.player.playerFaction)*/;
         }
         return false;
     }
