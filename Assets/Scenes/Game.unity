@@ -39551,14 +39551,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 1087159205}
-  tooltipHeader: Mana
+  tooltipHeader: Spirit Energy
   ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1414646975}
-        m_MethodName: ShowSmallInfoInSpecificPosition
-        m_Mode: 5
+      - m_Target: {fileID: 606078598}
+        m_MethodName: OnHoverSpiritEnergy
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -39571,8 +39571,8 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1414646975}
-        m_MethodName: HideSmallInfoString
+      - m_Target: {fileID: 606078598}
+        m_MethodName: OnHoverOutMana
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
