@@ -175,6 +175,21 @@ namespace Inner_Maps.Location_Structures {
         public void RemoveBorderTile(LocationGridTile p_tile) {
             borderTiles.Remove(p_tile);
         }
+        public LocationGridTile GetRandomPassableBorderTile() {
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            for (int i = 0; i < borderTiles.Count; i++) {
+                LocationGridTile border = borderTiles[i];
+                if (border.IsPassable()) {
+                    tiles.Add(border);
+                }
+            }
+            LocationGridTile chosenTile = null;
+            if (tiles.Count > 0) {
+                chosenTile = tiles[GameUtilities.RandomBetweenTwoNumbers(0, tiles.Count - 1)];
+            }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
+            return chosenTile;
+        }
         #endregion
         
         private void StopDrainingCharactersHere() {
