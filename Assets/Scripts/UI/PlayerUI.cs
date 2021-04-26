@@ -140,6 +140,7 @@ public class PlayerUI : BaseMonoBehaviour {
             return;
         }
         UpdateMana();
+        UpdateSpiritEnergy();
     }
 
     public void Initialize() {

@@ -7,6 +7,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public string factionID;
     public string settlementID;
     public int mana;
+    public int spiritEnergy;
 
     public int portalTileXCoordinate;
     public int portalTileYCoordinate;
@@ -36,6 +37,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public SaveDataSummonMeterComponent summonMeterComponent;
     public SaveDataPlayerDamageAccumulator damageAccumulator;
     public SaveDataPlayerRetaliationComponent retaliationComponent;
+    public SaveDataManaRegenComponent manaRegenComponent;
 
     #region Overrides
     public override void Save() {
@@ -44,6 +46,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
         factionID = player.playerFaction.persistentID;
         settlementID = player.playerSettlement.persistentID;
         mana = player.mana;
+        spiritEnergy = player.spiritEnergy;
         portalTileXCoordinate = player.portalArea.areaData.xCoordinate;
         portalTileYCoordinate = player.portalArea.areaData.yCoordinate;
         hasAlreadyWon = player.hasAlreadyWon;
@@ -126,6 +129,9 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
         retaliationComponent = new SaveDataPlayerRetaliationComponent();
         retaliationComponent.Save(player.retaliationComponent);
+
+        manaRegenComponent = new SaveDataManaRegenComponent();
+        manaRegenComponent.Save(player.manaRegenComponent);
     }
     public override Player Load() {
         Player player = new Player(this);
