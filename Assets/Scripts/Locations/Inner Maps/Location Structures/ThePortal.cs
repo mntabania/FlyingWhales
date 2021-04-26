@@ -86,9 +86,10 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < p_tier.skillTypesToUnlock.Length; i++) {
                 PLAYER_SKILL_TYPE skill = p_tier.skillTypesToUnlock[i];
                 SkillData skillData = PlayerSkillManager.Instance.GetSkillData(skill);
+                PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(skill);
                 if (skillData.isInUse) {
-                    skillData.AdjustMaxCharges(1);
-                    skillData.AdjustCharges(1);
+                    skillData.AdjustMaxCharges(playerSkillData.unlockChargeOnPortalUpgrade);
+                    skillData.AdjustCharges(playerSkillData.unlockChargeOnPortalUpgrade);
                 } else {
                     PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(skill);
                 }

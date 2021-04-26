@@ -16,6 +16,7 @@ public class PlayerSkillData : ScriptableObject {
     public int cheatedLevel;
     public float pierce;
     public int bonusChargeWhenUnlocked;
+    public int unlockChargeOnPortalUpgrade = 1;
     public Sprite buttonSprite;
     public VideoClip tooltipVideoClip;
     public Texture tooltipImage;
