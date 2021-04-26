@@ -15,3 +15,7 @@ MonoBehaviour:
   minAmountHover: 4
   maxAmountHover: 5
   maxChaoticPerValues: 88130000881300008813000088130000881300008813000088130000
+  releaseAbilitiesRerollCost:
+    name: 5 Chaotic_Energy
+    currency: 1
+    amount: 5

@@ -31,7 +31,7 @@ public class PlayerSkillComponent {
     public PLAYER_SKILL_TYPE currentSpellBeingUnlocked { get; private set; }
     public int currentSpellUnlockCost { get; private set; }
     public RuinarchTimer timerUnlockSpell { get; private set; }
-    public RuinarchTimer cooldownReroll { get; private set; }
+    // public RuinarchTimer cooldownReroll { get; private set; }
     public List<PLAYER_SKILL_TYPE> currentSpellChoices { get; private set; }
 
     public Cost[] currentPortalUpgradeCost { get; private set; }
@@ -52,7 +52,7 @@ public class PlayerSkillComponent {
         //canRemoveTraits = true;
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         timerUnlockSpell = new RuinarchTimer("Spell Unlock");
-        cooldownReroll = new RuinarchTimer("Reroll");
+        // cooldownReroll = new RuinarchTimer("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
         timerUpgradePortal = new RuinarchTimer("Summon Demon");
         
@@ -171,7 +171,7 @@ public class PlayerSkillComponent {
     }
     public void OnRerollUsed() {
         ResetPlayerSpellChoices();
-        cooldownReroll.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(RerollCooldownInHours)), OnRerollCooldownFinished);
+        // cooldownReroll.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(RerollCooldownInHours)), OnRerollCooldownFinished);
     }
     private void OnRerollCooldownFinished() {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "UI", "PortalUI", "reroll_available", null, LOG_TAG.Major);
@@ -722,10 +722,10 @@ public class PlayerSkillComponent {
             timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
             PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell, BOOKMARK_CATEGORY.Portal);
         }
-        cooldownReroll = data.cooldownReroll;
-        if (!cooldownReroll.IsFinished()) {
-            cooldownReroll.LoadStart();
-        }
+        // cooldownReroll = data.cooldownReroll;
+        // if (!cooldownReroll.IsFinished()) {
+        //     cooldownReroll.LoadStart();
+        // }
         currentPortalUpgradeCost = data.currentPortalUpgradeCost;
         timerUpgradePortal = data.timerUpgradePortal;
         timerUpgradePortal.SetOnHoverOverAction(OnHoverOverUpgradePortalBookmark);
@@ -805,7 +805,7 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
         currentSpellBeingUnlocked = component.currentSpellBeingUnlocked;
         currentSpellUnlockCost = component.currentSpellUnlockCost;
         timerUnlockSpell = component.timerUnlockSpell;
-        cooldownReroll = component.cooldownReroll;
+        // cooldownReroll = component.cooldownReroll;
         currentSpellChoices = component.currentSpellChoices;
         currentPortalUpgradeCost = component.currentPortalUpgradeCost;
         timerUpgradePortal = component.timerUpgradePortal;

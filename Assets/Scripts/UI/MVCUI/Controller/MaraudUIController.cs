@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ruinarch;
 using Inner_Maps;
+using Tutorial;
 
 public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
@@ -143,6 +144,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		InitializeMinions();
 		InitializeTargets();
 		InitializeDeployedItems();
+		UpdateNoTargetsUI();
 		m_maraudUIView.SetTitle(p_title);
 		if (m_isTeamDeployed) {
 			m_maraudUIView.SetButtonDeployText("Undeploy");
@@ -308,6 +310,23 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				m_targetList[ctr++].onClicked += OnAvailableTargetClicked;
 			}
 		});
+	}
+	void UpdateNoTargetsUI() {
+		bool hasAvailableTargets = m_targetPartyStructure.allPossibleTargets.Count > 0;
+		if (hasAvailableTargets) {
+			m_maraudUIView.HideNoTargetsUI();
+		}
+		else {
+			string text = string.Empty;
+			if (m_targetPartyStructure is Kennel) {
+				text = "Your Targets List does not have any valid Snatch target. Store the monster you intend to snatch on your Targets List.";
+			} else if (m_targetPartyStructure is TortureChambers) {
+				text = "Your Targets List does not have any valid Snatch target. Store the Villager you intend to snatch on your Targets List.";
+			}
+			if (!string.IsNullOrEmpty(text)) {
+				m_maraudUIView.ShowNoTargetsUI(text);	
+			}
+		}
 	}
 
 	void SetTargetHoverText(AvailableTargetItemUI p_item) {
@@ -596,6 +615,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	public void OnHoverOut() {
 		Tooltip.Instance.HideSmallInfo();
+	}
+	public void OnClickNoTargetsTip() {
+		PlayerUI.Instance.ShowSpecificTutorial(TutorialManager.Tutorial_Type.Storing_Targets);
 	}
 	#endregion
 }

@@ -1152,6 +1152,10 @@ public class PlayerUI : BaseMonoBehaviour {
             tutorialUIController.HideUI();
         }
     }
+    public void ShowSpecificTutorial(TutorialManager.Tutorial_Type p_type) {
+        tutorialUIController.ShowUI();
+        tutorialUIController.JumpToSpecificTutorial(p_type);
+    }
     public void OnCloseTutorialUI() {
         _tutorialToggle.SetIsOnWithoutNotify(false);
     }

@@ -93,4 +93,22 @@ public struct Cost {
     public override string ToString() {
         return $"{amount.ToString()} {currency.ToString()}";
     }
+    public string GetCostStringWithIcon() {
+        string icon = string.Empty;
+        switch (currency) {
+            case CURRENCY.Mana:
+                icon = UtilityScripts.Utilities.ManaIcon();
+                break;
+            case CURRENCY.Chaotic_Energy:
+                icon = UtilityScripts.Utilities.ChaoticEnergyIcon();
+                break;
+            case CURRENCY.Spirit_Energy:
+                icon = UtilityScripts.Utilities.SpiritEnergyIcon();
+                break;
+            default:
+                icon = string.Empty;
+                break;
+        }
+        return $"{amount.ToString()}{icon}";
+    }
 }

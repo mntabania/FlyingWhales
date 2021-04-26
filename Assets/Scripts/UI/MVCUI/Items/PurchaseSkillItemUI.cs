@@ -41,7 +41,11 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	PlayerSkillData m_data;
 	public RuinarchText bonusCharges;
 	[SerializeField] private AnimationCurve _animationCurve;
-	
+
+	private Vector2 _defaultContentSize;
+	private void Awake() {
+		_defaultContentSize = rectTransformContent.sizeDelta;
+	}
 	private void OnEnable() {
 		btnSkill.onClick.AddListener(SkillClicked);
 		hoverHandler.AddOnHoverOverAction(OnHoverOver);
@@ -128,7 +132,7 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	#region Animation
 	public Sequence PrepareAnimation() {
 		Sequence sequence = DOTween.Sequence();
-		Vector2 targetSize = rectTransformContent.sizeDelta;
+		Vector2 targetSize = _defaultContentSize;
 		rectTransformContent.sizeDelta = new Vector2(targetSize.x - 30f, targetSize.y - 30f);
 		canvasGroupContent.alpha = 0f;
 		canvasGroupPortrait.alpha = 0f;
@@ -140,8 +144,13 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 		sequence.Join(canvasGroupPortrait.DOFade(1f, 0.2f).SetDelay(0.2f));
 		sequence.Join(canvasGroupSpellText.DOFade(1f, 0.2f).SetDelay(0.3f));
 		sequence.Join(canvasGroupCurrencies.DOFade(1f, 0.2f).SetDelay(0.4f));
-
+		sequence.OnKill(() => SetContentSize(_defaultContentSize));
+		sequence.OnComplete(() => SetContentSize(_defaultContentSize));
+		
 		return sequence;
-	} 
+	}
+	private void SetContentSize(Vector2 size) {
+		rectTransformContent.sizeDelta = size;
+	}
 	#endregion
 }

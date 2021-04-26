@@ -129,14 +129,16 @@ public class PurchaseSkillUIView : MVCUIView {
 
         sequence.Play();
     }
+    private Sequence _itemsSequence;
     public void PlayItemsAnimation() {
-	    Sequence sequence = DOTween.Sequence();
+	    _itemsSequence?.Kill();
+	    _itemsSequence = DOTween.Sequence();
 	    for (int i = 0; i < UIModel.skillItems.Count; i++) {
 		    PurchaseSkillItemUI item = UIModel.skillItems[i];
-		    sequence.Join(item.PrepareAnimation().SetDelay(i/5f));
+		    _itemsSequence.Join(item.PrepareAnimation().SetDelay(i/5f));
 	    }
 
-	    sequence.Play();
+	    _itemsSequence.Play();
     }
     public void PlayHideAnimation(System.Action onComplete) {
         Sequence sequence = DOTween.Sequence();

@@ -5,6 +5,7 @@ using System;
 using Inner_Maps;
 using Locations.Area_Features;
 using Traits;
+using Tutorial;
 using UnityEngine;
 
 public static class Extensions {
@@ -1424,6 +1425,35 @@ public static class Extensions {
                 return RelationshipManager.Acquaintance;
             default:
                 return string.Empty;
+        }
+    }
+    #endregion
+
+    #region Tutorials
+    public static int GetTutorialOrder(this TutorialManager.Tutorial_Type p_type) {
+        switch (p_type) {
+            case TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers:
+                return 0;
+            case TutorialManager.Tutorial_Type.Upgrading_The_Portal:
+                return 1;
+            case TutorialManager.Tutorial_Type.Mana:
+                return 2;
+            case TutorialManager.Tutorial_Type.Chaotic_Energy:
+                return 3;
+            case TutorialManager.Tutorial_Type.Spirit_Energy:
+                return 4;
+            case TutorialManager.Tutorial_Type.Storing_Targets:
+                return 5;
+            case TutorialManager.Tutorial_Type.Prism:
+                return 6;
+            case TutorialManager.Tutorial_Type.Maraud:
+                return 7;
+            case TutorialManager.Tutorial_Type.Intel:
+                return 8;
+            case TutorialManager.Tutorial_Type.Migration_Controls:
+                return 9;
+            default:
+                return (int)p_type;
         }
     }
     #endregion

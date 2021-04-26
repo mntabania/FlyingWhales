@@ -112,11 +112,12 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	public void Init(int numberOfSkills, bool playShowAnimation) {
 		m_numberOfSkills = numberOfSkills;
 		InstantiateUI();
-		if (PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.IsFinished()) {
-			m_purchaseSkillUIView.SetRerollCooldownFill(0f);
-		} else {
-			m_purchaseSkillUIView.SetRerollCooldownFill(1f - PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.GetCurrentTimerProgressPercent());	
-		}
+		m_purchaseSkillUIView.SetRerollCooldownFill(0f);
+		// if (PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.IsFinished()) {
+		// 	m_purchaseSkillUIView.SetRerollCooldownFill(0f);
+		// } else {
+		// 	m_purchaseSkillUIView.SetRerollCooldownFill(1f - PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.GetCurrentTimerProgressPercent());	
+		// }
 		UpdateWindowCoverState();
 		UpdateTimerState();
 		if (playShowAnimation) {
@@ -298,7 +299,9 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 
 	#region Reroll
 	private void UpdateRerollBtn() {
-		if (skillComponentToUse.cooldownReroll.IsFinished() && skillComponentToUse.timerUnlockSpell.IsFinished()) {
+		Cost rerollCost = EditableValuesManager.Instance.GetReleaseAbilitiesRerollCost();
+		bool canAffordReroll = PlayerManager.Instance.player.CanAfford(rerollCost);
+		if (canAffordReroll && skillComponentToUse.timerUnlockSpell.IsFinished()) {
 			m_purchaseSkillUIView.EnableRerollButton();	
 		} else {
 			m_purchaseSkillUIView.DisableRerollButton();
@@ -309,6 +312,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	#region Listeners
 	public void OnRerollClicked() {
 		m_firstRun = false;
+		Cost rerollCost = EditableValuesManager.Instance.GetReleaseAbilitiesRerollCost();
+		PlayerManager.Instance.player.ReduceCurrency(rerollCost);
 		PlayerManager.Instance.player.playerSkillComponent.OnRerollUsed();
 		MakeListForAvailableSkills();
 		UpdateRerollBtn();
@@ -320,11 +325,16 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		m_purchaseSkillUIView.PlayHideAnimation(HideUI);
 	}
 	public void OnHoverOverReroll() {
+		Cost rerollCost = EditableValuesManager.Instance.GetReleaseAbilitiesRerollCost();
 		if (!m_purchaseSkillUIView.UIModel.btnReroll.IsInteractable()) {
-			if (!PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.IsFinished()) {
+			bool canAffordReroll = PlayerManager.Instance.player.CanAfford(rerollCost);
+			if (!skillComponentToUse.timerUnlockSpell.IsFinished()) {
+				string tooltip = LocalizationManager.Instance.GetLocalizedValue("UI", "PurchaseSkillUI", "reroll_tooltip_releasing");
+				UIManager.Instance.ShowSmallInfo(tooltip, autoReplaceText: false);
+			} else if (!canAffordReroll) {
 				string tooltip = LocalizationManager.Instance.GetLocalizedValue("UI", "PurchaseSkillUI", "reroll_tooltip_cooldown");
 				List<LogFillerStruct> fillers = RuinarchListPool<LogFillerStruct>.Claim();
-				fillers.Add(new LogFillerStruct(null, PlayerManager.Instance.player.playerSkillComponent.cooldownReroll.GetRemainingTimeString(), LOG_IDENTIFIER.STRING_1));
+				fillers.Add(new LogFillerStruct(null, rerollCost.GetCostStringWithIcon(), LOG_IDENTIFIER.STRING_1));
 				tooltip = UtilityScripts.Utilities.StringReplacer(tooltip, fillers);
 				UIManager.Instance.ShowSmallInfo(tooltip, autoReplaceText: false);
 				RuinarchListPool<LogFillerStruct>.Release(fillers);	
@@ -332,7 +342,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		} else {
 			string tooltip = LocalizationManager.Instance.GetLocalizedValue("UI", "PurchaseSkillUI", "reroll_tooltip_default");
 			List<LogFillerStruct> fillers = RuinarchListPool<LogFillerStruct>.Claim();
-			fillers.Add(new LogFillerStruct(null, PlayerSkillComponent.RerollCooldownInHours.ToString(), LOG_IDENTIFIER.STRING_1));
+			fillers.Add(new LogFillerStruct(null, rerollCost.GetCostStringWithIcon(), LOG_IDENTIFIER.STRING_1));
 			tooltip = UtilityScripts.Utilities.StringReplacer(tooltip, fillers);
 			UIManager.Instance.ShowSmallInfo(tooltip, autoReplaceText: false);
 			RuinarchListPool<LogFillerStruct>.Release(fillers);
