@@ -37,7 +37,7 @@ public class DestroyData : PlayerAction {
                 eachTile.charactersHere.ForEach((eachCharacters) => {
                     int processedDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY);
                     eachCharacters.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true,
-                        piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY));
+                        piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY), isPlayerSource: true);
                     Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, eachCharacters, processedDamage);
                     if (eachCharacters.isDead && eachCharacters.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                         eachCharacters.skillCauseOfDeath = PLAYER_SKILL_TYPE.DESTROY;
