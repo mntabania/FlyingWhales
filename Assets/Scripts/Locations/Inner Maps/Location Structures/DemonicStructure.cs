@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Inner_Maps;
@@ -30,7 +31,7 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Overrides
-        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             if (hasBeenDestroyed) {
                 return;
             }
@@ -42,7 +43,14 @@ namespace Inner_Maps.Location_Structures {
             //Area area = occupiedArea;
             base.AfterStructureDestruction(p_responsibleCharacter);
             //area.RemoveCorruption();
-            CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+            //CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+            for (int i = 0; i < currentAttackers.Count; i++) {
+                Character attacker = currentAttackers.ElementAt(i);
+                if (attacker.race == RACE.ANGEL) {
+                    PlayerManager.Instance.player.retaliationComponent.AddDestroyedStructureByAngels();
+                    break;
+                }
+            }
             currentAttackers.Clear();
             if (structureType != STRUCTURE_TYPE.THE_PORTAL) {
                 DemonicStructurePlayerSkill skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
@@ -73,13 +81,13 @@ namespace Inner_Maps.Location_Structures {
 
         #region Listeners
         protected override void SubscribeListeners() {
-            Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.AddListener<TileObject, int, Character>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
+            Messenger.AddListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int, Character, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
-            Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.RemoveListener<TileObject, int, Character>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
+            Messenger.RemoveListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int, Character, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         private bool DoesSnatchJobTargetThisStructure(JobQueueItem job) {

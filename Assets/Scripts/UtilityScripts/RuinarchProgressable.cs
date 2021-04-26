@@ -53,6 +53,11 @@ namespace UtilityScripts {
             currentValue = Mathf.Clamp(currentValue, 0, maxValue);
             ExecuteOnProgressChangedEvent();
         }
+        public void SetProgress(int p_amount) {
+            currentValue = p_amount;
+            currentValue = Mathf.Clamp(currentValue, 0, maxValue);
+            ExecuteOnProgressChangedEvent();
+        }
         public float GetCurrentProgressPercent() {
             float currentTimerProgressPercent = (float) currentValue / totalValue;
             if (float.IsNaN(currentTimerProgressPercent)) {

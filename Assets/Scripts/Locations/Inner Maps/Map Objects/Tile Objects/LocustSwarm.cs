@@ -55,9 +55,9 @@ public class LocustSwarm : MovingTileObject {
         }
         if (amount < 0) {
             if (source is Character responsibleCharacter) {
-                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this as TileObject, amount, responsibleCharacter);
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this as TileObject, amount, responsibleCharacter, isPlayerSource);
             } else {
-                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this as TileObject, amount);
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this as TileObject, amount, isPlayerSource);
             }
         } else if (amount > 0) {
             if (currentHP == maxHP) {

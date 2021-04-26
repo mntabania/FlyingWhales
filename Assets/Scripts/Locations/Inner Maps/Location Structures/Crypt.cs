@@ -14,8 +14,8 @@ namespace Inner_Maps.Location_Structures {
             base.OnBuiltNewStructure();
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Skeleton, 5);
         }
-        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
-            base.DestroyStructure(p_responsibleCharacter);
+        protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
+            base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Skeleton, -5);
         }
         #endregion

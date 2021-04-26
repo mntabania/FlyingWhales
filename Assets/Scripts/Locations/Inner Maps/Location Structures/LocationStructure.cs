@@ -771,7 +771,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
+        public bool RemovePOI(IPointOfInterest poi, Character removedBy = null, bool isPlayerSource = false) {
             LocationGridTile tileLocation = poi.gridTileLocation;
             TileObject tileObj = poi as TileObject;
             if (tileObj != null && tileObj.isHidden) {
@@ -789,7 +789,7 @@ namespace Inner_Maps.Location_Structures {
                         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                             //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
                         } else {
-                            region.innerMap.RemoveObject(tileLocation, removedBy);
+                            region.innerMap.RemoveObject(tileLocation, removedBy, isPlayerSource);
                         }
                         //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
                     }
@@ -1071,7 +1071,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Destroy
-        protected virtual void DestroyStructure(Character p_responsibleCharacter = null) {
+        protected virtual void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             if (hasBeenDestroyed) {
                 return;
             }
@@ -1140,6 +1140,11 @@ namespace Inner_Maps.Location_Structures {
                     room.OnParentStructureDestroyed();
                 }
             }
+
+            if (isPlayerSource) {
+                PlayerManager.Instance?.player?.retaliationComponent.StructureDestroyedRetaliation(this);
+            }
+
             AfterStructureDestruction(p_responsibleCharacter);
         }
         protected virtual void AfterStructureDestruction(Character p_responsibleCharacter = null) {
@@ -1212,21 +1217,21 @@ namespace Inner_Maps.Location_Structures {
                 to.SetAsDamageContributorToStructure(true);
             }
         }
-        protected void OnObjectDamaged(TileObject tileObject, int amount) {
+        protected void OnObjectDamaged(TileObject tileObject, int amount, bool isPlayerSource) {
             if (objectsThatContributeToDamage.Contains(tileObject)) {
-                AdjustHP(amount);
-                if (!objectsThatContributeToDamage.Any(o => o.currentHP > 0)) {
+                AdjustHP(amount, isPlayerSource: isPlayerSource);
+                if (!hasBeenDestroyed && !objectsThatContributeToDamage.Any(o => o.currentHP > 0)) {
                     //if this structure no longer has any objects that have hp, then destroy this structure
-                    AdjustHP(-currentHP);
+                    AdjustHP(-currentHP, isPlayerSource: isPlayerSource);
                 }
             }
         }
-        protected void OnObjectDamagedBy(TileObject tileObject, int amount, Character p_responsibleCharacter) {
+        protected void OnObjectDamagedBy(TileObject tileObject, int amount, Character p_responsibleCharacter, bool isPlayerSource) {
             if (objectsThatContributeToDamage.Contains(tileObject)) {
-                AdjustHP(amount, p_responsibleCharacter);
-                if (!objectsThatContributeToDamage.Any(o => o.currentHP > 0)) {
+                AdjustHP(amount, p_responsibleCharacter, isPlayerSource: isPlayerSource);
+                if (!hasBeenDestroyed && !objectsThatContributeToDamage.Any(o => o.currentHP > 0)) {
                     //if this structure no longer has any objects that have hp, then destroy this structure
-                    AdjustHP(-currentHP, p_responsibleCharacter);
+                    AdjustHP(-currentHP, p_responsibleCharacter, isPlayerSource: isPlayerSource);
                 }
             }
         }
@@ -1235,12 +1240,12 @@ namespace Inner_Maps.Location_Structures {
                 AdjustHP(amount);
             }
         }
-        public void AdjustHP(int amount, Character p_responsibleCharacter = null) {
+        public void AdjustHP(int amount, Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             if (hasBeenDestroyed) { return; }
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
             if (currentHP == 0) {
-                DestroyStructure(p_responsibleCharacter);
+                DestroyStructure(p_responsibleCharacter, isPlayerSource);
             }
         }
         public void SetMaxHP(int amount) {

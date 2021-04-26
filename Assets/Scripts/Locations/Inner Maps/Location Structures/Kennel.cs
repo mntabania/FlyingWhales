@@ -54,9 +54,9 @@ namespace Inner_Maps.Location_Structures {
             position.y -= 0.5f;
             worldPosition = position;
         }
-        protected override void DestroyStructure(Character p_responsibleCharacter = null) {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             StopDrainingCharactersHere();
-            base.DestroyStructure(p_responsibleCharacter);
+            base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
             if (_markerDummy != null) {
                 ObjectPoolManager.Instance.DestroyObject(_markerDummy.gameObject);
             }

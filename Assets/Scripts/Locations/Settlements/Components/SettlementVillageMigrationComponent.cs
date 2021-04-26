@@ -211,7 +211,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     }
     private void Migrate(List<PreCharacterData> unspawnedCharacters, Faction faction, ref string debugLog) {
         AdjustLongTermModifier(-1);
-        int randomAmount = UnityEngine.Random.Range(2, 6);
+        int randomAmount = UnityEngine.Random.Range(3, 6);
         List<LocationGridTile> edgeTileChoices = null;
         for (int i = 0; i < owner.region.innerMap.allEdgeTiles.Count; i++) {
             LocationGridTile tile = owner.region.innerMap.allEdgeTiles[i];
@@ -226,7 +226,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         }
 
         LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(edgeTileChoices);
-        debugLog += $"\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
+        debugLog += $"\nWill spawn {randomAmount} characters at {edgeTile}";
         for (int i = 0; i < randomAmount; i++) {
             if (unspawnedCharacters.Count <= 0) { break; }
             PreCharacterData characterToSpawn = CollectionUtilities.GetRandomElement(unspawnedCharacters);

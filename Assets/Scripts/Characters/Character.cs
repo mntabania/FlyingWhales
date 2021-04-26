@@ -2755,14 +2755,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (triggerDeath) {
                 if (source != null && source != this) {
                     if (responsibleCharacter != null) {
-                        Death("attacked", responsibleCharacter: responsibleCharacter);
+                        Death("attacked", responsibleCharacter: responsibleCharacter, isPlayerSource: isPlayerSource);
                     } else {
                         string cause = "attacked";
                         cause += $"_{source}";
-                        Death(cause);
+                        Death(cause, isPlayerSource: isPlayerSource);
                     }
                 } else {
-                    Death();
+                    Death(isPlayerSource: isPlayerSource);
                 }
             }
         } else if (amount < 0) {
@@ -5532,7 +5532,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.ResetHappinessMeter();
     }
 
-    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
+    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null, bool isPlayerSource = false) {
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
@@ -5769,6 +5769,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
             eventDispatcher.ExecuteCharacterDied(this);
+
+            if (isPlayerSource) {
+                PlayerManager.Instance?.player?.retaliationComponent.CharacterDeathRetaliation(this);
+            }
 
             List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {

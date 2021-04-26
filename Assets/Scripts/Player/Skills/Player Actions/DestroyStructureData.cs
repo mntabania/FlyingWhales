@@ -22,7 +22,7 @@ public class DestroyStructureData : PlayerAction {
 
     void OnActualDestroyStructure() {
         if (m_targetStructure is DemonicStructure demonicStructure) {
-            demonicStructure.AdjustHP(-m_targetStructure.currentHP);
+            demonicStructure.AdjustHP(-m_targetStructure.currentHP, isPlayerSource: true);
         }
         base.ActivateAbility(m_targetStructure);
         

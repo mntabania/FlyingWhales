@@ -79,7 +79,7 @@ public class ThreatParticleEffect : MonoBehaviour {
     
     private void CheckEffectState() {
         if (QuestManager.Instance.IsQuestActive<DivineIntervention>() 
-            || PlayerManager.Instance.player.threatComponent.threat >= ThreatComponent.MAX_THREAT) {
+            || PlayerManager.Instance.player.retaliationComponent.isRetaliating) { //|| PlayerManager.Instance.player.threatComponent.threat >= ThreatComponent.MAX_THREAT
             //play effect if threat is at max or counterattack quest is active or divine intervention quest is active
             PlayEffect();
         } else {

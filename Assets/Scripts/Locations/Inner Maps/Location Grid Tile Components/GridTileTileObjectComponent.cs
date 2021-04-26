@@ -97,7 +97,7 @@ namespace Inner_Maps {
                 Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, owner, poi);
             }
         }
-        public TileObject RemoveObjectHere(Character removedBy) {
+        public TileObject RemoveObjectHere(Character removedBy, bool isPlayerSource) {
             if (objHere != null) {
                 TileObject removedObj = objHere;
                 SetOccupyingObject(null);
@@ -110,6 +110,17 @@ namespace Inner_Maps {
                 //    removedObj.OnDestroyPOI();
                 //}
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
+
+                if(removedBy != null && removedBy.faction != null && removedBy.faction.isPlayerFaction) {
+                    isPlayerSource = true;
+                }
+
+                if (isPlayerSource) {
+                    if (removedObj is ResourcePile) {
+                        PlayerManager.Instance?.player?.retaliationComponent.ResourcePileRetaliation(removedObj, owner);
+                    }
+                }
+
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
                 Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
@@ -139,6 +150,7 @@ namespace Inner_Maps {
                 //    tileObject.OnRemoveTileObject(null, gridTile, false, false);
                 //}
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
+
                 Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
@@ -158,6 +170,16 @@ namespace Inner_Maps {
                 //    removedTileObj.DestroyMapVisualGameObject();
                 //}
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
+
+                bool isPlayerSource = false;
+                if (remover != null && remover.faction != null && remover.faction.isPlayerFaction) {
+                    isPlayerSource = true;
+                }
+                if (isPlayerSource) {
+                    if (removedObj is ResourcePile) {
+                        PlayerManager.Instance?.player?.retaliationComponent.ResourcePileRetaliation(removedObj, owner);
+                    }
+                }
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
                 Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;

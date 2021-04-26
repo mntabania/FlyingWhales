@@ -25,8 +25,8 @@ public abstract class Nymph : Summon {
         ScheduleAOEEffect(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(12, 24));
     }
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null,
-        Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
-        base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt);
+        Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null, bool isPlayerSource = false) {
+        base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt, isPlayerSource);
         CancelAOEEffect();
     }
     public override void OnSeizePOI() {

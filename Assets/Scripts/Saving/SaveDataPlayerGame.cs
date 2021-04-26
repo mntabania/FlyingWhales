@@ -35,6 +35,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public SaveDataBookmarkComponent bookmarkComponent;
     public SaveDataSummonMeterComponent summonMeterComponent;
     public SaveDataPlayerDamageAccumulator damageAccumulator;
+    public SaveDataPlayerRetaliationComponent retaliationComponent;
 
     #region Overrides
     public override void Save() {
@@ -122,6 +123,9 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
         damageAccumulator = new SaveDataPlayerDamageAccumulator();
         damageAccumulator.Save(player.damageAccumulator);
+
+        retaliationComponent = new SaveDataPlayerRetaliationComponent();
+        retaliationComponent.Save(player.retaliationComponent);
     }
     public override Player Load() {
         Player player = new Player(this);

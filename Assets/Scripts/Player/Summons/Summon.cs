@@ -68,7 +68,7 @@ public class Summon : Character {
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null,
-        Interrupt interrupt = null) {
+        Interrupt interrupt = null, bool isPlayerSource = false) {
         if (!_isDead) {
             deathTilePosition = gridTileLocation;
             Region deathLocation = currentRegion;

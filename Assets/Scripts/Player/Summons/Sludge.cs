@@ -16,12 +16,12 @@ public class Sludge : Summon {
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Sludge_Behaviour);
     }
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null,
-        Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
+        Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null, bool isPlayerSource = false) {
         if (isDead) {
             return;
         }
         LocationGridTile deathTile = gridTileLocation;
-        base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt);
+        base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt, isPlayerSource);
         List<LocationGridTile> affectedTiles =
             deathTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < affectedTiles.Count; i++) {

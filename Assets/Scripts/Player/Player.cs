@@ -39,6 +39,7 @@ public class Player : ILeader, IObjectManipulator {
     public SummonMeterComponent summonMeterComponent { get; private set; }
     public ManaRegenComponent manaRegenComponent { get; set; }
     public PlayerDamageAccumulator damageAccumulator { get; private set; }
+    public PlayerRetaliationComponent retaliationComponent { get; private set; }
 
     public bool hasAlreadyWon { get; set; }
 
@@ -72,10 +73,12 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent = new SummonMeterComponent();
         bookmarkComponent = new BookmarkComponent();
         damageAccumulator = new PlayerDamageAccumulator();
+        retaliationComponent = new PlayerRetaliationComponent();
         summonMeterComponent.Initialize();
 
         hasAlreadyWon = false;
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
 
         SubscribeListeners();
         
@@ -89,6 +92,7 @@ public class Player : ILeader, IObjectManipulator {
         tileObjectComponent = data.tileObjectComponent.Load();
         summonMeterComponent = data.summonMeterComponent.Load();
         damageAccumulator = data.damageAccumulator.Load();
+        retaliationComponent = data.retaliationComponent.Load();
         bookmarkComponent = new BookmarkComponent();
         plagueComponent = new PlagueComponent(data.plagueComponent);
         threatComponent.SetPlayer(this);
@@ -99,6 +103,7 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
 
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
         hasAlreadyWon = data.hasAlreadyWon;
         SubscribeListeners();
     }
@@ -711,6 +716,7 @@ public class Player : ILeader, IObjectManipulator {
         if(p_character.faction == playerFaction) {
             underlingsComponent.OnFactionMemberDied(p_character);
         }
+        retaliationComponent.OnCharacterDeath(p_character);
     }
     #endregion
 
@@ -810,6 +816,7 @@ public class Player : ILeader, IObjectManipulator {
         storedTargetsComponent.LoadReferences(data.storedTargetsComponent);
         summonMeterComponent.LoadReferences(data.summonMeterComponent);
         underlingsComponent.LoadReferences(data.underlingsComponent);
+        retaliationComponent.LoadReferences(data.retaliationComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion
