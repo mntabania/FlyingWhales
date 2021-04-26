@@ -242,7 +242,7 @@ namespace Traits {
             }
             Profiler.EndSample();
 
-            if (Random.Range(0, 100) >= 4) {
+            if (Random.Range(0, 100) >= 2) {
                 return;
             }
             Profiler.BeginSample($"Burning - Tick Ended Part 2");
