@@ -42,16 +42,14 @@ namespace Traits {
             return false;
         }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+            if (node.goapType == INTERACTION_TYPE.STAND || node.goapType == INTERACTION_TYPE.STAND_STILL || node.goapType == INTERACTION_TYPE.LONG_STAND_STILL) {
+                return false;
+            }
             int accidentChance = UnityEngine.Random.Range(0, 100);
             //bool hasCreatedJob = false;
             if (accidentChance < 10) {
                 willStillContinueAction = false;
                 return node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Accident, node.actor);
-                //if (node != null && !excludedActionsFromAccidentProneTrait.Contains(node.action.goapType)) {
-                //    DoAccident(node.action);
-                //    hasCreatedJob = true;
-                //    willStillContinueAction = false;
-                //}
             }
             return false;
         }

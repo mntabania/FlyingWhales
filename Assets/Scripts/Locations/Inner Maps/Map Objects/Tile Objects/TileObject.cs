@@ -548,7 +548,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
 
         Character responsibleCharacter = source as Character;
-        if (responsibleCharacter != null && responsibleCharacter.faction != null && responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons) {
+        if (responsibleCharacter != null && responsibleCharacter.faction != null && responsibleCharacter.faction.isPlayerFaction) {
             //If responsible character is part of player faction, tag this as Player Source also
             isPlayerSource = true;
         }
@@ -613,6 +613,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
+        bool isPlayerSource = false;
+        if (characterThatAttacked.faction != null && characterThatAttacked.faction.isPlayerFaction) {
+            //If responsible character is part of player faction, tag this as Player Source also
+            isPlayerSource = true;
+        }
         int attackPower = characterThatAttacked.combatComponent.attack;
         if (characterThatAttacked.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Razer)) {
             //Razer deals bonus damage to structures and objects
@@ -620,7 +625,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 attackPower = Mathf.RoundToInt(attackPower * 1.5f);
             //}
         }
-        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
+        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, isPlayerSource: isPlayerSource);
         attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.attack.ToString()}";
         if (currentHP <= 0) {
             attackSummary = $"{attackSummary}\n{name}'s hp has reached 0.";

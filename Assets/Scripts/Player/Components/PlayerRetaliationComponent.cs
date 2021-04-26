@@ -39,6 +39,14 @@ public class PlayerRetaliationComponent {
     #endregion
 
     #region Utilities
+    public void OnCharacterRestrained(Character p_character) {
+        if (p_character.race == RACE.ANGEL) {
+            CheckAngels();
+        }
+    }
+    #endregion
+
+    #region Retaliation Counter
     public bool AddRetaliationCounter() {
         if (isRetaliating) {
             return false;
@@ -145,12 +153,18 @@ public class PlayerRetaliationComponent {
         spawnedAngels.Clear();
     }
     private void CheckAngels() {
-        if (!HasAngels()) {
+        if (!HasActiveAngel()) {
             StopRetaliation();
         }
     }
-    public bool HasAngels() {
-        return spawnedAngels.Count > 0;
+    public bool HasActiveAngel() {
+        for (int i = 0; i < spawnedAngels.Count; i++) {
+            Character angel = spawnedAngels[i];
+            if (!angel.traitContainer.HasTrait("Restrained") && !angel.isDead) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

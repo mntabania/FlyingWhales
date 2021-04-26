@@ -50,7 +50,8 @@ public class PsychopathUI : MonoBehaviour {
         , "Fast", "Fireproof", "Glutton", "Hothead", "Inspiring", "Kleptomaniac"
         , "Lazy", "Lustful", "Lycanthrope", "Music Hater", "Music Lover", "Narcoleptic"
         , "Nocturnal", "Optimist", "Pessimist", "Psychopath", "Purifier", "Pyrophobic"
-        , "Robust", "Suspicious", "Treacherous", "Unattractive", "Unfaithful", "Vampire", "Vigilant" };
+        , "Robust", "Suspicious", "Treacherous", "Unattractive", "Unfaithful", "Vampire", "Vigilant"
+        , "Blessed"};
     private List<string> criteriaConjunctions = new List<string>() { "And", "Or" };
 
     public Character character { get; private set; }

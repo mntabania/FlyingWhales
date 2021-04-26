@@ -192,6 +192,11 @@ namespace Traits {
                 burningEffect = null;
             }
         }
+        protected override string GetDescriptionInUI() {
+            string desc = base.GetDescriptionInUI();
+            desc += "\nIs Player Source: " + isPlayerSource;
+            return desc;
+        }
         #endregion
 
         public void LoadSourceOfBurning(BurningSource source) {

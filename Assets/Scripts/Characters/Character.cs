@@ -2595,6 +2595,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!HasHealth()) {
             return; //if hp is already 0, do not deal damage
         }
+        bool isPlayerSource = false;
+        if (characterThatAttacked.faction != null && characterThatAttacked.faction.isPlayerFaction) {
+            //If responsible character is part of player faction, tag this as Player Source also
+            isPlayerSource = true;
+        }
         //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
         //Put this here so that we will have the chance to knockout before applying damage, since once the character receives damage they will automatically wake up from sleeping
         //So we need to check the knockout chance before applying damage
@@ -2611,7 +2616,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             chanceToKnockout += 20;
         }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
-        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower);
+        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower, isPlayerSource: isPlayerSource);
         attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
 
         //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
@@ -2627,7 +2632,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                         deathReason = "accidental_attacked";
                     }
-                    Death(deathReason, responsibleCharacter: characterThatAttacked);
+                    Death(deathReason, responsibleCharacter: characterThatAttacked, isPlayerSource: isPlayerSource);
                 }
             }
         } else {
@@ -2697,7 +2702,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
 
         Character responsibleCharacter = source as Character;
-        if (responsibleCharacter != null && responsibleCharacter.faction != null && responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons) {
+        if (responsibleCharacter != null && responsibleCharacter.faction != null && responsibleCharacter.faction.isPlayerFaction) {
             //If responsible character is part of player faction, tag this as Player Source also
             isPlayerSource = true;
         }

@@ -93,6 +93,11 @@ namespace Traits {
                 dryer = status.dryer;
             }
         }
+        protected override string GetDescriptionInUI() {
+            string desc = base.GetDescriptionInUI();
+            desc += "\nIs Player Source: " + isPlayerSource;
+            return desc;
+        }
         #endregion
 
         #region Visuals

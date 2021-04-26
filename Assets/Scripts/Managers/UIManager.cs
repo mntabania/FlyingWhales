@@ -225,7 +225,8 @@ public class UIManager : BaseMonoBehaviour {
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
             || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW || p_playerAction.type == PLAYER_SKILL_TYPE.DESTROY || p_playerAction.type == PLAYER_SKILL_TYPE.DESTROY_EYE_WARD
-            || p_playerAction.category == PLAYER_SKILL_CATEGORY.SCHEME) {
+            || p_playerAction.category == PLAYER_SKILL_CATEGORY.SCHEME
+            || p_playerAction.type == PLAYER_SKILL_TYPE.PSYCHOPATHY) {
             HidePlayerActionContextMenu();    
         } else {
             if (IsContextMenuShowing()) {

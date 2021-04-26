@@ -166,6 +166,11 @@ namespace Traits {
                 isVenomous = status.isVenomous;
             }
         }
+        protected override string GetDescriptionInUI() {
+            string desc = base.GetDescriptionInUI();
+            desc += "\nIs Player Source: " + isPlayerSource;
+            return desc;
+        }
         #endregion
 
         #region Aware Characters

@@ -47,6 +47,11 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             DisablePlayerSourceChaosOrb(owner);
         }
+        protected override string GetDescriptionInUI() {
+            string desc = base.GetDescriptionInUI();
+            desc += "\nIs Player Source: " + isPlayerSource;
+            return desc;
+        }
         #endregion
 
         #region IElementalTrait
