@@ -378,7 +378,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public void ResetSpellsInUse() {
         for (int i = 0; i < allPlayerSkillsData.Values.Count; i++) {
             SkillData spellData = allPlayerSkillsData.Values.ElementAt(i);
-            spellData.ResetIsInUse();
+            spellData.ResetData();
         }
     }
     public void ResetSummonPlayerSkills() {
