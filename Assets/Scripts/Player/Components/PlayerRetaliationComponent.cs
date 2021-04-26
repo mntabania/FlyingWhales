@@ -17,7 +17,7 @@ public class PlayerRetaliationComponent {
     public PlayerRetaliationComponent() {
         spawnedAngels = new List<Character>();
         SetAngelCount(2);
-        retaliationProgress = new RuinarchBasicProgress("Retaliation!");
+        retaliationProgress = new RuinarchBasicProgress(GetRetaliationBookmarkText());
         retaliationProgress.Initialize(0, MAX_RETALIATION_COUNTER);
     }
     public PlayerRetaliationComponent(SaveDataPlayerRetaliationComponent data) {
@@ -44,6 +44,7 @@ public class PlayerRetaliationComponent {
             return false;
         }
         retaliationCounter++;
+        retaliationProgress.SetName(GetRetaliationBookmarkText());
         retaliationProgress.SetProgress(retaliationCounter);
         if (retaliationCounter >= MAX_RETALIATION_COUNTER) {
             MaxRetaliationCounterReached();
@@ -54,6 +55,7 @@ public class PlayerRetaliationComponent {
         if (isRetaliating) {
             isRetaliating = false;
             retaliationCounter = 0;
+            retaliationProgress.SetName(GetRetaliationBookmarkText());
             retaliationProgress.SetProgress(retaliationCounter);
             DespawnAllAngels();
             ResetAngelDestroyedStructuresCounter();
@@ -96,6 +98,7 @@ public class PlayerRetaliationComponent {
             Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
             CharacterManager.Instance.PlaceSummonInitially(angel, spawnTile);
             angel.behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
+            angel.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
             angel.SetDestroyMarkerOnDeath(true);
             spawnedAngels.Add(angel);
             //characters.Add(angel);
@@ -107,6 +110,9 @@ public class PlayerRetaliationComponent {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation", null, LOG_TAG.Player, LOG_TAG.Major);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+    }
+    private string GetRetaliationBookmarkText() {
+        return "Retaliation!: " + retaliationCounter + "/" + MAX_RETALIATION_COUNTER;
     }
     #endregion
 
@@ -150,7 +156,7 @@ public class PlayerRetaliationComponent {
 
     #region Triggers
     public void CharacterDeathRetaliation(Character p_character) {
-        if (GameUtilities.RollChance(25)) {
+        if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation))) {
             if (!p_character.traitContainer.HasTrait("Cultist") && p_character.isNormalCharacter) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_character_death", null, LOG_TAG.Player, LOG_TAG.Major);
@@ -163,7 +169,7 @@ public class PlayerRetaliationComponent {
     }
     public void StructureDestroyedRetaliation(LocationStructure p_structure) {
         if (p_structure.settlementLocation != null && p_structure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE && p_structure.settlementLocation.owner != null && p_structure.settlementLocation.owner.isMajorNonPlayer) {
-            if (GameUtilities.RollChance(25)) {
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation))) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_structure_destroyed", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_structure, p_structure.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -175,7 +181,7 @@ public class PlayerRetaliationComponent {
     }
     public void ResourcePileRetaliation(TileObject p_pile, LocationGridTile removedFrom) {
         if (removedFrom != null && removedFrom.structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-            if (GameUtilities.RollChance(25)) {
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation))) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_pile_loss", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_pile, p_pile.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

@@ -989,7 +989,8 @@ public class CombatState : CharacterState {
                     //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                     if (damageable == currentClosestHostile) {
                         //When the target is hit and it is still alive, add hostile
-                        if ((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend ||
+                        bool isAnAngelAttackingDemonicStructure = hitCharacter.race == RACE.ANGEL && hitCharacter.behaviourComponent.isAttackingDemonicStructure;
+                        if (((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend && !isAnAngelAttackingDemonicStructure) ||
                             hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) && hitCharacter.limiterComponent.canPerform) {
                             hitCharacter.combatComponent.FightOrFlight(stateComponent.owner, CombatManager.Retaliation, isLethal: stateComponent.owner.combatComponent.IsLethalCombatForTarget(hitCharacter));
                         }

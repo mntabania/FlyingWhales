@@ -373,20 +373,21 @@ public class Eat : GoapAction {
                 }
             }
             if (poiTarget is Table) {
+                if (poiTarget.storedResources[RESOURCE.FOOD] < 12 && job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+                    return false;
+                }
                 //Allow rats to eat at table
-                if(!(actor is Rat)) {
+                if (!(actor is Rat)) {
                     //if target is table, do not allow if actor is a monster
                     if (UtilityScripts.GameUtilities.IsRaceBeast(actor.race) || actor.isNormalCharacter == false) {
                         return false;
                     }
                 }
-
+            } else if (poiTarget is FoodPile) {
+                if (poiTarget.storedResources[RESOURCE.FOOD] < 12 && job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+                    return false;
+                }
             }
-            // else {
-            //     if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {
-            //         return false;
-            //     }
-            // }
             if (poiTarget.gridTileLocation != null) {
                 return true;
             }
