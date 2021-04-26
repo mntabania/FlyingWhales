@@ -183,7 +183,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (!canAcceptQuests) {
             SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
         }
-
+        if (partyState == PARTY_STATE.Waiting) {
+            SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
+        }
     }
 
     #region Listeners
