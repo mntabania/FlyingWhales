@@ -33,7 +33,8 @@ namespace Inner_Maps.Location_Structures {
         public bool hasBeenDestroyed { get; private set; }
         public bool isStoredAsTarget { get; private set; }
 
-        public virtual string description => string.Empty;
+        public virtual string scenarioDescription => string.Empty;
+        public virtual string customDescription => scenarioDescription;
 
         //HP
         public int maxHP { get; protected set; }

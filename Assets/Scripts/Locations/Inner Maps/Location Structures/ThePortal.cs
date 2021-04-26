@@ -7,6 +7,9 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class ThePortal : DemonicStructure {
 
+        public override string scenarioDescription => "The Portal is the Ruinarch's primary connection to this world. Protect it at all costs! Spend Chaotic Energy to obtain Bonus Charges of Powers from the other Archetypes here.";
+        public override string customDescription => "The Portal is the Ruinarch's primary connection to this world. Protect it at all costs! Spend Spirit Energy to upgrade the Portal and permanently unlock new Powers. You may also spend Chaotic Energy to obtain Bonus Charges of Powers from the other Archetypes here.";
+
         public int level { get; private set; }
         public PortalUpgradeTier currentTier {
             get {
