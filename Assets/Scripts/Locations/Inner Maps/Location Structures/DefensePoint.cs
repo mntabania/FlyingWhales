@@ -4,6 +4,8 @@ using UtilityScripts;
 
 namespace Inner_Maps.Location_Structures {
     public class DefensePoint : PartyStructure {
+
+        public override string description => "The Prism allows the player to spawn monsters that will roam around it and defend the player from hostile attacks.";
         public override string nameplateName => "Prism";
         public DefensePoint(Region location) : base(STRUCTURE_TYPE.DEFENSE_POINT, location) {
             startingSummonCount = 2;

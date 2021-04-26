@@ -105,7 +105,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Utilities
-        protected LocationGridTile GetCenterTile() {
+        public LocationGridTile GetCenterTile() {
             return GameUtilities.GetCenterTile(tilesInRoom, tilesInRoom[0].parentMap.map);
         }
         public bool HasAnyAliveCharacterInRoom() {

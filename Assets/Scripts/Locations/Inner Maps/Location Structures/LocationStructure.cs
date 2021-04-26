@@ -33,6 +33,8 @@ namespace Inner_Maps.Location_Structures {
         public bool hasBeenDestroyed { get; private set; }
         public bool isStoredAsTarget { get; private set; }
 
+        public virtual string description => string.Empty;
+
         //HP
         public int maxHP { get; protected set; }
         public int currentHP { get; protected set; }
@@ -289,7 +291,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Characters
-        public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
+        public virtual void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
             bool wasAdded = false;
             if (!charactersHere.Contains(character)) {
                 wasAdded = true;

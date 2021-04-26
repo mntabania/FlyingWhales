@@ -65,8 +65,12 @@ namespace Inner_Maps {
                 owner.CreateSeamlessEdgesForSelfAndNeighbours();
                 TileObject tileObject = owner.tileObjectComponent.objHere;
                 if (tileObject != null) {
-                    if (tileObject is TreeObject tree) {
-                        (tree.mapObjectVisual as TileObjectGameObject).UpdateTileObjectVisual(tree);
+                    if (tileObject is TreeObject tree && tree.mapObjectVisual is TileObjectGameObject tileObjectGameObject) {
+                        if (tree is BigTreeObject) {
+                            owner.structure.RemovePOI(tileObject);
+                        } else {
+                            tileObjectGameObject.UpdateTileObjectVisual(tree);    
+                        }
                     } else if (tileObject is BlockWall blockWall) {
                         blockWall.SetWallType(WALL_TYPE.Demon_Stone);
                         blockWall.UpdateVisual(owner);
@@ -95,8 +99,12 @@ namespace Inner_Maps {
                 owner.CreateSeamlessEdgesForSelfAndNeighbours();
                 TileObject tileObject = owner.tileObjectComponent.objHere;
                 if (tileObject != null) {
-                    if (tileObject is TreeObject tree) {
-                        (tree.mapObjectVisual as TileObjectGameObject).UpdateTileObjectVisual(tree);
+                    if (tileObject is TreeObject tree && tree.mapObjectVisual is TileObjectGameObject tileObjectGameObject) {
+                        if (tree is BigTreeObject) {
+                            owner.structure.RemovePOI(tileObject);
+                        } else {
+                            tileObjectGameObject.UpdateTileObjectVisual(tree);    
+                        }
                     } else if (tileObject is BlockWall blockWall) {
                         blockWall.SetWallType(WALL_TYPE.Demon_Stone);
                         blockWall.UpdateVisual(owner);
@@ -109,7 +117,7 @@ namespace Inner_Maps {
                         }
                     }
                 }
-                if (ChanceData.RollChance(CHANCE_TYPE.Demonic_Decor_On_Corrupt)) {
+                if (owner.tileObjectComponent.objHere == null && ChanceData.RollChance(CHANCE_TYPE.Demonic_Decor_On_Corrupt)) {
                     TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(GameUtilities.corruptionTileObjectChoices);
                     TileObject createdDecor = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
                     owner.structure.AddPOI(createdDecor, owner);

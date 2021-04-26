@@ -77,6 +77,9 @@ namespace Inner_Maps.Location_Structures {
             if (HasAnyAliveCharacterInRoom()) {
                 return false;
             }
+            return IsValidOccupant(character);
+        }
+        public bool IsValidOccupant(Character character) {
             return character.isNormalCharacter && character.isDead == false && (character.faction == null || !character.faction.isPlayerFaction);
         }
         #endregion

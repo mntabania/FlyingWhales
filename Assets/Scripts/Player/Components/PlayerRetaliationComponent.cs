@@ -60,6 +60,7 @@ public class PlayerRetaliationComponent {
             Messenger.Broadcast(PlayerSignals.STOP_THREAT_EFFECT);
 
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "stop_retaliation", null, LOG_TAG.Player, LOG_TAG.Major);
+            log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
     }
@@ -104,6 +105,7 @@ public class PlayerRetaliationComponent {
         Messenger.Broadcast(PlayerSignals.START_THREAT_EFFECT);
 
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation", null, LOG_TAG.Player, LOG_TAG.Major);
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
     #endregion

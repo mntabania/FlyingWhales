@@ -19,7 +19,7 @@ namespace Inner_Maps.Location_Structures {
 
         public virtual int startingSummonCount { set; get; }
         public virtual void InitTargets() { }
-        public bool IsAvailableForTargeting() {
+        public virtual bool IsAvailableForTargeting() {
             if (this is Maraud || this is DefensePoint) {
                 return true;
             }
