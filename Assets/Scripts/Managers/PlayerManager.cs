@@ -7,6 +7,7 @@ using UnityEngine.Serialization;
 using Archetype;
 using Locations.Settlements;
 using Player_Input;
+using Quests;
 using Ruinarch;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -270,6 +271,7 @@ public class PlayerManager : BaseMonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
         yield return GameUtilities.waitFor3Seconds;
         PlayerUI.Instance.WinGameOver(winMessage);
+        QuestManager.Instance.winConditionTracker?.RemoveStepsFromBookmark();
     }
     #endregion
 

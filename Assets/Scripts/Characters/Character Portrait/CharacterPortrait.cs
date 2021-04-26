@@ -51,6 +51,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private void OnEnable() {
         Messenger.AddListener(CharacterSignals.CHARACTER_INFO_REVEALED, UpdateLeaderIcon);
         SubscribeListeners();
+        UpdateLeaderIcon();
     }
     public void GeneratePortrait(PortraitSettings portraitSettings, bool makePixelPerfect = true) {
         _portraitSettings = portraitSettings;

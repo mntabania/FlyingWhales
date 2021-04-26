@@ -43,10 +43,10 @@ namespace UtilityScripts {
             return currentTimerProgress == totalTicksInTimer;
         }
         private void TimerTick() {
-            IncreaseProgress(1);
             if (IsComplete()) {
                 TimerHasReachedEnd();
             }
+            IncreaseProgress(1);
         }
         private void TimerHasReachedEnd() {
             _onTimerEndAction?.Invoke();
@@ -69,6 +69,9 @@ namespace UtilityScripts {
         public string GetRemainingTimeString() {
             int remainingTicks = GetRemainingTicks();
             return $"{GameManager.GetTimeAsWholeDuration(remainingTicks).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(remainingTicks)}";
+        }
+        public string GetTimerEndString() {
+            return $"{timerEnd.ToString()}";
         }
         public void Stop() {
             Reset();

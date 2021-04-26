@@ -144,9 +144,10 @@ public class HumansSurviveAndElvesWipedOutWinConditionTracker : WinConditionTrac
 
     #region Win Conditions Steps
     protected override IBookmarkable[] CreateWinConditionSteps() {
-        GenericTextBookmarkable wipeOutBookmarkable = new GenericTextBookmarkable(GetWipeOutText, () => BOOKMARK_TYPE.Text, null, null, null, null);
-        GenericTextBookmarkable protectHumansBookmarkable = new GenericTextBookmarkable(GetProtectHumansText, () => BOOKMARK_TYPE.Text, null, null, 
-            OnHoverProtectHumans, UIManager.Instance.HideSmallInfo);
+        GenericTextBookmarkable wipeOutBookmarkable = new GenericTextBookmarkable(GetWipeOutText, () => BOOKMARK_TYPE.Text, CenterCycleElves, 
+            null, OnHoverEliminateElves, UIManager.Instance.HideSmallInfo);
+        GenericTextBookmarkable protectHumansBookmarkable = new GenericTextBookmarkable(GetProtectHumansText, () => BOOKMARK_TYPE.Text, CenterCycleHumans, 
+            null, OnHoverProtectHumans, UIManager.Instance.HideSmallInfo);
         IBookmarkable[] bookmarkables = new[] {
             wipeOutBookmarkable, protectHumansBookmarkable
         };
@@ -161,13 +162,52 @@ public class HumansSurviveAndElvesWipedOutWinConditionTracker : WinConditionTrac
     #endregion
 
     #region Tooltips
-    private void OnHoverProtectHumans() {
+    private void OnHoverProtectHumans(UIHoverPosition position) {
         UIManager.Instance.ShowSmallInfo(
             $"Keep at least {MinimumHumans.ToString()} humans alive and part of {GetMainHumanFaction().nameWithColor}.\n" +
             $"Important Notes:\n " +
             $"\t- Human vagrants do not count!\n" +
-            $"\t- Human Villagers cannot be replenished, while Elven Villagers can.\n" +
-            $"\t- Elven vagrants are considered as eliminated.", pos: UIManager.Instance.bookmarkUIController.GetHoverPosition());
+            $"\t- Human Villagers cannot be replenished, while Elven Villagers can.\n"
+            , pos: position);
+    }
+    private void OnHoverEliminateElves(UIHoverPosition position) {
+        UIManager.Instance.ShowSmallInfo(
+            $"Wipe out all members of {GetMainElvenFaction().nameWithColor}.\n" +
+            $"Important Notes:\n " +
+            $"\t- Elven vagrants are considered as eliminated.", pos: position);
+    }
+    #endregion
+    
+    #region Center Cycle
+    private void CenterCycleElves() {
+        CharacterCenterCycle(elvenToEliminate);
+    }
+    private void CenterCycleHumans() {
+        CharacterCenterCycle(humans);
+    }
+    private void CharacterCenterCycle(List<Character> characters) {
+        if (characters != null && characters.Count > 0) {
+            //normal objects to center
+            ISelectable objToSelect = GetNextCharacterToCenter(characters);
+            if (objToSelect != null) {
+                InputManager.Instance.Select(objToSelect);
+            }
+        }
+    }
+    private Character GetNextCharacterToCenter(List<Character> selectables) {
+        Character objToSelect = null;
+        for (int i = 0; i < selectables.Count; i++) {
+            Character currentSelectable = selectables[i];
+            if (currentSelectable.IsCurrentlySelected()) {
+                //set next selectable in list to be selected.
+                objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                break;
+            }
+        }
+        if (objToSelect == null) {
+            objToSelect = selectables[0];
+        }
+        return objToSelect;
     }
     #endregion
 }

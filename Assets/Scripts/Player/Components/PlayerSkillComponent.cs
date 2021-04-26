@@ -55,6 +55,12 @@ public class PlayerSkillComponent {
         cooldownReroll = new RuinarchTimer("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
         timerUpgradePortal = new RuinarchTimer("Summon Demon");
+        
+        timerUnlockSpell.SetOnHoverOverAction(OnHoverOverReleaseAbilitiesBookmark);
+        timerUnlockSpell.SetOnHoverOutAction(OnHoverOutReleaseAbilitiesBookmark);
+        
+        timerUpgradePortal.SetOnHoverOverAction(OnHoverOverUpgradePortalBookmark);
+        timerUpgradePortal.SetOnHoverOutAction(OnHoverOutUpgradePortalBookmark);
 
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
@@ -216,6 +222,20 @@ public class PlayerSkillComponent {
     }
     public void AddCurrentPlayerSpellChoice(PLAYER_SKILL_TYPE p_skillType) {
         currentSpellChoices.Add(p_skillType);
+    }
+    private void OnHoverOverReleaseAbilitiesBookmark(UIHoverPosition position) {
+        string text = $"Will finish on {timerUnlockSpell.GetTimerEndString()}.";
+        UIManager.Instance.ShowSmallInfo(text, position);
+    }
+    private void OnHoverOutReleaseAbilitiesBookmark() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private void OnHoverOverUpgradePortalBookmark(UIHoverPosition position) {
+        string text = $"Will finish on {timerUpgradePortal.GetTimerEndString()}.";
+        UIManager.Instance.ShowSmallInfo(text, position);
+    }
+    private void OnHoverOutUpgradePortalBookmark() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -695,6 +715,8 @@ public class PlayerSkillComponent {
         currentSpellBeingUnlocked = data.currentSpellBeingUnlocked;
         currentSpellUnlockCost = data.currentSpellUnlockCost;
         timerUnlockSpell = data.timerUnlockSpell;
+        timerUnlockSpell.SetOnHoverOverAction(OnHoverOverReleaseAbilitiesBookmark);
+        timerUnlockSpell.SetOnHoverOutAction(OnHoverOutReleaseAbilitiesBookmark);
         if (currentSpellBeingUnlocked != PLAYER_SKILL_TYPE.NONE) {
             timerUnlockSpell.LoadStart(OnCompleteSpellUnlockTimer);
             timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
@@ -706,6 +728,8 @@ public class PlayerSkillComponent {
         }
         currentPortalUpgradeCost = data.currentPortalUpgradeCost;
         timerUpgradePortal = data.timerUpgradePortal;
+        timerUpgradePortal.SetOnHoverOverAction(OnHoverOverUpgradePortalBookmark);
+        timerUpgradePortal.SetOnHoverOutAction(OnHoverOutUpgradePortalBookmark);
         if (currentPortalUpgradeCost != null) {
             timerUpgradePortal.LoadStart(OnCompletePortalUpgrade);
             timerUpgradePortal.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));

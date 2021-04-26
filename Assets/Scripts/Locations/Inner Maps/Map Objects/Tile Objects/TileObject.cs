@@ -1330,8 +1330,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void RemoveBookmark() {
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this, BOOKMARK_CATEGORY.Targets);
     }
-    public void OnHoverOverBookmarkItem() { }
-    public void OnHoverOutBookmarkItem() { }
+    public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) {
+        UIManager.Instance.ShowTileObjectNameplateTooltip(this, position: p_pos);
+    }
+    public void OnHoverOutBookmarkItem() {
+        UIManager.Instance.HideTileObjectNameplateTooltip();
+    }
     #endregion
 }
 

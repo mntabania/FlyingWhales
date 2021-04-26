@@ -6179,8 +6179,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RemoveBookmark() {
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
     }
-    public void OnHoverOverBookmarkItem() { }
-    public void OnHoverOutBookmarkItem() { }
+    public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) {
+        UIManager.Instance.ShowCharacterNameplateTooltip(this, position: p_pos);
+    }
+    public void OnHoverOutBookmarkItem() {
+        UIManager.Instance.HideCharacterNameplateTooltip();
+    }
     #endregion
 
     #region Death Tile

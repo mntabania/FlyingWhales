@@ -77,9 +77,14 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public void RemoveOnHoverOutAction(UnityAction e) {
         onHoverExitAction.RemoveListener(e);
     }
+    public void ClearHoverActions() {
+        onHoverOverAction.RemoveAllListeners();
+        onHoverExitAction.RemoveAllListeners();
+    }
     public void ExecuteHoverEnterActionPerFrame(bool p_state) {
         executeHoverEnterActionPerFrame = p_state;
     }
+    
 
     void Update() {
         if (executeHoverEnterActionPerFrame) {

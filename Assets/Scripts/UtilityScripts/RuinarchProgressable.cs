@@ -20,6 +20,8 @@ namespace UtilityScripts {
         public int totalValue;
         private System.Action<RuinarchProgressable> _onCurrentProgressChanged;
         private System.Action _onSelectProgressable;
+        private System.Action<UIHoverPosition> _onHoverOverProgressable;
+        private System.Action _onHoverOutProgressable;
         
         public abstract string progressableName { get; }
         public abstract BOOKMARK_TYPE bookmarkType { get; } 
@@ -85,6 +87,12 @@ namespace UtilityScripts {
         public void SetOnSelectAction(System.Action p_action) {
             _onSelectProgressable = p_action;
         }
+        public void SetOnHoverOverAction(System.Action<UIHoverPosition> p_action) {
+            _onHoverOverProgressable = p_action;
+        }
+        public void SetOnHoverOutAction(System.Action p_action) {
+            _onHoverOutProgressable = p_action;
+        }
         public void OnSelect() {
             _onSelectProgressable?.Invoke();
         }
@@ -94,8 +102,12 @@ namespace UtilityScripts {
         public void RemoveBookmark() {
             PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
         }
-        public void OnHoverOverBookmarkItem() { }
-        public void OnHoverOutBookmarkItem() { }
+        public void OnHoverOverBookmarkItem(UIHoverPosition pos) {
+            _onHoverOverProgressable?.Invoke(pos);
+        }
+        public void OnHoverOutBookmarkItem() {
+            _onHoverOutProgressable?.Invoke();
+        }
         #endregion
     }
 }

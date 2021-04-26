@@ -18,6 +18,8 @@ public class PlayerRetaliationComponent {
         spawnedAngels = new List<Character>();
         SetAngelCount(2);
         retaliationProgress = new RuinarchBasicProgress(GetRetaliationBookmarkText());
+        retaliationProgress.SetOnHoverOverAction(OnHoverOverRetaliationBookmark);
+        retaliationProgress.SetOnHoverOutAction(OnHoverOutRetaliationBookmark);
         retaliationProgress.Initialize(0, MAX_RETALIATION_COUNTER);
     }
     public PlayerRetaliationComponent(SaveDataPlayerRetaliationComponent data) {
@@ -26,6 +28,8 @@ public class PlayerRetaliationComponent {
         destroyedStructuresByAngelCounter = data.destroyedStructuresByAngelCounter;
         isRetaliating = data.isRetaliating;
         retaliationProgress = data.retaliationProgress;
+        retaliationProgress.SetOnHoverOverAction(OnHoverOverRetaliationBookmark);
+        retaliationProgress.SetOnHoverOutAction(OnHoverOutRetaliationBookmark);
     }
 
     #region Listeners
@@ -218,6 +222,17 @@ public class PlayerRetaliationComponent {
     #region Loading
     public void LoadReferences(SaveDataPlayerRetaliationComponent data) {
         spawnedAngels = SaveUtilities.ConvertIDListToCharacters(data.spawnedAngels);
+    }
+    #endregion
+
+    #region UI
+    private void OnHoverOverRetaliationBookmark(UIHoverPosition position) {
+        UIManager.Instance.ShowSmallInfo("Angels will spawn and head towards your Portal once the Retaliation Counter reaches Max Count. " +
+                                         "The Retaliation Counter may rise whenever you kill Villagers, ruin their structures or destroy their resources.", 
+            pos: position);
+    }
+    private void OnHoverOutRetaliationBookmark() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 }
