@@ -45,13 +45,14 @@ public class PsychopathUI : MonoBehaviour {
     private List<string> criteriaRaces = new List<string>() { "Humans", "Elves" };
     private List<string> criteriaClasses = new List<string>() { "Peasant", "Miner", "Craftsman", "Archer", "Stalker", "Hunter", "Druid", "Shaman"
         , "Mage", "Knight", "Barbarian", "Marauder", "Noble" };
-    private List<string> criteriaTraits = new List<string>() { "Accident Prone", "Agoraphobic", "Alcoholic", "Ambitious", "Authoritative", "Cannibal"
-        , "Chaste", "Coward", "Diplomatic", "Evil"
+    private List<string> criteriaTraits = new List<string>() { 
+        "Accident Prone", "Agoraphobic", "Alcoholic", "Ambitious", "Authoritative"
+        , "Blessed"
+        , "Cannibal", "Chaste", "Coward", "Diplomatic", "Evil"
         , "Fast", "Fireproof", "Glutton", "Hothead", "Inspiring", "Kleptomaniac"
         , "Lazy", "Lustful", "Lycanthrope", "Music Hater", "Music Lover", "Narcoleptic"
         , "Nocturnal", "Optimist", "Pessimist", "Psychopath", "Purifier", "Pyrophobic"
-        , "Robust", "Suspicious", "Treacherous", "Unattractive", "Unfaithful", "Vampire", "Vigilant"
-        , "Blessed"};
+        , "Robust", "Suspicious", "Treacherous", "Unattractive", "Unfaithful", "Vampire", "Vigilant"};
     private List<string> criteriaConjunctions = new List<string>() { "And", "Or" };
 
     public Character character { get; private set; }

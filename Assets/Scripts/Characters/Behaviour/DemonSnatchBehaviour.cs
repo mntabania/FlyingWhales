@@ -38,7 +38,7 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
                     if (prisoner != null && prisoner.IsFactionPrisonerOf(character.faction)) {
                         //party.GoBackHomeAndEndQuest();
                          if (!party.jobBoard.HasJob(JOB_TYPE.SNATCH)) {
-                            quest.CreateSnatchJobFor(quest.targetCharacter, party);
+                            quest.CreateSnatchJobFor(quest.targetCharacter, party, quest.dropStructure);
                         }
                         hasJob = DoPartyJobsInPartyJobBoard(character, party, ref producedJob);
                         if (!hasJob) {

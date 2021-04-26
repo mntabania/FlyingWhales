@@ -83,7 +83,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
             //Bring back snatch job when unseizing target because the snatch job is removed when you seize him
             Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
             if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
-                CreateSnatchJobFor(targetCharacter, assignedParty);
+                CreateSnatchJobFor(targetCharacter, assignedParty, dropStructure);
             }
             for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
                 Character member = assignedParty.membersThatJoinedQuest[i];
@@ -122,7 +122,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
         }
     }
 
-    public void CreateSnatchJobFor(Character p_target, Party p_party) {
+    public void CreateSnatchJobFor(Character p_target, Party p_party, DemonicStructure p_dropStructure) {
         //Area area = p_quest.dropStructure.occupiedArea;
         //LocationGridTile dropTile = area.gridTileComponent.GetRandomPassableUnoccupiedTileThatIsNotPartOfAStructure();
         //if(dropTile == null) {
@@ -131,8 +131,15 @@ public class DemonSnatchPartyQuest : PartyQuest {
         //        dropTile = area.gridTileComponent.GetRandomTile();
         //    }
         //}
-        LocationGridTile dropTile = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL).GetRandomPassableTile();
-        p_party.jobComponent.CreateSnatchJob(p_target, dropTile, dropTile.structure);
+        LocationGridTile dropTile = null;
+        if (p_dropStructure is Kennel kennel) {
+            dropTile = kennel.GetRandomPassableBorderTile();
+        } else if (p_dropStructure is TortureChambers prison) {
+            dropTile = prison.GetRandomPassableBorderTile();
+        }
+        if (dropTile != null) {
+            p_party.jobComponent.CreateSnatchJob(p_target, dropTile, p_dropStructure);
+        }
     }
     private void OnCharacterSwitchedFromLimbo(Character p_inLimbo, Character p_activeCharacter) {
         if (p_inLimbo == target && assignedParty != null) {

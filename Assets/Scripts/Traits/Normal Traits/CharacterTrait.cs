@@ -193,6 +193,11 @@ namespace Traits {
                             !characterThatWillDoJob.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && 
                             !characterThatWillDoJob.faction.HasActiveReportDemonicStructureJob(demonicStructure)) {
                             wasReportJobCreated = characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
+                            if (wasReportJobCreated) {
+                                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "structure_discovered", null, LOG_TAG.Player, LOG_TAG.Major);
+                                log.AddLogToDatabase();
+                                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+                            }
                         }
                     }
                     
