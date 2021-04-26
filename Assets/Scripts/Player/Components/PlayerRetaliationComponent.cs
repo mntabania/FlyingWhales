@@ -161,7 +161,7 @@ public class PlayerRetaliationComponent {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_character_death", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_character, p_character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    //log.AddLogToDatabase();
+                    log.AddLogToDatabase();
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             }
@@ -173,7 +173,7 @@ public class PlayerRetaliationComponent {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_structure_destroyed", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_structure, p_structure.name, LOG_IDENTIFIER.LANDMARK_1);
-                    //log.AddLogToDatabase();
+                    log.AddLogToDatabase();
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             }
@@ -185,7 +185,7 @@ public class PlayerRetaliationComponent {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_pile_loss", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_pile, p_pile.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    //log.AddLogToDatabase();
+                    log.AddLogToDatabase();
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             }
@@ -195,7 +195,7 @@ public class PlayerRetaliationComponent {
         if (AddRetaliationCounter()) {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_report_structure", null, LOG_TAG.Player, LOG_TAG.Major);
             log.AddToFillers(p_character, p_character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //log.AddLogToDatabase();
+            log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
     }
