@@ -11,6 +11,7 @@ public class DarkRitualChaosOrb : PassiveSkill {
     }
     private void OnSuccessPraying(ActualGoapNode p_goapNode) {
         if (p_goapNode.goapType == INTERACTION_TYPE.PRAY) {
+            Debug.Log("Chaos Orb Produced - [" + p_goapNode.target.name + "] - [OnSuccessPraying - Dark Ritual] - [4]");
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_goapNode.target.worldPosition, 4, p_goapNode.target.gridTileLocation.parentMap);
         }
     }

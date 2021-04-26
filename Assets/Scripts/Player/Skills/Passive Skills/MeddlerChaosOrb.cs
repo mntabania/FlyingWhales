@@ -1,5 +1,6 @@
 ﻿using Traits;
 using Interrupts;
+using UnityEngine;
 
 public class MeddlerChaosOrb : PassiveSkill {
     public override string name => "Chaos Orbs from Successful Meddler Scheme";
@@ -11,6 +12,7 @@ public class MeddlerChaosOrb : PassiveSkill {
     }
 
     void OnSuccessMeddlerScheme(Character p_character) {
+        Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnSuccessMeddlerScheme] - [3]");
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 3, p_character.gridTileLocation.parentMap);
     }
 }

@@ -418,6 +418,15 @@ public class PlayerUI : BaseMonoBehaviour {
             Quaternion.identity, transform, true);
         effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
     }
+    public void OnHoverSpiritEnergy() {
+        string header = $"{UtilityScripts.Utilities.SpiritEnergyIcon()}Spirit Energy";
+        if (PlayerManager.Instance.player != null) {
+            header = $"{header}";
+            //header += " (+" + (EditableValuesManager.Instance.GetManaRegenPerHour() + (PlayerManager.Instance.player.manaRegenComponent.GetManaPitCount() * (EditableValuesManager.Instance.GetManaRegenPerManaPit())) + "/hour)");
+        }
+        UIManager.Instance.ShowSmallInfo("Spirit Energy is used to upgrade your Portal to learn new Powers. You also gain Spirit Energy from Chaos Orbs.", pos: manaTooltipPos, header, autoReplaceText: false);
+    }
+
     public void OnHoverOverMana() {
         string header = $"{UtilityScripts.Utilities.ManaIcon()}Mana";
         if (PlayerManager.Instance.player != null) {
@@ -426,6 +435,7 @@ public class PlayerUI : BaseMonoBehaviour {
         }
         UIManager.Instance.ShowSmallInfo("Mana is spent whenever you use any of your Powers, summon Minions or build Demonic Structures. It is easy to deplete but also quickly replenishes every hour. Build more Mana Pits to expand maximum capacity and increase hourly replenish.", pos: manaTooltipPos, header, autoReplaceText: false);
     }
+
     public void OnHoverOutMana() {
         UIManager.Instance.HideSmallInfo();
     }

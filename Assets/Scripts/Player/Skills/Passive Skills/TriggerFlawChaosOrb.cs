@@ -1,4 +1,6 @@
-﻿public class TriggerFlawChaosOrb : PassiveSkill {
+﻿using UnityEngine;
+
+public class TriggerFlawChaosOrb : PassiveSkill {
     public override string name => "Chaos Orbs from Successful Trigger Flaw";
     public override string description => "Chaos Orbs from Successful Trigger Flaw";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Trigger_Flaw_Chaos_Orb;
@@ -8,6 +10,7 @@
     }
 
     void OnTriggerFlawSuccess(Character p_character) {
+        Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnTriggerFlawSuccess] - [1]");
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 1, p_character.gridTileLocation.parentMap);
     }
 }

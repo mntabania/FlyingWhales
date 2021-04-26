@@ -47,7 +47,8 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private CurrencyHoverData currencyHoverData;
 
 	[Header("Chaotic Energy")]
-	[SerializeField] private int _initialChaoticEnergy;
+	[SerializeField] private int _initialChaoticEnergyCustom;
+	[SerializeField] private int _initialChaoticEnergyScenario;
 
 	[Header("Reveal Info Character")]
 	[SerializeField] private int _revealInfoCharacterCost;
@@ -124,8 +125,19 @@ public class EditableValuesManager : MonoBehaviour {
 		return currencyHoverData.maxChaoticPerValues[0];
 	}
 
-	public int GetInitialChaoticEnergy() {
-		return _initialChaoticEnergy;
+	public int GetInitialChaoticEnergyCustom() {
+		return _initialChaoticEnergyCustom;
+	}
+
+	public int GetInitialChaoticEnergyScenario() {
+		return _initialChaoticEnergyScenario;
+	}
+
+	public int GetInitialChaoticEnergyBaseOnGameMode() {
+		if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+			return GetInitialChaoticEnergyScenario();
+		}
+		return GetInitialChaoticEnergyCustom();
 	}
 
 	public int GetManaRegenPerHour() {
