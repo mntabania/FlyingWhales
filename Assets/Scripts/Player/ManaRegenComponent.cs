@@ -11,10 +11,19 @@ public class ManaRegenComponent
 
     public ManaRegenComponent(Player p_player) {
         m_player = p_player;
+        SubscribeListeners();
+    }
+    public ManaRegenComponent(Player p_player, SaveDataManaRegenComponent data) {
+        m_player = p_player;
+        m_manaPitCount = data.manaPitCount;
+        SubscribeListeners();
+    }
+    private void SubscribeListeners() {
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStared);
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
         Messenger.AddListener<LocationStructure, Area>(StructureSignals.STRUCTURE_OBJECT_REMOVED, OnStructureDestroyed);
     }
+    
 
     #region structure event listener(FOR MANA_PIT)
     void OnStructurePlaced(LocationStructure p_structure) {
@@ -45,3 +54,13 @@ public class ManaRegenComponent
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataManaRegenComponent : SaveData<ManaRegenComponent> {
+    public int manaPitCount;
+    public override void Save(ManaRegenComponent data) {
+        base.Save(data);
+        manaPitCount = data.GetManaPitCount();
+    }
+}
+#endregion

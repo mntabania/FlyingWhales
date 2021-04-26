@@ -99,7 +99,7 @@ public class Player : ILeader, IObjectManipulator {
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         storedTargetsComponent = new StoredTargetsComponent();
-        manaRegenComponent = new ManaRegenComponent(this);
+        manaRegenComponent = new ManaRegenComponent(this, data.manaRegenComponent);
         summonMeterComponent.Initialize();
 
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
@@ -787,6 +787,7 @@ public class Player : ILeader, IObjectManipulator {
         //}
 
         AdjustMana(data.mana);
+        AdjustSpiritEnergy(data.spiritEnergy);
         SetPortalTile(GridMap.Instance.map[data.portalTileXCoordinate, data.portalTileYCoordinate]);
 
         Faction faction = FactionManager.Instance.GetFactionByPersistentID(data.factionID);
