@@ -38916,18 +38916,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nouns:
-  - Evildoers
-  - Wrekt
-  - Baddest
-  - Clownz
-  - Jokers
-  - Illest
-  - 'Lookout '
-  - 'Nippers '
-  - Noodle
-  - 'Flapper '
-  - 'Squeeze '
-  - Dewdropper
+  - Nasty
+  - Wicked
+  - Rampaging
+  - Cruel
+  - Petty
+  - Swift
+  - Crushing
+  - Pasty
+  - Plagued
+  - Despair
+  - Morose
+  - Eclectic
+  - Terrible
+  - Vile
+  - Foul
+  - Dreadful
+  - Insolent
+  - Harsh
+  - Crimson
+  - Dark
+  - Black
+  - Severe
 --- !u!1 &1395490770
 GameObject:
   m_ObjectHideFlags: 0

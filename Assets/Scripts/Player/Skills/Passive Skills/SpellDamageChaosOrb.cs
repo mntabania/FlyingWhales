@@ -25,6 +25,7 @@ public class SpellDamageChaosOrb : PassiveSkill {
                 tileLocation = character.deathTilePosition;
             }
             if (tileLocation != null) {
+                Debug.Log("Chaos Orb Produced - [" + character.name + "] - [OnSpellDamageDone] - [" + orbCount + "]");
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, tileLocation.centeredWorldLocation, orbCount, tileLocation.parentMap);
             }
         }

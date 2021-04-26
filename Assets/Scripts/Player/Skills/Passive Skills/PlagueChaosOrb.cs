@@ -1,6 +1,7 @@
 ﻿using Traits;
 using Interrupts;
 using UtilityScripts;
+using UnityEngine;
 public class PlagueChaosOrb : PassiveSkill {
     public override string name => "Chaos Orbs from Plague";
     public override string description => "Chaos Orbs upon Acquiring plague symptom";
@@ -14,6 +15,7 @@ public class PlagueChaosOrb : PassiveSkill {
     private void OnTraitAdded(Character character, Trait trait) {
         if (GameUtilities.RollChance(50)) {
             if (trait.name == "Depressed" || trait.name == "Insomnia" || trait.name == "Lethargic") { //|| trait.name == "Paralyzed"
+                Debug.Log("Chaos Orb Produced - [" + character.name + "] - [Became Depressed - Insomnia - Lethargic] - [1]");
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
             }
         }

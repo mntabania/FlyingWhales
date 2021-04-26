@@ -14,7 +14,9 @@ public class MentalBreakChaosOrb : PassiveSkill {
     private void OnDarkRitualStarted(InterruptHolder interrupt) {
         Character character = interrupt.actor;
         if (character.faction.factionType.type != FACTION_TYPE.Demon_Cult && interrupt.interrupt.type == INTERRUPT.Mental_Break) {
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, UnityEngine.Random.Range(1, 3), character.gridTileLocation.parentMap);
+            int numChaosOrbs = GameUtilities.RandomBetweenTwoNumbers(1, 3);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, numChaosOrbs, character.gridTileLocation.parentMap);
+            Debug.Log("Chaos Orb Produced - [" + character.name + "] - [OnDarkRitualStarted] - [" + numChaosOrbs + "]");
         }
     }
 }

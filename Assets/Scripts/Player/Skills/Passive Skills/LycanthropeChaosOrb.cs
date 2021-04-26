@@ -1,5 +1,6 @@
 ﻿using Traits;
 using Interrupts;
+using UnityEngine;
 
 public class LycanthropeChaosOrb : PassiveSkill {
     public override string name => "Chaos Orbs from Lycanthropes";
@@ -16,6 +17,7 @@ public class LycanthropeChaosOrb : PassiveSkill {
             Character responsibleCharacter = p_character.traitContainer.GetTraitOrStatus<Trait>("Dead").responsibleCharacter;
             if (responsibleCharacter != null) {
                 if (responsibleCharacter.traitContainer.HasTrait("Lycanthrope")) {
+                    Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [Kill by lycan] - [2]");
                     Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 2, p_character.gridTileLocation.parentMap);
                 }
             }
