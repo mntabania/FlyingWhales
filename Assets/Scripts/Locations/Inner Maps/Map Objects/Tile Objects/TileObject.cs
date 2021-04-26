@@ -82,6 +82,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
     public virtual Vector3 worldPosition => mapVisual.transform.position;
     public virtual Vector2 selectableSize => Vector2Int.one;
+    public virtual Vector3 attackRangePosition => worldPosition;
     public bool isDead => gridTileLocation == null; //Consider the object as dead if it no longer has a tile location (has been removed)
     public ProjectileReceiver projectileReceiver => mapVisual.visionTrigger.projectileReceiver;
     public Transform worldObject => mapVisual != null ? mapVisual.transform : null;
@@ -1110,6 +1111,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void SetAsDamageContributorToStructure(bool p_state) {
         isDamageContributorToStructure = p_state;
+    }
+    protected Vector3 GetAttackRangePosForDemonicStructureTileObject() {
+        //We do this when getting the attack range position for demonic structure tile object because the demonic structure tile object world position is the lower left of the location grid tile
+        //So the melee characters are getting stuck when attack the demonic structure tile object because the attack range of the melee characters are 1 but since the world position of these tile objects is the lower left of the grid tile they couldn't go in range of that but when pursuing it, it always says that character now has reached it
+        //So in order for the melee characters not get stuck when attacking these tile objects, we must always get center world location (the one with +0.5 x and y)
+        //In short, the melee characters cannot get in range of attack but will always trigger target reached, that is why it loops in pursuing closest hostile
+        LocationGridTile gridTile = gridTileLocation;
+        if (gridTile != null) {
+            return gridTile.parentMap.GetTileFromWorldPos(worldPosition).centeredWorldLocation;
+        }
+        return worldPosition;
     }
     #endregion
 

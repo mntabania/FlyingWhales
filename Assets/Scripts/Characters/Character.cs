@@ -171,6 +171,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isInfoUnlocked { set; get; }
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => visuals.selectableSize;
+    public Vector3 attackRangePosition => worldPosition;
     public Transform worldObject {
         get {
             if (hasMarker) {

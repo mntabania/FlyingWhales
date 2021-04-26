@@ -9,6 +9,8 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Kennel : PartyStructure, CharacterEventDispatcher.IDeathListener {
+
+        public override string description => "This Structure allows the Player to imprison a monster. The Kennel will slowly breed it. Each Kennel can breed up to 3 monsters. You may use these to spawn monster parties using your Maraud, Prism, Kennel or Prison.\n\nImprisoned monsters may also be drained to produce Chaos Orbs.";
         public override string nameplateName => $"{name}";
         public Summon occupyingSummon => _occupyingSummon;
         public override Type serializedData => typeof(SaveDataKennel);

@@ -17,7 +17,7 @@ public class PlayerRetaliationComponent {
     public PlayerRetaliationComponent() {
         spawnedAngels = new List<Character>();
         SetAngelCount(2);
-        retaliationProgress = new RuinarchBasicProgress("Retaliation");
+        retaliationProgress = new RuinarchBasicProgress("Retaliation!");
         retaliationProgress.Initialize(0, MAX_RETALIATION_COUNTER);
     }
     public PlayerRetaliationComponent(SaveDataPlayerRetaliationComponent data) {
@@ -70,7 +70,7 @@ public class PlayerRetaliationComponent {
         SetAngelCount(angelCount + 1);
     }
     private void DivineIntervention() {
-        string debugLog = GameManager.Instance.TodayLogString() + "Divine Intervention";
+        string debugLog = GameManager.Instance.TodayLogString() + "Angel Retaliation";
         LocationStructure targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
         //if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
         //    targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];

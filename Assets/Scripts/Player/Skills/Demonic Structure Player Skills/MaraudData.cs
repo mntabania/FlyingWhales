@@ -6,7 +6,7 @@ using UnityEngine;
 public class MaraudData : DemonicStructurePlayerSkill {
     public override string name => "Maraud";
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.MARAUD;
-    public override string description => "Allows the player to form a monster raid party that he can then instruct to raid a target village. A monster raid party can have up to 3 monsters.";
+    public override string description => "This Structure allows the player to summon Raid Parties. Raid Parties harass Villages and is primarily used to generate some Chaos Orbs.";
     public MaraudData() {
         structureType = STRUCTURE_TYPE.MARAUD;
     }

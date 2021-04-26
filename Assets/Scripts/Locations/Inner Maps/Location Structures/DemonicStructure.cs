@@ -15,7 +15,7 @@ namespace Inner_Maps.Location_Structures {
         public LocationStructureObject structureObj {get; private set;}
         public HashSet<Character> currentAttackers { get; }
         public Character preOccupiedBy { get; private set; }
-        
+
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
         public override Type serializedData => typeof(SaveDataDemonicStructure);

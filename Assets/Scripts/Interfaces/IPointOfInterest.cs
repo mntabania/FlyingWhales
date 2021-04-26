@@ -18,6 +18,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     bool isBeingSeized { get; }
     //bool isInPendingAwarenessList { get; }
     int numOfActionsBeingPerformedOnThis { get; } //this is increased, when the action of another character stops this characters movement
+    Vector3 attackRangePosition { get; } //used for checking distance if poi is in attack range of the attacker, see CombatState's LateUpdate
     ILocationAwareness currentLocationAwareness { get; }
     POINT_OF_INTEREST_TYPE poiType { get; }
     POI_STATE state { get; }
