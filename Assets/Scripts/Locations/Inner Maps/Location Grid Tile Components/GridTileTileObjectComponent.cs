@@ -210,7 +210,7 @@ namespace Inner_Maps {
             walls.Clear();
         }
         public bool HasWalls() {
-            if(objHere is BlockWall) {
+            if(objHere is BlockWall || objHere is OreVein) {
                 return true;
             } else {
                 if(walls.Count > 0) {
@@ -224,7 +224,7 @@ namespace Inner_Maps {
             return false;
         }
         public TileObject GetFirstWall() {
-            if(objHere is BlockWall) {
+            if(objHere is BlockWall || objHere is OreVein) {
                 return objHere;
             } else if (walls.Count > 0) {
                 for (int i = 0; i < walls.Count; i++) {

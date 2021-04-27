@@ -211,6 +211,9 @@ namespace Inner_Maps.Location_Structures {
             RuinarchListPool<LocationGridTile>.Release(tiles);
             return chosenTile;
         }
+        public LocationGridTile GetRandomBorderTile() {
+            return CollectionUtilities.GetRandomElement(borderTiles);
+        }
         #endregion
         
         private void StopDrainingCharactersHere() {
