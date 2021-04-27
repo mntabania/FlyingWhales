@@ -195,6 +195,8 @@ namespace Traits {
                             wasReportJobCreated = characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
                             if (wasReportJobCreated) {
                                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "structure_discovered", null, LOG_TAG.Player, LOG_TAG.Major);
+                                log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                log.AddToFillers(demonicStructure, demonicStructure.name, LOG_IDENTIFIER.LANDMARK_1);
                                 log.AddLogToDatabase();
                                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                             }
