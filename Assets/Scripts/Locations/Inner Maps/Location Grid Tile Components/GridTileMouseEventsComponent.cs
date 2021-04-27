@@ -46,7 +46,7 @@ namespace Inner_Maps {
         public void SetHasMouseEvents(bool state) {
             if(hasMouseEvents != state) {
                 hasMouseEvents = state;
-                Debug.Log($"Set has mouse events of {owner.ToString()} as {hasMouseEvents.ToString()}");
+                // Debug.Log($"Set has mouse events of {owner.ToString()} as {hasMouseEvents.ToString()}");
                 if (hasMouseEvents) {
                     InitiateMouseEventsGO();
                 } else {
