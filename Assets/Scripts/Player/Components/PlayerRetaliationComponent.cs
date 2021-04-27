@@ -20,6 +20,7 @@ public class PlayerRetaliationComponent {
         retaliationProgress = new RuinarchBasicProgress(GetRetaliationBookmarkText());
         retaliationProgress.SetOnHoverOverAction(OnHoverOverRetaliationBookmark);
         retaliationProgress.SetOnHoverOutAction(OnHoverOutRetaliationBookmark);
+        retaliationProgress.SetOnSelectAction(OnClickRetaliationBookmark);
         retaliationProgress.Initialize(0, MAX_RETALIATION_COUNTER);
     }
     public PlayerRetaliationComponent(SaveDataPlayerRetaliationComponent data) {
@@ -30,6 +31,7 @@ public class PlayerRetaliationComponent {
         retaliationProgress = data.retaliationProgress;
         retaliationProgress.SetOnHoverOverAction(OnHoverOverRetaliationBookmark);
         retaliationProgress.SetOnHoverOutAction(OnHoverOutRetaliationBookmark);
+        retaliationProgress.SetOnSelectAction(OnClickRetaliationBookmark);
     }
 
     #region Listeners
@@ -233,6 +235,12 @@ public class PlayerRetaliationComponent {
     }
     private void OnHoverOutRetaliationBookmark() {
         UIManager.Instance.HideSmallInfo();
+    }
+    private void OnClickRetaliationBookmark() {
+        if (spawnedAngels.Count > 0) {
+            Character angel = spawnedAngels[GameUtilities.RandomBetweenTwoNumbers(0, spawnedAngels.Count)];
+            UIManager.Instance.ShowCharacterInfo(angel, true);
+        }
     }
     #endregion
 }
