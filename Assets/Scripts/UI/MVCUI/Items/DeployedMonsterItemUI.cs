@@ -103,6 +103,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         lockCover.SetActive(false);
         isDeployed = false;
         isReadyForDeploy = false;
+        HideDeadIcon();
         emptyCover.SetActive(true);
         addSummonCover.SetActive(false);
     }
@@ -121,6 +122,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         addSummonCover.SetActive(false);
         txtUnlockCost.text = unlockCost.ToString();
         btnUnlockSlot.gameObject.SetActive(true);
+        HideDeadIcon();
         if (p_isAbleToBuy) {
             btnUnlockSlot.interactable = true;
             hoverText.SetText("Expand Capacity by 1");
@@ -205,6 +207,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         lockCover.SetActive(false);
         btnUnlockSlot.gameObject.SetActive(false);
         addSummonCover.SetActive(true);
+        HideDeadIcon();
         btnAddSummon.gameObject.SetActive(true);
     }
 }

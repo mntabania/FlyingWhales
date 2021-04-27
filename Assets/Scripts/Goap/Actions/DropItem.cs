@@ -80,7 +80,11 @@ public class DropItem : GoapAction {
         //if current grid location is occupied and cannot get any unoccupied tile from current location, then just let the object disappear
         LocationGridTile tile = goapNode.actor.gridTileLocation;
         if(tile != null && tile.tileObjectComponent.objHere != null) {
-            tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+            tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject(thisStructureOnly: true);
+            if (tile == null) {
+                //in case no tile was found inside structure
+                tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();    
+            }
         }
         bool addToLocation = tile != null;
         goapNode.actor.UncarryPOI(goapNode.poiTarget as TileObject, addToLocation: addToLocation, dropLocation: tile);

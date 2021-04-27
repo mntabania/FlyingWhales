@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Traits;
 using UtilityScripts;
 using Inner_Maps;
+using Ruinarch.Custom_UI;
 public class CharacterInfoUI : InfoUIBase {
 
     private enum VIEW_MODE { None = 0, Info, Mood, Relationship, Logs, }
@@ -211,11 +212,19 @@ public class CharacterInfoUI : InfoUIBase {
             btnRevealLogs.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
             btnRevealMood.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
             btnRevealRelationship.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealInfo.GetComponent<RuinarchButton>().MakeUnavailable();
+            btnRevealLogs.GetComponent<RuinarchButton>().MakeUnavailable();
+            btnRevealMood.GetComponent<RuinarchButton>().MakeUnavailable();
+            btnRevealRelationship.GetComponent<RuinarchButton>().MakeUnavailable();
         } else {
             btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Character Info");
             btnRevealLogs.GetComponent<HoverText>()?.SetText("Reveal Character Info");
             btnRevealMood.GetComponent<HoverText>()?.SetText("Reveal Character Info");
             btnRevealRelationship.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealInfo.GetComponent<RuinarchButton>().MakeAvailable();
+            btnRevealLogs.GetComponent<RuinarchButton>().MakeAvailable();
+            btnRevealMood.GetComponent<RuinarchButton>().MakeAvailable();
+            btnRevealRelationship.GetComponent<RuinarchButton>().MakeAvailable();
         }
     }
 
@@ -312,7 +321,8 @@ public class CharacterInfoUI : InfoUIBase {
             OnToggleInfo(true);
             break;
         }
-	}
+        InitializeRevealHoverText();
+    }
 
     #region Utilities
     private void ResetAllScrollPositions() {

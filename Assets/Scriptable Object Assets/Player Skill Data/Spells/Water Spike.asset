@@ -22,6 +22,7 @@ MonoBehaviour:
   cheatedLevel: 0
   pierce: 0
   bonusChargeWhenUnlocked: 3
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: dfbece8ed8611b042b4b4ffafe7b09e3, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: eb9b0cf342db4f242996861a944bf25c, type: 3}
   tooltipImage: {fileID: 0}
@@ -87,4 +88,4 @@ MonoBehaviour:
     opinionTrigger: 
     addedBehaviour: 
     listOfCriteria: 
-  blastSound: {fileID: 8300000, guid: 25bdd82943acdb843a2cdee41658c12c, type: 3}
+  blastSound: {fileID: 8300000, guid: 9fc4b4de02e399c4fa4471f2ee024e6b, type: 3}

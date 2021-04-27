@@ -441,9 +441,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
 
         int currentManaCost = skillData.manaCost;
-        int nextLevelManaCost = playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel + 1);
+        int nextLevelManaCost = WorldSettings.Instance.worldSettingsData.IsScenarioMap()
+            ? playerSkillData.GetManaCostForScenarios()
+            : playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel + 1);//playerSkillData.GetManaCostBaseOnLevel(skillData.currentLevel + 1);
         if (currentManaCost != nextLevelManaCost) {
             currencies = $"{currencies}{currentManaCost} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText(nextLevelManaCost.ToString())} {UtilityScripts.Utilities.ManaIcon()}";
+        } else {
+            currencies = $"{currencies}{currentManaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
         }
         return currencies;
     }

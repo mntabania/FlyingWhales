@@ -51,6 +51,11 @@ public class PlayerSkillData : ScriptableObject {
     public int GetManaCostBaseOnLevel(int level) {
         return SpellUtilities.GetModifiedSpellCost(skillUpgradeData.GetManaCostPerLevel(level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
     }
+    public int GetManaCostForScenarios() {
+        //scenarios will always use level 1 mana cost
+        //https://trello.com/c/sU3NFYwu/4226-in-scenarios-mana-cost-does-not-increase-when-powers-are-upgraded
+        return SpellUtilities.GetModifiedSpellCost(skillUpgradeData.GetManaCostPerLevel(0), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+    }
 
     public int GetCoolDownBaseOnLevel(int level) {
         if (!isAffliction) {

@@ -18,7 +18,7 @@ public class Summon : Character {
     /// </summary>
     public bool isVolatileMonster { get; private set; }
     public virtual Faction defaultFaction => FactionManager.Instance.neutralFaction;
-    public virtual int gainedKennelSummonCapacity => 5;
+    public virtual int gainedKennelSummonCapacity => 3;
 
     #region getters
     public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;

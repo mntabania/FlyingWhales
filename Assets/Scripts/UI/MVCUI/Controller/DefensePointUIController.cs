@@ -212,7 +212,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		}
 	}
 
-	public void OnAddSummonClicked() { m_defensePointUIView.ShowSummonSubContainer(); }
+	public void OnAddSummonClicked() { m_defensePointUIView.ShowSummonSubContainer(); m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints); }
 
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
@@ -304,7 +304,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
 	
-	public void OnCloseSummonSubContainer() { m_defensePointUIView.HideAllSubMenu(); }
+	public void OnCloseSummonSubContainer() { m_defensePointUIView.HideAllSubMenu(); m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints); }
 
 	public void OnHoverOver() {
 		if (m_isAllItemDeployed) {

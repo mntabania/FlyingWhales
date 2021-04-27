@@ -133,9 +133,9 @@ public class DemonSnatchPartyQuest : PartyQuest {
         //}
         LocationGridTile dropTile = null;
         if (p_dropStructure is Kennel kennel) {
-            dropTile = kennel.GetRandomPassableBorderTile();
+            dropTile = kennel.GetRandomBorderTile();
         } else if (p_dropStructure is TortureChambers prison) {
-            dropTile = prison.GetRandomPassableBorderTile();
+            dropTile = prison.GetRandomBorderTile();
         }
         if (dropTile != null) {
             p_party.jobComponent.CreateSnatchJob(p_target, dropTile, p_dropStructure);

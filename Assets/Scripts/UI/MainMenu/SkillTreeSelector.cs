@@ -23,7 +23,7 @@ public class SkillTreeSelector : MonoBehaviour {
         _horizontalScrollSnap.Awake();
         for (int i = 0; i < playerLoadoutUI.Length; i++) {
             playerLoadoutUI[i].Initialize();
-            playerLoadoutUI[i].SetMoreLoadoutOptions(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions, false);
+            playerLoadoutUI[i].SetMoreLoadoutOptions(false, false); //SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions
         }
         if (WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetypes != null) {
             //world settings has a forced archetype, disable all other archetypes except forced archetype
@@ -51,7 +51,7 @@ public class SkillTreeSelector : MonoBehaviour {
                 }
             }
         }
-        moreLoadoutOptionsToggle.SetIsOnWithoutNotify(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions);
+        moreLoadoutOptionsToggle.SetIsOnWithoutNotify(false);//
         this.gameObject.SetActive(false);
     }
     public void Show() {

@@ -102,6 +102,30 @@ public class MaraudUIView : MVCUIView {
 		UIModel.scrollViewDeployedTargets.gameObject.SetActive(false);
 	}
 
+	public void ProcessMinionDisplay(int p_deployedMinionCount) {
+		if (p_deployedMinionCount <= 0) {
+			if (!UIModel.subMinionContainer.gameObject.activeSelf) {
+				UIModel.btnAddMinion.gameObject.SetActive(true);
+			} else {
+				UIModel.btnAddMinion.gameObject.SetActive(false);
+			}
+		} else {
+			UIModel.btnAddMinion.gameObject.SetActive(false);
+		}
+	}
+
+	public void ProcessTargetDisplay(int p_deployedTargetCount) {
+		if (p_deployedTargetCount <= 0) {
+			if (!UIModel.subTargetContainer.gameObject.activeSelf) {
+				UIModel.btnAddTarget.gameObject.SetActive(true);
+			} else {
+				UIModel.btnAddTarget.gameObject.SetActive(false);
+			}
+		} else {
+			UIModel.btnAddTarget.gameObject.SetActive(false);
+		}
+	}
+
 	public void ProcessSummonDisplay(int p_currentCount, int p_maxCount, Party p_party, int p_currentMana) {
 		int targetIndex = -1;
 		for (int x = 0; x < p_currentCount; ++x) {
@@ -118,9 +142,13 @@ public class MaraudUIView : MVCUIView {
 		if (targetIndex == -1) {
 			targetIndex = p_currentCount;
 		}
-		if (targetIndex < p_currentCount - 1) {
+		if (targetIndex < p_currentCount) {
 			UIModel.deployedItemSummonsUI[targetIndex].gameObject.SetActive(true);
-			UIModel.deployedItemSummonsUI[targetIndex].DisplayAddSummon();
+			if (!UIModel.subSummonContainer.gameObject.activeSelf) {
+				UIModel.deployedItemSummonsUI[targetIndex].DisplayAddSummon();
+			} else {
+				UIModel.deployedItemSummonsUI[targetIndex].MakeSlotEmpty();
+			}
 		}
 		targetIndex = p_currentCount;
 		if (targetIndex < p_maxCount) {

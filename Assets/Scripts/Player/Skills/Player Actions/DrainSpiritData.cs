@@ -22,7 +22,7 @@ public class DrainSpiritData : PlayerAction {
         } else if (targetStructure is TortureChambers tortureChambers) {
             PrisonCell prisonCell = tortureChambers.rooms[0] as PrisonCell;
             Assert.IsNotNull(prisonCell);
-            Character chosenCharacter = prisonCell.charactersInRoom.FirstOrDefault(CanPerformAbilityTowards);
+            Character chosenCharacter = prisonCell.charactersInRoom.FirstOrDefault(c =>  CanPerformAbilityTowards(c) && IsValid(c));
             Assert.IsNotNull(chosenCharacter);
             ActivateAbility(chosenCharacter);
         }
@@ -87,7 +87,7 @@ public class DrainSpiritData : PlayerAction {
             } else if (targetStructure is TortureChambers tortureChambers) {
                 if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
                     List<Character> charactersInRoom = prisonCell.charactersInRoom;
-                    if (!charactersInRoom.Any(CanPerformAbilityTowards)) { //charactersInRoom.Any(c => c.traitContainer.HasTrait("Being Drained")) || 
+                    if (!charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) { //charactersInRoom.Any(c => c.traitContainer.HasTrait("Being Drained")) || 
                         //if cannot drain any character in room or a character in the room is already being drained.
                         return false;    
                     }
@@ -120,7 +120,7 @@ public class DrainSpiritData : PlayerAction {
         } else if (p_targetStructure is TortureChambers tortureChambers) {
             if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
                 List<Character> charactersInRoom = prisonCell.charactersInRoom;
-                if (!charactersInRoom.Any(CanPerformAbilityTowards)) {
+                if (!charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) {
                     reasons += "Cannot find valid Drain target. Cannot drain characters that are currently being Brainwashed or Tortured.";    
                 } 
                 // else if (charactersInRoom.Any(c => c.traitContainer.HasTrait("Being Drained"))) {
