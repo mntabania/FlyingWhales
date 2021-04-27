@@ -64,6 +64,7 @@ public class StructureInfoUI : InfoUIBase {
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, UpdatePrisonersFromSignal);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, UpdatePrisonersFromSignal);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Beholder>(StructureSignals.UPDATE_EYE_WARDS, UpdateEyeWardsFromSignal);
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
@@ -71,6 +72,11 @@ public class StructureInfoUI : InfoUIBase {
 
         villageEventLbl.SetOnLeftClickAction(OnLeftClickVillage);
         villageEventLbl.SetOnRightClickAction(OnRightClickVillage);
+    }
+    private void OnCharacterDied(Character p_character) {
+        if (isShowing && p_character.currentStructure == activeStructure) {
+            UpdatePrisonersFromSignal(p_character, p_character.currentStructure);
+        }
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -239,7 +245,10 @@ public class StructureInfoUI : InfoUIBase {
                 characters.Add(kennel.occupyingSummon);
             }
         } else if (activeStructure is TortureChambers tortureChambers&& tortureChambers.rooms != null && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
-            characters.AddRange(prisonCell.charactersInRoom);
+            List<Character> validCharacters = prisonCell.charactersInRoom.Where(c => prisonCell.IsValidOccupant(c)).ToList();
+            if (validCharacters.Count > 0) {
+                characters.AddRange(validCharacters);    
+            }
         } else {
             characters.AddRange(activeStructure.charactersHere);
         }

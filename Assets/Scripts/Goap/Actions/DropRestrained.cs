@@ -224,6 +224,33 @@ public class DropRestrained : GoapAction {
                         }
                     }
                 }
+            } else if (goapNode.associatedJobType == JOB_TYPE.CAPTURE_CHARACTER && goapNode.actor is Harpy) {
+                if (goapNode.poiTarget.gridTileLocation != null) {
+                    LocationStructure structure = goapNode.poiTarget.gridTileLocation.structure;
+                    if (goapNode.poiTarget is Character droppedCharacter) {
+                        if (structure is Kennel kennel) {
+                            //teleport character to inside kennel
+                            LocationGridTile chosenTile = kennel.passableTiles.First(t => t.charactersHere.Count <= 0) ?? kennel.GetCenterTile();
+                            if (chosenTile != null) {
+                                CharacterManager.Instance.Teleport(droppedCharacter, chosenTile);
+                                GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                            }
+                            //restrain monster dropped inside kennel
+                            kennel.OnHarpyDroppedCharacterHere(droppedCharacter);
+                        } else if (structure is TortureChambers tortureChambers && tortureChambers.rooms.ElementAtOrDefault(0) is PrisonCell prisonCell) {
+                            if (!tortureChambers.IsTilePartOfARoom(goapNode.poiTarget.gridTileLocation, out var room)) {
+                                //teleport character to inside prison cell
+                                LocationGridTile targetTile = prisonCell.tilesInRoom.First(t => t.charactersHere.Count <= 0) ?? CollectionUtilities.GetRandomElement(prisonCell.tilesInRoom);
+                                if (targetTile != null) {
+                                    CharacterManager.Instance.Teleport(droppedCharacter, targetTile);
+                                    GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                                }    
+                            }
+                            //restrain villager dropped inside kennel
+                            prisonCell.OnHarpyDroppedCharacterHere(droppedCharacter);
+                        }    
+                    }
+                }
             }
         }
 

@@ -23,6 +23,7 @@ public static class ChanceData {
         {CHANCE_TYPE.Host_Social_Party, 10},
         {CHANCE_TYPE.Demonic_Decor_On_Corrupt, 15},
         {CHANCE_TYPE.Retaliation, 25},
+        {CHANCE_TYPE.Harpy_Capture, 15},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {

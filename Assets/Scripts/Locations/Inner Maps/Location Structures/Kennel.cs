@@ -95,6 +95,18 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        public void OnHarpyDroppedCharacterHere(Character character) {
+            //In case there are multiple monsters inside kennel, only the first one will be counted.
+            //Reference: https://www.notion.so/ruinarch/f5da33a23d5545298c66be49c3c767fd?v=1ebbd3791a3d477fb7818103643f9a41&p=595c5767c8684d2b91274f304058c4a1
+            if (character is Summon summon) {
+                //automatically restrain and imprison dropped monsters
+                //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
+                summon.traitContainer.RestrainAndImprison(summon, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
+                if (_occupyingSummon == null && IsValidOccupant(summon)) { //charactersHere.Count(c => c is Summon && !c.isDead) == 1
+                    OccupyKennel(summon);    
+                }
+            }
+        }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {
             if (p_character is Summon summon) {
                 if (occupyingSummon == summon) {
@@ -140,10 +152,18 @@ namespace Inner_Maps.Location_Structures {
             characters.AddRange(charactersHere);
             for (int i = 0; i < characters.Count; i++) {
                 Character character = characters[i];
-                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
-                if (targetTile != null) {
-                    CharacterManager.Instance.Teleport(character, targetTile);
-                    GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                //automatically restrain and imprison accidentally captured characters
+                //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
+                character.traitContainer.RestrainAndImprison(character, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
+                //teleport monster to inside of kennel
+                LocationGridTile chosenTile = passableTiles.First(t => t.charactersHere.Count <= 0) ?? GetCenterTile();
+                if (chosenTile != null) {
+                    CharacterManager.Instance.Teleport(character, chosenTile);
+                    GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                }
+                
+                if (_occupyingSummon == null && character is Summon summon && IsValidOccupant(summon)) {
+                    OccupyKennel(summon);
                 }
             }
             RuinarchListPool<Character>.Release(characters);
@@ -158,6 +178,9 @@ namespace Inner_Maps.Location_Structures {
             //         }
             //     }
             // }
+        }
+        public LocationGridTile GetCenterTile() {
+            return GameUtilities.GetCenterTile(tiles.ToList(), tiles.ElementAt(0).parentMap.map);
         }
         public override bool IsAvailableForTargeting() {
             return _occupyingSummon == null;
