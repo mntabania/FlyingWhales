@@ -70,14 +70,29 @@ namespace Inner_Maps.Location_Structures {
             int numOfSummons = GetNumberOfSummonsHere();
             return numOfSummons >= 1;
         }
-        protected override void AfterCharacterAddedToLocation(Character p_character) {
+        public override void OnCharacterUnSeizedHere(Character character) {
+            base.OnCharacterUnSeizedHere(character);
             //In case there are multiple monsters inside kennel, only the first one will be counted.
             //Reference: https://www.notion.so/ruinarch/f5da33a23d5545298c66be49c3c767fd?v=1ebbd3791a3d477fb7818103643f9a41&p=595c5767c8684d2b91274f304058c4a1
-            if (p_character is Summon summon) {
+            if (character is Summon summon) {
+                //automatically restrain and imprison dropped monsters
+                //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
+                summon.traitContainer.RestrainAndImprison(summon, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
                 if (_occupyingSummon == null && IsValidOccupant(summon)) { //charactersHere.Count(c => c is Summon && !c.isDead) == 1
                     OccupyKennel(summon);    
                 }
-                summon.movementComponent.SetEnableDigging(false);
+            }
+        }
+        public void OnSnatchedCharacterDroppedHere(Character character) {
+            //In case there are multiple monsters inside kennel, only the first one will be counted.
+            //Reference: https://www.notion.so/ruinarch/f5da33a23d5545298c66be49c3c767fd?v=1ebbd3791a3d477fb7818103643f9a41&p=595c5767c8684d2b91274f304058c4a1
+            if (character is Summon summon) {
+                //automatically restrain and imprison dropped monsters
+                //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
+                summon.traitContainer.RestrainAndImprison(summon, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
+                if (_occupyingSummon == null && IsValidOccupant(summon)) { //charactersHere.Count(c => c is Summon && !c.isDead) == 1
+                    OccupyKennel(summon);    
+                }
             }
         }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {
@@ -85,7 +100,6 @@ namespace Inner_Maps.Location_Structures {
                 if (occupyingSummon == summon) {
                     UnOccupyKennelAndCheckForNewOccupant();    
                 }
-                summon.movementComponent.SetEnableDigging(true);
             }
         }
         public override string GetTestingInfo() {
@@ -115,24 +129,39 @@ namespace Inner_Maps.Location_Structures {
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH_MONSTER);
+            AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
+            AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
         }
         public override void OnBuiltNewStructure() {
             base.OnBuiltNewStructure();
-            if (_occupyingSummon != null) {
-                Character characterToTeleport = _occupyingSummon;
-                if (!IsValidOccupant(_occupyingSummon)) {
-                    UnOccupyKennelAndCheckForNewOccupant();
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
-                    if (targetTile != null) {
-                        CharacterManager.Instance.Teleport(characterToTeleport, targetTile);
-                        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
-                    }
+            //automatically teleport characters caught inside the kennel upon building
+            //this is to prevent complications with occupying summon.
+            List<Character> characters = RuinarchListPool<Character>.Claim();
+            characters.AddRange(charactersHere);
+            for (int i = 0; i < characters.Count; i++) {
+                Character character = characters[i];
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
+                if (targetTile != null) {
+                    CharacterManager.Instance.Teleport(character, targetTile);
+                    GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
                 }
             }
+            RuinarchListPool<Character>.Release(characters);
+            // if (_occupyingSummon != null) {
+            //     Character characterToTeleport = _occupyingSummon;
+            //     if (!IsValidOccupant(_occupyingSummon)) {
+            //         UnOccupyKennelAndCheckForNewOccupant();
+            //         LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
+            //         if (targetTile != null) {
+            //             CharacterManager.Instance.Teleport(characterToTeleport, targetTile);
+            //             GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+            //         }
+            //     }
+            // }
         }
-        // public override bool IsAvailableForTargeting() {
-        //     return _occupyingSummon == null;
-        // }
+        public override bool IsAvailableForTargeting() {
+            return _occupyingSummon == null;
+        }
         #endregion
 
         private void OccupyKennel(Summon p_summon) {
@@ -144,6 +173,7 @@ namespace Inner_Maps.Location_Structures {
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity, false);
             PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
             Debug.Log($"Set occupant of {name} to {occupyingSummon?.name}");
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void UnOccupyKennelAndCheckForNewOccupant() {
             Assert.IsNotNull(occupyingSummon, $"Problem un occupying summon at {name}");
@@ -157,6 +187,8 @@ namespace Inner_Maps.Location_Structures {
             Summon otherSummon = charactersHere.FirstOrDefault(IsValidOccupant) as Summon;
             if (otherSummon != null) {
                 OccupyKennel(otherSummon);    
+            } else {
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
             }
         }
         private bool IsValidOccupant(Character p_character) {
@@ -167,11 +199,14 @@ namespace Inner_Maps.Location_Structures {
                 if (summon.faction != null && summon.faction.isPlayerFaction) {
                     return false;
                 }
-                if (!summon.isBeingSeized && summon.gridTileLocation != null && !summon.gridTileLocation.IsPassable()) {
-                    //needed to check for impassable tile placements
-                    //Reference: https://trello.com/c/EFAyp5Vn/4223-demonic-structure-appears-occupied
+                if (!summon.traitContainer.HasTrait("Restrained")) {
                     return false;
                 }
+                // if (!summon.isBeingSeized && summon.gridTileLocation != null && !summon.gridTileLocation.IsPassable()) {
+                //     //needed to check for impassable tile placements
+                //     //Reference: https://trello.com/c/EFAyp5Vn/4223-demonic-structure-appears-occupied
+                //     return false;
+                // }
                 return true;
             }
             return false;
@@ -186,6 +221,7 @@ namespace Inner_Maps.Location_Structures {
         public void OnCharacterSubscribedToDied(Character p_character) {
             Assert.IsTrue(p_character == occupyingSummon, $"{name} is subscribed to death event of non occupying summon {p_character?.name}! Occupying summon is {occupyingSummon?.name}");
             UnOccupyKennelAndCheckForNewOccupant();
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         
         #region Border Tiles

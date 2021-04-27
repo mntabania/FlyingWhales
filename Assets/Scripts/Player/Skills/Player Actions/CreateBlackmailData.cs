@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System.Linq;
+using DG.Tweening;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -41,6 +42,14 @@ public class CreateBlackmailData : PlayerAction {
             base.ActivateAbility(targetPOI);    
         }
     }
+    public override void ActivateAbility(LocationStructure targetStructure) {
+        if (targetStructure is TortureChambers tortureChambers && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
+            Character targetCharacter = prisonCell.charactersInRoom.FirstOrDefault(c => CanPerformAbilityTowards(c) && IsValid(c));
+            if (targetCharacter != null) {
+                ActivateAbility(targetCharacter);
+            }
+        }
+    }
     private void OnReachIntelTab(GameObject effectGO) {
         PlayerUI.Instance.DoIntelTabPunchEffect();
         ObjectPoolManager.Instance.DestroyObject(effectGO);
@@ -49,9 +58,14 @@ public class CreateBlackmailData : PlayerAction {
         bool isValid = base.IsValid(target);
         if (isValid) {
             if (target is Character targetCharacter) {
-                return targetCharacter.isNormalCharacter && targetCharacter.currentStructure is TortureChambers;
+                return targetCharacter.isNormalCharacter && !targetCharacter.isDead && targetCharacter.gridTileLocation != null && targetCharacter.currentStructure is TortureChambers && 
+                       targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell;
+            } else if (target is TortureChambers tortureChambers) {
+                if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && prisonCell.HasValidOccupant()) {
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
         return false;
     }
@@ -65,10 +79,31 @@ public class CreateBlackmailData : PlayerAction {
         }
         return false;
     }
+    public override bool CanPerformAbilityTowards(LocationStructure targetStructure) {
+        bool canPerform = base.CanPerformAbilityTowards(targetStructure);
+        if (canPerform) {
+            if (targetStructure is TortureChambers tortureChambers) {
+                if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && prisonCell.charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return false;
+    }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (PlayerManager.Instance.player.playerSkillComponent.AlreadyHasBlackmail(targetCharacter)) {
             reasons += $"Player already has Hostage Blackmail on {targetCharacter.name}.";
+        }
+        return reasons;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure p_targetStructure) {
+        string reasons =  base.GetReasonsWhyCannotPerformAbilityTowards(p_targetStructure);
+        if (p_targetStructure is TortureChambers tortureChambers) {
+            if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && !prisonCell.charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) {
+                reasons += $"Player already has Hostage Blackmail on all Villagers inside Prison Cell.";
+            }
         }
         return reasons;
     }

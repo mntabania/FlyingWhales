@@ -33,7 +33,7 @@ public class RepairData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is LocationStructure structure) {
-            if (structure.hasBeenDestroyed || structure.tiles.Count <= 0) {
+            if (structure.hasBeenDestroyed || structure.tiles.Count <= 0 || structure.currentHP >= structure.maxHP) {
                 return false;
             }
         }

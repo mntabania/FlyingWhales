@@ -184,6 +184,7 @@ public class Summon : Character {
             }
             
             AfterDeath(deathTilePosition);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
     }
     protected override void OnTickStarted() {

@@ -233,7 +233,16 @@ public class StructureInfoUI : InfoUIBase {
     }
     private void UpdatePrisoners() {
         UtilityScripts.Utilities.DestroyChildren(prisonersScrollView.content);
-        List<Character> characters = activeStructure.charactersHere;
+        List<Character> characters = RuinarchListPool<Character>.Claim();
+        if (activeStructure is Kennel kennel) {
+            if (kennel.occupyingSummon != null) {
+                characters.Add(kennel.occupyingSummon);
+            }
+        } else if (activeStructure is TortureChambers tortureChambers&& tortureChambers.rooms != null && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
+            characters.AddRange(prisonCell.charactersInRoom);
+        } else {
+            characters.AddRange(activeStructure.charactersHere);
+        }
         if (characters != null && characters.Count > 0) {
             for (int i = 0; i < characters.Count; i++) {
                 Character character = characters[i];

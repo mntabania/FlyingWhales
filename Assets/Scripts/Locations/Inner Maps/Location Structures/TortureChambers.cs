@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -48,6 +49,7 @@ namespace Inner_Maps.Location_Structures {
                 if (character.gridTileLocation != null && !character.gridTileLocation.charactersHere.Contains(character)) {
                     character.gridTileLocation.AddCharacterHere(character);
                 }
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
             }
         }
         protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
@@ -93,25 +95,51 @@ namespace Inner_Maps.Location_Structures {
         //     }
         //     return !isOccupied;
         // }
+        public override bool IsAvailableForTargeting() {
+            if (rooms.Length > 0 && rooms[0] is PrisonCell prisonCell) {
+                List<Character> charactersInRoom = prisonCell.charactersInRoom;
+                return !charactersInRoom.Any(prisonCell.IsValidOccupant); //can target character for snatch if prison does not currently have a valid occupant
+            }
+            return false;
+        }
+        #endregion
+
+        #region Listeners
+        public override void OnCharacterDied(Character p_character) {
+            base.OnCharacterDied(p_character);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+        }
         #endregion
 
         protected override void AfterCharacterAddedToLocation(Character p_character) {
             base.AfterCharacterAddedToLocation(p_character);
-            p_character.movementComponent.SetEnableDigging(false);
             // if (p_character.isNormalCharacter && IsTilePartOfARoom(p_character.gridTileLocation, out var room) && room is PrisonCell prisonCell && prisonCell.skeleton == null) {
             //     DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
             //     door?.Close();
             // }
-            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            // Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {
             base.AfterCharacterRemovedFromLocation(p_character);
-            p_character.movementComponent.SetEnableDigging(true);
-            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+        }
+        public void OnSnatchedCharacterDroppedHere(Character character) {
+            //In case there are multiple monsters inside kennel, only the first one will be counted.
+            //Reference: https://www.notion.so/ruinarch/f5da33a23d5545298c66be49c3c767fd?v=1ebbd3791a3d477fb7818103643f9a41&p=595c5767c8684d2b91274f304058c4a1
+            if (rooms.Length > 0 && rooms[0] is PrisonCell prisonCell && prisonCell.IsValidOccupant(character)) {
+                //automatically restrain and imprison dropped monsters
+                //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
+                character.traitContainer.RestrainAndImprison(character, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
+            }
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH_VILLAGER);
+            AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
+            AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
+            AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
+            AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
+            AddPlayerAction(PLAYER_SKILL_TYPE.CREATE_BLACKMAIL);
         }
         public override string GetTestingInfo() {
             string summary = base.GetTestingInfo();
@@ -132,26 +160,32 @@ namespace Inner_Maps.Location_Structures {
             _tortureChamberStructureObject.SetEntrance(region.innerMap);
             List<Character> charactersToTeleport = RuinarchListPool<Character>.Claim();
             charactersToTeleport.AddRange(charactersHere);
-            bool alreadyTeleportedCharacterInside = false;
+            // bool alreadyTeleportedCharacterInside = false;
             for (int i = 0; i < charactersToTeleport.Count; i++) {
                 Character character = charactersToTeleport[i];
-                if (!alreadyTeleportedCharacterInside && character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room) && room.parentStructure == this &&
-                    room is PrisonCell prisonCell && prisonCell.IsValidOccupant(character)) {
-                    //teleport character to center of room
-                    LocationGridTile targetTile = room.GetCenterTile();
-                    if (targetTile != null) {
-                        alreadyTeleportedCharacterInside = true; //if already teleported character inside, then flag as true, so that other characters will be teleported outside
-                        CharacterManager.Instance.Teleport(character, targetTile);
-                        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
-                    }
-                } else {
-                    //teleport character to outside
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
-                    if (targetTile != null) {
-                        CharacterManager.Instance.Teleport(character, targetTile);
-                        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
-                    }
+                //teleport character to outside
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
+                if (targetTile != null) {
+                    CharacterManager.Instance.Teleport(character, targetTile);
+                    GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
                 }
+                // if (!alreadyTeleportedCharacterInside && character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room) && room.parentStructure == this &&
+                //     room is PrisonCell prisonCell && prisonCell.IsValidOccupant(character)) {
+                //     //teleport character to center of room
+                //     LocationGridTile targetTile = room.GetCenterTile();
+                //     if (targetTile != null) {
+                //         alreadyTeleportedCharacterInside = true; //if already teleported character inside, then flag as true, so that other characters will be teleported outside
+                //         CharacterManager.Instance.Teleport(character, targetTile);
+                //         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                //     }
+                // } else {
+                //     //teleport character to outside
+                //     LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
+                //     if (targetTile != null) {
+                //         CharacterManager.Instance.Teleport(character, targetTile);
+                //         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                //     }
+                // }
             }
             RuinarchListPool<Character>.Release(charactersToTeleport);
         }

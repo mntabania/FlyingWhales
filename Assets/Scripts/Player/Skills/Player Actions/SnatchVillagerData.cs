@@ -1,5 +1,7 @@
 ﻿using Inner_Maps.Location_Structures;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SnatchVillagerData : PlayerAction {
@@ -16,7 +18,18 @@ public class SnatchVillagerData : PlayerAction {
         }
         return base.CanPerformAbilityTowards(target) && canPerform;
     }
-
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (target is TortureChambers tortureChambers) {
+            if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
+                List<Character> charactersInRoom = prisonCell.charactersInRoom;
+                if (!charactersInRoom.Any(c => prisonCell.IsValidOccupant(c))) {
+                    //if prison cell does not have any valid occupants yet, then allow snatch action.
+                    return true;    
+                }
+            }
+        }
+        return false;
+    }
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
         reasons += $"Can't snatch because Prison is occupied\n";

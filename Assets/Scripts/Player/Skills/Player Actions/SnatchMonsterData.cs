@@ -18,7 +18,15 @@ public class SnatchMonsterData : PlayerAction {
         }
         return base.CanPerformAbilityTowards(target) && canPerform;
     }
-
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (target is Kennel kennel) {
+            bool isValid = base.IsValid(target);
+            if (isValid) {
+                return kennel.occupyingSummon == null;
+            }
+        }
+        return false;
+    }
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
         reasons += $"Can't snatch because Kennel is occupied\n";

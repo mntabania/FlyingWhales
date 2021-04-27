@@ -147,7 +147,7 @@ public class ActionItem : PooledObject {
 		DOTween.Kill(this);
         cooldownCoverImg.fillAmount = 0f;
 		expiryKey = string.Empty;
-		SetCooldownState(false);
+		cooldownCoverImg.gameObject.SetActive(false);
 		SetInteractable(true);
 		Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
 		Messenger.RemoveListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
