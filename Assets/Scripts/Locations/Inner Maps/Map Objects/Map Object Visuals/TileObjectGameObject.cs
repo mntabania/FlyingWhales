@@ -123,6 +123,16 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             }
         }
     }
+    public void MakeObjectUnClickable() {
+        if (clickCollider != null) {
+            clickCollider.enabled = false;    
+        }
+    }
+    public void MakeObjectClickable() {
+        if (clickCollider != null) {
+            clickCollider.enabled = true;    
+        }
+    }
     #endregion
 
     #region Object Pool

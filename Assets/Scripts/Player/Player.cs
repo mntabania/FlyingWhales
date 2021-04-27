@@ -829,7 +829,7 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Currencies
-    public void AdjustCurrency(CURRENCY p_currency, int p_amount) {
+    private void AdjustCurrency(CURRENCY p_currency, int p_amount, bool affectSpiritEnergy = true) {
         switch (p_currency) {
             case CURRENCY.Mana:
                 AdjustMana(p_amount);

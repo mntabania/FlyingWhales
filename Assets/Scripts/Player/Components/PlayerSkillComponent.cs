@@ -138,8 +138,10 @@ public class PlayerSkillComponent {
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, p_skillData, p_unlockCost);
     }
     public void CancelCurrentPlayerSkillUnlock() {
-        //Refund player mana
-        PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(currentSpellUnlockCost);
+        //Refund player Chaotic Energy
+        // PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(currentSpellUnlockCost);
+        //This is so that refunding will not affect spirit energy
+        PlayerManager.Instance.player.plagueComponent.AdjustPlaguePointsWithoutAffectingSpiritEnergy(currentSpellUnlockCost);
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         currentSpellUnlockCost = 0;
         timerUnlockSpell.Stop();

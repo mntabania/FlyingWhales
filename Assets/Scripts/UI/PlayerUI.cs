@@ -365,10 +365,7 @@ public class PlayerUI : BaseMonoBehaviour {
     //        }
     //    }
 
-    #region SpiritEnergy
-    private void OnSpiritEnergyAdjustedByOne() { //this one is attached to chaos orb gain
-        PlayerManager.Instance.player.AdjustSpiritEnergy(1);
-    }
+    #region Spiri tEnergy
     private void OnSpiritEnergyAdjusted(int adjustedAmount, int spiritEnergy) {
         if (adjustedAmount != 0) {
             UpdateSpiritEnergy();
@@ -1082,9 +1079,6 @@ public class PlayerUI : BaseMonoBehaviour {
     private Tweener _currentPlaguePointPunchTween;
     private void OnPlaguePointsAdjusted(int p_adjustedAmount, int p_totalAmount) {
         if (p_adjustedAmount != 0) {
-            if (p_adjustedAmount > 0) {
-                OnSpiritEnergyAdjustedByOne();
-            }
             UpdatePlaguePointsAmount(p_totalAmount);
             ShowPlaguePointsGainedEffect(p_adjustedAmount);
             DoPlaguePointPunchEffect();

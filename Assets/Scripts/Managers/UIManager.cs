@@ -77,6 +77,9 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Tile Object Tooltip")]
     [SerializeField] private TileObjectNameplateItem _tileObjectNameplateTooltip;
     
+    [Header("Tile Object Tooltip")]
+    [SerializeField] private StructureNameplateItem _structureNameplateTooltip;
+    
     [Header("Character Marker Nameplate")]
     public Transform characterMarkerNameplateParent;
     
@@ -649,6 +652,14 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void HideTileObjectNameplateTooltip() {
         _tileObjectNameplateTooltip.gameObject.SetActive(false);
+    }
+    public void ShowStructureNameplateTooltip(LocationStructure structure, UIHoverPosition position) {
+        _structureNameplateTooltip.SetObject(structure);
+        _structureNameplateTooltip.gameObject.SetActive(true);
+        _structureNameplateTooltip.SetPosition(position);
+    }
+    public void HideStructureNameplateTooltip() {
+        _structureNameplateTooltip.gameObject.SetActive(false);
     }
     #endregion
 

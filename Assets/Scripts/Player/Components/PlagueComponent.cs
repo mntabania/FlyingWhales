@@ -35,6 +35,18 @@ public class PlagueComponent {
         _plaguePoints = Mathf.Clamp(_plaguePoints + amount, 0, maxPlaguePoints);
         Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
         Messenger.Broadcast(PlayerSignals.PLAGUE_POINTS_ADJUSTED, amount, _plaguePoints);
+        if (amount > 0) {
+            //adjust spirit energy by 1 every time player gains at least 1 chaotic energy
+            PlayerManager.Instance.player.AdjustSpiritEnergy(1);    
+        }
+    }
+    public void AdjustPlaguePointsWithoutAffectingSpiritEnergy(int amount) {
+        if (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None) {
+            return;
+        }
+        _plaguePoints = Mathf.Clamp(_plaguePoints + amount, 0, maxPlaguePoints);
+        Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
+        Messenger.Broadcast(PlayerSignals.PLAGUE_POINTS_ADJUSTED, amount, _plaguePoints);
     }
     public void AdjustPlaguePointsNoLimit(int amount) {
         _plaguePoints += amount;

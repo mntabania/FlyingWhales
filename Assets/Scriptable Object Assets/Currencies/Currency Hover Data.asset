@@ -19,3 +19,11 @@ MonoBehaviour:
     name: 5 Chaotic_Energy
     currency: 1
     amount: 5
+  corruptFloorCost:
+    name: 2 Chaotic_Energy
+    currency: 1
+    amount: 2
+  buildWallCost:
+    name: 4 Chaotic_Energy
+    currency: 1
+    amount: 4

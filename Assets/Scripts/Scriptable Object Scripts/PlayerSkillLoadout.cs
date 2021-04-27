@@ -90,6 +90,13 @@ public struct Cost {
     [ReadOnly] public string name;
     public CURRENCY currency;
     public int amount;
+
+    public Cost(CURRENCY p_currency, int p_amount) {
+        currency = p_currency;
+        amount = p_amount;
+        name = $"{amount.ToString()} {currency.ToString()}";
+    }
+    
     public override string ToString() {
         return $"{amount.ToString()} {currency.ToString()}";
     }

@@ -20,9 +20,9 @@ namespace Quests {
         private List<Quest> _activeQuests;
         
         public enum Special_Popup { 
-            Threat, Counterattack, Divine_Intervention, Special_Events, Pause_Reminder,
+            Threat, Special_Events, Pause_Reminder,
             Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened, Sleeping_Dragon,
-            The_Sword, The_Crack, The_Necronomicon, Cult_Leader, Low_Mana
+            The_Sword, The_Crack, The_Necronomicon, Cult_Leader
         }
 
         

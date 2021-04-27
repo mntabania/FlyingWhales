@@ -164,6 +164,18 @@ public class EditableValuesManager : MonoBehaviour {
 		return -1; //no data was provided for current level
 	}
 	public Cost GetReleaseAbilitiesRerollCost() {
-		return currencyHoverData.releaseAbilitiesRerollCost;
+		Cost defaultCost = currencyHoverData.releaseAbilitiesRerollCost;
+		int modifiedCost = SpellUtilities.GetModifiedSpellCost(defaultCost.amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());;
+		return new Cost(defaultCost.currency, modifiedCost);
+	}
+	public Cost GetCorruptTileCost() {
+		Cost defaultCost = currencyHoverData.corruptFloorCost;
+		int modifiedCost = SpellUtilities.GetModifiedSpellCost(defaultCost.amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());;
+		return new Cost(defaultCost.currency, modifiedCost);
+	}
+	public Cost GetBuildWallCost() {
+		Cost defaultCost = currencyHoverData.buildWallCost;
+		int modifiedCost = SpellUtilities.GetModifiedSpellCost(defaultCost.amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());;
+		return new Cost(defaultCost.currency, modifiedCost);
 	}
 }

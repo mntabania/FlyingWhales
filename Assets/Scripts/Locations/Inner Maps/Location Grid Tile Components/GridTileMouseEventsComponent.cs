@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Ruinarch;
 using UnityEngine;
 
 namespace Inner_Maps {
@@ -38,9 +39,12 @@ namespace Inner_Maps {
                     shouldHaveMouseEvents = false;
                 }
             }
-            if (owner.tileObjectComponent.objHere != null) {
+            if (owner.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
                 shouldHaveMouseEvents = false;
             }
+            // if (owner.tileObjectComponent.objHere != null) {
+            //     shouldHaveMouseEvents = false;
+            // }
             SetHasMouseEvents(shouldHaveMouseEvents);
         }
         public void SetHasMouseEvents(bool state) {
@@ -59,7 +63,8 @@ namespace Inner_Maps {
             go.name = $"{owner.ToString()} MouseEvents";
             _mouseEvents = go.GetComponent<LocationGridTileMouseEvents>();
             _mouseEvents.SetOwner(owner);
-            go.transform.SetParent(owner.parentMap.structureParent);
+            go.transform.SetParent(owner.parentMap.structureTilemap.transform);
+            // go.transform.SetAsFirstSibling();
             go.transform.position = owner.centeredWorldLocation;
         }
         private void DestroyMouseEventsGO() {
@@ -75,13 +80,37 @@ namespace Inner_Maps {
                 return;
             }
             //int mouseOnUIOrMapObjectValue = UIManager.Instance.GetMouseOnUIOrMapObjectValue();
-            if (!UIManager.Instance.IsMouseOnUIOrMapObject()) { // mouseOnUIOrMapObjectValue == -1
+            if (InputManager.Instance.isShiftDown || !UIManager.Instance.IsMouseOnUIOrMapObject()) { // mouseOnUIOrMapObjectValue == -1
                 if (owner.corruptionComponent.CanCorruptTile()) {
-                    owner.corruptionComponent.StartCorruption(true);
+                    Cost corruptCost = EditableValuesManager.Instance.GetCorruptTileCost();
+                    if (PlayerManager.Instance.player.CanAfford(corruptCost)) {
+                        PlayerManager.Instance.player.ReduceCurrency(corruptCost);
+                        owner.corruptionComponent.StartCorruption(true);    
+                    } else {
+                        InnerMapManager.Instance.ShowAreaMapTextPopup($"Not enough {UtilityScripts.Utilities.NotNormalizedConversionEnumToString(corruptCost.currency.ToString())}",
+                            owner.centeredWorldLocation, Color.white);
+                        AudioManager.Instance.OnErrorSoundPlay();
+                    }
                 } else if (owner.corruptionComponent.CanDisruptCorruptionOfTile()) {
+                    //return cost on disrupt corruption
+                    Cost corruptCost = EditableValuesManager.Instance.GetCorruptTileCost();
+                    if (corruptCost.currency == CURRENCY.Chaotic_Energy) {
+                        //This is so that refunding will not affect spirit energy
+                        PlayerManager.Instance.player.plagueComponent.AdjustPlaguePointsWithoutAffectingSpiritEnergy(corruptCost.amount);    
+                    } else {
+                        PlayerManager.Instance.player.AddCurrency(corruptCost);
+                    }
                     owner.corruptionComponent.DisruptCorruption();
                 } else if (owner.corruptionComponent.CanBuildDemonicWall()) {
-                    owner.corruptionComponent.StartBuildDemonicWall();
+                    Cost buildWallCost = EditableValuesManager.Instance.GetBuildWallCost();
+                    if (PlayerManager.Instance.player.CanAfford(buildWallCost)) {
+                        PlayerManager.Instance.player.ReduceCurrency(buildWallCost);
+                        owner.corruptionComponent.StartBuildDemonicWall();
+                    } else {
+                        InnerMapManager.Instance.ShowAreaMapTextPopup($"Not enough {UtilityScripts.Utilities.NotNormalizedConversionEnumToString(buildWallCost.currency.ToString())}",
+                            owner.centeredWorldLocation, Color.white);
+                        AudioManager.Instance.OnErrorSoundPlay();
+                    }
                 }
             } 
             //else if (mouseOnUIOrMapObjectValue == 2) {
@@ -96,7 +125,8 @@ namespace Inner_Maps {
             }
             //int mouseOnUIOrMapObjectValue = UIManager.Instance.GetMouseOnUIOrMapObjectValue();
             if (!isHovering) {
-                if (!UIManager.Instance.IsMouseOnUIOrMapObject()) { //mouseOnUIOrMapObjectValue == -1
+                bool isMouseOnUIOrMapObject = UIManager.Instance.IsMouseOnUIOrMapObject();
+                if (InputManager.Instance.isShiftDown || !isMouseOnUIOrMapObject) { //mouseOnUIOrMapObjectValue == -1
                     isHovering = true;
                     if (owner.corruptionComponent.CanCorruptTile()) {
                         OnHoverEnterTileAdjacentToCorruption();
@@ -104,8 +134,14 @@ namespace Inner_Maps {
                         OnHoverEnterBeingCorrupted();
                     } else if (owner.corruptionComponent.CanBuildDemonicWall()) {
                         OnHoverEnterCorrupted();
-                    }
+                    } 
+                    // else {
+                    //     UIManager.Instance.ShowSmallInfo($"{owner} hovered part 1. is Shift down {InputManager.Instance.isShiftDown.ToString()}. Is Mouse On UI: {isMouseOnUIOrMapObject.ToString()}");    
+                    // }
                 }
+                // else {
+                //     UIManager.Instance.ShowSmallInfo($"{owner} hovered part 2. is Shift down {InputManager.Instance.isShiftDown.ToString()}. Is Mouse On UI: {isMouseOnUIOrMapObject.ToString()}");
+                // }
             }
             //else if (mouseOnUIOrMapObjectValue == 2) {
             //    isHovering = true;
@@ -129,13 +165,15 @@ namespace Inner_Maps {
 
         #region Corruption Mouse Events
         private void OnHoverEnterTileAdjacentToCorruption() {
-            UIManager.Instance.ShowSmallInfo("Right click to corrupt tile");
+            Cost corruptCost = EditableValuesManager.Instance.GetCorruptTileCost();
+            UIManager.Instance.ShowSmallInfo($"Right click to corrupt tile. Cost: {corruptCost.GetCostStringWithIcon()}");
         }
         private void OnHoverEnterBeingCorrupted() {
             UIManager.Instance.ShowSmallInfo("Right click to undo corruption");
         }
         private void OnHoverEnterCorrupted() {
-            UIManager.Instance.ShowSmallInfo("Right click to build wall");
+            Cost buildWallCost = EditableValuesManager.Instance.GetBuildWallCost();
+            UIManager.Instance.ShowSmallInfo($"Right click to build wall. Cost: {buildWallCost.GetCostStringWithIcon()}");
         }
         private void OnHoverEnterDemonicWall() {
             UIManager.Instance.ShowSmallInfo("Right click to destroy wall");

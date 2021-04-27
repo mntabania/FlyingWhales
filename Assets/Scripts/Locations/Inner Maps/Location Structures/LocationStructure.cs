@@ -1454,8 +1454,12 @@ namespace Inner_Maps.Location_Structures {
         public void RemoveBookmark() {
             PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
         }
-        public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) { }
-        public void OnHoverOutBookmarkItem() { }
+        public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) {
+            UIManager.Instance.ShowStructureNameplateTooltip(this, p_pos);
+        }
+        public void OnHoverOutBookmarkItem() {
+            UIManager.Instance.HideStructureNameplateTooltip();
+        }
         #endregion
     }
 }

@@ -26,6 +26,9 @@ public class StructureNameplateItem : NameplateItem<LocationStructure> {
         subLbl.text = string.Empty;
         portrait.SetPortrait(_structure.structureType);
     }
+    public void SetPosition(UIHoverPosition position) {
+        UIManager.Instance.PositionTooltip(position, gameObject, this.transform as RectTransform);
+    }
     public override void Reset() {
         base.Reset();
         _structure = null;
