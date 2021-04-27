@@ -11,6 +11,8 @@ namespace Ruinarch.Custom_UI {
         private System.Action _onHoverOutAction;
         private TextMeshProUGUI _lblBtnName;
 
+        private bool _isUnavailable;
+
         #region Monobehaviours
         protected override void Awake() {
             base.Awake();
@@ -52,8 +54,20 @@ namespace Ruinarch.Custom_UI {
         }
         #endregion
 
+        public void MakeAvailable() {
+            _isUnavailable = false;
+        }
+        public void MakeUnavailable() {
+            _isUnavailable = true;
+        }
+
         #region Pointer Clicks
         public override void OnPointerClick(PointerEventData eventData) {
+			if (_isUnavailable) {
+                AudioManager.Instance.OnErrorSoundPlay();
+                //play error sound here
+                return;
+			}
             if (!IsInteractable())
                 return;
             Messenger.Broadcast(UISignals.BUTTON_CLICKED, this);

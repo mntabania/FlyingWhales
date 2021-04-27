@@ -32,6 +32,9 @@ public class PopUpScreensUI : MonoBehaviour {
     [SerializeField] private Image ruinarchLogo;
     [SerializeField] private RectTransform thankYouWindow;
     [SerializeField] private CanvasGroup endScreenCanvasGroup;
+    [SerializeField] private Button btnJoinDiscord;
+    [SerializeField] private Button btnSurvey;
+    [SerializeField] private Button btnContinue;
 
     #region Start Screen
     public void ShowStartScreen(string message) {
@@ -117,8 +120,22 @@ public class PopUpScreensUI : MonoBehaviour {
         // bgImage.color = fromColor;
         // bgImage.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
         endScreenCanvasGroup.alpha = 0f;
+        ShowButtonBaseOnGameResult();
         endScreenCanvasGroup.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
+    }
 
+    private void ShowButtonBaseOnGameResult() {
+        if (!PlayerManager.Instance.player.hasAlreadyWon) {
+            Vector3 pos = btnJoinDiscord.transform.position;
+            pos.y += 80f;
+            btnJoinDiscord.transform.position = pos;
+            pos = btnSurvey.transform.position;
+            pos.y += 80f;
+            btnSurvey.transform.position = pos;
+            btnContinue.gameObject.SetActive(false);
+        } else {
+            btnContinue.gameObject.SetActive(true);
+        }
     }
 
     private void ShowLogoAndThankYou() {
