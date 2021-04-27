@@ -5976,6 +5976,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool HasAfflictedByPlayerWith(Trait p_trait) {
         return HasAfflictedByPlayerWith(p_trait.name);
     }
+    public void AddAfflictionByPlayer(string p_traitName) {
+        PLAYER_SKILL_TYPE afflictionType = PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(p_traitName);
+        if (afflictionType != PLAYER_SKILL_TYPE.NONE) {
+            if (!afflictionsSkillsInflictedByPlayer.Contains(afflictionType)) {
+                afflictionsSkillsInflictedByPlayer.Add(afflictionType);
+            }
+        }
+    }
     #endregion
 
     #region Loading

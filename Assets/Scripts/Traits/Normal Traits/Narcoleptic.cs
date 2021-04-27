@@ -47,7 +47,13 @@ namespace Traits {
             return base.TriggerFlaw(character);
         }
         private bool DoNarcolepticNap(Character p_owner, INTERRUPT p_interruptType) {
-            return p_owner.interruptComponent.TriggerInterrupt(p_interruptType, p_owner);
+            if (p_owner.interruptComponent.TriggerInterrupt(p_interruptType, p_owner)) {
+                if (p_owner.HasAfflictedByPlayerWith(name)) {
+                    DispenseChaosOrbsForAffliction(p_owner, 1);
+                }
+                return true;
+            }
+            return false;
         }
         private void GetChanceAndInterruptType(Character p_owner, ref int p_chance, ref INTERRUPT p_interruptType) {
             int level = 0;

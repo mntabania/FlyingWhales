@@ -34,7 +34,7 @@ public class CombatManager : BaseMonoBehaviour {
     public const string Resisting_Arrest = "Resisting_Arrest", Resisting_Abduction = "Resisting_Abduction", Defending_Self = "Defending_Self";
 
     //Flee reasons
-    public const string Vulnerable = "Vulnerable when alone";
+    public const string Vulnerable = "Vulnerable when alone", Coward = "character is a coward";
 
     [SerializeField] private ProjectileDictionary _projectileDictionary;
     [SerializeField] private GameObject _dragonProjectile;

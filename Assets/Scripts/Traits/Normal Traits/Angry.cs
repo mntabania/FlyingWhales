@@ -61,7 +61,9 @@ namespace Traits {
                         owner.relationshipContainer.AdjustOpinion(owner, otherCharacter, "Anger", -30);    
                     }
                 }
-
+                if (character.HasAfflictedByPlayerWith("Hothead")) {
+                    DispenseChaosOrbsForAffliction(character, 1);
+                }
                 character.marker.visionCollider.VoteToUnFilterVision();
                 Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
             }
