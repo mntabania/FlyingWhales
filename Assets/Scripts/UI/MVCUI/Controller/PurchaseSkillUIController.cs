@@ -389,6 +389,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToAddBonusCharge(skillData, result);
 			UpdateRerollBtn();
 			UpdateItems();
+			OnCloseClicked();
 		}
 	}
 	public void OnFinishSkillUnlock() {

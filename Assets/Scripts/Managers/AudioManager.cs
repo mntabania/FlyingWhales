@@ -215,6 +215,9 @@ public class AudioManager : MonoBehaviour {
     private void OnQuestStepFailed(QuestStep questStep) {
         // negativeNotificationSound.Play();
     }
+    public void OnErrorSoundPlay() {
+        negativeNotificationSound.Play();
+    }
     private void OnObtainIntel(IIntel intel) {
         particleMagnet.Play();
     }

@@ -134,6 +134,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
             ResetScrollPositions();
             ProcessDisplay();
             PopulateFilterRegions();
+            InitializeRevealHoverText();
         }
     }
     //public void UpdateFactionInfo() {
@@ -694,10 +695,24 @@ public class FactionInfoUIV2 : MonoBehaviour {
     }
     #endregion
 
+    private void InitializeRevealHoverText() {
+        if (PlayerManager.Instance.player == null) {
+            return;
+        }
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints < EditableValuesManager.Instance.GetRevealFactionInfoCost()) {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealInfo.GetComponent<RuinarchButton>().MakeUnavailable();
+        } else {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealInfo.GetComponent<RuinarchButton>().MakeAvailable();
+        }
+    }
+
     #region toggles tabs
     public void OnToggleOverview(bool isOn) {
         HideAllScrollView();
         if (isOn) {
+            InitializeRevealHoverText();
             m_viewMode = VIEW_MODE.Overview;
             if (activeFaction.isInfoUnlocked) {
                 overviewScrollRectParent.SetActive(true);
@@ -714,6 +729,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     public void OnToggleMembers(bool isOn) {
         HideAllScrollView();
         if (isOn) {
+            InitializeRevealHoverText();
             m_viewMode = VIEW_MODE.Members;
             if (activeFaction.isInfoUnlocked) {
                 membersScrollRectParent.SetActive(true);
@@ -730,6 +746,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     public void OnToggleRelations(bool isOn) {
         HideAllScrollView();
         if (isOn) {
+            InitializeRevealHoverText();
             m_viewMode = VIEW_MODE.Relations;
             if (activeFaction.isInfoUnlocked) {
                 relationshipScrollRectParent.SetActive(true);
@@ -746,6 +763,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     public void OnToggleCrimes(bool isOn) {
         HideAllScrollView();
         if (isOn) {
+            InitializeRevealHoverText();
             m_viewMode = VIEW_MODE.Crimes;
             if (activeFaction.isInfoUnlocked) {
                 crimesScrollRectParent.SetActive(true);
@@ -762,6 +780,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     public void OnToggleLogs(bool isOn) {
         HideAllScrollView();
         if (isOn) {
+            InitializeRevealHoverText();
             m_viewMode = VIEW_MODE.Logs;
             if (activeFaction.isInfoUnlocked) {
                 logScrollRectParent.SetActive(true);
