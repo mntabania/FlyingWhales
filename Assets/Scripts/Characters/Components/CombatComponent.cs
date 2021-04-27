@@ -297,7 +297,7 @@ public class CombatComponent : CharacterComponent {
                 Coward coward = owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
                 if (!coward.TryActivatePassOut(owner)) {
                     owner.logComponent.PrintLogIfActive(debugLog);
-                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                    return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Coward);
                 }
                 debugLog += "\n-Coward character passed out instead";
                 owner.logComponent.PrintLogIfActive(debugLog);
@@ -331,7 +331,7 @@ public class CombatComponent : CharacterComponent {
                     Coward coward = owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
                     if (!coward.TryActivatePassOut(owner)) {
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                        return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Coward);
                     }
                     debugLog += "\n-Coward character passed out instead";
                     owner.logComponent.PrintLogIfActive(debugLog);
@@ -386,7 +386,7 @@ public class CombatComponent : CharacterComponent {
                     if(coward != null) {
                         if (!coward.TryActivatePassOut(owner)) {
                             owner.logComponent.PrintLogIfActive(debugLog);
-                            return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                            return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Coward);
                         }
                         debugLog += "\n-Coward character passed out instead";
                         owner.logComponent.PrintLogIfActive(debugLog);

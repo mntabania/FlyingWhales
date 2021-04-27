@@ -56,6 +56,7 @@
     /// </summary>
     //public static string PLAYER_SKILL_UPGRADED_ON_SPIRE = "OnPlayerSkillUpgradedOnSpire";
     public static string PLAYER_GAINED_DEMONIC_STRUCTURE = "OnPlayerGainedDemonicStructure";
+    public static string PLAYER_LOST_DEMONIC_STRUCTURE = "OnPlayerLostDemonicStructure";
     public static string PLAYER_SKILL_LEVEL_UP = "OnPlayerSkillLevelUp";
     public static string ON_PLAGUE_POISON_CLOUD_ACTIVATED = "OnPlaguePoisonCloudActivated";
 

@@ -90,6 +90,7 @@ namespace Traits {
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, character, "Agoraphobic");
                     }
                 }
+                DispenseChaosOrbsForAffliction(character, 1);
             }
             if (shouldAddAnxiousTrait) {
                 debugLog += $"\n{character.name} became anxious";

@@ -82,7 +82,13 @@ namespace Traits {
         #endregion
 
         public bool TriggerLazy() {
-            return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Lazy, owner);
+            if (owner.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Lazy, owner)) {
+                if (owner.HasAfflictedByPlayerWith(this)) {
+                    DispenseChaosOrbsForAffliction(owner, 1);
+                }
+                return true;
+            }
+            return false;
         }
         public bool TryIgnoreUrgentTask(JOB_TYPE job) {
             if (ChanceData.RollChance(CHANCE_TYPE.Ignore_Urgent_Task) && owner.HasAfflictedByPlayerWith(this) && 

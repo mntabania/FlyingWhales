@@ -575,6 +575,7 @@ public class PlayerSkillComponent {
             schemes.Remove(p_skillData.type);
         } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
             demonicStructuresSkills.Remove(p_skillData.type);
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_LOST_DEMONIC_STRUCTURE, p_skillData.type);
         } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
             minionsSkills.Remove(p_skillData.type);
         } else if (p_skillData.category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION) {

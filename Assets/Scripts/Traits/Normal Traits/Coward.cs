@@ -28,7 +28,7 @@ namespace Traits {
                         if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.COWARDICE).currentLevel >= 3) {
                             characterThatWillDoJob.combatComponent.hostilesInRange.Remove(targetCharacter);
                             characterThatWillDoJob.combatComponent.avoidInRange.Remove(targetCharacter);
-                            if (characterThatWillDoJob.combatComponent.Flight(targetCharacter, "character is a coward")) {
+                            if (characterThatWillDoJob.combatComponent.Flight(targetCharacter, CombatManager.Coward)) {
                                 characterThatWillDoJob.ForceCancelAllJobsTargetingPOI(targetCharacter, "actor fled");
                             }
                         }

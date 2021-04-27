@@ -485,7 +485,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 	}
 
-	public void OnAddSummonClicked() { m_maraudUIView.ShowSummonSubContainer(); }
+	public void OnAddSummonClicked() { m_maraudUIView.ShowSummonSubContainer(); ProcessDeployedItemsDisplay(); }
 
 	void OnDeployedMonsterClicked(DeployedMonsterItemUI p_itemUI) { //not just deployed, but also the one being planned out
 		if (m_isTeamDeployed) {
@@ -522,7 +522,6 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			HideUI();
 		} 
 	}
-
 	void OnYesDeploy() {
 		m_deployedSummonsUI.ForEach((eachMonsterToBeDeployed) => {
 			if (eachMonsterToBeDeployed.isReadyForDeploy) {
@@ -557,6 +556,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		OnCloseClicked();
 		PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
 	}
+
+	void ProcessDeployedItemsDisplay() {
+		m_maraudUIView.ProcessMinionDisplay(m_targetPartyStructure.partyData.readyForDeployMinionCount + m_targetPartyStructure.partyData.deployedMinionCount);
+		m_maraudUIView.ProcessTargetDisplay(m_targetPartyStructure.partyData.readyForDeployTargetCount + m_targetPartyStructure.partyData.deployedTargetCount);
+		m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
+	}
 	void OnYesUndeploy() {
 		m_isTeamDeployed = false;
 		m_targetPartyStructure.ResetExistingCharges();
@@ -590,12 +595,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
-	public void OnAddMinionClicked() { m_maraudUIView.ShowMinionSubContainer(); }
-	public void OnAddTargetClicked() { m_maraudUIView.ShowTargetSubContainer(); }
+	public void OnAddMinionClicked() { m_maraudUIView.ShowMinionSubContainer(); ProcessDeployedItemsDisplay(); }
+	public void OnAddTargetClicked() { m_maraudUIView.ShowTargetSubContainer(); ProcessDeployedItemsDisplay(); }
 
-	public void OnCloseSummonSubContainer() { m_maraudUIView.HideAllSubMenu(); }
-	public void OnCloseMinionSubContainer() { m_maraudUIView.HideAllSubMenu(); }
-	public void OnCloseTargetSubContainer() { m_maraudUIView.HideAllSubMenu(); }
+	public void OnCloseSummonSubContainer() { m_maraudUIView.HideAllSubMenu(); ProcessDeployedItemsDisplay(); }
+	public void OnCloseMinionSubContainer() { m_maraudUIView.HideAllSubMenu(); ProcessDeployedItemsDisplay(); }
+	public void OnCloseTargetSubContainer() { m_maraudUIView.HideAllSubMenu(); ProcessDeployedItemsDisplay(); }
 
 	public void OnHoverOver() {
 		if (m_isTeamDeployed) {

@@ -862,9 +862,9 @@ public class CombatState : CharacterState {
             LocationGridTile relativeTile = p_relativePOI.gridTileLocation;
             if (initialTile != null && relativeTile != null) {
                 LocationGridTile chosenGridTile = null;
-                List<LocationGridTile> alreadyCheckedTiles = RuinarchListPool<LocationGridTile>.Claim();
-                Vector3 position = GetPositionToRepositionRecursively(initialTile, p_distanceLimit, p_relativePOI.worldPosition, alreadyCheckedTiles, ref chosenGridTile);
-                RuinarchListPool<LocationGridTile>.Release(alreadyCheckedTiles);
+                //List<LocationGridTile> alreadyCheckedTiles = RuinarchListPool<LocationGridTile>.Claim();
+                Vector3 position = GetPositionToReposition(initialTile, p_distanceLimit, p_relativePOI.worldPosition, ref chosenGridTile); //alreadyCheckedTiles
+                //RuinarchListPool<LocationGridTile>.Release(alreadyCheckedTiles);
                 if (!position.Equals(Vector3.positiveInfinity)) {
                     GridNodeBase gridNode = chosenGridTile.GetGridNodeByWorldPosition(position);
                     SetGridNodeToReposition(gridNode);
@@ -881,6 +881,21 @@ public class CombatState : CharacterState {
             summary += "\nNo marker or is already repositioning, skipping";
         }
         return true;
+    }
+    private Vector3 GetPositionToReposition(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, ref LocationGridTile p_chosenPositionGridTile) {
+        List<LocationGridTile> tilesToCheck = RuinarchListPool<LocationGridTile>.Claim();
+        p_gridTile.PopulateTilesInRadius(tilesToCheck, Mathf.CeilToInt(p_distanceLimit), includeCenterTile: true, includeTilesInDifferentStructure: true);
+        if (tilesToCheck.Count > 0) {
+            for (int i = 0; i < tilesToCheck.Count; i++) {
+                LocationGridTile tile = tilesToCheck[i];
+                Vector3 pos = tile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
+                if (!pos.Equals(Vector3.positiveInfinity)) {
+                    p_chosenPositionGridTile = tile;
+                    return pos;
+                }
+            }
+        }
+        return Vector3.positiveInfinity;
     }
     private Vector3 GetPositionToRepositionRecursively(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, List<LocationGridTile> checkedTiles, ref LocationGridTile p_chosenPositionGridTile) {
         if (!checkedTiles.Contains(p_gridTile)) {
@@ -1093,7 +1108,12 @@ public class CombatState : CharacterState {
             }
         }
         string reason = GetAvoidReason(objToAvoid);
-
+        if (reason == CombatManager.Coward) {
+            if (stateComponent.owner.HasAfflictedByPlayerWith("Coward")) {
+                Coward coward = stateComponent.owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
+                coward.DispenseChaosOrbsForAffliction(stateComponent.owner, 1);
+            }
+        }
         if (reason == CombatManager.Vulnerable) {
             //Will go to party mate
             stateComponent.owner.marker.OnStartFleeToPartyMate();

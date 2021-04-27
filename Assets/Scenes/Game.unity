@@ -64152,11 +64152,6 @@ PrefabInstance:
       propertyPath: villagersToggle
       value: 
       objectReference: {fileID: 1271312853}
-    - target: {fileID: 7865718460920514164, guid: 65a159b014602c143bbf2126de537ad7,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 4324374794287741078}
     - target: {fileID: 8110390128361350314, guid: 65a159b014602c143bbf2126de537ad7,
         type: 3}
       propertyPath: m_LocalPosition.x

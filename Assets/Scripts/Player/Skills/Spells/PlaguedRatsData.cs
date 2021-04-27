@@ -18,8 +18,8 @@ public class PlaguedRatData : SkillData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         //CreateMeteorStrikeAt(targetTile);
-        targetTile.AddPlaguedRats(); //two plagued rats
-        targetTile.AddPlaguedRats(true);
+        targetTile.AddPlaguedRats(isFromSpell: true); //two plagued rats
+        targetTile.AddPlaguedRats(true, isFromSpell: true);
         base.ActivateAbility(targetTile);
     }
     //private void CreateMeteorStrikeAt(LocationGridTile tile) {

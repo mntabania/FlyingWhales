@@ -59,6 +59,8 @@ public class ContextMenuUIObject : PooledObject {
                 if (!string.IsNullOrEmpty(chargesText)) {
                     txtCharges.text = $"{chargesText}";
                     txtCharges.gameObject.SetActive(true);
+                } else {
+                    txtCharges.gameObject.SetActive(false);
                 }
             } else {
                 txtCharges.gameObject.SetActive(false);

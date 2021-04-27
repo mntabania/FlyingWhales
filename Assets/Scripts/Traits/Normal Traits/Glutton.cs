@@ -24,6 +24,7 @@ namespace Traits {
                 m_owner = character;
                 if (character.HasAfflictedByPlayerWith(this)) {
                     character.traitComponent.SubscribeToGluttonLevelUpSignal();
+                    SubscribeToAfflictionSignals();
                 }
                 additionalFullnessDecreaseRate = GetHungerDecreaseRate(character);
                 character.needsComponent.SetFullnessForcedTick(0);
@@ -37,6 +38,7 @@ namespace Traits {
                 m_owner = character;
                 if (character.HasAfflictedByPlayerWith(this)) {
                     character.traitComponent.SubscribeToGluttonLevelUpSignal();
+                    SubscribeToAfflictionSignals();
                 }
                 additionalFullnessDecreaseRate = GetHungerDecreaseRate(character);
             }
@@ -49,6 +51,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
+                UnsubscribeToAfflictionSignals();
                 character.traitComponent.UnsubscribeToGluttonLevelUpSignal();
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
@@ -77,5 +80,21 @@ namespace Traits {
             hungerRate /= 100f;
             return EditableValuesManager.Instance.baseFullnessDecreaseRate * hungerRate;
         }
+
+        #region Chaos Orbs
+        private void SubscribeToAfflictionSignals() {
+            Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnActionPerformed);
+        }
+        private void UnsubscribeToAfflictionSignals() {
+            if (Messenger.eventTable.ContainsKey(JobSignals.STARTED_PERFORMING_ACTION)) {
+                Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnActionPerformed);
+            }
+        }
+        private void OnActionPerformed(ActualGoapNode p_action) {
+            if (p_action.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                DispenseChaosOrbsForAffliction(m_owner, 1);
+            }
+        }
+        #endregion
     }
 }

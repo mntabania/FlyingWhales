@@ -7,7 +7,8 @@ using UtilityScripts;
 
 public class VampiricEmbrace : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
+    //Why is vampiric embrace consume category?
+    //public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
 
     public VampiricEmbrace() : base(INTERACTION_TYPE.VAMPIRIC_EMBRACE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;

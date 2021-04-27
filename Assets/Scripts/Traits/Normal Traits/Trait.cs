@@ -6,6 +6,8 @@ using Interrupts;
 using Object_Pools;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Inner_Maps;
+
 namespace Traits {
     [System.Serializable]
     public class Trait : IMoodModifier, ISavable, IContextMenuItem {
@@ -379,6 +381,18 @@ namespace Traits {
                 return log;
             }
             return default;
+        }
+        #endregion
+
+        #region Chaos Orbs
+        public void DispenseChaosOrbsForAffliction(Character p_character, int amount) {
+            LocationGridTile gridTile = p_character.gridTileLocation;
+            if (p_character.isDead) {
+                gridTile = p_character.deathTilePosition;
+            }
+            if (gridTile != null) {
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, amount, gridTile.parentMap);
+            }
         }
         #endregion
     }
