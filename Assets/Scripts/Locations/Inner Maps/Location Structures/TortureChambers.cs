@@ -158,36 +158,23 @@ namespace Inner_Maps.Location_Structures {
         public override void OnBuiltNewStructure() {
             base.OnBuiltNewStructure();
             _tortureChamberStructureObject.SetEntrance(region.innerMap);
-            List<Character> charactersToTeleport = RuinarchListPool<Character>.Claim();
-            charactersToTeleport.AddRange(charactersHere);
-            // bool alreadyTeleportedCharacterInside = false;
-            for (int i = 0; i < charactersToTeleport.Count; i++) {
-                Character character = charactersToTeleport[i];
-                //teleport character to outside
-                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
-                if (targetTile != null) {
-                    CharacterManager.Instance.Teleport(character, targetTile);
-                    GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+            List<Character> characters = RuinarchListPool<Character>.Claim();
+            characters.AddRange(charactersHere);
+            if (rooms.FirstOrDefault() is PrisonCell prisonCell) {
+                for (int i = 0; i < characters.Count; i++) {
+                    Character character = characters[i];
+                    //teleport character to inside prison cell
+                    //automatically restrain and imprison accidentally captured characters
+                    //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
+                    character.traitContainer.RestrainAndImprison(character, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
+                    LocationGridTile targetTile = prisonCell.tilesInRoom.First(t => t.charactersHere.Count <= 0) ?? CollectionUtilities.GetRandomElement(prisonCell.tilesInRoom);
+                    if (targetTile != null) {
+                        CharacterManager.Instance.Teleport(character, targetTile);
+                        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
+                    }
                 }
-                // if (!alreadyTeleportedCharacterInside && character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room) && room.parentStructure == this &&
-                //     room is PrisonCell prisonCell && prisonCell.IsValidOccupant(character)) {
-                //     //teleport character to center of room
-                //     LocationGridTile targetTile = room.GetCenterTile();
-                //     if (targetTile != null) {
-                //         alreadyTeleportedCharacterInside = true; //if already teleported character inside, then flag as true, so that other characters will be teleported outside
-                //         CharacterManager.Instance.Teleport(character, targetTile);
-                //         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
-                //     }
-                // } else {
-                //     //teleport character to outside
-                //     LocationGridTile targetTile = CollectionUtilities.GetRandomElement(borderTiles);
-                //     if (targetTile != null) {
-                //         CharacterManager.Instance.Teleport(character, targetTile);
-                //         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);    
-                //     }
-                // }
             }
-            RuinarchListPool<Character>.Release(charactersToTeleport);
+            RuinarchListPool<Character>.Release(characters);
         }
         public override void OnDoneLoadStructure() {
             _tortureChamberStructureObject.SetEntrance(region.innerMap);

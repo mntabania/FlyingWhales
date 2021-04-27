@@ -79,6 +79,13 @@ namespace Inner_Maps.Location_Structures {
             }
             return IsValidOccupant(character);
         }
+        public void OnHarpyDroppedCharacterHere(Character character) {
+            if (IsValidOccupant(character)) {
+                //automatically restrain and imprison dropped monsters
+                //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
+                character.traitContainer.RestrainAndImprison(character, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
+            }
+        }
         public bool IsValidOccupant(Character character) {
             return character.isNormalCharacter && character.isDead == false && (character.faction == null || !character.faction.isPlayerFaction);
         }
@@ -303,7 +310,7 @@ namespace Inner_Maps.Location_Structures {
                     // GameDate dueDate = GameManager.Instance.Today();
                     // dueDate.AddTicks(1);
                     // SchedulingManager.Instance.AddEntry(dueDate, () => chosenTarget.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME), chosenTarget);
-                    chosenTarget.traitContainer.RemoveRestrainAndImprison(chosenTarget);
+                    // chosenTarget.traitContainer.RemoveRestrainAndImprison(chosenTarget);
                     chosenTarget.traitContainer.RemoveTrait(chosenTarget, "Unconscious");
                 } else {
                     chosenTarget.traitContainer.RestrainAndImprison(chosenTarget, null, PlayerManager.Instance.player.playerFaction);

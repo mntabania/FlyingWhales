@@ -1278,4 +1278,5 @@ public enum CHANCE_TYPE {
     Host_Social_Party,
     Demonic_Decor_On_Corrupt,
     Retaliation,
+    Harpy_Capture
 }

@@ -25,7 +25,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
             Harpy harpy = character as Harpy;
             if (!harpy.hasCapturedForTheDay) {
                 harpy.SetHasCapturedForTheDay(true);
-                if (GameUtilities.RollChance(15)) {
+                if (ChanceData.RollChance(CHANCE_TYPE.Harpy_Capture)) {
                     if (TryCaptureCharacter(character, out producedJob)) {
                         return true;
                     }
