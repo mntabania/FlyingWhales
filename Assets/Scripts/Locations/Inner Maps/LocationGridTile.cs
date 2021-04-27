@@ -1699,11 +1699,13 @@ namespace Inner_Maps {
         #endregion
 
         #region Plagued Rats
-        public void AddPlaguedRats(bool p_randomizedPosition = false) {
+        public void AddPlaguedRats(bool p_randomizedPosition = false, bool isFromSpell = false) {
             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Rat, PlayerManager.Instance.player.playerFaction, homeRegion: parentMap.region);
             summon.OnSummonAsPlayerMonster();
             CharacterManager.Instance.PlaceSummonInitially(summon, this);
-
+            if (isFromSpell) {
+                summon.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+            }
 			if (p_randomizedPosition) {
                 Vector3 pos = summon.mapObjectVisual.transform.position;
                 pos.x += Random.Range(-1f, 1f);
