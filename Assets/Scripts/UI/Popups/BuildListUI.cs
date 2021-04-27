@@ -54,10 +54,14 @@ public class BuildListUI : PopupMenuBase {
         PopulateBuildingList();
         Messenger.AddListener(UISignals.UPDATE_BUILD_LIST, UpdateBuildList);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_GAINED_DEMONIC_STRUCTURE, OnPlayerGainedDemonicStructure);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_LOST_DEMONIC_STRUCTURE, OnPlayerLostDemonicStructure);
         buildToggle.interactable = true;
     }
     private void OnPlayerGainedDemonicStructure(PLAYER_SKILL_TYPE p_structureType) {
         CreateStructureItem(p_structureType);
+    }
+    private void OnPlayerLostDemonicStructure(PLAYER_SKILL_TYPE p_structureType) {
+        DeleteStructureItem(p_structureType);
     }
     private void PopulateBuildingList() {
         UtilityScripts.Utilities.DestroyChildrenObjectPool(buildingsScrollRect.content);  
@@ -76,6 +80,22 @@ public class BuildListUI : PopupMenuBase {
         spellItem.AddHoverExitAction(OnHoverExitSpellItem);
         spellItem.ForceUpdateInteractableState();
         buildItems.Add(spellItem);
+    }
+    private void DeleteStructureItem(PLAYER_SKILL_TYPE structureSpell) {
+        SpellItem item = GetStructureItem(structureSpell);
+        if (item != null) {
+            ObjectPoolManager.Instance.DestroyObject(item);
+            buildItems.Remove(item);
+        }
+    }
+    private SpellItem GetStructureItem(PLAYER_SKILL_TYPE structureSpell) {
+        for (int i = 0; i < buildItems.Count; i++) {
+            SpellItem item = buildItems[i];
+            if (item.spellData.type == structureSpell) {
+                return item;
+            }
+        }
+        return null;
     }
     private void OnHoverSpellItem(SkillData spellData) {
         PlayerUI.Instance.OnHoverSpell(spellData, tooltipPosition);
