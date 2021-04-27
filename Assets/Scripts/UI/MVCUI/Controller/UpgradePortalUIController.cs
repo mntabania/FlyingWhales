@@ -108,7 +108,7 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
         PortalUpgradeTier nextTier = portal.nextTier;
         portal.PayForUpgrade(nextTier);
         PlayerManager.Instance.player.playerSkillComponent.PlayerStartedPortalUpgrade(nextTier.upgradeCost, nextTier);
-        // AnimatedHideUI();
+        AnimatedHideUI();
     }
     public void OnClickCancelUpgrade() {
         UIManager.Instance.ShowYesNoConfirmation(
