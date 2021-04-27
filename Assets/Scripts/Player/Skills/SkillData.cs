@@ -61,7 +61,7 @@ public class SkillData : IPlayerSkill {
     public void LevelUp() {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
         currentLevel = Mathf.Clamp(++currentLevel, 0, MAX_SPELL_LEVEL);
-        SetManaCost(playerSkillData.GetManaCostBaseOnLevel(currentLevel));
+        SetManaCost(WorldSettings.Instance.worldSettingsData.IsScenarioMap() ? playerSkillData.GetManaCostForScenarios() : playerSkillData.GetManaCostBaseOnLevel(currentLevel)); // playerSkillData.GetManaCostBaseOnLevel(currentLevel)
         SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
         SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
         SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(currentLevel));

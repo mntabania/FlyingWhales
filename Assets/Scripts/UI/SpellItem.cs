@@ -47,8 +47,14 @@ public class SpellItem : NameplateItem<SkillData> {
         SkillData updatedSkillData = PlayerSkillManager.Instance.GetSkillData(this.spellData.type);
         this.spellData = updatedSkillData;
         if (playerSkillData != null) {
-            if (playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel) > 0) {
-                currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{playerSkillData.GetManaCostBaseOnLevel(updatedSkillData.currentLevel)} ";
+            int manaCost = WorldSettings.Instance.worldSettingsData.IsScenarioMap()
+                ? playerSkillData.GetManaCostForScenarios()
+                : playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel);
+            if (manaCost > 0) {
+                manaCost = WorldSettings.Instance.worldSettingsData.IsScenarioMap()
+                    ? playerSkillData.GetManaCostForScenarios()
+                    : playerSkillData.GetManaCostBaseOnLevel(updatedSkillData.currentLevel);
+                currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{manaCost.ToString()} ";
             }
             //if (playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel) > 0) {
             //    currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel)}  ";
