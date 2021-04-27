@@ -26,15 +26,18 @@ public class BookmarkUIController : MVCUIController, BookmarkUIView.IListener {
     }
     private void OnLoadoutSelected() {
         m_bookmarkUIView.Show();
+        UIManager.Instance.OnBookmarkMenuShow();
     }
     private void OnBookmarkCategoryAdded(BookmarkCategory p_category) {
         m_bookmarkUIView.CreateBookmarkCategoryItem(p_category);
     }
     public void OnClickHide() {
         m_bookmarkUIView.Hide();
+        UIManager.Instance.OnBookmarkMenuHide();
     }
     public void OnClickShow() {
         m_bookmarkUIView.Show();
+        UIManager.Instance.OnBookmarkMenuShow();
     }
     public UIHoverPosition GetHoverPosition() {
         return m_bookmarkUIView.UIModel.tooltipHoverPosition;

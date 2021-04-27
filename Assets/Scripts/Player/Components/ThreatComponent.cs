@@ -35,7 +35,7 @@ public class ThreatComponent {
     // }
 
     public void AdjustThreatAndApplyModification(int amount) {
-        amount = SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
+        // amount = SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
         AdjustThreat(amount);
     }
     public void AdjustThreat(int amount) {

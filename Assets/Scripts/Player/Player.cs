@@ -77,8 +77,10 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
 
         hasAlreadyWon = false;
+        if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
+            bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);    
+        }
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
-        bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
 
         SubscribeListeners();
         
@@ -103,7 +105,9 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
 
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
-        bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
+        if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
+            bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
+        }
         hasAlreadyWon = data.hasAlreadyWon;
         SubscribeListeners();
     }

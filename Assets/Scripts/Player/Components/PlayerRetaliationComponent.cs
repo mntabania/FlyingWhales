@@ -54,6 +54,9 @@ public class PlayerRetaliationComponent {
 
     #region Retaliation Counter
     public bool AddRetaliationCounter() {
+        if (!WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
+            return false;
+        }
         if (isRetaliating) {
             return false;
         }

@@ -111,7 +111,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		m_worldGenOptionsUIView.SetCooldownDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.cooldownSpeed.ToString()));
 		m_worldGenOptionsUIView.SetCostsDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.costAmount.ToString()));
 		m_worldGenOptionsUIView.SetChargesDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.chargeAmount.ToString()));
-		m_worldGenOptionsUIView.SetThreatDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.threatAmount.ToString()));
+		m_worldGenOptionsUIView.SetThreatDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.retaliation.ToString()));
 		m_worldGenOptionsUIView.SetOmnipotentDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.omnipotentMode.ToString()));
 	}
 
@@ -263,8 +263,8 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	public void OnChangeSkillChargeAmount(SKILL_CHARGE_AMOUNT p_value) {
 		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetChargeAmount(p_value);
 	}
-	public void OnChangeThreatAmount(THREAT_AMOUNT p_value) {
-		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetThreatAmount(p_value);
+	public void OnChangeThreatAmount(RETALIATION p_value) {
+		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetRetaliationState(p_value);
 	}
 	public void OnChangeOmnipotentMode(OMNIPOTENT_MODE p_value) {
 		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetOmnipotentMode(p_value);
@@ -341,11 +341,8 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		Tooltip.Instance.HideSmallInfo();
 	}
 	public void OnHoverOverThreat(UIHoverPosition p_pos) {
-		string summary = "Set the threat amount normally produced by your abilities.\n" +
-		                 "\n<b>None</b> - All your actions do not produce Threat." +
-		                 "\n<b>Half</b> - Threat amount decreased by half." +
-		                 "\n<b>Normal</b> - Normal threat amount.";
-		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ThreatIcon()} Threat", autoReplaceText: false);
+		string summary = "Enable or Disable Retaliation. If Disabled, Angels will no longer spawn and attack your base.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"Retaliation", autoReplaceText: false);
 	}
 	public void OnHoverOutThreat() {
 		Tooltip.Instance.HideSmallInfo();

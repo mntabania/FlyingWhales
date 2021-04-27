@@ -35,7 +35,7 @@ public class WorldSettingsData {
         playerSkillSettings.SetCooldownSpeed(SKILL_COOLDOWN_SPEED.Normal);
         playerSkillSettings.SetManaCostAmount(SKILL_COST_AMOUNT.Normal);
         playerSkillSettings.SetChargeAmount(SKILL_CHARGE_AMOUNT.Normal);
-        playerSkillSettings.SetThreatAmount(THREAT_AMOUNT.Normal);
+        playerSkillSettings.SetRetaliationState(RETALIATION.Enabled);
         playerSkillSettings.SetOmnipotentMode(OMNIPOTENT_MODE.Disabled);
     }
 
@@ -218,5 +218,10 @@ public class WorldSettingsData {
         Debug.Log($"Set Victory Condition {p_value.ToString()}");
     }
     #endregion
-    
+
+    #region Retaliation
+    public bool IsRetaliationAllowed() {
+        return playerSkillSettings.retaliation == RETALIATION.Enabled;
+    }
+    #endregion
 }

@@ -135,10 +135,6 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
-    
-    [Space(10)]
-    [Header("Bookmark UI")]
-    public BookmarkUIController bookmarkUIController;
 
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
@@ -1235,6 +1231,8 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private GameObject intelPrefab;
     [SerializeField] private GameObject defaultNotificationPrefab;
     [SerializeField] private UIHoverPosition notificationHoverPos;
+    [SerializeField] private Vector2 notificationHoverPosDefaultPosition;
+    [SerializeField] private Vector2 notificationHoverPosModifiedPosition;
     [SerializeField] private GameObject searchFieldsParent;
     [SerializeField] private TMP_InputField notificationSearchField;
     [SerializeField] private GameObject searchFieldClearBtn;
@@ -1996,5 +1994,16 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Bookmarks UI
+    [Space(10)]
+    [Header("Bookmark UI")]
+    public BookmarkUIController bookmarkUIController;
+    public void OnBookmarkMenuHide() {
+        (notificationHoverPos.transform as RectTransform).anchoredPosition = notificationHoverPosDefaultPosition;
+    }
+    public void OnBookmarkMenuShow() {
+        (notificationHoverPos.transform as RectTransform).anchoredPosition = notificationHoverPosModifiedPosition;
+    }
+    #endregion
     
 }

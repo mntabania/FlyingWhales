@@ -212,7 +212,7 @@ namespace Inner_Maps.Location_Structures {
                 case STRUCTURE_TYPE.PRISON:
                     return $"the {settlementLocation.name} prison";
                 case STRUCTURE_TYPE.WILDERNESS:
-                    return $"the outskirts of {region.name}";
+                    return "the wilderness";//$"the outskirts of {region.name}";
                 case STRUCTURE_TYPE.CEMETERY:
                     return $"the cemetery of {settlementLocation.name}";
                 case STRUCTURE_TYPE.POND:
