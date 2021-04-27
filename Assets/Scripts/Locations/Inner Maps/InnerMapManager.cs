@@ -414,6 +414,7 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
             summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
             summary = $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
+            summary = $"{summary} <b>Has Mouse Events:</b>{tile.mouseEventsComponent.hasMouseEvents.ToString()}";
             // summary = $"{summary}\nTile Traits: ";
             // if (tile.tileObjectComponent.genericTileObject != null && tile.traits.Count > 0) {
             //     summary = $"{summary}\n";
