@@ -9,7 +9,8 @@ using UtilityScripts;
 public class AgitateData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AGITATE;
     public override string name => "Agitate";
-    public override string description => "This Ability may be used on a wild monster to force it to enter a state of frenzy. It will terrorize nearby Villagers if possible.";
+    public override string description => "This Ability may be used on a wild monster to force it to enter a state of frenzy. It will terrorize nearby Villagers if possible." +
+        "\nAgitating a monster produces 1 Chaos Orb. Additional 2 Chaos Orbs are produced each time the monster kills a Villager.";
     public AgitateData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

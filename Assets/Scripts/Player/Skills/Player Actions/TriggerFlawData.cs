@@ -8,8 +8,9 @@ using Inner_Maps.Location_Structures;
 public class TriggerFlawData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TRIGGER_FLAW;
     public override string name => "Trigger Flaw";
-    public override string description => "This Ability can be used to immediately activate an effect of a Villager's negative Trait. You may choose from the Villager's list of flaws that can be triggered.";
-    
+    public override string description => "This Ability can be used to immediately activate an effect of a Villager's negative Trait. You may choose from the Villager's list of flaws that can be triggered." +
+        "\nActivating Trigger Flaw produces a Chaos Orb. If the Villager successfully performs a task related to the Flaw, it will produce additional 2 Chaos Orbs.";
+
     private readonly List<string> _triggerFlawPool;
     private static readonly List<LogFiller> _triggerFlawLogFillers = new List<LogFiller>();
     

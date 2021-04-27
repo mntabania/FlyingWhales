@@ -8,7 +8,8 @@ using UtilityScripts;
 public class LycanthropyData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LYCANTHROPY;
     public override string name => "Lycanthropy";
-    public override string description => "This Affliction will turn a Villager into a Werewolf. A Werewolf sometimes switches from normal form to wolf form and vice-versa whenever it sleeps.";
+    public override string description => "This Affliction will turn a Villager into a Werewolf. A Werewolf sometimes switches from normal form to wolf form and vice-versa whenever it sleeps." +
+        "\nA Lycanthrope produces 2 Chaos Orbs whenever it sheds a Wolf Pelt. It also produces 2 Chaos Orbs each time it kills a Villager.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 

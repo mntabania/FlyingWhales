@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 public class DrainSpiritData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DRAIN_SPIRIT;
     public override string name => "Drain Spirit";
-    public override string description => "This Ability slowly kills the target to drain them of their Spirit Energy.";
+    public override string description => "This Ability slowly kills the target to produce Chaos Orbs.";
     public DrainSpiritData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

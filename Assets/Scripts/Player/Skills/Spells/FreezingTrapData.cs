@@ -8,7 +8,8 @@ public class FreezingTrapData : SkillData {
 
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FREEZING_TRAP;
     public override string name => "Freezing Trap";
-    public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it and become Frozen.";
+    public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it and become Frozen." +
+        "\nTrapping a hostile Villager produces 2 Chaos Orbs. Additionally, characters Frozen by the player has a small chance of periodically producing Chaos Orbs.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     public virtual int abilityRadius => 1;
 

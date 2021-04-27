@@ -7,7 +7,8 @@ using Traits;
 public class SpawnNecronomiconData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPAWN_NECRONOMICON;
     public override string name => "Spawn Necronomicon";
-    public override string description => "This Spell will create a Necronomicon on the target ground. If an appropriate character picks it up, it will turn into a Necromancer.";
+    public override string description => "This Spell will create a Necronomicon on the target ground. If an appropriate character picks it up, it will turn into a Necromancer." +
+        "\nA Necromancer produces a Chaos Orb each time it raises a Skeleton. It also produces 2 Chaos Orbs whenever it or its army of skeletons kill a Villager.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;

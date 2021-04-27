@@ -8,8 +8,9 @@ using Inner_Maps.Location_Structures;
 public class RemoveBuffData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REMOVE_BUFF;
     public override string name => "Remove Buff";
-    public override string description => "This Ability can be used to remove any positive Trait from a character.";
-    
+    public override string description => "This Ability can be used to remove any positive Trait from a character." +
+        "\nRemoving a buff from a hostile Villager will produce a Chaos Orb.";
+
     public RemoveBuffData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

@@ -9,7 +9,7 @@ namespace Traits {
         public override Type serializedData => typeof(SaveDataEmpowered);
         public Empowered() {
             name = "Empowered";
-            description = "This character's combat prowess is significantly increased.";
+            description = "Increased Strength.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);

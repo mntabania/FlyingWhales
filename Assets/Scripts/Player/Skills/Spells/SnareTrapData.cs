@@ -6,7 +6,8 @@ using Inner_Maps;
 public class SnareTrapData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SNARE_TRAP;
     public override string name => "Snare Trap";
-    public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it and become Ensnared.";
+    public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it and become Ensnared." +
+        "\nTrapping a hostile Villager produces 2 Chaos Orbs. Additionally, characters Ensnared by the player has a small chance of periodically producing Chaos Orbs.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     public virtual int abilityRadius => 1;
 

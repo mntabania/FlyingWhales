@@ -7,7 +7,8 @@ using Logs;
 public class ExpelData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EXPEL;
     public override string name => "Expel";
-    public override string description => "This Action kicks out a character from its current Village and Faction.";
+    public override string description => "This Ability kicks out a character from its current Village and Faction." +
+        "\nExpelling a hostile Villager from its Faction will produce a Chaos Orb.";
     public ExpelData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
