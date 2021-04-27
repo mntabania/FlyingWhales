@@ -84,7 +84,8 @@ namespace Inner_Maps {
                         }
                     }
                 }
-                owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
+                // owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
+                owner.mouseEventsComponent.UpdateHasMouseEventsForAllNeighbours();
                 owner.mouseEventsComponent.OnHoverExit();
             }
         }
@@ -123,7 +124,8 @@ namespace Inner_Maps {
                     owner.structure.AddPOI(createdDecor, owner);
                     Debug.Log($"Placed random demonic decor {createdDecor.name} at {owner.ToString()}");
                 }
-                owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
+                // owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
+                owner.mouseEventsComponent.UpdateHasMouseEventsForAllNeighbours();
                 owner.mouseEventsComponent.OnHoverExit();
             }
         }
@@ -140,16 +142,18 @@ namespace Inner_Maps {
                 //        owner.structure.RemovePOI(owner.tileObjectComponent.objHere);
                 //    }
                 //}
-                if (!IsTileAdjacentToACorruption()) {
-                    owner.mouseEventsComponent.SetHasMouseEvents(false);
-                }
+                owner.mouseEventsComponent.UpdateHasMouseEvents();
+                // if (!IsTileAdjacentToACorruption()) {
+                //     owner.mouseEventsComponent.SetHasMouseEvents(false);
+                // }
                 for (int i = 0; i < owner.neighbourList.Count; i++) {
                     LocationGridTile neighbour = owner.neighbourList[i];
-                    if (!neighbour.corruptionComponent.isCorrupted) {
-                        if (!neighbour.corruptionComponent.IsTileAdjacentToACorruption()) {
-                            neighbour.mouseEventsComponent.SetHasMouseEvents(false);
-                        }
-                    }
+                    neighbour.mouseEventsComponent.UpdateHasMouseEvents();
+                    // if (!neighbour.corruptionComponent.isCorrupted) {
+                    //     if (!neighbour.corruptionComponent.IsTileAdjacentToACorruption()) {
+                    //         neighbour.mouseEventsComponent.SetHasMouseEvents(false);
+                    //     }
+                    // }
                 }
             } else {
                 DisruptCorruption();
@@ -248,7 +252,7 @@ namespace Inner_Maps {
                 SchedulingManager.Instance.AddEntry(wallBuildOrDestroyDate, DestroyDemonicWall, null); //_wallScheduleID = 
             }
             if (isCorrupted) {
-                owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
+                owner.mouseEventsComponent.UpdateHasMouseEventsForSelfAndAllNeighbours();
                 owner.mouseEventsComponent.OnHoverExit();
             }
         }

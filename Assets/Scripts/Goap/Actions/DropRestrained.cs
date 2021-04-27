@@ -211,6 +211,11 @@ public class DropRestrained : GoapAction {
                         if (targetCharacter.hasMarker) {
                             targetCharacter.marker.UpdatePosition();
                         }
+                        if (chosenTile.structure is Kennel kennel) {
+                            kennel.OnSnatchedCharacterDroppedHere(targetCharacter);
+                        } else if (chosenTile.structure is TortureChambers tortureChambers) {
+                            tortureChambers.OnSnatchedCharacterDroppedHere(targetCharacter);
+                        }
                     }
                     Party party = goapNode.actor.partyComponent.currentParty;
                     if (party != null && party.isActive && party.currentQuest is DemonSnatchPartyQuest quest) {

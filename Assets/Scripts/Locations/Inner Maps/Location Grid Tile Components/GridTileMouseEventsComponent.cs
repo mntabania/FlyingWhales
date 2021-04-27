@@ -20,9 +20,33 @@ namespace Inner_Maps {
                 owner.neighbourList[i].mouseEventsComponent.SetHasMouseEvents(state);
             }
         }
+        public void UpdateHasMouseEventsForAllNeighbours() {
+            for (int i = 0; i < owner.neighbourList.Count; i++) {
+                owner.neighbourList[i].mouseEventsComponent.UpdateHasMouseEvents();
+            }
+        }
+        public void UpdateHasMouseEventsForSelfAndAllNeighbours() {
+            owner.mouseEventsComponent.UpdateHasMouseEvents();
+            for (int i = 0; i < owner.neighbourList.Count; i++) {
+                owner.neighbourList[i].mouseEventsComponent.UpdateHasMouseEvents();
+            }
+        }
+        public void UpdateHasMouseEvents() {
+            bool shouldHaveMouseEvents = true;
+            if (!owner.corruptionComponent.isCorrupted) {
+                if (!owner.corruptionComponent.IsTileAdjacentToACorruption()) {
+                    shouldHaveMouseEvents = false;
+                }
+            }
+            if (owner.tileObjectComponent.objHere != null) {
+                shouldHaveMouseEvents = false;
+            }
+            SetHasMouseEvents(shouldHaveMouseEvents);
+        }
         public void SetHasMouseEvents(bool state) {
             if(hasMouseEvents != state) {
                 hasMouseEvents = state;
+                // Debug.Log($"Set has mouse events of {owner.ToString()} as {hasMouseEvents.ToString()}");
                 if (hasMouseEvents) {
                     InitiateMouseEventsGO();
                 } else {
@@ -32,6 +56,7 @@ namespace Inner_Maps {
         }
         private void InitiateMouseEventsGO() {
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(InnerMapManager.Instance.gridTileMouseEventsPrefab.name, Vector3.zero, Quaternion.identity);
+            go.name = $"{owner.ToString()} MouseEvents";
             _mouseEvents = go.GetComponent<LocationGridTileMouseEvents>();
             _mouseEvents.SetOwner(owner);
             go.transform.SetParent(owner.parentMap.structureParent);

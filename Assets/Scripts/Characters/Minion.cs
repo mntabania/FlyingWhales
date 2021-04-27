@@ -165,6 +165,7 @@ public class Minion {
             }
             Unsummon();
             GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
         }
     }
 

@@ -743,9 +743,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.gameObject.SetActive(true);
         }
     }
-    private void SetCharacterMarker(CharacterMarker marker) {
-        this.marker = marker;
-        if (marker == null) {
+    private void SetCharacterMarker(CharacterMarker p_marker) {
+        if (p_marker == null && marker != null) {
+            //will set character marker to null
+            //remove character from its current structure character list and its current tile character list
+            gridTileLocation?.RemoveCharacterHere(this);
+            currentStructure?.RemoveCharacterAtLocation(this);
+        }
+        this.marker = p_marker;
+        if (p_marker == null) {
             hasMarker = false;
             Messenger.Broadcast(CharacterSignals.CHARACTER_MARKER_DESTROYED, this);
         } else {

@@ -39,6 +39,7 @@ namespace Inner_Maps {
         #region Object Here
         public void SetOccupyingObject(TileObject p_object) {
             objHere = p_object;
+            owner.mouseEventsComponent.UpdateHasMouseEventsForSelfAndAllNeighbours();
         }
         public void SetObjectHere(TileObject poi) {
             if (poi.isHidden) {

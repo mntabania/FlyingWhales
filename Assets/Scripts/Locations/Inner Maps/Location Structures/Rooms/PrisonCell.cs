@@ -53,7 +53,7 @@ namespace Inner_Maps.Location_Structures {
             // }
             if (currentTortureTarget != null) {
                 Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-                    Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+                    Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, parentStructure as IPlayerActionTarget);
                 LocationGridTile centerTile = GetCenterTile();
                 _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
             } else if (currentBrainwashTarget != null) {
@@ -82,13 +82,18 @@ namespace Inner_Maps.Location_Structures {
         public bool IsValidOccupant(Character character) {
             return character.isNormalCharacter && character.isDead == false && (character.faction == null || !character.faction.isPlayerFaction);
         }
+        public bool HasValidOccupant() {
+            return charactersInRoom.Any(IsValidOccupant);
+        }
         #endregion
 
         #region Torture
         public void BeginTorture() {
-            List<Character> characters = charactersInRoom;
-            Character chosenTarget = CollectionUtilities.GetRandomElement(characters);
-            StartTorture(chosenTarget);
+            List<Character> characters = charactersInRoom.Where(IsValidTortureTarget).ToList();
+            if (characters.Count > 0) {
+                Character chosenTarget = CollectionUtilities.GetRandomElement(characters);
+                StartTorture(chosenTarget);    
+            }
         }
         public void BeginTorture(Character p_character) {
             StartTorture(p_character);
@@ -110,13 +115,13 @@ namespace Inner_Maps.Location_Structures {
             currentTortureTarget = target;
             currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, currentTortureTarget);
             Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, parentStructure as IPlayerActionTarget);
             LocationGridTile centerTile = GetCenterTile();
             _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
         }
         private void StopTorture() {
             currentTortureTarget = null;
-            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, parentStructure as IPlayerActionTarget);
         }
         private void CheckIfTortureInterruptFinished(INTERRUPT interrupt, Character character) {
             if (character == currentTortureTarget && interrupt == INTERRUPT.Being_Tortured) {
@@ -258,12 +263,12 @@ namespace Inner_Maps.Location_Structures {
             wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
             DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
             door?.Close();
-            Character chosenTarget = CollectionUtilities.GetRandomElement(charactersInRoom.Where(x => IsValidBrainwashTarget(x)));
+            Character chosenTarget = CollectionUtilities.GetRandomElement(charactersInRoom.Where(IsValidBrainwashTarget));
             currentBrainwashTarget = chosenTarget;
             currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
             Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
-            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, parentStructure as IPlayerActionTarget);
             LocationGridTile centerTile = GetCenterTile();
             _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
         }
@@ -275,13 +280,13 @@ namespace Inner_Maps.Location_Structures {
             currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
             Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
-            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, parentStructure as IPlayerActionTarget);
             LocationGridTile centerTile = GetCenterTile();
             _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
         }
         private void BrainwashDone() {
             currentBrainwashTarget = null;
-            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, parentStructure as IPlayerActionTarget);
         }
         private void CheckIfBrainwashFinished(INTERRUPT interrupt, Character chosenTarget) {
             if (interrupt == INTERRUPT.Being_Brainwashed && chosenTarget == currentBrainwashTarget) {

@@ -58,6 +58,7 @@ public class SeizeComponent {
             }
 
             PrepareToUnseize();
+            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
             // PlayerManager.Instance.player.AdjustMana(-manaCost);
             //PlayerUI.Instance.ShowSeizedObjectUI();
         } else {
@@ -132,9 +133,10 @@ public class SeizeComponent {
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-        if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
-            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
-        }
+        // if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
+        //     Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
+        // }
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public bool CanUnseize() {
         if (!hasSeizedPOI) {
