@@ -70,10 +70,13 @@ public class DefensePointUIView : MVCUIView {
 				}
 			}
 		}
-
 		if (lastAvailIndex != -1) {
 			UIModel.deployedItemSummonsUI[lastAvailIndex].gameObject.SetActive(true);
-			UIModel.deployedItemSummonsUI[lastAvailIndex].DisplayAddSummon();
+			if (!UIModel.subSummonContainer.activeSelf) {
+				UIModel.deployedItemSummonsUI[lastAvailIndex].DisplayAddSummon();
+			} else {
+				UIModel.deployedItemSummonsUI[lastAvailIndex].MakeSlotEmpty();
+			}
 		}
 		if (p_currentCount < p_maxCount) {
 			UIModel.deployedItemSummonsUI[p_currentCount].gameObject.SetActive(true);
