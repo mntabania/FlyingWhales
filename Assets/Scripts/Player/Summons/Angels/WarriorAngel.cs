@@ -22,6 +22,7 @@ public class WarriorAngel : Summon {
     }
     public override void Initialize() {
         base.Initialize();
+        movementComponent.SetIsFlying(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Angel_Behaviour);
     }
     #endregion  
