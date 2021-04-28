@@ -70,8 +70,8 @@ namespace Interrupts {
                 //Character is a monster
                 log += "\n-Character is a monster";
                 log += "\n-Find an unoccupied Special Structure within the region and randomly select one. Clear out Territory data if it has one.";
-                LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatMeetCriteria(currStructure => !currStructure.IsOccupied() && currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
-                if (chosenHomeStructure != null && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
+                LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatMeetCriteria(currStructure => !currStructure.IsOccupied() && currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0 && !IsSameAsCurrentHomeStructure(currStructure, actor));
+                if (chosenHomeStructure != null) {
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                     log += "\n-Special Structure found: " + chosenHomeStructure.ToString();
                     actor.logComponent.PrintLogIfActive(log);
@@ -169,7 +169,7 @@ namespace Interrupts {
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenDwelling, affectSettlement: false);
                 } else {
                     log += "\nFind dwelling that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friend";
-                    chosenDwelling = GetDwellingWithCloseFriendOrNonRivalEnemyRelative(actor.homeSettlement, actor);
+                    chosenDwelling = GetDwellingWithCloseFriendOrNonRivalEnemyRelativeInSameFaction(actor.homeSettlement, actor);
                     if (chosenDwelling != null) {
                         log += "\nFound dwelling: " + chosenDwelling.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenDwelling, affectSettlement: false);
@@ -327,7 +327,7 @@ namespace Interrupts {
                                 identifier = "unoccupied";
                                 return chosenDwelling;
                             } else {
-                                chosenDwellingWithCloseFriendOrNonEnemyRivalRelative = GetDwellingWithCloseFriendOrNonRivalEnemyRelative(npcSettlement, actor);
+                                chosenDwellingWithCloseFriendOrNonEnemyRivalRelative = GetDwellingWithCloseFriendOrNonRivalEnemyRelativeInSameFaction(npcSettlement, actor);
                             }
                         }
                     }
@@ -336,7 +336,7 @@ namespace Interrupts {
                             for (int j = 0; j < baseSettlement.allStructures.Count; j++) {
                                 LocationStructure structure = baseSettlement.allStructures[j];
                                 if (structure != actor.previousCharacterDataComponent.previousHomeStructure && !structure.HasReachedMaxResidentCapacity() && !IsSameAsCurrentHomeStructure(structure, actor)) {
-                                    if (structure.HasCloseFriendOrNonEnemyRivalRelative(actor)) {
+                                    if (structure.HasCloseFriendOrNonEnemyRivalRelativeInSameFaction(actor)) {
                                         chosenHabitableSpecialWithCloseFriendOrNonEnemyRivalRelative = structure;
                                         break;
                                     }
@@ -416,15 +416,14 @@ namespace Interrupts {
         #endregion
 
         #region Utilities
-        private LocationStructure GetDwellingWithCloseFriendOrNonRivalEnemyRelative(NPCSettlement settlement, Character actor) {
+        private LocationStructure GetDwellingWithCloseFriendOrNonRivalEnemyRelativeInSameFaction(NPCSettlement settlement, Character actor) {
             LocationStructure chosenDwelling = null;
             List<LocationStructure> dwellings = settlement.GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
             if (dwellings != null) {
                 for (int i = 0; i < dwellings.Count; i++) {
                     LocationStructure currDwelling = dwellings[i];
                     if (currDwelling != actor.previousCharacterDataComponent.previousHomeStructure && !currDwelling.HasReachedMaxResidentCapacity() && currDwelling.residents.Count > 0 && !IsSameAsCurrentHomeStructure(currDwelling, actor)) {
-                        Character resident = currDwelling.residents[0];
-                        if (currDwelling.HasCloseFriendOrNonEnemyRivalRelative(actor)) {
+                        if (currDwelling.HasCloseFriendOrNonEnemyRivalRelativeInSameFaction(actor)) {
                             chosenDwelling = currDwelling;
                             break;
                         }

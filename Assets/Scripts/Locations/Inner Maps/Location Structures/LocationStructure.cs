@@ -1340,10 +1340,10 @@ namespace Inner_Maps.Location_Structures {
             }
             return 0;
         }
-        public bool HasCloseFriendOrNonEnemyRivalRelative(Character character) {
+        public bool HasCloseFriendOrNonEnemyRivalRelativeInSameFaction(Character character) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if(character != resident) {
+                if(character != resident && resident.faction == character.faction) {
                     if (character.relationshipContainer.GetOpinionLabel(resident) == RelationshipManager.Close_Friend) {
                         return true;
                     } else if (!character.relationshipContainer.IsEnemiesWith(resident) && character.relationshipContainer.IsFamilyMember(resident)) {
