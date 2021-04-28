@@ -213,12 +213,10 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 					if (playerSkillData != null) {
 						if (m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, entry.Value.type) != -1) {
 							int processedWeight = playerSkillData.baseLoadoutWeight;
-							/* //Remove archetype weighted bonus for now
 							if (PlayerSkillManager.Instance.selectedArchetype == playerSkillData.archetypeWeightedBonus) {
-								processedWeight += 100;
+								processedWeight /= 2;
 							}
-							*/ //Remove archetype weighted bonus for now
-							if (processedWeight > 0) {
+							if(processedWeight > 0) {
 								weights.AddElement(entry.Value, processedWeight);
 							}
 						}
@@ -378,19 +376,31 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			}
 		}
 	}
+
+	PLAYER_SKILL_TYPE m_selectedSkill = PLAYER_SKILL_TYPE.NONE;
+	int m_unlockCost = 0;
 	private void OnSkillClick(PLAYER_SKILL_TYPE p_type) {
-		int result = isTestScene ? 
-			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(fakePlayer.skillComponent, fakePlayer.currenciesComponent, p_type) : 
+		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
+		m_selectedSkill = p_type;
+		int result = isTestScene ?
+			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(fakePlayer.skillComponent, fakePlayer.currenciesComponent, p_type) :
 			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, p_type);
+		m_unlockCost = result;
 		if (result != -1) {
-			SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
-			m_firstRun = false;
-			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-result);
-			PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToAddBonusCharge(skillData, result);
-			UpdateRerollBtn();
-			UpdateItems();
-			OnCloseClicked();
+			UIManager.Instance.ShowYesNoConfirmation(
+			"Portal Upgrade", $"Do you want to spend {result}{UtilityScripts.Utilities.ChaoticEnergyIcon()} to unlock {skillData.name}?", OnYesUnlockSkill, layer: 150);
 		}
+	}
+
+	private void OnYesUnlockSkill() {
+		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(m_selectedSkill);
+		m_firstRun = false;
+		PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-m_unlockCost);
+		PlayerManager.Instance.player.playerSkillComponent.PlayerChoseSkillToAddBonusCharge(skillData, m_unlockCost);
+		UpdateRerollBtn();
+		UpdateItems();
+		OnCloseClicked();
+
 	}
 	public void OnFinishSkillUnlock() {
 		MakeListForAvailableSkills();

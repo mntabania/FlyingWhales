@@ -196,10 +196,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		for (int x = 0; x < m_targetPartyStructure.partyData.deployedSummonUnderlings.Count; ++x) {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
 			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedSummonUnderlings[x], true, true);
+			m_deployedSummonsUI[x].Deploy(m_targetPartyStructure.partyData.deployedSummons[x]);
 		}
 		if (m_targetPartyStructure.partyData.deployedMinionCount > 0) {
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
 			m_deployedMinionsUI[0].gameObject.SetActive(true);
+			m_deployedMinionsUI[0].Deploy(m_targetPartyStructure.partyData.deployedMinions[0]);
 			m_deployedMinionsUI[0].InitializeItem(m_targetPartyStructure.partyData.deployedMinionUnderlings[0], true, true);
 		} else {
 			m_maraudUIView.ShowMinionButtonHideMinionContainer();

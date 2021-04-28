@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Ruinarch;
 using UtilityScripts;
 
 public class PlayerRetaliationComponent {
@@ -250,9 +251,34 @@ public class PlayerRetaliationComponent {
     }
     private void OnClickRetaliationBookmark() {
         if (spawnedAngels.Count > 0) {
-            Character angel = spawnedAngels[GameUtilities.RandomBetweenTwoNumbers(0, spawnedAngels.Count)];
-            UIManager.Instance.ShowCharacterInfo(angel, true);
+            CharacterCenterCycle(spawnedAngels);
+            // Character angel = CollectionUtilities.GetRandomElement(spawnedAngels); //spawnedAngels[GameUtilities.RandomBetweenTwoNumbers(0, spawnedAngels.Count)];
+            // UIManager.Instance.ShowCharacterInfo(angel, true);
         }
+    }
+    private void CharacterCenterCycle(List<Character> characters) {
+        if (characters != null && characters.Count > 0) {
+            //normal objects to center
+            ISelectable objToSelect = GetNextCharacterToCenter(characters);
+            if (objToSelect != null) {
+                InputManager.Instance.Select(objToSelect);
+            }
+        }
+    }
+    private Character GetNextCharacterToCenter(List<Character> selectables) {
+        Character objToSelect = null;
+        for (int i = 0; i < selectables.Count; i++) {
+            Character currentSelectable = selectables[i];
+            if (currentSelectable.IsCurrentlySelected()) {
+                //set next selectable in list to be selected.
+                objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                break;
+            }
+        }
+        if (objToSelect == null) {
+            objToSelect = selectables[0];
+        }
+        return objToSelect;
     }
     #endregion
 }
