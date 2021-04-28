@@ -208,7 +208,7 @@ namespace Inner_Maps.Location_Structures {
         }
         private static void GetBrainwashSuccessAndFailWeights(Character actor, out int successWeight, out int failWeight) {
             failWeight = 100;
-            successWeight = 20;
+            successWeight = 50;
 
             if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
                 if (actor.traitContainer.HasTrait("Evil")) {

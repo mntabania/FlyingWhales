@@ -17,6 +17,10 @@ public class ZapData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ZAP);
         targetPOI.traitContainer.AddTrait(targetPOI, "Zapped", bypassElementalChance: true, overrideDuration: duration);
+        Zapped zapped = targetPOI.traitContainer.GetTraitOrStatus<Zapped>("Zapped");
+        if (zapped != null) {
+            zapped.SetIsPlayerSource(true);
+        }
         if (UIManager.Instance.characterInfoUI.isShowing) {
             UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
         }

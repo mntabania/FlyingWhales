@@ -130,7 +130,7 @@ public class PlayerRetaliationComponent {
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
     private string GetRetaliationBookmarkText() {
-        return "Retaliation!: " + retaliationCounter + "/" + MAX_RETALIATION_COUNTER;
+        return "Retaliation: " + retaliationCounter + "/" + MAX_RETALIATION_COUNTER;
     }
     #endregion
 
@@ -180,7 +180,9 @@ public class PlayerRetaliationComponent {
 
     #region Triggers
     public void CharacterDeathRetaliation(Character p_character) {
-        if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation))) {
+        string debugLog = "ADD RETALIATION COUNTER!";
+        debugLog += "\nDeath of " + p_character.name;
+        if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation), ref debugLog)) {
             if (!p_character.traitContainer.HasTrait("Cultist") && p_character.isNormalCharacter) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_character_death", null, LOG_TAG.Player, LOG_TAG.Major);
@@ -190,10 +192,13 @@ public class PlayerRetaliationComponent {
                 }
             }
         }
+        Debug.Log(debugLog);
     }
     public void StructureDestroyedRetaliation(LocationStructure p_structure) {
         if (p_structure.settlementLocation != null && p_structure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE && p_structure.settlementLocation.owner != null && p_structure.settlementLocation.owner.isMajorNonPlayer) {
-            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation))) {
+            string debugLog = "ADD RETALIATION COUNTER!";
+            debugLog += "\nDestruction of " + p_structure.name;
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation), ref debugLog)) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_structure_destroyed", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_structure, p_structure.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -201,11 +206,14 @@ public class PlayerRetaliationComponent {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             }
+            Debug.Log(debugLog);
         }
     }
     public void ResourcePileRetaliation(TileObject p_pile, LocationGridTile removedFrom) {
         if (removedFrom != null && removedFrom.structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation))) {
+            string debugLog = "ADD RETALIATION COUNTER!";
+            debugLog += "\nDestruction/Loss of " + p_pile.name;
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation), ref debugLog)) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_pile_loss", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_pile, p_pile.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -213,6 +221,7 @@ public class PlayerRetaliationComponent {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             }
+            Debug.Log(debugLog);
         }
     }
     public void ReportDemonicStructureRetaliation(Character p_character) {

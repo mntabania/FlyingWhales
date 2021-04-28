@@ -26,7 +26,7 @@ namespace Quests {
 
         private void OnHoverOverStep1(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
-                "HINT: After recruiting enough cultists, one may eventually become a Cult Leader. You can directly order a Cult Leader to start its own Demon Cult faction.",
+                "HINT: After recruiting enough cultists, one may eventually become a Cult Leader. You can directly order a Cult Leader to start its own Demon Cult faction. Transform villagers into cultists by brainwashing them in your Prison.",
                 stepItem.hoverPosition, "Cult Faction"
             );
         }
