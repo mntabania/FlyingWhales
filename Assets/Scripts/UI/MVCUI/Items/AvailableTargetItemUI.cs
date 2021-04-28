@@ -6,14 +6,16 @@ using UnityEngine.UI;
 public class AvailableTargetItemUI : MonoBehaviour {
 
     public Action<AvailableTargetItemUI> onClicked;
+    public Action<AvailableTargetItemUI> onHoverOver;
+    public Action<AvailableTargetItemUI> onHoverOut;
     public Button myButton;
 
     public RuinarchText txtName;
     public IStoredTarget target;
 
     public GameObject goCover;
-
     public HoverText hoverText;
+    public HoverHandler hoverHandler;
 
 	private void Awake() {
         hoverText = goCover.GetComponent<HoverText>();
@@ -43,10 +45,14 @@ public class AvailableTargetItemUI : MonoBehaviour {
 
     private void OnEnable() {
         myButton.onClick.AddListener(Click);
+        hoverHandler.AddOnHoverOverAction(OnHoverOver);
+        hoverHandler.AddOnHoverOutAction(OnHoverOut);
     }
 
     private void OnDisable() {
         myButton.onClick.RemoveListener(Click);
+        hoverHandler.RemoveOnHoverOverAction(OnHoverOver);
+        hoverHandler.RemoveOnHoverOutAction(OnHoverOut);
     }
 
     public void ShowCover() {
@@ -60,5 +66,11 @@ public class AvailableTargetItemUI : MonoBehaviour {
 
     void Click() {
         onClicked?.Invoke(this);
+    }
+    private void OnHoverOver() {
+        onHoverOver?.Invoke(this);
+    }
+    private void OnHoverOut() {
+        onHoverOut?.Invoke(this);
     }
 }

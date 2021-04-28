@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class DeployedTargetItemUI : MonoBehaviour {
     public Action<DeployedTargetItemUI> onDeleteClick;
+    public Action<DeployedTargetItemUI> onHoverOver;
+    public Action<DeployedTargetItemUI> onHoverOut;
     public Button btnDelete;
     public Button btnItem;
     public RuinarchText txtName;
@@ -14,7 +16,8 @@ public class DeployedTargetItemUI : MonoBehaviour {
 
     public bool isDeployed;
     public bool isReadyForDeploy;
-
+    public HoverHandler hoverHandler;
+    
     public Sprite[] icons;
 
     public void InitializeItem(IStoredTarget p_target, bool p_isDeployed = false) {
@@ -41,11 +44,15 @@ public class DeployedTargetItemUI : MonoBehaviour {
     private void OnEnable() {
         btnDelete.onClick.AddListener(OnDeleteClick);
         btnItem.onClick.AddListener(OnItemClicked);
+        hoverHandler.AddOnHoverOverAction(OnHoverOver);
+        hoverHandler.AddOnHoverOutAction(OnHoverOut);
     }
 
     private void OnDisable() {
         btnDelete.onClick.RemoveListener(OnDeleteClick);
         btnItem.onClick.RemoveListener(OnItemClicked);
+        hoverHandler.RemoveOnHoverOverAction(OnHoverOver);
+        hoverHandler.RemoveOnHoverOutAction(OnHoverOut);
     }
 
     public void HideRemoveButton() {
@@ -67,5 +74,11 @@ public class DeployedTargetItemUI : MonoBehaviour {
 
     void OnItemClicked() {
         UIManager.Instance.OpenObjectUI(target);
+    }
+    private void OnHoverOver() {
+        onHoverOver?.Invoke(this);
+    }
+    private void OnHoverOut() {
+        onHoverOut?.Invoke(this);
     }
 }

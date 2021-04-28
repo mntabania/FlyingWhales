@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 7543668318363562319}
   - component: {fileID: 1421593464392814353}
   - component: {fileID: 3852895042428931158}
+  - component: {fileID: 4062313316916885176}
   m_Layer: 5
   m_Name: DeployedTargetItemUI
   m_TagString: Untagged
@@ -346,10 +347,33 @@ MonoBehaviour:
   imgIcon: {fileID: 7415958835927423282}
   isDeployed: 0
   isReadyForDeploy: 0
+  hoverHandler: {fileID: 4062313316916885176}
   icons:
   - {fileID: 21300000, guid: 7bfd9d1947982c0469020e61a18a9aaa, type: 3}
   - {fileID: 21300000, guid: cc56f59c59cf9fc4da1d95fa813bd8ac, type: 3}
   - {fileID: 21300000, guid: b54566c2a94fb6b428dd81e65d59e65d, type: 3}
+--- !u!114 &4062313316916885176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7575952380986081399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &7576678907592590147
 GameObject:
   m_ObjectHideFlags: 0

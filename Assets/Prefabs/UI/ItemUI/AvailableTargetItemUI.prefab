@@ -500,6 +500,7 @@ GameObject:
   - component: {fileID: 7293416103478056398}
   - component: {fileID: 2179063453915245456}
   - component: {fileID: 4197504112873557005}
+  - component: {fileID: 4142423643316740649}
   m_Layer: 5
   m_Name: AvailableTargetItemUI
   m_TagString: Untagged
@@ -627,3 +628,26 @@ MonoBehaviour:
   txtName: {fileID: 7293401113306238722}
   goCover: {fileID: 251793160}
   hoverText: {fileID: 251793163}
+  hoverHandler: {fileID: 4142423643316740649}
+--- !u!114 &4142423643316740649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7251962664710218998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1

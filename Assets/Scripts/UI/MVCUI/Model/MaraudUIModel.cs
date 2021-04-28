@@ -59,6 +59,7 @@ public class MaraudUIModel : MVCUIModel {
 	public RuinarchText txtEmptyTargetList;
 
 	public UIHoverPosition hoverPosition;
+	public UIHoverPosition deployedItemHoverPosition;
 
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);

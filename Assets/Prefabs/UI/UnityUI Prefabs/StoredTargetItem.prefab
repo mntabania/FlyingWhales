@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 6010327583232136474}
   - component: {fileID: 565879913238856415}
   - component: {fileID: 2909893740237925188}
+  - component: {fileID: 2044179539818230711}
   m_Layer: 5
   m_Name: StoredTargetItem
   m_TagString: Untagged
@@ -297,6 +298,7 @@ MonoBehaviour:
   lblName: {fileID: 6010282339600060374}
   btnMain: {fileID: 2909893740237925188}
   btnDelete: {fileID: 4369594890161751510}
+  hoverHandler: {fileID: 2044179539818230711}
 --- !u!114 &2909893740237925188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,6 +343,28 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2044179539818230711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5979574986780075042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &5980008564039968534
 GameObject:
   m_ObjectHideFlags: 0

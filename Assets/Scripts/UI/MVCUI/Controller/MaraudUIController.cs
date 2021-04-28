@@ -91,9 +91,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		});
 		m_deployedTargetItemUI.ForEach((eachDeployedItem) => {
 			eachDeployedItem.onDeleteClick += OnDeployedTargetClicked;
+			eachDeployedItem.onHoverOver += OnHoverOverDeployedItem;
+			eachDeployedItem.onHoverOut += OnHoverOutDeployedItem;
 		});
 	}
-
 	void UnlistenToDeployedItems() {
 		m_deployedMinionsUI.ForEach((eachDeployedItem) => {
 			eachDeployedItem.onDelete -= OnDeployedMonsterClicked;
@@ -109,6 +110,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		});
 		m_deployedTargetItemUI.ForEach((eachDeployedItem) => {
 			eachDeployedItem.onDeleteClick -= OnDeployedTargetClicked;
+			eachDeployedItem.onHoverOver -= OnHoverOverDeployedItem;
+			eachDeployedItem.onHoverOut -= OnHoverOutDeployedItem;
 		});
 		m_targetList.ForEach((eachItem) => {
 			eachItem.onClicked -= OnAvailableTargetClicked;
@@ -307,7 +310,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				availableTargetItemUI.transform.SetParent(m_maraudUIView.GetAvailableTargetParent());
 				m_targetList.Add(availableTargetItemUI);
 				SetTargetHoverText(m_targetList[ctr]);
-				m_targetList[ctr++].onClicked += OnAvailableTargetClicked;
+				AvailableTargetItemUI targetItemUI = m_targetList[ctr++];
+				targetItemUI.onClicked += OnAvailableTargetClicked;
+				targetItemUI.onHoverOver += OnHoverOverAvailableTargetItem;
+				targetItemUI.onHoverOut += OnHoverOutAvailableTargetItem;
 			}
 		});
 	}
@@ -385,6 +391,28 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			}
 		}
 		ProcessButtonAvailability();
+	}
+	void OnHoverOverAvailableTargetItem(AvailableTargetItemUI p_target) {
+		if (p_target.target is Character character) {
+			UIManager.Instance.ShowCharacterNameplateTooltip(character, m_maraudUIView.UIModel.hoverPosition);
+		} else if (p_target.target is TileObject tileObject) {
+			UIManager.Instance.ShowTileObjectNameplateTooltip(tileObject, m_maraudUIView.UIModel.hoverPosition);
+		} else if (p_target.target is LocationStructure structure) {
+			UIManager.Instance.ShowStructureNameplateTooltip(structure, m_maraudUIView.UIModel.hoverPosition);
+		}
+	}
+	void OnHoverOutAvailableTargetItem(AvailableTargetItemUI p_target) {
+		if (p_target.target is Character) {
+			UIManager.Instance.HideCharacterNameplateTooltip();
+		} else if (p_target.target is TileObject) {
+			UIManager.Instance.HideTileObjectNameplateTooltip();
+		} else if (p_target.target is LocationStructure) {
+			UIManager.Instance.HideStructureNameplateTooltip();
+		} else {
+			UIManager.Instance.HideCharacterNameplateTooltip();
+			UIManager.Instance.HideTileObjectNameplateTooltip();
+			UIManager.Instance.HideStructureNameplateTooltip();
+		}
 	}
 
 	void OnAvailableMonsterClicked(MonsterAndDemonUnderlingCharges p_clickedMonster, MonsterUnderlingQuantityNameplateItem p_item) {
@@ -475,6 +503,29 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			}
 		}
 		ProcessButtonAvailability();
+		OnHoverOutDeployedItem(p_itemUI);
+	}
+	private void OnHoverOutDeployedItem(DeployedTargetItemUI p_target) {
+		if (p_target.target is Character) {
+			UIManager.Instance.HideCharacterNameplateTooltip();
+		} else if (p_target.target is TileObject) {
+			UIManager.Instance.HideTileObjectNameplateTooltip();
+		} else if (p_target.target is LocationStructure) {
+			UIManager.Instance.HideStructureNameplateTooltip();
+		} else {
+			UIManager.Instance.HideCharacterNameplateTooltip();
+			UIManager.Instance.HideTileObjectNameplateTooltip();
+			UIManager.Instance.HideStructureNameplateTooltip();
+		}
+	}
+	private void OnHoverOverDeployedItem(DeployedTargetItemUI p_target) {
+		if (p_target.target is Character character) {
+			UIManager.Instance.ShowCharacterNameplateTooltip(character, m_maraudUIView.UIModel.deployedItemHoverPosition);
+		} else if (p_target.target is TileObject tileObject) {
+			UIManager.Instance.ShowTileObjectNameplateTooltip(tileObject, m_maraudUIView.UIModel.deployedItemHoverPosition);
+		} else if (p_target.target is LocationStructure structure) {
+			UIManager.Instance.ShowStructureNameplateTooltip(structure, m_maraudUIView.UIModel.deployedItemHoverPosition);
+		}
 	}
 
 	void OnUnlockSlotClicked(DeployedMonsterItemUI p_itemUI) {
