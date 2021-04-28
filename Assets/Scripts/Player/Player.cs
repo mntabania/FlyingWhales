@@ -77,8 +77,10 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
 
         hasAlreadyWon = false;
+        if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
+            bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);    
+        }
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
-        bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
 
         SubscribeListeners();
         
@@ -103,7 +105,9 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
 
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
-        bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
+        if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
+            bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
+        }
         hasAlreadyWon = data.hasAlreadyWon;
         SubscribeListeners();
     }
@@ -829,7 +833,7 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Currencies
-    public void AdjustCurrency(CURRENCY p_currency, int p_amount) {
+    private void AdjustCurrency(CURRENCY p_currency, int p_amount, bool affectSpiritEnergy = true) {
         switch (p_currency) {
             case CURRENCY.Mana:
                 AdjustMana(p_amount);

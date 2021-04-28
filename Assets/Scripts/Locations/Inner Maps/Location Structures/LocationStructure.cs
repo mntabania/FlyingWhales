@@ -212,7 +212,7 @@ namespace Inner_Maps.Location_Structures {
                 case STRUCTURE_TYPE.PRISON:
                     return $"the {settlementLocation.name} prison";
                 case STRUCTURE_TYPE.WILDERNESS:
-                    return $"the outskirts of {region.name}";
+                    return "the wilderness";//$"the outskirts of {region.name}";
                 case STRUCTURE_TYPE.CEMETERY:
                     return $"the cemetery of {settlementLocation.name}";
                 case STRUCTURE_TYPE.POND:
@@ -1458,8 +1458,12 @@ namespace Inner_Maps.Location_Structures {
         public void RemoveBookmark() {
             PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(this);
         }
-        public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) { }
-        public void OnHoverOutBookmarkItem() { }
+        public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) {
+            UIManager.Instance.ShowStructureNameplateTooltip(this, p_pos);
+        }
+        public void OnHoverOutBookmarkItem() {
+            UIManager.Instance.HideStructureNameplateTooltip();
+        }
         #endregion
     }
 }

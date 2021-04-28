@@ -176,6 +176,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (visionTrigger) {
             visionTrigger.Reset();    
         }
+        if (clickCollider != null) {
+            clickCollider.enabled = true;
+        }
         DestroyAllStatusIcons();
         DestroyAllParticleEffects();
         SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);

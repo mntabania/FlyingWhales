@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps {
@@ -197,6 +198,9 @@ namespace Inner_Maps {
                     ObjectPoolManager.Instance.DestroyObject(_buildSmokeEffect);
                     _buildSmokeEffect = null;
                 }
+                if (owner.tileObjectComponent.objHere != null) {
+                    owner.structure.RemovePOI(owner.tileObjectComponent.objHere);
+                }
                 BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
                 wall.SetWallType(WALL_TYPE.Demon_Stone);
                 owner.structure.AddPOI(wall, owner);
@@ -226,7 +230,8 @@ namespace Inner_Maps {
             }
         }
         public bool CanBuildDemonicWall() {
-            return isCorrupted && !wallIsBeingBuilt && !wallIsBeingDestroyed && owner.tileObjectComponent.objHere == null && owner.tileState != LocationGridTile.Tile_State.Occupied;
+            return isCorrupted && !wallIsBeingBuilt && !wallIsBeingDestroyed && owner.structure is Wilderness && 
+                   (owner.tileObjectComponent.objHere == null || (!owner.tileObjectComponent.objHere.IsUnpassable() && !owner.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible"))) /*&& owner.tileObjectComponent.objHere == null&& owner.tileState != LocationGridTile.Tile_State.Occupied*/;
         }
         public bool CanDestroyDemonicWall() {
             return isCorrupted && !wallIsBeingDestroyed && !wallIsBeingBuilt && owner.tileObjectComponent.objHere is BlockWall wall && wall.wallType == WALL_TYPE.Demon_Stone;

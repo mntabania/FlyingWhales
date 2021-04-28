@@ -15,7 +15,14 @@ public class CurrencyHoverData : ScriptableObject {
 
     [Header("Portal")] 
     public Cost releaseAbilitiesRerollCost;
+    
+    [Header("Corruption")] 
+    public Cost corruptFloorCost;
+    public Cost buildWallCost;
+    
     private void OnValidate() {
         releaseAbilitiesRerollCost.name = releaseAbilitiesRerollCost.ToString();
+        corruptFloorCost.name = corruptFloorCost.ToString();
+        buildWallCost.name = buildWallCost.ToString();
     }
 }

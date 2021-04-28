@@ -226,9 +226,23 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #region Listeners
     protected virtual void SubscribeListeners() {
         //Messenger.AddListener(Signals.TICK_STARTED, ProcessTraitsOnTickStarted);
+        Messenger.AddListener(ControlsSignals.LEFT_SHIFT_DOWN, OnShiftDown);
+        Messenger.AddListener(ControlsSignals.LEFT_SHIFT_UP, OnShiftUp);
+    }
+    private void OnShiftUp() {
+        if (mapObjectVisual is TileObjectGameObject tileObjectGameObject) {
+            tileObjectGameObject.MakeObjectClickable();
+        }
+    }
+    private void OnShiftDown() {
+        if (mapObjectVisual is TileObjectGameObject tileObjectGameObject) {
+            tileObjectGameObject.MakeObjectUnClickable();
+        }
     }
     protected virtual void UnsubscribeListeners() {
         //Messenger.RemoveListener(Signals.TICK_STARTED, ProcessTraitsOnTickStarted);
+        Messenger.RemoveListener(ControlsSignals.LEFT_SHIFT_DOWN, OnShiftDown);
+        Messenger.RemoveListener(ControlsSignals.LEFT_SHIFT_UP, OnShiftUp);
     }
     #endregion
 

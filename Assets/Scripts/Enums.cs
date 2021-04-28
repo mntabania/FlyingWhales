@@ -1193,8 +1193,8 @@ public enum SKILL_COST_AMOUNT {
 public enum SKILL_CHARGE_AMOUNT {
     Unlimited, Half, Normal, Double 
 }
-public enum THREAT_AMOUNT {
-    None, Half, Normal 
+public enum RETALIATION {
+    Enabled, Disabled 
 }
 public enum OMNIPOTENT_MODE {
     Disabled, Enabled 

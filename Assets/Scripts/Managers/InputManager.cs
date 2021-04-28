@@ -34,6 +34,7 @@ namespace Ruinarch {
         
         private CursorMode cursorMode = CursorMode.ForceSoftware;
         private bool runUpdate;
+        private bool _isShiftDown;
 
         private Dictionary<KeyCode, bool> allowedHotKeys = new Dictionary<KeyCode, bool>() {
             {KeyCode.F1, true},
@@ -54,7 +55,12 @@ namespace Ruinarch {
             {KeyCode.Tab, true},
             {KeyCode.R, true},
             {KeyCode.LeftAlt, true},
+            {KeyCode.LeftShift, true},
         };
+
+        #region getters
+        public bool isShiftDown => _isShiftDown;
+        #endregion
         
         #region Monobehaviours
         private void Awake() {
@@ -162,6 +168,15 @@ namespace Ruinarch {
                 if (GameManager.Instance != null && GameManager.Instance.gameHasStarted) {
                     CharacterManager.Instance.ToggleCharacterMarkerNameplate();
                 }
+            } else if (Input.GetKeyDown(KeyCode.LeftShift)) {
+                if (!CanUseHotkey(KeyCode.LeftShift)) return;
+                _isShiftDown = true;
+                Messenger.Broadcast(ControlsSignals.LEFT_SHIFT_DOWN);
+            }
+            
+            if (Input.GetKeyUp(KeyCode.LeftShift)) {
+                _isShiftDown = false;
+                Messenger.Broadcast(ControlsSignals.LEFT_SHIFT_UP);
             }
         }
         private void BroadcastHotkeyPress(string buttonToActivate, KeyCode p_keyCode) {

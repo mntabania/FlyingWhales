@@ -22,6 +22,7 @@ MonoBehaviour:
   cheatedLevel: 0
   pierce: 0
   bonusChargeWhenUnlocked: 2
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: eb9b0cf342db4f242996861a944bf25c, type: 3}
   tooltipImage: {fileID: 0}
@@ -54,7 +55,7 @@ MonoBehaviour:
     manacostPerLevel: 6400000096000000c8000000fa000000
     chargesPerLevel: 01000000010000000200000002000000
     bonuses: 010000000a000000000000000e000000
-    additionalDamagePerLevel: 64000000fa00000090010000c2010000
+    additionalDamagePerLevel: 7d000000a5000000cd00000022010000
     additionalPiercePerLevel:
     - 0
     - 50

@@ -133,7 +133,7 @@ public class ConsoleBase : InfoUIBase {
         worldSettingsText = $"{worldSettingsText}\nCooldown: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.cooldownSpeed.ToString()}";
         worldSettingsText = $"{worldSettingsText}\nCosts: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount.ToString()}";
         worldSettingsText = $"{worldSettingsText}\nCharges: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount.ToString()}";
-        worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.threatAmount.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.retaliation.ToString()}";
 
         worldSettingsText = $"{worldSettingsText}\nPathfinding:";
         if (AstarPath.active.graphs.Length > 0) {
