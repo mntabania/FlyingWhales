@@ -18,7 +18,7 @@ MonoBehaviour:
     fixedSkills: 160000001e0000002d0000001f000000
   afflictions:
     extraSlots: 2
-    fixedSkills: 0e0000000300000001000000
+    fixedSkills: 0300000001000000
   minions:
     extraSlots: 0
     fixedSkills: 540000005300000052000000

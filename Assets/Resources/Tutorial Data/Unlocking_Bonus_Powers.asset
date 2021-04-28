@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tutorialType: 0
   tutorialNameKey: unlock_bonus_powers
-  hasBeenRead: 0
-  hasBeenUnlocked: 0
   pages:
   - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
     description: You can obtain limited charges of various Powers from the Portal.
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 1176c1c7d76c1fe4fb7ccc02fc5ab3f4, type: 3}
     description: The Portal will provide you with a random set of three Powers to
       choose from. Note that Powers obtained here have limited charges only!

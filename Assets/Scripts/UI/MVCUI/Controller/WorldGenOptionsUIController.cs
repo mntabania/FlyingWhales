@@ -300,7 +300,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	public void OnHoverOverVictory(UIHoverPosition p_pos) {
 		string summary = "Set the game's victory condition.\n" +
-		                 "\n<b>Eliminate All</b> - Wipe out or recruit all Villagers to win the game." +
+		                 "\n<b>Summon Ruinarch</b> - Upgrade Portal to Level 8 to win the game." +
 		                 "\n<b>Sandbox</b> - No victory conditions. Play to your heart's content.";
 		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, "Victory Condition", autoReplaceText: false);
 	}
@@ -319,11 +319,11 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		Tooltip.Instance.HideSmallInfo();
 	}
 	public void OnHoverOverCosts(UIHoverPosition p_pos) {
-		string summary = "Set the mana cost of your abilities.\n" +
-		                 "\n<b>None</b> - All actions have zero mana cost." +
-		                 "\n<b>Half</b> - Mana cost reduced to half of normal (rounded up)." +
-		                 "\n<b>Normal</b> - Normal mana cost." +
-		                 "\n<b>Double</b> - Mana cost double of normal.";
+		string summary = "Set the costs of your abilities.\n" +
+		                 "\n<b>None</b> - All actions have zero cost." +
+		                 "\n<b>Half</b> - Costs are reduced to half of normal (rounded up)." +
+		                 "\n<b>Normal</b> - Normal cost." +
+		                 "\n<b>Double</b> - Costs are double of normal.";
 		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ManaIcon()} Costs", autoReplaceText: false);
 	}
 	public void OnHoverOutCosts() {
