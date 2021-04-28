@@ -703,7 +703,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
             btnRevealInfo.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
             btnRevealInfo.GetComponent<RuinarchButton>().MakeUnavailable();
         } else {
-            btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Faction Info");
             btnRevealInfo.GetComponent<RuinarchButton>().MakeAvailable();
         }
     }
