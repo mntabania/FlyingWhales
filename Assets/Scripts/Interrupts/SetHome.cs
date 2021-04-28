@@ -89,6 +89,8 @@ namespace Interrupts {
                             return;
                         }
                     }
+                } else {
+                    log += "\n-Character already has territory";
                 }
             } else {
                 //Character is not a summon
@@ -150,6 +152,8 @@ namespace Interrupts {
                         actor.logComponent.PrintLogIfActive(log);
                         return;
                     }
+                } else {
+                    log += "\n-Character already has territory";
                 }
             }
         }
