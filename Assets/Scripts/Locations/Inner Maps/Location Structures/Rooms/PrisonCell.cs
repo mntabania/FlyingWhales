@@ -390,7 +390,6 @@ namespace Inner_Maps.Location_Structures {
             if (currentTortureTarget != null && currentTortureTarget.interruptComponent.isInterrupted && 
                 currentTortureTarget.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
                 currentTortureTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
-                currentTortureTarget.traitContainer.RemoveRestrainAndImprison(currentTortureTarget);
             }
             if (_particleEffect != null) {
                 _particleEffect.StopEmission();

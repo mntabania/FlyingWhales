@@ -54,6 +54,12 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             StopDrainingCharactersHere();
+            List<Character> characters = RuinarchListPool<Character>.Claim();
+            characters.AddRange(charactersHere);
+            for (int i = 0; i < characters.Count; i++) {
+                Character character = characters[i];
+                character.traitContainer.RemoveRestrainAndImprison(character);
+            }
             base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
         }
         public override void DeployParty() {
