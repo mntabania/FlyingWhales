@@ -15,14 +15,14 @@ MonoBehaviour:
   tutorialType: 2
   tutorialNameKey: mana
   pages:
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 7debae308fb9c7549a0d7b251732b8cb, type: 3}
     description: 'Mana is a player resource used to perform most actions in the game:
       casting Spells, activating Abilities, applying Afflictions, building demonic
       structures and summoning minions'
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 7debae308fb9c7549a0d7b251732b8cb, type: 3}
     description: Your Mana has a low maximum capacity, which prevents you from spamming
       actions. However, you passively regenerate Mana in a rather short amount of
       time.
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 089f930f4a2c4f541bee96a447c60a05, type: 3}
     description: Upgraded Powers may cost more Mana to cast! Build more Mana Pits
       to expand your maximum capacity and hourly Mana regen.

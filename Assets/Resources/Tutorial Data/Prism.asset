@@ -15,7 +15,7 @@ MonoBehaviour:
   tutorialType: 5
   tutorialNameKey: prism
   pages:
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 4f96c558b63c3b142b1db077e753f189, type: 3}
     description: The Prism allows you to summon Minions that will roam around and
       defend. Unlike other summoning structures, the Prism defense party doesn't
       need a Lesser Demon as its leader.

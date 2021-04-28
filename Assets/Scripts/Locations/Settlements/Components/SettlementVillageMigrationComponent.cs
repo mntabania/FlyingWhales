@@ -202,7 +202,11 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         }
         DatabaseManager.Instance.familyTreeDatabase.ForcePopulateAllUnspawnedCharactersThatFitRace(unspawnedCharacters, migrationRace);
         if (unspawnedCharacters.Count > 0) {
-            Migrate(unspawnedCharacters, FactionManager.Instance.vagrantFaction, ref debugLog);
+            Faction newFaction = FactionManager.Instance.CreateNewFaction(FactionManager.Instance.GetFactionTypeForRace(migrationRace), race: migrationRace);
+            newFaction.factionType.SetAsDefault();
+            LandmarkManager.Instance.OwnSettlement(newFaction, owner);
+            Migrate(unspawnedCharacters, newFaction, ref debugLog);
+            Messenger.Broadcast(FactionSignals.FORCE_FACTION_UI_RELOAD);
         } else {
             debugLog += $"\nNo unspawned character to spawn for {migrationRace}/Vagrants";
         }

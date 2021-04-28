@@ -15,9 +15,9 @@ MonoBehaviour:
   tutorialType: 8
   tutorialNameKey: spirit_energy
   pages:
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 1697afb5a1de8594cb9af994b66f6460, type: 3}
     description: Spirit Energy is used to upgrade your Portal Level to permanently
       unlock new Powers.
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 1697afb5a1de8594cb9af994b66f6460, type: 3}
     description: Like Chaotic Energy, you gain Spirit Energy from Chaos Orbs albeit
       with a much smaller amount gained per Orb.

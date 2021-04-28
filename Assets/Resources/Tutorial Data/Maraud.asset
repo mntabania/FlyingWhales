@@ -15,11 +15,11 @@ MonoBehaviour:
   tutorialType: 6
   tutorialNameKey: maraud
   pages:
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 1d3a5db1ed5ca9b4fa2c3d679a53e5cf, type: 3}
     description: The Maraud allows you to summon Minions to raid villages. Raiding
       villages is a good way to obtain Chaos Orbs. The amount of Chaos Orbs depends
       on the damage dealt to Villagers and objects around the target Village.
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: f34358d1ef6ee704f91b91808085ba38, type: 3}
     description: First, choose a target Village from your list of Stored Targets.
       The raiding party also needs a Lesser Demon as its leader. You may unlock more
       party slots using Chaotic Energy.

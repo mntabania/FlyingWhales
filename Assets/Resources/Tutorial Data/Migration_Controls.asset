@@ -15,11 +15,11 @@ MonoBehaviour:
   tutorialType: 9
   tutorialNameKey: migration_controls
   pages:
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 5faed9f4f9680cf4a83a324ffaf5573f, type: 3}
     description: You may force new Colonists to migrate to a target Village. Right
       click on an empty tile in the Village town center and activate Induce Migration
       to do so.
-  - imgTutorial: {fileID: 21300000, guid: 999a6c5ea5fe11f4fbf819125ceb9253, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 7601cb480753b5e4d8cca3e36d813fcc, type: 3}
     description: Villages also have a Migration Meter that slowly fill up over time.
       You may reset this Meter to prevent new Colonists from migrating. Right click
       on an empty tile in the Village town center and activate Stifle Migration to

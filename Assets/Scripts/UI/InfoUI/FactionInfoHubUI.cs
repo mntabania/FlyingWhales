@@ -51,8 +51,9 @@ public class FactionInfoHubUI : MonoBehaviour {
         //Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
+        Messenger.AddListener(FactionSignals.FORCE_FACTION_UI_RELOAD, ForceFactionReload);
     }
-	public void InitializeAfterGameLoaded() {
+    public void InitializeAfterGameLoaded() {
         factionInfoUI.Initialize();
         PopulateInitialFactions();
         InitializeUI();
@@ -182,6 +183,9 @@ public class FactionInfoHubUI : MonoBehaviour {
                 StartCoroutine(RepopulateFactions());
             }
         }
+    }
+    private void ForceFactionReload() {
+        StartCoroutine(RepopulateFactions());
     }
     #endregion
 
