@@ -118,32 +118,9 @@ public class LetGoData : PlayerAction {
     }
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
-            LocationStructure letGoFrom = targetCharacter.currentStructure;
-            //Make character dazed (if not summon) and teleport him/her on a random spot outside
-            List<LocationGridTile> allTilesOutside = RuinarchListPool<LocationGridTile>.Claim();
-            List<LocationGridTile> passableTilesOutside = RuinarchListPool<LocationGridTile>.Claim();
-            for (int i = 0; i < targetCharacter.currentStructure.tiles.Count; i++) {
-                LocationGridTile tileInStructure = targetCharacter.currentStructure.tiles.ElementAt(i);
-                for (int j = 0; j < tileInStructure.neighbourList.Count; j++) {
-                    LocationGridTile neighbour = tileInStructure.neighbourList[j];
-                    if (neighbour.structure is Wilderness && !allTilesOutside.Contains(neighbour)) {
-                        allTilesOutside.Add(neighbour);
-                        if (neighbour.IsPassable()) {
-                            passableTilesOutside.Add(neighbour);
-                        }
-                    }
-                }
-            }
-            Assert.IsTrue(allTilesOutside.Count > 0);
-            var targetTile = CollectionUtilities.GetRandomElement(passableTilesOutside.Count > 0 ? passableTilesOutside : allTilesOutside);
-            if (targetCharacter is Summon == false) {
-                targetCharacter.traitContainer.AddTrait(targetCharacter, "Dazed");    
-            }
-            CharacterManager.Instance.Teleport(targetCharacter, targetTile);
-            GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);
-            targetPOI.traitContainer.RemoveRestrainAndImprison(targetPOI);
-            RuinarchListPool<LocationGridTile>.Release(allTilesOutside);
+            targetCharacter.movementComponent.LetGo(true);
 
+            LocationStructure letGoFrom = targetCharacter.currentStructure;
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Let Go", "activated");
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(letGoFrom, letGoFrom?.name, LOG_IDENTIFIER.LANDMARK_1);

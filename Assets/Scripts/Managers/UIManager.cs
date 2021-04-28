@@ -232,7 +232,8 @@ public class UIManager : BaseMonoBehaviour {
             || p_playerAction.type == PLAYER_SKILL_TYPE.SNATCH_MONSTER
             || p_playerAction.type == PLAYER_SKILL_TYPE.SNATCH_VILLAGER
             || p_playerAction.type == PLAYER_SKILL_TYPE.RAID
-            || p_playerAction.type == PLAYER_SKILL_TYPE.DEFEND) {
+            || p_playerAction.type == PLAYER_SKILL_TYPE.DEFEND
+            || p_playerAction.type == PLAYER_SKILL_TYPE.EVANGELIZE) {
             HidePlayerActionContextMenu();    
         } else {
             if (IsContextMenuShowing()) {
