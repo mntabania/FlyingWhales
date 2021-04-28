@@ -196,10 +196,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		for (int x = 0; x < m_targetPartyStructure.partyData.deployedSummonUnderlings.Count; ++x) {
 			m_deployedSummonsUI[x].gameObject.SetActive(true);
 			m_deployedSummonsUI[x].InitializeItem(m_targetPartyStructure.partyData.deployedSummonUnderlings[x], true, true);
+			m_deployedSummonsUI[x].Deploy(m_targetPartyStructure.partyData.deployedSummons[x]);
 		}
 		if (m_targetPartyStructure.partyData.deployedMinionCount > 0) {
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
 			m_deployedMinionsUI[0].gameObject.SetActive(true);
+			m_deployedMinionsUI[0].Deploy(m_targetPartyStructure.partyData.deployedMinions[0]);
 			m_deployedMinionsUI[0].InitializeItem(m_targetPartyStructure.partyData.deployedMinionUnderlings[0], true, true);
 		} else {
 			m_maraudUIView.ShowMinionButtonHideMinionContainer();
@@ -391,6 +393,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			}
 		}
 		ProcessButtonAvailability();
+		m_maraudUIView.HideAllSubMenu();
 	}
 	void OnHoverOverAvailableTargetItem(AvailableTargetItemUI p_target) {
 		if (p_target.target is Character character) {
@@ -430,6 +433,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedSummonsUI, p_clickedMonster);
 			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
+			if (m_targetPartyStructure.partyData.readyForDeploySummonCount + m_targetPartyStructure.partyData.deployedSummonCount >= m_targetPartyStructure.startingSummonCount) {
+				m_maraudUIView.HideAllSubMenu();
+			}
 		} else if (p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount >= 1) {
 				return;
@@ -437,6 +443,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedMinionsUI, p_clickedMonster);
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
+			m_maraudUIView.HideAllSubMenu();
 		}
 		ProcessButtonAvailability();
 	}

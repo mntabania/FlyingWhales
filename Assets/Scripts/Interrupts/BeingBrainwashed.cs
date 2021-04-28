@@ -23,6 +23,10 @@ namespace Interrupts {
                 Log log;
                 if (defilerRoom.WasBrainwashSuccessful(interruptHolder.actor)) {
                     //successfully converted
+                    LocationStructure currentStructure = interruptHolder.actor.currentStructure;
+                    if (currentStructure != null && currentStructure is TortureChambers) {
+                        interruptHolder.actor.movementComponent.LetGo();
+                    }
                     interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Cultist");
                     interruptHolder.actor.ResetNeeds();
                     log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Brainwashed", "converted", null, LOG_TAG.Major);

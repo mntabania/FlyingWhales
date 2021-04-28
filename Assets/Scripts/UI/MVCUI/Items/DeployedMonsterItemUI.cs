@@ -194,6 +194,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     }
 
     public void ShowDeadIcon() {
+        deployedCharacter = null;
         isDeployed = true;
         deadIcon.SetActive(true);
     }
