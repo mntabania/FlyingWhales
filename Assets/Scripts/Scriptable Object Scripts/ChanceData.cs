@@ -9,7 +9,7 @@ public static class ChanceData {
         {CHANCE_TYPE.Kleptomania_Pickpocket_Level_2, 10},
         {CHANCE_TYPE.Kleptomania_Rob_Other_House, 5},
         {CHANCE_TYPE.Kleptomania_Rob_Any_Place, 5},
-        {CHANCE_TYPE.Base_Cult_Leader_Spawn_Chance, 10},
+        {CHANCE_TYPE.Base_Cult_Leader_Spawn_Chance, 25},
         {CHANCE_TYPE.Laziness_Nap_Level_2, 2},
         {CHANCE_TYPE.Laziness_Nap_Level_3, 4},
         {CHANCE_TYPE.Unfaithful_Active_Search_Affair, 20},
