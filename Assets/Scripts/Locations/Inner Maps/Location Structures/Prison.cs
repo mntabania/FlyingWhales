@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Prison : ManMadeStructure {
         public override Vector2 selectableSize { get; }
