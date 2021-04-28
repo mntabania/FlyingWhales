@@ -18,7 +18,7 @@ MonoBehaviour:
     fixedSkills: 280000002c000000
   afflictions:
     extraSlots: 0
-    fixedSkills: 5a000000
+    fixedSkills: 
   minions:
     extraSlots: 0
     fixedSkills: 4e000000
@@ -27,7 +27,7 @@ MonoBehaviour:
     fixedSkills: bf00000049000000be000000b9000000
   miscs:
     extraSlots: 0
-    fixedSkills: 
+    fixedSkills: 59000000
   passiveSkills: 04000000060000000700000008000000090000000b0000000c0000000d0000000e0000000f000000100000001100000012000000
   availableSpells: 
   availableAfflictions: 
@@ -47,14 +47,14 @@ MonoBehaviour:
       amount: 20
     upgradeTime: 240
   - name: Level 3
-    skillTypesToUnlock: b8000000be0000004a0000004f0000001d00000019000000
+    skillTypesToUnlock: b8000000be0000004a0000004f0000003400000019000000
     upgradeCost:
     - name: 40 Spirit_Energy
       currency: 2
       amount: 40
     upgradeTime: 480
   - name: Level 4
-    skillTypesToUnlock: 4a000000b900000026000000c00000003400000001000000
+    skillTypesToUnlock: 4a000000b900000026000000c00000001d00000001000000
     upgradeCost:
     - name: 75 Spirit_Energy
       currency: 2
@@ -68,7 +68,7 @@ MonoBehaviour:
       amount: 100
     upgradeTime: 960
   - name: Level 6
-    skillTypesToUnlock: 1800000033000000
+    skillTypesToUnlock: 5800000018000000330000001f000000060000001e000000
     upgradeCost:
     - name: 150 Spirit_Energy
       currency: 2

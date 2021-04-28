@@ -60,13 +60,13 @@ public abstract class WinConditionTracker {
     public void AddStepsToBookmark() {
         for (int i = 0; i < winConditionSteps.Length; i++) {
             IBookmarkable winConditionStep = winConditionSteps[i];
-            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(winConditionStep, BOOKMARK_CATEGORY.Major_Events);    
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(winConditionStep, BOOKMARK_CATEGORY.Win_Condition);    
         }
     }
     public void RemoveStepsFromBookmark() {
         for (int i = 0; i < winConditionSteps.Length; i++) {
             IBookmarkable winConditionStep = winConditionSteps[i];
-            PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(winConditionStep, BOOKMARK_CATEGORY.Major_Events);    
+            PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(winConditionStep, BOOKMARK_CATEGORY.Win_Condition);    
         }
     }
     #endregion
