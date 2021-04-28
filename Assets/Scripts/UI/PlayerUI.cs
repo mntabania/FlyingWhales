@@ -165,6 +165,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_GAINED_SPELL, OnGainSpell);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_LOST_SPELL, OnLostSpell);
         AdjustUIDisplayBaseOnGameMode();
+        
     }
 
     public void AdjustUIDisplayBaseOnGameMode() {
@@ -177,6 +178,8 @@ public class PlayerUI : BaseMonoBehaviour {
             pos.x += 140f;
             plaguePointsContainer.transform.localPosition = pos;
         }
+        UpdatePlaguePointsAmount(EditableValuesManager.Instance.GetInitialChaoticEnergyBaseOnGameMode());
+        manaLbl.text = EditableValuesManager.Instance.startingMana.ToString();
     }
 
     public void InitializeAfterGameLoaded() {
