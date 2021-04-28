@@ -885,17 +885,20 @@ public class CombatState : CharacterState {
     private Vector3 GetPositionToReposition(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, ref LocationGridTile p_chosenPositionGridTile) {
         List<LocationGridTile> tilesToCheck = RuinarchListPool<LocationGridTile>.Claim();
         p_gridTile.PopulateTilesInRadius(tilesToCheck, Mathf.CeilToInt(p_distanceLimit), includeCenterTile: true, includeTilesInDifferentStructure: true);
+        Vector3 chosenPosition = Vector3.positiveInfinity;
         if (tilesToCheck.Count > 0) {
             for (int i = 0; i < tilesToCheck.Count; i++) {
                 LocationGridTile tile = tilesToCheck[i];
                 Vector3 pos = tile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
                 if (!pos.Equals(Vector3.positiveInfinity)) {
                     p_chosenPositionGridTile = tile;
-                    return pos;
+                    chosenPosition = pos;
+                    break;
                 }
             }
         }
-        return Vector3.positiveInfinity;
+        RuinarchListPool<LocationGridTile>.Release(tilesToCheck);
+        return chosenPosition;
     }
     private Vector3 GetPositionToRepositionRecursively(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, List<LocationGridTile> checkedTiles, ref LocationGridTile p_chosenPositionGridTile) {
         if (!checkedTiles.Contains(p_gridTile)) {

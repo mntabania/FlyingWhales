@@ -1344,15 +1344,10 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if(character != resident) {
-                    if (character.relationshipContainer.IsEnemiesWith(resident)) {
-                        return false;
-                    } else {
-                        if(character.relationshipContainer.IsFamilyMember(resident)) {
-                            return true;
-                        }
-                        if(character.relationshipContainer.GetOpinionLabel(resident) == RelationshipManager.Close_Friend) {
-                            return true;
-                        }
+                    if (character.relationshipContainer.GetOpinionLabel(resident) == RelationshipManager.Close_Friend) {
+                        return true;
+                    } else if (!character.relationshipContainer.IsEnemiesWith(resident) && character.relationshipContainer.IsFamilyMember(resident)) {
+                        return true;
                     }
                 }
             }
@@ -1365,6 +1360,15 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if (checker.Invoke(resident)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasAliveResidentOtherThan(Character p_character) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (p_character != resident && !resident.isDead) {
                     return true;
                 }
             }

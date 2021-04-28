@@ -318,9 +318,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     private void OnCharacterPresumedDead(Character missingCharacter) {
-        if (leader != null && missingCharacter == leader) {
-            SetLeader(null);
-        }
+        //Per Marvin, remove this, so it means that when a leader becomes presumed dead, he will still be the faction leader of the faction
+        //if (leader != null && missingCharacter == leader) {
+        //    SetLeader(null);
+        //}
     }
     private void OnCharacterDied(Character deadCharacter) {
         if (leader != null && deadCharacter == leader) {
@@ -805,6 +806,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     public bool HasOwnedSettlement() {
         return ownedSettlements.Count > 0;
+    }
+    public bool HasOwnedVillages() {
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            if (ownedSettlements[i].locationType == LOCATION_TYPE.VILLAGE) {
+                return true;
+            }
+        }
+        return false;
     }
     public bool HasOwnedSettlementExcept(NPCSettlement settlementException) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
