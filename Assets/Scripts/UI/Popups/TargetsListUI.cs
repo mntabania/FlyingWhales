@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,7 @@ public class TargetsListUI : PopupMenuBase, BookmarkableEventDispatcher.IListene
 
     [SerializeField] private Toggle tglTargets; 
     [SerializeField] private StoredTargetUIItem[] targetItems;
+    [SerializeField] private UIHoverPosition tooltipPos;
     public override void Open() {
         base.Open();
         tglTargets.SetIsOnWithoutNotify(true);
@@ -21,6 +23,10 @@ public class TargetsListUI : PopupMenuBase, BookmarkableEventDispatcher.IListene
         Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnPlayerRemovedStoredTarget);
         // Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         // Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        for (int i = 0; i < targetItems.Length; i++) {
+            StoredTargetUIItem item = targetItems[i];
+            item.Initialize(OnHoverOver, OnHoverOut);
+        }
         UpdateItems();
     }
     // private void OnCharacterSwitchFromLimbo(Character p_inLimbo, Character p_outOfLimbo) {
@@ -32,6 +38,28 @@ public class TargetsListUI : PopupMenuBase, BookmarkableEventDispatcher.IListene
     // private void OnCharacterChangedName(Character p_character) {
     //     UpdateItems();
     // }
+    private void OnHoverOver(IStoredTarget p_target) {
+        if (p_target is Character character) {
+            UIManager.Instance.ShowCharacterNameplateTooltip(character, tooltipPos);
+        } else if (p_target is TileObject tileObject) {
+            UIManager.Instance.ShowTileObjectNameplateTooltip(tileObject, tooltipPos);
+        } else if (p_target is LocationStructure structure) {
+            UIManager.Instance.ShowStructureNameplateTooltip(structure, tooltipPos);
+        }
+    }
+    private void OnHoverOut(IStoredTarget p_target) {
+        if (p_target is Character) {
+            UIManager.Instance.HideCharacterNameplateTooltip();
+        } else if (p_target is TileObject) {
+            UIManager.Instance.HideTileObjectNameplateTooltip();
+        } else if (p_target is LocationStructure) {
+            UIManager.Instance.HideStructureNameplateTooltip();
+        } else {
+            UIManager.Instance.HideCharacterNameplateTooltip();
+            UIManager.Instance.HideTileObjectNameplateTooltip();
+            UIManager.Instance.HideStructureNameplateTooltip();
+        }
+    }
     private void OnPlayerRemovedStoredTarget(IStoredTarget p_target) {
         p_target.bookmarkEventDispatcher.Unsubscribe(this, p_target);
         UpdateItems();
