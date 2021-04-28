@@ -9,12 +9,40 @@ namespace Inner_Maps {
         public bool isHovering { get; private set; }
         private LocationGridTileMouseEvents _mouseEvents;
 
-        public GridTileMouseEventsComponent() {
-        }
+        public GridTileMouseEventsComponent() { }
         public GridTileMouseEventsComponent(SaveDataGridTileMouseEventsComponent data) {
             hasMouseEvents = data.hasMouseEvents;
         }
 
+        private void SubscribeToShiftKeyListeners() {
+            Messenger.AddListener(ControlsSignals.LEFT_SHIFT_DOWN, OnShiftDown);
+            Messenger.AddListener(ControlsSignals.LEFT_SHIFT_UP, OnShiftUp);
+            if (InputManager.Instance.isShiftDown) {
+                OnShiftDown();
+            }
+        }
+        private void UnsubscribeToShiftKeyListeners() {
+            Messenger.AddListener(ControlsSignals.LEFT_SHIFT_DOWN, OnShiftDown);
+            Messenger.AddListener(ControlsSignals.LEFT_SHIFT_UP, OnShiftUp);
+            OnShiftUp();
+        }
+        
+        private void OnShiftUp() {
+            if (owner.tileObjectComponent.objHere != null) {
+                if (owner.tileObjectComponent.objHere.mapObjectVisual is TileObjectGameObject tileObjectGameObject) {
+                    tileObjectGameObject.MakeObjectClickable();
+                }    
+            }
+            
+        }
+        private void OnShiftDown() {
+            if (owner.tileObjectComponent.objHere != null) {
+                if (owner.tileObjectComponent.objHere.mapObjectVisual is TileObjectGameObject tileObjectGameObject) {
+                    tileObjectGameObject.MakeObjectUnClickable();
+                }
+            }
+        }
+        
         #region Utilities
         public void SetMouseEventsForAllNeighbours(bool state) {
             for (int i = 0; i < owner.neighbourList.Count; i++) {
@@ -53,8 +81,10 @@ namespace Inner_Maps {
                 // Debug.Log($"Set has mouse events of {owner.ToString()} as {hasMouseEvents.ToString()}");
                 if (hasMouseEvents) {
                     InitiateMouseEventsGO();
+                    SubscribeToShiftKeyListeners();
                 } else {
                     DestroyMouseEventsGO();
+                    UnsubscribeToShiftKeyListeners();
                 }
             }
         }

@@ -226,23 +226,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #region Listeners
     protected virtual void SubscribeListeners() {
         //Messenger.AddListener(Signals.TICK_STARTED, ProcessTraitsOnTickStarted);
-        Messenger.AddListener(ControlsSignals.LEFT_SHIFT_DOWN, OnShiftDown);
-        Messenger.AddListener(ControlsSignals.LEFT_SHIFT_UP, OnShiftUp);
     }
-    private void OnShiftUp() {
-        if (mapObjectVisual is TileObjectGameObject tileObjectGameObject) {
-            tileObjectGameObject.MakeObjectClickable();
-        }
-    }
-    private void OnShiftDown() {
-        if (mapObjectVisual is TileObjectGameObject tileObjectGameObject) {
-            tileObjectGameObject.MakeObjectUnClickable();
-        }
-    }
+    
     protected virtual void UnsubscribeListeners() {
         //Messenger.RemoveListener(Signals.TICK_STARTED, ProcessTraitsOnTickStarted);
-        Messenger.RemoveListener(ControlsSignals.LEFT_SHIFT_DOWN, OnShiftDown);
-        Messenger.RemoveListener(ControlsSignals.LEFT_SHIFT_UP, OnShiftUp);
     }
     #endregion
 
@@ -578,6 +565,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 //to the structure
                 amount = -currentHP;
             }
+            int prevHP = currentHP;
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
             if (mapVisual && mapVisual.hpBarGO && showHPBar) {
@@ -590,12 +578,25 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     }
                 }
             }    
+            if (source is Character character) {
+                if (character.partyComponent.hasParty && character.partyComponent.currentParty.isPlayerParty) {
+                    if (character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Demon_Raid){
+                        int damageDone = amount;
+                        if (currentHP == 0) {
+                            damageDone = prevHP;
+                        }
+                        character.partyComponent.currentParty.damageAccumulator.AccumulateDamage(damageDone, character);
+                    }
+                }
+            }
         }
         
         if (amount < 0) {
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
             //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
+        
+        
         LocationGridTile tile = gridTileLocation;
         if (currentHP <= 0) {
             //object has been destroyed

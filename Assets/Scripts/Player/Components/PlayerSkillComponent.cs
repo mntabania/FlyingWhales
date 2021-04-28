@@ -160,14 +160,16 @@ public class PlayerSkillComponent {
         //    Messenger.Broadcast(PlayerSkillSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);    
         //}
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, currentSpellBeingUnlocked, currentSpellUnlockCost);
-        ProduceLogForUnlockedSkills(skillData);
+        ProduceLogForUnlockedSkills(skillData, playerSkillData);
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         currentSpellUnlockCost = 0;
     }
-    void ProduceLogForUnlockedSkills(SkillData p_skillData) {
+    void ProduceLogForUnlockedSkills(SkillData p_skillData, PlayerSkillData p_playerSkillData) {
         Log m_log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Skills", "Unlock Skill", "skill_unlocked", providedTags: LOG_TAG.Player);
         m_log.AddTag(LOG_TAG.Major);
-        m_log.AddToFillers(null, p_skillData.name, LOG_IDENTIFIER.STRING_1);
+        string chargeText = p_playerSkillData.bonusChargeWhenUnlocked == 1 ? "charge" : "charges";
+        m_log.AddToFillers(null, $"{p_playerSkillData.bonusChargeWhenUnlocked.ToString()} {chargeText}", LOG_IDENTIFIER.STRING_1);
+        m_log.AddToFillers(null, p_skillData.name, LOG_IDENTIFIER.STRING_2);
         m_log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(m_log, true);
     }
