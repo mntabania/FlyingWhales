@@ -393,6 +393,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			}
 		}
 		ProcessButtonAvailability();
+		m_maraudUIView.HideAllSubMenu();
 	}
 	void OnHoverOverAvailableTargetItem(AvailableTargetItemUI p_target) {
 		if (p_target.target is Character character) {
@@ -432,6 +433,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedSummonsUI, p_clickedMonster);
 			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
+			if (m_targetPartyStructure.partyData.readyForDeploySummonCount + m_targetPartyStructure.partyData.deployedSummonCount >= m_targetPartyStructure.startingSummonCount) {
+				m_maraudUIView.HideAllSubMenu();
+			}
 		} else if (p_item.obj.isDemon && m_targetPartyStructure.partyData.readyForDeployMinionCount <= 0) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount >= 1) {
 				return;
@@ -439,6 +443,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			p_item.DeductOneChargeForDisplayPurpose();
 			ProcessDeployedItemFromClickingAvailableItem(m_deployedMinionsUI, p_clickedMonster);
 			m_maraudUIView.HideMinionButtonShowMinionContainer();
+			m_maraudUIView.HideAllSubMenu();
 		}
 		ProcessButtonAvailability();
 	}
