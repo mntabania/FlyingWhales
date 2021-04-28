@@ -640,6 +640,39 @@ public class MovementComponent : CharacterComponent {
     }
     #endregion
 
+    #region Let Go
+    public void LetGo(bool becomeDazed = false) {
+        LocationStructure letGoFrom = owner.currentStructure;
+        //Make character dazed (if not summon) and teleport him/her on a random spot outside
+        List<LocationGridTile> allTilesOutside = RuinarchListPool<LocationGridTile>.Claim();
+        List<LocationGridTile> passableTilesOutside = RuinarchListPool<LocationGridTile>.Claim();
+        for (int i = 0; i < letGoFrom.tiles.Count; i++) {
+            LocationGridTile tileInStructure = letGoFrom.tiles.ElementAt(i);
+            for (int j = 0; j < tileInStructure.neighbourList.Count; j++) {
+                LocationGridTile neighbour = tileInStructure.neighbourList[j];
+                if (neighbour.structure is Wilderness && !allTilesOutside.Contains(neighbour)) {
+                    allTilesOutside.Add(neighbour);
+                    if (neighbour.IsPassable()) {
+                        passableTilesOutside.Add(neighbour);
+                    }
+                }
+            }
+        }
+        Assert.IsTrue(allTilesOutside.Count > 0);
+        var targetTile = CollectionUtilities.GetRandomElement(passableTilesOutside.Count > 0 ? passableTilesOutside : allTilesOutside);
+        if (becomeDazed) {
+            if (owner is Summon == false) {
+                owner.traitContainer.AddTrait(owner, "Dazed");
+            }
+        }
+        CharacterManager.Instance.Teleport(owner, targetTile);
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);
+        owner.traitContainer.RemoveRestrainAndImprison(owner);
+        RuinarchListPool<LocationGridTile>.Release(allTilesOutside);
+        RuinarchListPool<LocationGridTile>.Release(passableTilesOutside);
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
         if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {

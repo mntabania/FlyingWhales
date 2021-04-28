@@ -13,11 +13,11 @@ namespace Inner_Maps.Location_Structures {
         #region Overrides
         public override void OnBuiltNewStructure() {
             base.OnBuiltNewStructure();
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Imp, 5);
+            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Imp, 3);
         }
         protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Imp, -5);
+            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Imp, -3);
         }
         #endregion
         

@@ -85,11 +85,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer { get; set; }
     public LocationStructure deployedAtStructure { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
-
     //misc
     public Tombstone grave { get; private set; }
     public FoodPile connectedFoodPile { get; private set; }
-    
+    public INTERACTION_TYPE causeOfDeath { set; get; }
+    public PLAYER_SKILL_TYPE skillCauseOfDeath { set; get; }
+
     //Components / Managers
     public TrapStructure trapStructure { get; private set; }
     public GoapPlanner planner { get; private set; }
@@ -119,8 +120,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterEventDispatcher eventDispatcher { get; }
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
     public CharacterTraitComponent traitComponent { get; private set; }
-    public INTERACTION_TYPE causeOfDeath { set; get; }
-    public PLAYER_SKILL_TYPE skillCauseOfDeath { set; get; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
     #region getters / setters
@@ -2620,6 +2619,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (characterThatAttacked.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Snatcher)) {
             //Temporary additional chance to knockout for snatcher combat behaviour
             chanceToKnockout += 20;
+        }
+        if (race == RACE.ANGEL) {
+            chanceToKnockout = Mathf.RoundToInt(chanceToKnockout * 0.35f);
         }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower, isPlayerSource: isPlayerSource);
