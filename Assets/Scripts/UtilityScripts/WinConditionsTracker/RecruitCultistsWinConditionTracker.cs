@@ -118,7 +118,7 @@ public class RecruitCultistsWinConditionTracker : WinConditionTracker {
     #region Tooltips
     private void OnHoverOverStartDemonCult(UIHoverPosition position) {
         UIManager.Instance.ShowSmallInfo(
-            "HINT: After recruiting enough cultists, one may eventually become a Cult Leader. You can directly order a Cult Leader to start its own Demon Cult faction.", 
+            "HINT: After recruiting enough cultists, one may eventually become a Cult Leader. You can directly order a Cult Leader to start its own Demon Cult faction. Transform villagers into cultists by brainwashing them in your Prison.", 
             pos: position
         );
     }

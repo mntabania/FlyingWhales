@@ -93,7 +93,7 @@ public class Execute : GoapAction {
 
         target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
-        target.Death("executed", goapNode, goapNode.actor);
+        target.Death("executed", goapNode, goapNode.actor, deathFromAction: goapNode);
     }
     #endregion
     
