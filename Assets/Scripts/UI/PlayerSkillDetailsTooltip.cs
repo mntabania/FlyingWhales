@@ -91,7 +91,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(skillData.type);
         
         string currencyStr = GetCurrencySummary(manaCost, charges, skillData.maxCharges, cooldown, skillData.bonusCharges, skillData.isInUse);
-        levelText.text = playerSkillData.isNonUpgradeable ? string.Empty : $"Lv. {skillData.levelForDisplay}";
+        levelText.text = playerSkillData.isNonUpgradeable ? string.Empty : $"Lv. {skillData.levelForDisplay.ToString()}";
         currenciesText.text = currencyStr;
         
         string bonusesStr = GetBonusesString(playerSkillData, skillData.currentLevel);
@@ -109,6 +109,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 targetCharacter = character;
             } else if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is PrisonCell room && room.charactersInRoom.Count > 0) {
                 targetCharacter = room.charactersInRoom.First();    
+            } else if (UIManager.Instance.structureInfoUI.isShowing && UIManager.Instance.structureInfoUI.activeStructure is TortureChambers tortureChambers &&
+                       tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && prisonCell.charactersInRoom.Count == 1) {
+                targetCharacter = prisonCell.charactersInRoom.First();    
             }
             if (targetCharacter != null) {
                 fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
