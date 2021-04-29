@@ -33,6 +33,7 @@ public class SpellItem : NameplateItem<SkillData> {
         Messenger.AddListener<SkillData>(PlayerSkillSignals.PLAYER_SKILL_LEVEL_UP, OnSpellUpgraded);
         Messenger.AddListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, OnExecuteSpell);
         Messenger.AddListener<SkillData>(PlayerSkillSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.AddListener<SkillData>(PlayerSkillSignals.BONUS_CHARGES_ADJUSTED, OnBonusChargesAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
         SetAsDefault();
 
@@ -131,6 +132,12 @@ public class SpellItem : NameplateItem<SkillData> {
             UpdateInteractableState();
         }
     }
+    private void OnBonusChargesAdjusted(SkillData spellData) {
+        if (this.spellData == spellData) {
+            UpdateData();
+            UpdateInteractableState();
+        }
+    }
     private void OnPlayerAdjustedMana(int adjusted, int mana) {
         UpdateData();
         UpdateInteractableState();
@@ -211,6 +218,7 @@ public class SpellItem : NameplateItem<SkillData> {
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, OnExecuteSpell);
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.RemoveListener<SkillData>(PlayerSkillSignals.BONUS_CHARGES_ADJUSTED, OnBonusChargesAdjusted);
         Messenger.RemoveListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
 }
