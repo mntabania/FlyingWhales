@@ -22,6 +22,7 @@ MonoBehaviour:
   cheatedLevel: 0
   pierce: 0
   bonusChargeWhenUnlocked: 2
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
@@ -80,7 +81,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 0000000001000000
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: a00000008c0000008c0000008c000000
+    cooldownPerLevel: a0000000780000007800000078000000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 

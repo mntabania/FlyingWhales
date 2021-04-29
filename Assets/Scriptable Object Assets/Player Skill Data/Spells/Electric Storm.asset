@@ -71,13 +71,13 @@ MonoBehaviour:
     - 5
     - 10
     - 15
-    durationBonusPerLevel: 14000000190000001e00000028000000
+    durationBonusPerLevel: 1400000019000000190000001e000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 400100002c0100001801000004010000
+    cooldownPerLevel: 500000003c0000003c0000003c000000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 
