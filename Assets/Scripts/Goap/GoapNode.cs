@@ -888,6 +888,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if(actionStatus == ACTION_STATUS.STARTED) {
             return thoughtBubbleMovingLog;
         }else if (actionStatus == ACTION_STATUS.PERFORMING) {
+            if (thoughtBubbleLog == null) {
+                //This is to prevent errors for logs without thought bubble in json file
+                //Bug: https://trello.com/c/eC0OQh3N/4275-charactervisualsgetthoughtbubble
+                return thoughtBubbleMovingLog;
+            }
             return thoughtBubbleLog;
         }
         return descriptionLog;

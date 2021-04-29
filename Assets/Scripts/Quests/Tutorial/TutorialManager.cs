@@ -24,7 +24,8 @@ namespace Tutorial {
             Maraud,
             Intel,
             Spirit_Energy,
-            Migration_Controls
+            Migration_Controls,
+            Base_Building
         }
         public enum Tutorial {
             Basic_Controls = 0,

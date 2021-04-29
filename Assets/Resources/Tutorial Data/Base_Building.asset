@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fe33fc91848c68ab8d6bd0b390d79, type: 3}
+  m_Name: Base_Building
+  m_EditorClassIdentifier: 
+  tutorialType: 10
+  tutorialNameKey: base_building
+  pages:
+  - imgTutorial: {fileID: 21300000, guid: cf63b0077440fc440adc9f866cb8354b, type: 3}
+    description: You may build new demonic structures in a spot that is adjacent
+      to at least one corrupted tile.
+  - imgTutorial: {fileID: 21300000, guid: e1102f3552f0d1c45be86dde7a51522f, type: 3}
+    description: You can corrupt tiles that are already adjacent to a corrupt tile
+      by right-clicking on it. This costs a small amount of Chaotic Energy. If the
+      tile has an object on it, use SHIFT + right-click instead.
+  - imgTutorial: {fileID: 21300000, guid: 70d4d4d8c8d183945b906d922b013eb8, type: 3}
+    description: You can also build a wall on a corrupt tile by right-clicking on
+      it. This costs a small amount of Chaotic Energy. If the corrupted tile has
+      an object on it, use SHIFT + right-click instead.

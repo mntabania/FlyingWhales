@@ -1452,6 +1452,8 @@ public static class Extensions {
                 return 8;
             case TutorialManager.Tutorial_Type.Migration_Controls:
                 return 9;
+            case TutorialManager.Tutorial_Type.Base_Building:
+                return 10;
             default:
                 return (int)p_type;
         }
