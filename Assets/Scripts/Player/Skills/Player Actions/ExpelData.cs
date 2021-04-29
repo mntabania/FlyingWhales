@@ -32,5 +32,11 @@ public class ExpelData : PlayerAction {
         }
         return false;
     }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
     #endregion
 }
