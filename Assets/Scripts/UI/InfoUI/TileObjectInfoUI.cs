@@ -79,7 +79,7 @@ public class TileObjectInfoUI : InfoUIBase {
                     InnerMapCameraMove.Instance.CenterCameraOn(null);
                 }
             }
-            if (activeTileObject is EyeWard eyeWard) {
+            if (activeTileObject is DemonEye eyeWard) {
                 //Show eye ward highlight of current eye ward
                 eyeWard.HideEyeWardHighlight();
             }
@@ -99,7 +99,7 @@ public class TileObjectInfoUI : InfoUIBase {
             if(previousTileObject.mapVisual != null) {
                 previousTileObject.mapVisual.UpdateSortingOrders(previousTileObject);
             }
-            if(previousTileObject is EyeWard previousEyeWard) {
+            if(previousTileObject is DemonEye previousEyeWard) {
                 //Hide eye ward highlight of previous eye ward
                 previousEyeWard.HideEyeWardHighlight();
             }
@@ -115,7 +115,7 @@ public class TileObjectInfoUI : InfoUIBase {
             Selector.Instance.Select(activeTileObject, activeTileObject.mapObjectVisual.transform);    
             activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
         }
-        if (activeTileObject is EyeWard eyeWard) {
+        if (activeTileObject is DemonEye eyeWard) {
             //Show eye ward highlight of current eye ward
             eyeWard.ShowEyeWardHighlight();
         }

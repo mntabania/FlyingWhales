@@ -2,21 +2,21 @@
 using Inner_Maps;
 using UnityEngine;
 
-public class EyeWard : TileObject {
+public class DemonEye : TileObject {
     public const int EYE_WARD_VISION_RANGE = 7;
     private List<LocationGridTile> tilesInRadius;
 
     private EyeWardHighlight _eyeWardHighlight;
-    public EyeWard() {
+    public DemonEye() {
         tilesInRadius = new List<LocationGridTile>();
-        Initialize(TILE_OBJECT_TYPE.EYE_WARD, false);
+        Initialize(TILE_OBJECT_TYPE.DEMON_EYE, false);
         AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Indestructible");
         hiddenComponent.SetIsHidden(true, false);
         PlayerManager.Instance.player.tileObjectComponent.AddEyeWard(this);
     }
-    public EyeWard(SaveDataTileObject data) {
+    public DemonEye(SaveDataTileObject data) {
         tilesInRadius = new List<LocationGridTile>();
         //AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
     }

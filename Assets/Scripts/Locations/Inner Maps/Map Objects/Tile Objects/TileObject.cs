@@ -458,7 +458,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         actions = new List<PLAYER_SKILL_TYPE>();
 
         if (tileObjectType == TILE_OBJECT_TYPE.RAVENOUS_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.FEEBLE_SPIRIT ||
-            tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.EYE_WARD) {
+            tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.DEMON_EYE) {
             return;
         }
 

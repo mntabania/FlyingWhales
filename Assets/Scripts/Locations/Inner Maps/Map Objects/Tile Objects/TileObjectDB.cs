@@ -281,7 +281,7 @@ public static class TileObjectDB {
                 new TileObjectRecipe(new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.METAL_PILE, 10)),
             }
         } },
-        { TILE_OBJECT_TYPE.EYE_WARD, new TileObjectData() {
+        { TILE_OBJECT_TYPE.DEMON_EYE, new TileObjectData() {
             maxHP = 48,
         } },
         { TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT, new TileObjectData() {

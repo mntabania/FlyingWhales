@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerTileObjectComponent {
-    public List<EyeWard> spawnedEyeWards { get; private set; }
+    public List<DemonEye> spawnedEyeWards { get; private set; }
 
     public PlayerTileObjectComponent() {
-        spawnedEyeWards = new List<EyeWard>();
+        spawnedEyeWards = new List<DemonEye>();
     }
     public PlayerTileObjectComponent(SaveDataPlayerTileObjectComponent data) {
-        spawnedEyeWards = new List<EyeWard>();
+        spawnedEyeWards = new List<DemonEye>();
     }
 
     #region Utilities
-    public void AddEyeWard(EyeWard p_eyeWard) {
+    public void AddEyeWard(DemonEye p_eyeWard) {
         if (!spawnedEyeWards.Contains(p_eyeWard)) {
             spawnedEyeWards.Add(p_eyeWard);
         }
     }
-    public bool RemoveEyeWard(EyeWard p_eyeWard) {
+    public bool RemoveEyeWard(DemonEye p_eyeWard) {
         return spawnedEyeWards.Remove(p_eyeWard);
     }
     public void ShowAllEyeWardHighlights() {

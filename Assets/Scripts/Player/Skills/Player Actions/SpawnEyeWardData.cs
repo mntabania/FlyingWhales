@@ -24,7 +24,7 @@ public class SpawnEyeWardData : PlayerAction {
         if (currentTileObject != null) {
             p_targetTile.structure.RemovePOI(currentTileObject);
         }
-        EyeWard ward = InnerMapManager.Instance.CreateNewTileObject<EyeWard>(TILE_OBJECT_TYPE.EYE_WARD);
+        DemonEye ward = InnerMapManager.Instance.CreateNewTileObject<DemonEye>(TILE_OBJECT_TYPE.DEMON_EYE);
         p_targetTile.structure.AddPOI(ward, p_targetTile);
 
         if (UIManager.Instance.structureInfoUI.isShowing) {
@@ -37,7 +37,7 @@ public class SpawnEyeWardData : PlayerAction {
         Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, this as PlayerAction);
     }
     public override void ShowValidHighlight(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(EyeWard.EYE_WARD_VISION_RANGE, tile);
+        TileHighlighter.Instance.PositionHighlight(DemonEye.EYE_WARD_VISION_RANGE, tile);
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
