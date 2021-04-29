@@ -23,7 +23,7 @@ public class Dragon : Summon {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
         traitContainer.AddTrait(this, "Sturdy");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
@@ -38,7 +38,7 @@ public class Dragon : Summon {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
         traitContainer.AddTrait(this, "Sturdy");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);

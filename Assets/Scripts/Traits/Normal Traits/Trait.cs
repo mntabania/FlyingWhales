@@ -24,6 +24,8 @@ namespace Traits {
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
         public bool canBeTriggered;
         public ELEMENTAL_TYPE elementalType;
+        public List<RESISTANCE> resistancesType;
+        public List<float> resistancesValue;
         public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
         /// <summary>
         /// Persistent ID of this trait. NOTE: Only instanced traits use this.

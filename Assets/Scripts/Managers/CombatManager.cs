@@ -211,7 +211,7 @@ public class CombatManager : BaseMonoBehaviour {
         if (elementalType == ELEMENTAL_TYPE.Fire) {
             if (target.traitContainer.HasTrait("Fire Prone")) {
                 return false;
-            } else if (target.traitContainer.HasTrait("Fireproof")) {
+            } else if (target.traitContainer.HasTrait("Fire Resistant")) {
                 //Immunity - less 85% damage
                 return true;
             }

@@ -100,7 +100,7 @@ namespace Generator.Map_Generation.Components {
                 character.traitContainer.AddTrait(character, "Cold Blooded");
             } else if (index == 1) {
                 //Desert villagers starts with Fire Proof
-                character.traitContainer.AddTrait(character, "Fireproof");
+                character.traitContainer.AddTrait(character, "Fire Resistant");
             } else if (index == 2) {
                 //Grassland villagers starts with Electric
                 character.traitContainer.AddTrait(character, "Electric");

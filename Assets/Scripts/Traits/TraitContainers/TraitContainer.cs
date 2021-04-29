@@ -296,7 +296,7 @@ namespace Traits {
             int chance = 100;
             if (traitName == "Burning") {
                 chance = bypassElementalChance ? 100 : 15;
-                if(HasTrait("Fireproof", "Wet", "Burnt") || !HasTrait("Flammable")) {
+                if(HasTrait("Fire Resistant", "Wet", "Burnt") || !HasTrait("Flammable")) {
                     chance = 0;
                 } else if (HasTrait("Poisoned")) {
                     chance = 100;
