@@ -22,6 +22,7 @@ MonoBehaviour:
   cheatedLevel: 0
   pierce: 0
   bonusChargeWhenUnlocked: 2
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 2a59907804a32e9469e0d8125ec3a388, type: 3}
   tooltipImage: {fileID: 0}
@@ -30,6 +31,7 @@ MonoBehaviour:
   baseLoadoutWeight: 150
   resistanceType: 5
   archetypeWeightedBonus: 2
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
@@ -75,7 +77,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 5000000046000000460000003c000000
+    cooldownPerLevel: 500000003c0000003c0000003c000000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 
