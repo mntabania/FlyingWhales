@@ -25,6 +25,7 @@ public class PlagueChaosOrb : PassiveSkill {
         if (GameUtilities.RollChance(50)) {
             Character character = interrupt.actor;
             if (character.faction.factionType.type != FACTION_TYPE.Demon_Cult && (interrupt.interrupt.type == INTERRUPT.Seizure || interrupt.interrupt.type == INTERRUPT.Sneeze || interrupt.interrupt.type == INTERRUPT.Puke)) {
+                Debug.Log("Chaos Orb Produced - [" + character.name + "] - [Became Depressed - Insomnia - Lethargic] - [1]");
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
             }
         }
