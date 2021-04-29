@@ -102,7 +102,10 @@ public struct Cost {
     }
     
     public override string ToString() {
-        return $"{processedAmount.ToString()} {currency.ToString()}";
+        if (WorldSettings.Instance != null) {
+            return $"{processedAmount.ToString()} {currency.ToString()}";
+        }
+        return $"{amount.ToString()} {currency.ToString()}";
     }
     public string GetCostStringWithIcon() {
         string icon = string.Empty;
