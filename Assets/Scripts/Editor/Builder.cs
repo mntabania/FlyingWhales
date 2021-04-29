@@ -9,7 +9,8 @@ public class Builder {
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows, BuildOptions.None);
         // Do other things with the build folder
-        RelocateDLLs(path, "x86");
+        PlaceRedistributables(path);
+        RelocateDLLs(path, "x86", false);
     }
     
     [MenuItem("Build/Build Release Windows 64-Bit")]
@@ -19,7 +20,8 @@ public class Builder {
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
         // Do other things with the build folder
-        RelocateDLLs(path, "x86_64");
+        PlaceRedistributables(path);
+        RelocateDLLs(path, "x86_64", true);
     }
 
     [MenuItem("Build/Build Release Windows 64 and 32 Bit")]
@@ -36,15 +38,29 @@ public class Builder {
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows64, buildOptions);
         // Do other things with the build folder
-        RelocateDLLs(path, "x86_64");
+        PlaceRedistributables(path);
+        RelocateDLLs(path, "x86_64", true);
     }
 
     #region Utilities
-    private static void RelocateDLLs(string buildPath, string pluginsFolder) {
+    private static void RelocateDLLs(string buildPath, string pluginsFolder, bool is64bit) {
+        //SQLite.Interop.dll
         string sqliteDLL = $"{buildPath}/Ruinarch_Data/Plugins/{pluginsFolder}/SQLite.Interop.dll";
         FileUtil.CopyFileOrDirectory(sqliteDLL, $"{buildPath}/SQLite.Interop.dll");
         Directory.CreateDirectory($"{buildPath}/Ruinarch_Data/Mono/");
         FileUtil.CopyFileOrDirectory(sqliteDLL, $"{buildPath}/Ruinarch_Data/Mono/SQLite.Interop.dll");
+
+        string sqliteDirectory = is64bit ? $"{buildPath}/redist/sqlite 64bit/" : $"{buildPath}/redist/sqlite 32bit/";
+        string[] dllsToCopy = new[] {"System.Data.SQLite.dll", "System.Data.SQLite.EF6.dll", "System.Data.SQLite.Linq.dll"};
+        for (int i = 0; i < dllsToCopy.Length; i++) {
+            string dllToCopy = dllsToCopy[i];
+            sqliteDLL = $"{sqliteDirectory}/{dllToCopy}";
+            FileUtil.CopyFileOrDirectory(sqliteDLL, $"{buildPath}/{dllToCopy}");    
+        }
+    }
+    private static void PlaceRedistributables(string buildPath) {
+        string redistributablesLocation = $"{Application.dataPath}/../bin/redist/";
+        FileUtil.CopyFileOrDirectory(redistributablesLocation, $"{buildPath}/redist/");
     }
     #endregion
 }

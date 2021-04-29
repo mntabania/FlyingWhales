@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 namespace AssetImporters {
     public class TutorialScreenshotAssetImporter : AssetPostprocessor {
@@ -17,3 +18,4 @@ namespace AssetImporters {
         }
     }
 }
+#endif
