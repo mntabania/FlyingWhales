@@ -11,7 +11,7 @@ public class WurmHole : TileObject{
     public WurmHole() {
         Initialize(TILE_OBJECT_TYPE.WURM_HOLE);
         traitContainer.AddTrait(this, "Indestructible");
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
     }
     public WurmHole(SaveDataWurmHole data) { }
 

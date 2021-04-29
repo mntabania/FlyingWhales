@@ -6,7 +6,7 @@ using Logs;
 
 public class DestroyEyeWardData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DESTROY_EYE_WARD;
-    public override string name => "Destroy Ward";
+    public override string name => "Destroy Eye";
     public override string description => "This Action destroys an Eye Ward.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public DestroyEyeWardData() : base() {
@@ -15,7 +15,7 @@ public class DestroyEyeWardData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        if(targetPOI is EyeWard eyeWard) {
+        if(targetPOI is DemonEye eyeWard) {
             LocationGridTile targetTile = targetPOI.gridTileLocation;
 
             if (targetTile != null) {

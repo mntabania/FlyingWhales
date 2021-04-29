@@ -23,6 +23,7 @@ namespace Inner_Maps.Location_Structures {
         private Summon _occupyingSummon;
 
         public Kennel(Region location) : base(STRUCTURE_TYPE.KENNEL, location) {
+            SetMaxHPAndReset(2500);
             borderTiles = new List<LocationGridTile>();
         }
         public Kennel(Region location, SaveDataKennel data) : base(location, data) { }

@@ -29,7 +29,7 @@ namespace Inner_Maps.Location_Structures {
         
         public ThePortal(Region location) : base(STRUCTURE_TYPE.THE_PORTAL, location){
             name = "Portal";
-            SetMaxHPAndReset(5000);
+            SetMaxHPAndReset(13666);
             if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
                 level = PlayerSkillLoadout.MAX_SKILLS_PER_UPGRADE_TIER - 1; //start portal at max level - 1 for scenarios. This is so that release abilities can show most powers
             } else {

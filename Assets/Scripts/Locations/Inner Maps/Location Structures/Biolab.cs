@@ -14,7 +14,9 @@ namespace Inner_Maps.Location_Structures {
         public override System.Type serializedData => typeof(SaveDataBiolab);
         #endregion
 
-        public Biolab(Region location) : base(STRUCTURE_TYPE.BIOLAB, location) { }
+        public Biolab(Region location) : base(STRUCTURE_TYPE.BIOLAB, location) {
+            SetMaxHPAndReset(5000);
+        }
         public Biolab(Region location, SaveDataBiolab data) : base(location, data) {
             //replenishDate = data.replenishDate;
             //SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);

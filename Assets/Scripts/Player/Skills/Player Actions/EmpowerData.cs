@@ -22,7 +22,7 @@ public class EmpowerData : PlayerAction {
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.traitContainer.HasTrait("Empowered")) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Empowered")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

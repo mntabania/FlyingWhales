@@ -96,7 +96,7 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
             LocationGridTile tile = area[i];
             TileObject tileObject = tile.tileObjectComponent.objHere;
             if (tileObject != null &&
-                tileObject.traitContainer.HasTrait("Burning", "Fireproof") == false &&
+                tileObject.traitContainer.HasTrait("Burning", "Fire Resistant") == false &&
                 tileObject.traitContainer.HasTrait("Flammable")) {
                 if (choices == null) {
                     choices = new List<TileObject>();

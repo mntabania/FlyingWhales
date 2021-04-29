@@ -268,7 +268,7 @@ public class StructureInfoUI : InfoUIBase {
         UtilityScripts.Utilities.DestroyChildren(eyesParentTransform);
         Beholder beholder = activeStructure as Beholder;
         for (int i = 0; i < beholder.eyeWards.Count; i++) {
-            EyeWard eyeWard = beholder.eyeWards[i];
+            DemonEye eyeWard = beholder.eyeWards[i];
             GameObject go = UIManager.Instance.InstantiateUIObject(tileObjectNameplatePrefab.name, eyesParentTransform);
             TileObjectNameplateItem item = go.GetComponent<TileObjectNameplateItem>();
             item.SetObject(eyeWard);
