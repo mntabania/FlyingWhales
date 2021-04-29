@@ -286,7 +286,7 @@ namespace Inner_Maps {
                         if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
                             //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
-                            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                            //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                         }
                     } else {
                         poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);

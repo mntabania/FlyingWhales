@@ -87,10 +87,10 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 		}
 		bonusCharges.text = "x" + m_data.bonusChargeWhenUnlocked.ToString();
 		txtLevel.text = "Level 0";
-		txtCost.text = m_data.unlockCost.ToString();
+		txtCost.text = m_data.GetUnlockCost().ToString();
 		m_skillType = p_type;
 		UpdateItem(p_currentMana);
-		hoverHandler.ExecuteHoverEnterActionPerFrame(m_data.unlockCost > p_currentMana);
+		hoverHandler.ExecuteHoverEnterActionPerFrame(m_data.GetUnlockCost() > p_currentMana);
 		transform.localScale = Vector3.one;
 	}
 
@@ -102,7 +102,7 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 			} else {
 				DisableButton();
 			}
-		} else if (m_data.unlockCost > p_currentMana) {
+		} else if (m_data.GetUnlockCost() > p_currentMana) {
 			DisableButton();
 		} else {
 			EnableButton();

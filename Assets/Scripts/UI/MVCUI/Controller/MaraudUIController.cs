@@ -282,18 +282,18 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 			UIManager.Instance.ShowSmallInfo("You cant add a team member bacause the structure is occupied", "Structure Occupied", true);
 		} else {
-			MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
-			if (minionPlayerSkill != null) {
-				CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(minionPlayerSkill.className);
-				if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
-					CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
-					UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_maraudUIView.UIModel.hoverPosition, combatBehaviour.name);
-				}
+			CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(p_monsterAndDemonUnderlingCharges.characterClassName);
+			if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
+				CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
+				UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_maraudUIView.UIModel.hoverPosition, combatBehaviour.name);
 			}
-			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
+			/*
+			if (p_monsterAndDemonUnderlingCharges.isDemon) {
+				MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
+				PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
+			}*/
 		}
 	}
-
 
 	void OnHoverExitItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
 		UIManager.Instance.HideSmallInfo();

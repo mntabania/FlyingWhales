@@ -22,6 +22,7 @@ MonoBehaviour:
   cheatedLevel: 0
   pierce: 0
   bonusChargeWhenUnlocked: 0
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: cf1c29e91becf7b468ed9942a26b8448, type: 3}
   tooltipImage: {fileID: 0}
@@ -30,6 +31,7 @@ MonoBehaviour:
   baseLoadoutWeight: 0
   resistanceType: 0
   archetypeWeightedBonus: 0
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 0e0660d7121fbec41ab7b927d1bea4c9, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 00c146ecfee6b7c4fb1138f861d0a9f4, type: 3}
@@ -51,7 +53,7 @@ MonoBehaviour:
   skillUpgradeData:
     upgradeCosts: 
     manacostPerLevel: 32000000
-    chargesPerLevel: 01000000
+    chargesPerLevel: 03000000
     bonuses: 0e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:

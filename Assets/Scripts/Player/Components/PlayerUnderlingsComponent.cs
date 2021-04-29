@@ -7,18 +7,18 @@ public class PlayerUnderlingsComponent {
     //public List<Summon> summons { get; private set; }
     public Dictionary<SUMMON_TYPE, MonsterAndDemonUnderlingCharges> monsterUnderlingCharges { get; private set; }
     public Dictionary<MINION_TYPE, MonsterAndDemonUnderlingCharges> demonUnderlingCharges { get; private set; }
-    public readonly int cooldown = GameManager.Instance.GetTicksBasedOnHour(4);
+    public readonly int cooldown;
     public PlayerUnderlingsComponent() {
         //minions = new List<Minion>();
         //summons = new List<Summon>();
-        cooldown = GameManager.Instance.GetTicksBasedOnHour(4);
+        cooldown = GameManager.Instance.GetTicksBasedOnHour(12);
         monsterUnderlingCharges = new Dictionary<SUMMON_TYPE, MonsterAndDemonUnderlingCharges>();
         demonUnderlingCharges = new Dictionary<MINION_TYPE, MonsterAndDemonUnderlingCharges>();
     }
     public PlayerUnderlingsComponent(SaveDataPlayerUnderlingsComponent data) {
         //minions = new List<Minion>();
         //summons = new List<Summon>();
-        cooldown = GameManager.Instance.GetTicksBasedOnHour(4);
+        cooldown = GameManager.Instance.GetTicksBasedOnHour(12);
         monsterUnderlingCharges = data.monsterUnderlingCharges;
         demonUnderlingCharges = data.demonUnderlingCharges;
     }

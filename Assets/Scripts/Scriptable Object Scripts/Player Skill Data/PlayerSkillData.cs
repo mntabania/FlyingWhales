@@ -21,7 +21,8 @@ public class PlayerSkillData : ScriptableObject {
     public VideoClip tooltipVideoClip;
     public Texture tooltipImage;
 
-    public int unlockCost = 0;
+    [SerializeField]
+    private int unlockCost = 0;
     public int tier;
     public int baseLoadoutWeight;
     public RESISTANCE resistanceType;
@@ -47,6 +48,10 @@ public class PlayerSkillData : ScriptableObject {
     public RequirementData requirementData;
     public SkillUpgradeData skillUpgradeData;
     public AfflictionUpgradeData afflictionUpgradeData;
+
+    public int GetUnlockCost() {
+        return SpellUtilities.GetModifiedSpellCost(unlockCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+    }
 
     public int GetManaCostBaseOnLevel(int level) {
         return SpellUtilities.GetModifiedSpellCost(skillUpgradeData.GetManaCostPerLevel(level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());

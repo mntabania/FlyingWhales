@@ -24,7 +24,7 @@ public class PlayerDamageAccumulator {
         accumulatedDamage += p_amount;
         PlayerUI.Instance.UpdateAccumulatedDamageText(accumulatedDamage);
     }
-    public void AccumulateDamage(int p_amount, LocationGridTile p_expelChaosOrbsOn) {
+    public void AccumulateDamage(int p_amount, LocationGridTile p_expelChaosOrbsOn, Character p_character) {
         if (!activatedSpellDamageChaosOrbPassiveSkill) {
             return;
         }
@@ -36,6 +36,7 @@ public class PlayerDamageAccumulator {
             accumulatedDamage -= subtractFromAccumulatedDamage;
             
             if(numOfChaosOrbs > 0) {
+                Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnPlayerDamageDone] - [" + numOfChaosOrbs + "]");
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_expelChaosOrbsOn.centeredWorldLocation, numOfChaosOrbs, p_expelChaosOrbsOn.parentMap);
             }
         }
