@@ -68,6 +68,8 @@ public struct LogFillerStruct {
         string typeString = type.ToString();
         if (type.IsSubclassOf(typeof(TileObject))) {
             typeString = "TileObject"; //Need this because if type of tile object and name is the same, when hovered the underline code will underline this link text instead. (i.e. Table)
+        } else if (type.IsSubclassOf(typeof(LocationStructure))) {
+            typeString = "Inner_Maps.Location_Structures.LocationStructure"; //Need this because if type of tile object and name is the same, when hovered the underline code will underline this link text instead. (i.e. Table)
         }
         return $"{typeString}|{objPersistentID}";
     }

@@ -164,11 +164,11 @@ namespace Generator.Map_Generation.Components {
             } else {
                 //all non evil characters are blessed
                 character.traitContainer.AddTrait(character, "Blessed");
-                character.traitContainer.AddTrait(character, "Robust");
+                // character.traitContainer.AddTrait(character, "Robust");
             }
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
             buffTraits.Remove("Blessed");
-            buffTraits.Remove("Robust");
+            // buffTraits.Remove("Robust");
             List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
             List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
             flawTraits.Remove("Evil");

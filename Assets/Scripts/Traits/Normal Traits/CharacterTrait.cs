@@ -182,7 +182,8 @@ namespace Traits {
                     }
                 } else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
                     bool wasReportJobCreated = false;
-                    if (characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
+                    if (!PlayerManager.Instance.player.retaliationComponent.isRetaliating &&
+                        characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
                         characterThatWillDoJob.homeSettlement != null && characterThatWillDoJob.necromancerTrait == null && characterThatWillDoJob.race.IsSapient() && 
                         characterThatWillDoJob.hasMarker && characterThatWillDoJob.carryComponent.IsNotBeingCarried() && !characterThatWillDoJob.isAlliedWithPlayer && 
                         (!characterThatWillDoJob.partyComponent.hasParty || !characterThatWillDoJob.partyComponent.currentParty.isActive || 

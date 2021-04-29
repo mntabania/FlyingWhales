@@ -77,7 +77,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: f0000000dc000000c8000000b4000000
+    cooldownPerLevel: 500000003c0000003c0000003c000000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 
