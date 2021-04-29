@@ -392,6 +392,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				break;
 			}
 		}
+		UIManager.Instance.HideCharacterNameplateTooltip();
+		UIManager.Instance.HideStructureNameplateTooltip();
 		ProcessButtonAvailability();
 		m_maraudUIView.HideAllSubMenu();
 	}
