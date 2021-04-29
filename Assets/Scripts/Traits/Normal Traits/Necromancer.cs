@@ -13,6 +13,8 @@ namespace Traits {
         public string prevClassName { get; private set; }
         public int lifeAbsorbed { get; private set; }
         public int energy { get; private set; }
+        public bool doNotSpawnLair { get; private set; }
+        public GameDate spawnLairDate { get; private set; }
 
         #region getters
         public int numOfSkeletonFollowers => GetNumOfSkeletonFollowers();
@@ -44,6 +46,14 @@ namespace Traits {
             prevClassName = saveDataNecromancer.prevClassName;
             lifeAbsorbed = saveDataNecromancer.lifeAbsorbed;
             energy = saveDataNecromancer.energy;
+            doNotSpawnLair = saveDataNecromancer.doNotSpawnLair;
+            spawnLairDate = saveDataNecromancer.spawnLairDate;
+        }
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            if (doNotSpawnLair) {
+                SchedulingManager.Instance.AddEntry(spawnLairDate, () => SetDoNotSpawnLair(false), null);
+            }
         }
         #endregion
 
@@ -127,6 +137,18 @@ namespace Traits {
         public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
             attackVillageTarget = npcSettlement;
         }
+        public void SetDoNotSpawnLair(bool p_state) {
+            if (doNotSpawnLair != p_state) {
+                doNotSpawnLair = p_state;
+                if (owner.isDead) {
+                    return;
+                }
+                if (doNotSpawnLair) {
+                    spawnLairDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+                    SchedulingManager.Instance.AddEntry(spawnLairDate, () => SetDoNotSpawnLair(false), null);
+                }
+            }
+        }
         #endregion
     }
 }
@@ -138,6 +160,8 @@ public class SaveDataNecromancer : SaveDataTrait {
     public string prevClassName;
     public int lifeAbsorbed;
     public int energy;
+    public bool doNotSpawnLair;
+    public GameDate spawnLairDate;
     public override void Save(Trait trait) {
         base.Save(trait);
         Necromancer necromancer = trait as Necromancer;
@@ -147,6 +171,8 @@ public class SaveDataNecromancer : SaveDataTrait {
         prevClassName = necromancer.prevClassName;
         lifeAbsorbed = necromancer.lifeAbsorbed;
         energy = necromancer.energy;
+        doNotSpawnLair = necromancer.doNotSpawnLair;
+        spawnLairDate = necromancer.spawnLairDate;
     }
 }
 #endregion

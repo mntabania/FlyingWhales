@@ -1676,6 +1676,24 @@ namespace Inner_Maps {
             }
             return nearestArea;
         }
+        public Area GetNearestHexTileForNecromancerSpawnLair(Character p_necromancer) {
+            if (area.elevationComponent.IsFully(ELEVATION.PLAIN) && !area.structureComponent.HasStructureInArea() && !area.IsNextToOrPartOfVillage() && p_necromancer.movementComponent.HasPathTo(area)) {
+                return area;
+            }
+            Area nearestArea = null;
+            float nearestDist = 0f;
+            for (int i = 0; i < area.region.areas.Count; i++) {
+                Area a = area.region.areas[i];
+                if (a.elevationComponent.IsFully(ELEVATION.PLAIN) && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && p_necromancer.movementComponent.HasPathTo(a)) {
+                    float dist = GetDistanceTo(a.gridTileComponent.centerGridTile);
+                    if (nearestArea == null || dist < nearestDist) {
+                        nearestArea = a;
+                        nearestDist = dist;
+                    }
+                }
+            }
+            return nearestArea;
+        }
         #endregion
 
         #region Blueprints

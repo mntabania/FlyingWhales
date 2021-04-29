@@ -228,30 +228,72 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Character will return home";
                 character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
             } else {
-                if(character.necromancerTrait.lairStructure == null) {
-                    log += $"\n-Lair is not set, will spawn lair";
-                    Area chosenArea = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(a => a.elevationComponent.IsFully(ELEVATION.PLAIN) && 
-                                                                                                                    !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && 
-                                                                                                                    character.movementComponent.HasPathTo(a));
-                    //Removed this because we only have 1 region only
-                    //if (chosenArea == null) {
-                    //    chosenArea = GetNoStructurePlainAreaInAllRegions();
-                    //}
-                    LocationGridTile centerTileOfHex = chosenArea.gridTileComponent.centerGridTile;
-                    character.jobComponent.TriggerSpawnLair(centerTileOfHex, out producedJob);
+                if (character.necromancerTrait.doNotSpawnLair) {
+                    log += $"\n-Necromancer cannot spawn lair, will roam instead";
+                    character.jobComponent.TriggerRoamAroundTile(out producedJob);
                 } else {
-                    if(character.homeStructure != character.necromancerTrait.lairStructure) {
-                        log += $"\n-Lair is not his home, will migrate home first";
-                        character.MigrateHomeStructureTo(character.necromancerTrait.lairStructure);
+                    log += $"\n-Necromancer can spawn lair";
+                    if (character.necromancerTrait.lairStructure == null) {
+                        log += $"\n-Lair is not set, will try to spawn lair";
+                        Area chosenArea = character.gridTileLocation.GetNearestHexTileForNecromancerSpawnLair(character);
+                        //Removed this because we only have 1 region only
+                        //if (chosenArea == null) {
+                        //    chosenArea = GetNoStructurePlainAreaInAllRegions();
+                        //}
+                        if (chosenArea != null) {
+                            log += $"\n-Has chosen an area to spawn lair";
+                            LocationGridTile centerTileOfHex = chosenArea.gridTileComponent.centerGridTile;
+                            character.jobComponent.TriggerSpawnLair(centerTileOfHex, out producedJob);
+                        } else {
+                            log += $"\n-Cannot spawn lair, will find a special structure and set is as lair";
+                            LocationStructure possibleLairStructure = GetStructureForNecromancerLair(character);
+                            if (possibleLairStructure != null) {
+                                log += $"\n-Found special structure for lair: " + possibleLairStructure.name;
+                                character.necromancerTrait.SetLairStructure(possibleLairStructure);
+                                character.MigrateHomeStructureTo(possibleLairStructure);
+                            } else {
+                                log += $"\n-Could not find special structure, will roam instead";
+                                character.necromancerTrait.SetDoNotSpawnLair(true);
+                                character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                            }
+                        }
+                    } else {
+                        if (character.homeStructure != character.necromancerTrait.lairStructure) {
+                            log += $"\n-Lair is not his home, will migrate home first";
+                            character.MigrateHomeStructureTo(character.necromancerTrait.lairStructure);
+                        }
+                        log += $"\n-Character will return home";
+                        character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                     }
-                    log += $"\n-Character will return home";
-                    character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                 }
             }
         }
         return true;
 	}
 
+    private LocationStructure GetStructureForNecromancerLair(Character p_necromancer) {
+        Region region = p_necromancer.currentRegion;
+        if (region != null) {
+            for (int i = 0; i < region.allStructures.Count; i++) {
+                LocationStructure structure = region.allStructures[i];
+                if (!structure.hasBeenDestroyed && structure.structureType.IsSpecialStructure()) {
+                    if (!structure.IsOccupied() || IsStructureOccupiedByUndead(structure)) {
+                        return structure;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    private bool IsStructureOccupiedByUndead(LocationStructure p_structure) {
+        for (int i = 0; i < p_structure.residents.Count; i++) {
+            Character resident = p_structure.residents[i];
+            if (resident.faction != null && resident.faction.factionType.type == FACTION_TYPE.Undead) {
+                return true;
+            }
+        }
+        return false;
+    }
     private Area GetNoStructurePlainAreaInAllRegions() {
         Area chosenArea = null;
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
