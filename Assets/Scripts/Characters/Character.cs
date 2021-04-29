@@ -5567,6 +5567,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
 
+            if (isPlayerSource) {
+                PlayerManager.Instance?.player?.retaliationComponent.CharacterDeathRetaliation(this);
+            }
+
             List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Death_Trait);
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
@@ -5783,10 +5787,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
             eventDispatcher.ExecuteCharacterDied(this);
-
-            if (isPlayerSource) {
-                PlayerManager.Instance?.player?.retaliationComponent.CharacterDeathRetaliation(this);
-            }
 
             List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {
