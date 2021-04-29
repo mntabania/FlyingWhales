@@ -11,8 +11,7 @@ public class SaveDataPlayer {
     private TutorialManager.Tutorial_Type[] defaultUnlockedTutorials = new[] {
         TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers, TutorialManager.Tutorial_Type.Upgrading_The_Portal, TutorialManager.Tutorial_Type.Mana, TutorialManager.Tutorial_Type.Chaotic_Energy,
         TutorialManager.Tutorial_Type.Storing_Targets, TutorialManager.Tutorial_Type.Prism, TutorialManager.Tutorial_Type.Maraud, TutorialManager.Tutorial_Type.Intel,
-        TutorialManager.Tutorial_Type.Spirit_Energy,
-        TutorialManager.Tutorial_Type.Migration_Controls
+        TutorialManager.Tutorial_Type.Spirit_Energy, TutorialManager.Tutorial_Type.Migration_Controls, TutorialManager.Tutorial_Type.Base_Building
     };
     
     public string gameVersion;
