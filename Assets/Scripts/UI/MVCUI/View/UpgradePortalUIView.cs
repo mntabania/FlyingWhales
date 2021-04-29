@@ -120,6 +120,7 @@ public class UpgradePortalUIView : MVCUIView {
     #endregion
 
     #region Animations
+    private Sequence _showSequence;
     public void PlayShowAnimation() {
         UIModel.canvasGroupWindow.alpha = 0f;
         UIModel.canvasGroupCover.alpha = 0f;
@@ -133,12 +134,12 @@ public class UpgradePortalUIView : MVCUIView {
         UIModel.canvasGroupFrameGlow.DOKill();
         UIModel.canvasGroupFrameGlow.DOFade(1f, 2f).SetEase(Ease.OutQuart).SetLoops(-1, LoopType.Yoyo);
         
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(UIModel.canvasGroupWindow.DOFade(1f, 0.5f));
-        sequence.Join(UIModel.canvasGroupCover.DOFade(1f, 0.5f));
-        sequence.Join(UIModel.rectWindow.DOAnchorPos(targetPos, 0.5f));
-        sequence.Join(UIModel.rectFrame.DOSizeDelta(defaultSize, 0.8f));
-        sequence.AppendInterval(0.05f);
+        _showSequence = DOTween.Sequence();
+        _showSequence.Append(UIModel.canvasGroupWindow.DOFade(1f, 0.5f));
+        _showSequence.Join(UIModel.canvasGroupCover.DOFade(1f, 0.5f));
+        _showSequence.Join(UIModel.rectWindow.DOAnchorPos(targetPos, 0.5f));
+        _showSequence.Join(UIModel.rectFrame.DOSizeDelta(defaultSize, 0.8f));
+        _showSequence.AppendInterval(0.05f);
 
         if (UIModel.scrollRectContent.gameObject.activeSelf) {
             int lastIndex = 0;
@@ -151,8 +152,8 @@ public class UpgradePortalUIView : MVCUIView {
                     upgradePortalItemUI.SetHoverInteractionAllowedState(false);
                 
                     upgradePortalItemUI.contentParent.anchoredPosition = new Vector2(defaultPos.x, defaultPos.y + 50f);
-                    sequence.Join(upgradePortalItemUI.contentParent.DOAnchorPosY(targetPosY, 0.3f).SetDelay((i + 1)/30f));
-                    sequence.Join(upgradePortalItemUI.canvasGroupContent.DOFade(1f, 0.4f).OnComplete(() => upgradePortalItemUI.SetHoverInteractionAllowedState(true)));
+                    _showSequence.Join(upgradePortalItemUI.contentParent.DOAnchorPosY(targetPosY, 0.3f).SetDelay((i + 1)/30f));
+                    _showSequence.Join(upgradePortalItemUI.canvasGroupContent.DOFade(1f, 0.4f).OnComplete(() => upgradePortalItemUI.SetHoverInteractionAllowedState(true)));
                     lastIndex = i;
                 }
             }
@@ -162,8 +163,8 @@ public class UpgradePortalUIView : MVCUIView {
                 UIModel.canvasGroupChaoticEnergyUpgrade.alpha = 0f;
                 
                 UIModel.contentChaoticEnergyUpgrade.anchoredPosition = new Vector2(position.x, position.y + 50f);
-                sequence.Join(UIModel.contentChaoticEnergyUpgrade.DOAnchorPosY(targetPosition, 0.3f).SetDelay((lastIndex + 1)/30f));
-                sequence.Join(UIModel.canvasGroupChaoticEnergyUpgrade.DOFade(1f, 0.4f));    
+                _showSequence.Join(UIModel.contentChaoticEnergyUpgrade.DOAnchorPosY(targetPosition, 0.3f).SetDelay((lastIndex + 1)/30f));
+                _showSequence.Join(UIModel.canvasGroupChaoticEnergyUpgrade.DOFade(1f, 0.4f));    
             }
         } else if (UIModel.lblAwakenRuinarch.gameObject.activeSelf) {
             Vector2 position = UIModel.lblAwakenRuinarch.rectTransform.anchoredPosition; 
@@ -171,14 +172,15 @@ public class UpgradePortalUIView : MVCUIView {
             UIModel.canvasGroupAwakenRuinarch.alpha = 0f;
             
             UIModel.lblAwakenRuinarch.rectTransform.anchoredPosition = new Vector2(position.x, position.y + 50f);
-            sequence.Join(UIModel.lblAwakenRuinarch.rectTransform.DOAnchorPosY(targetPosition, 0.3f).SetDelay(1/30f));
-            sequence.Join(UIModel.canvasGroupAwakenRuinarch.DOFade(1f, 0.4f));
+            _showSequence.Join(UIModel.lblAwakenRuinarch.rectTransform.DOAnchorPosY(targetPosition, 0.3f).SetDelay(1/30f));
+            _showSequence.Join(UIModel.canvasGroupAwakenRuinarch.DOFade(1f, 0.4f));
         }
-        sequence.Append(UIModel.canvasGroupUpgradeInteraction.DOFade(1f, 0.3f));
-
-        sequence.Play();
+        _showSequence.Append(UIModel.canvasGroupUpgradeInteraction.DOFade(1f, 0.3f));
+        _showSequence.Play();
     }
     public void PlayHideAnimation(System.Action onComplete) {
+        _showSequence?.Kill(true);
+        _showSequence = null;
         Sequence sequence = DOTween.Sequence();
         Vector2 targetFrameSize = UIModel.defaultFrameSize;
         targetFrameSize.x += 1000f;

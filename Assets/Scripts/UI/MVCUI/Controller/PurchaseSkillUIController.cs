@@ -387,8 +387,8 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, p_type);
 		m_unlockCost = result;
 		if (result != -1) {
-			UIManager.Instance.ShowYesNoConfirmation(
-			"Portal Upgrade", $"Do you want to spend {result}{UtilityScripts.Utilities.ChaoticEnergyIcon()} to unlock {skillData.name}?", OnYesUnlockSkill, layer: 150);
+			UIManager.Instance.ShowYesNoConfirmation("Portal Upgrade", $"Do you want to spend {result}{UtilityScripts.Utilities.ChaoticEnergyIcon()} to unlock {skillData.name}?", 
+				OnYesUnlockSkill, layer: 150, showCover: true);
 		}
 	}
 

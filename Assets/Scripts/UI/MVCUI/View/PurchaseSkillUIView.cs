@@ -101,6 +101,7 @@ public class PurchaseSkillUIView : MVCUIView {
 	#endregion
 	
 	#region Animations
+	private Sequence _showSequence;
     public void PlayShowAnimation() {
 	    UIModel.canvasGroupCover.alpha = 0f;
 	    UIModel.canvasGroupMainWindow.alpha = 0f;
@@ -115,19 +116,19 @@ public class PurchaseSkillUIView : MVCUIView {
         UIModel.canvasGroupFrameGlow.DOKill();
         UIModel.canvasGroupFrameGlow.DOFade(1f, 2f).SetEase(Ease.OutQuart).SetLoops(-1, LoopType.Yoyo);
         
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(UIModel.canvasGroupMainWindow.DOFade(1f, 0.5f));
-        sequence.Join(UIModel.canvasGroupCover.DOFade(1f, 0.5f));
-        sequence.Join(UIModel.rectTransformMainWindow.DOAnchorPos(targetPos, 0.5f));
-        sequence.Join(UIModel.rectTransformFrame.DOSizeDelta(defaultSize, 0.8f));
-        sequence.AppendInterval(0.02f);
+        _showSequence = DOTween.Sequence();
+        _showSequence.Append(UIModel.canvasGroupMainWindow.DOFade(1f, 0.5f));
+        _showSequence.Join(UIModel.canvasGroupCover.DOFade(1f, 0.5f));
+        _showSequence.Join(UIModel.rectTransformMainWindow.DOAnchorPos(targetPos, 0.5f));
+        _showSequence.Join(UIModel.rectTransformFrame.DOSizeDelta(defaultSize, 0.8f));
+        _showSequence.AppendInterval(0.02f);
         
         for (int i = 0; i < UIModel.skillItems.Count; i++) {
 	        PurchaseSkillItemUI item = UIModel.skillItems[i];
-	        sequence.Join(item.PrepareAnimation().SetDelay(i/5f));
+	        _showSequence.Join(item.PrepareAnimation().SetDelay(i/5f));
         }
 
-        sequence.Play();
+        _showSequence.Play();
     }
     private Sequence _itemsSequence;
     public void PlayItemsAnimation() {
@@ -141,6 +142,8 @@ public class PurchaseSkillUIView : MVCUIView {
 	    _itemsSequence.Play();
     }
     public void PlayHideAnimation(System.Action onComplete) {
+	    _showSequence?.Kill(true);
+	    _showSequence = null;
         Sequence sequence = DOTween.Sequence();
         Vector2 targetFrameSize = UIModel.defaultFrameSize;
         targetFrameSize.x += 1000f;
