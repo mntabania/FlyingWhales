@@ -46,7 +46,6 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
     [Header("Threat")]
     [SerializeField] protected ThreatParticleEffect threatEffect;
 
-
     public Transform lastCenteredTarget { get; private set; }
     protected bool isMovementDisabled;
 
@@ -156,7 +155,6 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
                     }
                 }
             }
-            
         }
 
         if (isDragging) {
@@ -379,7 +377,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         }
         return false;
     }
-    private void SetCameraBounds(Bounds bounds) {
+    public void SetCameraBounds(Bounds bounds) {
         float halfOfHexagon = 256f / 100f;
         // MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * 1.5f);
         // MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * 1.5f); //removed -1 because of UI
