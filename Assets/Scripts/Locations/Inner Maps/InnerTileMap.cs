@@ -191,6 +191,8 @@ namespace Inner_Maps {
             eastEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
             
             upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
+
+            Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, UpdateOrtigraphicSize);
         }
         protected IEnumerator GenerateGrid(int width, int height, MapGenerationComponent mapGenerationComponent) {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -520,6 +522,7 @@ namespace Inner_Maps {
         #endregion
 
         void UpdateOrtigraphicSize(Camera p_cam, float p_float) {
+           
             groundTilemap.CompressBounds();
             _boundDrawer.ManualUpdateBounds(groundTilemap.localBounds);
             worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.camera;
