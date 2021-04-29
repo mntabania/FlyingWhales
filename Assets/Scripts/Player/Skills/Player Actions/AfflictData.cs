@@ -25,6 +25,9 @@ public class AfflictData : PlayerAction {
         return false;
     }
     public override bool IsValid(IPlayerActionTarget target) {
+        if (!PlayerManager.Instance.player.playerSkillComponent.HasAfflictions()) {
+            return false;
+        }
         if(target is Character character) {
             if (!character.isNormalCharacter || character.isConsideredRatman) {
                 return false;

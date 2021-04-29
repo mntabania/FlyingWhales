@@ -427,6 +427,9 @@ public class PlayerSkillComponent {
         }
         return false;
     }
+    public bool HasAfflictions() {
+        return afflictions.Count > 0;
+    }
     #endregion
 
     #region Skills
