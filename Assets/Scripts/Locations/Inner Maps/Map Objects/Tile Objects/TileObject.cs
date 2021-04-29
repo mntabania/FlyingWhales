@@ -163,7 +163,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
         eventDispatcher = new TileObjectEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }

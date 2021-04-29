@@ -86,6 +86,7 @@ public class CharacterTraitComponent : CharacterComponent {
             if (GameUtilities.RollChance(20)) {
                 LocationGridTile gridTile = owner.gridTileLocation;
                 if (gridTile != null) {
+                    Debug.Log("Chaos Orb Produced - [" + owner.name + "] - [Status Effect] - [" + 1 + "]");
                     Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, 1, gridTile.parentMap);
                 }
             }

@@ -233,9 +233,10 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     Area chosenArea = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(a => a.elevationComponent.IsFully(ELEVATION.PLAIN) && 
                                                                                                                     !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && 
                                                                                                                     character.movementComponent.HasPathTo(a));
-                    if (chosenArea == null) {
-                        chosenArea = GetNoStructurePlainAreaInAllRegions();
-                    }
+                    //Removed this because we only have 1 region only
+                    //if (chosenArea == null) {
+                    //    chosenArea = GetNoStructurePlainAreaInAllRegions();
+                    //}
                     LocationGridTile centerTileOfHex = chosenArea.gridTileComponent.centerGridTile;
                     character.jobComponent.TriggerSpawnLair(centerTileOfHex, out producedJob);
                 } else {
