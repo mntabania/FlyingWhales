@@ -79,11 +79,11 @@ public class MapSettings {
             case MAP_SIZE.Small:
                 return 1;
             case MAP_SIZE.Medium:
-                return 2;
+                return 1;
             case MAP_SIZE.Large:
-                return 3;
+                return 2;
             case MAP_SIZE.Extra_Large:
-                return 4;
+                return 3;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -93,11 +93,11 @@ public class MapSettings {
             case MAP_SIZE.Small:
                 return 1;
             case MAP_SIZE.Medium:
-                return 4;
+                return 2;
             case MAP_SIZE.Large:
-                return 6;
+                return 4;
             case MAP_SIZE.Extra_Large:
-                return 8;
+                return 6;
             default:
                 throw new ArgumentOutOfRangeException();
         }
