@@ -8,6 +8,7 @@ namespace Inner_Maps.Location_Structures {
         public override string scenarioDescription => "The Prism allows the player to spawn monsters that will roam around it and defend the player from hostile attacks.";
         public override string nameplateName => name;
         public DefensePoint(Region location) : base(STRUCTURE_TYPE.DEFENSE_POINT, location) {
+            SetMaxHPAndReset(2000);
             startingSummonCount = 2;
             nameWithoutID = "Prism";
             name = $"{nameWithoutID} {id.ToString()}";

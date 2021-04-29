@@ -15,6 +15,7 @@ namespace Inner_Maps.Location_Structures {
         public List<LocationGridTile> borderTiles { get; private set; }
         public override Type serializedData => typeof(SaveDataTortureChambers);
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
+            SetMaxHPAndReset(2500);
             nameWithoutID = "Prison";
             startingSummonCount = 2;
             name = $"{nameWithoutID} {id.ToString()}";

@@ -11,7 +11,9 @@ namespace Inner_Maps.Location_Structures {
         public override System.Type serializedData => typeof(SaveDataDefiler);
         #endregion
 
-        public Defiler(Region location) : base(STRUCTURE_TYPE.DEFILER, location) { }
+        public Defiler(Region location) : base(STRUCTURE_TYPE.DEFILER, location) {
+            SetMaxHPAndReset(3000);
+        }
         public Defiler(Region location, SaveDataDefiler data) : base(location, data) {
             hasVampirismBefore = data.hasVampirismBefore;
             hasSpawnNecronomiconBefore = data.hasSpawnNecronomiconBefore;
