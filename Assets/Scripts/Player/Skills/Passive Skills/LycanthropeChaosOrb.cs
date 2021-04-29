@@ -25,6 +25,7 @@ public class LycanthropeChaosOrb : PassiveSkill {
     }
 
     void OnLycanthropeShedWolfPelt(Character p_character) {
+        Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnLycanthropeShedWolfPelt] - [2]");
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 2, p_character.gridTileLocation.parentMap);
     }
 }

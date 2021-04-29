@@ -614,7 +614,7 @@ public class PlayerSkillComponent {
         }
         p_skillData.SetCooldown(p_playerSkillData.GetCoolDownBaseOnLevel(p_skillData.currentLevel));
         p_skillData.SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(p_skillData.type));
-        p_skillData.SetUnlockCost(p_playerSkillData.unlockCost);
+        p_skillData.SetUnlockCost(p_playerSkillData.GetUnlockCost());
         p_skillData.SetManaCost(WorldSettings.Instance.worldSettingsData.IsScenarioMap() ? p_playerSkillData.GetManaCostForScenarios() : p_playerSkillData.GetManaCostBaseOnLevel(p_skillData.currentLevel));
         p_skillData.SetThreat(p_playerSkillData.threat);
         p_skillData.SetThreatPerHour(p_playerSkillData.threatPerHour);

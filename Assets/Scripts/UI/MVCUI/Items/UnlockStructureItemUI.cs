@@ -19,11 +19,11 @@ public class UnlockStructureItemUI : MonoBehaviour {
         _structureType = p_type;
         _playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
         lblName.text = _playerSkillData.name;
-        lblCosts.text = $"{_playerSkillData.unlockCost}{UtilityScripts.Utilities.ManaIcon()}";
+        lblCosts.text = $"{_playerSkillData.GetUnlockCost()}{UtilityScripts.Utilities.ManaIcon()}";
         btn.onClick.AddListener(OnClickStructureItem);
     }
     private void OnClickStructureItem() {
-        onClickUnlockStructure?.Invoke(_structureType, _playerSkillData.unlockCost);
+        onClickUnlockStructure?.Invoke(_structureType, _playerSkillData.GetUnlockCost());
     }
 
     public void SetCoverState(bool p_state) {
@@ -37,7 +37,7 @@ public class UnlockStructureItemUI : MonoBehaviour {
             btn.interactable = false;
         } else {
             //player does not yet have structure, check if player can afford to unlock this
-            bool canAfford = PlayerManager.Instance.player.mana >= _playerSkillData.unlockCost;
+            bool canAfford = PlayerManager.Instance.player.mana >= _playerSkillData.GetUnlockCost();
             btn.interactable = canAfford;
             SetCoverState(!canAfford);
         }

@@ -2131,14 +2131,6 @@
         },
         {
           "resource": "WOOD",
-          "structureType": "DWELLING"
-        },
-        {
-          "resource": "WOOD",
-          "structureType": "DWELLING"
-        },
-        {
-          "resource": "WOOD",
           "structureType": "HOSPICE"
         },
         {
@@ -2182,7 +2174,7 @@
           "structureType": "CEMETERY"
         },
       ],
-      "minimumVillagerCount": 16,
+      "minimumVillagerCount": 11,
       "factionRace": "ELVES",
       "settlementType": "Elven_Hamlet"
     }

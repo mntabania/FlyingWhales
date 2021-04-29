@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UtilityScripts;
 
 [CreateAssetMenu(fileName = "New Character Class Data", menuName = "Scriptable Objects/Character Class Data")]
 public class CharacterClassData : ScriptableObject {
@@ -16,6 +17,10 @@ public class CharacterClassData : ScriptableObject {
     public Sprite portraitSprite;
     public CharacterClassAsset defaultSprites;
     public RaceSpriteListDictionary raceSprites;
+
+    public int GetSummonCost() {
+        return SpellUtilities.GetModifiedSpellCost(summonCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+    }
 
     public CharacterClassAsset GetAssets(RACE p_race) {
         if (raceSprites.ContainsKey(p_race)) {

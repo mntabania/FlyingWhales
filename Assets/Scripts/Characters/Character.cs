@@ -2753,7 +2753,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if(currentHP == 0) {
                     accumulatedDamage = prevHP;
                 }
-                PlayerManager.Instance.player.damageAccumulator.AccumulateDamage(accumulatedDamage, gridTileLocation);
+                PlayerManager.Instance.player.damageAccumulator.AccumulateDamage(accumulatedDamage, gridTileLocation, this);
             }
         }
         

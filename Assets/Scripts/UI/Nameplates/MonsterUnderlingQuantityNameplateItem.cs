@@ -49,7 +49,7 @@ public class MonsterUnderlingQuantityNameplateItem : NameplateItem<MonsterAndDem
         txtHp.text = cClass.baseHP.ToString();
         txtAttack.text = cClass.baseAttackPower.ToString();
         txtAttackSpeed.text = cClass.baseAttackSpeed.ToString();
-        summonCost = CharacterManager.Instance.GetOrCreateCharacterClassData(cClass.className).summonCost;
+        summonCost = CharacterManager.Instance.GetOrCreateCharacterClassData(cClass.className).GetSummonCost();
         txtManaCost.text = summonCost.ToString();
         if (_monsterOrMinion.isDemon) {
             mainLbl.text = cClass.className;

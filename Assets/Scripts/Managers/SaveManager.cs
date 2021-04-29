@@ -39,11 +39,11 @@ public class SaveManager : MonoBehaviour {
     #region getters
     public SaveDataPlayer currentSaveDataPlayer => savePlayerManager.currentSaveDataPlayer;
     public SaveDataCurrentProgress currentSaveDataProgress => saveCurrentProgressManager.currentSaveDataProgress;
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+// #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public bool unlockAllWorlds => _unlockAllWorlds;
-#else
-    public bool unlockAllWorlds => false;
-#endif
+// #else
+//     public bool unlockAllWorlds => false;
+// #endif
     #endregion
 
     #region Monobehaviours

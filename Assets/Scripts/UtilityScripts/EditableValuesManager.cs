@@ -110,11 +110,11 @@ public class EditableValuesManager : MonoBehaviour {
 	}
 
 	public int GetRevealCharacterInfoCost() {
-		return _revealInfoCharacterCost;
+		return SpellUtilities.GetModifiedSpellCost(_revealInfoCharacterCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
 	}
 
 	public int GetRevealFactionInfoCost() {
-		return _revealInfoFactionCost;
+		return SpellUtilities.GetModifiedSpellCost(_revealInfoFactionCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
 	}
 
 	public int GetChaosOrbHoverAmount() {
@@ -165,17 +165,17 @@ public class EditableValuesManager : MonoBehaviour {
 	}
 	public Cost GetReleaseAbilitiesRerollCost() {
 		Cost defaultCost = currencyHoverData.releaseAbilitiesRerollCost;
-		int modifiedCost = SpellUtilities.GetModifiedSpellCost(defaultCost.amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());;
+		int modifiedCost = defaultCost.processedAmount;
 		return new Cost(defaultCost.currency, modifiedCost);
 	}
 	public Cost GetCorruptTileCost() {
 		Cost defaultCost = currencyHoverData.corruptFloorCost;
-		int modifiedCost = SpellUtilities.GetModifiedSpellCost(defaultCost.amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());;
+		int modifiedCost = defaultCost.processedAmount;
 		return new Cost(defaultCost.currency, modifiedCost);
 	}
 	public Cost GetBuildWallCost() {
 		Cost defaultCost = currencyHoverData.buildWallCost;
-		int modifiedCost = SpellUtilities.GetModifiedSpellCost(defaultCost.amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());;
+		int modifiedCost = defaultCost.processedAmount;
 		return new Cost(defaultCost.currency, modifiedCost);
 	}
 }

@@ -36,6 +36,7 @@ public class DefensePointUIModel : MVCUIModel {
 	
 	public RuinarchText txtTitle;
 
+	public UIHoverPosition hoverPosition;
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);

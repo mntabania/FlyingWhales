@@ -107,7 +107,7 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         PortalUpgradeTier nextTier = portal.nextTier;
         UIManager.Instance.ShowYesNoConfirmation(
-            "Portal Upgrade", $"Do you want to spend {nextTier.GetUpgradeCostString()} to upgrade the Portal? ", OnClickConfirmUpgrade, layer:150);
+            "Portal Upgrade", $"Do you want to spend {nextTier.GetUpgradeCostString()} to upgrade the Portal? ", OnClickConfirmUpgrade, layer:150, showCover: true);
     }
 
     public void OnClickConfirmUpgrade() {

@@ -126,7 +126,7 @@ namespace Inner_Maps {
                     Cost corruptCost = EditableValuesManager.Instance.GetCorruptTileCost();
                     if (corruptCost.currency == CURRENCY.Chaotic_Energy) {
                         //This is so that refunding will not affect spirit energy
-                        PlayerManager.Instance.player.plagueComponent.AdjustPlaguePointsWithoutAffectingSpiritEnergy(corruptCost.amount);    
+                        PlayerManager.Instance.player.plagueComponent.AdjustPlaguePointsWithoutAffectingSpiritEnergy(corruptCost.processedAmount);    
                     } else {
                         PlayerManager.Instance.player.AddCurrency(corruptCost);
                     }

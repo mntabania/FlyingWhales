@@ -68,7 +68,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         txtHP.text = cClass.baseHP.ToString();
         txtAtk.text = cClass.baseAttackPower.ToString();
         txtAtkSpd.text = cClass.baseAttackSpeed.ToString();
-        summonCost = CharacterManager.Instance.GetOrCreateCharacterClassData(cClass.className).summonCost;
+        summonCost = CharacterManager.Instance.GetOrCreateCharacterClassData(cClass.className).GetSummonCost();
         txtSummonCost.text = summonCost.ToString();
         if (p_underling.isDemon) {
             isMinion = true;
@@ -109,6 +109,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     }
 
     public void ResetButton() {
+        deployedCharacter = null;
         isDeployed = false;
         isReadyForDeploy = false;
         emptyCover.SetActive(true);

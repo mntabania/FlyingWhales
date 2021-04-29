@@ -22,6 +22,7 @@ MonoBehaviour:
   cheatedLevel: 0
   pierce: 0
   bonusChargeWhenUnlocked: 3
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: 7ecd3228d54a4dc4f817bd86a29d1f1a, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 5a3333c7232bbb94894fcc20adc3c147, type: 3}
   tooltipImage: {fileID: 0}
@@ -52,7 +53,7 @@ MonoBehaviour:
   skillUpgradeData:
     upgradeCosts: 140000003200000050000000
     manacostPerLevel: 6400000096000000c80000002c010000
-    chargesPerLevel: 01000000010000000200000003000000
+    chargesPerLevel: 01000000010000000200000002000000
     bonuses: 0e000000010000000a000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
@@ -73,13 +74,13 @@ MonoBehaviour:
     - 20
     - 40
     - 60
-    durationBonusPerLevel: 280000003c0000005000000064000000
+    durationBonusPerLevel: 28000000320000003200000050000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: a00000008c0000008c0000008c000000
+    cooldownPerLevel: a0000000780000007800000078000000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 
