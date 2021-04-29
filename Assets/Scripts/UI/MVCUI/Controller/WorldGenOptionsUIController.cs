@@ -279,10 +279,10 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 
 	#region Tooltips
 	public void OnHoverOverMapSize(UIHoverPosition p_pos) {
-		string summary = "<b>Small</b> - Can accommodate 1 small region and 1 village only." +
-		                 "\n<b>Medium</b> - Can accommodate 2 regions with up to 4 villages." +
-		                 "\n<b>Large</b> - Can accommodate 3 regions with up to 6 villages." +
-		                 "\n<b>Extra Large</b> - Can accommodate 4 regions with up to 8 villages.";
+		string summary = "<b>Small</b> - Can accommodate 1 faction and 1 village only." +
+		                 "\n<b>Medium</b> - Can accommodate 1 faction with up to 2 villages." +
+		                 "\n<b>Large</b> - Can accommodate 2 factions with up to 4 villages." +
+		                 "\n<b>Extra Large</b> - Can accommodate 3 factions with up to 6 villages.";
 		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, "Map Size", autoReplaceText: false);
 	}
 	public void OnHoverOutMapSize() {
@@ -324,7 +324,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		                 "\n<b>Half</b> - Costs are reduced to half of normal (rounded up)." +
 		                 "\n<b>Normal</b> - Normal cost." +
 		                 "\n<b>Double</b> - Costs are double of normal.";
-		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ManaIcon()} Costs", autoReplaceText: false);
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"Costs", autoReplaceText: false);
 	}
 	public void OnHoverOutCosts() {
 		Tooltip.Instance.HideSmallInfo();
