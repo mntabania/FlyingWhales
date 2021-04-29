@@ -233,7 +233,8 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     character.jobComponent.TriggerRoamAroundTile(out producedJob);
                 } else {
                     log += $"\n-Necromancer can spawn lair";
-                    if (character.necromancerTrait.lairStructure == null) {
+                    if (character.necromancerTrait.lairStructure == null || character.necromancerTrait.lairStructure.hasBeenDestroyed) {
+                        character.necromancerTrait.SetLairStructure(null);
                         log += $"\n-Lair is not set, will try to spawn lair";
                         Area chosenArea = character.gridTileLocation.GetNearestHexTileForNecromancerSpawnLair(character);
                         //Removed this because we only have 1 region only
