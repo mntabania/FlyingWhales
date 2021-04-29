@@ -20,7 +20,7 @@ public class SnatchVillagerData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is TortureChambers tortureChambers) {
-            if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
+            if (tortureChambers.rooms != null && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
                 List<Character> charactersInRoom = prisonCell.charactersInRoom;
                 if (!charactersInRoom.Any(c => prisonCell.IsValidOccupant(c))) {
                     //if prison cell does not have any valid occupants yet, then allow snatch action.

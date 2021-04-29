@@ -55,7 +55,10 @@ namespace Inner_Maps.Location_Structures {
             if (structureType != STRUCTURE_TYPE.THE_PORTAL) {
                 DemonicStructurePlayerSkill skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
                 if(skill.isInUse) {
-                    skill.AdjustCharges(1);
+                    int numberOfActiveStructures = PlayerManager.Instance.player.playerSettlement.GetStructureCount(structureType);
+                    if (numberOfActiveStructures < skill.maxCharges) {
+                        skill.AdjustCharges(1);
+                    }
                 }
             }
             Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);

@@ -425,9 +425,10 @@ namespace UtilityScripts {
             if (InteractionManager.Instance.forcedActionNames.Contains(word)) {
                 return true;
             }
-            if (word.EndsWith("ing") || word.EndsWith("ed")) {
-                return true;
-            } else if (InteractionManager.Instance.actionNames.Contains(word)) {
+            // if (word.EndsWith("ing") || word.EndsWith("ed")) {
+            //     return true;
+            // } else 
+            if (InteractionManager.Instance.actionNames.Contains(word)) {
                 return true;
             }
             return false;
