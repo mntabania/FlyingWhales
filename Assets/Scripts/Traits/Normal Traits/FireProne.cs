@@ -12,7 +12,7 @@ namespace Traits {
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            mutuallyExclusive = new[] { "Fireproof" };
+            mutuallyExclusive = new[] { "Fire Resistant" };
         }
     }
 }

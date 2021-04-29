@@ -343,13 +343,13 @@ public class TraitManager : BaseMonoBehaviour {
     private string[] GetTraitPoolForWorld() {
         if (WorldConfigManager.Instance.isTutorialWorld) {
             return new[] { "Inspiring", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
-                "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
+                "Fire Resistant", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac",
                 "Lycanphobic", "Lycanphiliac", "Ruthless"
             };
         } else {
             return new[] { "Inspiring", "Blessed", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
-                "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
+                "Fire Resistant", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac",
                 "Lycanphobic", "Lycanphiliac", "Ruthless"
             };;

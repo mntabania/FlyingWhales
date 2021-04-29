@@ -8,7 +8,9 @@ namespace Inner_Maps.Location_Structures {
         public override string scenarioDescription => "Each Crypt can produce up to 3 Skeleton minions. You may use these Skeletons to spawn monster parties using your Maraud, Prism, Kennel or Prison.";
 
         public override SUMMON_TYPE housedMonsterType => SUMMON_TYPE.Skeleton;
-        public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){ }
+        public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){
+            SetMaxHPAndReset(1500);
+        }
         public Crypt(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 
         #region Overrides

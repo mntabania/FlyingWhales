@@ -88,6 +88,15 @@ namespace Traits {
             }
         }
         private void ApplyTraitEffects(Character character, Trait trait) {
+            if (trait.resistancesType != null && trait.resistancesValue != null) {
+                if (trait.resistancesType.Count != trait.resistancesValue.Count) {
+                    Debug.LogError("Resistances does not match for " + trait.name);
+                } else {
+                    for (int i = 0; i < trait.resistancesType.Count; i++) {
+                        character.piercingAndResistancesComponent.AdjustResistance(trait.resistancesType[i], trait.resistancesValue[i]);
+                    }
+                }
+            }
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.needsComponent.AdjustDoNotGetTired(1);
             } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Resting" || trait.name == "Unconscious") {
@@ -137,6 +146,15 @@ namespace Traits {
             }
         }
         public void UnapplyTraitEffects(Character character, Trait trait) {
+            if (trait.resistancesType != null && trait.resistancesValue != null) {
+                if (trait.resistancesType.Count != trait.resistancesValue.Count) {
+                    Debug.LogError("Resistances does not match for " + trait.name);
+                } else {
+                    for (int i = 0; i < trait.resistancesType.Count; i++) {
+                        character.piercingAndResistancesComponent.AdjustResistance(trait.resistancesType[i], -trait.resistancesValue[i]);
+                    }
+                }
+            }
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
             } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Resting" || trait.name == "Unconscious") {

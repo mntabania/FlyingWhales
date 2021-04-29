@@ -12,6 +12,7 @@ namespace Inner_Maps.Location_Structures {
         public override System.Type serializedData => typeof(SaveDataBeholder);
         #endregion
         public Beholder(Region location) : base(STRUCTURE_TYPE.BEHOLDER, location){
+            SetMaxHPAndReset(2500);
             eyeWards = new List<EyeWard>();
         }
         public Beholder(Region location, SaveDataBeholder data) : base(location, data) {

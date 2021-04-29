@@ -49,7 +49,7 @@ public class PsychopathUI : MonoBehaviour {
         "Accident Prone", "Agoraphobic", "Alcoholic", "Ambitious", "Authoritative"
         , "Blessed"
         , "Cannibal", "Chaste", "Coward", "Diplomatic", "Evil"
-        , "Fast", "Fireproof", "Glutton", "Hothead", "Inspiring", "Kleptomaniac"
+        , "Fast", "Fire Resistant", "Glutton", "Hothead", "Inspiring", "Kleptomaniac"
         , "Lazy", "Lustful", "Lycanthrope", "Music Hater", "Music Lover", "Narcoleptic"
         , "Nocturnal", "Optimist", "Pessimist", "Psychopath", "Purifier", "Pyrophobic"
         , "Robust", "Suspicious", "Treacherous", "Unattractive", "Unfaithful", "Vampire", "Vigilant"};

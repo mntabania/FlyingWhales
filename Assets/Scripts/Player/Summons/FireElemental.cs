@@ -13,7 +13,7 @@ public class FireElemental : Summon {
 
     public override void Initialize() {
         base.Initialize();
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Fire_Elemental_Behaviour);
     }
     public override void SubscribeToSignals() {
