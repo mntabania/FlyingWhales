@@ -360,7 +360,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	private void OnHoverOverSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
 		if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == PLAYER_SKILL_TYPE.NONE) {
-			if (PlayerManager.Instance.player.plagueComponent.plaguePoints < p_skillData.unlockCost) {
+			if (PlayerManager.Instance.player.plagueComponent.plaguePoints < p_skillData.GetUnlockCost()) {
 				UIManager.Instance.ShowSmallInfo("Not enough mana!");
 			} else {
 				p_item.borderShineEffect.Play();
@@ -369,7 +369,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	}
 	private void OnHoverOutSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
 		if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == PLAYER_SKILL_TYPE.NONE) {
-			if (PlayerManager.Instance.player.plagueComponent.plaguePoints < p_skillData.unlockCost) {
+			if (PlayerManager.Instance.player.plagueComponent.plaguePoints < p_skillData.GetUnlockCost()) {
 				UIManager.Instance.HideSmallInfo();
 			} else {
 				p_item.borderShineEffect.Stop(true);

@@ -148,6 +148,8 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 				item.SetAsButton();
 				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && entry.Value.currentCharges > 0);
 				m_summonList.Add(item);
+				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
+				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
 			}
 		}
 		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
@@ -303,7 +305,24 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		InputManager.Instance.SetAllHotkeysEnabledState(true);
 		UIManager.Instance.ResumeLastProgressionSpeed();
 	}
-	
+
+	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges p_monsterAndDemonUnderlingCharges) {
+		CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(p_monsterAndDemonUnderlingCharges.characterClassName);
+		if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
+			CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
+			UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_defensePointUIView.UIModel.hoverPosition, combatBehaviour.name);
+		}
+		/*
+		if (p_monsterAndDemonUnderlingCharges.isDemon) {
+			MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
+			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
+		}*/
+	}
+
+	void OnHoverExitItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
+		UIManager.Instance.HideSmallInfo();
+	}
+
 	public void OnCloseSummonSubContainer() { m_defensePointUIView.HideAllSubMenu(); m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints); }
 
 	public void OnHoverOver() {

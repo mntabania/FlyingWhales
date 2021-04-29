@@ -21,7 +21,7 @@ public class UnlockMinionItemUI : MonoBehaviour {
         lblName.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(trimmed);
         _playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
         MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(p_type);
-        lblCosts.text = $"{_playerSkillData.unlockCost}{UtilityScripts.Utilities.ManaIcon()}";
+        lblCosts.text = $"{_playerSkillData.GetUnlockCost()}{UtilityScripts.Utilities.ManaIcon()}";
         _portrait.GeneratePortrait(CharacterManager.Instance.GeneratePortrait(RACE.DEMON, GENDER.MALE, minionPlayerSkill.className, false));
         _portrait.AddPointerClickAction(OnClickMinionItem);
     }
@@ -35,12 +35,12 @@ public class UnlockMinionItemUI : MonoBehaviour {
         } else {
             SetCheckmarkState(false);
             //player does not yet have minion type, check if player can afford to unlock this
-            SetCoverState(PlayerManager.Instance.player.mana < _playerSkillData.unlockCost);
+            SetCoverState(PlayerManager.Instance.player.mana < _playerSkillData.GetUnlockCost());
         }
     }
     
     private void OnClickMinionItem() {
-        onClickUnlockMinion?.Invoke(_minionType, _playerSkillData.unlockCost);
+        onClickUnlockMinion?.Invoke(_minionType, _playerSkillData.GetUnlockCost());
     }
 
     public void SetCoverState(bool p_state) {

@@ -109,6 +109,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
     }
 
     public void ResetButton() {
+        deployedCharacter = null;
         isDeployed = false;
         isReadyForDeploy = false;
         emptyCover.SetActive(true);

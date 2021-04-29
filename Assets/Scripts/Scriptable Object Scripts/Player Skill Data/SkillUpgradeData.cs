@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using UtilityScripts;
+
 [System.Serializable]
 public class SkillUpgradeData
 {
@@ -51,7 +53,7 @@ public class SkillUpgradeData
         if (p_currentLevel >= upgradeCosts.Count) {
             return upgradeCosts[upgradeCosts.Count - 1];
         }
-        return upgradeCosts[p_currentLevel];
+        return SpellUtilities.GetModifiedSpellCost(upgradeCosts[p_currentLevel], WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
     }
     public int GetAdditionalDamageBaseOnLevel(int p_currentLevel) {
         if (additionalDamagePerLevel == null || additionalDamagePerLevel.Count <= 0) {
