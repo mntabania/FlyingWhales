@@ -849,10 +849,10 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
     public void AddCurrency(Cost p_cost) {
-        AdjustCurrency(p_cost.currency, p_cost.amount);
+        AdjustCurrency(p_cost.currency, p_cost.processedAmount);
     }
     public void ReduceCurrency(Cost p_cost) {
-        AdjustCurrency(p_cost.currency, -p_cost.amount);
+        AdjustCurrency(p_cost.currency, -p_cost.processedAmount);
     }
     public bool CanAfford(CURRENCY p_currency, int p_amount) {
         switch (p_currency) {
@@ -868,7 +868,7 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
     public bool CanAfford(Cost p_cost) {
-        return CanAfford(p_cost.currency, p_cost.amount);
+        return CanAfford(p_cost.currency, p_cost.processedAmount);
     }
     public bool CanAfford(Cost[] p_cost) {
         bool canAfford = true;

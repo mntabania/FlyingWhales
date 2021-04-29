@@ -5,6 +5,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
+using UtilityScripts;
+
 [CreateAssetMenu(fileName = "New Player Skill Loadout", menuName = "Scriptable Objects/Player Skill Loadout")]
 public class PlayerSkillLoadout : ScriptableObject {
 
@@ -77,7 +79,7 @@ public struct PortalUpgradeTier {
         for (int i = 0; i < upgradeCost.Length; i++) {
             Cost cost = upgradeCost[i];
             string costSprite = cost.currency.GetCurrencyTextSprite();
-            combined = $"{combined} {cost.amount.ToString()}{costSprite}";
+            combined = $"{combined} {cost.processedAmount.ToString()}{costSprite}";
             if (!upgradeCost.IsLastIndex(i)) {
                 combined = $"{combined},";
             }
@@ -91,14 +93,16 @@ public struct Cost {
     public CURRENCY currency;
     public int amount;
 
+    public int processedAmount => SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+
     public Cost(CURRENCY p_currency, int p_amount) {
         currency = p_currency;
         amount = p_amount;
-        name = $"{amount.ToString()} {currency.ToString()}";
+        name = $"{SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()).ToString()} {currency.ToString()}";
     }
     
     public override string ToString() {
-        return $"{amount.ToString()} {currency.ToString()}";
+        return $"{processedAmount.ToString()} {currency.ToString()}";
     }
     public string GetCostStringWithIcon() {
         string icon = string.Empty;
@@ -116,6 +120,6 @@ public struct Cost {
                 icon = string.Empty;
                 break;
         }
-        return $"{amount.ToString()}{icon}";
+        return $"{processedAmount.ToString()}{icon}";
     }
 }
