@@ -318,10 +318,20 @@ namespace Ruinarch {
                     return true;
                 }
                 if (UIManager.Instance.upgradePortalUIController.isShowing) {
+                    //TODO: Improve this
+                    if (UIManager.Instance.yesNoConfirmation.isShowing) {
+                        UIManager.Instance.yesNoConfirmation.Close();
+                        return true;
+                    }
                     UIManager.Instance.upgradePortalUIController.HideViaShortcutKey();
                     return true;
                 }
                 if (UIManager.Instance.purchaseSkillUIController.isShowing) {
+                    //TODO: Improve this
+                    if (UIManager.Instance.yesNoConfirmation.isShowing) {
+                        UIManager.Instance.yesNoConfirmation.Close();
+                        return true;
+                    }
                     UIManager.Instance.purchaseSkillUIController.HideViaShortcutKey();
                     return true;
                 }

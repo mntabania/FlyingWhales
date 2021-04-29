@@ -29,7 +29,7 @@ public class UpgradePortalItemUI : PooledObject {
     private System.Action<UpgradePortalItemUI> _onHoverOverItem;
     private System.Action<UpgradePortalItemUI> _onHoverOutItem;
     private bool _allowHoverInteraction = true;
-
+    
     #region getters
     public PLAYER_SKILL_TYPE skill => _skill;
     public PASSIVE_SKILL passiveSkill => _passiveSkill;
