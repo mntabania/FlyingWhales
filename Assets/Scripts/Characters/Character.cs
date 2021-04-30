@@ -4991,7 +4991,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Pathfinding
     public void PopulateTilesInRadius(List<LocationGridTile> tiles, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
-        if(currentRegion == null) { return null; }
+        if(currentRegion == null) { return; }
         int mapSizeX = currentRegion.innerMap.map.GetUpperBound(0);
         int mapSizeY = currentRegion.innerMap.map.GetUpperBound(1);
         int x = gridTileLocation.localPlace.x;
