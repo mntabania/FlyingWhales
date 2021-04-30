@@ -41,7 +41,7 @@ MonoBehaviour:
   requirementData:
     requirements: 08000000
     requiredArchetype: 0
-    requiredSkills: 2b000000
+    requiredSkills: 
     actionCount: 0
     afflictionCount: 0
     spellsCount: 0
