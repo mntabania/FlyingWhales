@@ -220,7 +220,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
 		if (!m_isAllItemDeployed) {
-			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Deploy Party.", $"Are you sure you want to use {m_totalDeployCost.ToString()} mana and deploy the party?", OnYesDeploy, showCover: true, layer: 150);
+			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Deploy Party.", $"Are you sure you want to spend {m_totalDeployCost.ToString()}{UtilityScripts.Utilities.ManaIcon()} to summon this party?", OnYesDeploy, showCover: true, layer: 150);
 		} else {
 			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Disband Party.", $"Are you sure you want to disband the party?", OnYesUndeploy, showCover: true, layer: 150);
 		}
@@ -328,7 +328,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	public void OnHoverOver() {
 		if (m_isAllItemDeployed) {
-			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
+			Tooltip.Instance.ShowSmallInfo("Unsummon all party members.", "Undeploy Party", autoReplaceText: false);
 		} else {
 			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
 				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana.", "Not enough Mana", autoReplaceText: false);
