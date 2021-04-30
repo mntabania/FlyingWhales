@@ -80,7 +80,7 @@ public class DefensePointUIView : MVCUIView {
 		}
 		if (p_currentCount < p_maxCount) {
 			UIModel.deployedItemSummonsUI[p_currentCount].gameObject.SetActive(true);
-			UIModel.deployedItemSummonsUI[p_currentCount].MakeSlotLocked(p_currentMana >= UIModel.deployedItemSummonsUI[p_currentCount].unlockCost);
+			UIModel.deployedItemSummonsUI[p_currentCount].MakeSlotLocked(p_currentMana >= UIModel.deployedItemSummonsUI[p_currentCount].GetUnlockCost());
 		}
 
 		for (int x = p_currentCount + 1; x < UIModel.deployedItemSummonsUI.Count; ++x) {

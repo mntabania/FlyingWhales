@@ -153,7 +153,7 @@ public class MaraudUIView : MVCUIView {
 		targetIndex = p_currentCount;
 		if (targetIndex < p_maxCount) {
 			UIModel.deployedItemSummonsUI[targetIndex].gameObject.SetActive(true);
-			UIModel.deployedItemSummonsUI[targetIndex].MakeSlotLocked(p_currentMana >= UIModel.deployedItemSummonsUI[targetIndex].unlockCost);
+			UIModel.deployedItemSummonsUI[targetIndex].MakeSlotLocked(p_currentMana >= UIModel.deployedItemSummonsUI[targetIndex].GetUnlockCost());
 			targetIndex++;
 			for (int x = targetIndex; x < p_maxCount; ++x) {
 				UIModel.deployedItemSummonsUI[x].gameObject.SetActive(true);
