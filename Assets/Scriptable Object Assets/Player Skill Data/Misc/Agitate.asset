@@ -40,12 +40,12 @@ MonoBehaviour:
   isLockedBaseOnRequirements: 0
   requirementData:
     requirements: 08000000
-    requiredArchetype: 2
-    requiredSkills: 2a00000022000000
-    actionCount: 2
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 0
     afflictionCount: 0
     spellsCount: 0
-    tier1Count: 6
+    tier1Count: 0
     tier2Count: 0
     tier3Count: 0
     portalLevel: 2
