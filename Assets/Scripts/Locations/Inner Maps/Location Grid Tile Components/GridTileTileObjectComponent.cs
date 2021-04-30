@@ -259,15 +259,16 @@ namespace Inner_Maps {
             
             GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Landmine_Explosion);
             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
-            yield return new WaitForSeconds(0.5f);
             SetHasLandmine(false);
+            if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
+                Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
+            }
+            yield return new WaitForSeconds(0.5f);
             List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
             owner.PopulateTilesInRadius(tiles, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
             SkillData landmineData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.LANDMINE);
             int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(landmineData);
-            if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
-                Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
-            }
+            
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 List<IPointOfInterest> pois = RuinarchListPool<IPointOfInterest>.Claim();
