@@ -19,8 +19,11 @@ public class WorldSettings : MonoBehaviour {
     public Button btnContinue;
 
     public GameObject hoverGO;
+    public GameObject subHoverGO;
     public RuinarchText hoverText;
     public RuinarchText hoverTitle;
+    public RuinarchText subHoverText;
+    public RuinarchText subHoverTitle;
     public WorldPickerItem[] worldPickerItems;
     private WorldPickerItem toggledWorldPicker;
     public Transform parentDisplay;
@@ -128,11 +131,11 @@ public class WorldSettings : MonoBehaviour {
         }
     }
     public void OnHoverEnterWorldPicker(WorldPickerItem item) {
-        ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(item.worldType.ToString()), item.description);
+        ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(item.worldType.ToString()), item.description, item.isScenario);
     }
     public void OnHoverExitWorldPicker(WorldPickerItem item) {
         if(toggledWorldPicker != null && toggledWorldPicker.description != string.Empty) {
-            ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(toggledWorldPicker.worldType.ToString()), toggledWorldPicker.description);
+            ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(toggledWorldPicker.worldType.ToString()), toggledWorldPicker.description, toggledWorldPicker.isScenario);
         } else {
             HideHover();
         }
@@ -140,19 +143,32 @@ public class WorldSettings : MonoBehaviour {
     public void OnToggleWorldPicker(WorldPickerItem item, bool state) {
         if (state) {
             toggledWorldPicker = item;
-            ShowHover(item.worldType.ToString(), item.description);
+            ShowHover(item.worldType.ToString(), item.description, item.isScenario);
         }
     }
-    public void ShowHover(string title, string text) {
-        if(title != string.Empty && text != string.Empty) {
-            hoverTitle.text = title;
-            hoverText.text = text;
+    public void ShowHover(string title, string text, bool p_isScenario) {
+        if (title != string.Empty && text != string.Empty) {
+            subHoverTitle.text = title;
+            subHoverText.text = text;
+            if (p_isScenario) {
+                hoverTitle.text = "Scenario Game\n";
+                hoverText.text = "Scenarios are shorter games with a variety of different situations and victory conditions. Unlike Custom, you will start with a bigger loadout with some optional configurable slots.\n\nHowever, you don't get to upgrade the Portal, so you won't get permanent access to more Powers. Unleash Power is still available in the Portal so you can still get Bonus Charges.";
+            } else {
+                hoverTitle.text = "Custom Game\n";
+                hoverText.text = "Configure game settings and generate a random world.";
+
+            }
             hoverGO.SetActive(true);
+            subHoverGO.SetActive(true);
             LayoutRebuilder.ForceRebuildLayoutImmediate(hoverGO.transform as RectTransform);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(subHoverGO.transform as RectTransform);
+        } else {
+            HideHover();
         }
     }
     public void HideHover() {
         hoverGO.SetActive(false);
+        subHoverGO.SetActive(false);
     }
     #endregion
 

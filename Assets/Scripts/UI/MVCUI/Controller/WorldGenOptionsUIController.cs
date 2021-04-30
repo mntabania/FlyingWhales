@@ -320,10 +320,9 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	public void OnHoverOverCosts(UIHoverPosition p_pos) {
 		string summary = "Set the costs of your abilities.\n" +
-		                 "\n<b>None</b> - All actions have zero cost." +
-		                 "\n<b>Half</b> - Costs are reduced to half of normal (rounded up)." +
-		                 "\n<b>Normal</b> - Normal cost." +
-		                 "\n<b>Double</b> - Costs are double of normal.";
+						 "\n<b>None</b> - All actions have zero cost." +
+						 "\n<b>Half</b> - Costs are reduced to half of normal (rounded up)." +
+						 "\n<b>Normal</b> - Normal cost.";
 		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"Costs", autoReplaceText: false);
 	}
 	public void OnHoverOutCosts() {
