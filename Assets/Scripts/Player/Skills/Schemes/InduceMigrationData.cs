@@ -42,6 +42,12 @@ public class InduceMigrationData : PlayerAction {
         if (targetSettlement is NPCSettlement npcSettlement && npcSettlement.locationType != LOCATION_TYPE.VILLAGE /*!npcSettlement.migrationComponent.IsMigrationEventAllowed()*/) {
             return false;
         }
+        if (targetSettlement.owner != null) {
+            if (targetSettlement.owner.factionType.type != FACTION_TYPE.Human_Empire && targetSettlement.owner.factionType.type != FACTION_TYPE.Elven_Kingdom) {
+                //Cannot induce migration to settlements owned by a faction but that faction is not a human empire or elven kingdom
+                return false;
+            }
+        }
         //if (PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.SCHEME).charges <= 0) {
         //    return false;
         //}
@@ -64,6 +70,12 @@ public class InduceMigrationData : PlayerAction {
         if (p_targetSettlement is NPCSettlement npcSettlement /*&& !npcSettlement.migrationComponent.IsMigrationEventAllowed()*/) {
             if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE) {
                 reasons += $"{p_targetSettlement.name} is not a village,";
+            }
+            if (npcSettlement.owner != null) {
+                if (npcSettlement.owner.factionType.type != FACTION_TYPE.Human_Empire && npcSettlement.owner.factionType.type != FACTION_TYPE.Elven_Kingdom) {
+                    //Cannot induce migration to settlements owned by a faction but that faction is not a human empire or elven kingdom
+                    reasons += $"{p_targetSettlement.name} is not owned by a Human Empire or Elven Kingdom faction,";
+                }
             }
             //if (npcSettlement.residents.Count <= 0) {
             //    reasons += $"{p_targetSettlement.name} does not have any residents,";

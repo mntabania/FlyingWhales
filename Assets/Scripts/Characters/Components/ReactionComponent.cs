@@ -717,6 +717,9 @@ public class ReactionComponent : CharacterComponent {
                                 bool canDoJob = false;
                                 if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.APPREHEND)) {
                                     actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
+                                } else if (actor.homeSettlement != null) {
+                                    JobQueueItem job = actor.homeSettlement.GetJob(JOB_TYPE.APPREHEND, targetCharacter);
+                                    if (job != null) { canDoJob = owner.jobQueue.AddJobInQueue(job); }
                                 }
                                 if (!canDoJob) {
                                     if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
@@ -764,7 +767,11 @@ public class ReactionComponent : CharacterComponent {
                                     bool canDoJob = false;
                                     actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
                                 } else {
-                                    debugLog = $"{debugLog}\n-Already has active apprehend job. Do nothing";  
+                                    debugLog = $"{debugLog}\n-Already has active apprehend job. Check if can take settlement apprehend job";
+                                    if (disguisedActor.homeSettlement != null) {
+                                        JobQueueItem job = actor.homeSettlement.GetJob(JOB_TYPE.APPREHEND, targetCharacter);
+                                        if (job != null) { owner.jobQueue.AddJobInQueue(job); }
+                                    }
                                 }
                             }
                         }

@@ -8,6 +8,7 @@ namespace Goap.Job_Checkers {
             Assert.IsNotNull(goapPlanJob);
             Character targetCharacter = goapPlanJob.targetPOI as Character;
             Assert.IsNotNull(targetCharacter);
+            if (targetCharacter == character) { return false; }
             return InteractionManager.Instance.CanCharacterTakeApprehendJob(character, targetCharacter);
         }
     }

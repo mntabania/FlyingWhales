@@ -390,6 +390,8 @@ public class FactionManager : BaseMonoBehaviour {
             //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
             if (faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return FACTION_RELATIONSHIP_STATUS.Neutral;
+            } else if (faction1.factionType.type == FACTION_TYPE.Demon_Cult || faction2.factionType.type == FACTION_TYPE.Demon_Cult) {
+                return FACTION_RELATIONSHIP_STATUS.Friendly;
             } else {
                 return FACTION_RELATIONSHIP_STATUS.Hostile;
             }

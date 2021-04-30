@@ -4368,7 +4368,7 @@ PrefabInstance:
 
 
         <color="green">Special
-        features:</color> No new Factions and Villages. Necronomicon. Graveyards.'
+        features:</color> No new Factions and Villages. Graveyards.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

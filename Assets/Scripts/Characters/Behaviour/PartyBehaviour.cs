@@ -43,6 +43,10 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                         }
                     }
                 }
+                if (party.isPlayerParty) {
+                    //if demon party, should not go through other behaviours, so return true here
+                    return true;
+                }
             } else {
                 if (party.membersThatJoinedQuest.Contains(character)) {
                     if (party.IsMemberActive(character)) {

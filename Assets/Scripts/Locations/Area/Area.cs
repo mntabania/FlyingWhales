@@ -224,7 +224,9 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public void OnRemovePOIInHex(IPointOfInterest poi) {
         spellsComponent.OnRemovePOIInHex(poi);
         if (poi is TileObject item) { // && item.tileObjectType.IsTileObjectAnItem()
-            tileObjectComponent.RemoveItemInArea(item);
+            if (tileObjectComponent.RemoveItemInArea(item)) {
+                // Debug.Log($"Removed item {poi} in area {this.ToString()}");    
+            }
         }
     }
     #endregion

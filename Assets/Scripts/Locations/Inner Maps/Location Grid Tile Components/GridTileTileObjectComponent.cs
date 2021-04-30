@@ -145,6 +145,7 @@ namespace Inner_Maps {
                 LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
                 SetOccupyingObject(null);
+                removedObj.previousTile?.area.OnRemovePOIInHex(removedObj);
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
                 removedObj.OnRemoveTileObject(null, gridTile, false, false);
                 //if (removedObj is TileObject tileObject) {
@@ -163,6 +164,7 @@ namespace Inner_Maps {
                 LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
                 SetOccupyingObject(null);
+                removedObj.previousTile?.area.OnRemovePOIInHex(removedObj);
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
                 removedObj.OnRemoveTileObject(null, gridTile, false, false);
                 removedObj.DestroyMapVisualGameObject();
