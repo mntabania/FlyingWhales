@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UtilityScripts;
 
 [System.Serializable]
 public class DeployedMonsterItemUI : MonoBehaviour {
@@ -121,7 +122,7 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         emptyCover.SetActive(false);
         lockCover.SetActive(true);
         addSummonCover.SetActive(false);
-        txtUnlockCost.text = unlockCost.ToString();
+        txtUnlockCost.text = GetUnlockCost().ToString();
         btnUnlockSlot.gameObject.SetActive(true);
         HideDeadIcon();
         if (p_isAbleToBuy) {
@@ -211,5 +212,9 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         addSummonCover.SetActive(true);
         HideDeadIcon();
         btnAddSummon.gameObject.SetActive(true);
+    }
+
+    public int GetUnlockCost() { 
+        return SpellUtilities.GetModifiedSpellCost(unlockCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
     }
 }

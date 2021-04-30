@@ -3,6 +3,7 @@ using Ruinarch.MVCFramework;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Ruinarch;
+
 public class DefensePointUIController : MVCUIController, DefensePointUIView.IListener {
 
 	#region MVCUI
@@ -207,8 +208,8 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	}
 
 	void OnUnlockSlotClicked(DeployedMonsterItemUI p_itemUI) {
-		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.unlockCost) {
-			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.unlockCost);
+		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.GetUnlockCost()) {
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.GetUnlockCost());
 			m_targetPartyStructure.startingSummonCount++;
 			m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		}
