@@ -182,7 +182,7 @@ public class PlayerRetaliationComponent {
     public void CharacterDeathRetaliation(Character p_character) {
         string debugLog = "ADD RETALIATION COUNTER!";
         debugLog += "\nDeath of " + p_character.name;
-        if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation), ref debugLog)) {
+        if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation_Character_Death), ref debugLog)) {
             if (!p_character.traitContainer.HasTrait("Cultist") && p_character.isNormalCharacter) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_character_death", null, LOG_TAG.Player, LOG_TAG.Major);
@@ -198,7 +198,7 @@ public class PlayerRetaliationComponent {
         if (p_structure.settlementLocation != null && p_structure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE && p_structure.settlementLocation.owner != null && p_structure.settlementLocation.owner.isMajorNonPlayer) {
             string debugLog = "ADD RETALIATION COUNTER!";
             debugLog += "\nDestruction of " + p_structure.name;
-            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation), ref debugLog)) {
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation_Structure_Destroy), ref debugLog)) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_structure_destroyed", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_structure, p_structure.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -213,7 +213,7 @@ public class PlayerRetaliationComponent {
         if (removedFrom != null && removedFrom.structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
             string debugLog = "ADD RETALIATION COUNTER!";
             debugLog += "\nDestruction/Loss of " + p_pile.name;
-            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation), ref debugLog)) {
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation_Resource_Pile), ref debugLog)) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_pile_loss", null, LOG_TAG.Player, LOG_TAG.Major);
                     log.AddToFillers(p_pile, p_pile.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

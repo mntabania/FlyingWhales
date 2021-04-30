@@ -164,18 +164,12 @@ public class EditableValuesManager : MonoBehaviour {
 		return -1; //no data was provided for current level
 	}
 	public Cost GetReleaseAbilitiesRerollCost() {
-		Cost defaultCost = currencyHoverData.releaseAbilitiesRerollCost;
-		int modifiedCost = defaultCost.processedAmount;
-		return new Cost(defaultCost.currency, modifiedCost);
+		return currencyHoverData.releaseAbilitiesRerollCost;
 	}
 	public Cost GetCorruptTileCost() {
-		Cost defaultCost = currencyHoverData.corruptFloorCost;
-		int modifiedCost = defaultCost.processedAmount;
-		return new Cost(defaultCost.currency, modifiedCost);
+		return currencyHoverData.corruptFloorCost;
 	}
 	public Cost GetBuildWallCost() {
-		Cost defaultCost = currencyHoverData.buildWallCost;
-		int modifiedCost = defaultCost.processedAmount;
-		return new Cost(defaultCost.currency, modifiedCost);
+		return currencyHoverData.buildWallCost;
 	}
 }

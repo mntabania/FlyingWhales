@@ -24,8 +24,8 @@ public class DemonRaidBehaviour : CharacterBehaviourComponent {
                     return true;
                 }
                 BaseSettlement targetSettlement = quest.targetSettlement;
-                TileObject target = targetSettlement.GetRandomTileObject();
-                if (target != null && !target.traitContainer.HasTrait("Indestructible")) {
+                TileObject target = targetSettlement.GetRandomTileObjectForRaidAttack();
+                if (target != null) {
                     log += $"\n-Chosen target is {target.name}";
                     character.combatComponent.Fight(target, CombatManager.Hostility);
                 } else {

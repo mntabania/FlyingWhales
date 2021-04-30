@@ -30,19 +30,19 @@ public class RuinarchText : TextMeshProUGUI {
                 text = text.Replace("mana", $"{UtilityScripts.Utilities.ManaIcon()}mana ");
             }
             //charges
-            if (text.Contains("Charges")) {
-                text = text.Replace("Charges", $"{UtilityScripts.Utilities.ChargesIcon()}Charges");
-            }
-            if (text.Contains("charges")) {
-                text = text.Replace("charges", $"{UtilityScripts.Utilities.ChargesIcon()}charges");
-            }
-            //bonus charges
             if (text.Contains("Bonus Charges")) {
                 text = text.Replace("Bonus Charges", $"{UtilityScripts.Utilities.BonusChargesIcon()}Bonus Charges");
-            }
-            if (text.Contains("bonus charges")) {
+            } else if (text.Contains("bonus charges")) {
                 text = text.Replace("bonus charges", $"{UtilityScripts.Utilities.BonusChargesIcon()}bonus charges");
+            } else {
+                if (text.Contains("Charges")) {
+                    text = text.Replace("Charges", $"{UtilityScripts.Utilities.ChargesIcon()}Charges");
+                }
+                if (text.Contains("charges")) {
+                    text = text.Replace("charges", $"{UtilityScripts.Utilities.ChargesIcon()}charges");
+                }    
             }
+
             //threat
             if (text.Contains("Threat")) {
                 text = text.Replace("Threat", $"{UtilityScripts.Utilities.ThreatIcon()}Threat");

@@ -64,5 +64,25 @@ public class AreaTileObjectComponent : AreaComponent {
         }
         return null;
     }
+    public TileObject GetRandomTileObjectForRaidAttack() {
+        TileObject chosenObject = null;
+        if (itemsInArea.Count > 0) {
+            List<TileObject> tileObjects = RuinarchListPool<TileObject>.Claim();
+            for (int i = 0; i < itemsInArea.Count; i++) {
+                TileObject item = itemsInArea[i];
+                if (item.traitContainer.HasTrait("Indestructible")) {
+                    continue;
+                }
+                if (item.tileObjectType.IsTileObjectAnItem() || item.tileObjectType.IsTileObjectImportant() || item.tileObjectType.CanBeRepaired()) {
+                    tileObjects.Add(item);
+                }
+            }
+            if (tileObjects.Count > 0) {
+                chosenObject = tileObjects[GameUtilities.RandomBetweenTwoNumbers(0, tileObjects.Count - 1)];
+            }
+            RuinarchListPool<TileObject>.Release(tileObjects);
+        }
+        return chosenObject;
+    }
     #endregion
 }
