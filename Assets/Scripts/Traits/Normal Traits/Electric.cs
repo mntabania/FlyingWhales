@@ -14,7 +14,7 @@ namespace Traits {
             ticksDuration = 0;
             elementalType = ELEMENTAL_TYPE.Electric;
             resistancesType = new List<RESISTANCE>() { RESISTANCE.Electric };
-            resistancesValue = new List<float>() { 100f };
+            resistancesValue = new List<float>() { 85f };
         }
     }
 }
