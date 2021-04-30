@@ -1277,6 +1277,8 @@ public enum CHANCE_TYPE {
     Vampire_Lord_Chance,
     Host_Social_Party,
     Demonic_Decor_On_Corrupt,
-    Retaliation,
+    Retaliation_Character_Death,
+    Retaliation_Structure_Destroy,
+    Retaliation_Resource_Pile,
     Harpy_Capture
 }
