@@ -164,7 +164,8 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 				}
 				m_skillItems[x].onButtonClick += OnSkillClick;
 			} else {
-				SkillUpgradeItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI);
+				SkillUpgradeItemUI go = GameObject.Instantiate(m_purchaseSkillItemUI, m_skillUpgradeUIView.GetSkillParent());
+				go.transform.localScale = new Vector3(1f, 1f, 1f);
 				SkillData data = PlayerSkillManager.Instance.GetSkillData(listOfSkills[x]);
 				if (isTestScene) {
 					go.InitItem(data.type, fakePlayer.currenciesComponent.Spirits);
@@ -173,7 +174,6 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 				}
 				
 				go.onButtonClick += OnSkillClick;
-				go.transform.SetParent(m_skillUpgradeUIView.GetSkillParent());
 				m_skillItems.Add(go);
 			}
 		}
