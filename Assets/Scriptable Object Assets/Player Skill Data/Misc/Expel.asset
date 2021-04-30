@@ -41,9 +41,9 @@ MonoBehaviour:
   requirementData:
     requirements: 08000000
     requiredArchetype: 0
-    requiredSkills: 8c000000
+    requiredSkills: 
     actionCount: 0
-    afflictionCount: 2
+    afflictionCount: 0
     spellsCount: 0
     tier1Count: 0
     tier2Count: 0
