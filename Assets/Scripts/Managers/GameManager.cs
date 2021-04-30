@@ -140,6 +140,10 @@ public class GameManager : BaseMonoBehaviour {
                 message = message.Replace("\\n", "\n");
                 UIManager.Instance.ShowStartScenario(message);    
             }
+        } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom && !SaveManager.Instance.useSaveData) {
+            string message = "The key to winning the game is in knowing how to produce <color=#FB6F37>Chaos Orbs</color>. In early game, try using various <color=#FB6F37>traps</color> and damaging <color=#FB6F37>Spells</color>. " +
+                             "As you upgrade your <color=#FB6F37>Portal</color>, learn which Powers can provide Chaos Orbs by going through their tooltip descriptions.";
+            UIManager.Instance.ShowStartScenario(message);
         }
         Canvas.ForceUpdateCanvases();
     }
