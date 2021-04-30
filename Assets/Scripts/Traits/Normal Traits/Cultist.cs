@@ -9,7 +9,7 @@ namespace Traits {
         public override bool affectsNameIcon => true;
         public Cultist() {
             name = "Cultist";
-            description = "Worships us, but only secretly.";
+            description = "Worships us, but only secretly. Produces a Chaos Orb when praying. May produce 4 Chaos Orbs by performing a Dark Ritual.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

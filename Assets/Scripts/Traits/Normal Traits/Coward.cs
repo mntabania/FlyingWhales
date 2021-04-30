@@ -10,7 +10,7 @@ namespace Traits {
 
         public Coward() {
             name = "Coward";
-            description = "A scaredy-cat. Will often flee from combat.";
+            description = "A scaredy-cat. Will often flee from combat. If afflicted by the player, will produce a Chaos Orb each time it flees from combat.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
