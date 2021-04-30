@@ -43,8 +43,8 @@ MonoBehaviour:
     requiredArchetype: 0
     requiredSkills: 
     actionCount: 0
-    afflictionCount: 2
-    spellsCount: 2
+    afflictionCount: 0
+    spellsCount: 0
     tier1Count: 0
     tier2Count: 0
     tier3Count: 0
