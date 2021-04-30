@@ -41,7 +41,7 @@ MonoBehaviour:
   requirementData:
     requirements: 08000000
     requiredArchetype: 0
-    requiredSkills: 09000000
+    requiredSkills: 
     actionCount: 0
     afflictionCount: 0
     spellsCount: 0
@@ -49,7 +49,7 @@ MonoBehaviour:
     tier2Count: 0
     tier3Count: 0
     portalLevel: 3
-    isOR: 1
+    isOR: 0
   skillUpgradeData:
     upgradeCosts: 140000003200000050000000
     manacostPerLevel: 6400000096000000c8000000fa000000

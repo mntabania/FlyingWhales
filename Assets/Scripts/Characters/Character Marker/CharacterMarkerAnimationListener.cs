@@ -22,6 +22,8 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             } else {
                 //combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
+                if (parentMarker.character == null) { return; } 
+                if (isExecutingAttack == false) { return; } //just to be safe, added this checking. This should not be needed
                 if (parentMarker.character is Summon) {
                     AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
                         parentMarker.character.gridTileLocation, 1, false);    
@@ -121,5 +123,8 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
                 parentMarker.character.logComponent.PrintLogIfActive(attackSummary);
             }    
         }
+    }
+    public void Reset() {
+        isExecutingAttack = false;
     }
 }

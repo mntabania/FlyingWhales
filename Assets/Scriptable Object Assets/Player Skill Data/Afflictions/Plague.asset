@@ -39,13 +39,13 @@ MonoBehaviour:
   isAffliction: 0
   isLockedBaseOnRequirements: 1
   requirementData:
-    requirements: 03000000
+    requirements: 
     requiredArchetype: 0
     requiredSkills: 
     actionCount: 0
-    afflictionCount: 3
+    afflictionCount: 0
     spellsCount: 0
-    tier1Count: 3
+    tier1Count: 0
     tier2Count: 0
     tier3Count: 0
     portalLevel: 0

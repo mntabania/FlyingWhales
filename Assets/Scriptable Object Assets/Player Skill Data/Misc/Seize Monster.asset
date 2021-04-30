@@ -22,6 +22,7 @@ MonoBehaviour:
   cheatedLevel: 0
   pierce: 0
   bonusChargeWhenUnlocked: 3
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 0395346f7571d724f9c91404dc1a09eb, type: 3}
   tooltipImage: {fileID: 0}
@@ -40,7 +41,7 @@ MonoBehaviour:
   requirementData:
     requirements: 08000000
     requiredArchetype: 0
-    requiredSkills: 32000000
+    requiredSkills: 
     actionCount: 0
     afflictionCount: 0
     spellsCount: 0
