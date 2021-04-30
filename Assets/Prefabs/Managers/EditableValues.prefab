@@ -69,7 +69,7 @@ MonoBehaviour:
   _revealInfoCharacterCost: 8
   _revealInfoFactionCost: 40
   _manaRegenPerHr: 100
-  _manaRegenPerManapit: 20
+  _manaRegenPerManapit: 50
   _additionalMaxManaPerPit: 250
   _targetPortalLevel: 8
   vaporStacks: 5

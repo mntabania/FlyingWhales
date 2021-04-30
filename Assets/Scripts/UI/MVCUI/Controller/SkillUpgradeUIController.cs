@@ -103,11 +103,11 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 				m_skillUpgradeUIView.Subscribe(this);
 				InitUI(p_ui.UIModel, p_ui);
 				ShowUI();
-				DisplaySkills(m_skillComponent.afflictions);
+				DisplaySkills(GetFilteredAfflictions());
 			});
 		} else {
 			ShowUI();
-			DisplaySkills(m_skillComponent.afflictions);
+			DisplaySkills(GetFilteredAfflictions());
 		}
 	}
 
@@ -190,7 +190,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		skillData.LevelUp();
 		switch (m_currentView) {
 			case SKILL_VIEW.AFFLICTIONS:
-			DisplaySkills(m_skillComponent.afflictions);
+			DisplaySkills(GetFilteredAfflictions());
 			break;
 			case SKILL_VIEW.SPELLS:
 			DisplaySkills(GetFilteredSpells());
@@ -210,7 +210,7 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	public void OnAfflictionTabClicked(bool isOn) {
 		if (isOn) {
 			m_currentView = SKILL_VIEW.AFFLICTIONS;
-			DisplaySkills(m_skillComponent.afflictions);
+			DisplaySkills(GetFilteredAfflictions());
 			UpdateTopMenuSummary();
 		}
 	}
@@ -229,6 +229,15 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 		}
 	}
 
+	public List<PLAYER_SKILL_TYPE> GetFilteredAfflictions() {
+		List<PLAYER_SKILL_TYPE> skills = new List<PLAYER_SKILL_TYPE>();
+		m_skillComponent.afflictions.ForEach((eachSkill) => {
+			if (!PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(eachSkill).isNonUpgradeable) {
+				skills.Add(eachSkill);
+			}
+		});
+		return skills;
+	}
 	public List<PLAYER_SKILL_TYPE> GetFilteredPlayerActions() {
 		List<PLAYER_SKILL_TYPE> skills = new List<PLAYER_SKILL_TYPE>();
 		m_skillComponent.playerActions.ForEach((eachSkill) => {
