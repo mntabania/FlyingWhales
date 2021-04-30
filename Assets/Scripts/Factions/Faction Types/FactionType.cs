@@ -132,7 +132,7 @@ namespace Factions.Faction_Types {
             }
             return CRIME_SEVERITY.Unapplicable;
         }
-        public void AddCrime(CRIME_TYPE type, CRIME_SEVERITY severity) {
+        public void AddCrime(CRIME_TYPE type, CRIME_SEVERITY severity, bool shouldBroadcastSignal = false) {
             if (!crimes.ContainsKey(type)) {
                 crimes.Add(type, severity);
             } else {
