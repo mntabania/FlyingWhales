@@ -118,9 +118,9 @@ public class LetGoData : PlayerAction {
     }
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
-            targetCharacter.movementComponent.LetGo(true);
-
             LocationStructure letGoFrom = targetCharacter.currentStructure;
+            targetCharacter.movementComponent.LetGo(true);
+            
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Let Go", "activated");
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(letGoFrom, letGoFrom?.name, LOG_IDENTIFIER.LANDMARK_1);
