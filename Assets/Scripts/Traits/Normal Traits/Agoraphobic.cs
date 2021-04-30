@@ -7,7 +7,7 @@ namespace Traits {
 
         public Agoraphobic() {
             name = "Agoraphobic";
-            description = "Crowds? Oh no!";
+            description = "Crowds? Oh no! If afflicted by the player, will produce a Chaos Orb each time it sees a crowd.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

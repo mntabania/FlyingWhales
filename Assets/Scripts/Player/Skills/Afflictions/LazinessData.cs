@@ -7,7 +7,7 @@ using UnityEngine;
 public class LazinessData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LAZINESS;
     public override string name => "Laziness";
-    public override string description => "This Affliction will make a Villager Lazy. Lazy villagers may sometimes refuse to do work.";
+    public override string description => "This Affliction will make a Villager Lazy. Lazy villagers may sometimes refuse to do work and will produce a Chaos Orb whenever they do this.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     public LazinessData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };

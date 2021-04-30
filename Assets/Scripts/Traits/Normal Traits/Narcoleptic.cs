@@ -8,7 +8,7 @@ namespace Traits {
         public override bool isSingleton => true;
         public Narcoleptic() {
             name = "Narcoleptic";
-            description = "Randomly plops down to sleep.";
+            description = "Randomly plops down to sleep. If afflicted by the player, will produce a Chaos Orb each time it enters narcoleptic sleep.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

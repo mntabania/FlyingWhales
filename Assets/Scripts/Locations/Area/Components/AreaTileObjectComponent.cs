@@ -73,6 +73,9 @@ public class AreaTileObjectComponent : AreaComponent {
                 if (item.traitContainer.HasTrait("Indestructible")) {
                     continue;
                 }
+                if (item.IsUnpassable()) {
+                    continue;
+                }
                 if (item.tileObjectType.IsTileObjectAnItem() || item.tileObjectType.IsTileObjectImportant() || item.tileObjectType.CanBeRepaired()) {
                     tileObjects.Add(item);
                 }

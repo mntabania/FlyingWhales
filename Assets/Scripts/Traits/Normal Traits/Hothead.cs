@@ -8,7 +8,7 @@ namespace Traits {
 
         public Hothead() {
             name = "Hothead";
-            description = "Quick to anger. May flare up when seeing an enemy.";
+            description = "Quick to anger. May flare up when seeing an enemy. If afflicted by the player, will produce a Chaos Orb each time it gets Angry.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
