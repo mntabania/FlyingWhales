@@ -259,12 +259,16 @@ namespace Inner_Maps {
             
             GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Landmine_Explosion);
             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
-            yield return new WaitForSeconds(0.5f);
             SetHasLandmine(false);
+            if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
+                Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
+            }
+            yield return new WaitForSeconds(0.5f);
             List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
             owner.PopulateTilesInRadius(tiles, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
             SkillData landmineData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.LANDMINE);
             int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(landmineData);
+            
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 List<IPointOfInterest> pois = RuinarchListPool<IPointOfInterest>.Claim();
@@ -283,9 +287,6 @@ namespace Inner_Maps {
                     } else if (poi is Character character) {
                         character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true, source: landmineData);
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
-                        if (character.isNormalAndNotAlliedWithPlayer) {
-                            Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, character);
-                        }
                         if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
                             //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
