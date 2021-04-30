@@ -788,6 +788,8 @@ MonoBehaviour:
     - {x: 2, y: 4, z: 0}
     - {x: 3, y: 4, z: 0}
     - {x: 4, y: 4, z: 0}
+    - {x: 1, y: 3, z: 0}
+    - {x: 4, y: 4, z: 0}
   _clickCollider: {fileID: 9072862880742469610}
   wallsContributeToDamage: 0
   wallTileMap: {fileID: 7766376355357131671}
