@@ -199,14 +199,14 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 formatted = $"{formatted}{p_data.skillUpgradeData.GetAdditionalDamageBaseOnLevel(p_level).ToString()}";
                 break;
             case UPGRADE_BONUS.Pierce:
-                float value = p_data.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(p_level);
+                float value = p_data.GetAdditionalPiercePerLevelBaseOnLevel(p_level);
                 formatted = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"Piercing{UtilityScripts.Utilities.PiercingIcon()}:")} {value.ToString()}";
                 if (value == 0f) {
                     return false; //skip 0 values;
                 }
                 break;
             case UPGRADE_BONUS.Duration:
-                int durationInTicks = p_data.skillUpgradeData.GetDurationBonusPerLevel(p_level);
+                int durationInTicks = p_data.GetDurationBonusPerLevel(p_level);
                 formatted = $"{formatted}{GameManager.ConvertTicksToWholeTime(durationInTicks)}";
                 break;
             case UPGRADE_BONUS.Tile_Range:

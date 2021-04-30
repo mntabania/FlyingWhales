@@ -42,6 +42,7 @@ namespace Inner_Maps {
                 _corruptionScheduleID = randomGenerateDemonicDecor ? SchedulingManager.Instance.AddEntry(corruptDate, CorruptTileAndRandomlyGenerateDemonicObject, null) : 
                     SchedulingManager.Instance.AddEntry(corruptDate, CorruptTile, null);
                 owner.mouseEventsComponent.OnHoverExit();
+                owner.SetIsDefault(false);
             }
         }
         public void DisruptCorruption() {
