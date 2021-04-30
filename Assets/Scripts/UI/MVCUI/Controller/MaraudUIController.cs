@@ -311,6 +311,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				AvailableTargetItemUI availableTargetItemUI = Instantiate(m_availableTargetItemUI);
 				availableTargetItemUI.InitializeItem(EachTarget);
 				availableTargetItemUI.transform.SetParent(m_maraudUIView.GetAvailableTargetParent());
+				availableTargetItemUI.transform.localScale = Vector3.one;
 				m_targetList.Add(availableTargetItemUI);
 				SetTargetHoverText(m_targetList[ctr]);
 				AvailableTargetItemUI targetItemUI = m_targetList[ctr++];
