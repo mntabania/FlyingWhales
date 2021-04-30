@@ -91,7 +91,7 @@ namespace Traits {
             }
         }
         private void OnActionPerformed(ActualGoapNode p_action) {
-            if (p_action.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+            if (p_action.action.actionCategory == ACTION_CATEGORY.CONSUME && p_action.actor == m_owner) {
                 DispenseChaosOrbsForAffliction(m_owner, 1);
             }
         }
