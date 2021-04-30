@@ -261,6 +261,8 @@ namespace Inner_Maps {
             SetHasLandmine(false);
             List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
             owner.PopulateTilesInRadius(tiles, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            SkillData landmineData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.LANDMINE);
+            int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(landmineData);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 List<IPointOfInterest> pois = RuinarchListPool<IPointOfInterest>.Claim();
@@ -270,15 +272,14 @@ namespace Inner_Maps {
                     if (poi.gridTileLocation == null) {
                         continue; //skip
                     }
-                    int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.LANDMINE));
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
+                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true, source : landmineData);
                         } else {
                             CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj, setAsPlayerSource: true);
                         }
                     } else if (poi is Character character) {
-                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
+                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true, source: landmineData);
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                         if (character.isNormalAndNotAlliedWithPlayer) {
                             Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, character);
@@ -289,7 +290,7 @@ namespace Inner_Maps {
                             //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                         }
                     } else {
-                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true);
+                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true, source: landmineData);
                     }
                 }
                 RuinarchListPool<IPointOfInterest>.Release(pois);

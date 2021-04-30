@@ -605,5 +605,18 @@ public class CombatManager : BaseMonoBehaviour {
         return null;
     }
     #endregion
+
+    public bool IsDamageSourceFromPlayerSpell(object source) {
+        if (source != null) {
+            if (source is SkillData skill && skill.category == PLAYER_SKILL_CATEGORY.SPELL) {
+                return true;
+            } else if (source is LocustSwarm locustSwarm && locustSwarm.isPlayerSource) {
+                return true;
+            } else if (source is Tornado tornado && tornado.isPlayerSource) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

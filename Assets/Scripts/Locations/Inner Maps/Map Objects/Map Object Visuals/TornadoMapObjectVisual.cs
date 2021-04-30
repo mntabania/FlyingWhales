@@ -257,12 +257,14 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Tornado Per Tick");
-        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO));
+        SkillData tornadoData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.TORNADO);
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(tornadoData);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(tornadoData);
         List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
         gridTileLocation.PopulateTilesInRadius(tiles, _radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.tileObjectComponent.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO), isPlayerSource: _tornado.isPlayerSource);
+            tile.tileObjectComponent.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: piercing, isPlayerSource: _tornado.isPlayerSource);
         }
         RuinarchListPool<LocationGridTile>.Release(tiles);
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
@@ -275,7 +277,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 //} else {
                     Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
                     if (distance.magnitude < 2f) { //3
-                        DealDamage(damageable);
+                        DealDamage(damageable, processedDamage, piercing);
                     } else {
                         //check for suck in
                         TrySuckIn(damageable);
@@ -285,11 +287,10 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
         Profiler.EndSample();
     }
-    private void DealDamage(IDamageable damageable) {
+    private void DealDamage(IDamageable damageable, int processedDamage, float piercing) {
         if (damageable.CanBeDamaged()) {
             if (damageable is Character character) {
-                int processedDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.TORNADO);
-                damageable.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, isPlayerSource: _tornado.isPlayerSource);
+                damageable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, piercingPower: piercing, isPlayerSource: _tornado.isPlayerSource);
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                 if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.TORNADO;
@@ -297,7 +298,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                     //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                 }
             } else {
-                damageable.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, isPlayerSource: _tornado.isPlayerSource);    
+                damageable.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, piercingPower: piercing, isPlayerSource: _tornado.isPlayerSource);    
             }
         }
     }

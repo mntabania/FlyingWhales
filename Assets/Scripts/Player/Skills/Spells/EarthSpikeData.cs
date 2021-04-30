@@ -20,21 +20,21 @@ public class EarthSpikeData : SkillData {
             targetTile, 3, false
         );
 
-        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE);
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(this);
+        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(this);
         UnityEngine.GameObject go = GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Earth_Spike);
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         go.transform.localScale = new UnityEngine.Vector3(go.transform.localScale.x * processedTileRange, go.transform.localScale.y * processedTileRange, go.transform.localScale.z * processedTileRange);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.PerformActionOnTraitables(ApplyEarthDamage);
+            tile.PerformActionOnTraitables((traitable) => ApplyEarthDamage(traitable, processedDamage));
         }
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
-    private void ApplyEarthDamage(ITraitable traitable) {
-        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTH_SPIKE));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Earth, true, showHPBar: true, isPlayerSource: true);
+    private void ApplyEarthDamage(ITraitable traitable, int processedDamage) {
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Earth, true, showHPBar: true, isPlayerSource: true, source: this);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);

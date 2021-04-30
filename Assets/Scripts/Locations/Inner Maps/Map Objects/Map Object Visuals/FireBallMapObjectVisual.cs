@@ -116,12 +116,13 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
             return;
         }
         Profiler.BeginSample($"Poison Cloud Per Tick");
-        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
+        SkillData fireBallData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.FIRE_BALL);
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(fireBallData);
         BurningSource bs = null;
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
             if (owner != traitable) {
-                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, showHPBar: true, isPlayerSource: owner.isPlayerSource);
+                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, showHPBar: true, isPlayerSource: owner.isPlayerSource, source: owner.isPlayerSource ? fireBallData : null);
             }
             Burning burningTrait = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {

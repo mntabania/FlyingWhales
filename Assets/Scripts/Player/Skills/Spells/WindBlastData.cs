@@ -20,22 +20,21 @@ public class WindBlastData : SkillData {
             PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<WindBlastSkillData>(PLAYER_SKILL_TYPE.WIND_BLAST).blastSound,
             targetTile, 3, false
         );
-
-        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.WIND_BLAST);
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(this);
+        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(this);
         UnityEngine.GameObject go = GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Wind_Blast);
         go.transform.localScale = new UnityEngine.Vector3(go.transform.localScale.x * processedTileRange, go.transform.localScale.y * processedTileRange, go.transform.localScale.z * processedTileRange);
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.PerformActionOnTraitables(ApplyWindDamage);
+            tile.PerformActionOnTraitables((t) => ApplyWindDamage(t, processedDamage));
         }
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
-    private void ApplyWindDamage(ITraitable traitable) {
-        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.WIND_BLAST));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, showHPBar: true, isPlayerSource: true);
+    private void ApplyWindDamage(ITraitable traitable, int processedDamage) {
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, showHPBar: true, isPlayerSource: true, source: this);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);

@@ -50,12 +50,15 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //for (int i = 0; i < meteorExplosionParticles.Length; i++) {
         //    meteorExplosionParticles[i].Play();
         //}
+        SkillData meteorData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.METEOR);
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(meteorData);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(meteorData);
         BurningSource bs = null;
         //List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, 0, true, true); //radius
-        targetTile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, ref bs));
+        targetTile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, processedDamage, piercing, meteorData, ref bs));
         for (int i = 0; i < targetTile.neighbourList.Count; i++) {
             LocationGridTile tile = targetTile.neighbourList[i];
-            tile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, ref bs));
+            tile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, processedDamage, piercing, meteorData, ref bs));
         }
 
         //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, 10);
@@ -66,11 +69,10 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
 
     }
-    private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
+    private void MeteorEffect(ITraitable traitable, int processedDamage, float piercing, SkillData meteorData, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }
         BurningSource burningSource = bs;
-        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.METEOR));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.METEOR), isPlayerSource: true);
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true, piercingPower: piercing, isPlayerSource: true, source: meteorData);
         //if (traitable is TileObject obj) {
         //    if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
         //        obj.AdjustHP(-500, ELEMENTAL_TYPE.Fire, 

@@ -546,7 +546,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
-
+        if (tileObjectType.IsDemonicStructureTileObject()) {
+            //Demonic Structures do not receive damage from player spells.
+            //https://trello.com/c/AkfAOCx6/4284-demonic-structures-do-not-receive-damage-from-player-spells
+            if (CombatManager.Instance.IsDamageSourceFromPlayerSpell(source)) {
+                return;
+            }
+        }
         Character responsibleCharacter = source as Character;
         if (responsibleCharacter != null && responsibleCharacter.faction != null && responsibleCharacter.faction.isPlayerFaction) {
             //If responsible character is part of player faction, tag this as Player Source also

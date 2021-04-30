@@ -134,9 +134,10 @@ namespace Locations.Area_Features {
         #region Effects
         private void BlizzardDamageAndFreezingProcess(Area hex) {
             string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
-            int baseChance = (int)PlayerSkillManager.Instance.GetChanceBonusPerLevel(PLAYER_SKILL_TYPE.BLIZZARD);
-            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
-            int blizzardDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD);
+            SkillData blizzardData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.BLIZZARD);
+            int baseChance = (int)PlayerSkillManager.Instance.GetChanceBonusPerLevel(blizzardData);
+            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(blizzardData);
+            int blizzardDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(blizzardData);
             for (int i = 0; i < _charactersOutside.Count; i++) {
                 Character character = _charactersOutside[i];
                 if (character.isDead) {
@@ -154,7 +155,7 @@ namespace Locations.Area_Features {
                     //character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice,
                     //    piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.BLIZZARD), showHPBar: true);
                 }
-                character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing, isPlayerSource: isPlayerSource);
+                character.AdjustHP(-blizzardDamage, ELEMENTAL_TYPE.Ice, triggerDeath: true, showHPBar: true, piercingPower: piercing, isPlayerSource: isPlayerSource, source: isPlayerSource ? blizzardData : null);
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, blizzardDamage);
                 if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                     character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BLIZZARD;

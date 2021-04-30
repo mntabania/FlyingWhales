@@ -19,21 +19,20 @@ public class WaterSpikeData : SkillData {
             PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<WaterSpikeSkillData>(PLAYER_SKILL_TYPE.WATER_SPIKE).blastSound,
             targetTile, 3, false
         );
-
-        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.WATER_SPIKE);
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(this);
+        int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(this);
         UnityEngine.GameObject go = GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Spike);
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.PerformActionOnTraitables(ApplyEarthDamage);
+            tile.PerformActionOnTraitables((t) => ApplyEarthDamage(t, processedDamage));
         }
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
-    private void ApplyEarthDamage(ITraitable traitable) {
-        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.WATER_SPIKE));
-        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Water, true, showHPBar: true, isPlayerSource: true);
+    private void ApplyEarthDamage(ITraitable traitable, int processedDamage) {
+        traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Water, true, showHPBar: true, isPlayerSource: true, source: this);
 
         if (traitable is Character character) {
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);

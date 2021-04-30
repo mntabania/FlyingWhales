@@ -24,7 +24,7 @@ public class AreaSpellsComponent : AreaComponent {
     #region Brimstones Variables
     public bool hasBrimstones { get; private set; }
 
-    public bool isBrimStoneCastedByPlayer { get; private set; }
+    public bool isBrimstoneCastedByPlayer { get; private set; }
     public int currentBrimstonesDuration  { get; private set; }
     #endregion
 
@@ -34,7 +34,7 @@ public class AreaSpellsComponent : AreaComponent {
     public bool isElectricStormCastedByPlayer { get; private set; }
     public int currentElectricStormDuration { get; private set; }
     #endregion
-    
+
     #region Iceteroid Variables
     public bool hasIceteroids { get; private set; }
     public int currentIceteroidsDuration  { get; private set; }
@@ -59,11 +59,11 @@ public class AreaSpellsComponent : AreaComponent {
             currentEarthquakeDuration = saveData.remainingEarthquakeDuration;
         }
         if (saveData.hasBrimstones) {
-            SetHasBrimstones(true);
+            SetHasBrimstones(true, saveData.isBrimstoneCastedByPlayer);
             currentBrimstonesDuration = saveData.remainingBrimstoneDuration;
         }
         if (saveData.hasElectricStorm) {
-            SetHasElectricStorm(true);
+            SetHasElectricStorm(true, saveData.isElectricStormCastedByPlayer);
             currentElectricStormDuration = saveData.remainingElectricStormDuration;
         }
         if (saveData.hasIceteroids) {
@@ -267,6 +267,9 @@ public class AreaSpellsComponent : AreaComponent {
         }
         
         currentEarthquakeDuration++;
+        SkillData earthquakeData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.EARTHQUAKE);
+        int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(earthquakeData));
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(earthquakeData);
         for (int i = 0; i < earthquakeTileObjects.Count; i++) {
             IPointOfInterest poi = earthquakeTileObjects[i];
             if (poi.gridTileLocation == null) {
@@ -274,8 +277,7 @@ public class AreaSpellsComponent : AreaComponent {
                 i--;
                 continue;
             }
-            int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE));
-            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.EARTHQUAKE), isPlayerSource: true); //right now, earthquake is always player source because we do not have any other way to create earthquake
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: piercing, isPlayerSource: true, source: earthquakeData); //right now, earthquake is always player source because we do not have any other way to create earthquake
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
@@ -307,7 +309,7 @@ public class AreaSpellsComponent : AreaComponent {
     #region Brimstones
     public void SetHasBrimstones(bool state, bool p_isCastedByPlayer = true) {
         if (hasBrimstones != state) {
-            isBrimStoneCastedByPlayer = p_isCastedByPlayer;
+            isBrimstoneCastedByPlayer = p_isCastedByPlayer;
             hasBrimstones = state;
             if (hasBrimstones) {
                 StartBrimstones();
@@ -333,7 +335,7 @@ public class AreaSpellsComponent : AreaComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, owner.gridTileComponent.gridTiles.Count)];
             GameObject go = GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
-            go.GetComponent<BrimstonesParticleEffect>().IsCastedByPlayer = isBrimStoneCastedByPlayer;
+            go.GetComponent<BrimstonesParticleEffect>().IsCastedByPlayer = isBrimstoneCastedByPlayer;
             //Note: Damage is moved in BrimstonesParticleEffect
             //chosenTile.PerformActionOnTraitables(ApplyBrimstoneDamage);
         }
@@ -382,7 +384,7 @@ public class AreaSpellsComponent : AreaComponent {
     private void PerTickBrimstones() {
         Profiler.BeginSample($"Per Tick Brimstones");
         currentBrimstonesDuration++;
-        if (isBrimStoneCastedByPlayer){
+        if (isBrimstoneCastedByPlayer){
             if (currentBrimstonesDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BRIMSTONES)) {
                 SetHasBrimstones(false);
             }
@@ -433,17 +435,20 @@ public class AreaSpellsComponent : AreaComponent {
             // for (int i = 0; i < pois.Count; i++) {
             //     pois[i].AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
             // }
-            chosenTile.PerformActionOnTraitables(ElectricStormEffect);
+            SkillData electricStormData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.ELECTRIC_STORM);
+            int processedDamage;
+            if (!isElectricStormCastedByPlayer) {
+                processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(electricStormData, 0);
+            } else {
+                processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(electricStormData);
+            }
+            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(electricStormData);
+            chosenTile.PerformActionOnTraitables((traitable) => ElectricStormEffect(traitable, processedDamage, piercing, electricStormData));
         }
     }
-    private void ElectricStormEffect(ITraitable traitable) {
+    private void ElectricStormEffect(ITraitable traitable, int processedDamage, float piercing, SkillData electricStormData) {
         if (traitable is IPointOfInterest poi) {
-            int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM));
-            if (!isElectricStormCastedByPlayer) {
-                processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM, 0));
-            }
-            
-            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM), isPlayerSource: isElectricStormCastedByPlayer);
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: piercing, isPlayerSource: isElectricStormCastedByPlayer, source: isElectricStormCastedByPlayer ? electricStormData : null);
         }
     }
     private void PerTickElectricStorm() {
@@ -527,9 +532,11 @@ public class SaveDataAreaSpellsComponent : SaveData<AreaSpellsComponent> {
     public bool hasEarthquake;
     public int remainingEarthquakeDuration;
     //brimstones
+    public bool isBrimstoneCastedByPlayer;
     public bool hasBrimstones;
     public int remainingBrimstoneDuration;
     //electric storm
+    public bool isElectricStormCastedByPlayer;
     public bool hasElectricStorm;
     public int remainingElectricStormDuration;
     //iceteroids
@@ -540,13 +547,15 @@ public class SaveDataAreaSpellsComponent : SaveData<AreaSpellsComponent> {
         base.Save(data);
         hasEarthquake = data.hasEarthquake;
         remainingEarthquakeDuration = data.currentEarthquakeDuration;
-        
+
+        isBrimstoneCastedByPlayer = data.isBrimstoneCastedByPlayer;
         hasBrimstones = data.hasBrimstones;
         remainingBrimstoneDuration = data.currentBrimstonesDuration;
-            
+
+        isElectricStormCastedByPlayer = data.isElectricStormCastedByPlayer;
         hasElectricStorm = data.hasElectricStorm;
         remainingElectricStormDuration = data.currentElectricStormDuration;
-        
+
         hasIceteroids = data.hasIceteroids;
         remainingIceteroidsDuration = data.currentIceteroidsDuration;
     }

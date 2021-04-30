@@ -24,13 +24,15 @@ public class IceteroidParticleEffect : BaseParticleEffect {
             targetTile, 1, false
         );
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
-        targetTile.PerformActionOnTraitables(DealDamage);
+        SkillData iceteroidsData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.ICETEROIDS);
+        int additionalDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(iceteroidsData);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(iceteroidsData);
+        targetTile.PerformActionOnTraitables((t) => DealDamage(t, additionalDamage, piercing, iceteroidsData));
     }
-    private void DealDamage(ITraitable traitable) {
-        int additionalDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS);
+    private void DealDamage(ITraitable traitable, int additionalDamage, float piercing, SkillData iceteroidsData) {
         int processedDamage = additionalDamage;
         traitable.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Ice, true, showHPBar: true,
-                    piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
+                    piercingPower: piercing, isPlayerSource: true, source: iceteroidsData);
         //traitable.AdjustHP(-400, ELEMENTAL_TYPE.Ice, true, showHPBar: true);
         if (traitable is Character character && character.isDead == false) {
             character.traitContainer.RemoveStatusAndStacks(character, "Freezing");

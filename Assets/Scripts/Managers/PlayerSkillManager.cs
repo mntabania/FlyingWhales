@@ -418,27 +418,43 @@ public class PlayerSkillManager : MonoBehaviour {
 
     #region utility
     public int GetDamageBaseOnLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
-        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
+        SkillData skillData = GetSkillData(p_skillType);
+        return GetDamageBaseOnLevel(skillData, p_forcedLevel);
+    }
+    public int GetDamageBaseOnLevel(SkillData p_skill, int p_forcedLevel = -1) {
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skill.type);
         if (p_forcedLevel == -1) {
-            return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(GetSkillData(p_skillType).currentLevel);
+            return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(p_skill.currentLevel);
         } else {
             return playerSkillData.skillUpgradeData.GetAdditionalDamageBaseOnLevel(p_forcedLevel);
         }
     }
 
     public int GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
-        return playerSkillData.skillUpgradeData.GetTileRangeBonusPerLevel(GetSkillData(p_skillType).currentLevel);
+        SkillData skillData = GetSkillData(p_skillType);
+        return GetTileRangeBonusPerLevel(skillData);
+    }
+    public int GetTileRangeBonusPerLevel(SkillData p_skill) {
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skill.type);
+        return playerSkillData.skillUpgradeData.GetTileRangeBonusPerLevel(p_skill.currentLevel);
     }
 
     public float GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
-        return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(GetSkillData(p_skillType).currentLevel);
+        SkillData skillData = GetSkillData(p_skillType);
+        return GetAdditionalPiercePerLevelBaseOnLevel(skillData);
+    }
+    public float GetAdditionalPiercePerLevelBaseOnLevel(SkillData p_skill) {
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skill.type);
+        return playerSkillData.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(p_skill.currentLevel);
     }
 
     public float GetChanceBonusPerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
-        return playerSkillData.skillUpgradeData.GetChanceBonusPerLevel(GetSkillData(p_skillType).currentLevel);
+        SkillData skillData = GetSkillData(p_skillType);
+        return GetChanceBonusPerLevel(skillData);
+    }
+    public float GetChanceBonusPerLevel(SkillData p_skill) {
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skill.type);
+        return playerSkillData.skillUpgradeData.GetChanceBonusPerLevel(p_skill.currentLevel);
     }
 
     public float GetAdditionalHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE p_skillType) {

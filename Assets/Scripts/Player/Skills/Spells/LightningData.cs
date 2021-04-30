@@ -23,14 +23,15 @@ public class LightningData : SkillData {
             CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<LightningSkillData>(PLAYER_SKILL_TYPE.LIGHTNING).thunderAudioClips), 
             targetTile, 1, false
         );
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(this);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
-        targetTile.PerformActionOnTraitables(LightningDamage);
+        targetTile.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage));
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Lightning Remnant");
 
         List<LocationGridTile> crossNeighbours = targetTile.GetCrossNeighbours();
         for (int i = 0; i < crossNeighbours.Count; i++) {
             LocationGridTile neighbour = crossNeighbours[i];
-            neighbour.PerformActionOnTraitables(LightningDamage);
+            neighbour.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage));
         }
         // List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         // for (int i = 0; i < pois.Count; i++) {
@@ -39,10 +40,9 @@ public class LightningData : SkillData {
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
-    private void LightningDamage(ITraitable traitable) {
+    private void LightningDamage(ITraitable traitable, int processedDamage) {
         if (traitable is IPointOfInterest poi) {
-            int processedDamage = (-PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.LIGHTNING));
-            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true, isPlayerSource: true);
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true, isPlayerSource: true, source: this);
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, traitable as Character, processedDamage);
             if (traitable is Character character && character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LIGHTNING;
