@@ -458,10 +458,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				if (p_monsterClicked.isDemon) {
 					m_targetPartyStructure.partyData.readyForDeployMinionCount++;
 					deployedItemList[x].InitializeItem(p_monsterClicked);
+					Debug.LogError(deployedItemList[x].summonCost);
 					m_totalDeployCost += deployedItemList[x].summonCost;
 				} else {
 					deployedItemList[x].InitializeItem(p_monsterClicked);
 					m_targetPartyStructure.partyData.readyForDeploySummonCount++;
+					Debug.LogError(deployedItemList[x].summonCost);
 					m_totalDeployCost += deployedItemList[x].summonCost;
 				}
 				break;
@@ -490,11 +492,15 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		if (!m_isTeamDeployed) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				m_maraudUIView.EnableDeployButton();
-			} else if (!m_targetPartyStructure.IsAvailableForTargeting()) {
-				m_maraudUIView.DisableDeployButton();
-			} else if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
-				m_maraudUIView.DisableDeployButton();
 			} else {
+				m_maraudUIView.DisableDeployButton();
+			}
+
+			if (!m_targetPartyStructure.IsAvailableForTargeting()) {
+				m_maraudUIView.DisableDeployButton();
+			}
+
+			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
 				m_maraudUIView.DisableDeployButton();
 			}
 		} else {
@@ -669,12 +675,16 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		} else {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				Tooltip.Instance.ShowSmallInfo("Spawn the party to do the task", "Deploy Party", autoReplaceText: false);
-			} else if (!m_targetPartyStructure.IsAvailableForTargeting()) {
-				Tooltip.Instance.ShowSmallInfo("Can't build team, structure is occupied.", "Occupied Structure", autoReplaceText: false);
-			} else if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
-				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana", "Not enough Mana", autoReplaceText: false);
-			} else {
+			}  else {
 				Tooltip.Instance.ShowSmallInfo("Should at least have a Target and a Leader", "Deploy team", autoReplaceText: false);
+			}
+
+			if (!m_targetPartyStructure.IsAvailableForTargeting()) {
+				Tooltip.Instance.ShowSmallInfo("Can't build team, structure is occupied.", "Occupied Structure", autoReplaceText: false);
+			}
+			
+			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
+				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana", "Not enough Mana", autoReplaceText: false);
 			}
 		}
 	}
