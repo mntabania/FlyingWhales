@@ -66,7 +66,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private List<Character> _activeMembers;
     private PartyJobTriggerComponent _jobComponent;
 
-    public PartyDamageAccumulator damageAccumulator = new PartyDamageAccumulator();
+    public PartyDamageAccumulator damageAccumulator;
 
     #region getters
     public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text;
@@ -92,6 +92,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         jobBoard = new JobBoard();
         beaconComponent = new PartyBeaconComponent(); beaconComponent.SetOwner(this);
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+        damageAccumulator = new PartyDamageAccumulator();
     }
 
     public bool IsPartyTheSameAsThisParty(Party p_party) {
@@ -112,7 +113,6 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
 
     public void Initialize(Character partyCreator) { //In order to create a party, there must always be a party creator
-        
         InitializePartyName(partyCreator);
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         if (partyCreator.faction != null && partyCreator.faction.isPlayerFaction) {
@@ -170,6 +170,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
 
         jobBoard.InitializeFromSaveData(data.jobBoard);
         beaconComponent.Initialize(data.beaconComponent);
+        damageAccumulator.Initialize(data.damageAccumulator);
 
         if (partyName != string.Empty) {
             Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
@@ -1249,6 +1250,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         canAcceptQuests = false;
         perHourElapsedInWaiting = 0;
         bookmarkEventDispatcher.ClearAll();
+        damageAccumulator?.Reset();
         members.Clear();
         deadMembers.Clear();
         onQuestFailed = null;
@@ -1321,6 +1323,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
 
     //Components
     public SaveDataPartyBeaconComponent beaconComponent;
+    public SaveDataPartyDamageAccumulator damageAccumulator;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party;
@@ -1411,6 +1414,9 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
 
         beaconComponent = new SaveDataPartyBeaconComponent();
         beaconComponent.Save(data.beaconComponent);
+
+        damageAccumulator = new SaveDataPartyDamageAccumulator();
+        damageAccumulator.Save(data.damageAccumulator);
         //if (data.campSetter != null) {
         //    campSetter = data.campSetter.persistentID;
         //}
