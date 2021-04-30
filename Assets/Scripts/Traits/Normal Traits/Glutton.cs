@@ -10,7 +10,7 @@ namespace Traits {
 
         public Glutton() {
             name = "Glutton";
-            description = "Eats a lot!";
+            description = "Eats a lot! If afflicted by the player, will produce a Chaos Orb each time it eats.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

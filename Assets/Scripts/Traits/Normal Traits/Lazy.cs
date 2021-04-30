@@ -9,7 +9,7 @@ namespace Traits {
 
         public Lazy() {
             name = "Lazy";
-            description = "Would rather loaf around than work.";
+            description = "Would rather loaf around than work. If afflicted by the player, will produce a Chaos Orb each time it starts feeling lazy.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
