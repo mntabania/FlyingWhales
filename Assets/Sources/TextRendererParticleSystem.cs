@@ -54,6 +54,11 @@ namespace Necromancy.UI
         {
             SpawnParticle(transform.position, "+600", Color.red, 10f);
         }
+        public void Stop() {
+            if (particleSystem != null) {
+                particleSystem.Stop(true);    
+            }
+        }
 
         public void SpawnParticle(Vector3 position, float amount, Color color, float? startSize = null)
         {

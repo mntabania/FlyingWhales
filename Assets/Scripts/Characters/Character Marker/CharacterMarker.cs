@@ -601,6 +601,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // previousGridTile = null;
         _previousAreaLocation = null;
         areasInWildernessForFlee.Clear();
+        if (textRendererParticleSystem != null) {
+            textRendererParticleSystem.Stop();    
+        }
     }
     protected override void OnDestroy() {
         pathfindingAI = null;    
