@@ -419,7 +419,8 @@ public class VillageGeneration : MapGenerationComponent {
 	}
 	private WeightedDictionary<StructureSetting> GetStructureWeights(List<STRUCTURE_TYPE> structureTypes, Faction faction, Area villageCenterTile, NPCSettlement settlement) {
 		WeightedDictionary<StructureSetting> structureWeights = new WeightedDictionary<StructureSetting>();
-		List<Area> tilesInRange = villageCenterTile.GetTilesInRange(3);
+		List<Area> tilesInRange = RuinarchListPool<Area>.Claim();
+		villageCenterTile.PopulateAreasInRange(tilesInRange, 3);
 		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom || settlement.settlementType.settlementType == SETTLEMENT_TYPE.Elven_Hamlet) {
 			if (!structureTypes.Contains(STRUCTURE_TYPE.HOSPICE)) {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
@@ -476,8 +477,8 @@ public class VillageGeneration : MapGenerationComponent {
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 3);
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 6);
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 6);
-			
 		}
+		RuinarchListPool<Area>.Release(tilesInRange);
 		return structureWeights;
 	}
 	#endregion

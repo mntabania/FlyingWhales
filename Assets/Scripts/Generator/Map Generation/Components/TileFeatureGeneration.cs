@@ -257,9 +257,11 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				//remove game feature from settlement tiles
 				chosenTile.featureComponent.RemoveFeature(AreaFeatureDB.Game_Feature, chosenTile);
 				//remove chosen tile and neighbours from choices.
-				List<Area> neighbours = chosenTile.GetTilesInRange(tilesInRange, false);
+				List<Area> neighbours = RuinarchListPool<Area>.Claim();
+				chosenTile.PopulateAreasInRange(neighbours, tilesInRange, false);
 				neighbours.Add(chosenTile);
 				data.RemoveVillageSpots(neighbours);
+				RuinarchListPool<Area>.Release(neighbours);
 				createdVillages++;
 			}
 		}

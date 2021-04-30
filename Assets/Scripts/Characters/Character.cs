@@ -4990,9 +4990,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Pathfinding
-    public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+    public void PopulateTilesInRadius(List<LocationGridTile> tiles, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         if(currentRegion == null) { return null; }
-        List<LocationGridTile> tiles = new List<LocationGridTile>();
         int mapSizeX = currentRegion.innerMap.map.GetUpperBound(0);
         int mapSizeY = currentRegion.innerMap.map.GetUpperBound(1);
         int x = gridTileLocation.localPlace.x;
@@ -5021,7 +5020,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
-        return tiles;
     }
     #endregion
 

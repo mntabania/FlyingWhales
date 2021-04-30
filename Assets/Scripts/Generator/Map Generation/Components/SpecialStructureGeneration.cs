@@ -361,14 +361,18 @@ namespace Generator.Map_Generation.Components {
 			return false;
 		}
 		private bool IsInRangeOfSettlement(Area tile, int range) {
-			List<Area> tilesInRange = tile.GetTilesInRange(range);
+			List<Area> tilesInRange = RuinarchListPool<Area>.Claim();
+			tile.PopulateAreasInRange(tilesInRange, range);
+			bool isInRange = false;
 			for (int i = 0; i < tilesInRange.Count; i++) {
 				Area tileInRange = tilesInRange[i];
 				if (tileInRange.settlementOnArea != null && tileInRange.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE) {
-					return true;
+					isInRange = true;
+					break;
 				}
 			}
-			return false;
+			RuinarchListPool<Area>.Release(tilesInRange);
+			return isInRange;
 		}
 		private bool IsAdjacentToNonCaveSpecialStructure(Area p_area) {
 			for (int i = 0; i < p_area.neighbourComponent.neighbours.Count; i++) {

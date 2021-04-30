@@ -2,8 +2,7 @@
 using UnityEngine;
 
 public static class AreaExtensions {
-    public static List<Area> GetTilesInRange(this Area p_area, int p_range, bool sameRegionOnly = true) {
-        List<Area> tilesInRange = new List<Area>();
+    public static void PopulateAreasInRange(this Area p_area, List<Area> areasInRange, int p_range, bool sameRegionOnly = true) {
         CubeCoordinate cube = OddRToCube(new Vector2Int(p_area.areaData.xCoordinate, p_area.areaData.yCoordinate));
         for (int dx = -p_range; dx <= p_range; dx++) {
             for (int dy = Mathf.Max(-p_range, -dx - p_range); dy <= Mathf.Min(p_range, -dx + p_range); dy++) {
@@ -12,12 +11,11 @@ public static class AreaExtensions {
                 if (hex.x >= 0 && hex.y >= 0 && hex.x < GridMap.Instance.width && hex.y < GridMap.Instance.height && !(hex.x == p_area.areaData.xCoordinate && hex.y == p_area.areaData.yCoordinate)) {
                     Area hextile = GridMap.Instance.map[hex.x, hex.y];
                     if(!sameRegionOnly || hextile.region == p_area.region) {
-                        tilesInRange.Add(hextile);
+                        areasInRange.Add(hextile);
                     }
                 }
             }
         }
-        return tilesInRange;
     }
     
     private static HexCoordinate CubeToOddR(Vector3Int cube) {
