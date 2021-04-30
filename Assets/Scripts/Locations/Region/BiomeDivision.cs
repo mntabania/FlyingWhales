@@ -195,9 +195,11 @@ public class BiomeDivision {
     
     #region Desert
     private void TryRemoveFreezing(Character character, Area p_area) {
-        if (p_area.gridTileComponent.centerGridTile.biomeType == biome) {
-            character.traitContainer.RemoveTrait(character, "Freezing");
-            character.traitContainer.RemoveTrait(character, "Frozen");
+        if (GameManager.Instance.gameHasStarted) {
+            if (p_area.gridTileComponent.centerGridTile.biomeType == biome) {
+                character.traitContainer.RemoveTrait(character, "Freezing");
+                character.traitContainer.RemoveTrait(character, "Frozen");
+            }    
         }
     }
     #endregion

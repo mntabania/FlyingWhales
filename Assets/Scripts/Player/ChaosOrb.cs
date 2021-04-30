@@ -22,7 +22,7 @@ public class ChaosOrb : PooledObject {
 	
 	public Region location { get; private set; }
 	
-	public void Initialize(Region locationy) {
+	public void Initialize(Region location) {
 		this.location = location;
 		GameDate expiry = GameManager.Instance.Today();
 		expiry = expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(ExpiryInHours));

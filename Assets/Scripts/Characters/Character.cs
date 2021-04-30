@@ -6127,7 +6127,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.UpdateAnimation();
         }
         if (currentActionNode != null) {
-            if (currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
+            if (currentActionNode.action.goapType == INTERACTION_TYPE.DIG && currentActionNode.poiTarget is ThinWall) {
+                //TODO: quick fix for null error when a character that is trying to dig a thin wall is loaded and will cause error.
+                SetCurrentActionNode(null, null, null);
+            } else if (currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
                 SetCurrentActionNode(null, null, null);
             } else if (currentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
                 if(currentActionNode.poiTarget is TileObject target) {
