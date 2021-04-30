@@ -87,6 +87,19 @@ public class PlayerSkillData : ScriptableObject {
             return skillUpgradeData.GetDurationBonusPerLevel(p_currentLevel);
         }
     }
+
+    [ContextMenu("Reset requirements except portal")]
+    public void ResetAllRequirements() {
+        requirementData.requiredArchetype = PLAYER_ARCHETYPE.Normal;
+        requirementData.requiredSkills.Clear();
+        requirementData.actionCount = 0;
+        requirementData.afflictionCount = 0;
+        requirementData.spellsCount = 0;
+        requirementData.tier1Count = 0;
+        requirementData.tier2Count = 0;
+        requirementData.tier3Count = 0;
+        requirementData.isOR = false;
+    }
 }
 
 //[System.Serializable]
