@@ -1516,42 +1516,6 @@ namespace Inner_Maps {
         public bool IsNextToSettlementAreaOrPartOfSettlement(BaseSettlement settlement) {
             return IsPartOfSettlement(settlement) || IsNextToSettlementArea(settlement);
         }
-        public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false, bool includeImpassable = true, bool includeTilesWithObject = true) {
-            List<LocationGridTile> tiles = new List<LocationGridTile>();
-            int mapSizeX = parentMap.map.GetUpperBound(0);
-            int mapSizeY = parentMap.map.GetUpperBound(1);
-            int x = localPlace.x;
-            int y = localPlace.y;
-            if (includeCenterTile) {
-                tiles.Add(this);
-            }
-            int xLimitLower = x - radiusLimit;
-            int xLimitUpper = x + radiusLimit;
-            int yLimitLower = y - radiusLimit;
-            int yLimitUpper = y + radiusLimit;
-
-
-            for (int dx = x - radius; dx <= x + radius; dx++) {
-                for (int dy = y - radius; dy <= y + radius; dy++) {
-                    if (dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
-                        if (dx == x && dy == y) {
-                            continue;
-                        }
-                        if (radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
-                            continue;
-                        }
-                        LocationGridTile result = parentMap.map[dx, dy];
-                        if (result.structure == null) { continue; } //do not include tiles with no structures
-                        if (!includeTilesWithObject && result.tileObjectComponent.objHere != null) { continue; }
-                        if (!includeTilesInDifferentStructure 
-                            && (result.structure != structure && (!result.structure.structureType.IsOpenSpace() || !structure.structureType.IsOpenSpace()))) { continue; }
-                        if(!includeImpassable && !result.IsPassable()) { continue; }
-                        tiles.Add(result);
-                    }
-                }
-            }
-            return tiles;
-        }
         public void PopulateTilesInRadius(List<LocationGridTile> tiles, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false, bool includeImpassable = true, bool includeTilesWithObject = true) {
             int mapSizeX = parentMap.map.GetUpperBound(0);
             int mapSizeY = parentMap.map.GetUpperBound(1);

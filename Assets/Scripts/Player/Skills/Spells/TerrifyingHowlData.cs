@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Traits;
-
+using UtilityScripts;
 public class TerrifyingHowlData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TERRIFYING_HOWL;
     public override string name => "Terrifying Howl";
@@ -14,7 +14,8 @@ public class TerrifyingHowlData : SkillData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: false);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: false);
         //create generic tile object and destroy after 3 ticks.
         
         BaseMapObjectVisual visual = targetTile.tileObjectComponent.genericTileObject.GetOrCreateMapVisual();
@@ -28,6 +29,7 @@ public class TerrifyingHowlData : SkillData {
         // }
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Terrifying_Howl);
         //IncreaseThreatThatSeesTile(targetTile, 10);
+        RuinarchListPool<LocationGridTile>.Release(tiles);
         base.ActivateAbility(targetTile);
     }
     private void SpookCharacter(ITraitable traitable, LocationGridTile targetTile) {

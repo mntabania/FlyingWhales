@@ -118,7 +118,8 @@ namespace Traits {
             return false;
         }
         public void DamageTargetByTrap(Character actor, IPointOfInterest target) {
-            List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            target.gridTileLocation.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
                 List<IPointOfInterest> pois = RuinarchListPool<IPointOfInterest>.Claim();
@@ -130,7 +131,8 @@ namespace Traits {
                 RuinarchListPool<IPointOfInterest>.Release(pois);
             }
             target.traitContainer.RemoveTrait(target, this);
-            actor.traitContainer.AddTrait(actor, "Unconscious");    
+            actor.traitContainer.AddTrait(actor, "Unconscious");
+            RuinarchListPool<LocationGridTile>.Release(tiles);
         }
 
         public void SetElementType(ELEMENTAL_TYPE element) {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Traits;
-
+using UtilityScripts;
 public class ProtectionData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PROTECTION;
     public override string name => "Protection";
@@ -12,7 +12,8 @@ public class ProtectionData : SkillData {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         GameManager.Instance.CreateParticleEffectAtWithScale(targetTile, PARTICLE_EFFECT.Protection, 4f);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
@@ -27,6 +28,7 @@ public class ProtectionData : SkillData {
                 }
             }
         }
+        RuinarchListPool<LocationGridTile>.Release(tiles);
 
         //TODO: Create Particle Effect
         //GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);

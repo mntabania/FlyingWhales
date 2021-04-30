@@ -23,7 +23,8 @@ public class EarthSpikeData : SkillData {
         int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(this);
         int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(this);
         UnityEngine.GameObject go = GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Earth_Spike);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(tiles, processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         go.transform.localScale = new UnityEngine.Vector3(go.transform.localScale.x * processedTileRange, go.transform.localScale.y * processedTileRange, go.transform.localScale.z * processedTileRange);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
@@ -31,6 +32,7 @@ public class EarthSpikeData : SkillData {
         }
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Danger Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
+        RuinarchListPool<LocationGridTile>.Release(tiles);
         base.ActivateAbility(targetTile);
     }
     private void ApplyEarthDamage(ITraitable traitable, int processedDamage) {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Inner_Maps;
 using Ruinarch;
-
+using UtilityScripts;
 public class SpawnPartyData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPAWN_PARTY;
     public override string name => "Spawn Party";
@@ -42,41 +42,35 @@ public class SpawnPartyData : PlayerAction {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
-            List<LocationGridTile> tiles = targetTile.GetTilesInRadius(2);
-            bool isWilderness = true;
-            tiles.ForEach((eachTile) => {
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            targetTile.PopulateTilesInRadius(tiles, 2);
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile eachTile = tiles[i];
                 if (eachTile.structure.structureType == STRUCTURE_TYPE.CAVE) {
-                    isWilderness = false;
+                    o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_cave");
+                    RuinarchListPool<LocationGridTile>.Release(tiles);
+                    return false;
+                } else if (eachTile.groundType == LocationGridTile.Ground_Type.Water) {
+                    o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_water");
+                    RuinarchListPool<LocationGridTile>.Release(tiles);
+                    return false;
                 }
-            });
-            if (!isWilderness) {
-                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_cave");
-                return false;
             }
-            tiles.ForEach((eachTile) => {
-                if (eachTile.groundType == LocationGridTile.Ground_Type.Water) {
-                    isWilderness = false;
-                }
-            });
-            if (!isWilderness) {
-                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_water");
-                return false;
-            }
-            tiles = targetTile.GetTilesInRadius(2, includeTilesInDifferentStructure: true, includeCenterTile: true);
-            tiles.ForEach((eachTile) => {
+            tiles.Clear();
+            targetTile.PopulateTilesInRadius(tiles, 2, includeTilesInDifferentStructure: true, includeCenterTile: true);
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile eachTile = tiles[i];
                 if (eachTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
-                    isWilderness = false;
+                    o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_structure");
+                    RuinarchListPool<LocationGridTile>.Release(tiles);
+                    return false;
                 }
-            });
-
-            if (!isWilderness) {
-                o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_structure");
-                return false;
             }
             /*if (targetTile.structure) {
                 o_cannotPerformReason = LocalizationManager.Instance.GetLocalizedValue("Party", "General", "invalid_build_at_structure");
                 return false;
             }*/
+            RuinarchListPool<LocationGridTile>.Release(tiles);
             return true;
         }
         return canPerform;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
-
+using UtilityScripts;
 public class SnowMound : TileObject{
     public SnowMound() {
         Initialize(TILE_OBJECT_TYPE.SNOW_MOUND, false);
@@ -15,10 +15,12 @@ public class SnowMound : TileObject{
         base.OnDestroyPOI();
         traitContainer.RemoveTrait(this, "Melting");
         if (previousTile != null) {
-            List<LocationGridTile> tiles = previousTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            previousTile.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Wet");
             }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
         }
     }
 

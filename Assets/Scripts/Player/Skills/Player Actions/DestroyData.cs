@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Logs;
-
+using UtilityScripts;
 public class DestroyData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DESTROY;
     public override string name => "Destroy";
@@ -31,14 +31,17 @@ public class DestroyData : PlayerAction {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == targetPOI) {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
-
-        targetTile.GetTilesInRadius(PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.DESTROY)).ForEach((eachTile) => {
+        int processedDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(this);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(this);
+        List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(tilesInRadius, PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.DESTROY));
+        for (int i = 0; i < tilesInRadius.Count; i++) {
+            LocationGridTile eachTile = tilesInRadius[i];
             if (eachTile != null) {
                 GameManager.Instance.CreateParticleEffectAt(eachTile, PARTICLE_EFFECT.Destroy_Explosion);
                 eachTile.charactersHere.ForEach((eachCharacters) => {
-                    int processedDamage = PlayerSkillManager.Instance.GetDamageBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY);
                     eachCharacters.AdjustHP(-processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true,
-                        piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.DESTROY), isPlayerSource: true);
+                        piercingPower: piercing, isPlayerSource: true);
                     Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, eachCharacters, processedDamage);
                     if (eachCharacters.isDead && eachCharacters.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                         eachCharacters.skillCauseOfDeath = PLAYER_SKILL_TYPE.DESTROY;
@@ -49,8 +52,8 @@ public class DestroyData : PlayerAction {
                     }
                 });
             }
-        });
-
+        }
+        RuinarchListPool<LocationGridTile>.Release(tilesInRadius);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {

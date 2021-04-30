@@ -260,8 +260,9 @@ public class CombatManager : BaseMonoBehaviour {
         yield return new WaitForSeconds(0.2f);
         AudioManager.Instance.CreatePoisonExplosionAudio(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Explosion);
-        List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        //List<ITraitable> traitables = new List<ITraitable>();
+        List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(affectedTiles, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.1f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
@@ -272,6 +273,7 @@ public class CombatManager : BaseMonoBehaviour {
             // traitables.AddRange(tile.GetTraitablesOnTile());
             tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, characterResponsible, ref bs, isPlayerSource));
         }
+        RuinarchListPool<LocationGridTile>.Release(affectedTiles);
         // if(!(target is GenericTileObject)) {
         //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
         //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -305,8 +307,9 @@ public class CombatManager : BaseMonoBehaviour {
         yield return new WaitForSeconds(0.2f);
         AudioManager.Instance.CreateFrozenExplosionAudio(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Frozen_Explosion);
-        List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
+        //List<ITraitable> traitables = new List<ITraitable>();
+        List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(affectedTiles, 2, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.2f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
@@ -316,7 +319,7 @@ public class CombatManager : BaseMonoBehaviour {
             // traitables.AddRange(tile.GetTraitablesOnTile());
             tile.PerformActionOnTraitables((traitable) => FrozenExplosionEffect(traitable, damagePercentage, isPlayerSource));
         }
-
+        RuinarchListPool<LocationGridTile>.Release(affectedTiles);
         // if (!(target is GenericTileObject)) {
         //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
         //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);

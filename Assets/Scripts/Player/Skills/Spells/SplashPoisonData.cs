@@ -21,7 +21,8 @@ public class SplashPoisonData : SkillData {
                 .GetScriptableObjPlayerSkillData<SplashPoisonSkillData>(PLAYER_SKILL_TYPE.SPLASH_POISON).splashSounds),
             targetTile, 3, false
         );
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(MakeTraitblePoisoned);
@@ -29,6 +30,7 @@ public class SplashPoisonData : SkillData {
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Bomb);
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Surprised Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
+        RuinarchListPool<LocationGridTile>.Release(tiles);
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitblePoisoned(ITraitable traitable) {

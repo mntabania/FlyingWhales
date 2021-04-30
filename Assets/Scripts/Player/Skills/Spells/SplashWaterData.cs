@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Traits;
-
+using UtilityScripts;
 public class SplashWaterData : SkillData {
 
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPLASH_WATER;
@@ -15,7 +15,8 @@ public class SplashWaterData : SkillData {
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
         int processedTileRange = PlayerSkillManager.Instance.GetTileRangeBonusPerLevel(PLAYER_SKILL_TYPE.SPLASH_WATER);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(tiles, processedTileRange, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(MakeTraitbleWet);
@@ -24,6 +25,7 @@ public class SplashWaterData : SkillData {
         go.transform.localScale = new UnityEngine.Vector3(go.transform.localScale.x * (processedTileRange * 0.7f), go.transform.localScale.y * (processedTileRange * 0.7f), go.transform.localScale.z * (processedTileRange * 0.7f));
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Surprised Remnant");
         //IncreaseThreatThatSeesTile(targetTile, 10);
+        RuinarchListPool<LocationGridTile>.Release(tiles);
         base.ActivateAbility(targetTile);
     }
     private void MakeTraitbleWet(ITraitable traitable) {
