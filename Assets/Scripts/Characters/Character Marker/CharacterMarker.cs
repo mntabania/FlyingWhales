@@ -604,6 +604,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (textRendererParticleSystem != null) {
             textRendererParticleSystem.Stop();    
         }
+        if (animationListener != null) {
+            animationListener.Reset();
+        }
     }
     protected override void OnDestroy() {
         pathfindingAI = null;    

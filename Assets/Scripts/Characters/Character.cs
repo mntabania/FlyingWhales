@@ -2772,8 +2772,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         Death("attacked", responsibleCharacter: responsibleCharacter, isPlayerSource: isPlayerSource);
                     } else {
                         string cause = "attacked";
-                        cause += $"_{source}";
-                        Death(cause, isPlayerSource: isPlayerSource);
+                        if (source is SkillData skillData) {
+                            cause += $"_spell";
+                            Death(cause, isPlayerSource: isPlayerSource, deathLogFillers: new[] {
+                                new LogFillerStruct(null, skillData.name, LOG_IDENTIFIER.STRING_1)
+                            });
+                        } else if (source is TileObject tileObject) {
+                            cause += $"_spell";
+                            Death(cause, isPlayerSource: isPlayerSource, deathLogFillers: new[] {
+                                new LogFillerStruct(null, tileObject.name, LOG_IDENTIFIER.STRING_1)
+                            });
+                        } else {
+                            cause += $"_{source}";
+                            Death(cause, isPlayerSource: isPlayerSource);
+                        }
                     }
                 } else {
                     Death(isPlayerSource: isPlayerSource);
