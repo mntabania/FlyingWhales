@@ -73,6 +73,20 @@ public class PlayerSkillData : ScriptableObject {
     public int GetMaxChargesBaseOnLevel(int level) {
         return SpellUtilities.GetModifiedSpellCost(skillUpgradeData.GetChargesBaseOnLevel(level), WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
     }
+    public float GetAdditionalPiercePerLevelBaseOnLevel(int p_currentLevel) {
+        if (isAffliction) {
+            return afflictionUpgradeData.GetPiercePerLevel(p_currentLevel);
+        } else {
+            return skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(p_currentLevel);
+        }
+    }
+    public int GetDurationBonusPerLevel(int p_currentLevel) {
+        if (isAffliction) {
+            return (int)afflictionUpgradeData.GetDurationPerLevel(p_currentLevel);
+        } else {
+            return skillUpgradeData.GetDurationBonusPerLevel(p_currentLevel);
+        }
+    }
 }
 
 //[System.Serializable]

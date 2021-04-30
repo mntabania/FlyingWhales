@@ -368,7 +368,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 		}
 	}
 	private void OnHoverOutSkill(PlayerSkillData p_skillData, PurchaseSkillItemUI p_item) {
-		if (PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == PLAYER_SKILL_TYPE.NONE) {
+		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked == PLAYER_SKILL_TYPE.NONE) {
 			if (PlayerManager.Instance.player.plagueComponent.plaguePoints < p_skillData.GetUnlockCost()) {
 				UIManager.Instance.HideSmallInfo();
 			} else {

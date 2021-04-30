@@ -22,19 +22,20 @@ MonoBehaviour:
   cheatedLevel: 0
   pierce: 0
   bonusChargeWhenUnlocked: 0
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
   unlockCost: 300
   tier: 0
   baseLoadoutWeight: 0
-  resistanceType: 10
+  resistanceType: 0
   archetypeWeightedBonus: 2
   canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 3aa12ad36bc6d1d479696c177317a09a, type: 3}
   contextMenuColumn: 1
   playerActionIcon: {fileID: 0}
-  isNonUpgradeable: 0
+  isNonUpgradeable: 1
   isAffliction: 0
   isLockedBaseOnRequirements: 1
   requirementData:
@@ -51,15 +52,12 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 140000003200000050000000
-    manacostPerLevel: 96000000c8000000fa0000005e010000
+    manacostPerLevel: 96000000
     chargesPerLevel: 01000000010000000200000002000000
     bonuses: 010000000e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
     - 0
-    - 50
-    - 100
-    - 150
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
@@ -72,7 +70,7 @@ MonoBehaviour:
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
     decreaseMovementSpeedPerLevel: 
-    cooldownPerLevel: 400100000001000000010000e0000000
+    cooldownPerLevel: 40010000
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 

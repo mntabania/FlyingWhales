@@ -313,9 +313,9 @@ public class PlagueDisease : ISingletonPattern, ISavable {
 
     #region Randomization
     public void OnLoadoutPicked() {
-        if (!PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse) {
-            RandomizePlague();
-        }
+        // if (!PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse) {
+        //     RandomizePlague();
+        // }
     }
     private void RandomizePlague() {
         string randomizeSummary = $"Randomizing Plague Effects:";

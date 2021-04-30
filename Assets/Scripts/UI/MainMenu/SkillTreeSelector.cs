@@ -86,7 +86,7 @@ public class SkillTreeSelector : MonoBehaviour {
         }
         SaveManager.Instance.currentSaveDataPlayer.SetMoreLoadoutOptions(moreLoadoutOptionsToggle.isOn);
         BroadcastLoadoutSelectedSignals();
-        PlagueDisease.Instance.OnLoadoutPicked();
+        // PlagueDisease.Instance.OnLoadoutPicked();
         GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
         

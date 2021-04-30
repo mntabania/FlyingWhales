@@ -5,6 +5,7 @@ using UnityEngine;
 using Ruinarch;
 using Inner_Maps;
 using Tutorial;
+using UtilityScripts;
 
 public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
@@ -251,7 +252,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost
+				item.SetInteractableState(PlayerManager.Instance.player.mana >= item.summonCost
 					&& CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClassName).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower
 					&& entry.Value.currentCharges > 0);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
@@ -538,8 +539,8 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void OnUnlockSlotClicked(DeployedMonsterItemUI p_itemUI) {
-		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.unlockCost) {
-			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.unlockCost);
+		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.GetUnlockCost()) {
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.GetUnlockCost());
 			m_targetPartyStructure.startingSummonCount++;
 			m_maraudUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, m_targetPartyStructure.party, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		}
@@ -569,7 +570,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		}
 		m_chosenTile = p_chosenTile;
 		if (!m_isTeamDeployed) {
-			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Deploy Party.", $"Are you sure you want to use {m_totalDeployCost.ToString()} mana and deploy the party?", OnYesDeploy, showCover: true, layer: 150);
+			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Deploy Party.", $"Are you sure you want to spend {m_totalDeployCost.ToString()}{UtilityScripts.Utilities.ManaIcon()} to summon this party?", OnYesDeploy, showCover: true, layer: 150);
 		}
 	}
 
@@ -664,16 +665,16 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	public void OnHoverOver() {
 		if (m_isTeamDeployed) {
-			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
+			Tooltip.Instance.ShowSmallInfo("Unsummon all party members.", "Undeploy Party", autoReplaceText: false);
 		} else {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
-				Tooltip.Instance.ShowSmallInfo("Send the team to do the quest.", "Deploy team", autoReplaceText: false);
+				Tooltip.Instance.ShowSmallInfo("Spawn the party to do the task", "Deploy Party", autoReplaceText: false);
 			} else if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 				Tooltip.Instance.ShowSmallInfo("Can't build team, structure is occupied.", "Occupied Structure", autoReplaceText: false);
 			} else if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
 				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana", "Not enough Mana", autoReplaceText: false);
 			} else {
-				Tooltip.Instance.ShowSmallInfo("Should atleast have 1 target and 1 leader", "Deploy team", autoReplaceText: false);
+				Tooltip.Instance.ShowSmallInfo("Should at least have a Target and a Leader", "Deploy team", autoReplaceText: false);
 			}
 		}
 	}

@@ -3,6 +3,7 @@ using Ruinarch.MVCFramework;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Ruinarch;
+
 public class DefensePointUIController : MVCUIController, DefensePointUIView.IListener {
 
 	#region MVCUI
@@ -146,7 +147,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
 				item.SetObject(entry.Value);
 				item.SetAsButton();
-				item.SetInteractableState(PlayerManager.Instance.player.mana > item.summonCost && entry.Value.currentCharges > 0);
+				item.SetInteractableState(PlayerManager.Instance.player.mana >= item.summonCost && entry.Value.currentCharges > 0);
 				m_summonList.Add(item);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
@@ -207,8 +208,8 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	}
 
 	void OnUnlockSlotClicked(DeployedMonsterItemUI p_itemUI) {
-		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.unlockCost) {
-			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.unlockCost);
+		if (m_targetPartyStructure.startingSummonCount < m_targetPartyStructure.MAX_SUMMON_COUNT && PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_itemUI.GetUnlockCost()) {
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_itemUI.GetUnlockCost());
 			m_targetPartyStructure.startingSummonCount++;
 			m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		}
@@ -219,7 +220,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	#region MaraudUIView implementation
 	public void OnDeployClicked() {
 		if (!m_isAllItemDeployed) {
-			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Deploy Party.", $"Are you sure you want to use {m_totalDeployCost.ToString()} mana and deploy the party?", OnYesDeploy, showCover: true, layer: 150);
+			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Deploy Party.", $"Are you sure you want to spend {m_totalDeployCost.ToString()}{UtilityScripts.Utilities.ManaIcon()} to summon this party?", OnYesDeploy, showCover: true, layer: 150);
 		} else {
 			UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Disband Party.", $"Are you sure you want to disband the party?", OnYesUndeploy, showCover: true, layer: 150);
 		}
@@ -327,7 +328,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	public void OnHoverOver() {
 		if (m_isAllItemDeployed) {
-			Tooltip.Instance.ShowSmallInfo("Disband the team.", "Undeploy team", autoReplaceText: false);
+			Tooltip.Instance.ShowSmallInfo("Unsummon all party members.", "Undeploy Party", autoReplaceText: false);
 		} else {
 			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
 				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana.", "Not enough Mana", autoReplaceText: false);
