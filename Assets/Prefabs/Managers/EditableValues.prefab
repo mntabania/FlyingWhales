@@ -66,7 +66,7 @@ MonoBehaviour:
   currencyHoverData: {fileID: 11400000, guid: 4554e545483287347a940b31691f1945, type: 2}
   _initialChaoticEnergyCustom: 50
   _initialChaoticEnergyScenario: 250
-  _revealInfoCharacterCost: 15
+  _revealInfoCharacterCost: 8
   _revealInfoFactionCost: 40
   _manaRegenPerHr: 100
   _manaRegenPerManapit: 20
