@@ -502,6 +502,12 @@ public class VillageGeneration : MapGenerationComponent {
 				remainingDwellings--;
 			}
 		} else {
+			if (dwellingCount == 2) {
+				//this is to prevent only 2 characters spawning in custom if only 2 dwellings were placed
+				coupleCharacters = 2;
+				singleCharacters = 0;
+				return;
+			}
 			for (int i = 0; i < dwellingCount; i++) {
 				if (GameUtilities.RollChance(35)) {
 					coupleCharacters++;

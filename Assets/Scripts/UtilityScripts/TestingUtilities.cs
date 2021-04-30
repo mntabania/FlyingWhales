@@ -88,6 +88,11 @@ namespace UtilityScripts {
                     }
                 }
             }
+            // summary += $"\n{npcSettlement.name} Items in location: ";
+            // for (int i = 0; i < npcSettlement.areas.Count; i++) {
+            //     Area area = npcSettlement.areas[i];
+            //     summary += $"{area.tileObjectComponent.itemsInArea.ComafyList()}";
+            // }
             summary += "\n";
             UIManager.Instance.ShowSmallInfo(summary);
         }

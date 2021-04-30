@@ -296,7 +296,7 @@ public class CombatManager : BaseMonoBehaviour {
         //List<ITraitable> traitables = new List<ITraitable>();
         List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
         targetTile.PopulateTilesInRadius(affectedTiles, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-        float damagePercentage = 0.1f * stacks;
+        float damagePercentage = 0.05f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
         }
