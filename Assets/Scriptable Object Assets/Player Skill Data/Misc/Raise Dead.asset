@@ -67,9 +67,9 @@ MonoBehaviour:
     - 75
     additionalAttackPercentagePerLevel:
     - 0
+    - 10
+    - 25
     - 50
-    - 75
-    - 100
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
     additionalmanaReceivedPercentagePerLevel: []
@@ -77,9 +77,9 @@ MonoBehaviour:
     durationBonusPerLevel: 
     additionalMaxHPPercentagePerLevel:
     - 0
+    - 10
+    - 25
     - 50
-    - 75
-    - 100
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
     additionalTileRangeBonusPerLevel: 
