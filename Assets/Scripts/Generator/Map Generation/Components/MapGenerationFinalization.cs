@@ -355,12 +355,14 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			// randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
 			// Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-			//always spawn Necronomicon
-			Region randomRegion = GridMap.Instance.allRegions[0];
-			//tutorial should always have 2 ancient graveyards.
-			LocationStructure structure = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
-			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
-			structure.AddPOI(artifact);
+			//Commented this out because of task:
+			//https://trello.com/c/YvfQuJ4g/4295-remove-necronomicon-from-pangat-loo
+			// //always spawn Necronomicon
+			// Region randomRegion = GridMap.Instance.allRegions[0];
+			// //tutorial should always have 2 ancient graveyards.
+			// LocationStructure structure = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
+			// Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
+			// structure.AddPOI(artifact);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
 			List<LocationStructure> structures = LandmarkManager.Instance.GetSpecialStructuresOfType(STRUCTURE_TYPE.TEMPLE);
 			List<ARTIFACT_TYPE> artifactChoices = new List<ARTIFACT_TYPE>() {
