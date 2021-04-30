@@ -39,7 +39,7 @@ MonoBehaviour:
   isAffliction: 0
   isLockedBaseOnRequirements: 0
   requirementData:
-    requirements: 08000000
+    requirements: 01000000
     requiredArchetype: 0
     requiredSkills: 
     actionCount: 0

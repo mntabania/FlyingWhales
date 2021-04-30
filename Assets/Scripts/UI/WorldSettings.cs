@@ -148,20 +148,20 @@ public class WorldSettings : MonoBehaviour {
     }
     public void ShowHover(string title, string text, bool p_isScenario) {
         if (title != string.Empty && text != string.Empty) {
-            subHoverTitle.text = title;
-            subHoverText.text = text;
             if (p_isScenario) {
+                subHoverTitle.text = title;
+                subHoverText.text = text;
                 hoverTitle.text = "Scenario Game\n";
                 hoverText.text = "Scenarios are shorter games with a variety of different situations and victory conditions. Unlike Custom, you will start with a bigger loadout with some optional configurable slots.\n\nHowever, you don't get to upgrade the Portal, so you won't get permanent access to more Powers. Unleash Power is still available in the Portal so you can still get Bonus Charges.";
+                subHoverGO.SetActive(true);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(subHoverGO.transform as RectTransform);
             } else {
+                subHoverGO.SetActive(false);
                 hoverTitle.text = "Custom Game\n";
                 hoverText.text = "Configure game settings and generate a random world.";
-
             }
             hoverGO.SetActive(true);
-            subHoverGO.SetActive(true);
             LayoutRebuilder.ForceRebuildLayoutImmediate(hoverGO.transform as RectTransform);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(subHoverGO.transform as RectTransform);
         } else {
             HideHover();
         }

@@ -280,9 +280,11 @@ public class SkillUpgradeUIController : MVCUIController, SkillUpgradeUIView.ILis
 	private void OnHoverOverUpgradeItem(PLAYER_SKILL_TYPE p_skillType) {
 		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_skillType);
 		if (skillData.isMaxLevel) {
-			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, m_skillUpgradeUIView.UIModel.tooltipPosition);
+			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData, m_skillUpgradeUIView.UIModel.tooltipPosition, false);
 		} else {
-			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillWithLevelUpDetails(skillData, m_skillUpgradeUIView.UIModel.tooltipPosition);	
+			PlayerSkillData playerData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
+			bool isChaoticEnergyEnough = PlayerManager.Instance.player.chaoticEnergy >= playerData.skillUpgradeData.GetUpgradeCostBaseOnLevel(skillData.currentLevel);
+			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillWithLevelUpDetails(skillData, m_skillUpgradeUIView.UIModel.tooltipPosition, isChaoticEnergyEnough);	
 		}
 	}
 	private void OnHoverOutUpgradeItem(PLAYER_SKILL_TYPE p_skillType) {

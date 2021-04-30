@@ -23,8 +23,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public TextMeshProUGUI additionalText;
     public UIHoverPosition defaultPosition;
 
-    public void ShowPlayerSkillDetails(SkillData spellData, UIHoverPosition position = null) {
-        UpdateData(spellData);
+    public void ShowPlayerSkillDetails(SkillData spellData, UIHoverPosition position = null, bool p_dontShowAdditionalText = false) {
+        UpdateData(spellData, p_dontShowAdditionalText);
         UpdatePosition(position);
     }
     public void ShowPlayerSkillDetails(PlayerSkillData skillData, int level = 0, UIHoverPosition position = null) {
@@ -35,8 +35,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         UpdateData(title, description);
         UpdatePosition(position);
     }
-    public void ShowPlayerSkillWithLevelUpDetails(SkillData spellData, UIHoverPosition position = null) {
-        UpdateDataWithLevelUpDetails(spellData);
+    public void ShowPlayerSkillWithLevelUpDetails(SkillData spellData, UIHoverPosition position = null, bool p_isChaoticEnergyEnough = true) {
+        UpdateDataWithLevelUpDetails(spellData, p_isChaoticEnergyEnough);
         UpdatePosition(position);
     }
     public void HidePlayerSkillDetails() {
@@ -81,7 +81,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
         bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(p_playerSkillData, 1)}";
     }
-    private void UpdateData(SkillData skillData) {
+    private void UpdateData(SkillData skillData, bool p_dontShowAdditionalText = false) {
         // UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
         titleText.text = skillData.name;
         string fullDescription = skillData.description;
@@ -98,9 +98,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         bonusesStr = $"{bonusesStr}{GetAdditionalBonusesString(skillData, playerSkillData, skillData.currentLevel)}";
         bonusesText.text = bonusesStr;
         bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(playerSkillData, skillData.currentLevel)}";
-        
-        additionalText.text = GetAdditionalInfo(skillData);
 
+        if (p_dontShowAdditionalText) {
+            additionalText.text = string.Empty;
+        } else {
+            additionalText.text = GetAdditionalInfo(skillData);
+        }
+        
         if (skillData is BrainwashData) {
             Character targetCharacter = null;
             if (UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
@@ -126,7 +130,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = string.Empty;
         additionalText.text = string.Empty;
     }
-    private void UpdateDataWithLevelUpDetails(SkillData spellData) {
+    private void UpdateDataWithLevelUpDetails(SkillData spellData, bool p_isChaoticEnergyEnough = true) {
         titleText.text = spellData.name;
         string fullDescription = spellData.description;
         int charges = spellData.charges;
@@ -154,7 +158,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //     //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
         //     bonusesText.text = $"{bonusesText.text}{UtilityScripts.Utilities.ColorizeSpellTitle("Charges:")} {charges.ToString()}/{spellData.maxCharges.ToString()}";
         // }
-        additionalText.text = GetAdditionalInfo(spellData);
+        additionalText.text = GetAdditionalInfoForSpire(p_isChaoticEnergyEnough);
 
         // if (spellData is BrainwashData && UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
         //     Character targetCharacter = defilerRoom.charactersInRoom.First();
@@ -162,7 +166,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //         fullDescription += $"\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
         //     }
         // }
-        
+
         descriptionText.SetTextAndReplaceWithIcons(fullDescription);
     }
     
@@ -412,6 +416,15 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         
         return additionalText;
     }
+
+    private string GetAdditionalInfoForSpire(bool p_isChaoticEnergyEnough = true) {
+        string additionalText = string.Empty;
+        if (!p_isChaoticEnergyEnough) {
+            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough Chaotic Energy.")}\n";
+        }
+        return additionalText;
+    }
+
     private string GetTileRangeDisplay(int radius) {
         int dimension = (radius * 2) + 1;
         return $"{dimension.ToString()}x{dimension.ToString()}";
