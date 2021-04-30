@@ -458,12 +458,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				if (p_monsterClicked.isDemon) {
 					m_targetPartyStructure.partyData.readyForDeployMinionCount++;
 					deployedItemList[x].InitializeItem(p_monsterClicked);
-					Debug.LogError(deployedItemList[x].summonCost);
 					m_totalDeployCost += deployedItemList[x].summonCost;
 				} else {
 					deployedItemList[x].InitializeItem(p_monsterClicked);
 					m_targetPartyStructure.partyData.readyForDeploySummonCount++;
-					Debug.LogError(deployedItemList[x].summonCost);
 					m_totalDeployCost += deployedItemList[x].summonCost;
 				}
 				break;
