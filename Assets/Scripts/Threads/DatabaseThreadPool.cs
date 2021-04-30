@@ -49,14 +49,14 @@ public class DatabaseThreadPool : BaseMonoBehaviour {
 
     private void RunThread() {
         while (isRunning) {
-            if (functionsToBeRunInThread != null && functionsToBeRunInThread.Count > 0) {
-                SQLWorkerItem newFunction = functionsToBeRunInThread.Dequeue();
-                if (newFunction != null) {
-                    lock (THREAD_LOCKER) {
+            lock (THREAD_LOCKER) {
+                if (functionsToBeRunInThread != null && functionsToBeRunInThread.Count > 0) {
+                    SQLWorkerItem newFunction = functionsToBeRunInThread.Dequeue();
+                    if (newFunction != null) {
                         newFunction.DoMultithread();
                     }
+                    functionsToBeResolved.Enqueue(newFunction);
                 }
-                functionsToBeResolved.Enqueue(newFunction);
             }
         }
     }
