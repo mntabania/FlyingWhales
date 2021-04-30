@@ -87,8 +87,8 @@ public class SkillTreeSelector : MonoBehaviour {
         SaveManager.Instance.currentSaveDataPlayer.SetMoreLoadoutOptions(moreLoadoutOptionsToggle.isOn);
         BroadcastLoadoutSelectedSignals();
         // PlagueDisease.Instance.OnLoadoutPicked();
-        GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
+        GameManager.Instance.StartProgression();
         
         InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
