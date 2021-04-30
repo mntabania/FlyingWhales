@@ -169,6 +169,7 @@ namespace Locations.Settlements.Settlement_Events {
                 default:
                     throw new ArgumentOutOfRangeException(nameof(p_response), p_response, null);
             }
+            Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, p_faction);
         }
         private Character GetLeaderThatWillDecideResponse(NPCSettlement p_settlement) {
             if (p_settlement.owner != null && p_settlement.owner.leader is Character factionLeader && factionLeader.homeSettlement != null && factionLeader.homeSettlement == p_settlement) {
@@ -184,7 +185,8 @@ namespace Locations.Settlements.Settlement_Events {
         private void RevertFactionEffects(Faction p_faction) {
             if (!p_faction.ownedSettlements.Any(s => s is NPCSettlement npcSettlement && npcSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event))) {
                 //if faction no longer has any plagued settlements, remove plague as crime. Otherwise retain its current value
-                p_faction.factionType.RemoveCrime(CRIME_TYPE.Plagued);    
+                p_faction.factionType.RemoveCrime(CRIME_TYPE.Plagued);
+                Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, p_faction);
             }
         }
         #endregion

@@ -141,7 +141,34 @@ public class CombatManager : BaseMonoBehaviour {
     }
     public void ModifyDamage(ref int damage, ELEMENTAL_TYPE elementalType, float piercingPower, ITraitable target) {
         if(damage < 0) {
-            if(target is Character targetCharacter) {
+            if (target.traitContainer.HasTrait("Immune")) {
+                damage = 0;
+                return;
+            }
+            if (target.traitContainer.HasTrait("Protection")) {
+                damage = Mathf.RoundToInt(damage * 0.5f);
+                if (damage >= 0) {
+                    damage = -1;
+                }
+            }
+            if (HasSpecialImmunityToElement(target, elementalType)) {
+                if (target is Vapor) {
+                    damage = 0;
+                    return;
+                } else {
+                    //Immunity - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.15f);
+                    if (damage >= 0) {
+                        damage = -1;
+                    }
+                }
+            }
+            if (elementalType == ELEMENTAL_TYPE.Fire) {
+                if (target.traitContainer.HasTrait("Fire Prone")) {
+                    damage *= 2;
+                }
+            }
+            if (target is Character targetCharacter) {
                 //Piercing and Resistances
                 targetCharacter.piercingAndResistancesComponent.ModifyValueByResistance(ref damage, elementalType, piercingPower);
             } else {
@@ -191,13 +218,13 @@ public class CombatManager : BaseMonoBehaviour {
             //}
         }
     }
-    public bool IsImmuneToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
-        if(target is Vapor && elementalType != ELEMENTAL_TYPE.Ice && elementalType != ELEMENTAL_TYPE.Poison && elementalType != ELEMENTAL_TYPE.Fire) {
+    public bool HasSpecialImmunityToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
+        if (target is Vapor && elementalType != ELEMENTAL_TYPE.Ice && elementalType != ELEMENTAL_TYPE.Poison && elementalType != ELEMENTAL_TYPE.Fire) {
             //Vapors are immune to all other damage types except Ice
             return true;
         }
-        if(elementalType != ELEMENTAL_TYPE.Fire) {
-            if(target is WinterRose) {
+        if (elementalType != ELEMENTAL_TYPE.Fire) {
+            if (target is WinterRose) {
                 //Immunity - less 85% damage
                 return true;
             }
@@ -207,6 +234,12 @@ public class CombatManager : BaseMonoBehaviour {
                 //Immunity - less 85% damage
                 return true;
             }
+        }
+        return false;
+    }
+    public bool IsImmuneToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
+        if (HasSpecialImmunityToElement(target, elementalType)) {
+            return true;
         }
         if (elementalType == ELEMENTAL_TYPE.Fire) {
             if (target.traitContainer.HasTrait("Fire Prone")) {

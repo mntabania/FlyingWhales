@@ -6,9 +6,10 @@ using UnityEngine;
 namespace Interrupts {
     public class FeelingConcerned : Interrupt {
         public FeelingConcerned() : base(INTERRUPT.Feeling_Concerned) {
-            duration = 0;
-            doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sad_Icon;
+            duration = 0;
+            //doesStopCurrentAction = true;
+            isSimulateneous = true;
             shouldAddLogs = false;
             logTags = new[] {LOG_TAG.Social};
         }

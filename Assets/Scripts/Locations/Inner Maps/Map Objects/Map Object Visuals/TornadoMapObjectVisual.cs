@@ -298,7 +298,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                     //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                 }
             } else {
-                damageable.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, piercingPower: piercing, isPlayerSource: _tornado.isPlayerSource);    
+                //Damage to tile objects should be half so that the village structures should not be destroyed easily
+                int objectDamage = Mathf.RoundToInt(processedDamage * 0.5f);
+                damageable.AdjustHP(objectDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, piercingPower: piercing, isPlayerSource: _tornado.isPlayerSource);    
             }
         }
     }

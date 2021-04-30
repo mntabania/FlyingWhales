@@ -794,6 +794,25 @@ namespace Locations.Settlements {
             RuinarchListPool<Area>.Release(areaChoices);
             return chosenTileObject;
         }
+        public TileObject GetRandomTileObjectForRaidAttack() {
+            List<Area> areaChoices = RuinarchListPool<Area>.Claim();
+            areaChoices.AddRange(areas);
+            TileObject chosenTileObject = null;
+            while (chosenTileObject == null && areaChoices.Count > 0) {
+                int areaIndex = GameUtilities.RandomBetweenTwoNumbers(0, areaChoices.Count - 1);
+                Area randomArea = areaChoices[areaIndex];
+                if (randomArea != null) {
+                    chosenTileObject = randomArea.tileObjectComponent.GetRandomTileObjectForRaidAttack();
+                    if (chosenTileObject == null) {
+                        areaChoices.RemoveAt(areaIndex);
+                    }
+                } else {
+                    break;
+                }
+            }
+            RuinarchListPool<Area>.Release(areaChoices);
+            return chosenTileObject;
+        }
         public T GetRandomTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
             List<T> objs = null;
             for (int i = 0; i < allStructures.Count; i++) {
