@@ -1280,5 +1280,6 @@ public enum CHANCE_TYPE {
     Retaliation_Character_Death,
     Retaliation_Structure_Destroy,
     Retaliation_Resource_Pile,
-    Harpy_Capture
+    Harpy_Capture,
+    Lycanthrope_Transform_Chance,
 }
