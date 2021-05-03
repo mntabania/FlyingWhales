@@ -62,6 +62,7 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             log += $"\n{character.name} has no cultist kit available. Will create obtain personal item job.";
             bool success = character.jobComponent.TryCreateObtainPersonalItemJob("Cultist Kit", out producedJob);
             if (success) {
+                JobUtilities.PopulatePriorityLocationsForTakingPersonalItem(character, producedJob as GoapPlanJob, INTERACTION_TYPE.NONE);
                 producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe });
             }
             return success;
