@@ -4124,6 +4124,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.LONG_STAND_STILL);
         AddAdvertisedAction(INTERACTION_TYPE.COOK);
         AddAdvertisedAction(INTERACTION_TYPE.MAKE_LOVE);
+        AddAdvertisedAction(INTERACTION_TYPE.INVITE);
         
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
@@ -4148,7 +4149,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.PRAY);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
-            AddAdvertisedAction(INTERACTION_TYPE.INVITE);
             AddAdvertisedAction(INTERACTION_TYPE.TANTRUM);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_TO_STOP_JOB);
             AddAdvertisedAction(INTERACTION_TYPE.STRANGLE);
@@ -4502,6 +4502,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void SetCurrentActionNode(ActualGoapNode actionNode, JobQueueItem job, GoapPlan plan) {
+        Debug.Log($"Set current node of {name} to - Action: {actionNode?.name ?? "Null"}.\nJob: {job?.ToString() ?? "Null"}.\nPlan: {plan?.LogPlan() ?? "Null"}");
         if (currentActionNode != null) {
             previousCurrentActionNode = currentActionNode;
         }
