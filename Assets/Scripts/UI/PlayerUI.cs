@@ -901,6 +901,7 @@ public class PlayerUI : BaseMonoBehaviour {
         SpellItem item = GetSpellItem(spell);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+            _spellItems.Remove(item);
         }
     }
     private SpellItem GetSpellItem(PLAYER_SKILL_TYPE spell) {

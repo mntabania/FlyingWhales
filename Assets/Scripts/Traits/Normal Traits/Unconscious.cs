@@ -100,8 +100,7 @@ namespace Traits {
         #region Lycanthropy
         private void CheckForLycanthropy(Character character) {
             if(character.isLycanthrope && !character.lycanData.isMaster) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 25) {
+                if (ChanceData.RollChance(CHANCE_TYPE.Lycanthrope_Transform_Chance)) {
                     character.lycanData.Transform(character);
                 }
             }

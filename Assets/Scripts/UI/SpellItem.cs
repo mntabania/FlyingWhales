@@ -212,13 +212,16 @@ public class SpellItem : NameplateItem<SkillData> {
         SetCooldownState(false);
         spellData = null;
         cooldownCoverImage.fillAmount = 0f;
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, OnExecuteSpell);
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
         Messenger.RemoveListener<SkillData>(PlayerSkillSignals.BONUS_CHARGES_ADJUSTED, OnBonusChargesAdjusted);
+        Messenger.RemoveListener<SkillData>(PlayerSkillSignals.PLAYER_SKILL_LEVEL_UP, OnSpellUpgraded);
         Messenger.RemoveListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
 }

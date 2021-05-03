@@ -222,13 +222,15 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         public bool CanSeeObjectLocatedHere(Character p_character) {
-            //since characters usually cannot directly step on a demonic structure,
-            //consider character as arrived if it has a tile object in its vision that is at the target structure
-            for (int i = 0; i < p_character.marker.inVisionTileObjects.Count; i++) {
-                TileObject tileObject = p_character.marker.inVisionTileObjects[i];
-                if (tileObject.structureLocation != null && tileObject.structureLocation == this) {
-                    return true;
-                }
+            if (p_character.hasMarker) {
+                //since characters usually cannot directly step on a demonic structure,
+                //consider character as arrived if it has a tile object in its vision that is at the target structure
+                for (int i = 0; i < p_character.marker.inVisionTileObjects.Count; i++) {
+                    TileObject tileObject = p_character.marker.inVisionTileObjects[i];
+                    if (tileObject.structureLocation != null && tileObject.structureLocation == this) {
+                        return true;
+                    }
+                }    
             }
             return false;
         }

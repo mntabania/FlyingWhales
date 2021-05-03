@@ -83,4 +83,7 @@ public static class ArrayExtensions {
     public static bool IsLastIndex<T>(this T[] p_list, int p_index) {
         return p_list.Length - 1 == p_index;
     }
+    public static bool IsIndexInArray<T>(this T[] p_list, int p_index) {
+        return p_index >= 0 && p_index < p_list.Length;
+    }
 }

@@ -468,6 +468,11 @@ namespace Traits {
             if (form.trapStructure.IsTrappedInArea()) {
                 form.trapStructure.ResetTrapArea();
             }
+            //Added this because of this issue:
+            //https://trello.com/c/Vx50lcFi/4344-nullreference-canseeobjectlocationhere
+            if (form.partyComponent.hasParty) {
+                form.partyComponent.currentParty.RemoveMemberThatJoinedQuest(form);
+            }
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, form as IPointOfInterest, "");
             if (!form.carryComponent.IsNotBeingCarried()) {
