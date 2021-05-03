@@ -33,6 +33,8 @@ public partial class InteractionManager : BaseMonoBehaviour {
         "deposited", "picked", "doing", "opened", "healed", "buried", "destroyed", "crafted", "built",
         "daydreaming"
     };
+    public string[] vigilantCancellingTraits = new[] { "Resting", "Unconscious", "Restrained", "Zapped" };
+
 
     [Header("Actions")]
     public StringSpriteDictionary actionIconDictionary;

@@ -1558,6 +1558,26 @@ public class CharacterManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Ratmen
+    public bool GenerateRatmen(LocationStructure structure, int amount, int chance = 10) {
+        if (GameUtilities.RollChance(chance)) {
+            if (FactionManager.Instance.ratmenFaction == null) {
+                //Only create ratmen faction if ratmen are spawned
+                FactionManager.Instance.CreateRatmenFaction();
+            }
+            int numOfRatmen = amount;
+            for (int k = 0; k < numOfRatmen; k++) {
+                Character character = CreateNewCharacter("Ratman", RACE.RATMAN, GENDER.MALE, FactionManager.Instance.ratmenFaction ?? FactionManager.Instance.neutralFaction, structure.settlementLocation, structure.settlementLocation.region, structure);
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structure.passableTiles) ?? CollectionUtilities.GetRandomElement(structure.tiles);
+                character.CreateMarker();
+                character.InitialCharacterPlacement(targetTile);
+            }
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
 }
 
 [Serializable]

@@ -4497,7 +4497,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (plan.doNotRecalculate) {
                 job.CancelJob(false);
             } else {
-                planner.RecalculateJob(job as GoapPlanJob);
+                planner.RecalculateJob(job);
             }
         }
     }

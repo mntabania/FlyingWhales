@@ -56,12 +56,6 @@ public class MonsterGeneration : MapGenerationComponent {
 		}
 		return summon;
 	}
-    private void CreateCharacter(RACE race, string className, GENDER gender, BaseSettlement settlementOnTile, LocationStructure structure, Faction faction = null) {
-        Character character = CharacterManager.Instance.CreateNewCharacter(className, race, gender, faction ?? FactionManager.Instance.neutralFaction, settlementOnTile, settlementOnTile.region, structure);
-        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structure.passableTiles) ?? CollectionUtilities.GetRandomElement(structure.tiles);
-        character.CreateMarker();
-        character.InitialCharacterPlacement(targetTile);
-    }
     #endregion
 
     private IEnumerator LandmarkMonsterGeneration() {
@@ -157,13 +151,15 @@ public class MonsterGeneration : MapGenerationComponent {
 							//if cave already has occupants, then do not generate monsters for that cave
 							continue;
 						}
-						BiomeDivision biomeDivision = cave.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(cave.tiles.First());
-						if (GameUtilities.RollChance(70)) {
+                        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom && CharacterManager.Instance.GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(1, 3), 8)) {
+                            //Ratmen has bee generated
+                        } else {
+							BiomeDivision biomeDivision = cave.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(cave.tiles.First());
 							locationChoices.Clear();
 							locationChoices.AddRange(cave.passableTiles);
-					
+
 							MonsterMigrationBiomeAtomizedData chosenMMonster = biomeDivision.GetRandomMonsterFromFaunaList();
-							int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
+							int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange); ;
 							for (int k = 0; k < randomAmount; k++) {
 								Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, cave, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
 								if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
@@ -180,18 +176,7 @@ public class MonsterGeneration : MapGenerationComponent {
 								break;
 							}
 						}
-						// if (GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(1, 3))) {
-						//     //Ratmen has bee generated
-						// } else {
-						//     if (GameUtilities.RollChance(caveData.monsterGenerationChance)) {
-						//         MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-						//         int randomAmount = randomMonsterSetting.minMaxRange.Random();
-						//         for (int l = 0; l < randomAmount; l++) {
-						//             CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave);
-						//         }
-						//     }
-						// }
-					}	
+                    }	
 				}
 					
 			}
@@ -215,7 +200,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		if (shuffledCaves.Count > 0) {
 			LocationStructure ratmenCave = shuffledCaves[0];
 			shuffledCaves.Remove(ratmenCave);
-			GenerateRatmen(ratmenCave, 3, 100);
+			CharacterManager.Instance.GenerateRatmen(ratmenCave, 3, 100);
 		}
 		
 		for (int j = 0; j < shuffledCaves.Count; j++) {
@@ -245,21 +230,4 @@ public class MonsterGeneration : MapGenerationComponent {
 		}
 	}
 	#endregion
-
-    #region Ratmen Generation
-    private bool GenerateRatmen(LocationStructure structure, int amount, int chance = 10) {
-        if (GameUtilities.RollChance(chance)) {
-            if (FactionManager.Instance.ratmenFaction == null) {
-                //Only create ratmen faction if ratmen are spawned
-                FactionManager.Instance.CreateRatmenFaction();
-            }
-            int numOfRatmen = amount;
-            for (int k = 0; k < numOfRatmen; k++) {
-                CreateCharacter(RACE.RATMAN, "Ratman", GENDER.MALE, structure.settlementLocation, structure, FactionManager.Instance.ratmenFaction);
-            }
-            return true;
-        }
-        return false;
-    }
-    #endregion
 }

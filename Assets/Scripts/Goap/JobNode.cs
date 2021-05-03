@@ -1,8 +1,6 @@
 ﻿public abstract class JobNode {
     public string persistentID { get; } 
     public abstract ActualGoapNode singleNode { get; }
-    public abstract int currentNodeIndex { get; }
-
     public JobNode() { 
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
     }

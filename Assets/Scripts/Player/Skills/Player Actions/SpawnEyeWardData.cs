@@ -9,7 +9,7 @@ using Inner_Maps.Location_Structures;
 public class SpawnEyeWardData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPAWN_EYE_WARD;
     public override string name => "Spawn Eye";
-    public override string description => $"Spawn an eye ward that will monitor all actions within its radius.";
+    public override string description => $"Spawn a demon eye that will monitor all actions within its radius.";
     public override bool shouldShowOnContextMenu => false;
     public SpawnEyeWardData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };

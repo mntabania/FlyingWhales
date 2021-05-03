@@ -37,10 +37,7 @@ public class GoapNode {
 }
 
 //actual nodes located in a finished plan that is going to be executed by a character
-public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
-
-    private static string[] vigilantCancellingTraits = new[] { "Resting", "Unconscious", "Restrained", "Zapped" };
-    
+public class ActualGoapNode : IRumorable, ICrimeable, ISavable {    
     public string persistentID { get; private set; }
     public Character actor { get; private set; }
     public IPointOfInterest poiTarget { get; private set; }
@@ -654,7 +651,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //    }
         //}
 
-        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait(vigilantCancellingTraits) == false && !target.isDead) {
+        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait(InteractionManager.Instance.vigilantCancellingTraits) == false && !target.isDead) {
             //trigger vigilant, only if character is NOT resting or unconscious
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this, LOG_TAG.Social);
             action.AddFillersToLog(log, this);
@@ -718,7 +715,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             return;
         }
         //Separate calls for end effect if target is vigilang and the action is stealth because there are things that will be called in normal effect that does not apply to vigilant
-        if(isStealth && target.traitContainer.HasTrait("Vigilant") && !target.traitContainer.HasTrait(vigilantCancellingTraits) && !target.isDead) {
+        if(isStealth && target.traitContainer.HasTrait("Vigilant") && !target.traitContainer.HasTrait(InteractionManager.Instance.vigilantCancellingTraits) && !target.isDead) {
             EndEffectVigilant();
         } else {
             EndEffectNormal(shouldDoAfterEffect);
