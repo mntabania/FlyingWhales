@@ -237,20 +237,34 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 int characterIndex = linkInfo.linkTextfirstCharacterIndex + i;
 
                 // Get the index of the material / sub text object used by this character.
-                TMP_CharacterInfo characterInfo = text.textInfo.characterInfo[characterIndex];
-                int meshIndex = characterInfo.materialReferenceIndex;
-                int vertexIndex = characterInfo.vertexIndex;
+                if (text.textInfo.characterInfo.IsIndexInArray(characterIndex)) {
+                    TMP_CharacterInfo characterInfo = text.textInfo.characterInfo[characterIndex];
+                    int meshIndex = characterInfo.materialReferenceIndex;
+                    int vertexIndex = characterInfo.vertexIndex;
 
-                if (!char.IsWhiteSpace(characterInfo.character)) {
-                    // Get a reference to the vertex color
-                    Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
-                    if (vertexColors.Length >  vertexIndex + 3) {
-                        Color32 c = originalColor;
-                        vertexColors[vertexIndex] = c;
-                        vertexColors[vertexIndex + 1] = c;
-                        vertexColors[vertexIndex + 2] = c;
-                        vertexColors[vertexIndex + 3] = c;
-                    }
+                    if (!char.IsWhiteSpace(characterInfo.character)) {
+                        // Get a reference to the vertex color
+                        Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
+                        if (vertexColors.Length >  vertexIndex + 3) {
+                            Color32 c = originalColor;
+                            if (vertexColors.IsIndexInArray(vertexIndex)) {
+                                vertexColors[vertexIndex] = c;    
+                            }
+                            if (vertexColors.IsIndexInArray(vertexIndex + 1)) {
+                                vertexColors[vertexIndex + 1] = c;    
+                            }
+                            if (vertexColors.IsIndexInArray(vertexIndex + 2)) {
+                                vertexColors[vertexIndex + 2] = c;    
+                            }
+                            if (vertexColors.IsIndexInArray(vertexIndex + 3)) {
+                                vertexColors[vertexIndex + 3] = c;    
+                            }
+                            // vertexColors[vertexIndex] = c;
+                            // vertexColors[vertexIndex + 1] = c;
+                            // vertexColors[vertexIndex + 2] = c;
+                            // vertexColors[vertexIndex + 3] = c;
+                        }
+                    }    
                 }
             }
 
