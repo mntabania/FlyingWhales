@@ -42,17 +42,26 @@ namespace Inner_Maps.Location_Structures {
             Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CREATED, OnSettlementCreated);
         }
         private void OnSettlementCreated(NPCSettlement p_settlement) {
-            UpdateTargetsList();
+            UpdateTargetsList(p_settlement);
         }
 
         #region Targets
-        private void UpdateTargetsList() {
+        private void UpdateTargetsList(NPCSettlement p_settlement = null) {
             _allVillages.Clear();
             LandmarkManager.Instance.allNonPlayerSettlements.ForEach((eachVillage) => {
                 if (eachVillage.locationType == LOCATION_TYPE.VILLAGE && eachVillage.areas.Count > 0) {
                     _allVillages.Add(eachVillage);
                 }
             });
+            if (p_settlement != null) {
+                if (!LandmarkManager.Instance.allNonPlayerSettlements.Contains(p_settlement)) {
+                    if (p_settlement.locationType == LOCATION_TYPE.VILLAGE && p_settlement.areas.Count > 0) {
+                        if (!_allVillages.Contains(p_settlement)) {
+                            _allVillages.Add(p_settlement);
+                        }
+                    }
+                }
+            }
         }
         #endregion
         

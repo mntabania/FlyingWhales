@@ -105,7 +105,18 @@ public class BiomeDivision {
             }
 
             if (homeStructureOfNewMonsters != null) {
-                SpawnMonstersFaunaListProcessing(homeStructureOfNewMonsters);
+                if(homeStructureOfNewMonsters.structureType == STRUCTURE_TYPE.CAVE
+                    && (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom || WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa)
+                    && CharacterManager.Instance.GenerateRatmen(homeStructureOfNewMonsters, GameUtilities.RandomBetweenTwoNumbers(1, 3), 8)) {
+                    //Generate ratmen
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "WorldEvents", "Monster Migration", "monster_migration", providedTags: LOG_TAG.Major);
+                    log.AddToFillers(null, "Ratmen", LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(homeStructureOfNewMonsters, homeStructureOfNewMonsters.name, LOG_IDENTIFIER.LANDMARK_1);
+                    log.AddLogToDatabase();
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+                } else {
+                    SpawnMonstersFaunaListProcessing(homeStructureOfNewMonsters);
+                }
             }
         }
         //We did this so that on the first DAY_STARTED broadcast, there will be no spawning of monsters from the fauna list
