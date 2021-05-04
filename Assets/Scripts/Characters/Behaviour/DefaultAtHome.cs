@@ -252,7 +252,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                 log = $"{log}\n  -Will visit house of Disabled Character {chosenCharacter.name}";
                                 character.PlanFixedJob(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, out producedJob, 
                                     new OtherData[] { new LocationStructureOtherData(chosenCharacter.homeStructure), new CharacterOtherData(chosenCharacter),  });
-                                return true;
+                                // return true;
                             } else {
                                 log = $"{log}\n  -{chosenCharacter.name} has no house. Will check out character instead";
                                 GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
@@ -321,7 +321,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             log = $"{log}\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
                             character.PlanFixedJob(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, 
                                 new OtherData[] { new LocationStructureOtherData(targetStructure), new CharacterOtherData(targetCharacter),  });
-                            return true;
+                            // return true;
                         } else {
                             log = $"{log}\n  -No valid character to visit.";
                         }
