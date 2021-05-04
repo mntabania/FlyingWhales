@@ -55,7 +55,7 @@ namespace Inner_Maps.Location_Structures {
             });
             if (p_settlement != null) {
                 if (!LandmarkManager.Instance.allNonPlayerSettlements.Contains(p_settlement)) {
-                    if (p_settlement.locationType == LOCATION_TYPE.VILLAGE && p_settlement.areas.Count > 0) {
+                    if (p_settlement.locationType == LOCATION_TYPE.VILLAGE) {
                         if (!_allVillages.Contains(p_settlement)) {
                             _allVillages.Add(p_settlement);
                         }
