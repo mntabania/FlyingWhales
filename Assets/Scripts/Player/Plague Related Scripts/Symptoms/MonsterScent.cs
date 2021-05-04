@@ -34,7 +34,7 @@ namespace Plague.Symptom {
             return false;
         }
         public override void HourStarted (Character p_character, int p_numOfHoursPassed) {
-            if (GameUtilities.RollChance(100)) {
+            if (GameUtilities.RollChance(5)) {
                 ActivateSymptomOn(p_character);
             }
         }
