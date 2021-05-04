@@ -32,7 +32,7 @@ namespace Traits {
                 }
                 if(responsibleCharacter != null) {
                     if (responsibleCharacter.faction != null) {
-                        targetCharacter.ChangeFactionTo(responsibleCharacter.faction);
+                        targetCharacter.ChangeFactionTo(responsibleCharacter.faction, true);
                     }
                     if (responsibleCharacter.homeStructure != null) {
                         targetCharacter.MigrateHomeStructureTo(responsibleCharacter.homeStructure);
@@ -42,7 +42,7 @@ namespace Traits {
                 } else if (responsibleCharacters != null && responsibleCharacters.Count > 0) {
                     Character characterResponsible = responsibleCharacters[0];
                     if(characterResponsible.faction != null) {
-                        targetCharacter.ChangeFactionTo(characterResponsible.faction);
+                        targetCharacter.ChangeFactionTo(characterResponsible.faction, true);
                     }
                     if (characterResponsible.homeStructure != null) {
                         targetCharacter.MigrateHomeStructureTo(characterResponsible.homeStructure);
@@ -58,7 +58,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
             if (sourcePOI is Character targetCharacter) {
-                FactionManager.Instance.LeaveFaction(targetCharacter);
+                ChangeToDefaultFaction(targetCharacter);
                 targetCharacter.MigrateHomeStructureTo(null);
                 targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
                 targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.PRODUCE_FOOD);
@@ -67,6 +67,18 @@ namespace Traits {
             }
         }
         #endregion
+
+        private void ChangeToDefaultFaction(Character p_character) {
+            if (p_character.isNormalCharacter) {
+                p_character.ChangeFactionTo(FactionManager.Instance.vagrantFaction, true);
+            } else if (p_character.minion != null) {
+                p_character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction, true);
+            } else if (p_character.IsUndead() || p_character.necromancerTrait != null) {
+                p_character.ChangeFactionTo(FactionManager.Instance.undeadFaction, true);
+            } else {
+                p_character.ChangeFactionTo(FactionManager.Instance.neutralFaction, true);
+            }
+        }
     }
 }
 

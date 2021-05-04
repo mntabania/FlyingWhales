@@ -18,9 +18,7 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
             actor.AssignClass("Necromancer");
-            actor.ChangeFactionTo(FactionManager.Instance.undeadFaction);
-            FactionManager.Instance.undeadFaction.OnlySetLeader(actor); //TODO: needed to call this even though Become Faction Leader is called because it calls a version of set leader that prevents setting the leader of The Undead Faction
-            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, actor);
+            actor.ChangeFactionTo(FactionManager.Instance.undeadFaction, true);
             CharacterManager.Instance.SetNecromancerInTheWorld(actor);
             actor.MigrateHomeStructureTo(null);
             actor.ClearTerritory();

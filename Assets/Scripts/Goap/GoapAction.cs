@@ -310,6 +310,11 @@ public class GoapAction {
                 p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target tile ({node.targetTile?.ToString()}) and is not neighbour.";
                 return true;
             }
+        } else if (actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+            if (!actor.hasMarker || !actor.marker.IsPOIInVision(poiTarget)) {
+                p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} has reached end of path but ({poiTarget.name}) is not yet in vision.";
+                return true;
+            }
         }
         return false;
     }

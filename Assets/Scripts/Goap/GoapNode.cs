@@ -401,7 +401,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     private void OnArriveAtTargetLocation() {
         Profiler.BeginSample($"{actor.name} - {action.name} - OnArriveAtTargetLocation");
         if(action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
-            if(actor.marker && actor.marker.IsPOIInVision(poiTarget)) {
+            if(actor.hasMarker && actor.marker.IsPOIInVision(poiTarget)) {
                 //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
                 actor.PerformGoapAction();
             }

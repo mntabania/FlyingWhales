@@ -87,7 +87,9 @@ namespace Traits {
             owner.behaviourComponent.RemoveBehaviourComponent(typeof(NecromancerBehaviour));
             owner.SetNecromancerTrait(null);
             //owner.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
-            FactionManager.Instance.undeadFaction.OnlySetLeader(null);
+            if (FactionManager.Instance.undeadFaction.leader == owner) {
+                FactionManager.Instance.undeadFaction.OnlySetLeader(null);
+            }
             CharacterManager.Instance.SetNecromancerInTheWorld(null);
             owner.movementComponent.SetEnableDigging(false);
             owner.movementComponent.SetAvoidSettlements(false);

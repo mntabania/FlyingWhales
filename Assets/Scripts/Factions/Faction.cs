@@ -152,6 +152,21 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     character.behaviourComponent.UpdateDefaultBehaviourSet();
                 }
 
+                if (factionType.type == FACTION_TYPE.Undead && character.necromancerTrait != null) {
+                    //Every time a necromancer is added to the Undead Faction, check if it can be the faction leader
+                    if (!HasAliveNecromancerLeaderExcept(character)) {
+                        FactionManager.Instance.undeadFaction.OnlySetLeader(character);
+                        //We only call the Become Faction Leader Log so that there will be a log if necromancer becomes the faction leader of undead
+                        //So since the log is our only purpose, we just need to log it, not call another interrupt, because calling another interrupt for the sole purpose of log is bad and might cause problems
+                        //actor.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, actor);
+                        Log becomeLeaderLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader", null, LOG_TAG.Major);
+                        becomeLeaderLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        becomeLeaderLog.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                        becomeLeaderLog.AddLogToDatabase();
+                        PlayerManager.Instance.player.ShowNotificationFrom(character, becomeLeaderLog, true);
+                    }
+                }
+
                 if (broadcastSignal) {
                     Messenger.Broadcast(FactionSignals.CHARACTER_ADDED_TO_FACTION, character, this);
                 }
@@ -575,6 +590,15 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         for (int i = 0; i < characters.Count; i++) {
             Character character = characters[i];
             if (!character.isDead) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasAliveNecromancerLeaderExcept(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character character = characters[i];
+            if (character != p_character && !character.isDead && character.necromancerTrait != null && leader == character) {
                 return true;
             }
         }

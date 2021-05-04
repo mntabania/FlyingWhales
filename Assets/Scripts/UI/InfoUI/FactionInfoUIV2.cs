@@ -442,6 +442,15 @@ public class FactionInfoUIV2 : MonoBehaviour {
         //}
         return item;
     }
+    private CharacterNameplateItem GetCharacterItem(Character character) {
+        for (int i = 0; i < _characterItems.Count; i++) {
+            CharacterNameplateItem item = _characterItems[i];
+            if (item.obj == character) {
+                return item;
+            }
+        }
+        return null;
+    }
     private void OrderCharacterItems() {
         if (activeFaction.leader != null && activeFaction.leader is Character leader) {
             CharacterNameplateItem leaderItem = GetItem(leader);
@@ -455,7 +464,9 @@ public class FactionInfoUIV2 : MonoBehaviour {
         //Angels should not show in the characters list of faction in UI
         //https://trello.com/c/SGow0hA0/2234-angels-on-list
         if (FactionInfoHubUI.Instance.IsShowing(faction) && character.race != RACE.ANGEL) {
-            CreateNewCharacterItem(character);
+            if (GetCharacterItem(character) == null) {
+                CreateNewCharacterItem(character);
+            }
         }
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
