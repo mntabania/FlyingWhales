@@ -549,7 +549,14 @@ public class ObjectPoolManager : MonoBehaviour {
     }
     public void ReturnGoapPlanJobToPool(GoapPlanJob job) {
         job.Reset();
-        _goapJobPool.Add(job);
+        if (!_goapJobPool.Contains(job)) {
+            _goapJobPool.Add(job);    
+        } else {
+#if UNITY_EDITOR
+            Debug.LogError("Job instance is already in pool but is added again!");
+#endif
+        }
+        
     }
     public CharacterStateJob CreateNewCharacterStateJob() {
         if (_stateJobPool.Count > 0) {

@@ -86,6 +86,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                             log += $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
                             character.PlanFixedJob(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, 
                                 new OtherData[] { new LocationStructureOtherData(targetStructure), new CharacterOtherData(targetCharacter), });
+                            return true;
                         } else {
                             log += "\n  -No valid character to visit.";
                         }

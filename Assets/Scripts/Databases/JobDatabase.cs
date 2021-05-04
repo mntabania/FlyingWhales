@@ -25,5 +25,11 @@ namespace Databases {
             }
             throw new Exception($"Could not find job with id {id}");
         }
+        public JobQueueItem GetJobWithPersistentIDSafe(string id) {
+            if (jobsByGUID.ContainsKey(id)) {
+                return jobsByGUID[id];
+            }
+            return null;
+        }
     }
 }

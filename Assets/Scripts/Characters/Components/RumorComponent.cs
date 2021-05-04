@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Interrupts;
 using UtilityScripts;
+using System.Linq;
 
 public class RumorComponent : CharacterComponent {
     private List<string> _rumorPool;
@@ -172,7 +173,7 @@ public class RumorComponent : CharacterComponent {
     }
     public Character GetRandomSpreadRumorOrNegativeInfoTarget(Character rumoredCharacter) {
         Character chosenCharacter = null;
-        int charactersWithOpinionCount = owner.relationshipContainer.charactersWithOpinion.Count;
+        int charactersWithOpinionCount = owner.relationshipContainer.charactersWithOpinion.Count(CanShareInfoTo);
         if(charactersWithOpinionCount > 2) {
             while (chosenCharacter == null) {
                 Character potentialCharacter = owner.relationshipContainer.charactersWithOpinion[Random.Range(0, owner.relationshipContainer.charactersWithOpinion.Count)];

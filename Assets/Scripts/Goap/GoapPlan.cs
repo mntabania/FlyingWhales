@@ -93,6 +93,9 @@ public class GoapPlan {
         }
     }
     private ActualGoapNode GetCurrentActualNode() {
+        // if (currentNode == null) {
+        //     return startingNode.singleNode;
+        // }
         return currentNode.singleNode;
     }
     public bool HasNodeWithAction(INTERACTION_TYPE actionType) {
@@ -192,7 +195,7 @@ public class GoapPlan {
             }
             log += $"{(i + 1)}.";
             ActualGoapNode node = jobNode.singleNode;
-            log += $" ({node.cost}) {node.action.goapName} - {node.poiTarget.name}";
+            log += $" ({node.cost}){node.action.goapName} - Actor: {node.actor.name}, Target: {node.poiTarget.name}";
         }
         return log;
     }

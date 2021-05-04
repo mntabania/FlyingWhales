@@ -45,6 +45,12 @@ public class TileObjectDatabase {
         }
         throw new Exception($"Could not find tile object with id {id}");
     }
+    public TileObject GetTileObjectByPersistentIDSafe(string id) {
+        if (tileObjectsByGUID.ContainsKey(id)) {
+            return tileObjectsByGUID[id];
+        }
+        return null;
+    }
     public TileObject GetFirstTileObject(TILE_OBJECT_TYPE type) {
         if (allTileObjects.ContainsKey(type)) {
             for (int i = 0; i < allTileObjects[type].Count; i++) {

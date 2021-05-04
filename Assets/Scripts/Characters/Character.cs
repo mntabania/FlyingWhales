@@ -489,7 +489,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnChangeFactionRelationship);
         
-        
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -2708,7 +2707,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //Adjust current HP based on specified parameter, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
-
+        bool ignoreIndestructibleTrait = source is BeingDrained;
         Character responsibleCharacter = source as Character;
         if (responsibleCharacter != null && responsibleCharacter.faction != null && responsibleCharacter.faction.isPlayerFaction) {
             //If responsible character is part of player faction, tag this as Player Source also
@@ -2717,7 +2716,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         
-        if ((amount < 0 && CanBeDamaged()) || amount > 0) {
+        if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
                 marker.ShowHealthAdjustmentEffect(amount);
             }
@@ -4273,6 +4272,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         GoapPlanJob currentTopPrioJob = job as GoapPlanJob;
         if(currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;
+            if (plan.startingNode != null && plan.startingNode.singleNode != null && plan.startingNode.singleNode.actor != this) {
+                //Had to add this checking for this issue: 
+                //https://trello.com/c/BiLeYCT0/4341-nullreference-getcurrentactualnode
+                //Somehow other characters can get finished jobs from other characters, until that issue is solved, this line of code will always be needed
+#if UNITY_EDITOR
+                Debug.LogError($"{name} has a finished job from another character {currentTopPrioJob.jobType.ToString()} {currentTopPrioJob.ToString()} -Plan: {currentTopPrioJob.assignedPlan?.LogPlan()}");
+#endif
+                this.jobQueue.RemoveJobInQueue(currentTopPrioJob, false, string.Empty);
+                return;
+            }
             ActualGoapNode currentNode = plan.currentActualNode;
             Profiler.BeginSample($"{name} - {currentNode.action.name} - Can Do Goap Action");
             bool canCharacterDoGoapAction = RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType);
@@ -6181,7 +6190,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (job != null && job.ProcessJob() == false) {
                 PerformJob(job);
             }
-        }
+        }    
     }
     protected void LoadCharacterTraitsFromSave(SaveDataCharacter data) {
         traitContainer.Load(this, data.saveDataTraitContainer);

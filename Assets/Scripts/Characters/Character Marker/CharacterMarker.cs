@@ -131,6 +131,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if(areasInWildernessForFlee == null) {
             areasInWildernessForFlee = new List<Area>();
         }
+        if (textRendererParticleSystem != null) {
+            textRendererParticleSystem.Stop();    
+        }
 
         AddListeners();
         PathfindingManager.Instance.AddAgent(pathfindingAI);
