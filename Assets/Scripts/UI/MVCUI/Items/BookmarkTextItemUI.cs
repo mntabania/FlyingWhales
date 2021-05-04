@@ -40,6 +40,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
         }
     }
     public void OnBookmarkRemoved(IBookmarkable p_bookmarkable) {
+        System.Action hoverOutAction = _onHoverOutAction;
         RectTransform rect = null;
         RectTransform parentOfParent = null;
         if (transform.parent is RectTransform rectTransform) {
@@ -48,6 +49,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
         }
         p_bookmarkable.bookmarkEventDispatcher.Unsubscribe(this, p_bookmarkable);
         ObjectPoolManager.Instance.DestroyObject(this);
+        hoverOutAction?.Invoke();
         if (rect) {
             LayoutRebuilder.ForceRebuildLayoutImmediate(rect);    
         }
