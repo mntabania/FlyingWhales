@@ -252,6 +252,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                 log = $"{log}\n  -Will visit house of Disabled Character {chosenCharacter.name}";
                                 character.PlanFixedJob(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, out producedJob, 
                                     new OtherData[] { new LocationStructureOtherData(chosenCharacter.homeStructure), new CharacterOtherData(chosenCharacter),  });
+                                return true;
                             } else {
                                 log = $"{log}\n  -{chosenCharacter.name} has no house. Will check out character instead";
                                 GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
@@ -306,22 +307,21 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 } else {
                     log = $"{log}\n  -Time of Day: {strCurrentTimeOfDay}";
                 }
-                log =
-                    $"{log}\n-Otherwise, if it is Morning, Lunch Time or Afternoon, 25% chance to someone with a positive relationship in current location and then set it as the Base Structure for 2.5 hours";
+                log = $"{log}\n-Otherwise, if it is Morning, Lunch Time or Afternoon, 25% chance to someone with a positive relationship in current location and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log = $"{log}\n  -Time of Day: {strCurrentTimeOfDay}";
-                    int chance = Random.Range(0, 100);
-                    log = $"{log}\n  -RNG roll: {chance.ToString()}";
-                    if (chance < 25 && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
+                    // int chance = Random.Range(0, 100);
+                    // log = $"{log}\n  -RNG roll: {chance.ToString()}";
+                    if (ChanceData.RollChance(CHANCE_TYPE.Visit_Friend, ref log) && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) { //chance < 25
                         WeightedDictionary<Character> visitWeights = GetCharacterToVisitWeights(character);
                         if (visitWeights.GetTotalOfWeights() > 0) {
                             Character targetCharacter = visitWeights.PickRandomElementGivenWeights();
                             LocationStructure targetStructure = targetCharacter.homeStructure;
                             Assert.IsNotNull(targetStructure, $"Home structure of visit target {targetCharacter.name} is null!");
-                            log =
-                                $"{log}\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
+                            log = $"{log}\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
                             character.PlanFixedJob(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, 
                                 new OtherData[] { new LocationStructureOtherData(targetStructure), new CharacterOtherData(targetCharacter),  });
+                            return true;
                         } else {
                             log = $"{log}\n  -No valid character to visit.";
                         }

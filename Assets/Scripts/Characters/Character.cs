@@ -489,7 +489,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnChangeFactionRelationship);
         
-        
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -4274,6 +4273,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;
             ActualGoapNode currentNode = plan.currentActualNode;
+            if (currentNode.actor != this) {
+                //Had to add this checking for this issue: 
+                //https://trello.com/c/BiLeYCT0/4341-nullreference-getcurrentactualnode
+                //Somehow other characters can get finished jobs from other characters, until that issue is solved, this line of code will always be needed
+#if UNITY_EDITOR
+                Debug.LogWarning($"{name} has a finished job from another character {currentTopPrioJob.jobType.ToString()} {currentTopPrioJob.ToString()} -Plan: {currentTopPrioJob.assignedPlan?.LogPlan()}");
+#endif
+                this.jobQueue.RemoveJobInQueue(currentTopPrioJob, false, string.Empty);
+                return;
+            }
+            
             Profiler.BeginSample($"{name} - {currentNode.action.name} - Can Do Goap Action");
             bool canCharacterDoGoapAction = RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType);
             Profiler.EndSample();
@@ -6181,7 +6191,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (job != null && job.ProcessJob() == false) {
                 PerformJob(job);
             }
-        }
+        }    
     }
     protected void LoadCharacterTraitsFromSave(SaveDataCharacter data) {
         traitContainer.Load(this, data.saveDataTraitContainer);

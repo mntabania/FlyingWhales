@@ -178,7 +178,13 @@ namespace UtilityScripts {
         if (activeCharacter.jobQueue.jobsInQueue.Count > 0) {
             for (int i = 0; i < activeCharacter.jobQueue.jobsInQueue.Count; i++) {
                 JobQueueItem poi = activeCharacter.jobQueue.jobsInQueue[i];
-                summary += $"{poi}, ";
+                summary += $"{poi.jobType.ToString()}-{poi}";
+                if (poi is GoapPlanJob goapPlanJob) {
+                    summary += $"-Plan: {goapPlanJob.assignedPlan?.LogPlan()}, ";    
+                }
+                else {
+                    summary += ", ";
+                }
             }
         } else {
             summary += "None";

@@ -13,12 +13,14 @@ public class JobQueue {
     }
 
     #region Loading
-    public void LoadReferences(SaveDataCharacter saveDataCharacter) {
+    public void LoadReferences(SaveDataCharacter saveDataCharacter) { 
         for (int i = 0; i < saveDataCharacter.jobs.Count; i++) {
             string jobID = saveDataCharacter.jobs[i];
-            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
-            jobsInQueue.Add(jobQueueItem);
-            jobQueueItem.OnAddJobToQueue();
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentIDSafe(jobID);
+            if (jobQueueItem != null) {
+                jobsInQueue.Add(jobQueueItem);
+                jobQueueItem.OnAddJobToQueue();    
+            }
         }
     }
     #endregion

@@ -1212,8 +1212,8 @@ public class CombatComponent : CharacterComponent {
             }
         }
         for (int i = 0; i < data.hostileTileObjectsInRange.Count; i++) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.hostileTileObjectsInRange[i]);
-            if (!IsHostileInRange(tileObject)) {
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentIDSafe(data.hostileTileObjectsInRange[i]);
+            if (tileObject != null && !IsHostileInRange(tileObject)) {
                 hostilesInRange.Add(tileObject);
             }
         }
@@ -1237,9 +1237,11 @@ public class CombatComponent : CharacterComponent {
             combatDataDictionary.Add(character, combatData);
         }
         foreach (KeyValuePair<string, SaveDataCombatData> item in data.tileObjectCombatData) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(item.Key);
-            CombatData combatData = item.Value.Load();
-            combatDataDictionary.Add(tileObject, combatData);
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentIDSafe(item.Key);
+            if (tileObject != null) {
+                CombatData combatData = item.Value.Load();
+                combatDataDictionary.Add(tileObject, combatData);    
+            }
         }
 
         for (int i = 0; i < data.bannedFromHostileList.Count; i++) {
