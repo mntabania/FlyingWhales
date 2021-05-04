@@ -43,6 +43,16 @@ public class JobQueue {
             //If character is fasting, prevent any fullness recovery job from being added.
             return false;
         }
+        if (job is GoapPlanJob goapJob && goapJob.assignedPlan != null && goapJob.assignedPlan.startingNode != null && goapJob.assignedPlan.startingNode.singleNode != null && 
+            goapJob.assignedPlan.startingNode.singleNode.actor != owner) {
+            //Had to add this checking for this issue: 
+            //https://trello.com/c/BiLeYCT0/4341-nullreference-getcurrentactualnode
+            //Somehow other characters can get finished jobs from other characters, until that issue is solved, this line of code will always be needed
+#if UNITY_EDITOR
+            Debug.LogError($"{owner} is trying to add job owned by another character {job.jobType.ToString()} {job.ToString()} -Plan: {goapJob.assignedPlan?.LogPlan()}");
+#endif
+            return false;
+        }
         if (!CanJobBeAddedToQueue(job)) {
             return false;
         }
