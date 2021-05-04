@@ -17,7 +17,8 @@ namespace Plague.Symptom {
                 && (c is Summon)
                 && !(c is Animal)
                 && !c.isInLimbo
-                && !IsCharacterTheSameLycan(p_character, c));
+                && !IsCharacterTheSameLycan(p_character, c)
+                && (!c.partyComponent.hasParty));
 
                 if(chosenMonster != null) {
                     chosenMonster.combatComponent.Fight(p_character, CombatManager.Monster_Scent);
@@ -33,7 +34,7 @@ namespace Plague.Symptom {
             return false;
         }
         public override void HourStarted (Character p_character, int p_numOfHoursPassed) {
-            if (GameUtilities.RollChance(5)) {
+            if (GameUtilities.RollChance(100)) {
                 ActivateSymptomOn(p_character);
             }
         }
