@@ -186,7 +186,13 @@ public class StructureInfoUI : InfoUIBase {
         UpdateInfo();
     }
     private void UpdateBasicInfo() {
-        nameLbl.text = $"{activeStructure.nameplateName}";
+        if (activeStructure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
+            ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+            nameLbl.text = $"{activeStructure.nameplateName} Lv.{portal.level}";
+        } else {
+            nameLbl.text = $"{activeStructure.nameplateName}";
+        }
+        
         if (activeStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
             locationPortrait.SetLocation(activeStructure.settlementLocation);
         } else {

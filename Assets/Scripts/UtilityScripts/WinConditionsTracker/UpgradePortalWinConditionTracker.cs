@@ -27,7 +27,8 @@ public class UpgradePortalWinConditionTracker : WinConditionTracker {
         return bookmarkables;
     }
     private string GetUpgradePortalText() {
-        return $"Upgrade Portal to Level {TargetLevel.ToString()}";
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        return $"Upgrade Portal to Max {portal.level}/{TargetLevel.ToString()}";
     }
     private void OnSelectWinCondition() {
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
