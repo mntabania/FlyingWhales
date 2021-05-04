@@ -1036,7 +1036,23 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void UpdatePartyWalkSpeed() {
         if (!isPlayerParty) { return; } //Party Walk Speed applies only on demon parties for now
         if(membersThatJoinedQuest.Count > 0) {
-            partyWalkSpeed = membersThatJoinedQuest.Min(c => c.movementComponent.walkSpeed);
+            //get lowest walk speed in party, excluding 0 (Wurms)
+            //This is so that if a wurm is part of a party but the party still has other walking members
+            //then this party will get that speed instead.
+            partyWalkSpeed = float.MaxValue;
+            bool wasWalkSpeedSet = false;
+            for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+                Character member = membersThatJoinedQuest[i];
+                if (member.movementComponent.walkSpeed > 0f && member.movementComponent.walkSpeed < partyWalkSpeed) {
+                    wasWalkSpeedSet = true;
+                    partyWalkSpeed = member.movementComponent.walkSpeed;
+                }
+            }
+            if (!wasWalkSpeedSet) {
+                //this can only happen if all members of the party has 0 or less walk speed
+                partyWalkSpeed = 0;
+            }
+            // partyWalkSpeed = membersThatJoinedQuest.Min(c => c.movementComponent.walkSpeed);
             for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
                 membersThatJoinedQuest[i].movementComponent.UpdateSpeed();
             }

@@ -119,8 +119,10 @@ public class CharacterMarkerNameplate : PooledObject {
 
     #region Utilities
     public void UpdateNameActiveState() {
-        SetNameActiveState(CharacterManager.Instance.toggleCharacterMarkerName
-            || (_parentMarker != null && _parentMarker.character != null && (_parentMarker.character.isStoredAsTarget || InnerMapManager.Instance.IsPOIConsideredTheCurrentHoveredPOI(_parentMarker.character))));
+        if (_parentMarker != null && _parentMarker.character != null && CharacterManager.Instance != null && InnerMapManager.Instance != null) {
+            SetNameActiveState(CharacterManager.Instance.toggleCharacterMarkerName
+                               || (_parentMarker != null && _parentMarker.character != null && (_parentMarker.character.isStoredAsTarget || InnerMapManager.Instance.IsPOIConsideredTheCurrentHoveredPOI(_parentMarker.character))));    
+        }
     }
     public void SetNameActiveState(bool state) {
         nameLbl.gameObject.SetActive(state);
