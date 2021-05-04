@@ -4272,16 +4272,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         GoapPlanJob currentTopPrioJob = job as GoapPlanJob;
         if(currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;
-//             if (plan.startingNode != null && plan.startingNode.singleNode != null && plan.startingNode.singleNode.actor != this) {
-//                 //Had to add this checking for this issue: 
-//                 //https://trello.com/c/BiLeYCT0/4341-nullreference-getcurrentactualnode
-//                 //Somehow other characters can get finished jobs from other characters, until that issue is solved, this line of code will always be needed
-// #if UNITY_EDITOR
-//                 Debug.LogError($"{name} has a finished job from another character {currentTopPrioJob.jobType.ToString()} {currentTopPrioJob.ToString()} -Plan: {currentTopPrioJob.assignedPlan?.LogPlan()}");
-// #endif
-//                 this.jobQueue.RemoveJobInQueue(currentTopPrioJob, false, string.Empty);
-//                 return;
-//             }
             ActualGoapNode currentNode = plan.currentActualNode;
             Profiler.BeginSample($"{name} - {currentNode.action.name} - Can Do Goap Action");
             bool canCharacterDoGoapAction = RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType);

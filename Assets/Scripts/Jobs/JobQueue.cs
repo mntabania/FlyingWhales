@@ -43,16 +43,6 @@ public class JobQueue {
             //If character is fasting, prevent any fullness recovery job from being added.
             return false;
         }
-        if (job is GoapPlanJob goapJob && goapJob.assignedPlan != null && goapJob.assignedPlan.startingNode != null && goapJob.assignedPlan.startingNode.singleNode != null && 
-            goapJob.assignedPlan.startingNode.singleNode.actor != owner) {
-            //Had to add this checking for this issue: 
-            //https://trello.com/c/BiLeYCT0/4341-nullreference-getcurrentactualnode
-            //Somehow other characters can get finished jobs from other characters, until that issue is solved, this line of code will always be needed
-#if UNITY_EDITOR
-            Debug.LogError($"{owner} is trying to add job owned by another character {job.jobType.ToString()} {job.ToString()} -Plan: {goapJob.assignedPlan?.LogPlan()}");
-#endif
-            return false;
-        }
         if (!CanJobBeAddedToQueue(job)) {
             return false;
         }
@@ -184,17 +174,6 @@ public class JobQueue {
             if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
                 JobQueueItem topJob = jobsInQueue[0];
                 if (newJob.priority > topJob.priority) {
-//                     if (topJob is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null && goapPlanJob.assignedPlan.startingNode != null && goapPlanJob.assignedPlan.startingNode.singleNode != null
-//                         && goapPlanJob.assignedPlan.startingNode.singleNode.actor != owner) {
-//                         //character has job in job queue that he/she is not the actor of 
-//                         //Had to add this checking for this issue: 
-//                         //https://trello.com/c/BiLeYCT0/4341-nullreference-getcurrentactualnode
-//                         //Somehow other characters can get finished jobs from other characters, until that issue is solved, this line of code will always be needed
-// #if UNITY_EDITOR
-//                         Debug.LogError($"{owner.name} has a finished job from another character {goapPlanJob.jobType.ToString()} {goapPlanJob.ToString()} -Plan: {goapPlanJob.assignedPlan?.LogPlan()}");
-// #endif
-//                         return true;
-//                     }
                     if (topJob.CanBeInterruptedBy(newJob.jobType)) {
                         return true;
                     }
