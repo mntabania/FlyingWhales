@@ -60,13 +60,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
     
     [Header("Villagers")]
-    [FormerlySerializedAs("killSummaryGO")] [SerializeField] private GameObject villagerGO;
-    [SerializeField] private GameObject villagerItemPrefab;
-    [FormerlySerializedAs("killCountScrollView")] [SerializeField] private ScrollRect villagersScrollView;
-    [SerializeField] private RectTransform aliveHeader;
     [SerializeField] private Toggle villagerTab;
-    public RectTransform deadHeader;
-    private List<CharacterNameplateItem> villagerItems;
     
     [Header("Seize Object")]
     [SerializeField] private Button unseizeButton;
@@ -183,19 +177,11 @@ public class PlayerUI : BaseMonoBehaviour {
     }
 
     public void InitializeAfterGameLoaded() {
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CREATED, AddedNewCharacter);
-        Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         Messenger.AddListener(PlayerSignals.THREAT_UPDATED, OnThreatUpdated);
         Messenger.AddListener<int>(PlayerSignals.THREAT_INCREASED, OnThreatIncreased);
         Messenger.AddListener(PlayerSignals.THREAT_RESET, OnThreatReset);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
-        Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
-        Messenger.AddListener<Character>(CharacterSignals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
         Messenger.AddListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, UpdatePlaguePointsAmount);
 
         //key presses
@@ -207,7 +193,6 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<int, int>(PlayerSignals.PLAGUE_POINTS_ADJUSTED, OnPlaguePointsAdjusted);
         //Messenger.AddListener(PlayerSignals.CHAOS_ORB_COLLECTED, OnSpiritEnergyAdjustedByOne);
 
-        InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
 #if UNITY_EDITOR
         itemsToggle.gameObject.SetActive(true);
@@ -246,86 +231,6 @@ public class PlayerUI : BaseMonoBehaviour {
         // if (pressedKey == KeyCode.F9) {
         //     UIManager.Instance.optionsMenu.QuickSave();
         // }
-    }
-    private void OnCharacterDied(Character character) {
-        TransferCharacterFromActiveToInactive(character);
-    }
-    private void OnCharacterGainedTrait(Character character, Trait trait) {
-        if (trait is Cultist) {
-            CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-            if (item != null) {
-                ObjectPoolManager.Instance.DestroyObject(item);
-            }
-        }
-        //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-        //    TransferCharacterFromActiveToInactive(character);
-        //    UpdateKillCount();
-        //}
-    }
-    private void OnCharacterLostTrait(Character character, Trait trait) {
-        //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-        //    TransferCharacterFromInactiveToActive(character);
-        //    UpdateKillCount();
-        //}
-    }
-    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
-        //UpdateKillCount();
-        //OrderKillSummaryItems();
-
-        //TODO: This causes inconsistencies since the character will have null faction once he/she is removed from the faction
-        //TransferCharacterFromActiveToInactive(character);
-        //CheckIfAllCharactersWipedOut();
-    }
-    private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        //if (faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
-        //    TransferCharacterFromActiveToInactive(character);
-        //} else 
-        if (faction.isPlayerFaction || faction?.factionType.type == FACTION_TYPE.Undead) {
-            OnCharacterBecomesMinionOrSummon(character);
-        } else {
-            TransferCharacterFromInactiveToActive(character);
-        }
-    }
-    private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if (item != null) {
-            item.UpdateObject(character);
-        } else {
-            item = GetInactiveCharacterNameplateItem(character);
-            if (item != null) {
-                item.UpdateObject(character);
-            }
-        }
-    }
-    private void OnCharacterSwitchFromLimbo(Character fromCharacter, Character toCharacter) {
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(fromCharacter);
-        if (item != null) {
-            item.UpdateObject(toCharacter);
-        } else {
-            item = GetInactiveCharacterNameplateItem(fromCharacter);
-            if (item != null) {
-                item.UpdateObject(toCharacter);
-            }
-        }
-        // if (!toCharacter.IsAble()/* || toCharacter.isFactionless*/) {
-        //     TransferCharacterFromActiveToInactive(toCharacter);
-        // } else if (toCharacter.faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
-        //     OnCharacterBecomesMinionOrSummon(toCharacter);
-        // } else {
-        //     TransferCharacterFromInactiveToActive(toCharacter);
-        // }
-    }
-    private void AddedNewCharacter(Character character) {
-        // OnAddNewCharacter(character);
-    }
-    private void CharacterBecomesMinionOrSummon(Character character) {
-        //OnCharacterBecomesMinionOrSummon(character);
-    }
-    private void CharacterBecomesNonMinionOrSummon(Character character) {
-        OnCharacterBecomesNonMinionOrSummon(character);
-    }
-    private void OnNecromancerSpawned(Character character) {
-        OnCharacterBecomesNecromancer(character);
     }
     private void OnThreatUpdated() {
         threatLbl.text = PlayerManager.Instance.player.threatComponent.threat.ToString();
@@ -602,14 +507,6 @@ public class PlayerUI : BaseMonoBehaviour {
     public void SuccessfulAreaCorruption() {
         successfulAreaCorruptionGO.SetActive(true);
         //Utilities.DestroyChildren(killSummaryScrollView.content);
-        LoadKillSummaryCharacterItems();
-    }
-    private void LoadKillSummaryCharacterItems() {
-        CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(villagersScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            CharacterNameplateItem item = items[i];
-            item.transform.SetParent(killSummaryScrollView.content);
-        }
     }
     #endregion
 
@@ -626,199 +523,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     public void SetVillagerTabIsOn(bool state) {
         villagerTab.isOn = state;
-    }
-    public void OpenVillagersList() {
-        villagerGO.SetActive(true);
-        villagerTab.SetIsOnWithoutNotify(true);
-    }
-    public void CloseVillagersList() {
-        villagerGO.SetActive(false);
-        villagerTab.SetIsOnWithoutNotify(false);
-    }
-    private void LoadVillagerItems(int itemsToCreate) {
-        villagerItems = new List<CharacterNameplateItem>();
-        for (int i = 0; i < itemsToCreate; i++) {
-            CreateNewVillagerItem();
-        }
-    }
-    private CharacterNameplateItem CreateNewVillagerItem() {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(villagerItemPrefab.name, Vector3.zero, Quaternion.identity, villagersScrollView.content);
-        CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
-        go.SetActive(false);
-        villagerItems.Add(item);
-        return item;
-    }
-    private void InitialUpdateVillagerListCharacterItems() {
-        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalEvenLycanAndNotAlliedWithPlayer && !x.isPreplaced).ToList();
-        int allVillagersCount = villagers.Count;
-        LoadVillagerItems(allVillagersCount);
-        
-        List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
-        List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
-
-        for (int i = 0; i < allVillagersCount; i++) {
-            Character character = villagers[i];
-            CharacterNameplateItem item = villagerItems[i];
-            
-            item.SetObject(character);
-            item.SetAsButton();
-            item.ClearAllOnClickActions();
-            item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
-            item.gameObject.SetActive(true);
-            if (!character.IsAble()) {
-                dead.Add(item);
-            } else {
-                alive.Add(item);
-            }
-        }
-
-        aliveHeader.transform.SetAsFirstSibling();
-        for (int i = 0; i < alive.Count; i++) {
-            CharacterNameplateItem currItem = alive[i];
-            currItem.SetIsActive(true);
-            currItem.transform.SetSiblingIndex(i + 1);
-        }
-        deadHeader.transform.SetSiblingIndex(alive.Count + 1);
-        for (int i = 0; i < dead.Count; i++) {
-            CharacterNameplateItem currItem = dead[i];
-            currItem.SetIsActive(false);
-            currItem.transform.SetSiblingIndex(alive.Count + i + 2);
-        }
-    }
-    private void OnAddNewCharacter(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
-            //Do not show minions and summons
-            return;
-        }
-        CharacterNameplateItem item = GetUnusedCharacterNameplateItem();
-        if(item == null) {
-            item = CreateNewVillagerItem();
-        }
-        item.SetObject(character);
-        item.SetAsButton();
-        item.ClearAllOnClickActions();
-        item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
-        item.gameObject.SetActive(true);
-        if (!character.IsAble()) {
-            //if (allFilteredCharactersCount == villagerItems.Count) {
-            //    item.transform.SetAsLastSibling();
-            //} else {
-            //    item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
-            //}
-            item.transform.SetAsLastSibling();
-            item.SetIsActive(false);
-        } else {
-            item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
-            item.SetIsActive(true);
-        }
-    }
-    private void TransferCharacterFromActiveToInactive(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
-            return;
-        }
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if(item != null) {
-            // if (allFilteredCharactersCount == villagerItems.Count) {
-            //     item.transform.SetAsLastSibling();
-            // } else {
-            //     item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
-            // }
-            // item.SetIsActive(false);
-            item.transform.SetAsLastSibling(); //put character item at the bottom of the list.
-        }
-        //UpdateKillCount();
-    }
-    private void TransferCharacterFromInactiveToActive(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
-            return;
-        }
-        CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);
-        if (item != null) {
-            int index = item.transform.GetSiblingIndex();
-            int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
-            item.transform.SetSiblingIndex(deadHeaderIndex);
-            item.SetIsActive(true);
-        }
-        //UpdateKillCount();
-    }
-    private void OnCharacterBecomesMinionOrSummon(Character character) {
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if (item != null) {
-            item.gameObject.SetActive(false);
-            //UpdateKillCount();
-        } else {
-            item = GetInactiveCharacterNameplateItem(character);
-            if (item != null) {
-                item.gameObject.SetActive(false);
-                //UpdateKillCount();
-            }
-        }
-    }
-    private void OnCharacterBecomesNonMinionOrSummon(Character character) {
-        // OnAddNewCharacter(character);
-    }
-    private void OnCharacterBecomesNecromancer(Character character) {
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if (item != null) {
-            item.gameObject.SetActive(false);
-        }
-    }
-    private CharacterNameplateItem GetUnusedCharacterNameplateItem() {
-        int killCountCharacterItemsCount = villagerItems.Count;
-        for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
-            CharacterNameplateItem item = villagerItems[i];
-            if (!item.gameObject.activeSelf) {
-                return item;
-            }
-        }
-        return null;
-    }
-    private CharacterNameplateItem GetActiveCharacterNameplateItem(Character character) {
-        int killCountCharacterItemsCount = villagerItems.Count;
-        for (int i = 0; i < killCountCharacterItemsCount; i++) {
-            CharacterNameplateItem item = villagerItems[i];
-            if (item.gameObject.activeSelf && item.isActive && item.character == character) {
-                return item;
-            }
-        }
-        return null;
-    }
-    private CharacterNameplateItem GetInactiveCharacterNameplateItem(Character character) {
-        int killCountCharacterItemsCount = villagerItems.Count;
-        for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
-            CharacterNameplateItem item = villagerItems[i];
-            if (item.gameObject.activeSelf && !item.isActive && item.character == character) {
-                return item;
-            }
-        }
-        return null;
-    }
-    //private void OrderKillSummaryItems() {
-    //    CharacterNameplateItem[] items = GameGameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
-    //    List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
-    //    List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
-    //    for (int i = 0; i < items.Length; i++) {
-    //        CharacterNameplateItem currItem = items[i];
-    //        if (!currItem.character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(currItem.character.faction)) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
-    //            dead.Add(currItem);
-    //        } else {
-    //            alive.Add(currItem);
-    //        }
-    //    }
-    //    aliveHeader.transform.SetAsFirstSibling();
-    //    for (int i = 0; i < alive.Count; i++) {
-    //        CharacterNameplateItem currItem = alive[i];
-    //        currItem.transform.SetSiblingIndex(i + 1);
-    //    }
-    //    deadHeader.transform.SetSiblingIndex(alive.Count + 1);
-    //    for (int i = 0; i < dead.Count; i++) {
-    //        CharacterNameplateItem currItem = dead[i];
-    //        currItem.transform.SetSiblingIndex(alive.Count + i + 2);
-    //    }
-    //    UpdateKillCount();
-    //}
-    public void ToggleKillSummary(bool isOn) {
-        villagerGO.SetActive(isOn);
     }
     #endregion
 
