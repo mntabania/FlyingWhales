@@ -63,5 +63,10 @@ namespace Inner_Maps.Location_Structures {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.DEFEND);
         }
+
+        protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
+            UnDeployAll();
+            base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
+        }
     }
 }

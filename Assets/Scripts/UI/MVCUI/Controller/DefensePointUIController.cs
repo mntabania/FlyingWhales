@@ -266,10 +266,10 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints);
 		ProcessDeployButtonDisplay();
 	}
-	
 
+	int displayedCount = 0;
 	private void ProcessDeployButtonDisplay() {
-		int displayedCount = 0;
+		displayedCount = 0;
 		int deployedCount = m_targetPartyStructure.partyData.deployedSummonCount;
 		m_deployedSummonsUI.ForEach((eachUi) => {
 			if (eachUi.isReadyForDeploy) {
@@ -291,10 +291,17 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			m_defensePointUIView.SetButtonDeployText("Deploy");
 		}
 
-		if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
-			m_defensePointUIView.DisableDeployButton();
-		} else {
-			m_defensePointUIView.EnableDeployButton();
+		m_defensePointUIView.EnableDeployButton();
+		if (!m_isAllItemDeployed) {
+			if (displayedCount <= 0) {
+				m_defensePointUIView.DisableDeployButton();
+				return;
+			}
+
+			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
+				m_defensePointUIView.DisableDeployButton();
+				return;
+			}
 		}
 	}
 
@@ -330,10 +337,13 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		if (m_isAllItemDeployed) {
 			Tooltip.Instance.ShowSmallInfo("Unsummon all party members.", "Undeploy Party", autoReplaceText: false);
 		} else {
+			if (displayedCount > 0) {
+				Tooltip.Instance.ShowSmallInfo("Summon minions to defend around the Prism.", "Deploy team", autoReplaceText: false);
+				return;
+			}
 			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
 				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana.", "Not enough Mana", autoReplaceText: false);
-			} else {
-				Tooltip.Instance.ShowSmallInfo("Summon minions to defend around the Prism.", "Deploy team", autoReplaceText: false);
+				return;
 			}
 		}
 	}
