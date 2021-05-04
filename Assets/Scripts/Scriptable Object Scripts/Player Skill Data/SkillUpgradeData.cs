@@ -25,6 +25,8 @@ public class SkillUpgradeData
     [HideInInspector]
     public List<int> additionalAttackValuePerLevel = new List<int>();
     [HideInInspector]
+    public List<int> applyOnLevel = new List<int>();
+    [HideInInspector]
     public List<float> additionalmanaReceivedPercentagePerLevel = new List<float>();
     [HideInInspector]
     public List<float> statsIncreasedPercentagePerLevel = new List<float>();

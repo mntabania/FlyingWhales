@@ -79,7 +79,12 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
             bonusesText.text = $"{bonusesText.text}{UtilityScripts.Utilities.ColorizeSpellTitle("Charges:")} {charges.ToString()}/{charges.ToString()}";
         }
-        bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(p_playerSkillData, 1)}";
+        if (p_playerSkillData.isAffliction) {
+            bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(p_playerSkillData, 1)}";
+        } else {
+            bonusesText.text = $"{bonusesText.text}\n{GetPlayerActionSkillBonusesString(p_playerSkillData, 1)}";
+        }
+        
     }
     private void UpdateData(SkillData skillData, bool p_dontShowAdditionalText = false) {
         // UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
@@ -97,7 +102,12 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         string bonusesStr = GetBonusesString(playerSkillData, skillData.currentLevel);
         bonusesStr = $"{bonusesStr}{GetAdditionalBonusesString(skillData, playerSkillData, skillData.currentLevel)}";
         bonusesText.text = bonusesStr;
-        bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(playerSkillData, skillData.currentLevel)}";
+        if (playerSkillData.isAffliction) {
+            bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(playerSkillData, skillData.currentLevel)}";
+        } else {
+            bonusesText.text = $"{bonusesText.text}\n{GetPlayerActionSkillBonusesString(playerSkillData, skillData.currentLevel)}";
+        }
+        
 
         if (p_dontShowAdditionalText) {
             additionalText.text = string.Empty;
@@ -149,7 +159,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (!string.IsNullOrEmpty(additionalBonusesLevelUpString)) {
             bonusesStr = $"{bonusesStr}\n{additionalBonusesLevelUpString}";    
         }
-        string afflictionBonusesString = GetAfflictionBonusesWithLevelUpDetailsString(playerSkillData, spellData.currentLevel);
+        string afflictionBonusesString = string.Empty;
+        if (playerSkillData.isAffliction) {
+            afflictionBonusesString = GetAfflictionBonusesWithLevelUpDetailsString(playerSkillData, spellData.currentLevel);
+        } else {
+            afflictionBonusesString = GetPlayerActionSkillBonusesWithLevelUpDetailsString(playerSkillData, spellData.currentLevel);
+        }
+        
         if (!string.IsNullOrEmpty(afflictionBonusesString)) {
             bonusesStr = $"{bonusesStr}\n{afflictionBonusesString}";    
         }
@@ -371,7 +387,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             if (activeObj != null) {
                 if (activeObj is Character activeCharacter) {
                     if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
-                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
+                        if (spellData is PlayerAction playerAction && !playerAction.GetCanBeCastOnBlessed() && activeCharacter.traitContainer.IsBlessed()) {
                             additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
                         }
                         string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
@@ -500,6 +516,24 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             }
         }
         return bonuses.TrimEnd();
+    }
+
+    private string GetPlayerActionSkillBonusesString(PlayerSkillData p_data, int p_level) {
+        string bonuses = string.Empty;
+        SkillData skilldata = PlayerSkillManager.Instance.GetSkillData(p_data.skill);
+        if (skilldata is RemoveBuffData && p_level >= 3) {
+            bonuses = $"{UtilityScripts.Utilities.ColorizeSpellTitle("Can remove Blessed Trait.")}\n";
+        }
+        return bonuses.TrimEnd();
+    }
+
+    private string GetPlayerActionSkillBonusesWithLevelUpDetailsString(PlayerSkillData p_data, int p_level) {
+        SkillData skilldata = PlayerSkillManager.Instance.GetSkillData(p_data.skill);
+        string str = string.Empty;
+        if (skilldata is RemoveBuffData && p_level >= 2) {
+            str = $"{UtilityScripts.Utilities.ColorizeUpgradeText("Can remove Blessed Trait.")}\n"; ;
+        }
+        return str;
     }
     private string GetAfflictionBonusesWithLevelUpDetailsString(PlayerSkillData p_data, int p_level) {
         string bonuses = string.Empty;
