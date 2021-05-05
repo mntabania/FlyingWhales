@@ -55,7 +55,7 @@ MonoBehaviour:
     manacostPerLevel: 96000000fa0000005e010000c2010000
     chargesPerLevel: 01000000010000000200000002000000
     bonuses: 00000000010000000e000000
-    additionalDamagePerLevel: f40100009e02000066030000e2040000
+    additionalDamagePerLevel: 17020000cb0200009d0300006f040000
     additionalPiercePerLevel:
     - 0
     - 50
