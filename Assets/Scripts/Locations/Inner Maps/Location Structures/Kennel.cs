@@ -200,8 +200,8 @@ namespace Inner_Maps.Location_Structures {
             _occupyingSummon = p_summon;
             occupyingSummon.eventDispatcher.SubscribeToCharacterDied(this);
             startingSummonCount = 2;
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity, false);
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
+            PlayerManager.Instance.player.underlingsComponent.GainMonsterUnderlingMaxChargesFromKennel(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
+            // PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
             Debug.Log($"Set occupant of {name} to {occupyingSummon?.name}");
             Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
@@ -209,8 +209,8 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(occupyingSummon, $"Problem un occupying summon at {name}");
             Debug.Log($"Removed {occupyingSummon.name} as occupant of {name}");
             occupyingSummon.eventDispatcher.UnsubscribeToCharacterDied(this);
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity, false);
-            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity);
+            PlayerManager.Instance.player.underlingsComponent.LoseMonsterUnderlingMaxChargesFromKennel(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity);
+            // PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity);
             _occupyingSummon = null;
 
             //in case there is another monster that is still at this kennel, then set the occupying monster to that monster, also add related charges

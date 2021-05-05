@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
+
 public class PlayerUnderlingsComponent {
     //public List<Minion> minions { get; private set; }
     //public List<Summon> summons { get; private set; }
@@ -114,6 +116,22 @@ public class PlayerUnderlingsComponent {
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
     }
+    public void GainMonsterUnderlingMaxChargesFromKennel(SUMMON_TYPE summonType, int amount) {
+        Assert.IsTrue(amount > 0);
+        //Related Task: https://trello.com/c/Bj13iHJW/4317-kennel-monster-transfer-exploit
+        AdjustMonsterUnderlingMaxCharge(summonType, amount, false);
+        if (HasMonsterUnderlingEntry(summonType, out var monsterUnderling)) {
+            monsterUnderling.StartMonsterReplenish();
+        }
+    }
+    public void LoseMonsterUnderlingMaxChargesFromKennel(SUMMON_TYPE summonType, int amount) {
+        Assert.IsTrue(amount < 0);
+        //Related Task: https://trello.com/c/Bj13iHJW/4317-kennel-monster-transfer-exploit
+        //Expected behaviour is that current charges will be clamped by max charges
+        //Example: 4/6 charges before adjustment, should become 3/3 after losing max charges.
+        //Only denominator will be reduced.
+        AdjustMonsterUnderlingMaxCharge(summonType, amount, false);
+    }
     //public void RemoveMonsterUnderlingEntry(SUMMON_TYPE p_monsterType) {
     //    if (HasMonsterUnderlingEntry(p_monsterType)) {
     //        MonsterUnderlingCharges m_underlingCharges = monsterUnderlingCharges[p_monsterType];
@@ -123,6 +141,14 @@ public class PlayerUnderlingsComponent {
     //}
     public bool HasMonsterUnderlingEntry(SUMMON_TYPE p_monsterType) {
         return monsterUnderlingCharges.ContainsKey(p_monsterType);
+    }
+    private bool HasMonsterUnderlingEntry(SUMMON_TYPE p_monsterType, out MonsterAndDemonUnderlingCharges p_monsterAndDemonUnderlingCharges) {
+        if (monsterUnderlingCharges.ContainsKey(p_monsterType)) {
+            p_monsterAndDemonUnderlingCharges = monsterUnderlingCharges[p_monsterType];
+            return true;
+        }
+        p_monsterAndDemonUnderlingCharges = null;
+        return false;
     }
     public bool HasDemonUnderlingEntry(MINION_TYPE p_demonType) {
         return demonUnderlingCharges.ContainsKey(p_demonType);
@@ -167,7 +193,9 @@ public class PlayerUnderlingsComponent {
             m_underlingCharges.maxCharges = charge;
             if (adjustCurrentCharges) {
                 AdjustMonsterUnderlingCharge(p_monsterType, amount);
+                if (amount < 0) { m_underlingCharges.OnLoseMaxCharges(); }
             } else {
+                if (amount < 0) { m_underlingCharges.OnLoseMaxCharges(); }
                 Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
             }
         } else {
@@ -270,6 +298,16 @@ public class MonsterAndDemonUnderlingCharges {
             //SchedulingManager.Instance.AddEntry(replenishDate, DoneMonsterReplenish, null);
         }
     }
+    public void OnLoseMaxCharges() {
+        //clamp current charges to max charges when max charges are lost
+        currentCharges = Mathf.Clamp(currentCharges, 0, maxCharges);
+        if (!hasMaxCharge) {
+            //Related task: (Kennel Monster transfer exploit) https://trello.com/c/Bj13iHJW/4317-kennel-monster-transfer-exploit
+            //lost max charges and max charges is less than or equal to 0
+            //if underlings are replenishing, stop it.
+            CancelMonsterReplenish();
+        }
+    }
     private void PerTickReplenish() {
         currentCooldownTick++;
         Messenger.Broadcast(PlayerSkillSignals.PER_TICK_MONSTER_UNDERLING_COOLDOWN, this);
@@ -279,10 +317,20 @@ public class MonsterAndDemonUnderlingCharges {
     }
     private void DoneMonsterReplenish() {
         if (isReplenishing) {
+            currentCooldownTick = 0;
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickReplenish);
             isReplenishing = false;
             Messenger.Broadcast(PlayerSkillSignals.STOP_MONSTER_UNDERLING_COOLDOWN, this);
             ReplenishCharges();
+        }
+    }
+    private void CancelMonsterReplenish() {
+        if (isReplenishing) {
+            Debug.Log($"{GameManager.Instance.TodayLogString()}Cancelling monster replenish of {monsterType.ToString()} since player no longer has max charges for it.");
+            currentCooldownTick = 0;
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickReplenish);
+            isReplenishing = false;
+            Messenger.Broadcast(PlayerSkillSignals.STOP_MONSTER_UNDERLING_COOLDOWN, this);
         }
     }
     private void ReplenishCharges() {
