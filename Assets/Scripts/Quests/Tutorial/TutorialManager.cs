@@ -25,8 +25,11 @@ namespace Tutorial {
             Intel,
             Spirit_Energy,
             Migration_Controls,
-            Base_Building
+            Base_Building,
+            Abilities
         }
+        
+        [System.Obsolete("Old Tutorials will be removed")]
         public enum Tutorial {
             Basic_Controls = 0,
             Build_A_Kennel = 1,
