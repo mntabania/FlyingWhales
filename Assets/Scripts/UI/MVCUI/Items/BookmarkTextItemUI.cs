@@ -9,6 +9,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
     [SerializeField] private Button btnRemove;
     [SerializeField] private HoverHandler hoverHandler;
     [SerializeField] private UIHoverPosition hoverPosition;
+    [SerializeField] private EnvelopContentUnityUI envelopContent;
 
     private System.Action _onHoverOverAction;
     private System.Action _onHoverOutAction;
@@ -63,6 +64,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
 
     private void SetBookmarkItemText(string p_text) {
         lblName.text = p_text;
+        envelopContent.Execute();
     }
     private void OnHoverOverBookmark() {
         _onHoverOverAction?.Invoke();

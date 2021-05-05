@@ -364,6 +364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7572147956438921713}
   - component: {fileID: 5565422450568841589}
+  - component: {fileID: 8271340756917096019}
   m_Layer: 5
   m_Name: Bookmark_Item_Text_Prefab
   m_TagString: Untagged
@@ -411,6 +412,23 @@ MonoBehaviour:
   btnRemove: {fileID: 9113909443806329406}
   hoverHandler: {fileID: 8295217290797107165}
   hoverPosition: {fileID: 8385359458815093132}
+  envelopContent: {fileID: 8271340756917096019}
+--- !u!114 &8271340756917096019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7572147956438921712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d821a190b14981c4f85f4f8c88518bec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  otherTransform: {fileID: 7572147957243166602}
+  followWidth: 0
+  followHeight: 1
+  padding: {x: 0, y: 0}
 --- !u!1 &7572147957243166601
 GameObject:
   m_ObjectHideFlags: 0
@@ -444,11 +462,11 @@ RectTransform:
   m_Father: {fileID: 7572147956438921713}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -0.0000038146973, y: 0}
-  m_Pivot: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: 311, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7572147957243166604
 CanvasRenderer:
   m_ObjectHideFlags: 0

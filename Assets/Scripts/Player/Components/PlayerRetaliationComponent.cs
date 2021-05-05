@@ -18,7 +18,7 @@ public class PlayerRetaliationComponent {
     public PlayerRetaliationComponent() {
         spawnedAngels = new List<Character>();
         SetAngelCount(2);
-        retaliationProgress = new RuinarchBasicProgress(GetRetaliationBookmarkText());
+        retaliationProgress = new RuinarchBasicProgress(GetRetaliationBookmarkText(), BOOKMARK_TYPE.Progress_Bar);
         retaliationProgress.SetOnHoverOverAction(OnHoverOverRetaliationBookmark);
         retaliationProgress.SetOnHoverOutAction(OnHoverOutRetaliationBookmark);
         retaliationProgress.SetOnSelectAction(OnClickRetaliationBookmark);

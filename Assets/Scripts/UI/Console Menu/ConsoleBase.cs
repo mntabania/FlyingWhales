@@ -109,7 +109,8 @@ public class ConsoleBase : InfoUIBase {
             {"/bonus_charge", BonusCharges},
             {"/log_alive_villagers", LogAliveVillagers},
             {"/kill_villagers", KillAllVillagers},
-            {"/adjust_se", AdjustSpiritEnergy}
+            {"/adjust_se", AdjustSpiritEnergy},
+            {"/adjust_mm", AdjustMigrationMeter}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -122,6 +123,7 @@ public class ConsoleBase : InfoUIBase {
         tglShowPOIHoverData.onValueChanged.RemoveAllListeners();
         tglShowPOIHoverData.onValueChanged.AddListener(OnToggleShowPOIHoverData);
     }
+    
     private void Update() {
         if (!isShowing) {
             return;
@@ -1675,6 +1677,30 @@ public class ConsoleBase : InfoUIBase {
             AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
         }
         
+    }
+    private void AdjustMigrationMeter(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, amount
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /adjust_mm");
+            return;
+        }
+        string settlementName = parameters[0];
+        string migrationAdjustmentStr = parameters[1];
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+        if (settlement is NPCSettlement npcSettlement) {
+            if (Int32.TryParse(migrationAdjustmentStr, out var adjustment)) {
+                if (adjustment > 0) {
+                    npcSettlement.migrationComponent.IncreaseVillageMigrationMeter(adjustment);
+                } else {
+                    npcSettlement.migrationComponent.ReduceVillageMigrationMeter(adjustment * -1);
+                }
+                AddSuccessMessage($"{settlement.name} migration meter is now {npcSettlement.migrationComponent.GetMigrationMeterValueInText()}");
+            } else {
+                AddErrorMessage($"{migrationAdjustmentStr} could not be parsed into an integer");    
+            }
+        } else {
+            AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+        }
     }
     #endregion
 
