@@ -166,9 +166,7 @@ namespace Locations.Area_Features {
                     if (gridTile.tileObjectComponent.objHere != null) {
                         gridTile.tileObjectComponent.objHere.traitContainer.AddTrait(gridTile.tileObjectComponent.objHere, "Wet");
                         Wet wetObjHere = gridTile.tileObjectComponent.objHere.traitContainer.GetTraitOrStatus<Wet>("Wet");
-                        if (wet != null) {
-                            wetObjHere.SetIsPlayerSource(isPlayerSource);
-                        }
+                        wetObjHere?.SetIsPlayerSource(isPlayerSource);
                     }
                 }
             }
