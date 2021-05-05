@@ -19,7 +19,7 @@ public class BookmarkTextItemUI : PooledObject, BookmarkableEventDispatcher.ILis
         p_bookmarkable.bookmarkEventDispatcher.Subscribe(this, p_bookmarkable);
         btnMain.onClick.AddListener(p_bookmarkable.OnSelectBookmark);
         btnRemove.onClick.AddListener(() => OnClickRemoveBookmark(p_bookmarkable));
-        btnRemove.gameObject.SetActive(p_bookmarkable.bookmarkType == BOOKMARK_TYPE.Text_With_Cancel);
+        btnRemove.gameObject.SetActive(p_bookmarkable.bookmarkType == BOOKMARK_TYPE.Text_With_Cancel || p_bookmarkable.bookmarkType == BOOKMARK_TYPE.Special);
         _onHoverOverAction = () => p_bookmarkable.OnHoverOverBookmarkItem(hoverPosition);
         _onHoverOutAction = p_bookmarkable.OnHoverOutBookmarkItem;
         hoverHandler.AddOnHoverOverAction(OnHoverOverBookmark);

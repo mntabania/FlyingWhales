@@ -1244,7 +1244,7 @@ public enum BOOKMARK_CATEGORY {
 }
 
 public enum BOOKMARK_TYPE {
-    Progress_Bar, Text, Text_With_Cancel
+    Progress_Bar, Text, Text_With_Cancel, Special
 }
 
 public enum AFFLICTION_UPGRADE_BONUS {
