@@ -46,8 +46,13 @@ namespace Inner_Maps.Location_Structures {
         public LocationAwareness locationAwareness { get; protected set; }
         public LocationStructureEventDispatcher eventDispatcher { get; }
 
+        public virtual string extraInfo1Header => string.Empty;
+        public virtual string extraInfo1Description => string.Empty;
+        public virtual string extraInfo2Header => string.Empty;
+        public virtual string extraInfo2Description => string.Empty;
+
         //protected Faction _owner;
-        
+
         /// <summary>
         /// List of areas that this structure has a tile on.
         /// NOTE: This can have duplicates of the same Area, this is so that there is

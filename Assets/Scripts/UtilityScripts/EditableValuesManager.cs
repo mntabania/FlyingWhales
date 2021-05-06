@@ -70,6 +70,11 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _targetPortalLevel;
 	[Space]
 
+	[Header("Beholder Costs")]
+	[SerializeField] private List<Cost> m_eyeUpgradeCostPerLevel;
+	[SerializeField] private List<Cost> m_radiusUpgradeCostPerLevel;
+	[Space]
+
 	public int vaporStacks;
 	public int poisonCloudStacks;
 	public int frostyFogStacks;
@@ -171,5 +176,13 @@ public class EditableValuesManager : MonoBehaviour {
 	}
 	public Cost GetBuildWallCost() {
 		return currencyHoverData.buildWallCost;
+	}
+
+	public Cost GetBeholderEyeUpgradeCostPerLevel(int level) {
+		return m_eyeUpgradeCostPerLevel[level];
+	}
+
+	public Cost GetBeholderRadiusUpgradeCostPerLevel(int level) {
+		return m_radiusUpgradeCostPerLevel[level];
 	}
 }

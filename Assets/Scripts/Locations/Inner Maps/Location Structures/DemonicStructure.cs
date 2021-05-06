@@ -11,7 +11,7 @@ using Debug = System.Diagnostics.Debug;
 
 namespace Inner_Maps.Location_Structures {
     public class DemonicStructure : LocationStructure {
-        
+
         public LocationStructureObject structureObj {get; private set;}
         public HashSet<Character> currentAttackers { get; }
         public Character preOccupiedBy { get; private set; }

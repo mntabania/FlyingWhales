@@ -72,6 +72,26 @@ MonoBehaviour:
   _manaRegenPerManapit: 50
   _additionalMaxManaPerPit: 250
   _targetPortalLevel: 8
+  m_eyeUpgradeCostPerLevel:
+  - name: 
+    currency: 1
+    amount: 50
+  - name: 
+    currency: 1
+    amount: 100
+  - name: 
+    currency: 1
+    amount: 200
+  m_radiusUpgradeCostPerLevel:
+  - name: 
+    currency: 1
+    amount: 50
+  - name: 
+    currency: 1
+    amount: 100
+  - name: 
+    currency: 1
+    amount: 200
   vaporStacks: 5
   poisonCloudStacks: 1
   frostyFogStacks: 5

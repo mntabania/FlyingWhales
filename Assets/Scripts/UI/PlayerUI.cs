@@ -168,11 +168,10 @@ public class PlayerUI : BaseMonoBehaviour {
 
     void OnSpellCooldownFinished(SkillData p_skillData) {
         if (p_skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
-            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.ColorizeSpellTitle(p_skillData.name)} is now available", popUpDisplayPoint);
+            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} is now available", popUpDisplayPoint);
         } else {
-            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.ColorizeSpellTitle(p_skillData.name)} charge replenished by 1", popUpDisplayPoint);
+            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} charge replenished by 1", popUpDisplayPoint);
         }
-        
     }
 
     public void AdjustUIDisplayBaseOnGameMode() {

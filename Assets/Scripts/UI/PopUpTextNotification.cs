@@ -31,7 +31,7 @@ public static class PopUpTextNotification
         float timer = 0f;
         while (timer < 2f) {
             timer += Time.deltaTime;
-            PopUpText.transform.position = Vector3.MoveTowards(PopUpText.transform.position, p_targetPos, 50f * Time.deltaTime);
+            PopUpText.transform.position = Vector3.MoveTowards(PopUpText.transform.position, p_targetPos, 120f * Time.deltaTime);
             yield return 0;
         }
         PopUpText.text = string.Empty;

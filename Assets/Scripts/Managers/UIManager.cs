@@ -233,7 +233,9 @@ public class UIManager : BaseMonoBehaviour {
             || p_playerAction.type == PLAYER_SKILL_TYPE.SNATCH_VILLAGER
             || p_playerAction.type == PLAYER_SKILL_TYPE.RAID
             || p_playerAction.type == PLAYER_SKILL_TYPE.DEFEND
-            || p_playerAction.type == PLAYER_SKILL_TYPE.EVANGELIZE) {
+            || p_playerAction.type == PLAYER_SKILL_TYPE.EVANGELIZE
+            || p_playerAction.type == PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_EYE_LEVEL
+            || p_playerAction.type == PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_RADIUS_LEVEL) {
             HidePlayerActionContextMenu();    
         } else {
             if (IsContextMenuShowing()) {
