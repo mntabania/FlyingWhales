@@ -167,10 +167,13 @@ public class PlayerUI : BaseMonoBehaviour {
     }
 
     void OnSpellCooldownFinished(SkillData p_skillData) {
+        string rawString = p_skillData.name;
         if (p_skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
-            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} is now available", popUpDisplayPoint);
-        } else {
-            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} charge replenished by 1", popUpDisplayPoint);
+            rawString += " is now available";
+            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} is now available", popUpDisplayPoint, rawString.Length);
+        } else { 
+            rawString += " charge replenished by 1";
+            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} charge replenished by 1", popUpDisplayPoint, rawString.Length);
         }
     }
 

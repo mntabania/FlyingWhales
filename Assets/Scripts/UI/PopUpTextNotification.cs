@@ -1,29 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class PopUpTextNotification
 {
     private static RuinarchText m_popupText;
     private static IEnumerator onDoneFunction;
-    private static RuinarchText PopUpText {
+    private static Image m_parentGO;
+    private static MonoBehaviour m_mono;
+    private static GameObject PopUpparent {
         get {
             if (m_popupText == null) {
-                m_popupText = GameObject.Find("PopUpText").GetComponent<RuinarchText>();
+                GameObject go = GameObject.Find("PopUpNotificationUI");
+                m_parentGO = go.GetComponentInChildren<Image>(true);
+                m_popupText = go.GetComponentInChildren<RuinarchText>(true);
+                m_mono = m_parentGO.GetComponent<MonoBehaviour>();
             }
-            return m_popupText;
+            return m_parentGO.gameObject;
         }
     }
 
-    public static void ShowPlayerPoppingTextNotif(string p_message, Transform p_startingPosition = null) {
-        AudioManager.Instance.OnErrorSoundPlay();
-        PopUpText.StopAllCoroutines();
-        PopUpText.text = p_message;
-        Vector3 pos = PopUpText.transform.position;
+    public static void ShowPlayerPoppingTextNotif(string p_message, Transform p_startingPosition = null, int p_stringCount = 0) {
+        AudioManager.Instance.OnTextPopUpSoundPlay();
+        PopUpparent.gameObject.SetActive(true);
+        m_mono.StopAllCoroutines();
+        m_popupText.text = p_message;
+        m_parentGO.rectTransform.sizeDelta = new Vector2(p_stringCount * 10, m_parentGO.rectTransform.sizeDelta.y);
+        Vector3 pos = PopUpparent.transform.position;
         if (p_startingPosition != null) {
-            pos = PopUpText.transform.position = p_startingPosition.transform.position;
+            pos = PopUpparent.transform.position = p_startingPosition.transform.position;
         }
-        PopUpText.StartCoroutine(Move(pos));
+        m_mono.StartCoroutine(Move(pos));
     }
 
     static IEnumerator Move(Vector3 p_targetPos) {
@@ -31,9 +39,10 @@ public static class PopUpTextNotification
         float timer = 0f;
         while (timer < 2f) {
             timer += Time.deltaTime;
-            PopUpText.transform.position = Vector3.MoveTowards(PopUpText.transform.position, p_targetPos, 120f * Time.deltaTime);
+            PopUpparent.transform.position = Vector3.MoveTowards(PopUpparent.transform.position, p_targetPos, 120f * Time.deltaTime);
             yield return 0;
         }
-        PopUpText.text = string.Empty;
+        m_popupText.text = string.Empty;
+        PopUpparent.gameObject.SetActive(false);
     }
 }

@@ -257,7 +257,7 @@ MonoBehaviour:
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 37
-    m_Scale: 1
+    m_Scale: 2
     m_Name: exclamation
     m_HashCode: 229586851
   m_SpriteGlyphTable:
@@ -860,7 +860,7 @@ MonoBehaviour:
       m_HorizontalAdvance: 42.13
     m_GlyphRect:
       m_X: 2
-      m_Y: 204
+      m_Y: 208
       m_Width: 49
       m_Height: 50
     m_Scale: 1
