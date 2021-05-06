@@ -950,6 +950,10 @@ public class UIManager : BaseMonoBehaviour {
         if(character.isLycanthrope) {
             characterToShow = character.lycanData.activeForm;
         }
+        if (characterToShow == null || !characterToShow.hasMarker) {
+            //Do not show characters that have no body anymore
+            return;
+        }
         if(characterToShow.isNormalCharacter) {
             if (tempDisableShowInfoUI) {
                 SetTempDisableShowInfoUI(false);
