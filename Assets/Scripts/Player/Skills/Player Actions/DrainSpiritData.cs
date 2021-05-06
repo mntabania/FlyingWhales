@@ -81,7 +81,7 @@ public class DrainSpiritData : PlayerAction {
         bool canPerformAbility = base.CanPerformAbilityTowards(targetStructure);
         if (canPerformAbility) {
             if (targetStructure is Kennel kennel) {
-                if (!CanPerformAbilityTowards(kennel.occupyingSummon)) {
+                if (kennel.occupyingSummon != null && !CanPerformAbilityTowards(kennel.occupyingSummon)) {
                     return false;
                 }
             } else if (targetStructure is TortureChambers tortureChambers) {
@@ -114,7 +114,7 @@ public class DrainSpiritData : PlayerAction {
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure p_targetStructure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(p_targetStructure);
         if (p_targetStructure is Kennel kennel) {
-            if (!CanPerformAbilityTowards(kennel.occupyingSummon)) {
+            if (kennel.occupyingSummon != null && !CanPerformAbilityTowards(kennel.occupyingSummon)) {
                 reasons += GetReasonsWhyCannotPerformAbilityTowards(kennel.occupyingSummon);
             }
         } else if (p_targetStructure is TortureChambers tortureChambers) {

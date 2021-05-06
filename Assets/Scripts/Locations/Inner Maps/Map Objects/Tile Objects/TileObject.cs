@@ -759,6 +759,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool IsUnpassable() {
         return false;
     }
+    public bool CanBeSeenBy(Character p_character) {
+        if (p_character.hasMarker) {
+            return p_character.marker.inVisionTileObjects.Contains(this);
+        }
+        return false;
+    }
     #endregion
 
     #region Traits

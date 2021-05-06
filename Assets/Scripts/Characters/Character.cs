@@ -5966,6 +5966,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool IsUnpassable() {
         return false;
     }
+    public virtual bool CanBeSeenBy(Character p_character) {
+        if (p_character.hasMarker) {
+            return p_character.marker.inVisionCharacters.Contains(this);
+        }
+        return false;
+    }
     #endregion
 
     #region IStoredTarget

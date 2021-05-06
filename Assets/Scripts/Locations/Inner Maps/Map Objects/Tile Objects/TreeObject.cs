@@ -33,7 +33,7 @@ public class TreeObject : TileObject {
     public Ent ent => _ent;
 
     private TreeGameObject _treeGameObject;
-    
+
     public TreeObject() {
         Initialize(TILE_OBJECT_TYPE.TREE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
@@ -157,13 +157,24 @@ public class TreeObject : TileObject {
     #endregion
 
     #region Occupant
-    public void SetOccupyingEnt(Ent ent) {
+    public void SetOccupyingEnt(Ent p_ent) {
         _occupiedState = Occupied_State.Occupied;
-        _ent = ent;
-        _users = new Character[] { ent };
+        _ent = p_ent;
+        _users = new Character[] { p_ent };
+        if (_ent != null) {
+            _ent.SubscribeToAwakenEntEvent(this);
+        }
+    }
+    private void RemoveOccupyingEnt() {
+        if (_ent != null) {
+            Debug.Log($"Removed Occupying ent of {name} {id.ToString()}");
+            //if previous value is not null and will set it to null, unsubscribe from previous ent
+            _ent.UnsubscribeToAwakenEntEvent(this);
+            _ent = null;
+        }
     }
     private void RollForOccupant(LocationGridTile location) {
-        if (GameUtilities.RollChance(3)) {//3
+        if (ChanceData.RollChance(CHANCE_TYPE.Ent_Spawn)) {//3
             //tree has occupant. Spawn Ent
             SUMMON_TYPE entType;
             if (location.corruptionComponent.isCorrupted) {
@@ -195,6 +206,7 @@ public class TreeObject : TileObject {
             ent.SetTerritory(location.GetNearestHexTileWithinRegion());
             TraitManager.Instance.CopyStatuses(this, ent);
             location.structure.RemovePOI(this);
+            RemoveOccupyingEnt();
         } else {
             //tree has no occupant, set that.
             _occupiedState = Occupied_State.Unoccupied;
@@ -203,13 +215,21 @@ public class TreeObject : TileObject {
     private void AwakenOccupant(LocationGridTile location) {
         Assert.IsNotNull(ent);
         if (!ent.isDead) {
-            ent.CreateMarker();
+            if (!ent.hasMarker) {
+                ent.CreateMarker();    
+            }
             ent.marker.SetVisualState(true);
             ent.marker.PlaceMarkerAt(location);
             ent.SetIsTree(false);    
         }
         location.structure.RemovePOI(this);
         TraitManager.Instance.CopyStatuses(this, ent);
+        RemoveOccupyingEnt();
+    }
+    public void TryAwakenEnt(Ent p_ent) {
+        if (ent == p_ent && p_ent.gridTileLocation != null) {
+            AwakenOccupant(p_ent.gridTileLocation);
+        }
     }
     #endregion
 }

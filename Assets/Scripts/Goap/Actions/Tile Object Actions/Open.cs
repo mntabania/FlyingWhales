@@ -51,16 +51,21 @@ public class Open  : GoapAction {
         TreasureChest treasureChest = goapNode.poiTarget as TreasureChest;
         LocationStructure structure = treasureChest.gridTileLocation.structure;
         LocationGridTile gridTileLocation = treasureChest.gridTileLocation;
-        if (treasureChest.objectInside is Mimic summon) {
-            if (summon.marker == null) {
-                treasureChest.SpawnInitialMimic(gridTileLocation, summon);
+        if (treasureChest.objectInside is Mimic mimic) {
+            if (mimic.marker == null) {
+                treasureChest.SpawnInitialMimic(gridTileLocation, mimic);
             } else {
-                summon.marker.PlaceMarkerAt(gridTileLocation);
-                summon.SetIsTreasureChest(false);
-                TraitManager.Instance.CopyStatuses(treasureChest, summon);
+                mimic.SetIsTreasureChest(false);
+                mimic.marker.PlaceMarkerAt(gridTileLocation);
+                mimic.marker.SetVisualState(true);
+                TraitManager.Instance.CopyStatuses(treasureChest, mimic);
             }
-            
             goapNode.actor.currentStructure.RemovePOI(goapNode.poiTarget);
+            mimic.UnsubscribeToAwakenMimicEvent(treasureChest);
+            if (mimic.hasMarker) {
+                //this is so that mimic will react to actor again, since it probably already saw him/her before it was opened
+                mimic.marker.AddUnprocessedPOI(goapNode.actor);    
+            }
         } else {
             goapNode.actor.currentStructure.RemovePOI(goapNode.poiTarget);
             if (treasureChest.objectInside is ResourcePile resourcePile) {

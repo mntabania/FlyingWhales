@@ -1,6 +1,7 @@
 ﻿using Inner_Maps;
 using Interrupts;
 using Traits;
+using UnityEngine;
 
 public abstract class Ent : Summon {
 
@@ -11,6 +12,8 @@ public abstract class Ent : Summon {
     /// Is this ent pretending to be a tree
     /// </summary>
     public bool isTree { get; private set; }
+    
+    private System.Action<Ent> _awakenEntEvent;
     
     protected Ent(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.ENT, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
@@ -27,15 +30,20 @@ public abstract class Ent : Summon {
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar, piercingPower, isPlayerSource);
-        if (amount < 0 && !isDead && !faction.isPlayerFaction) {
-            if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
-                combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-            } else {
-                combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        if (amount < 0 && !isDead) {
+            if (!faction.isPlayerFaction) {
+                if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
+                    combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+                } else {
+                    combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+                }
+                JobQueueItem job = jobQueue.GetJob(JOB_TYPE.STAND_STILL);
+                if (job != null) {
+                    job.ForceCancelJob(false);
+                }   
             }
-            JobQueueItem job = jobQueue.GetJob(JOB_TYPE.STAND_STILL);
-            if (job != null) {
-                job.ForceCancelJob(false);
+            if (isTree) {
+                ExecuteAwakenEntEvent();
             }
         }
     }
@@ -63,10 +71,20 @@ public abstract class Ent : Summon {
         }
         base.OnTickStarted();
     }
-
     #region General
     public void SetIsTree(bool state) {
         isTree = state;
+    }
+    public void SubscribeToAwakenEntEvent(TreeObject p_tree) {
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{p_tree.nameWithID} subscribed to {name} ({id.ToString()})({persistentID}) Awaken Event");
+        _awakenEntEvent += p_tree.TryAwakenEnt;
+    }
+    public void UnsubscribeToAwakenEntEvent(TreeObject p_tree) {
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{p_tree.nameWithID} unsubscribed from {name} ({id.ToString()})({persistentID}) Awaken Event");
+        _awakenEntEvent -= p_tree.TryAwakenEnt;
+    }
+    private void ExecuteAwakenEntEvent() {
+        _awakenEntEvent?.Invoke(this);
     }
     #endregion
 }

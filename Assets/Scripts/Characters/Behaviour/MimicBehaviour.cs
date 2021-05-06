@@ -22,6 +22,9 @@ public class MimicBehaviour : BaseMonsterBehaviour {
         if (character.currentStructure is Kennel && chosenAction == "Revert") {
             chosenAction = "Stand";
         }
+
+        // chosenAction = "Revert";
+        
         if (chosenAction == "Roam") {
             return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
         } else if (chosenAction == "Stand") {
@@ -31,9 +34,9 @@ public class MimicBehaviour : BaseMonsterBehaviour {
             Mimic mimic = character as Mimic;
             mimic.SetIsTreasureChest(true);
             LocationGridTile tile = character.gridTileLocation;
-            character.DisableMarker();
-            TreasureChest chest =
-                InnerMapManager.Instance.CreateNewTileObject<TreasureChest>(TILE_OBJECT_TYPE.TREASURE_CHEST); 
+            // character.DisableMarker();
+            character.marker.SetVisualState(false);
+            TreasureChest chest = InnerMapManager.Instance.CreateNewTileObject<TreasureChest>(TILE_OBJECT_TYPE.TREASURE_CHEST); 
             tile.structure.AddPOI(chest, tile);
             chest.SetObjectInside(mimic);
             return true;

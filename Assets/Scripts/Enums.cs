@@ -1282,5 +1282,7 @@ public enum CHANCE_TYPE {
     Retaliation_Resource_Pile,
     Harpy_Capture,
     Lycanthrope_Transform_Chance,
-    Visit_Friend
+    Visit_Friend,
+    Ent_Spawn,
+    Mimic_Spawn
 }
