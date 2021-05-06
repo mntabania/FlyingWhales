@@ -1577,6 +1577,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         logComponent.PrintLogIfActive(debugLog);
     }
+    public void ChangeToDefaultFaction() {
+        if (isNormalCharacter) {
+            ChangeFactionTo(FactionManager.Instance.vagrantFaction, true);
+        } else if (minion != null) {
+            ChangeFactionTo(PlayerManager.Instance.player.playerFaction, true);
+        } else if (IsUndead() || necromancerTrait != null) {
+            ChangeFactionTo(FactionManager.Instance.undeadFaction, true);
+        } else {
+            ChangeFactionTo(FactionManager.Instance.neutralFaction, true);
+        }
+    }
     #endregion
 
     #region Carry Component

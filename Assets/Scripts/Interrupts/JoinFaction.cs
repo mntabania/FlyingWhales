@@ -26,6 +26,9 @@ namespace Interrupts {
                     overrideEffectLog.AddToFillers(factionToJoinTo, factionToJoinTo.name, LOG_IDENTIFIER.FACTION_1);
                     overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     return true;
+                } else {
+                    //If character could not join faction, it must join the default faction because we do not want character to have null faction
+                    interruptHolder.actor.ChangeToDefaultFaction();
                 }
             }
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
