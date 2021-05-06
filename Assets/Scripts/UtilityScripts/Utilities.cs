@@ -1017,6 +1017,9 @@ namespace UtilityScripts {
         public static string UpgradeArrowIcon() {
             return "<sprite=\"Text_Sprites\" name=\"upgrade_arrow_icon\">";
         }
+        public static string YellowDotIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"exclamation\">";
+        }
         public static string ChargesIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\">";
         }

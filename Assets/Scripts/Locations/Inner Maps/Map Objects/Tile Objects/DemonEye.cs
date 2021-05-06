@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
-using Inner_Maps;
+﻿using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DemonEye : TileObject {
-    public const int EYE_WARD_VISION_RANGE = 7;
+    //public const int EYE_WARD_VISION_RANGE = 7;
     private List<LocationGridTile> tilesInRadius;
 
     private EyeWardHighlight _eyeWardHighlight;
+    private Beholder m_owner;
     public DemonEye() {
         tilesInRadius = new List<LocationGridTile>();
         Initialize(TILE_OBJECT_TYPE.DEMON_EYE, false);
@@ -21,13 +23,10 @@ public class DemonEye : TileObject {
         //AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
     }
 
-    #region Overrides
-
-    protected override void OnSetGridTileLocation() {
-        base.OnSetGridTileLocation();
+    public void UpdateRange() {
         if (gridTileLocation != null && previousTile != gridTileLocation) {
             tilesInRadius.Clear();
-            gridTileLocation.PopulateTilesInRadius(tilesInRadius, EYE_WARD_VISION_RANGE, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            gridTileLocation.PopulateTilesInRadius(tilesInRadius, m_owner.GetEyeWardRadius(), includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tilesInRadius.Count; i++) {
                 tilesInRadius[i].tileObjectComponent.SetIsSeenByEyeWard(true);
             }
@@ -36,6 +35,13 @@ public class DemonEye : TileObject {
                 tilesInRadius[i].tileObjectComponent.SetIsSeenByEyeWard(false);
             }
         }
+    }
+
+    #region Overrides
+
+    protected override void OnSetGridTileLocation() {
+        base.OnSetGridTileLocation();
+        UpdateRange();
     }
     //protected override void SubscribeListeners() {
     //    base.SubscribeListeners();
@@ -96,6 +102,9 @@ public class DemonEye : TileObject {
             }
         }
     }
+    public void SetBeholderOwner(Beholder p_beholder) {
+        m_owner = p_beholder;
+    }
     public void ShowEyeWardHighlight() {
         if(_eyeWardHighlight == null) {
             GameObject go = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Eye_Ward_Highlight, false);
@@ -105,7 +114,7 @@ public class DemonEye : TileObject {
         }
         if(_eyeWardHighlight != null) {
             _eyeWardHighlight.HideHighlight();
-            _eyeWardHighlight.SetupHighlight(EYE_WARD_VISION_RANGE);
+            _eyeWardHighlight.SetupHighlight(m_owner.GetEyeWardRadius());
             _eyeWardHighlight.ShowHighlight();
         }
     }

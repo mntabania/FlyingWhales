@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 4145389
+    totalSpriteSurfaceArea: 4150289
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -313,6 +313,7 @@ SpriteAtlas:
   - {fileID: -6281302631860722087, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 7078123920453852532, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -8236894391047943605, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -4048909695388612998, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 6206799429775631491, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -4574964752767626041, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -5554612431395520410, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
@@ -410,6 +411,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4056713ddb1e4b94182250758aaf544a, type: 3}
   - {fileID: 21300000, guid: fc1f343d7f4b3b742a313e70faa55e61, type: 3}
   - {fileID: 21300000, guid: 851a3d4d4a5e5f44aab854b2cb1e67cd, type: 3}
+  - {fileID: 21300000, guid: 6e8f4d4d615fdb04fb8fecd24ecb9c3c, type: 3}
   - {fileID: 21300000, guid: 2bfc315d67335a74f97ffb42a8125af8, type: 3}
   - {fileID: 21300000, guid: b4991e5d6e188ea44ba37285820895a6, type: 3}
   - {fileID: 21300000, guid: b14a9e6d88432e243a487db211bf8e2f, type: 3}
@@ -742,6 +744,7 @@ SpriteAtlas:
   - icon_demon
   - icon_mana
   - icon_cultist
+  - traveller_hover
   - icon_chargesB
   - element_water_icon
   - icon_plague
@@ -839,6 +842,7 @@ SpriteAtlas:
   - AddButton
   - BgOverlay
   - Arrow-Faction-Btn-Default
+  - traveller_hover
   - trait_cultist
   - button_arrow2_left_disabled
   - right_sidebar

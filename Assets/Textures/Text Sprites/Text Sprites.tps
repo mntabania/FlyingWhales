@@ -175,7 +175,7 @@
             <key>heuristicMask</key>
             <false/>
             <key>defaultPivotPoint</key>
-            <point_f>0.5,0.5</point_f>
+            <point_f>0.55102,0.5</point_f>
             <key>writePivotPoints</key>
             <true/>
         </struct>
@@ -353,6 +353,21 @@
                 <rect>8,8,15,15</rect>
                 <key>scale9Paddings</key>
                 <rect>8,8,15,15</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/traveller_hover.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>12,13,25,25</rect>
+                <key>scale9Paddings</key>
+                <rect>12,13,25,25</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
