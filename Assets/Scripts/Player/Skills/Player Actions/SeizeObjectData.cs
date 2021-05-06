@@ -36,14 +36,17 @@ public class SeizeObjectData : PlayerAction {
         return false;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if(target is TileObject targetTileObject) {
-            if (targetTileObject is AnkhOfAnubis ankh && ankh.isActivated) {
-                return false;
+        bool isValid = base.IsValid(target);
+        if (isValid) {
+            if (target is TileObject targetTileObject) {
+                if (targetTileObject is AnkhOfAnubis ankh && ankh.isActivated) {
+                    return false;
+                }
+                if (targetTileObject is WurmHole) {
+                    return false;
+                }
+                return targetTileObject.isBeingCarriedBy != null; //allow tile object to be seized even if it does not yet have a map visual, but make sure it hasn't been destroyed yet  
             }
-            if (targetTileObject is WurmHole) {
-                return false;
-            }
-            return targetTileObject.mapVisual != null || targetTileObject.isBeingCarriedBy != null; //allow tile object to be seized even if it does not yet have a map visual, but make sure it hasn't been destroyed yet  
         }
         return false;
     }

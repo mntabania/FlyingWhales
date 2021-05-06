@@ -1084,12 +1084,22 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             throw new System.Exception("Action " + action.name + " of " + actor.name + " is being done again after loading but the status is " + actionStatus.ToString());
         }
     }
-    public void LoadReferences(SaveDataActualGoapNode data) {
+    public bool LoadReferences(SaveDataActualGoapNode data) {
+        bool isViable = true;
         actor = CharacterManager.Instance.GetCharacterByPersistentID(data.actor);
+        if (actor == null) {
+            isViable = false;
+        }
         if (data.poiTargetType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             poiTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.poiTarget);
+            if (poiTarget == null) {
+                isViable = false;
+            }
         } else if (data.poiTargetType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             poiTarget = InnerMapManager.Instance.GetTileObjectByPersistentID(data.poiTarget);
+            if (poiTarget == null) {
+                isViable = false;
+            }
         }
         if (!string.IsNullOrEmpty(data.disguisedActor)) {
             disguisedActor = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedActor);
@@ -1124,11 +1134,16 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             } else if (data.targetPOIToGoToType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 targetPOIToGoTo = InnerMapManager.Instance.GetTileObjectByPersistentID(data.targetPOIToGoTo);
             }
+            if (targetPOIToGoTo == null) {
+                isViable = false;
+            }
         }
         if (data.awareCharacters != null) {
             for (int i = 0; i < data.awareCharacters.Count; i++) {
                 Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacters[i]);
-                awareCharacters.Add(character);
+                if (character != null) {
+                    awareCharacters.Add(character);
+                }
             }    
         }
         if (data.hasRumor) {
@@ -1154,6 +1169,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (data.uniqueActionData != null) {
             uniqueActionData = data.uniqueActionData.Load();
         }
+        return isViable;
     }
     /// <summary>
     /// Load other references, because there are some components in the action that depends on other actions being fully loaded
@@ -1278,7 +1294,14 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         awareCharacters = new List<string>();
         if (data.awareCharacters != null && data.awareCharacters.Count > 0) {
             for (int i = 0; i < data.awareCharacters.Count; i++) {
-                awareCharacters.Add(data.awareCharacters[i].persistentID);
+                Character character = data.awareCharacters[i];
+                if (character == null) {
+                    //If character is null remove it from the list
+                    data.awareCharacters.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                awareCharacters.Add(character.persistentID);
             }
         }
         if (data.rumor != null) {

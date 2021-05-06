@@ -286,14 +286,21 @@ namespace Interrupts {
         #endregion
 
         #region Loading
-        public void LoadReferences(SaveDataInterruptHolder data) {
+        public bool LoadReferences(SaveDataInterruptHolder data) {
+            bool isViable = true;
             actor = CharacterManager.Instance.GetCharacterByPersistentID(data.actorID);
+            if (actor == null) {
+                isViable = false;
+            }
             if (!string.IsNullOrEmpty(data.targetID)) {
                 if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                     target = CharacterManager.Instance.GetCharacterByPersistentID(data.targetID);
                 } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     target = InnerMapManager.Instance.GetTileObjectByPersistentID(data.targetID);
-                }    
+                }
+                if (target == null) {
+                    isViable = false;
+                }
             }
             disguisedActor = null;
             disguisedTarget = null;
@@ -313,7 +320,9 @@ namespace Interrupts {
                 if (data.awareCharacterIDs.Count > 0) {
                     for (int i = 0; i < data.awareCharacterIDs.Count; i++) {
                         Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacterIDs[i]);
-                        awareCharacters.Add(character);
+                        if (character != null) {
+                            awareCharacters.Add(character);
+                        }
                     }
                 }    
             }
@@ -322,6 +331,7 @@ namespace Interrupts {
                 rumor = data.rumor.Load();
                 rumor.SetRumorable(this);
             }
+            return isViable;
         }
         #endregion
     }
@@ -391,7 +401,14 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
         awareCharacterIDs = new List<string>();
         if (data.awareCharacters != null && data.awareCharacters.Count > 0) {
             for (int i = 0; i < data.awareCharacters.Count; i++) {
-                awareCharacterIDs.Add(data.awareCharacters[i].persistentID);
+                Character character = data.awareCharacters[i];
+                if (character == null) {
+                    //If character is null remove it from the list
+                    data.awareCharacters.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                awareCharacterIDs.Add(character.persistentID);
             }
         }
     }

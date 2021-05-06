@@ -41,8 +41,9 @@ public class BreedMonsterData : PlayerAction {
         return false;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if(target is Summon targetCharacter) {
-            return targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && 
+        if (target is Summon targetCharacter) {
+            bool isValid = base.IsValid(target);
+            return isValid && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && 
                    targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL && !(targetCharacter is Dragon) && 
                    PlayerSkillManager.Instance.GetSummonPlayerSkillData(targetCharacter.race, targetCharacter.characterClass.className) != null;
         }

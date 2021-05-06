@@ -124,6 +124,7 @@ namespace Inner_Maps {
 
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
                 Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                removedObj.DestroyPermanently();
                 return removedObj;
             }
             return null;
@@ -135,6 +136,7 @@ namespace Inner_Maps {
                 removedObj.RemoveTileObject(removedBy);
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
                 Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                removedObj.DestroyPermanently();
                 return removedObj;
             }
             return null;

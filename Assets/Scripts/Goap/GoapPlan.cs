@@ -52,16 +52,21 @@ public class GoapPlan {
         allNodes = new List<JobNode>();
         for (int i = 0; i < data.allNodes.Count; i++) {
             SaveDataJobNode saveDataJobNode = data.allNodes[i];
-            allNodes.Add(saveDataJobNode.Load());
+            JobNode node = saveDataJobNode.Load();
+            if (node.singleNode != null) {
+                allNodes.Add(node);
+            }
         }
-        startingNode = GetJobNodeWithPersistentID(data.startingNodeID);
-        endNode = GetJobNodeWithPersistentID(data.endNodeID);
-        currentNode = GetJobNodeWithPersistentID(data.currentNodeID);
-        previousNode = GetJobNodeWithPersistentID(data.previousNodeID);
+        if (allNodes.Count > 0) {
+            startingNode = GetJobNodeWithPersistentID(data.startingNodeID);
+            endNode = GetJobNodeWithPersistentID(data.endNodeID);
+            currentNode = GetJobNodeWithPersistentID(data.currentNodeID);
+            previousNode = GetJobNodeWithPersistentID(data.previousNodeID);
+        }
     }
 
     private JobNode GetJobNodeWithPersistentID(string id) {
-        Assert.IsTrue(allNodes != null && allNodes.Count > 0);
+        //Assert.IsTrue(allNodes != null && allNodes.Count > 0);
         for (int i = 0; i < allNodes.Count; i++) {
             JobNode jobNode = allNodes[i];
             if (jobNode.persistentID == id) {

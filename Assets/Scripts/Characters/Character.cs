@@ -87,7 +87,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public bool isInPendingAwarenessList { get; private set; }
     //misc
     public Tombstone grave { get; private set; }
-    public FoodPile connectedFoodPile { get; private set; }
     public INTERACTION_TYPE causeOfDeath { set; get; }
     public PLAYER_SKILL_TYPE skillCauseOfDeath { set; get; }
 
@@ -461,7 +460,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         hasSubscribedToSignals = true; //This is done so there will be no duplication of listening to signals
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnOtherCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.AddListener(CharacterSignals.CHARACTER_TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
@@ -502,7 +501,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         hasSubscribedToSignals = false; //This is done so there will be no duplication of listening to signals
-        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnOtherCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.RemoveListener(CharacterSignals.CHARACTER_TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
@@ -709,7 +708,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
     }
-    public void DestroyMarker(LocationGridTile destroyedAt = null) {
+    public void DestroyMarker(LocationGridTile destroyedAt = null, bool removeFromMasterList = true) {
         if (destroyedAt == null) {
             gridTileLocation?.RemoveCharacterHere(this);
             gridTileLocation?.structure.RemoveCharacterAtLocation(this);
@@ -723,6 +722,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         if (PlayerManager.Instance.player.seizeComponent.seizedPOI == this) {
             throw new Exception($"{name} is seized by the player but its marker was destroyed! Refer to call stack to find out what destroyed it.");
+        }
+        if (removeFromMasterList) {
+            //In order to lessen the all character list (because it will keep on expanding), once character's body is destroyed, remove it from the master list
+            //Do not broadcast signal because this will remove the character from its faction, and we do not want that
+            CharacterManager.Instance.RemoveCharacter(this, false);
         }
     }
     public void DisableMarker() {
@@ -1943,20 +1947,22 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                     InnerMapCameraMove.Instance.CenterCameraOn(grave.mapObjectVisual.gameObject);    
                 }
-            } else if (connectedFoodPile != null && connectedFoodPile.mapObjectVisual != null && (connectedFoodPile.gridTileLocation != null || connectedFoodPile.isBeingCarriedBy != null)) {
-                Region region = null;
-                if (connectedFoodPile.isBeingCarriedBy != null) {
-                    region = connectedFoodPile.isBeingCarriedBy.currentRegion;
-                } else if (connectedFoodPile.gridTileLocation != null){
-                    region = connectedFoodPile.gridTileLocation.parentMap.region;
-                }
-                if (region != null) {
-                    if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
-                        InnerMapManager.Instance.ShowInnerMap(region, false);
-                    }
-                    InnerMapCameraMove.Instance.CenterCameraOn(connectedFoodPile.mapObjectVisual.gameObject);    
-                }
             }
+            //Removed connectedFoodPile because the character reference will be removed from the master list once the body is destroyed
+            //else if (connectedFoodPile != null && connectedFoodPile.mapObjectVisual != null && (connectedFoodPile.gridTileLocation != null || connectedFoodPile.isBeingCarriedBy != null)) {
+            //    Region region = null;
+            //    if (connectedFoodPile.isBeingCarriedBy != null) {
+            //        region = connectedFoodPile.isBeingCarriedBy.currentRegion;
+            //    } else if (connectedFoodPile.gridTileLocation != null){
+            //        region = connectedFoodPile.gridTileLocation.parentMap.region;
+            //    }
+            //    if (region != null) {
+            //        if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
+            //            InnerMapManager.Instance.ShowInnerMap(region, false);
+            //        }
+            //        InnerMapCameraMove.Instance.CenterCameraOn(connectedFoodPile.mapObjectVisual.gameObject);    
+            //    }
+            //}
         }
         
         // else {
@@ -1966,8 +1972,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //     CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
         // }
     }
-    private void OnOtherCharacterDied(Character characterThatDied) {
-        if (characterThatDied.id != id) {
+    private void OnCharacterDied(Character characterThatDied) {
+        if (!characterThatDied.persistentID.Equals(persistentID)) {
             if (isDead) {
                 return;
             }
@@ -2000,6 +2006,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker) {
                 marker.OnOtherCharacterDied(characterThatDied);
             }
+        } else {
+            crimeComponent.OnCharacterDied();
         }
     }
     private void OnBeforeSeizingPOI(IPointOfInterest poi) {
@@ -5827,9 +5835,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
     }
-    public void SetConnectedFoodPile(FoodPile p_foodPile) {
-        connectedFoodPile = p_foodPile;
-    }
     #endregion
 
     #region Necromancer
@@ -6014,9 +6019,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
         }
-        if (!string.IsNullOrEmpty(data.connectedFoodPile)) {
-            connectedFoodPile = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.connectedFoodPile) as FoodPile;
-        }
         if (data.deathLog != null) {
             deathLog = data.deathLog;
             // deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
@@ -6041,7 +6043,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (!string.IsNullOrEmpty(data.currentJob)) {
             currentJob = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(data.currentJob);
-            if (currentJob is GoapPlanJob job && job.assignedPlan != null) {
+            if (currentJob != null && currentJob is GoapPlanJob job && job.assignedPlan != null) {
                 currentPlan = job.assignedPlan;
             }
         }
@@ -6059,11 +6061,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         for (int i = 0; i < data.items.Count; i++) {
             TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);
-            items.Add(obj);
+            if (obj != null) {
+                items.Add(obj);
+            }
         }
         for (int i = 0; i < data.ownedItems.Count; i++) {
             TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
-            ownedItems.Add(obj);
+            if (obj != null) {
+                ownedItems.Add(obj);
+            }
         }
 
         jobQueue.LoadReferences(data);
@@ -6071,7 +6077,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             string forceCanceledJob = data.forceCancelJobsOnTickEnded[i];
 
             JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(forceCanceledJob);
-            if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+            if (job != null && !forcedCancelJobsOnTickEnded.Contains(job)) {
                 forcedCancelJobsOnTickEnded.Add(job);
             }
         }

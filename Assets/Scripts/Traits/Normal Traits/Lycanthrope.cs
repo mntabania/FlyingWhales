@@ -500,7 +500,7 @@ namespace Traits {
                         (otherPOI as Character).marker.RemovePOIAsInRangeButDifferentStructure(form);
                     }
                 }
-                form.DestroyMarker();
+                form.DestroyMarker(removeFromMasterList: false);
             }
             form.currentRegion?.RemoveCharacterFromLocation(form);
             form.homeRegion?.RemoveResident(form);

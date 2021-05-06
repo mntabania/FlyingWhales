@@ -49,6 +49,8 @@ public class LoadSecondWave : MapGenerationComponent {
         //Load Area Spells Component
         yield return MapGenerator.Instance.StartCoroutine(LoadAreaSpellsComponent(saveData));
 
+        //Always load action references before character references because there is a chance that the action is no longer viable to be done, so the action will be removed from the database
+        //This means that when the character loads its references (including jobs and actions), if the action of the character is no longer in the database it will not be loaded to it and that is exactly what we want
         yield return MapGenerator.Instance.StartCoroutine(LoadActionReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadInterruptReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalActionReferences(saveData));
@@ -400,7 +402,12 @@ public class LoadSecondWave : MapGenerationComponent {
             JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
             SaveDataJobQueueItem saveDataJobQueueItem = saveData.GetFromSaveHub<SaveDataJobQueueItem>(OBJECT_TYPE.Job, jobQueueItem.persistentID);
             if (saveDataJobQueueItem != null) {
-                jobQueueItem.LoadSecondWave(saveDataJobQueueItem);
+                bool isViable = jobQueueItem.LoadSecondWave(saveDataJobQueueItem);
+                //if (!isViable) {
+                //    if (DatabaseManager.Instance.jobDatabase.UnRegister(jobQueueItem)) {
+                //        i--;
+                //    }
+                //}
             }
             batchCount++;
             if (batchCount == MapGenerationData.JobLoadingBatches) {

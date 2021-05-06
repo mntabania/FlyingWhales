@@ -22,13 +22,16 @@ public class LeaveFactionData : SchemeData {
         }
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            bool isNonVagrant = character.faction != null && character.faction.isMajorNonPlayer;
-            bool isRatman = character.isConsideredRatman;
-            if (isNonVagrant || isRatman) { // && !character.isFactionLeader && !character.isSettlementRuler
-                return true;
-            } else {
-                return false;
+        bool isValid = base.IsValid(target);
+        if (isValid) {
+            if (target is Character character) {
+                bool isNonVagrant = character.faction != null && character.faction.isMajorNonPlayer;
+                bool isRatman = character.isConsideredRatman;
+                if (isNonVagrant || isRatman) { // && !character.isFactionLeader && !character.isSettlementRuler
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
         return false;

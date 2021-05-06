@@ -14,9 +14,12 @@ namespace Databases {
             jobsByGUID.Add(job.persistentID, job);
             allJobs.Add(job);
         }
-        public void UnRegister(JobQueueItem job) {
-            jobsByGUID.Remove(job.persistentID);
-            allJobs.Remove(job);
+        public bool UnRegister(JobQueueItem job) {
+            if (jobsByGUID.Remove(job.persistentID)) {
+                allJobs.Remove(job);
+                return true;
+            }
+            return false;
         }
 
         public JobQueueItem GetJobWithPersistentID(string id) {

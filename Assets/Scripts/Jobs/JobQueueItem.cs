@@ -91,7 +91,9 @@ public abstract class JobQueueItem : ISavable {
     }
 
     #region Loading
-    public virtual void LoadSecondWave(SaveDataJobQueueItem data) {
+    //Returns true if the job is still viable (meaning the data is not corrupted), false, if already corrupted, i.e. the original owner/actor/target is null even if it actually isn't
+    public virtual bool LoadSecondWave(SaveDataJobQueueItem data) {
+        bool isViable = true;
         if (!string.IsNullOrEmpty(data.originalOwnerID)) {
             if (data.originalOwnerType == OBJECT_TYPE.Settlement) {
                 originalOwner = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.originalOwnerID) as NPCSettlement;
@@ -102,11 +104,23 @@ public abstract class JobQueueItem : ISavable {
             } else if (data.originalOwnerType == OBJECT_TYPE.Party) {
                 originalOwner = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.originalOwnerID);
             }
+            if (originalOwner == null) {
+                isViable = false;
+            }
         }
-        assignedCharacter = string.IsNullOrEmpty(data.assignedCharacterID) ? null : DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.assignedCharacterID);
+        if (string.IsNullOrEmpty(data.assignedCharacterID)) {
+            assignedCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.assignedCharacterID);
+            if (assignedCharacter == null) {
+                isViable = false;
+            }
+        }
         for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
-            blacklistedCharacters.Add(DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.blacklistedCharacterIDs[i]));
+            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.blacklistedCharacterIDs[i]);
+            if (character != null) {
+                blacklistedCharacters.Add(character);
+            }
         }
+        return isViable;
     }
     #endregion
     

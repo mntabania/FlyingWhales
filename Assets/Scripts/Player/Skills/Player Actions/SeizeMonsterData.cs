@@ -45,7 +45,8 @@ public class SeizeMonsterData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
-            return !(targetCharacter is Dragon);
+            bool isValid = base.IsValid(target);
+            return isValid && !(targetCharacter is Dragon);
         }
         return false;
     }

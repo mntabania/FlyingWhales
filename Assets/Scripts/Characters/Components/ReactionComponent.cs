@@ -1897,7 +1897,9 @@ public class ReactionComponent : CharacterComponent {
     public void LoadReferences(SaveDataReactionComponent data) {
         for (int i = 0; i < data.charactersThatSawThisDead.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.charactersThatSawThisDead[i]);
-            charactersThatSawThisDead.Add(character);
+            if (character != null) {
+                charactersThatSawThisDead.Add(character);
+            }
         }
         if (!string.IsNullOrEmpty(data.disguisedCharacter)) {
             disguisedCharacter = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedCharacter);

@@ -52,18 +52,21 @@ public class SacrificeData : PlayerAction {
         return false;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if(target is Summon targetCharacter) {
-            if (targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null) {
-                if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL) {
-                    return true;
-                } else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
-                    return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+        bool isValid = base.IsValid(target);
+        if (isValid) {
+            if (target is Summon targetCharacter) {
+                if (targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null) {
+                    if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL) {
+                        return true;
+                    } else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+                        return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+                    }
+                    //else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
+                    //    return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+                    //}
                 }
-                //else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
-                //    return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
-                //}
+                return false;
             }
-            return false;
         }
         return false;
     }

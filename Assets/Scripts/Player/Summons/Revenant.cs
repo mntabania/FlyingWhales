@@ -32,7 +32,9 @@ public class Revenant : Summon {
         if (data is SaveDataRevenant savedData) {
             for (int i = 0; i < savedData.betrayers.Count; i++) {
                 Character character = CharacterManager.Instance.GetCharacterByPersistentID(savedData.betrayers[i]);
-                betrayers.Add(character);
+                if (character != null) {
+                    betrayers.Add(character);
+                }
             }
         }
         base.LoadReferences(data);

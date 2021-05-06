@@ -1207,7 +1207,7 @@ public class CombatComponent : CharacterComponent {
     public void LoadReferences(SaveDataCombatComponent data) {
         for (int i = 0; i < data.hostileCharactersInRange.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.hostileCharactersInRange[i]);
-            if (!IsHostileInRange(character)) {
+            if (character != null && !IsHostileInRange(character)) {
                 hostilesInRange.Add(character);
             }
         }
@@ -1220,7 +1220,7 @@ public class CombatComponent : CharacterComponent {
 
         for (int i = 0; i < data.avoidCharactersInRange.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.avoidCharactersInRange[i]);
-            if (!IsAvoidInRange(character)) {
+            if (character != null && !IsAvoidInRange(character)) {
                 avoidInRange.Add(character);
             }
         }
@@ -1233,8 +1233,10 @@ public class CombatComponent : CharacterComponent {
 
         foreach (KeyValuePair<string, SaveDataCombatData> item in data.characterCombatData) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(item.Key);
-            CombatData combatData = item.Value.Load();
-            combatDataDictionary.Add(character, combatData);
+            if (character != null) {
+                CombatData combatData = item.Value.Load();
+                combatDataDictionary.Add(character, combatData);
+            }
         }
         foreach (KeyValuePair<string, SaveDataCombatData> item in data.tileObjectCombatData) {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentIDSafe(item.Key);
@@ -1246,7 +1248,7 @@ public class CombatComponent : CharacterComponent {
 
         for (int i = 0; i < data.bannedFromHostileList.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.bannedFromHostileList[i]);
-            if (!bannedFromHostileList.Contains(character)) {
+            if (character != null && !bannedFromHostileList.Contains(character)) {
                 bannedFromHostileList.Add(character);
             }
         }

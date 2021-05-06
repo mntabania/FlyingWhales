@@ -26,7 +26,8 @@ public class LeaveHomeData : SchemeData {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.homeStructure != null && !character.isConsideredRatman;
+            bool isValid = base.IsValid(target);
+            return isValid && character.homeStructure != null && !character.isConsideredRatman;
         }
         return false;
     }

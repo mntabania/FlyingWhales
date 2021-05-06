@@ -1363,6 +1363,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         UIManager.Instance.HideTileObjectNameplateTooltip();
     }
     #endregion
+
+    #region Utilities
+    public void DestroyPermanently() {
+        //Removed this temporarily because there are many loose ends and reference errors in saving/loading with a null tile object
+        //DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
+    }
+    #endregion
 }
 
 [System.Serializable]

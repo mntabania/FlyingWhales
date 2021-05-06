@@ -208,7 +208,9 @@ public class Gathering : ISavable {
         }
         for (int i = 0; i < data.attendees.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.attendees[i]);
-            attendees.Add(character);
+            if (character != null) {
+                attendees.Add(character);
+            }
         }
     }
     #endregion

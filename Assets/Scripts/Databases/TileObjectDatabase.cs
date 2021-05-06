@@ -43,7 +43,9 @@ public class TileObjectDatabase {
         if (tileObjectsByGUID.ContainsKey(id)) {
             return tileObjectsByGUID[id];
         }
-        throw new Exception($"Could not find tile object with id {id}");
+        return null;
+        //Removed exception because this can now return null since we delete objects that are destroyed from the master list
+        //throw new Exception($"Could not find tile object with id {id}");
     }
     public TileObject GetTileObjectByPersistentIDSafe(string id) {
         if (tileObjectsByGUID.ContainsKey(id)) {

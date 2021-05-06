@@ -35,7 +35,8 @@ public class JoinFactionData : SchemeData {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.isVagrant;
+            bool isValid = base.IsValid(target);
+            return isValid && character.isVagrant;
         }
         return false;
     }

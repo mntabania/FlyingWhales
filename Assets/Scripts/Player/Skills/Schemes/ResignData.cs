@@ -21,15 +21,18 @@ public class ResignData : SchemeData {
         }
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            if(character.faction?.factionType.type == FACTION_TYPE.Undead) {
-                return false;
+        bool isValid = base.IsValid(target);
+        if (isValid) {
+            if (target is Character character) {
+                if (character.faction?.factionType.type == FACTION_TYPE.Undead) {
+                    return false;
+                }
+                bool isFactionLeaderOrSettlementRuler = character.isFactionLeader || character.isSettlementRuler;
+                if (!isFactionLeaderOrSettlementRuler) {
+                    return false;
+                }
+                return true;
             }
-            bool isFactionLeaderOrSettlementRuler = character.isFactionLeader || character.isSettlementRuler;
-            if (!isFactionLeaderOrSettlementRuler) {
-                return false;
-            }
-            return true;
         }
         return false;
     }

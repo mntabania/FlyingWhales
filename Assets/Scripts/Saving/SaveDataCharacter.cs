@@ -58,7 +58,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     //References
     public string grave;
-    public string connectedFoodPile;
     public Log deathLog;
     public string homeRegion;
     public string homeSettlement;
@@ -217,9 +216,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
         if(data.grave != null) {
             grave = data.grave.persistentID;
-        }
-        if (data.connectedFoodPile != null) {
-            connectedFoodPile = data.connectedFoodPile.persistentID;
         }
         if (data.deathLog != null) {
             deathLog = data.deathLog;

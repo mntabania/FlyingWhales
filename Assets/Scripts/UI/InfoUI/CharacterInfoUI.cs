@@ -871,7 +871,7 @@ public class CharacterInfoUI : InfoUIBase {
         } else {
             //character has not yet been spawned
             IRelationshipData relationshipData = _activeCharacter.relationshipContainer.relationships[id];
-            UIManager.Instance.ShowSmallInfo($"{relationshipData.targetName} is not yet in this region.", relationshipNameplateItemPosition);
+            UIManager.Instance.ShowSmallInfo($"{relationshipData.targetName} is not yet in this region or is already gone.", relationshipNameplateItemPosition);
             UIManager.Instance.HideCharacterNameplateTooltip();
         }
     }

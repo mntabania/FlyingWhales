@@ -57,7 +57,8 @@ public class AgitateData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
-            return !(targetCharacter is Dragon) && (targetCharacter.faction == null || !targetCharacter.faction.isPlayerFaction) && !targetCharacter.movementComponent.isStationary;
+            bool isValid = base.IsValid(target);
+            return isValid && !(targetCharacter is Dragon) && (targetCharacter.faction == null || !targetCharacter.faction.isPlayerFaction) && !targetCharacter.movementComponent.isStationary;
         }
         return false;
     }

@@ -22,7 +22,8 @@ public class OverthrowLeaderData : SchemeData {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.faction != null && character.faction.leader != null && character.faction.leader is Character && character.faction.successionComponent.IsSuccessor(character);
+            bool isValid = base.IsValid(target);
+            return isValid && character.faction != null && character.faction.leader != null && character.faction.leader is Character && character.faction.successionComponent.IsSuccessor(character);
         }
         return false;
     }

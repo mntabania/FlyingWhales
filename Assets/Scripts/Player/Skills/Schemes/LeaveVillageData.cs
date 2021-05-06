@@ -23,7 +23,8 @@ public class LeaveVillageData : SchemeData {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.homeSettlement != null && !character.isConsideredRatman;
+            bool isValid = base.IsValid(target);
+            return isValid && character.homeSettlement != null && !character.isConsideredRatman;
         }
         return false;
     }

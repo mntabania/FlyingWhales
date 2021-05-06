@@ -36,7 +36,8 @@ public class ExpelData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
-            return targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer/* && targetCharacter.faction.IsFriendlyWith(PlayerManager.Instance.player.playerFaction)*/;
+            bool isValid = base.IsValid(target);
+            return isValid && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer/* && targetCharacter.faction.IsFriendlyWith(PlayerManager.Instance.player.playerFaction)*/;
         }
         return false;
     }

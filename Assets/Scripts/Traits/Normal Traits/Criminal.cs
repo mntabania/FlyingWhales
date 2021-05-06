@@ -51,7 +51,7 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             owner.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.APPREHEND);
-            owner.crimeComponent.RemoveAllActiveCrimes();
+            owner.crimeComponent.RemoveAllActiveCrimes(false);
             base.OnRemoveTrait(sourcePOI, removedBy);
         }
         protected override string GetDescriptionInUI() {

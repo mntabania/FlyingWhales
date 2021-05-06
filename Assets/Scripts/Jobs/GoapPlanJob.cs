@@ -59,8 +59,8 @@ public class GoapPlanJob : JobQueueItem {
     }
 
     #region Loading
-    public override void LoadSecondWave(SaveDataJobQueueItem saveData) {
-        base.LoadSecondWave(saveData);
+    public override bool LoadSecondWave(SaveDataJobQueueItem saveData) {
+        bool isViable = base.LoadSecondWave(saveData);
         SaveDataGoapPlanJob data = saveData as SaveDataGoapPlanJob;
         Assert.IsNotNull(data);
         if (!string.IsNullOrEmpty(data.targetPOIID)) {
@@ -68,6 +68,9 @@ public class GoapPlanJob : JobQueueItem {
                 targetPOI = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.targetPOIID);
             } else if (data.targetPOIObjectType == OBJECT_TYPE.Character) {
                 targetPOI = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.targetPOIID);
+            }
+            if (targetPOI == null) {
+                isViable = false;
             }
         }
         foreach (var saveDataOtherData in data.otherData) {
@@ -108,10 +111,18 @@ public class GoapPlanJob : JobQueueItem {
                 }
             }
         }
-        if (data.saveDataGoapPlan != null) {
-            GoapPlan goapPlan = data.saveDataGoapPlan.Load();
-            assignedPlan = goapPlan;
-        }
+        //if (isViable) {
+            if (data.saveDataGoapPlan != null) {
+                GoapPlan goapPlan = data.saveDataGoapPlan.Load();
+                if (goapPlan.allNodes.Count <= 0) {
+                    assignedPlan = null;
+                    isViable = false;
+                } else {
+                    assignedPlan = goapPlan;
+                }
+            }
+        //}
+        return isViable;
     }
     #endregion
     

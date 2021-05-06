@@ -27,7 +27,10 @@ public class RebellionData : SchemeData {
             return false;
         }
         if (target is Character character) {
-            return character.faction != null && !character.isFactionLeader && character.isSettlementRuler && character.faction.HasOwnedSettlementThatMeetCriteria(s => s != character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead));
+            bool isValid = base.IsValid(target);
+            if (isValid) {
+                return character.faction != null && !character.isFactionLeader && character.isSettlementRuler && character.faction.HasOwnedSettlementThatMeetCriteria(s => s != character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead));
+            }
         }
         return false;
     }

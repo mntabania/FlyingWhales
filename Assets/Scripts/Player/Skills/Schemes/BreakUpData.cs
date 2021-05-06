@@ -41,7 +41,8 @@ public class BreakUpData : SchemeData {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.isNormalCharacter && character.relationshipContainer.HasActiveRelationship(RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
+            bool isValid = base.IsValid(target);
+            return isValid && character.isNormalCharacter && character.relationshipContainer.HasActiveRelationship(RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
         }
         return false;
     }

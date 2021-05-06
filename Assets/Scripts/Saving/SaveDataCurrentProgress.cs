@@ -10,6 +10,7 @@ using Interrupts;
 using Object_Pools;
 using Quests;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class SaveDataCurrentProgress {
     public System.DateTime timeStamp;
@@ -290,8 +291,8 @@ public class SaveDataCurrentProgress {
     public void LoadJobs() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Job)){
             if(objectHub[OBJECT_TYPE.Job] is SaveDataJobHub hub) {
-                Dictionary<string, SaveDataJobQueueItem> saveDataTraits = hub.hub;
-                foreach (SaveDataJobQueueItem data in saveDataTraits.Values) {
+                Dictionary<string, SaveDataJobQueueItem> saveData = hub.hub;
+                foreach (SaveDataJobQueueItem data in saveData.Values) {
                     data.Load();
                 }
             }
@@ -300,8 +301,8 @@ public class SaveDataCurrentProgress {
     public void LoadActions() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Action)) {
             if (objectHub[OBJECT_TYPE.Action] is SaveDataActionHub hub) {
-                Dictionary<string, SaveDataActualGoapNode> saved = hub.hub;
-                foreach (SaveDataActualGoapNode data in saved.Values) {
+                Dictionary<string, SaveDataActualGoapNode> saveData = hub.hub;
+                foreach (SaveDataActualGoapNode data in saveData.Values) {
                     ActualGoapNode action = data.Load();
                     DatabaseManager.Instance.actionDatabase.AddAction(action);
                 }
@@ -420,10 +421,17 @@ public class SaveDataCurrentProgress {
         }
     }
     public void LoadActionReferences() {
+        //List<string> allCorruptedActions = RuinarchListPool<string>.Claim();
         foreach (KeyValuePair<string, ActualGoapNode> item in DatabaseManager.Instance.actionDatabase.allActions) {
             SaveDataActualGoapNode saveData = GetFromSaveHub<SaveDataActualGoapNode>(OBJECT_TYPE.Action, item.Key);
-            item.Value.LoadReferences(saveData);
+            if (!item.Value.LoadReferences(saveData)) {
+                //allCorruptedActions.Add(item.Key);
+            }
         }
+        //for (int i = 0; i < allCorruptedActions.Count; i++) {
+        //    DatabaseManager.Instance.actionDatabase.RemoveAction(allCorruptedActions[i]);
+        //}
+        //RuinarchListPool<string>.Release(allCorruptedActions);
     }
     public void LoadAdditionalActionReferences() {
         foreach (KeyValuePair<string, ActualGoapNode> item in DatabaseManager.Instance.actionDatabase.allActions) {
@@ -432,10 +440,17 @@ public class SaveDataCurrentProgress {
         }
     }
     public void LoadInterruptReferences() {
+        //List<string> allCorruptedInterrupts = RuinarchListPool<string>.Claim();
         foreach (KeyValuePair<string, InterruptHolder> item in DatabaseManager.Instance.interruptDatabase.allInterrupts) {
             SaveDataInterruptHolder saveData = GetFromSaveHub<SaveDataInterruptHolder>(OBJECT_TYPE.Interrupt, item.Key);
-            item.Value.LoadReferences(saveData);
+            if (!item.Value.LoadReferences(saveData)) {
+                //allCorruptedInterrupts.Add(item.Key);
+            }
         }
+        //for (int i = 0; i < allCorruptedInterrupts.Count; i++) {
+        //    DatabaseManager.Instance.interruptDatabase.RemoveInterrupt(allCorruptedInterrupts[i]);
+        //}
+        //RuinarchListPool<string>.Release(allCorruptedInterrupts);
     }
     // public void LoadLogReferences() {
     //     foreach (KeyValuePair<string, Log> item in DatabaseManager.Instance.logDatabase.allLogs) {

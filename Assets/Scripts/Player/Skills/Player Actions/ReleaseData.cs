@@ -40,7 +40,8 @@ public class ReleaseData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
-            return targetCharacter.traitContainer.HasTrait("Restrained", "Ensnared", "Frozen", "Enslaved");
+            bool isValid = base.IsValid(target);
+            return isValid && targetCharacter.traitContainer.HasTrait("Restrained", "Ensnared", "Frozen", "Enslaved");
         }
         return false;
     }

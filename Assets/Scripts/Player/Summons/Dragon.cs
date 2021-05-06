@@ -98,7 +98,10 @@ public class Dragon : Summon {
             }
             if(savedData.charactersThatAreWary != null) {
                 for (int i = 0; i < savedData.charactersThatAreWary.Count; i++) {
-                    charactersThatAreWary.Add(CharacterManager.Instance.GetCharacterByPersistentID(savedData.charactersThatAreWary[i]));
+                    Character character = CharacterManager.Instance.GetCharacterByPersistentID(savedData.charactersThatAreWary[i]);
+                    if (character != null) {
+                        charactersThatAreWary.Add(character);
+                    }
                 }
             }
         }

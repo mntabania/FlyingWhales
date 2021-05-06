@@ -710,7 +710,9 @@ public class CrimeData : ISavable {
         }
         for (int i = 0; i < data.witnesses.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.witnesses[i]);
-            witnesses.Add(character);
+            if (character != null) {
+                witnesses.Add(character);
+            }
         }
         for (int i = 0; i < data.factionsThatConsidersWanted.Count; i++) {
             Faction targetFaction = FactionManager.Instance.GetFactionByPersistentID(data.factionsThatConsidersWanted[i]);

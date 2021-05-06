@@ -1232,7 +1232,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         for (int i = 0; i < data.bannedCharacterIDs.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.bannedCharacterIDs[i]);
-            bannedCharacters.Add(character);
+            if (character != null) {
+                bannedCharacters.Add(character);
+            }
         }
 
         foreach (KeyValuePair<string, SaveDataFactionRelationship> item in data.relationships) {
