@@ -63,6 +63,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void SetCurrentLocationAwareness(ILocationAwareness locationAwareness);
     //void SetIsInPendingAwarenessList(bool state);
     bool IsUnpassable();
+    bool CanBeSeenBy(Character p_character);
 }
 
 /// <summary>

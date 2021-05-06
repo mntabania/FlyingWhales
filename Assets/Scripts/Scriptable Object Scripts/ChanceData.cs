@@ -28,6 +28,8 @@ public static class ChanceData {
         {CHANCE_TYPE.Harpy_Capture, 15},
         {CHANCE_TYPE.Lycanthrope_Transform_Chance, 25},
         {CHANCE_TYPE.Visit_Friend, 25},
+        {CHANCE_TYPE.Ent_Spawn, 3},
+        {CHANCE_TYPE.Mimic_Spawn, 5},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {

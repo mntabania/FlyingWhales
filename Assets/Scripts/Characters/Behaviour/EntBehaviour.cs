@@ -29,8 +29,7 @@ public class EntBehaviour : BaseMonsterBehaviour {
             ent.SetIsTree(true);
             LocationGridTile tile = character.gridTileLocation;
             character.marker.SetVisualState(false);
-            TreeObject treeObject =
-                InnerMapManager.Instance.CreateNewTileObject<TreeObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT); 
+            TreeObject treeObject = InnerMapManager.Instance.CreateNewTileObject<TreeObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT); 
             tile.structure.AddPOI(treeObject, tile);
             treeObject.SetOccupyingEnt(ent);
             return true;

@@ -4,7 +4,7 @@
 
 using UnityEngine.EventSystems;
 using System.Collections;
-
+using System.Globalization;
 namespace UnityEngine.UI.Extensions
 {
 
@@ -205,7 +205,11 @@ namespace UnityEngine.UI.Extensions
         private void SetScrollContainerPosition()
         {
             _scrollStartPosition = _screensContainer.localPosition.x;
-            _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            float result = (float) (_currentPage) / (_screens - 1);
+            // string summary = $"Will set scroll rect position to {result.ToString(CultureInfo.InvariantCulture)}. Current Page: {_currentPage.ToString()}. Screens {_screens.ToString()}";
+            // Debug.Log(summary);
+            if (float.IsInfinity(result)) { result = 0; }
+            _scroll_rect.horizontalNormalizedPosition = result;
             OnCurrentScreenChange(_currentPage);
         }
 

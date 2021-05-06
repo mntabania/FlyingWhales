@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UtilityScripts;
 using Inner_Maps;
@@ -12,17 +13,44 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public int longTermModifier { get; private set; }
 
     private const int MAX_MIGRATION_METER = 1000;
+    private readonly GenericTextBookmarkable _migrationBookmark;
+    private bool _isAlreadyBookmarked;
 
     public SettlementVillageMigrationComponent() {
         //villageMigrationMeter = 990;
         RandomizePerHourIncrement();
+        _migrationBookmark = new GenericTextBookmarkable(GetMigrationMeterBookmarkName, () => BOOKMARK_TYPE.Text, 
+            () => UIManager.Instance.ShowStructureInfo(owner.cityCenter), null, null, null);
     }
     public SettlementVillageMigrationComponent(SaveDataSettlementVillageMigrationComponent data) {
         villageMigrationMeter = data.villageMigrationMeter;
         perHourIncrement = data.perHourIncrement;
         longTermModifier = data.longTermModifier;
+        _migrationBookmark = new GenericTextBookmarkable(GetMigrationMeterBookmarkName, () => BOOKMARK_TYPE.Text, 
+            () => UIManager.Instance.ShowStructureInfo(owner.cityCenter), null, null, null);
     }
 
+    #region Loading
+    public void LoadReferences(SaveDataNPCSettlement saveDataNpcSettlement) {
+        CheckIfBookmarkShouldBeAdded(GetNormalizedMigrationMeterValue());
+    }
+    #endregion
+
+    #region Bookmark
+    private void CheckIfBookmarkShouldBeAdded(float p_migrationMeterNormalized) {
+        if (p_migrationMeterNormalized >= 0.9f && !_isAlreadyBookmarked) {
+            _isAlreadyBookmarked = true;
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(_migrationBookmark, BOOKMARK_CATEGORY.Major_Events);
+        }
+    }
+    private void CheckIfBookmarkShouldBeRemoved(float p_migrationMeterNormalized) {
+        if (p_migrationMeterNormalized < 0.9f && _isAlreadyBookmarked) {
+            _isAlreadyBookmarked = false;
+            PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(_migrationBookmark, BOOKMARK_CATEGORY.Major_Events);
+        }
+    }
+    #endregion
+    
     #region Listeners
     public void OnHourStarted() {
         if (!IsMigrationEventAllowed()) {
@@ -118,11 +146,32 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         amount = ApplyVillageMigrationModifier(amount);
         villageMigrationMeter += amount;
         villageMigrationMeter = Mathf.Clamp(villageMigrationMeter, 0, MAX_MIGRATION_METER);
+        CheckIfBookmarkShouldBeAdded(GetNormalizedMigrationMeterValue());
+        if (_isAlreadyBookmarked) {
+            _migrationBookmark.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(_migrationBookmark);
+        }
         CheckIfMigrationMeterIsFull();
+    }
+    public void ReduceVillageMigrationMeter(int amount) {
+        villageMigrationMeter -= amount;
+        villageMigrationMeter = Mathf.Clamp(villageMigrationMeter, 0, MAX_MIGRATION_METER);
+        if (_isAlreadyBookmarked) {
+            _migrationBookmark.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(_migrationBookmark);
+        }
+        CheckIfBookmarkShouldBeRemoved(GetNormalizedMigrationMeterValue());
     }
     public void SetVillageMigrationMeter(int amount) {
         villageMigrationMeter = amount;
         villageMigrationMeter = Mathf.Clamp(villageMigrationMeter, 0, MAX_MIGRATION_METER);
+        
+        //check both cases since set can be any value
+        float normalizedMigrationMeter = GetNormalizedMigrationMeterValue();
+        CheckIfBookmarkShouldBeRemoved(normalizedMigrationMeter);
+        CheckIfBookmarkShouldBeAdded(normalizedMigrationMeter);
+        if (_isAlreadyBookmarked) {
+            _migrationBookmark.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(_migrationBookmark);
+        }
+        
         CheckIfMigrationMeterIsFull();
     }
     private void CheckIfMigrationMeterIsFull() {
@@ -137,7 +186,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public float GetNormalizedMigrationMeterValue() {
         return villageMigrationMeter / (float) MAX_MIGRATION_METER;
     }
-    private string GetMigrationMeterValueInText() {
+    public string GetMigrationMeterValueInText() {
         return $"{villageMigrationMeter.ToString()}/{MAX_MIGRATION_METER.ToString()}";
     }
     public string GetHoverTextOfMigrationMeter() {
@@ -271,8 +320,10 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
     }
+    private string GetMigrationMeterBookmarkName() {
+        return $"<b>{owner.name}</b> will soon have new migrants: {Mathf.FloorToInt(GetNormalizedMigrationMeterValue() * 100f).ToString()}%";
+    }
     #endregion
-
 }
 
 [System.Serializable]

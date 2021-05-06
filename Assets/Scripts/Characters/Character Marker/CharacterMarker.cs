@@ -1504,7 +1504,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.CheckCombatPerTickEnded();
     }
     public bool IsPOIInVision(IPointOfInterest poi) {
-        return (poi is Character character && inVisionCharacters.Contains(character)) || (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject));
+        if (character == null) { return false; }
+        return poi.CanBeSeenBy(character); //(poi is Character character && inVisionCharacters.Contains(character)) || (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject));
     }
     #endregion
 

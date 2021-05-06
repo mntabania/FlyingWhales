@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -31,11 +32,17 @@ public class PlayerSkillComponent {
     public PLAYER_SKILL_TYPE currentSpellBeingUnlocked { get; private set; }
     public int currentSpellUnlockCost { get; private set; }
     public RuinarchTimer timerUnlockSpell { get; private set; }
+    public GenericTextBookmarkable spellUnlockedBookmark { get; private set; }
+    public string lastSpellUnlockSummary { get; private set; }
+    public bool isSpellUnlockedBookmarked { get; private set; }
     // public RuinarchTimer cooldownReroll { get; private set; }
     public List<PLAYER_SKILL_TYPE> currentSpellChoices { get; private set; }
 
     public Cost[] currentPortalUpgradeCost { get; private set; }
     public RuinarchTimer timerUpgradePortal { get; private set; }
+    public GenericTextBookmarkable previousPortalUpgradedBookmark { get; private set; }
+    public string lastPortalUpgradeSummary { get; private set; }
+    public bool isPreviousPortalUpgradeBookmarked { get; private set; }
 
     public PlayerSkillComponent() {
         //nodesData = new List<PlayerSkillTreeNodeData>();
@@ -52,9 +59,11 @@ public class PlayerSkillComponent {
         //canRemoveTraits = true;
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         timerUnlockSpell = new RuinarchTimer("Spell Unlock");
+        spellUnlockedBookmark = new GenericTextBookmarkable(GetSpellUnlockedString, () => BOOKMARK_TYPE.Special, OnSelectSpellUnlockedBookmark, RemoveSpellUnlockedBookmark, null, null);
         // cooldownReroll = new RuinarchTimer("Reroll");
         currentSpellChoices = new List<PLAYER_SKILL_TYPE>();
         timerUpgradePortal = new RuinarchTimer("Summon Demon");
+        previousPortalUpgradedBookmark = new GenericTextBookmarkable(GetPortalUpgradedSummary, () => BOOKMARK_TYPE.Special, OnSelectPortalUpgradedBookmark, RemovePortalUpgradedBookmark, null, null);
         
         timerUnlockSpell.SetOnHoverOverAction(OnHoverOverReleaseAbilitiesBookmark);
         timerUnlockSpell.SetOnHoverOutAction(OnHoverOutReleaseAbilitiesBookmark);
@@ -135,6 +144,9 @@ public class PlayerSkillComponent {
         timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GetBonusChargeCooldownInHours)), OnCompleteSpellUnlockTimer); //.AddDays(1)
         timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
         PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell, BOOKMARK_CATEGORY.Portal);
+        if (isSpellUnlockedBookmarked) {
+            RemoveSpellUnlockedBookmark();
+        }
         Messenger.Broadcast(PlayerSignals.PLAYER_CHOSE_SKILL_TO_UNLOCK, p_skillData, p_unlockCost);
     }
     public void CancelCurrentPlayerSkillUnlock() {
@@ -151,20 +163,19 @@ public class PlayerSkillComponent {
     private void OnCompleteSpellUnlockTimer() {
         SkillData skillData = PlayerSkillManager.Instance.GetSkillData(currentSpellBeingUnlocked);
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(currentSpellBeingUnlocked);
-        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUnlockSpell);
-        //PlayerManager.Instance.player.playerSkillComponent.AddAndCategorizePlayerSkill(currentSpellBeingUnlocked);
         skillData.AdjustBonusCharges(playerSkillData.bonusChargeWhenUnlocked);
         ResetPlayerSpellChoices();
-        //SkillData skillData = PlayerSkillManager.Instance.GetSkillData(currentSpellBeingUnlocked);
-        //if (skillData.category == PLAYER_SKILL_CATEGORY.SPELL) {
-        //    Messenger.Broadcast(PlayerSkillSignals.PLAYER_GAINED_SPELL, currentSpellBeingUnlocked);    
-        //}
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_SKILL_UNLOCK, currentSpellBeingUnlocked, currentSpellUnlockCost);
         ProduceLogForUnlockedSkills(skillData, playerSkillData);
         currentSpellBeingUnlocked = PLAYER_SKILL_TYPE.NONE;
         currentSpellUnlockCost = 0;
+        
+        string chargeText = playerSkillData.bonusChargeWhenUnlocked == 1 ? "charge" : "charges";
+        lastSpellUnlockSummary = $"Gained {playerSkillData.bonusChargeWhenUnlocked.ToString()} {chargeText} of <b>{skillData.name}</b>";
+        AddSpellUnlockedBookmark();
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUnlockSpell);
     }
-    void ProduceLogForUnlockedSkills(SkillData p_skillData, PlayerSkillData p_playerSkillData) {
+    private void ProduceLogForUnlockedSkills(SkillData p_skillData, PlayerSkillData p_playerSkillData) {
         Log m_log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Skills", "Unlock Skill", "skill_unlocked", providedTags: LOG_TAG.Player);
         m_log.AddTag(LOG_TAG.Major);
         string chargeText = p_playerSkillData.bonusChargeWhenUnlocked == 1 ? "charge" : "charges";
@@ -189,6 +200,7 @@ public class PlayerSkillComponent {
         timerUpgradePortal.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(p_upgradeTier.upgradeTime), OnCompletePortalUpgrade);
         timerUpgradePortal.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(portal));
         PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUpgradePortal, BOOKMARK_CATEGORY.Portal);
+        if (isPreviousPortalUpgradeBookmarked) { RemovePortalUpgradedBookmark(); }
         Messenger.Broadcast(PlayerSignals.PLAYER_STARTED_PORTAL_UPGRADE);
     }
     public void CancelPortalUpgrade() {
@@ -202,7 +214,6 @@ public class PlayerSkillComponent {
         Messenger.Broadcast(PlayerSignals.PORTAL_UPGRADE_CANCELLED);
     }
     private void OnCompletePortalUpgrade() {
-        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUpgradePortal);
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         portal.GainUpgradePowers(portal.nextTier);
         portal.IncreaseLevel();
@@ -210,6 +221,10 @@ public class PlayerSkillComponent {
         Messenger.Broadcast(PlayerSignals.PLAYER_FINISHED_PORTAL_UPGRADE, portal.level);
         Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
         currentPortalUpgradeCost = null;
+
+        lastPortalUpgradeSummary = $"Portal upgraded to Level {portal.level.ToString()}!";
+        AddPortalUpgradedBookmark();
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUpgradePortal);
     }
 
     void ProduceLogForPortalUpgrade(int level) {
@@ -677,6 +692,37 @@ public class PlayerSkillComponent {
     }
     #endregion
 
+    #region Bookmarks
+    private string GetSpellUnlockedString() {
+        return lastSpellUnlockSummary;
+    }
+    private void OnSelectSpellUnlockedBookmark() {
+        UIManager.Instance.ShowPurchaseSkillUI();
+    }
+    private void RemoveSpellUnlockedBookmark() {
+        isSpellUnlockedBookmarked = false;
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(spellUnlockedBookmark);
+    }
+    private void AddSpellUnlockedBookmark() {
+        isSpellUnlockedBookmarked = true;
+        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(spellUnlockedBookmark, BOOKMARK_CATEGORY.Portal);
+    }
+    private string GetPortalUpgradedSummary() {
+        return lastPortalUpgradeSummary;
+    }
+    private void OnSelectPortalUpgradedBookmark() {
+        UIManager.Instance.ShowUpgradePortalUI(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal);
+    }
+    private void RemovePortalUpgradedBookmark() {
+        isPreviousPortalUpgradeBookmarked = false;
+        PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(previousPortalUpgradedBookmark);
+    }
+    private void AddPortalUpgradedBookmark() {
+        isPreviousPortalUpgradeBookmarked = true;
+        PlayerManager.Instance.player.bookmarkComponent.AddBookmark(previousPortalUpgradedBookmark, BOOKMARK_CATEGORY.Portal);
+    }
+    #endregion
+
     #region Loading
     public void OnLoadSaveData() {
         for (int i = 0; i < spells.Count; i++) {
@@ -730,6 +776,12 @@ public class PlayerSkillComponent {
             timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
             PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell, BOOKMARK_CATEGORY.Portal);
         }
+        lastSpellUnlockSummary = data.lastSpellUnlockSummary;
+        isSpellUnlockedBookmarked = data.isSpellUnlockedBookmarked;
+        if (isSpellUnlockedBookmarked) {
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(spellUnlockedBookmark, BOOKMARK_CATEGORY.Portal);
+        }
+        
         // cooldownReroll = data.cooldownReroll;
         // if (!cooldownReroll.IsFinished()) {
         //     cooldownReroll.LoadStart();
@@ -743,6 +795,12 @@ public class PlayerSkillComponent {
             timerUpgradePortal.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
             PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUpgradePortal, BOOKMARK_CATEGORY.Portal);
         }
+        lastPortalUpgradeSummary = data.lastPortalUpgradeSummary;
+        isPreviousPortalUpgradeBookmarked = data.isPreviousPortalUpgradeBookmarked;
+        if (isPreviousPortalUpgradeBookmarked) {
+            PlayerManager.Instance.player.bookmarkComponent.AddBookmark(previousPortalUpgradedBookmark, BOOKMARK_CATEGORY.Portal);
+        }
+        
         currentSpellChoices = data.currentSpellChoices;
     }
     #endregion
@@ -756,10 +814,14 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
     public PLAYER_SKILL_TYPE currentSpellBeingUnlocked;
     public int currentSpellUnlockCost;
     public RuinarchTimer timerUnlockSpell;
+    public string lastSpellUnlockSummary;
+    public bool isSpellUnlockedBookmarked;
     public RuinarchTimer cooldownReroll;
     public List<PLAYER_SKILL_TYPE> currentSpellChoices;
     public Cost[] currentPortalUpgradeCost;
     public RuinarchTimer timerUpgradePortal;
+    public string lastPortalUpgradeSummary;
+    public bool isPreviousPortalUpgradeBookmarked;
 
     public override void Save(PlayerSkillComponent component) {
         //canTriggerFlaw = player.playerSkillComponent.canTriggerFlaw;
@@ -812,11 +874,16 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
         
         currentSpellBeingUnlocked = component.currentSpellBeingUnlocked;
         currentSpellUnlockCost = component.currentSpellUnlockCost;
+        lastSpellUnlockSummary = component.lastSpellUnlockSummary;
+        isSpellUnlockedBookmarked = component.isSpellUnlockedBookmarked;
+        
         timerUnlockSpell = component.timerUnlockSpell;
         // cooldownReroll = component.cooldownReroll;
         currentSpellChoices = component.currentSpellChoices;
         currentPortalUpgradeCost = component.currentPortalUpgradeCost;
         timerUpgradePortal = component.timerUpgradePortal;
+        lastPortalUpgradeSummary = component.lastPortalUpgradeSummary;
+        isPreviousPortalUpgradeBookmarked = component.isPreviousPortalUpgradeBookmarked;
     }
     public override PlayerSkillComponent Load() {
         PlayerSkillComponent component = new PlayerSkillComponent();

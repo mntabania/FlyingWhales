@@ -150,6 +150,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //        tile.landmarkOnTile?.nameplate.UpdateVisuals();
             //    }    
             //}
+            migrationComponent.LoadReferences(saveDataNpcSettlement);
         }
     }
     private void LoadJobs(SaveDataNPCSettlement data) {

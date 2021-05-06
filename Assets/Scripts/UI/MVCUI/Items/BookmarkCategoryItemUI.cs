@@ -76,6 +76,10 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
                 BookmarkTextItemUI textItemUI = go.GetComponent<BookmarkTextItemUI>();
                 textItemUI.SetBookmark(p_bookmarkable);
                 break;
+            case BOOKMARK_TYPE.Special:
+                SpecialBookmarkTextItemUI specialTextItemUI = go.GetComponent<SpecialBookmarkTextItemUI>();
+                specialTextItemUI.SetBookmark(p_bookmarkable);
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -87,6 +91,8 @@ public class BookmarkCategoryItemUI : PooledObject, BookmarkCategory.IListener {
             case BOOKMARK_TYPE.Text:
             case BOOKMARK_TYPE.Text_With_Cancel:
                 return $"Bookmark_Item_Text_Prefab";
+            case BOOKMARK_TYPE.Special:
+                return $"Special_Bookmark_Item_Text_Prefab";
             default:
                 return $"Bookmark_Item_{p_bookmarkType.ToString()}_Prefab";        
         }

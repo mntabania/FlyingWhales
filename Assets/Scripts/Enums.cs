@@ -1244,7 +1244,7 @@ public enum BOOKMARK_CATEGORY {
 }
 
 public enum BOOKMARK_TYPE {
-    Progress_Bar, Text, Text_With_Cancel
+    Progress_Bar, Text, Text_With_Cancel, Special
 }
 
 public enum AFFLICTION_UPGRADE_BONUS {
@@ -1282,5 +1282,7 @@ public enum CHANCE_TYPE {
     Retaliation_Resource_Pile,
     Harpy_Capture,
     Lycanthrope_Transform_Chance,
-    Visit_Friend
+    Visit_Friend,
+    Ent_Spawn,
+    Mimic_Spawn
 }

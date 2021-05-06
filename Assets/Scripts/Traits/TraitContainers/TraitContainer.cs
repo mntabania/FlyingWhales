@@ -235,6 +235,10 @@ namespace Traits {
                     Frozen frozen = GetTraitOrStatus<Frozen>("Frozen");
                     frozen.SetIsPlayerSource(isPlayerSource);
                 }
+            } else if (status.name == "Frozen") {
+                //Remove all stacks of Wet when a character gains Frozen.
+                //Reference: https://trello.com/c/0IT5tWi5/4291-remove-all-stacks-of-wet-when-a-character-gains-frozen
+                RemoveStatusAndStacks(traitable, "Wet");
             }
         }
         private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
