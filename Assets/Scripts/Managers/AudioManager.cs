@@ -218,6 +218,10 @@ public class AudioManager : MonoBehaviour {
     public void OnErrorSoundPlay() {
         negativeNotificationSound.Play();
     }
+
+    public void OnTextPopUpSoundPlay() {
+        positiveNotificationSound.Play();
+    }
     private void OnObtainIntel(IIntel intel) {
         particleMagnet.Play();
     }
