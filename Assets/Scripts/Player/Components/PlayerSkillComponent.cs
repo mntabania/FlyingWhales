@@ -171,7 +171,7 @@ public class PlayerSkillComponent {
         currentSpellUnlockCost = 0;
         
         string chargeText = playerSkillData.bonusChargeWhenUnlocked == 1 ? "charge" : "charges";
-        lastSpellUnlockSummary = $"Gained {playerSkillData.bonusChargeWhenUnlocked.ToString()} {chargeText} of <b>{skillData.name}</b>";
+        lastSpellUnlockSummary = $"Gained {playerSkillData.bonusChargeWhenUnlocked.ToString()}{UtilityScripts.Utilities.BonusChargesIcon()} <b>{skillData.name}</b>";
         AddSpellUnlockedBookmark();
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUnlockSpell);
     }
@@ -196,7 +196,7 @@ public class PlayerSkillComponent {
     public void PlayerStartedPortalUpgrade(Cost[] p_upgradeCost, PortalUpgradeTier p_upgradeTier) {
         currentPortalUpgradeCost = p_upgradeCost;
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
-        timerUpgradePortal.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "upgrade_portal_active")} {(portal.level + 1).ToString()}:");
+        timerUpgradePortal.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "upgrade_portal_active")} {(portal.level + 1).ToString()}");
         timerUpgradePortal.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(p_upgradeTier.upgradeTime), OnCompletePortalUpgrade);
         timerUpgradePortal.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(portal));
         PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUpgradePortal, BOOKMARK_CATEGORY.Portal);
