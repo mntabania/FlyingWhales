@@ -260,6 +260,12 @@ MonoBehaviour:
     m_Scale: 2
     m_Name: exclamation
     m_HashCode: 229586851
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 38
+    m_Scale: 1
+    m_Name: traveller_default
+    m_HashCode: -1167513705
   m_SpriteGlyphTable:
   - m_Index: 0
     m_Metrics:
@@ -856,16 +862,32 @@ MonoBehaviour:
       m_Width: 49
       m_Height: 50
       m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 36.58
+      m_HorizontalBearingY: 31
       m_HorizontalAdvance: 42.13
     m_GlyphRect:
       m_X: 2
-      m_Y: 208
+      m_Y: 204
       m_Width: 49
       m_Height: 50
     m_Scale: 1
     m_AtlasIndex: 0
     sprite: {fileID: -4048909695388612998, guid: 3ac8fd99bd951024e8e2de5be93c738b,
+      type: 3}
+  - m_Index: 38
+    m_Metrics:
+      m_Width: 49
+      m_Height: 50
+      m_HorizontalBearingX: -26.99998
+      m_HorizontalBearingY: 25
+      m_HorizontalAdvance: 49
+    m_GlyphRect:
+      m_X: 2
+      m_Y: 204
+      m_Width: 49
+      m_Height: 50
+    m_Scale: 1
+    m_AtlasIndex: 0
+    sprite: {fileID: 7755065342103653176, guid: 3ac8fd99bd951024e8e2de5be93c738b,
       type: 3}
   spriteInfoList: []
   fallbackSpriteAssets: []
