@@ -25,6 +25,7 @@ public class SpawnEyeWardData : PlayerAction {
             p_targetTile.structure.RemovePOI(currentTileObject);
         }
         DemonEye ward = InnerMapManager.Instance.CreateNewTileObject<DemonEye>(TILE_OBJECT_TYPE.DEMON_EYE);
+        ward.SetBeholderOwner(UIManager.Instance.structureInfoUI.activeStructure as Beholder);
         p_targetTile.structure.AddPOI(ward, p_targetTile);
 
         if (UIManager.Instance.structureInfoUI.isShowing) {

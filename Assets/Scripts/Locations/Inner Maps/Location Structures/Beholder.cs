@@ -103,6 +103,7 @@ namespace Inner_Maps.Location_Structures {
         public void AddEyeWard(DemonEye p_eyeWard) {
             if (!eyeWards.Contains(p_eyeWard)) {
                 eyeWards.Add(p_eyeWard);
+                p_eyeWard.SetBeholderOwner(this);
                 Messenger.Broadcast(StructureSignals.UPDATE_EYE_WARDS, this);
             }
         }
@@ -126,6 +127,7 @@ namespace Inner_Maps.Location_Structures {
             PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_radiusLevel).amount);
             m_radiusLevel = Mathf.Clamp(++m_radiusLevel, 1, 4);
             m_eyeWardRadius = Mathf.Clamp(++m_eyeWardRadius, 7, 12);
+            eyeWards.ForEach((eachEye) => eachEye.UpdateRange());
         }
         #endregion
 
@@ -137,6 +139,8 @@ namespace Inner_Maps.Location_Structures {
                 for (int i = 0; i < data.eyeWards.Count; i++) {
                     if (!string.IsNullOrEmpty(data.eyeWards[i])) {
                         eyeWards.Add(DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.eyeWards[i]) as DemonEye);
+                        eyeWards[i].SetBeholderOwner(this);
+                        eyeWards[i].UpdateRange();
                     }
                 }
             }
