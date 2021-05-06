@@ -26,7 +26,6 @@ public static class PopUpTextNotification
         PopUpparent.gameObject.SetActive(true);
         m_mono.StopAllCoroutines();
         m_popupText.text = p_message;
-        Debug.LogError(p_message.Length);
         m_parentGO.rectTransform.sizeDelta = new Vector2(p_stringCount * 10, m_parentGO.rectTransform.sizeDelta.y);
         Vector3 pos = PopUpparent.transform.position;
         if (p_startingPosition != null) {
