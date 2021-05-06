@@ -58,8 +58,9 @@ public class ActionItem : PooledObject {
     public void UnToggleHighlight() {
         if (button.interactable) {
             bool toggle = false;
-            if (playerAction != null) {
-                if (playerAction.type == PLAYER_SKILL_TYPE.SPAWN_EYE_WARD) {
+            if (playerAction != null && PlayerManager.Instance != null) {
+                if (playerAction.type == PLAYER_SKILL_TYPE.SPAWN_EYE_WARD || playerAction.type == PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_EYE_LEVEL
+                    || playerAction.type == PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_RADIUS_LEVEL) {
                     toggle = PlayerManager.Instance.player.currentActivePlayerSpell == playerAction;
                 }
             }
@@ -144,6 +145,7 @@ public class ActionItem : PooledObject {
 		if (string.IsNullOrEmpty(expiryKey) == false) {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);
 		}
+        playerAction = null;
 		DOTween.Kill(this);
         cooldownCoverImg.fillAmount = 0f;
 		expiryKey = string.Empty;

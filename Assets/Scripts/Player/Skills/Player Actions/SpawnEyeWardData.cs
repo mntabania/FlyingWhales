@@ -37,7 +37,9 @@ public class SpawnEyeWardData : PlayerAction {
         Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, this as PlayerAction);
     }
     public override void ShowValidHighlight(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(DemonEye.EYE_WARD_VISION_RANGE, tile);
+        if (UIManager.Instance.structureInfoUI.activeStructure is Beholder beholder) {
+            TileHighlighter.Instance.PositionHighlight(beholder.GetEyeWardRadius(), tile);
+        }
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);

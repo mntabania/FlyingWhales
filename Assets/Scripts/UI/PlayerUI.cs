@@ -45,9 +45,9 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private GameObject successfulAreaCorruptionGO;
     [SerializeField] private ScrollRect killSummaryScrollView;
 
-    [Header("General Confirmation")] 
+    [Header("General Confirmation")]
     [SerializeField] private GeneralConfirmation _generalConfirmation;
-    
+
     [Header("Intervention Abilities")]
     [SerializeField] private GameObject actionBtnPrefab;
 
@@ -58,10 +58,10 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private WinGameOverItem winGameOver;
     [SerializeField] private LoseGameOverItem loseGameOver;
 
-    
+
     [Header("Villagers")]
     [SerializeField] private Toggle villagerTab;
-    
+
     [Header("Seize Object")]
     [SerializeField] private Button unseizeButton;
 
@@ -73,7 +73,7 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private TargetsListUI targetsList;
     public Toggle monsterToggle;
     public Toggle targetsToggle;
-    
+
     [Header("Minion List")]
     [SerializeField] private MinionListUI minionList;
     public UIHoverPosition minionListHoverPosition;
@@ -92,7 +92,7 @@ public class PlayerUI : BaseMonoBehaviour {
     [Header("Summons")]
     [SerializeField] private SummonListUI summonList;
 
-    [Header("Items")] 
+    [Header("Items")]
     public Toggle itemsToggle;
     public ScrollRect itemsScrollRect;
     public GameObject itemsContainerGO;
@@ -105,15 +105,15 @@ public class PlayerUI : BaseMonoBehaviour {
     public GameObject artifactsContainerGO;
     public GameObject artifactItemPrefab;
     private List<ArtifactItem> _artifactItems;
-    
+
     [Header("Threat")]
     [SerializeField] private TextMeshProUGUI threatLbl;
     [SerializeField] private UIHoverPosition threatHoverPos;
     [SerializeField] private RectTransform threatContainer;
 
-    [Header("Building")] 
+    [Header("Building")]
     [SerializeField] private BuildListUI _buildListUI;
-    
+
     [Header("Plague Points")]
     [SerializeField] public TextMeshProUGUI plaguePointLbl;
     [SerializeField] private RectTransform plaguePointsContainer;
@@ -121,6 +121,9 @@ public class PlayerUI : BaseMonoBehaviour {
     [Header("Accumulated Damage")]
     public TextMeshProUGUI accumulatedDamageLbl;
     public GameObject accumulatedDamageGO;
+
+    [Header("Skill Pup Up Notif Position")]
+    public Transform popUpDisplayPoint;
 
     void Awake() {
         Instance = this;
@@ -158,8 +161,17 @@ public class PlayerUI : BaseMonoBehaviour {
         
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_GAINED_SPELL, OnGainSpell);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_LOST_SPELL, OnLostSpell);
+        Messenger.AddListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         AdjustUIDisplayBaseOnGameMode();
         
+    }
+
+    void OnSpellCooldownFinished(SkillData p_skillData) {
+        if (p_skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
+            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} is now available", popUpDisplayPoint);
+        } else {
+            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} charge replenished by 1", popUpDisplayPoint);
+        }
     }
 
     public void AdjustUIDisplayBaseOnGameMode() {

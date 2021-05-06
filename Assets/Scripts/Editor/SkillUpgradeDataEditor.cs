@@ -80,6 +80,10 @@ public class SkillUpgradeDataEditor : Editor {
                 DisplayIntList(data.skillUpgradeData.additionalAttackValuePerLevel, "Atk(amount) per level");
                 EditorGUILayout.Space();
             }
+            if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Applied_Blessed_On_Max_Level)) {
+                DisplayIntList(data.skillUpgradeData.applyOnLevel, "Apply On Blessed Max Level");
+                EditorGUILayout.Space();
+            }
             if (data.skillUpgradeData.bonuses.Contains(UPGRADE_BONUS.Mana_Received)) {
                 DisplayFloatList(data.skillUpgradeData.additionalmanaReceivedPercentagePerLevel, "Mana(%) received per level");
                 EditorGUILayout.Space();

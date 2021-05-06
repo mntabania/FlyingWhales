@@ -63,6 +63,33 @@ public class RemoveBuffData : PlayerAction {
             PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", p_character.name + " resisted the power of the Ruinarch!");
         }
     }
-    #endregion
 
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if(currentLevel >= 3) {
+            if (targetCharacter is Character character) {
+                if (character.traitContainer.HasTrait("Dark Blessing")) {
+                    return false;
+                }
+            }
+            return base.CanPerformAbility();
+        } else {
+            return base.CanPerformAbilityTowards(targetCharacter);
+        }
+    }
+
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        if (currentLevel >= 3) {
+            if (targetCharacter is Character character) {
+                if (character.traitContainer.HasTrait("Dark Blessing")) {
+                    return "You promised not to touch this one, remember?";
+                } else {
+                    return base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+                }
+            }
+        } else {
+            return base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        }
+        return string.Empty;
+    }
+    #endregion
 }

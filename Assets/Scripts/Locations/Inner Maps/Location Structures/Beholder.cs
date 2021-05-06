@@ -5,9 +5,18 @@ using Inner_Maps.Location_Structures;
 namespace Inner_Maps.Location_Structures {
     public class Beholder : DemonicStructure {
         public List<DemonEye> eyeWards { get; private set; }
-
-        public override string scenarioDescription => "The Beholder allows you to place Eyes on unoccupied tiles in the map. The Eye logs most events and actions that occur around it, allowing the player to store some of them as Intel. Intel can then be used for various purposes. You can share it with other Villagers and watch them react or you may even use one as Blackmail material if you have the Meddler.";
-
+        public int m_defaultEyeCount = 3;
+		#region upgradeable data
+		private int m_eyesLevel = 0;
+        private int m_radiusLevel = 0;
+        private int m_eyeWardMaxCount = 3;
+        private int m_eyeWardRadius = 7;
+		#endregion
+		public override string scenarioDescription => "The Beholder allows you to place Eyes on unoccupied tiles in the map. The Eye logs most events and actions that occur around it, allowing the player to store some of them as Intel. Intel can then be used for various purposes. You can share it with other Villagers and watch them react or you may even use one as Blackmail material if you have the Meddler.";
+        public override string extraInfo1Header => $"Eyes: Lv{m_eyesLevel+1}";
+        public override string extraInfo1Description => $"{eyeWards.Count}/{m_eyeWardMaxCount}";
+        public override string extraInfo2Header => $"Radius: Lv{m_radiusLevel+1}";
+        public override string extraInfo2Description => $"{m_eyeWardRadius*2}x{m_eyeWardRadius*2}";
         #region getters
         public override System.Type serializedData => typeof(SaveDataBeholder);
         #endregion
@@ -33,20 +42,13 @@ namespace Inner_Maps.Location_Structures {
         //}
         public override void OnBuiltNewStructure() {
             base.OnBuiltNewStructure();
-            PlayerAction spawnEyeWardAction = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD);
-            if(spawnEyeWardAction.maxCharges == -1) {
-                spawnEyeWardAction.SetMaxCharges(3);
-                spawnEyeWardAction.SetCharges(3);
-            } else {
-                spawnEyeWardAction.SetMaxCharges(spawnEyeWardAction.maxCharges + 3);
-                spawnEyeWardAction.AdjustCharges(3);
-            }
+            UpdateEyeWardCharges(m_defaultEyeCount);
             Messenger.AddListener<TileObject>(TileObjectSignals.DESTROY_TILE_OBJECT, OnDestroyTileObject);
         }
         protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             base.AfterStructureDestruction(p_responsibleCharacter);
             PlayerAction spawnEyeWardAction = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD);
-            spawnEyeWardAction.SetMaxCharges(spawnEyeWardAction.maxCharges - 3);
+            spawnEyeWardAction.SetMaxCharges(spawnEyeWardAction.maxCharges - m_eyeWardMaxCount);
 
             if(spawnEyeWardAction.charges > spawnEyeWardAction.maxCharges) {
                 int chargesToBeDeducted = spawnEyeWardAction.charges - spawnEyeWardAction.maxCharges;
@@ -67,6 +69,8 @@ namespace Inner_Maps.Location_Structures {
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD);
+            AddPlayerAction(PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_RADIUS_LEVEL);
+            AddPlayerAction(PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_EYE_LEVEL);
         }
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
@@ -77,6 +81,20 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region General
+        private void UpdateEyeWardCharges(int p_count, bool p_isFromLevelUp = false) {
+            PlayerAction spawnEyeWardAction = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD);
+            if (spawnEyeWardAction.maxCharges == -1) {
+                spawnEyeWardAction.SetMaxCharges(p_count);
+                spawnEyeWardAction.SetCharges(p_count);
+            } else {
+                spawnEyeWardAction.SetMaxCharges(p_count);
+                if (!p_isFromLevelUp) {
+                    spawnEyeWardAction.AdjustCharges(p_count);
+                } else {
+                    spawnEyeWardAction.AdjustCharges(1);
+                }
+            }
+        }
         private void OnDestroyTileObject(TileObject p_tileObject) {
             if(p_tileObject is DemonEye eyeWard) {
                 RemoveEyeWard(eyeWard);
@@ -96,6 +114,19 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+
+        public void LevelUpEyes() {
+            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_eyesLevel).amount);
+            m_eyesLevel = Mathf.Clamp(++m_eyesLevel, 1, 4);
+            m_eyeWardMaxCount = Mathf.Clamp(++m_eyeWardMaxCount, 1, 8);
+            UpdateEyeWardCharges(m_eyesLevel + m_defaultEyeCount, true);
+        }
+
+        public void LevelUpRadius() {
+            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_radiusLevel).amount);
+            m_radiusLevel = Mathf.Clamp(++m_radiusLevel, 1, 4);
+            m_eyeWardRadius = Mathf.Clamp(++m_eyeWardRadius, 7, 12);
+        }
         #endregion
 
         #region Loading
@@ -109,7 +140,27 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
             }
+            m_eyesLevel = data.eyesLevel;
+            m_radiusLevel = data.radiusLevel;
+            m_eyeWardMaxCount = data.eyeWardMaxCount;
+            m_eyeWardRadius = data.eyeWardRadius;
             Messenger.AddListener<TileObject>(TileObjectSignals.DESTROY_TILE_OBJECT, OnDestroyTileObject);
+        }
+
+        public int GetEyeLevel() {
+            return m_eyesLevel;
+        }
+
+        public int GetRadiusLevel() {
+            return m_radiusLevel;
+        }
+
+        public int GetEyeWardRadius() {
+            return m_eyeWardRadius;
+        }
+
+        public int GetCurrentMaxEyeCount() {
+            return m_eyeWardMaxCount;
         }
         #endregion
     }
@@ -117,6 +168,10 @@ namespace Inner_Maps.Location_Structures {
 
 public class SaveDataBeholder : SaveDataDemonicStructure {
     public List<string> eyeWards;
+    public int eyesLevel;
+    public int radiusLevel;
+    public int eyeWardMaxCount;
+    public int eyeWardRadius;
 
     public override void Save(LocationStructure structure) {
         base.Save(structure);
@@ -127,5 +182,9 @@ public class SaveDataBeholder : SaveDataDemonicStructure {
                 eyeWards.Add(data.eyeWards[i].persistentID);
             }
         }
+        eyesLevel = data.GetEyeLevel();
+        radiusLevel = data.GetRadiusLevel();
+        eyeWardRadius = data.GetEyeWardRadius();
+        eyeWardMaxCount = data.GetCurrentMaxEyeCount();
     }
 }

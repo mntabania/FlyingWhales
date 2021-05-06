@@ -25,6 +25,10 @@ public class StructureInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Basic Info")]
     [SerializeField] private TextMeshProUGUI nameLbl;
+    [SerializeField] private TextMeshProUGUI extraInfo1Title;
+    [SerializeField] private TextMeshProUGUI extraInfo1Description;
+    [SerializeField] private TextMeshProUGUI extraInfo2Title;
+    [SerializeField] private TextMeshProUGUI extraInfo2Description;
     [SerializeField] private LocationPortrait locationPortrait;
 
     [Space(10)]
@@ -186,13 +190,31 @@ public class StructureInfoUI : InfoUIBase {
         UpdateInfo();
     }
     private void UpdateBasicInfo() {
-        nameLbl.text = $"{activeStructure.nameplateName}";
+        if (!WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            if (activeStructure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
+                ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+                nameLbl.text = $"{activeStructure.nameplateName} Lv.{portal.level}";
+            } else {
+                nameLbl.text = $"{activeStructure.nameplateName}";
+            }
+        } else {
+            nameLbl.text = $"{activeStructure.nameplateName}";
+        }
+               
         if (activeStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
             locationPortrait.SetLocation(activeStructure.settlementLocation);
         } else {
             locationPortrait.ClearLocations();
         }
         locationPortrait.SetPortrait(activeStructure.structureType);
+        DisplayExtraInfos(activeStructure);
+    }
+
+    void DisplayExtraInfos(LocationStructure p_locationStructure) {
+        extraInfo1Title.text = p_locationStructure.extraInfo1Header;
+        extraInfo2Title.text = p_locationStructure.extraInfo2Header;
+        extraInfo1Description.text = p_locationStructure.extraInfo1Description;
+        extraInfo2Description.text = p_locationStructure.extraInfo2Description;
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeStructure.currentHP}/{activeStructure.maxHP}";

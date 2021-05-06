@@ -1012,7 +1012,7 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     CULTIST_JOIN_FACTION = 179, SKELETON = 180, SPIRE = 181, SPAWN_EYE_WARD = 182, DESTROY_EYE_WARD = 183, MANA_PIT = 184, MARAUD = 185,
     DRAIN_SPIRIT = 186, LET_GO = 187, FULL_HEAL = 188, CREATE_BLACKMAIL = 189, DEFENSE_POINT = 190, IMP_HUT = 191, ICE_BLAST = 192, EARTH_SPIKE = 193, WATER_SPIKE = 194,
     RELEASE_ABILITIES = 195, SNATCH_VILLAGER = 196, SNATCH_MONSTER = 197, RAID = 198, UPGRADE_ABILITIES = 199, DEFEND = 200, 
-    UPGRADE_PORTAL = 201, DESTROY_STRUCTURE = 202, DIRE_WOLF = 203, SPAWN_NECRONOMICON = 204, SPAWN_PARTY = 205,
+    UPGRADE_PORTAL = 201, DESTROY_STRUCTURE = 202, DIRE_WOLF = 203, SPAWN_NECRONOMICON = 204, SPAWN_PARTY = 205, UPGRADE_BEHOLDER_EYE_LEVEL = 206, UPGRADE_BEHOLDER_RADIUS_LEVEL = 207,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1207,7 +1207,7 @@ public enum RESISTANCE {
 }
 
 public enum UPGRADE_BONUS {
-    Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed,
+    Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed, Applied_Blessed_On_Max_Level, None,
 }
 
 public enum UNLOCKING_SKILL_REQUIREMENT {

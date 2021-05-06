@@ -18,6 +18,15 @@ public class PlayerAction : SkillData, IContextMenuItem {
     public PlayerAction() {
         _contextMenuItems = new List<IContextMenuItem>();
     }
+
+    public bool GetCanBeCastOnBlessed() {
+        if (PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type).canBeCastedOnMaxLevel) {
+            if (currentLevel >= 3) {
+                return true;
+            }
+        }
+        return canBeCastOnBlessed;
+    }
     
     #region Virtuals
     public virtual bool IsValid(IPlayerActionTarget target) {

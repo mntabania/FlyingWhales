@@ -43,6 +43,8 @@ public class PlayerSkillData : ScriptableObject {
 
     public bool isLockedBaseOnRequirements; //used by plague and plague rats
 
+    public bool canBeCastedOnMaxLevel;
+
     [Space]
     [Header("--------------Upgrade Related---------------")]
     public RequirementData requirementData;
