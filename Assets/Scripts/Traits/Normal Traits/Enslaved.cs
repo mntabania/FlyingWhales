@@ -58,7 +58,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
             if (sourcePOI is Character targetCharacter) {
-                ChangeToDefaultFaction(targetCharacter);
+                targetCharacter.ChangeToDefaultFaction();
                 targetCharacter.MigrateHomeStructureTo(null);
                 targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
                 targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.PRODUCE_FOOD);
@@ -67,18 +67,6 @@ namespace Traits {
             }
         }
         #endregion
-
-        private void ChangeToDefaultFaction(Character p_character) {
-            if (p_character.isNormalCharacter) {
-                p_character.ChangeFactionTo(FactionManager.Instance.vagrantFaction, true);
-            } else if (p_character.minion != null) {
-                p_character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction, true);
-            } else if (p_character.IsUndead() || p_character.necromancerTrait != null) {
-                p_character.ChangeFactionTo(FactionManager.Instance.undeadFaction, true);
-            } else {
-                p_character.ChangeFactionTo(FactionManager.Instance.neutralFaction, true);
-            }
-        }
     }
 }
 
