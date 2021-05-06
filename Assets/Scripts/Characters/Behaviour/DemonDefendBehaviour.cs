@@ -40,6 +40,17 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
                     return true;
                 }
             }
+             
+             //check if any demonic structures are being attacked
+             for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.allStructures.Count; i++) {
+                 LocationStructure structure = PlayerManager.Instance.player.playerSettlement.allStructures[i];
+                 if (structure is DemonicStructure demonicStructure && demonicStructure.currentAttackers.Count > 0) {
+                     Character attacker = demonicStructure.currentAttackers.First();
+                     character.combatComponent.Fight(attacker, CombatManager.Defending_Home, null, true);
+                     producedJob = null;
+                     return true;
+                 }
+             }
 
             if (targetStructure != null && !targetStructure.hasBeenDestroyed) {
                 if(character.currentStructure != targetStructure) {
@@ -102,5 +113,13 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
             && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation) && !target.isInLimbo && !target.isBeingSeized && target.carryComponent.IsNotBeingCarried()
             && !target.traitContainer.HasTrait("Hibernating", "Indestructible"));
         return chosenTarget;
+    }
+    public override void OnAddBehaviourToCharacter(Character character) {
+        base.OnAddBehaviourToCharacter(character);
+        character.behaviourComponent.OnBecomeDemonicDefender();
+    }
+    public override void OnRemoveBehaviourFromCharacter(Character character) {
+        base.OnRemoveBehaviourFromCharacter(character);
+        character.behaviourComponent.OnNoLongerDemonicDefender();
     }
 }
