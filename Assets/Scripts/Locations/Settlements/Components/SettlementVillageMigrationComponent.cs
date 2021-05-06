@@ -321,7 +321,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         }
     }
     private string GetMigrationMeterBookmarkName() {
-        return $"<b>{owner.name}</b> will soon have new migrants: {Mathf.FloorToInt(GetNormalizedMigrationMeterValue() * 100f).ToString()}%";
+        return $"<b>{owner.name}</b> Incoming Migrants: {Mathf.FloorToInt(GetNormalizedMigrationMeterValue() * 100f).ToString()}%";
     }
     #endregion
 }

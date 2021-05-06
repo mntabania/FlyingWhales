@@ -122,4 +122,8 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
         base.OnRemoveBehaviourFromCharacter(character);
         character.behaviourComponent.OnNoLongerDemonicDefender();
     }
+    public override void OnLoadBehaviourToCharacter(Character character) {
+        base.OnLoadBehaviourToCharacter(character);
+        character.behaviourComponent.OnBecomeDemonicDefender();
+    }
 }
