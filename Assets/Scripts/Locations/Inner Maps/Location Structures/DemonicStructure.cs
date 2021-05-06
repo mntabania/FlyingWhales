@@ -193,21 +193,27 @@ namespace Inner_Maps.Location_Structures {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, p_attacker, this);
                 if (wasEmptyBeforeAdding) {
                     Messenger.AddListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+                    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
                 }
                 UnityEngine.Debug.Log($"Added attacker {p_attacker.name} to {this.name}");
             }
         }
         private void RemoveAttacker(Character p_attacker) {
-            currentAttackers.Remove(p_attacker);
-            UnityEngine.Debug.Log($"Removed attacker {p_attacker.name} to {this.name}");
-            if (currentAttackers.Count == 0) {
-                Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+            if (currentAttackers.Remove(p_attacker)) {
+                UnityEngine.Debug.Log($"Removed attacker {p_attacker.name} to {this.name}");
+                if (currentAttackers.Count == 0) {
+                    Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+                    Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
+                }
             }
         }
         private void OnCharacterRemovedBehaviour(Character p_character, CharacterBehaviourComponent p_removedBehaviour) {
             if (p_removedBehaviour is AttackDemonicStructureBehaviour) {
                 RemoveAttacker(p_character);    
             }
+        }
+        private void OnCharacterMarkerDestroyed(Character p_character) {
+            RemoveAttacker(p_character);
         }
         #endregion
         
