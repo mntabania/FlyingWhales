@@ -20,4 +20,5 @@
     public static string KEY_UP = "OnKeyUp";
     public static string LEFT_SHIFT_DOWN = "OnLeftShiftPressed";
     public static string LEFT_SHIFT_UP = "OnLeftShiftUp";
+    public static string PRESS_PORTAL_SHORTCUT = "OnPressPortalShortCut";
 }

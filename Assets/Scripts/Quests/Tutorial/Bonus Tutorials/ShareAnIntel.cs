@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.BEHOLDER).isInUse;
+                return PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.SNOOPER).isInUse;
             }
             return false;
         }
@@ -25,8 +25,8 @@ namespace Tutorial {
 
         #region Overrides
         protected override void MakeAvailable() {
-            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BEHOLDER)) {
-                 SkillData spellData = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.BEHOLDER);
+            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.SNOOPER)) {
+                 SkillData spellData = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.SNOOPER);
                  if (spellData.charges <= 0) {
                      //if player does not yet have an eye structure and does not have an eye charge, then give them one so they can build one for this tutorial
                      spellData.AdjustCharges(1);
@@ -42,14 +42,14 @@ namespace Tutorial {
         }
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>();
-            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BEHOLDER)) {
+            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.SNOOPER)) {
                 //Only add build eye step if player doesn't already have an eye built
                 QuestStepCollection buildCollection = new QuestStepCollection(
                     new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
                         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
                     new ToggleTurnedOnStep("Eye", "Choose the Eye")
                         .SetOnTopmostActions(OnTopMostTheEye, OnNoLongerTopMostTheEye),
-                    new StructureBuiltStep(STRUCTURE_TYPE.BEHOLDER, "Place on an unoccupied Area")
+                    new StructureBuiltStep(STRUCTURE_TYPE.SNOOPER, "Place on an unoccupied Area")
                 );
                 steps.Add(buildCollection);
             }

@@ -58,7 +58,6 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private WinGameOverItem winGameOver;
     [SerializeField] private LoseGameOverItem loseGameOver;
 
-
     [Header("Villagers")]
     [SerializeField] private Toggle villagerTab;
 

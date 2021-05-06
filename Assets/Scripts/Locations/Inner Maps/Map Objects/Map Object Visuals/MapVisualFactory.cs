@@ -98,7 +98,7 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("PortalGameObject", Vector3.zero, Quaternion.identity);
                 break;
-            case TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.SNOOPER_TILE_OBJECT:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("BeholderGameObject", Vector3.zero, Quaternion.identity);
                 break;
             case TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT:
