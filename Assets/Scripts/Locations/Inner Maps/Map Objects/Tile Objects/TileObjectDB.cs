@@ -308,7 +308,7 @@ public static class TileObjectDB {
             maxHP = 3000,
             occupiedSize = new Point(4, 11)
         } },
-        { TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT, new TileObjectData() {
+        { TILE_OBJECT_TYPE.SNOOPER_TILE_OBJECT, new TileObjectData() {
             maxHP = 3000,
             occupiedSize = new Point(5, 6)
         } },
