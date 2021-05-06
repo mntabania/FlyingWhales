@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 
 namespace Inner_Maps.Location_Structures {
-    public class Beholder : DemonicStructure {
+    public class Snooper : DemonicStructure {
         public List<DemonEye> eyeWards { get; private set; }
         public int m_defaultEyeCount = 3;
 		#region upgradeable data
@@ -12,7 +12,7 @@ namespace Inner_Maps.Location_Structures {
         private int m_eyeWardMaxCount = 3;
         private int m_eyeWardRadius = 7;
 		#endregion
-		public override string scenarioDescription => "The Beholder allows you to place Eyes on unoccupied tiles in the map. The Eye logs most events and actions that occur around it, allowing the player to store some of them as Intel. Intel can then be used for various purposes. You can share it with other Villagers and watch them react or you may even use one as Blackmail material if you have the Meddler.";
+		public override string scenarioDescription => "The Snooper allows you to place Eyes on unoccupied tiles in the map. The Eye logs most events and actions that occur around it, allowing the player to store some of them as Intel. Intel can then be used for various purposes. You can share it with other Villagers and watch them react or you may even use one as Blackmail material if you have the Meddler.";
         public override string extraInfo1Header => $"Eyes: Lv{m_eyesLevel+1}";
         public override string extraInfo1Description => $"{eyeWards.Count}/{m_eyeWardMaxCount}";
         public override string extraInfo2Header => $"Radius: Lv{m_radiusLevel+1}";
@@ -20,11 +20,11 @@ namespace Inner_Maps.Location_Structures {
         #region getters
         public override System.Type serializedData => typeof(SaveDataBeholder);
         #endregion
-        public Beholder(Region location) : base(STRUCTURE_TYPE.BEHOLDER, location){
+        public Snooper(Region location) : base(STRUCTURE_TYPE.SNOOPER, location){
             SetMaxHPAndReset(2500);
             eyeWards = new List<DemonEye>();
         }
-        public Beholder(Region location, SaveDataBeholder data) : base(location, data) {
+        public Snooper(Region location, SaveDataBeholder data) : base(location, data) {
             eyeWards = new List<DemonEye>();
         }
 
@@ -47,13 +47,15 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             base.AfterStructureDestruction(p_responsibleCharacter);
+            /*
             PlayerAction spawnEyeWardAction = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD);
             spawnEyeWardAction.SetMaxCharges(spawnEyeWardAction.maxCharges - m_eyeWardMaxCount);
-
+            */
+            /*
             if(spawnEyeWardAction.charges > spawnEyeWardAction.maxCharges) {
                 int chargesToBeDeducted = spawnEyeWardAction.charges - spawnEyeWardAction.maxCharges;
                 spawnEyeWardAction.AdjustCharges(-chargesToBeDeducted);
-            }
+            }*/
             Messenger.RemoveListener<TileObject>(TileObjectSignals.DESTROY_TILE_OBJECT, OnDestroyTileObject);
 
             for (int i = 0; i < eyeWards.Count; i++) {
@@ -82,6 +84,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region General
         private void UpdateEyeWardCharges(int p_count, bool p_isFromLevelUp = false) {
+            return;
             PlayerAction spawnEyeWardAction = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SPAWN_EYE_WARD);
             if (spawnEyeWardAction.maxCharges == -1) {
                 spawnEyeWardAction.SetMaxCharges(p_count);
@@ -179,7 +182,7 @@ public class SaveDataBeholder : SaveDataDemonicStructure {
 
     public override void Save(LocationStructure structure) {
         base.Save(structure);
-        Beholder data = structure as Beholder;
+        Snooper data = structure as Snooper;
         if(data.eyeWards.Count > 0) {
             eyeWards = new List<string>();
             for (int i = 0; i < data.eyeWards.Count; i++) {

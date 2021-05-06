@@ -163,7 +163,7 @@ namespace Inner_Maps.Location_Structures {
                 //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
                 character.traitContainer.RestrainAndImprison(character, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
                 //teleport monster to inside of kennel
-                LocationGridTile chosenTile = passableTiles.First(t => t.charactersHere.Count <= 0) ?? GetCenterTile();
+                LocationGridTile chosenTile = passableTiles.FirstOrDefault(t => t.charactersHere.Count <= 0) ?? GetCenterTile();
                 if (chosenTile != null) {
                     CharacterManager.Instance.Teleport(character, chosenTile);
                     GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Minion_Dissipate);    
