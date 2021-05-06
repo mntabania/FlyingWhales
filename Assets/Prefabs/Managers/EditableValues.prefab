@@ -51,7 +51,7 @@ MonoBehaviour:
   _criticalMoodHighThreshold: 10
   _majorMentalBreakHourThreshold: 2
   _minorMentalBreakDayThreshold: 1
-  _baseFullnessDecreaseRate: 0.204
+  _baseFullnessDecreaseRate: 0.102
   _baseTirednessDecreaseRate: 0.108
   _baseHappinessDecreaseRate: 0.156
   _startingMana: 500
