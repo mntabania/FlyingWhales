@@ -108,7 +108,7 @@ public abstract class JobQueueItem : ISavable {
                 isViable = false;
             }
         }
-        if (string.IsNullOrEmpty(data.assignedCharacterID)) {
+        if (!string.IsNullOrEmpty(data.assignedCharacterID)) {
             assignedCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.assignedCharacterID);
             if (assignedCharacter == null) {
                 isViable = false;
