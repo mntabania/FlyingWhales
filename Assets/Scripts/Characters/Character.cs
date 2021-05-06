@@ -725,8 +725,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (removeFromMasterList) {
             //In order to lessen the all character list (because it will keep on expanding), once character's body is destroyed, remove it from the master list
-            //Do not broadcast signal because this will remove the character from its faction, and we do not want that
-            CharacterManager.Instance.RemoveCharacter(this, false);
+            CharacterManager.Instance.RemoveCharacter(this);
         }
     }
     public void DisableMarker() {
