@@ -343,7 +343,7 @@ namespace Traits {
                                 break;
                         }
                         if (willReact) {
-                            if (owner.marker) {
+                            if (owner.hasMarker) {
                                 if (!targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious")) {
                                     //If character considers the target a prisoner, do not assume trespassing
                                     //This might happen because if there is still no prison, the designated prison of the settlement is the city center
@@ -356,13 +356,17 @@ namespace Traits {
                                             willCreateAssumption = false;
                                         }
                                     }
-                                    if (targetCharacter.isVagrant) {
+                                    if (willCreateAssumption && targetCharacter.isVagrant) {
                                         //removed vagrant trespassing because it causes an issue whenever a character leaves its current faction while it is still inside its previous settlement.
                                         willCreateAssumption = false;
                                     }
-                                    if (targetCharacter.traitContainer.HasTrait("Cultist") && owner.traitContainer.HasTrait("Cultist")) {
+                                    if (willCreateAssumption && targetCharacter.traitContainer.HasTrait("Cultist") && owner.traitContainer.HasTrait("Cultist")) {
                                         //Do not assume that character is trespassing if both characters are cultists.
                                         //This is a fix for this issue: https://trello.com/c/SBNxYdlY/3085-live-03363-cultist-reporting-other-cultists
+                                        willCreateAssumption = false;
+                                    }
+                                    if (willCreateAssumption && owner.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                                        //Fix for: https://trello.com/c/Ab3P6jFo/4627-enslaved-friend-accused-of-trespassing
                                         willCreateAssumption = false;
                                     }
                                     if (willCreateAssumption) {
