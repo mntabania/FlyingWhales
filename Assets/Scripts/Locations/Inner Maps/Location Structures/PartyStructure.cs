@@ -212,11 +212,21 @@ namespace Inner_Maps.Location_Structures {
                 deployed.AddRange(partyData.deployedSummons);    
             }
             for (int x = 0; x < deployed.Count; x++) {
-                deployed[x].Death();
+                Character deployedCharacter = deployed[x];
+                if (deployedCharacter.faction != null && deployedCharacter.faction.isPlayerFaction) {
+                    //only undeploy characters that are still part of the demon faction, I expect that only recruited characters will be affected by this
+                    //Related task: https://trello.com/c/1x2q7FQY/4633-demonic-party-not-cleared-out-when-last-living-member-is-recruited-by-a-major-faction
+                    deployedCharacter.Death();    
+                }
             }
             if (partyData.deployedMinions.Count > 0) {
-                prevParty.RemoveMember(partyData.deployedMinions[0]);
-                partyData.deployedMinions[0].Death();    
+                Character deployedMinion = partyData.deployedMinions[0];
+                prevParty.RemoveMember(deployedMinion);
+                if (deployedMinion.faction != null && deployedMinion.faction.isPlayerFaction) {
+                    //only undeploy characters that are still part of the demon faction, I expect that only recruited characters will be affected by this
+                    //Related task: https://trello.com/c/1x2q7FQY/4633-demonic-party-not-cleared-out-when-last-living-member-is-recruited-by-a-major-faction
+                    deployedMinion.Death();    
+                }
             }
             RuinarchListPool<Character>.Release(deployed);
             partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
