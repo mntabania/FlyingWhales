@@ -101,6 +101,10 @@ public class MovementComponent : CharacterComponent {
     private float GetSpeed() {
         float speed = runSpeed;
         bool isPartOfActiveParty = owner.partyComponent.isMemberThatJoinedQuest && owner.partyComponent.currentParty.isPlayerParty; //Party Walk Speed applies only on demon parties for now
+        if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.currentQuest is DemonDefendPartyQuest) {
+            //Do not use party walk speed on demon defend quest
+            isPartOfActiveParty = false;
+        }
         if (!isRunning) {
             speed = walkSpeed;
         }
