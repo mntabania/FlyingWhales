@@ -301,6 +301,9 @@ public class StructureInfoUI : InfoUIBase {
     }
 
     private void OnReceivePortalShortCutSignal() {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         if (portal != null) {
             SetData(portal);
