@@ -18,6 +18,8 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
             actor.AssignClass("Necromancer");
+            //Remove enslaved because necromancer will build 2 lairs if it is not removed.
+            actor.traitContainer.RemoveTrait(actor, "Enslaved");
             actor.ChangeFactionTo(FactionManager.Instance.undeadFaction, true);
             CharacterManager.Instance.SetNecromancerInTheWorld(actor);
             actor.MigrateHomeStructureTo(null);
