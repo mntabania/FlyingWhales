@@ -9,7 +9,7 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
     public override string name => "Increase Eyes";
     public override string description => GetDescription();
 
-    private Beholder m_targetBeholder;
+    private Snooper m_targetBeholder;
 
     public string GetDescription() {
         if (m_targetBeholder != null) {
@@ -24,7 +24,7 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
 
     public override bool CanPerformAbilityTowards(LocationStructure target) {
         bool canPerform = false;
-        m_targetBeholder = target as Beholder;
+        m_targetBeholder = target as Snooper;
         if (m_targetBeholder.GetEyeLevel() < 3) {
             canPerform = true;
         } else {
@@ -40,14 +40,14 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
         return base.CanPerformAbilityTowards(target) && canPerform;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Beholder) {
+        if (target is Snooper) {
             return true;
         }
         return false;
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
-        m_targetBeholder = structure as Beholder;
+        m_targetBeholder = structure as Snooper;
         if (m_targetBeholder.GetEyeLevel() >= 3) {
             reasons += $"Eye already max level\n";
             return reasons;
@@ -65,7 +65,7 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        (structure as Beholder).LevelUpEyes();
+        (structure as Snooper).LevelUpEyes();
         base.ActivateAbility(structure);
     }
     #endregion

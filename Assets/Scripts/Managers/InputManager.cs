@@ -178,6 +178,10 @@ namespace Ruinarch {
                 _isShiftDown = false;
                 Messenger.Broadcast(ControlsSignals.LEFT_SHIFT_UP);
             }
+
+            if (Input.GetKeyUp(KeyCode.P)) {
+                Messenger.Broadcast(ControlsSignals.PRESS_PORTAL_SHORTCUT);
+            }
         }
         private void BroadcastHotkeyPress(string buttonToActivate, KeyCode p_keyCode) {
             if (!CanUseHotkey(p_keyCode)) return;

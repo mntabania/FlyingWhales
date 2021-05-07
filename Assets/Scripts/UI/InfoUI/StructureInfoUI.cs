@@ -69,9 +69,10 @@ public class StructureInfoUI : InfoUIBase {
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, UpdatePrisonersFromSignal);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, UpdatePrisonersFromSignal);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Beholder>(StructureSignals.UPDATE_EYE_WARDS, UpdateEyeWardsFromSignal);
+        Messenger.AddListener<Snooper>(StructureSignals.UPDATE_EYE_WARDS, UpdateEyeWardsFromSignal);
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
+        Messenger.AddListener(ControlsSignals.PRESS_PORTAL_SHORTCUT, OnReceivePortalShortCutSignal);
         ListenToPlayerActionSignals();
 
         villageEventLbl.SetOnLeftClickAction(OnLeftClickVillage);
@@ -152,7 +153,7 @@ public class StructureInfoUI : InfoUIBase {
         }
     }
     private bool UsesEyesTab() {
-        if (activeStructure is Beholder) {
+        if (activeStructure is Snooper) {
             return true;
         } else {
             return false;
@@ -288,7 +289,7 @@ public class StructureInfoUI : InfoUIBase {
     }
     private void UpdateEyes() {
         UtilityScripts.Utilities.DestroyChildren(eyesParentTransform);
-        Beholder beholder = activeStructure as Beholder;
+        Snooper beholder = activeStructure as Snooper;
         for (int i = 0; i < beholder.eyeWards.Count; i++) {
             DemonEye eyeWard = beholder.eyeWards[i];
             GameObject go = UIManager.Instance.InstantiateUIObject(tileObjectNameplatePrefab.name, eyesParentTransform);
@@ -297,6 +298,13 @@ public class StructureInfoUI : InfoUIBase {
             item.SetAsButton();
             item.AddOnClickAction(OnClickEye);
         }
+    }
+
+    private void OnReceivePortalShortCutSignal() {
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        SetData(portal);
+        OpenMenu();
+        activeStructure.CenterOnStructure();
     }
 
     private void OnReceiveKeyCodeSignal(KeyCode p_key) {
@@ -316,7 +324,7 @@ public class StructureInfoUI : InfoUIBase {
             UpdatePrisoners();
         }
     }
-    private void UpdateEyeWardsFromSignal(Beholder structure) {
+    private void UpdateEyeWardsFromSignal(Snooper structure) {
         if (isShowing && activeStructure == structure && UsesEyesTab()) {
             UpdateEyes();
         }
