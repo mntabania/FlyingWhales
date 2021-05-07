@@ -40,9 +40,11 @@ public class RaiseDeadData : PlayerAction {
             UIManager.Instance.characterInfoUI.CloseMenu();
         }
         base.ActivateAbility(targetPOI);
-        float m_addedMaxHP = summon.maxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD) / 100f);
-        summon.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
-        summon.combatComponent.AddAttackBaseOnPercentage(PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD) / 100f);
+        int m_addedMaxHP = Mathf.RoundToInt(summon.combatComponent.maxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD) / 100f));
+        int m_addedAttack = Mathf.RoundToInt(summon.combatComponent.attack * (PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.RAISE_DEAD) / 100f));
+
+        summon.combatComponent.AdjustMaxHPModifier(m_addedMaxHP);
+        summon.combatComponent.AdjustAttackModifier(m_addedAttack);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (!targetCharacter.isDead || !targetCharacter.carryComponent.IsNotBeingCarried() || targetCharacter.marker == null || targetCharacter.characterClass.IsZombie()) {

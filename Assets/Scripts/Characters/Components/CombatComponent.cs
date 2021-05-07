@@ -1142,10 +1142,10 @@ public class CombatComponent : CharacterComponent {
         }
     }
     private void UpdateAttack() {
-        attack = Mathf.RoundToInt(owner.characterClass.baseAttackPower * (owner.raceSetting.attackMultiplier == 0f ? 1f : owner.raceSetting.attackMultiplier)) + attackModification;
+        attack = unModifiedAttack + attackModification;
     }
     private void UpdateMaxHP() {
-        maxHP = Mathf.RoundToInt(owner.characterClass.baseHP * (owner.raceSetting.hpMultiplier == 0f ? 1f : owner.raceSetting.hpMultiplier)) + maxHPModification;
+        maxHP = unModifiedMaxHP + maxHPModification;
         if (maxHP < 0) {
             maxHP = 1;
         }
@@ -1175,7 +1175,6 @@ public class CombatComponent : CharacterComponent {
         attackModification += modification;
         UpdateAttack();
     }
-
     public void AddAttackBaseOnPercentage(float modification) {
         attackModification += (int)(modification * attack);
         UpdateAttack();
