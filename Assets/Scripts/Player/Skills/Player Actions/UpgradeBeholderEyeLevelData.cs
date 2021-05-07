@@ -49,7 +49,7 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
         m_targetBeholder = structure as Snooper;
         if (m_targetBeholder.GetEyeLevel() >= 3) {
-            reasons += $"Eye already max level\n";
+            reasons += $"Demon Eye already max level\n";
             return reasons;
         }
         if (PlayerManager.Instance.player.chaoticEnergy < EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).amount) {
