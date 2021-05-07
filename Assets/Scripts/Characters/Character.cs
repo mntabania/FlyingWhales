@@ -330,6 +330,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         buffStatsBonus = new BuffStatsBonus();
         needsComponent.ResetSleepTicks();
+
+        destroyMarkerOnDeath = true;
     }
     public Character(SaveDataCharacter data) {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
