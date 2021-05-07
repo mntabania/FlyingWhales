@@ -312,6 +312,7 @@ public class MonsterAndDemonUnderlingCharges {
         currentCooldownTick++;
         Messenger.Broadcast(PlayerSkillSignals.PER_TICK_MONSTER_UNDERLING_COOLDOWN, this);
         if (currentCooldownTick >= cooldown) {
+            Messenger.Broadcast(PlayerSkillSignals.ON_FINISH_UNDERLING_COOLDOWN, this);
             DoneMonsterReplenish();
         }
     }

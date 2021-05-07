@@ -67,6 +67,7 @@
     public static string PER_TICK_DEMON_COOLDOWN = "OnPerTickDemonCooldown";
     public static string PER_TICK_MONSTER_UNDERLING_COOLDOWN = "OnPerTickMonsterUnderlingCooldown";
     public static string START_MONSTER_UNDERLING_COOLDOWN = "OnStartMonsterUnderlingCooldown";
+    public static string ON_FINISH_UNDERLING_COOLDOWN = "OnFinishUnderlingCooldown";
     public static string STOP_MONSTER_UNDERLING_COOLDOWN = "OnStopMonsterUnderlingCooldown";
 
     //chaos orb passive skills
