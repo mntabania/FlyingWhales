@@ -1385,7 +1385,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(prevFaction != null) {
             if (prevFaction.factionType.type == FACTION_TYPE.Undead) {
                 behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
-            } 
+            }
+            if (prevFaction.factionType.type == FACTION_TYPE.Demons) {
+                if (partyComponent.hasParty) {
+                    //remove character from party when they are removed from demon faction.
+                    //Related Task: https://trello.com/c/1x2q7FQY/4633-demonic-party-not-cleared-out-when-last-living-member-is-recruited-by-a-major-faction
+                    partyComponent.currentParty.RemoveMember(this);
+                }
+            }
             //else if (prevFaction.factionType.type == FACTION_TYPE.Demons) {
             //    //This is only temporary
             //    //Right now combat behaviours are only applicable on characters in the Demon faction

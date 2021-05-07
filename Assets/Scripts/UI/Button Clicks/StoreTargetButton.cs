@@ -25,6 +25,10 @@ public class StoreTargetButton : MonoBehaviour {
     }
     private void OnEnable() {
         UpdateInteractableState();
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    private void OnDisable() {
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     public void SetTarget(IStoredTarget p_target) {
         _target = p_target;
@@ -92,4 +96,12 @@ public class StoreTargetButton : MonoBehaviour {
     private void OnDestroy() {
         _target = null;
     }
+
+    #region Listeners
+    private void OnCharacterDied(Character p_character) {
+        if (_target == p_character) {
+            UpdateInteractableState();
+        }
+    }
+    #endregion
 }
