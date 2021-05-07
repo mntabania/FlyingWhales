@@ -27,10 +27,18 @@ public class PoisonData : PlayerAction {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
-        if (tileObject.gridTileLocation == null || tileObject.traitContainer.HasTrait("Poisoned", "Robust")) {
+        if ((tileObject.gridTileLocation == null && tileObject.isBeingCarriedBy == null) || 
+            tileObject.traitContainer.HasTrait("Poisoned", "Robust")) {
             return false;
         }
         return base.CanPerformAbilityTowards(tileObject);
+    }
+    public override bool IsValid(IPlayerActionTarget target) {
+        bool isValid = base.IsValid(target);
+        if (isValid || (target is TileObject targetTileObject && targetTileObject.isBeingCarriedBy != null)) {
+            return true; //allow carried objects to be poisoned
+        }
+        return false;
     }
     #endregion
 }
