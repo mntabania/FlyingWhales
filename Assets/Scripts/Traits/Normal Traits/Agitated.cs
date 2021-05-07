@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+using UnityEngine;
 
 namespace Traits {
     public class Agitated : Status {
@@ -24,10 +25,10 @@ namespace Traits {
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
-                character.buffStatsBonus.originalAttack = (int)(character.combatComponent.unModifiedAttack * ((int)PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
+                character.buffStatsBonus.originalAttack = Mathf.RoundToInt(character.combatComponent.unModifiedAttack * (PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
                 character.combatComponent.AdjustAttackModifier(character.buffStatsBonus.originalAttack);
 
-                character.buffStatsBonus.originalHP = ((int)(character.combatComponent.unModifiedMaxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100)));
+                character.buffStatsBonus.originalHP = Mathf.RoundToInt(character.combatComponent.unModifiedMaxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
                 character.combatComponent.AdjustMaxHPModifier(character.buffStatsBonus.originalHP);
             }
         }
