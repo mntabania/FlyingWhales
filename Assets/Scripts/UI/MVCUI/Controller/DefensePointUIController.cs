@@ -147,7 +147,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 				item.AddOnClickAction((monsterCharge) => { OnAvailableMonsterClicked(monsterCharge, item); });
 				item.SetObject(entry.Value);
 				item.SetAsButton();
-				item.SetInteractableState(PlayerManager.Instance.player.mana >= item.summonCost && entry.Value.currentCharges > 0);
+				item.SetInteractableState(entry.Value.currentCharges > 0);
 				m_summonList.Add(item);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
@@ -325,6 +325,12 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
 			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
 		}*/
+		if (!p_monsterAndDemonUnderlingCharges.isDemon && p_monsterAndDemonUnderlingCharges.isReplenishing) {
+			PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(data, p_monsterAndDemonUnderlingCharges);
+		} else if (p_monsterAndDemonUnderlingCharges.isDemon && p_monsterAndDemonUnderlingCharges.isReplenishing) {
+			SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
+			PlayerUI.Instance.OnHoverSpellChargeRemaining(skillData, p_monsterAndDemonUnderlingCharges);
+		}
 	}
 
 	void OnHoverExitItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
@@ -337,12 +343,12 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		if (m_isAllItemDeployed) {
 			Tooltip.Instance.ShowSmallInfo("Unsummon all party members.", "Undeploy Party", autoReplaceText: false);
 		} else {
-			if (displayedCount > 0) {
-				Tooltip.Instance.ShowSmallInfo("Summon minions to defend around the Prism.", "Deploy team", autoReplaceText: false);
-				return;
-			}
 			if (m_totalDeployCost > PlayerManager.Instance.player.mana) {
 				Tooltip.Instance.ShowSmallInfo("Can't build team, Not enough Mana.", "Not enough Mana", autoReplaceText: false);
+				return;
+			}
+			if (displayedCount > 0) {
+				Tooltip.Instance.ShowSmallInfo("Summon minions to defend around the Prism.", "Deploy team", autoReplaceText: false);
 				return;
 			}
 		}
