@@ -321,6 +321,10 @@ public class Assault : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if (poiTarget == null || poiTarget.mapObjectVisual == null) {
+                //Cannot assault characters/objects that has no visual object
+                return false;
+            }
             if (poiTarget is TileObject tileObject) {
                 return tileObject.gridTileLocation != null && !actor.IsHealthCriticallyLow();
             }

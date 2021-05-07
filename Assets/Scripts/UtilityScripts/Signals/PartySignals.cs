@@ -3,6 +3,7 @@
     public static string CHARACTER_LEFT_PARTY = "OnCharacterLeftParty";
     public static string CHARACTER_LEFT_PARTY_DISBAND = "OnCharacterLeftPartyDisband";
     public static string DISBAND_PARTY = "OnDisbandParty";
+    public static string PARTY_DESTROYED = "OnPartyDestroyed";
     public static string CHARACTER_JOINED_PARTY_QUEST = "OnCharacterJoinedPartyQuest";
     public static string CHARACTER_LEFT_PARTY_QUEST = "OnCharacterLeftPartyQuest";
     public static string CLEAR_MEMBERS_THAT_JOINED_QUEST = "OnClearMembersThatJoinedQuest";

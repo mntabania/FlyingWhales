@@ -1279,6 +1279,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         Messenger.RemoveListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);
         Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         DatabaseManager.Instance.partyDatabase.RemoveParty(this);
+        Messenger.Broadcast(PartySignals.PARTY_DESTROYED, this);
     }
 	#endregion
         

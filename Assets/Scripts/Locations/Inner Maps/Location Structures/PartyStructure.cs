@@ -41,15 +41,13 @@ namespace Inner_Maps.Location_Structures {
             Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
+            Messenger.AddListener<Party>(PartySignals.PARTY_DESTROYED, OnPartyDestroyed);
         }
         public PartyStructure(Region location, SaveDataDemonicStructure data) : base(location, data) {
             Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             Messenger.AddListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
-        }
-
-        private void OnGameLoaded() {
-            InitializeTeam();
+            Messenger.AddListener<Party>(PartySignals.PARTY_DESTROYED, OnPartyDestroyed);
         }
 
         #region Loading
@@ -57,14 +55,72 @@ namespace Inner_Maps.Location_Structures {
             base.LoadReferences(saveDataLocationStructure);
             SaveDataPartyStructure saveData = saveDataLocationStructure as SaveDataPartyStructure;
             if (!string.IsNullOrEmpty(saveData.partyID)) {
-                party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(saveData.partyID);
-                PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
-                ListenToParty();
+                party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentIDSafe(saveData.partyID);
+                if (party != null) {
+                    PlayerManager.Instance.player.bookmarkComponent.AddBookmark(party, BOOKMARK_CATEGORY.Player_Parties);
+                    ListenToParty();
+                } else {
+                    Debug.LogWarning("Loading party reference in party structure " + name + " but party is in object pool");
+                }
             }
             startingSummonCount = saveData.startingSummonCount;
         }
         #endregion
-        
+
+        #region Overrides
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
+            base.AfterStructureDestruction(p_responsibleCharacter);
+            Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            if (Messenger.eventTable.ContainsKey(PlayerSignals.PLAYER_REMOVED_STORED_TARGET)) {
+                Messenger.RemoveListener<IStoredTarget>(PlayerSignals.PLAYER_REMOVED_STORED_TARGET, OnTargetRemoved);
+            }
+            Messenger.RemoveListener<Party>(PartySignals.PARTY_DESTROYED, OnPartyDestroyed);
+        }
+        #endregion
+
+        #region Listeners
+        public virtual void OnCharacterDied(Character p_deadMonster) {
+            if (m_isUndeployUserAction) {
+                return;
+            }
+            for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
+                if (p_deadMonster == partyData.deployedSummons[x]) {
+                    //Removed this because replenish of charge is done with a cooldown now. See MonsterAndDemonUnderlingCharges
+                    //PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
+                    partyData.deployedSummons.RemoveAt(x);
+                    partyData.deployedSummonUnderlings.RemoveAt(x);
+                    break;
+                }
+            }
+            for (int x = 0; x < partyData.deployedMinions.Count; ++x) {
+                if (p_deadMonster == partyData.deployedMinions[x]) {
+                    partyData.deployedMinionUnderlings.RemoveAt(x);
+                    partyData.deployedMinions.RemoveAt(x);
+                    break;
+                }
+            }
+
+            if (partyData.deployedSummonCount <= 0 && partyData.deployedMinionCount <= 0) {
+                partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
+                partyData.deployedTargets.Clear();
+            }
+        }
+        protected void OnTargetRemoved(IStoredTarget p_removedTarget) {
+            allPossibleTargets?.Remove(p_removedTarget);
+            //partyData.deployedTargets.Remove(p_removedTarget);
+        }
+        private void OnGameLoaded() {
+            InitializeTeam();
+        }
+        private void OnPartyDestroyed(Party p_party) {
+            if (party == p_party) {
+                partyData.ClearAllData();
+                party = null;
+            }
+        }
+        #endregion
+
         public void InitializeTeam() {
             m_isUndeployUserAction = false;
             if (!m_isInitialized) {
@@ -140,46 +196,16 @@ namespace Inner_Maps.Location_Structures {
         
         }
 
-        public virtual void OnCharacterDied(Character p_deadMonster) {
-            if (m_isUndeployUserAction) {
-                return;
-            }
-            for (int x = 0; x < partyData.deployedSummons.Count; ++x) {
-                if (p_deadMonster == partyData.deployedSummons[x]) {
-                    //Removed this because replenish of charge is done with a cooldown now. See MonsterAndDemonUnderlingCharges
-                    //PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_deadMonster as Summon).summonType, 1);
-                    partyData.deployedSummons.RemoveAt(x);
-                    partyData.deployedSummonUnderlings.RemoveAt(x);
-                    break;
-                }
-            }
-            for (int x = 0; x < partyData.deployedMinions.Count; ++x) {
-                if (p_deadMonster == partyData.deployedMinions[x]) {
-                    partyData.deployedMinionUnderlings.RemoveAt(x);
-                    partyData.deployedMinions.RemoveAt(x);
-                    break;
-                }
-            }
-
-            if(partyData.deployedSummonCount <= 0 && partyData.deployedMinionCount <= 0) {
-                partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
-                partyData.deployedTargets.Clear();
-			}
-        }
-
-        protected void OnTargetRemoved(IStoredTarget p_removedTarget) {
-            allPossibleTargets?.Remove(p_removedTarget);
-            //partyData.deployedTargets.Remove(p_removedTarget);
-		}
-
         public virtual void DeployParty() {
             m_isUndeployUserAction = false;
         }
 
         public virtual void UnDeployAll() {
             m_isUndeployUserAction = true;
+            Party prevParty = party;
+            party = null;
             partyData.deployedSummons.ForEach((eachSummon) => {
-                party.RemoveMember(eachSummon);
+                prevParty.RemoveMember(eachSummon);
             });
             List<Character> deployed = RuinarchListPool<Character>.Claim();
             if (partyData.deployedSummons.Count > 0) {
@@ -189,15 +215,15 @@ namespace Inner_Maps.Location_Structures {
                 deployed[x].Death();
             }
             if (partyData.deployedMinions.Count > 0) {
-                party.RemoveMember(partyData.deployedMinions[0]);
+                prevParty.RemoveMember(partyData.deployedMinions[0]);
                 partyData.deployedMinions[0].Death();    
             }
             RuinarchListPool<Character>.Release(deployed);
             partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
             partyData.ClearAllData();
-            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, party);
-            Debug.Log($"Un Deployed party at {name}. Party was {party?.name}");
-            party = null;
+            Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, prevParty);
+            Debug.Log($"Un Deployed party at {name}. Party was {prevParty?.name}");
+            //party = null;
         }
 
         public void ResetExistingCharges() {
