@@ -19,8 +19,8 @@ MonoBehaviour:
     maxRange: 5
     weight: 100
   spells:
-    m_keys: 19000000
-    m_values: 02000000
+    m_keys: 
+    m_values: 
   afflictions:
     m_keys: 
     m_values: 
@@ -33,3 +33,7 @@ MonoBehaviour:
   skills:
     m_keys: 
     m_values: 
+  loadoutData: []
+  puppetmasterOverride: {fileID: 0}
+  lichOverride: {fileID: 0}
+  ravagerOverride: {fileID: 0}
