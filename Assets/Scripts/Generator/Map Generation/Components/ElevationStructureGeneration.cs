@@ -219,7 +219,8 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
 		elevationStructure.SetOccupiedArea(occupiedArea);
 
-		List<BlockWall> validWallsForOreVeins = elevationStructure.GetTileObjectsOfType<BlockWall>(IsBlockWallValidForOreVein);
+		List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
+		elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein(validWallsForOreVeins);
 
 		var randomOreAmount = areaElevationIsland.tilesInIsland.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
 		for (int i = 0; i < randomOreAmount; i++) {
@@ -228,16 +229,17 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			CreateOreVeinAt(blockWall.gridTileLocation);
 			validWallsForOreVeins.Remove(blockWall);
 		}
+		RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
 	}
-	private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
-		if (p_blockWall.gridTileLocation != null) {
-			int caveNeighbours = p_blockWall.gridTileLocation.neighbourList.Count(t => t.tileObjectComponent.objHere is BlockWall);
-			if (caveNeighbours == 2 || caveNeighbours == 5) {
-				return p_blockWall.gridTileLocation.neighbourList.Count(t => t.structure is Wilderness) >= 3;	
-			}
-		}
-		return false;
-	}
+	//private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
+	//	if (p_blockWall.gridTileLocation != null) {
+	//		int caveNeighbours = p_blockWall.gridTileLocation.neighbourList.Count(t => t.tileObjectComponent.objHere is BlockWall);
+	//		if (caveNeighbours == 2 || caveNeighbours == 5) {
+	//			return p_blockWall.gridTileLocation.neighbourList.Count(t => t.structure is Wilderness) >= 3;	
+	//		}
+	//	}
+	//	return false;
+	//}
 	private void CreateOreVeinAt(LocationGridTile tile) {
 		if (tile != null) {
 			if (tile.tileObjectComponent.objHere != null) {

@@ -64,7 +64,7 @@ namespace Factions.Faction_Succession {
                     weight += -40;
                 }
                 if (member is Summon || member.characterClass.IsZombie()) {
-                    if (faction.HasMemberThatMeetCriteria(c => c.race.IsSapient() && (c.IsAtHome() || c.partyComponent.isMemberThatJoinedQuest))) {
+                    if (faction.HasMemberThatIsSapientAndIsAtHomeOrHasJoinedQuest()) {
                         weight *= 0;
                     }
                 }

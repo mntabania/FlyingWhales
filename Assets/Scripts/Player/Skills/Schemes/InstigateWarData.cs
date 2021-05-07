@@ -22,7 +22,7 @@ public class InstigateWarData : SchemeData {
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if(faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Wild_Monsters
-                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)) {
+                    && faction.HasMemberThatIsNotDead()) {
                     choices.Add(faction);
                 }
             }

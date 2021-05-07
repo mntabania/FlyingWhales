@@ -19,11 +19,16 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
         //    }
         //}
         producedJob = null;
-        if (character.isNormalCharacter && character.hasMarker && character.marker.inVisionCharacters.Count > 0 && HasCharacterNotConversedInMinutes(character, 6)) {
+        if (character.isNormalCharacter && character.hasMarker && character.marker.inVisionCharacters.Count > 0 && CharacterManager.Instance.HasCharacterNotConversedInMinutes(character, 6)) {
             log = $"{log}\n{character.name} has characters in vision and has not conversed in at least 10 minutes.";
-            List<Character> validChoices = character.marker.GetInVisionCharactersThatMeetCriteria((c) => HasCharacterNotConversedInMinutes(c, 6) && c.isNormalCharacter && !c.isDead);
-            if (validChoices != null && validChoices.Count > 0) {
-                Character chosenTarget = CollectionUtilities.GetRandomElement(validChoices);
+            List<Character> validChoices = RuinarchListPool<Character>.Claim();
+            character.marker.PopulateCharactersThatIsNotDeadVillagerAndNotConversedInMinutes(validChoices, 6);
+            Character chosenTarget = null;
+            if (validChoices.Count > 0) {
+                chosenTarget = CollectionUtilities.GetRandomElement(validChoices);
+            }
+            RuinarchListPool<Character>.Release(validChoices);
+            if (chosenTarget != null) {
                 log = $"{log}\n{character.name} has characters in vision that have not conversed in at least 10 minutes. Chosen target is {chosenTarget.name}. Rolling chat chance";
                 if (character.nonActionEventsComponent.CanChat(chosenTarget) && GameUtilities.RollChance(20, ref log)) {
                     character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenTarget);
@@ -66,18 +71,9 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
                         }
                     }
                 }
-                
             }
         }
         log += "\n-Chat and flirt did not trigger. Will create an Idle Stand job";
         return character.jobComponent.TriggerStand(out producedJob);
-    }
-
-    private bool HasCharacterNotConversedInMinutes(Character character, int minutes) {
-        GameDate lastConversationDate = character.nonActionEventsComponent.lastConversationDate;
-        //add ticks (based on given minutes) to last conversation date. If resulting date is before today, then character
-        //has not conversed for the given amount of time.
-        return lastConversationDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(minutes))
-            .IsBefore(GameManager.Instance.Today());
     }
 }

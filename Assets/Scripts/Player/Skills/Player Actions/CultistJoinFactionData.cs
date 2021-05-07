@@ -26,7 +26,7 @@ public class CultistJoinFactionData : PlayerAction {
                     && faction.factionType.type != FACTION_TYPE.Wild_Monsters
                     && faction.factionType.type != FACTION_TYPE.Undead
                     && faction.factionType.type != FACTION_TYPE.Ratmen
-                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)
+                    && faction.HasMemberThatIsNotDead()
                     && !faction.isDisbanded
                     && faction.isMajorNonPlayer) {
                     choices.Add(faction);

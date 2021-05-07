@@ -1449,7 +1449,7 @@ public class ConsoleBase : InfoUIBase {
             List<LocationStructure> structures = currentRegion.allStructures;
             for (int i = 0; i < structures.Count; i++) {
                 LocationStructure structure = structures[i];
-                TileObject tileObj = structure.GetFirstTileObjectOfTypeThatMeetCriteria<TileObject>(t => t.name == nameParameterString);
+                TileObject tileObj = structure.GetFirstTileObjectOfTypeWithName<TileObject>(nameParameterString);
 
                 if (tileObj != null) {
                     UIManager.Instance.ShowTileObjectInfo(tileObj);

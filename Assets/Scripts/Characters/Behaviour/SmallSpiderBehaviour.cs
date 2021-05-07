@@ -29,7 +29,7 @@ public class SmallSpiderBehaviour : BaseMonsterBehaviour {
     }
     private void PopulateWebbedCharactersAtHome(List<Character> p_characterList, Character character) {
         if (character.homeStructure != null) {
-            character.homeStructure.PopulateCharacterListThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
+            character.homeStructure.PopulateCharacterListThatIsWebbed(p_characterList);
         } else if (character.HasTerritory()) {
             character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
         }

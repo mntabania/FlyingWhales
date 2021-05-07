@@ -21,7 +21,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                 int roll = Random.Range(0, 100);
                 log += $"\n-Roll: {roll}";
                 if (roll < 15) {
-                    Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => CanCharacterBeRecruited(x, character));
+                    Character targetCharacter = structure.GetRandomCharacterThatCanBeRecruitedBy(character);
 
                     if (targetCharacter != null) {
                         log += $"\n-Chosen target: {targetCharacter.name}";

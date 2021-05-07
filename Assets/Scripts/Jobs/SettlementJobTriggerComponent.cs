@@ -12,7 +12,7 @@ using UnityEngine.Assertions;
 using Locations.Settlements;
 using Locations.Settlements.Components;
 using UnityEngine.Profiling;
-
+using UtilityScripts;
 public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener, NPCSettlementEventDispatcher.ITileListener {
 
 	private readonly NPCSettlement _owner;
@@ -266,11 +266,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	// }
 	private void OnSettlementChangedStorage(NPCSettlement npcSettlement) {
 		if (npcSettlement == _owner) {
-			List<ResourcePile> resourcePiles = _owner.region.GetTileObjectsOfType<ResourcePile>();
+			List<ResourcePile> resourcePiles = RuinarchListPool<ResourcePile>.Claim();
+			_owner.region.PopulateTileObjectsOfType(resourcePiles);
 			for (int i = 0; i < resourcePiles.Count; i++) {
 				ResourcePile resourcePile = resourcePiles[i];
 				TryCreateHaulJob(resourcePile);
 			}
+			RuinarchListPool<ResourcePile>.Release(resourcePiles);
 		}
 	}
 	private void OnBurningSourceInactive(BurningSource burningSource) {
@@ -331,13 +333,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	#region Resources
 	public int GetTotalResource(RESOURCE resourceType) {
 		int resource = 0;
-		List<ResourcePile> piles = _owner.mainStorage.GetTileObjectsOfType<ResourcePile>();
+		List<ResourcePile> piles = RuinarchListPool<ResourcePile>.Claim();
+		_owner.mainStorage.PopulateTileObjectsOfType(piles);
 		for (int i = 0; i < piles.Count; i++) {
 			ResourcePile resourcePile = piles[i];
 			if (resourcePile.providedResource == resourceType) {
 				resource += piles[i].resourceInPile;	
 			}
 		}
+		RuinarchListPool<ResourcePile>.Release(piles);
 		return resource;
 	}
 	private int GetMinimumResource(RESOURCE resource) {
@@ -1171,7 +1175,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     }
     private void HourlyCheckForNeededCharacterClasses() {
 	    if (_owner.settlementClassTracker.neededClasses.Count > 0) {
-		    ProfessionPedestal professionPedestal = _owner.GetFirstTileObjectOfTypeThatMeetCriteria<ProfessionPedestal>(t => t.IsAvailable());
+		    ProfessionPedestal professionPedestal = _owner.GetFirstTileObjectOfTypeThatIsAvailable<ProfessionPedestal>();
 		    if (professionPedestal != null) {
 			    for (int i = 0; i < _owner.settlementClassTracker.neededClasses.Count; i++) {
 				    string neededClass = _owner.settlementClassTracker.neededClasses[i];

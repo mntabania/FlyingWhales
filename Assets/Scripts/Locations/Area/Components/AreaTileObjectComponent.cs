@@ -19,14 +19,6 @@ public class AreaTileObjectComponent : AreaComponent {
     public bool RemoveItemInArea(TileObject item) {
         return itemsInArea.Remove(item);
     }
-    public void PopulateTileObjectsInHexTile(List<TileObject> p_tileObjectList, TILE_OBJECT_TYPE type) {
-        for (int i = 0; i < itemsInArea.Count; i++) {
-            TileObject tileObject = itemsInArea[i];
-            if (tileObject.tileObjectType == type) {
-                p_tileObjectList.Add(tileObject);
-            }
-        }
-    }
     public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
         int count = 0;
         for (int i = 0; i < itemsInArea.Count; i++) {
@@ -36,18 +28,13 @@ public class AreaTileObjectComponent : AreaComponent {
         }
         return count;
     }
-    public List<T> GetTileObjectsInHexTile<T>() where T : TileObject {
-        List<T> tileObjects = null;
+    public void PopulateTileObjectsInArea<T>(List<T> tileObjects) where T : TileObject {
         for (int i = 0; i < itemsInArea.Count; i++) {
             TileObject tileObject = itemsInArea[i];
             if (tileObject is T obj) {
-                if (tileObjects == null) {
-                    tileObjects = new List<T>();
-                }
                 tileObjects.Add(obj);
             }
         }
-        return tileObjects;
     }
     public bool HasBuiltFoodPileInArea() {
         for (int i = 0; i < itemsInArea.Count; i++) {

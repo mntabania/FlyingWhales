@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Inner_Maps;
 using UtilityScripts;
+using Inner_Maps.Location_Structures;
 
 public class AreaGridTileComponent : AreaComponent {
     public LocationGridTile centerGridTile { get; private set; }
@@ -86,19 +87,35 @@ public class AreaGridTileComponent : AreaComponent {
     public LocationGridTile GetRandomTile() {
         return gridTiles[UnityEngine.Random.Range(0, gridTiles.Count)];
     }
-    public LocationGridTile GetRandomTileThatMeetCriteria(Func<LocationGridTile, bool> checker) {
-        List<LocationGridTile> tiles = null;
+    public LocationGridTile GetRandomTileThatIsPassableAndOpenSpace() {
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
         for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile tile = gridTiles[i];
-            if (checker.Invoke(tile)) {
-                if (tiles == null) { tiles = new List<LocationGridTile>(); }
-                tiles.Add(tile);
+            LocationGridTile t = gridTiles[i];
+            if (t.IsPassable() && t.structure.structureType.IsOpenSpace()) {
+                tiles.Add(t);
             }
         }
-        if (tiles != null && tiles.Count > 0) {
-            return UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
+        LocationGridTile chosenTile = null;
+        if (tiles.Count > 0) {
+            chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
         }
-        return null;
+        RuinarchListPool<LocationGridTile>.Release(tiles);
+        return chosenTile;
+    }
+    public LocationGridTile GetRandomTileThatIsPassableAndHasNoObjectAndIsNotInStructure(LocationStructure p_structure) {
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        for (int i = 0; i < gridTiles.Count; i++) {
+            LocationGridTile t = gridTiles[i];
+            if (t.tileObjectComponent.objHere == null && t.structure != p_structure && t.IsPassable()) {
+                tiles.Add(t);
+            }
+        }
+        LocationGridTile chosenTile = null;
+        if (tiles.Count > 0) {
+            chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
+        }
+        RuinarchListPool<LocationGridTile>.Release(tiles);
+        return chosenTile;
     }
     public LocationGridTile GetRandomPassableTile() {
         // LocationGridTile chosenTile = null;
@@ -301,17 +318,6 @@ public class AreaGridTileComponent : AreaComponent {
         PlayerManager.Instance.player.playerSettlement.AddAreaToSettlement(p_area);
         //remove features
         p_area.featureComponent.RemoveAllFeatures(p_area);
-    }
-    public List<LocationGridTile> GetUnoccupiedTiles() {
-        List<LocationGridTile> tiles = null;
-        for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile tile = gridTiles[i];
-            if (tile.tileObjectComponent.objHere == null) {
-                if (tiles == null) { tiles = new List<LocationGridTile>(); }
-                tiles.Add(tile);
-            }
-        }
-        return tiles;
     }
     #endregion
 }

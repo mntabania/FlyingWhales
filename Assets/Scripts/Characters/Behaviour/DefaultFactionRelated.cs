@@ -90,7 +90,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
             if(faction.factionType.type == factionType) {
-                if (faction.HasMemberThatMeetCriteria(member => !member.isDead && member.homeSettlement != null && member.homeSettlement.GetFirstStructureThatMeetCriteria(s => !s.IsOccupied() && s is Dwelling) != null)) {
+                if (faction.HasMemberThatIsNotDeadHasHomeSettlementUnoccupiedDwelling()) {
                     return true;
                 }
             }
@@ -101,7 +101,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
             if (faction.factionType.type == factionType) {
-                int count = faction.GetMemberCountThatMeetCriteria(member => !member.isDead);
+                int count = faction.GetAliveMembersCount();
                 if (count == 1 || count == 2) {
                     return true;
                 }

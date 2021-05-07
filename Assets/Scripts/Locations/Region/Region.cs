@@ -527,14 +527,12 @@ public class Region : ISavable, ILogFiller {
         }
         return false;
     }
-    public List<T> GetTileObjectsOfType<T>() where T : TileObject{
-        List<T> objs = new List<T>();
+    public void PopulateTileObjectsOfType<T>(List<T> objs) where T : TileObject{
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType<T>());
+                keyValuePair.Value[i].PopulateTileObjectsOfType(objs);
             }
         }
-        return objs;
     }
     #endregion
 

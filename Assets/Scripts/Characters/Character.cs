@@ -1443,7 +1443,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     && !faction.isDisbanded
                     && !faction.IsCharacterBannedFromJoining(this)
                     && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
-                    bool hasCultLeader = faction.HasMemberThatMeetCriteria(m => !m.isDead && m.characterClass.className == "Cult Leader");
+                    bool hasCultLeader = faction.HasMemberThatIsNotDeadCultLeader();
                     if (hasCultLeader) {
                         chosenFaction = faction;
                         break;
@@ -1466,22 +1466,22 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)
                         && potentialFaction != prevFaction) {
                         if (potentialFaction.HasOwnedSettlementInRegion(currentRegion)) {
-                            bool hasRelativeOrLoverThatIsNotEnemyRival = faction.HasMemberThatMeetCriteria(m => !m.isDead && (relationshipContainer.IsFamilyMember(m) || relationshipContainer.HasRelationshipWith(m, RELATIONSHIP_TYPE.LOVER)) && !relationshipContainer.IsEnemiesWith(m));
+                            bool hasRelativeOrLoverThatIsNotEnemyRival = faction.HasMemberThatIsNotDeadAndIsFamilyOrLoverAndNotEnemyRivalWith(this);
                             if (hasRelativeOrLoverThatIsNotEnemyRival) {
                                 chosenFaction = potentialFaction;
                                 break;
                             } else {
-                                bool hasCloseFriend = faction.HasMemberThatMeetCriteria(m => !m.isDead && relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Close_Friend);
+                                bool hasCloseFriend = faction.HasMemberThatIsNotDeadAndIsCloseFriendWith(this);
                                 if (hasCloseFriend) {
                                     chosenFaction = potentialFaction;
                                     break;
                                 } else {
-                                    bool hasNoRival = !faction.HasMemberThatMeetCriteria(m => !m.isDead && relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Rival);
+                                    bool hasNoRival = !faction.HasMemberThatIsNotDeadAndIsRivalWith(this);
                                     if (hasNoRival) {
                                         chosenFaction = potentialFaction;
                                         break;
                                     } else {
-                                        bool hasFriend = faction.HasMemberThatMeetCriteria(m => !m.isDead && relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Friend);
+                                        bool hasFriend = faction.HasMemberThatIsNotDeadAndIsFriendWith(this);
                                         if (hasFriend) {
                                             chosenFaction = potentialFaction;
                                             break;
@@ -2878,10 +2878,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(p_homeStructure != null) {
             if(tileObjectComponent.primaryBed != null) {
                 if(tileObjectComponent.primaryBed.gridTileLocation == null || tileObjectComponent.primaryBed.gridTileLocation.structure != p_homeStructure) {
-                    tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.gridTileLocation != null));
+                    tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuilt<Bed>());
                 }
             } else {
-                tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.gridTileLocation != null));
+                tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuilt<Bed>());
             }
         }
     }
@@ -3566,7 +3566,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         job.SetAssignedPlan(goapPlan);
         jobQueue.AddJobInQueue(job);
     }
-    public Character GetDisabledCharacterToCheckOutThatMeetCriteria(System.Func<Character, bool> validityChecker = null) {
+    public Character GetDisabledCharacterToCheckOutThatHasIsInHomeSettlementOfThisCharacter() {
         //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         List<Character> charactersWithRel = relationshipContainer.charactersWithOpinion;
         if (charactersWithRel.Count > 0) {
@@ -3576,7 +3576,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if(character.isDead /*|| character.isMissing*/ || homeStructure == character.homeStructure) {
                     continue;
                 }
-                if (validityChecker != null && validityChecker.Invoke(character) == false) {
+                if ((homeSettlement != null && character.currentSettlement != null &&
+                                character.currentSettlement == homeSettlement) == false) {
                     //character is invalid, because of given 
                     continue;
                 }

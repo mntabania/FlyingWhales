@@ -558,31 +558,86 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
     }
-    public bool HasMemberThatMeetCriteria(Func<Character, bool> criteria) {
+    public bool HasMemberThatIsNotDeadHasHomeSettlementUnoccupiedDwelling() {
         for (int i = 0; i < characters.Count; i++) {
-            if (criteria.Invoke(characters[i])) {
+            Character m = characters[i];
+            if (!m.isDead && m.homeSettlement != null && m.homeSettlement.GetFirstStructureThatMeetCriteria(s => !s.IsOccupied() && s is Dwelling) != null) {
                 return true;
             }
         }
         return false;
     }
-    public int GetMemberCountThatMeetCriteria(Func<Character, bool> criteria) {
+    public bool HasMemberThatIsNotDeadCultLeader() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && m.characterClass.className == "Cult Leader") {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDeadAndIsFamilyOrLoverAndNotEnemyRivalWith(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && (p_character.relationshipContainer.IsFamilyMember(m) || p_character.relationshipContainer.HasRelationshipWith(m, RELATIONSHIP_TYPE.LOVER)) && !p_character.relationshipContainer.IsEnemiesWith(m)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDeadAndIsCloseFriendWith(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && p_character.relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Close_Friend) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDeadAndIsRivalWith(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && p_character.relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Rival) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDeadAndIsFriendWith(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && p_character.relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Friend) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsSapientAndIsAtHomeOrHasJoinedQuest() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (m.race.IsSapient() && (m.IsAtHome() || m.partyComponent.isMemberThatJoinedQuest)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDead() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int GetAliveMembersCount() {
         int count = 0;
         for (int i = 0; i < characters.Count; i++) {
-            if (criteria.Invoke(characters[i])) {
+            Character m = characters[i];
+            if (!m.isDead) {
                 count++;
             }
         }
-        return count;
-    }
-
-    public int GetAliveMembersCount() {
-        int count = 0;
-        characters.ForEach((eachCharacter) => {
-            if (!eachCharacter.isDead) {
-                count++;
-            }
-        });
         return count;
     }
 
@@ -849,9 +904,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
-    public bool HasOwnedSettlementThatMeetCriteria(Func<BaseSettlement, bool> criteria) {
+    public bool HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(Character p_character) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
-            if (criteria.Invoke(ownedSettlements[i])) {
+            BaseSettlement s = ownedSettlements[i];
+            if (s != p_character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead)) {
                 return true;
             }
         }
@@ -860,15 +916,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public BaseSettlement GetRandomOwnedSettlement() {
         if(ownedSettlements.Count > 0) {
             return ownedSettlements[UnityEngine.Random.Range(0, ownedSettlements.Count)];
-        }
-        return null;
-    }
-    public BaseSettlement GetFirstOwnedSettlementThatMeetCriteria(Func<BaseSettlement, bool> criteria) {
-        for (int i = 0; i < ownedSettlements.Count; i++) {
-            BaseSettlement settlement = ownedSettlements[i];
-            if (criteria.Invoke(settlement)) {
-                return settlement;
-            }
         }
         return null;
     }

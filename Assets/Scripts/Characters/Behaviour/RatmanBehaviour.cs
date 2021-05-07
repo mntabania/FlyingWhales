@@ -36,7 +36,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
             int chance = 10;
-            if(HasResidentFromSameHomeThatMeetCriteria(character, r => !r.isDead && r.traitContainer.HasTrait("Enslaved"))) {
+            if(HasResidentFromSameHomeThatIsNotDeadAndEnslaved(character)) {
                 chance -= 7;
             }
             if (HasFoodPileInHomeStorage(character)) {
@@ -45,7 +45,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             if (GameUtilities.RollChance(chance)) {
                 if (isInHome) {
                     Character prisoner = GetFirstPrisonerAtHome(character);
-                    if (prisoner == null && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_ABDUCT))) {
+                    if (prisoner == null && !HasResidentFromSameHomeThatHasMonsterAbductJob(character)) {
                         character.behaviourComponent.SetAbductionTarget(null);
 
                         //set abduction target if none, and chance met
@@ -99,9 +99,9 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 if (prisoner != null) {
                     if (GameUtilities.RollChance(30) && prisoner.race == RACE.RATMAN) {
                         return character.jobComponent.TriggerRecruitJob(prisoner, out producedJob);
-                    } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.TORTURE, JOB_TYPE.MONSTER_BUTCHER))) {
+                    } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasResidentFromSameHomeThatHasTortureOrMonsterButcherJob(character)) {
                         return character.jobComponent.TriggerTorture(prisoner, out producedJob);
-                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.TORTURE)) /*&& HasStorage(character)*/ && !HasFoodPileInHomeStorage(character)) {
+                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasResidentFromSameHomeThatHasTortureOrMonsterButcherJob(character) /*&& HasStorage(character)*/ && !HasFoodPileInHomeStorage(character)) {
                         return character.jobComponent.CreateButcherJob(prisoner, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
                     }
                 }
@@ -119,30 +119,16 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         return character.jobComponent.TriggerRoamAroundTile(out producedJob);
     }
-    private bool HasResidentFromSameHomeThatMeetCriteria(Character character, Func<Character, bool> criteria) {
+    private bool HasResidentFromSameHomeThatIsNotDeadAndEnslaved(Character character) {
         List<Character> residents = null;
-        bool hasBorrowedList = false;
-        if(character.homeSettlement != null) {
-            residents = character.homeSettlement.residents;
-        } else if (character.homeStructure != null) {
-            residents = character.homeStructure.residents;
-        } else if (character.HasTerritory()) {
-            hasBorrowedList = true;
-            residents = ObjectPoolManager.Instance.CreateNewCharactersList();
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character resident = CharacterManager.Instance.allCharacters[i];
-                if(!resident.isDead && resident.IsTerritory(character.territory)) {
-                    residents.Add(resident);
-                }
-            }
-        }
+        bool hasBorrowedList = PopulateResidentsFromSameHome(residents, character);
         bool decision = true;
         if (residents != null) {
             decision = false;
             for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if(resident != character) {
-                    if (criteria.Invoke(resident)) {
+                Character r = residents[i];
+                if(r != character) {
+                    if (!r.isDead && r.traitContainer.HasTrait("Enslaved")) {
                         decision = true;
                         break;
                     }
@@ -150,10 +136,74 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             }
         }
         if (hasBorrowedList) {
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(residents);
+            RuinarchListPool<Character>.Release(residents);
         }
         //If character has no home, this should return true so that the character will not do the action
         return decision;
+    }
+    private bool HasResidentFromSameHomeThatHasMonsterAbductJob(Character character) {
+        List<Character> residents = null;
+        bool hasBorrowedList = PopulateResidentsFromSameHome(residents, character);
+        bool decision = true;
+        if (residents != null) {
+            decision = false;
+            for (int i = 0; i < residents.Count; i++) {
+                Character r = residents[i];
+                if (r != character) {
+                    if (r.jobQueue.HasJob(JOB_TYPE.MONSTER_ABDUCT)) {
+                        decision = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (hasBorrowedList) {
+            RuinarchListPool<Character>.Release(residents);
+        }
+        //If character has no home, this should return true so that the character will not do the action
+        return decision;
+    }
+    private bool HasResidentFromSameHomeThatHasTortureOrMonsterButcherJob(Character character) {
+        List<Character> residents = null;
+        bool hasBorrowedList = PopulateResidentsFromSameHome(residents, character);
+        bool decision = true;
+        if (residents != null) {
+            decision = false;
+            for (int i = 0; i < residents.Count; i++) {
+                Character r = residents[i];
+                if (r != character) {
+                    if (r.jobQueue.HasJob(JOB_TYPE.TORTURE, JOB_TYPE.MONSTER_BUTCHER)) {
+                        decision = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (hasBorrowedList) {
+            RuinarchListPool<Character>.Release(residents);
+        }
+        //If character has no home, this should return true so that the character will not do the action
+        return decision;
+    }
+
+    //Returns true if has borrowed list from the pool
+    private bool PopulateResidentsFromSameHome(List<Character> residents, Character character) {
+        bool hasBorrowedList = false;
+        if (character.homeSettlement != null) {
+            residents = character.homeSettlement.residents;
+        } else if (character.homeStructure != null) {
+            residents = character.homeStructure.residents;
+        } else if (character.HasTerritory()) {
+            hasBorrowedList = true;
+            residents = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character resident = CharacterManager.Instance.allCharacters[i];
+                if (!resident.isDead && resident.IsTerritory(character.territory)) {
+                    residents.Add(resident);
+                }
+            }
+        }
+        return hasBorrowedList;
     }
     private Character GetFirstPrisonerAtHome(Character character) {
         if (character.homeSettlement != null) {
@@ -211,7 +261,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             return character.territory.tileObjectComponent.HasBuiltFoodPileInArea();
         }
         if(storage != null) {
-            return storage.HasTileObjectThatMeetCriteria(t => t is FoodPile && t.mapObjectState == MAP_OBJECT_STATE.BUILT);
+            return storage.HasTileObjectThatBuiltFoodPile();
         }
         return false;
     }

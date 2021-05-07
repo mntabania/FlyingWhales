@@ -3,7 +3,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public class Quarantine : GoapAction {
     
     public Quarantine() : base(INTERACTION_TYPE.QUARANTINE) {
@@ -90,9 +90,9 @@ public class Quarantine : GoapAction {
             if (apothecaries != null) {
                 for (int i = 0; i < apothecaries.Count; i++) {
                     LocationStructure structure = apothecaries[i];
-                    List<BedClinic> beds = structure.GetTileObjectsOfType<BedClinic>(t => t.CanUseBed(targetCharacter));
-                    if (beds.Count > 0) {
-                        return beds.First();
+                    BedClinic bed = structure.GetFirstBedClinicThatCanBeUsedBy(targetCharacter);
+                    if (bed != null) {
+                        return bed;
                     }
                 }    
             }

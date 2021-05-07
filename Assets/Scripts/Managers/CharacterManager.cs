@@ -1099,6 +1099,13 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return false;
     }
+    public bool HasCharacterNotConversedInMinutes(Character character, int minutes) {
+        GameDate lastConversationDate = character.nonActionEventsComponent.lastConversationDate;
+        //add ticks (based on given minutes) to last conversation date. If resulting date is before today, then character
+        //has not conversed for the given amount of time.
+        return lastConversationDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(minutes))
+            .IsBefore(GameManager.Instance.Today());
+    }
     #endregion
 
     #region Character Portraits
