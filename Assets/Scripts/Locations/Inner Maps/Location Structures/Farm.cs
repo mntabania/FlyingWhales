@@ -26,8 +26,8 @@ namespace Inner_Maps.Location_Structures {
 
         private void OnHourStarted() {
             if(GameManager.Instance.currentTick == 120) { //6am
-                List<TileObject> tileObjects = ObjectPoolManager.Instance.CreateNewTileObjectList();
-                PopulateTileObjectsList(tileObjects, TILE_OBJECT_TYPE.CORN_CROP, t => t is CornCrop cornCrop && cornCrop.currentGrowthState != Crops.Growth_State.Ripe);
+                List<TileObject> tileObjects = RuinarchListPool<TileObject>.Claim();
+                PopulateCornCropsThatIsNotRipe(tileObjects);
                 int numOfCropsToRipen = GameUtilities.RandomBetweenTwoNumbers(2, 3);
                 for (int i = 0; i < numOfCropsToRipen; i++) {
                     if(tileObjects.Count > 0) {
@@ -39,6 +39,7 @@ namespace Inner_Maps.Location_Structures {
                         break;
                     }
                 }
+                RuinarchListPool<TileObject>.Release(tileObjects);
             }
         }
     }

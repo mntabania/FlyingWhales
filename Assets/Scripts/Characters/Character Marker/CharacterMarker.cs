@@ -1278,18 +1278,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
             knockedOutHairImg.gameObject.SetActive(false);
         }
     }
-    public List<Character> GetInVisionCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
-        List<Character> characters = null;
+    public void PopulateCharactersThatIsNotDeadVillagerAndNotConversedInMinutes(List<Character> characters, int minutes) {
         for (int i = 0; i < inVisionCharacters.Count; i++) {
             Character c = inVisionCharacters[i];
-            if (criteria.Invoke(c)) {
-                if (characters == null) {
-                    characters = new List<Character>();
-                }
+            if (CharacterManager.Instance.HasCharacterNotConversedInMinutes(c, minutes) && c.isNormalCharacter && !c.isDead) {
                 characters.Add(c);
             }
         }
-        return characters;
     }
     public bool IsStillInRange(IPointOfInterest poi) {
         //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)

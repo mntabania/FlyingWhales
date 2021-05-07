@@ -217,11 +217,21 @@ namespace Locations.Settlements {
             }
             return false;
         }
-        public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> criteria) {
+        public Character GetRandomCharacterThatIsVillagerAndNotSeizedOrCarriedAndNotTargetedByProduceFoodAndIsRestrainedAndNot(Character p_character) {
             Character chosenCharacter = null;
             for (int i = 0; i < allStructures.Count; i++) {
-                chosenCharacter = allStructures[i].GetRandomCharacterThatMeetCriteria(criteria);
+                chosenCharacter = allStructures[i].GetRandomCharacterThatIsVillagerAndNotSeizedOrCarriedAndNotTargetedByProduceFoodAndIsRestrainedAndNot(p_character);
                 if(chosenCharacter != null) {
+                    return chosenCharacter;
+                }
+            }
+            return chosenCharacter;
+        }
+        public Character GetRandomCharacterThatIsAliveVillagerAndNotSeizedOrCarriedAndNotTargetedByProduceFoodAndIsRestrainedAndNot(Character p_character) {
+            Character chosenCharacter = null;
+            for (int i = 0; i < allStructures.Count; i++) {
+                chosenCharacter = allStructures[i].GetRandomCharacterThatIsAliveVillagerAndNotSeizedOrCarriedAndNotTargetedByProduceFoodAndIsRestrainedAndNot(p_character);
+                if (chosenCharacter != null) {
                     return chosenCharacter;
                 }
             }
@@ -813,22 +823,6 @@ namespace Locations.Settlements {
             RuinarchListPool<Area>.Release(areaChoices);
             return chosenTileObject;
         }
-        public T GetRandomTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
-            List<T> objs = null;
-            for (int i = 0; i < allStructures.Count; i++) {
-                List<T> structureTileObjects = allStructures[i].GetTileObjectsOfType(validityChecker);
-                if (structureTileObjects != null && structureTileObjects.Count > 0) {
-                    if (objs == null) {
-                        objs = new List<T>();
-                    }
-                    objs.AddRange(structureTileObjects);
-                }
-            }
-            if (objs != null && objs.Count > 0) {
-                return objs[UnityEngine.Random.Range(0, objs.Count)];
-            }
-            return null;
-        }
         public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] type) where T : TileObject {
             for (int i = 0; i < allStructures.Count; i++) {
                 T obj = allStructures[i].GetFirstTileObjectOfType<T>(type);
@@ -838,27 +832,28 @@ namespace Locations.Settlements {
             }
             return null;
         }
-        public T GetFirstTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+        public T GetFirstTileObjectOfTypeThatIsAvailable<T>() where T : TileObject {
             for (int i = 0; i < allStructures.Count; i++) {
-                T structureTileObject = allStructures[i].GetFirstTileObjectOfTypeThatMeetCriteria(validityChecker);
+                T structureTileObject = allStructures[i].GetFirstTileObjectOfTypeThatIsAvailable<T>();
                 if (structureTileObject != null) {
                     return structureTileObject;
                 }
             }
             return null;
         }
-        public List<T> GetTileObjectsOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker = null) where T : TileObject {
-            List<T> objs = null;
+        public Bed GetFirstBuiltBedThatIsAvailableAndNoActiveUsers() {
             for (int i = 0; i < allStructures.Count; i++) {
-                List<T> structureTileObjects = allStructures[i].GetTileObjectsOfType(validityChecker);
-                if (structureTileObjects != null && structureTileObjects.Count > 0) {
-                    if (objs == null) {
-                        objs = new List<T>();
-                    }
-                    objs.AddRange(structureTileObjects);
+                Bed structureTileObject = allStructures[i].GetFirstBuiltBedThatIsAvailableAndNoActiveUsers();
+                if (structureTileObject != null) {
+                    return structureTileObject;
                 }
             }
-            return objs;
+            return null;
+        }
+        public void PopulateTileObjectsOfType<T>(List<T> objs) where T : TileObject {
+            for (int i = 0; i < allStructures.Count; i++) {
+                allStructures[i].PopulateTileObjectsOfType(objs);
+            }
         }
         public int GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE tileObjectType, System.Func<TileObject, bool> validityChecker) {
             int count = 0;

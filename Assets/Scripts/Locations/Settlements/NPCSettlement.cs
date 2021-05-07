@@ -1064,15 +1064,25 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             allStructures[i].PopulateTileObjectsThatAdvertise(p_objectList, types);
         }
     }
-    public List<T> PopulateTileObjectsFromStructures<T>(STRUCTURE_TYPE structureType, Func<T, bool> validityChecker = null) where T : TileObject {
-        List<T> objs = new List<T>();
+    public void PopulateTileObjectsFromStructures<T>(List<T> objs, STRUCTURE_TYPE structureType) where T : TileObject {
         if (HasStructure(structureType)) {
             List<LocationStructure> structureList = structures[structureType];
             for (int i = 0; i < structureList.Count; i++) {
-                objs.AddRange(structureList[i].GetTileObjectsOfType<T>(validityChecker));
+                structureList[i].PopulateTileObjectsOfType(objs);
             }
         }
-        return objs;
+    }
+    public T GetFirstTileObjectFromStructuresThatIsUntended<T>(STRUCTURE_TYPE structureType) where T : TileObject {
+        if (HasStructure(structureType)) {
+            List<LocationStructure> structureList = structures[structureType];
+            for (int i = 0; i < structureList.Count; i++) {
+                T obj = structureList[i].GetFirstTileObjectsOfTypeThatIsUntended<T>();
+                if (obj != null) {
+                    return obj;
+                }
+            }
+        }
+        return null;
     }
     #endregion
 

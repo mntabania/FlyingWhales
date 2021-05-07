@@ -329,38 +329,81 @@ namespace Inner_Maps.Location_Structures {
             }
             return count;
         }
-        public void PopulateCharacterListThatMeetCriteria(List<Character> characterList, System.Func<Character, bool> criteria) {
+        public void PopulateCharacterListThatIsWebbed(List<Character> characterList) {
             for (int i = 0; i < charactersHere.Count; i++) {
-                Character character = charactersHere[i];
-                if (criteria.Invoke(character)) {
-                    characterList.Add(character);
+                Character c = charactersHere[i];
+                if (c.traitContainer.HasTrait("Webbed")) {
+                    characterList.Add(c);
                 }
             }
         }
-        public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> criteria) {
-            List<Character> characters = ObjectPoolManager.Instance.CreateNewCharactersList();
+        public void PopulateCharacterListThatIsFrozenAndNotKobold(List<Character> characterList) {
             for (int i = 0; i < charactersHere.Count; i++) {
-                Character character = charactersHere[i];
-                if (criteria.Invoke(character)) {
-                    characters.Add(character);
+                Character c = charactersHere[i];
+                if (c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD) {
+                    characterList.Add(c);
+                }
+            }
+        }
+        public Character GetRandomCharacterThatCanBeRecruitedBy(Character p_recruiter) {
+            List<Character> characters = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character c = charactersHere[i];
+                if (c.behaviourComponent.CanCharacterBeRecruitedBy(p_recruiter)) {
+                    characters.Add(c);
                 }
             }
             Character chosen = null;
-            if(characters != null && characters.Count > 0) {
+            if(characters.Count > 0) {
                 chosen = characters[UnityEngine.Random.Range(0, characters.Count)];
             }
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(characters);
+            RuinarchListPool<Character>.Release(characters);
             return chosen;
         }
-        public int GetNumOfCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
-            int count = 0;
+        public Character GetRandomCharacterThatIsAliveCanPerformAndWitnessAndNotInCombatExcept(Character p_character) {
+            List<Character> characters = RuinarchListPool<Character>.Claim();
             for (int i = 0; i < charactersHere.Count; i++) {
-                Character character = charactersHere[i];
-                if (criteria.Invoke(character)) {
-                    count++;
+                Character c = charactersHere[i];
+                if (!c.combatComponent.isInCombat && c.limiterComponent.canPerform && c.limiterComponent.canWitness && !c.isDead && c != p_character) {
+                    characters.Add(c);
                 }
             }
-            return count;
+            Character chosen = null;
+            if (characters.Count > 0) {
+                chosen = characters[UnityEngine.Random.Range(0, characters.Count)];
+            }
+            RuinarchListPool<Character>.Release(characters);
+            return chosen;
+        }
+        public Character GetRandomCharacterThatIsVillagerAndNotSeizedOrCarriedAndNotTargetedByProduceFoodAndIsRestrainedAndNot(Character p_character) {
+            List<Character> characters = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character c = charactersHere[i];
+                if (p_character != c && c.isNormalCharacter && !c.isBeingSeized && c.isBeingCarriedBy == null && !c.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && c.traitContainer.HasTrait("Restrained")) {
+                    characters.Add(c);
+                }
+            }
+            Character chosen = null;
+            if (characters.Count > 0) {
+                chosen = characters[UnityEngine.Random.Range(0, characters.Count)];
+            }
+            RuinarchListPool<Character>.Release(characters);
+            return chosen;
+        }
+        public Character GetRandomCharacterThatIsAliveVillagerAndNotSeizedOrCarriedAndNotTargetedByProduceFoodAndIsRestrainedAndNot(Character p_character) {
+            List<Character> characters = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character c = charactersHere[i];
+                if (p_character != c && c.isNormalCharacter && !c.isBeingSeized && c.isBeingCarriedBy == null && !c.isDead && !c.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && c.traitContainer.HasTrait("Restrained")) {
+                    characters.Add(c);
+                }
+            }
+            Character chosen = null;
+            if (characters.Count > 0) {
+                chosen = characters[UnityEngine.Random.Range(0, characters.Count)];
+            }
+            RuinarchListPool<Character>.Release(characters);
+            return chosen;
         }
         #endregion
 
@@ -466,13 +509,11 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public bool HasTileObjectThatMeetCriteria(Func<TileObject, bool> criteria) {
+        public bool HasTileObjectThatBuiltFoodPile() {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is TileObject obj) {
-                    if (criteria.Invoke(obj)) {
-                        return true;
-                    }
+                if (poi is FoodPile t && t.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    return true;
                 }
             }
             return false;
@@ -503,50 +544,114 @@ namespace Inner_Maps.Location_Structures {
         //    }
         //    return objs;
         //}
-        public void PopulateTileObjectsList(List<TileObject> tileObjects, TILE_OBJECT_TYPE type, System.Func<TileObject, bool> validityChecker) {
-            if (groupedTileObjects.ContainsKey(type)) {
-                List<TileObject> objs = groupedTileObjects[type];
-                if(objs != null) {
+        public void PopulateCornCropsThatIsNotRipe(List<TileObject> tileObjects) {
+            if (groupedTileObjects.ContainsKey(TILE_OBJECT_TYPE.CORN_CROP)) {
+                List<TileObject> objs = groupedTileObjects[TILE_OBJECT_TYPE.CORN_CROP];
+                if (objs != null) {
                     for (int i = 0; i < objs.Count; i++) {
                         TileObject t = objs[i];
-                        if (validityChecker == null || validityChecker.Invoke(t)) {
+                        if (t is CornCrop cornCrop && cornCrop.currentGrowthState != Crops.Growth_State.Ripe) {
                             tileObjects.Add(t);
                         }
                     }
                 }
             }
         }
-        public List<T> GetTileObjectsOfType<T>(System.Func<T, bool> validityChecker = null) where T : TileObject {
-            List<T> objs = new List<T>();
+        public void PopulateTileObjectsOfType<T>(List<T> objs) where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T obj) {
-                    if (validityChecker != null) {
-                        if (validityChecker.Invoke(obj)) {
-                            objs.Add(obj);
-                        }
-                    } else {
-                        objs.Add(obj);
-                    }
+                if (poi is T t) {
+                    objs.Add(t);
                 }
             }
-            return objs;
         }
-        public T GetRandomTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
-            List<T> objs = null;
+        public void PopulateTileObjectsOfTypeThatAdvertisesEatAndHasTileLocation<T>(List<T> objs) where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T obj) {
-                    if (validityChecker.Invoke(obj)) {
-                        if (objs == null) { objs = new List<T>(); }
-                        objs.Add(obj);
+                if (poi is T t) {
+                    if (t.gridTileLocation != null && t.mapVisual && t.advertisedActions.Contains(INTERACTION_TYPE.EAT)) {
+                        objs.Add(t);
                     }
                 }
             }
-            if (objs != null && objs.Count > 0) {
-                return objs[UnityEngine.Random.Range(0, objs.Count)];
+        }
+        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein<T>(List<T> objs) where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t) {
+                    if (t.gridTileLocation != null) {
+                        int caveNeighbours = t.gridTileLocation.neighbourList.Count(o => o.tileObjectComponent.objHere is BlockWall);
+                        if (caveNeighbours == 2 || caveNeighbours == 5) {
+                            if (t.gridTileLocation.neighbourList.Count(o => o.structure is Wilderness) >= 3) {
+                                objs.Add(t);
+                            }
+                        }
+                    }
+                }
             }
-            return null;
+        }
+        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2<T>(List<T> objs) where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t) {
+                    if (t.gridTileLocation != null) {
+                        List<LocationGridTile> caveNeighbours = t.gridTileLocation.FourNeighbours().Where(o => o.tileObjectComponent.objHere is BlockWall).ToList();
+                        int wildernessNeighboursCount = t.gridTileLocation.FourNeighbours().Count(o => o.structure.structureType == STRUCTURE_TYPE.WILDERNESS);
+                        if (caveNeighbours.Count == 2 && wildernessNeighboursCount == 1) {
+                            GridNeighbourDirection[] directions = new GridNeighbourDirection[2];
+                            for (int j = 0; j < caveNeighbours.Count; j++) {
+                                LocationGridTile neighbour = caveNeighbours[j];
+                                t.gridTileLocation.TryGetNeighbourDirection(neighbour, out GridNeighbourDirection direction);
+                                directions[j] = direction;
+                            }
+                            if((directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) || (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
+                                   (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) || directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East) {
+                                objs.Add(t);
+                            }
+                        } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
+                            if(t.gridTileLocation.neighbourList.Count(o => o.tileObjectComponent.objHere is BlockWall) == 5 &&
+                                   t.gridTileLocation.neighbourList.Count(o => o.structure.structureType == STRUCTURE_TYPE.WILDERNESS) == 3) {
+                                objs.Add(t);
+                            }
+                        }
+                    }
+                }
+            }
+           
+        }
+        public T GetRandomTileObjectOfTypeThatHasTileLocation<T>() where T : TileObject {
+            List<T> objs = RuinarchListPool<T>.Claim();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t) {
+                    if (t.gridTileLocation != null) {
+                        objs.Add(t);
+                    }
+                }
+            }
+            T chosenObj = null;
+            if (objs.Count > 0) {
+                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)];
+            }
+            RuinarchListPool<T>.Release(objs);
+            return chosenObj;
+        }
+        public T GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuilt<T>() where T : TileObject {
+            List<T> objs = RuinarchListPool<T>.Claim();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t) {
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && t.gridTileLocation != null) {
+                        objs.Add(t);
+                    }
+                }
+            }
+            T chosenObj = null;
+            if (objs.Count > 0) {
+                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)];
+            }
+            RuinarchListPool<T>.Release(objs);
+            return chosenObj;
         }
         public T GetFirstTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -554,6 +659,61 @@ namespace Inner_Maps.Location_Structures {
                 if (poi is T obj) {
                     if (validityChecker.Invoke(obj)) {
                         return obj;
+                    }
+                }
+            }
+            return null;
+        }
+        public T GetFirstTileObjectOfTypeThatIsAvailable<T>() where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t) {
+                    if (t.IsAvailable()) {
+                        return t;
+                    }
+                }
+            }
+            return null;
+        }
+        public Bed GetFirstBuiltBedThatIsAvailableAndNoActiveUsers() {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is Bed t) {
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && t.IsAvailable() && t.GetActiveUserCount() == 0) {
+                        return t;
+                    }
+                }
+            }
+            return null;
+        }
+        public BedClinic GetFirstBedClinicThatCanBeUsedBy(Character p_character) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is BedClinic t) {
+                    if (t.CanUseBed(p_character)) {
+                        return t;
+                    }
+                }
+            }
+            return null;
+        }
+        public T GetFirstTileObjectOfTypeWithName<T>(string p_name) where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T obj) {
+                    if (obj.name == p_name) {
+                        return obj;
+                    }
+                }
+            }
+            return null;
+        }
+        public T GetFirstTileObjectsOfTypeThatIsUntended<T>() where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t) {
+                    if (t.traitContainer.HasTrait("Tended") == false && t.state == POI_STATE.ACTIVE) {
+                        return t;
                     }
                 }
             }

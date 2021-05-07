@@ -230,7 +230,8 @@ namespace Inner_Maps {
 			    (locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
 			    (locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure)));
             
-		    List<BlockWall> validWallsForOreVeins = elevationStructure.GetTileObjectsOfType<BlockWall>(IsBlockWallValidForOreVein);
+		    List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
+            elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins);
 		    
 		    var randomOreAmount = elevationStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
 		    for (int i = 0; i < randomOreAmount; i++) {
@@ -239,30 +240,31 @@ namespace Inner_Maps {
 			    CreateOreVeinAt(blockWall.gridTileLocation);
 			    validWallsForOreVeins.Remove(blockWall);
 		    }
-	    }
-        private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
-            if (p_blockWall.gridTileLocation != null) {
-                List<LocationGridTile> caveNeighbours = p_blockWall.gridTileLocation.FourNeighbours().Where(t => t.tileObjectComponent.objHere is BlockWall).ToList();
-                int wildernessNeighboursCount = p_blockWall.gridTileLocation.FourNeighbours().Count(t => t.structure.structureType == STRUCTURE_TYPE.WILDERNESS);
-                if (caveNeighbours.Count == 2 && wildernessNeighboursCount == 1) {
-                    GridNeighbourDirection[] directions = new GridNeighbourDirection[2];
-                    for (int i = 0; i < caveNeighbours.Count; i++) {
-                        LocationGridTile neighbour = caveNeighbours[i];
-                        p_blockWall.gridTileLocation.TryGetNeighbourDirection(neighbour, out GridNeighbourDirection direction);
-                        directions[i] = direction;
-                    }
-                    return (directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) || (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
-                           (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) || directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East;
-                } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
-                    return p_blockWall.gridTileLocation.neighbourList.Count(t => t.tileObjectComponent.objHere is BlockWall) == 5 && 
-                           p_blockWall.gridTileLocation.neighbourList.Count(t => t.structure.structureType == STRUCTURE_TYPE.WILDERNESS) == 3;
-                }
-                // if (caveNeighbours == 2 || caveNeighbours == 4) {
-                //     return p_blockWall.gridTileLocation.FourNeighbours().Count(t => t.structure is Wilderness) >= 1;	
-                // }
-            }
-            return false;
+            RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
         }
+        //private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
+        //    if (p_blockWall.gridTileLocation != null) {
+        //        List<LocationGridTile> caveNeighbours = p_blockWall.gridTileLocation.FourNeighbours().Where(t => t.tileObjectComponent.objHere is BlockWall).ToList();
+        //        int wildernessNeighboursCount = p_blockWall.gridTileLocation.FourNeighbours().Count(t => t.structure.structureType == STRUCTURE_TYPE.WILDERNESS);
+        //        if (caveNeighbours.Count == 2 && wildernessNeighboursCount == 1) {
+        //            GridNeighbourDirection[] directions = new GridNeighbourDirection[2];
+        //            for (int i = 0; i < caveNeighbours.Count; i++) {
+        //                LocationGridTile neighbour = caveNeighbours[i];
+        //                p_blockWall.gridTileLocation.TryGetNeighbourDirection(neighbour, out GridNeighbourDirection direction);
+        //                directions[i] = direction;
+        //            }
+        //            return (directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) || (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
+        //                   (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) || directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East;
+        //        } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
+        //            return p_blockWall.gridTileLocation.neighbourList.Count(t => t.tileObjectComponent.objHere is BlockWall) == 5 && 
+        //                   p_blockWall.gridTileLocation.neighbourList.Count(t => t.structure.structureType == STRUCTURE_TYPE.WILDERNESS) == 3;
+        //        }
+        //        // if (caveNeighbours == 2 || caveNeighbours == 4) {
+        //        //     return p_blockWall.gridTileLocation.FourNeighbours().Count(t => t.structure is Wilderness) >= 1;	
+        //        // }
+        //    }
+        //    return false;
+        //}
         private void CreateOreVeinAt(LocationGridTile tile) {
             if (tile != null) {
                 if (tile.tileObjectComponent.objHere != null) {

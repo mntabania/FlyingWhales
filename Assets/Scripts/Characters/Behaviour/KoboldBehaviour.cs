@@ -105,12 +105,17 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             //if none of the jobs above were created, check for food piles inside this character's home/territory,
             if (GameUtilities.RollChance(15)) {
                 Profiler.BeginSample($"Kobold Get Food Piles at Home");
-                List<FoodPile> foodPiles = GetFoodPilesAtHome(character);
+                List<FoodPile> foodPiles = RuinarchListPool<FoodPile>.Claim();
+                PopulateFoodPilesAtHome(foodPiles, character);
                 Profiler.EndSample();
-                if (foodPiles != null && foodPiles.Count > 0) {
+                FoodPile chosenPile = null;
+                if (foodPiles.Count > 0) {
+                    chosenPile = CollectionUtilities.GetRandomElement(foodPiles);
+                }
+                RuinarchListPool<FoodPile>.Release(foodPiles);
+                if (chosenPile != null) {
                     Profiler.BeginSample($"Kobold Monster Eat Job");
                     //if there are any, create job to eat a random food pile
-                    FoodPile chosenPile = CollectionUtilities.GetRandomElement(foodPiles);
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT, INTERACTION_TYPE.EAT, chosenPile, character);
                     producedJob = job;
                     log += $"\nFood Piles found, will eat {chosenPile}";
@@ -163,10 +168,10 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
     }
     private void PopulateFrozenCharactersInHome(List<Character> p_characterList, Character character) {
         if (character.homeSettlement?.mainStorage != null) {
-            character.homeSettlement.mainStorage.PopulateCharacterListThatMeetCriteria(p_characterList, x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD);
+            character.homeSettlement.mainStorage.PopulateCharacterListThatIsFrozenAndNotKobold(p_characterList);
             //return character.homeSettlement.mainStorage.charactersHere.Where(x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD).ToList();
         } else if (character.homeStructure != null) {
-            character.homeStructure.PopulateCharacterListThatMeetCriteria(p_characterList, x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD);
+            character.homeStructure.PopulateCharacterListThatIsFrozenAndNotKobold(p_characterList);
         } else if (character.HasTerritory()) {
             character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
         }
@@ -200,15 +205,13 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         //return null;
     }
 
-    private List<FoodPile> GetFoodPilesAtHome(Character character) {
+    private void PopulateFoodPilesAtHome(List<FoodPile> foodPiles, Character character) {
         if (character.homeSettlement != null) {
-            return character.homeSettlement.GetTileObjectsOfTypeThatMeetCriteria<FoodPile>(null);
+            character.homeSettlement.PopulateTileObjectsOfType(foodPiles);
         } else if (character.homeStructure != null) {
-            return character.homeStructure.GetTileObjectsOfType<FoodPile>();
+            character.homeStructure.PopulateTileObjectsOfType(foodPiles);
         } else if (character.HasTerritory()) {
-            List<FoodPile> foodPiles = character.territory.tileObjectComponent.GetTileObjectsInHexTile<FoodPile>();
-            return foodPiles;
+            character.territory.tileObjectComponent.PopulateTileObjectsInArea(foodPiles);
         }
-        return null;
     }
 }

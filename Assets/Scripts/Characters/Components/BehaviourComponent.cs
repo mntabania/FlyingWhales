@@ -8,7 +8,7 @@ using Locations.Settlements;
 using Pathfinding;
 using UnityEngine.Profiling;
 using UtilityScripts;
-
+using Traits;
 public class BehaviourComponent : CharacterComponent {
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
     public NPCSettlement attackVillageTarget { get; private set; }
@@ -953,6 +953,40 @@ public class BehaviourComponent : CharacterComponent {
         }
         producedJob = null;
         return false;
+    }
+    #endregion
+
+    #region Recruit
+    public bool CanCharacterBeRecruitedBy(Character recruiter) {
+        if (recruiter.faction == null || owner.faction == recruiter.faction
+            || owner.race == RACE.TRITON) {
+            //Tritons cannot be tamed/recruited
+            return false;
+        }
+        // if (targetCharacter.faction?.factionType.type == FACTION_TYPE.Undead) {
+        //     return false;
+        // }
+        if (!owner.traitContainer.HasTrait("Restrained")) {
+            return false;
+        }
+        if (owner.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {
+            return false;
+        }
+        if (!recruiter.faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(owner)) {
+            //Cannot recruit characters that does not fit faction ideologies
+            return false;
+        }
+        if (recruiter.faction.IsCharacterBannedFromJoining(owner)) {
+            //Cannot recruit banned characters
+            return false;
+        }
+        Prisoner prisoner = owner.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+        if (prisoner == null || !prisoner.IsFactionPrisonerOf(recruiter.faction)) {
+            //Only recruit characters that are prisoners of the recruiters faction.
+            //This was added because sometimes vampire lords will recruit their imprisoned blood sources
+            return false;
+        }
+        return true;
     }
     #endregion
 

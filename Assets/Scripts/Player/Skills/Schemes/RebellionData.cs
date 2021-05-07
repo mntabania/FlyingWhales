@@ -29,7 +29,7 @@ public class RebellionData : SchemeData {
         if (target is Character character) {
             bool isValid = base.IsValid(target);
             if (isValid) {
-                return character.faction != null && !character.isFactionLeader && character.isSettlementRuler && character.faction.HasOwnedSettlementThatMeetCriteria(s => s != character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead));
+                return character.faction != null && !character.isFactionLeader && character.isSettlementRuler && character.faction.HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(character);
             }
         }
         return false;

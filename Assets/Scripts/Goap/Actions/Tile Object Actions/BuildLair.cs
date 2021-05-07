@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-
+using UtilityScripts;
 public class BuildLair : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
@@ -90,13 +90,13 @@ public class BuildLair : GoapAction {
 
         structure.SetOccupiedArea(targetArea);
 
-        List<TileObject> walls = ObjectPoolManager.Instance.CreateNewTileObjectList();
-        structure.PopulateTileObjectsList(walls, TILE_OBJECT_TYPE.BLOCK_WALL, null);
+        List<BlockWall> walls = RuinarchListPool<BlockWall>.Claim();
+        structure.PopulateTileObjectsOfType(walls);
         for (int i = 0; i < walls.Count; i++) {
             TileObject blockWall = walls[i];
             blockWall.baseMapObjectVisual.ApplyGraphUpdate();
         }
-        ObjectPoolManager.Instance.ReturnTileObjectListToPool(walls);
+        RuinarchListPool<BlockWall>.Release(walls);
         targetArea.areaItem.UpdatePathfindingGraph();
         //targetHex.UpdatePathfindingGraphCoroutine();
 

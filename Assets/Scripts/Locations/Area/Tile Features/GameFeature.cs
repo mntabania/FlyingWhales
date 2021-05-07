@@ -120,7 +120,7 @@ namespace Locations.Area_Features {
         }
 
         private void SpawnNewAnimal() {
-            LocationGridTile chosenTile = owner.gridTileComponent.GetRandomTileThatMeetCriteria(x => x.IsPassable() && x.structure.structureType.IsOpenSpace());
+            LocationGridTile chosenTile = owner.gridTileComponent.GetRandomTileThatIsPassableAndOpenSpace();
             //Assert.IsTrue(choices.Count > 0, $"{owner} is trying to spawn an {animalTypeBeingSpawned.ToString()} but no valid tiles were found!");
             if(chosenTile != null) {
                 Animal newAnimal = CharacterManager.Instance.CreateNewSummon(animalTypeBeingSpawned, FactionManager.Instance.neutralFaction, homeRegion: owner.region) as Animal;

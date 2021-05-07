@@ -1723,12 +1723,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (chosenObject == null) {
             //if no owned items was found, check the items in character's home structure if he/she has one
             if (targetCharacter.homeStructure != null) {
-                List<TileObject> tileObjects = targetCharacter.homeStructure.GetTileObjectsOfType<TileObject>(
-                    item => item.gridTileLocation != null && item.mapVisual &&
-                            item.advertisedActions.Contains(INTERACTION_TYPE.EAT));
+                List<TileObject> tileObjects = RuinarchListPool<TileObject>.Claim();
+                targetCharacter.homeStructure.PopulateTileObjectsOfTypeThatAdvertisesEatAndHasTileLocation(tileObjects);
                 if (tileObjects.Count > 0) {
                     chosenObject = CollectionUtilities.GetRandomElement(tileObjects);
                 }
+                RuinarchListPool<TileObject>.Release(tileObjects);
             }
             if (chosenObject == null) {
                 targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " +
@@ -2462,9 +2462,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (owner.currentRegion != null) {
 		    MagicCircle magicCircle = null;
 		    if (owner.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE)) {
-			    List<MagicCircle> magicCircles = owner.currentRegion.GetTileObjectsOfType<MagicCircle>();
+                List<MagicCircle> magicCircles = RuinarchListPool<MagicCircle>.Claim(); 
+                owner.currentRegion.PopulateTileObjectsOfType(magicCircles);
 			    magicCircle = CollectionUtilities.GetRandomElement(magicCircles);
-		    } else {
+                RuinarchListPool<MagicCircle>.Release(magicCircles);
+            } else {
 			    MagicCircle newCircle = InnerMapManager.Instance.CreateNewTileObject<MagicCircle>(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
 			    List<LocationGridTile> choices = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).unoccupiedTiles.ToList();
 			    if (choices.Count > 0) {

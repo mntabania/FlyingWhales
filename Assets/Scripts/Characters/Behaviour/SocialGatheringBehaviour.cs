@@ -41,10 +41,7 @@ public class SocialGatheringBehaviour : CharacterBehaviourComponent {
                             hasJob = character.jobComponent.TriggerPlayCardsJob(tileObject as Desk, out producedJob);
                         }
                     } else if (roll >= 50 && roll < 70) {
-                        Character chosenCharacter = character.currentStructure.GetRandomCharacterThatMeetCriteria(
-                            x => !x.combatComponent.isInCombat && x.limiterComponent.canPerform && x.limiterComponent.canWitness && !x.isDead &&
-                                 x != character
-                        );
+                        Character chosenCharacter = character.currentStructure.GetRandomCharacterThatIsAliveCanPerformAndWitnessAndNotInCombatExcept(character);
                         if (chosenCharacter != null && character.nonActionEventsComponent.CanChat(chosenCharacter)) {
                             hasJob = character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenCharacter);
                         }

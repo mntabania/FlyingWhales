@@ -244,9 +244,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log = $"{log}\n  -RNG roll: {chance.ToString()}";
                     if (chance < 30 && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInArea() == false) {
                         Character chosenCharacter =
-                            character.GetDisabledCharacterToCheckOutThatMeetCriteria(c =>
-                                character.homeSettlement != null && c.currentSettlement != null && 
-                                c.currentSettlement == character.homeSettlement);
+                            character.GetDisabledCharacterToCheckOutThatHasIsInHomeSettlementOfThisCharacter();
                         if (chosenCharacter != null) {
                             if(chosenCharacter.homeStructure != null) {
                                 log = $"{log}\n  -Will visit house of Disabled Character {chosenCharacter.name}";

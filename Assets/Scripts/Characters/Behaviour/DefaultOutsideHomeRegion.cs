@@ -36,7 +36,7 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                         return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                     } else {
                         log += $"\n  -Otherwise: Drink";
-                        Table table = character.currentStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Table>(t => t.gridTileLocation != null);
+                        Table table = character.currentStructure.GetRandomTileObjectOfTypeThatHasTileLocation<Table>();
                         if(table != null) {
                             return character.jobComponent.TriggerDrinkJob(JOB_TYPE.IDLE, table, out producedJob);
                         } else {
@@ -100,7 +100,8 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                         } else {
                             log += $"\n  -Outside settlement";
                             Campfire chosenCampfire = null;
-                            List<Campfire> campfires = currentArea.tileObjectComponent.GetTileObjectsInHexTile<Campfire>();
+                            List<Campfire> campfires = RuinarchListPool<Campfire>.Claim();
+                            currentArea.tileObjectComponent.PopulateTileObjectsInArea(campfires);
                             if(campfires != null && campfires.Count > 0) {
                                 for (int i = 0; i < campfires.Count; i++) {
                                     Campfire campfire = campfires[i];
@@ -110,7 +111,8 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                                     }
                                 }
                             }
-                            if(chosenCampfire != null) {
+                            RuinarchListPool<Campfire>.Release(campfires);
+                            if (chosenCampfire != null) {
                                 log += $"\n  -Has available campfire within hex, warm up: " + chosenCampfire.nameWithID + ", 25% chance to roam around";
                                 int chance = UnityEngine.Random.Range(0, 100);
                                 log += $"\n  -RNG roll: {chance}";
