@@ -460,8 +460,10 @@ public class PlayerSkillComponent {
             //                      && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER
             //                      && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             // } else {
+            //filtered defiler because of this task:
+            //https://trello.com/c/Y91OZehr/4614-defiler-naka-unlock-sa-omnipotent
             shouldAddSpell = PlayerSkillManager.Instance.GetSkillData(data.skill) != null
-            && data.skill != PLAYER_SKILL_TYPE.OSTRACIZER && data.skill != PLAYER_SKILL_TYPE.SKELETON;
+            && data.skill != PLAYER_SKILL_TYPE.OSTRACIZER && data.skill != PLAYER_SKILL_TYPE.SKELETON && data.skill != PLAYER_SKILL_TYPE.DEFILER;
             // }
             if (shouldAddSpell) {
                 AddAndCategorizePlayerSkill(data.skill, false, true);
