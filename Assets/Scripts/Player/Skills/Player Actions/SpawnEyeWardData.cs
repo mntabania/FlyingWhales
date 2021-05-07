@@ -58,7 +58,6 @@ public class SpawnEyeWardData : PlayerAction {
             return false;
 		}
         if (beholder.eyeWards.Count >= beholder.GetCurrentMaxEyeCount()) {
-            Debug.LogError(beholder.eyeWards.Count + " -- " + beholder.GetCurrentMaxEyeCount());
             return false;
         }
         return true;
@@ -69,9 +68,7 @@ public class SpawnEyeWardData : PlayerAction {
         Snooper beholder = UIManager.Instance.structureInfoUI.activeStructure as Snooper;
         bool canPerform = true;
         if (canPerform) {
-            Debug.LogError(beholder.eyeWards.Count + " -- " + beholder.GetCurrentMaxEyeCount());
             if (beholder.eyeWards.Count >= beholder.GetCurrentMaxEyeCount()) {
-                Debug.LogError(beholder.eyeWards.Count + " -- " + beholder.GetCurrentMaxEyeCount());
                 return false;
             }
         }

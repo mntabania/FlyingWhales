@@ -31,6 +31,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Region _currentRegion;
     public LocationGridTile deathTilePosition { protected set; get; }
 
+    public BuffStatsBonus buffStatsBonus;
     public string persistentID { get; private set; }
     //visuals
     public CharacterVisuals visuals { get; }
@@ -259,6 +260,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
+        buffStatsBonus = new BuffStatsBonus();
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
@@ -274,6 +276,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
+        buffStatsBonus = new BuffStatsBonus();
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
@@ -326,7 +329,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitComponent = new CharacterTraitComponent(); traitComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-
+        buffStatsBonus = new BuffStatsBonus();
         needsComponent.ResetSleepTicks();
     }
     public Character(SaveDataCharacter data) {
@@ -6099,7 +6102,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent.LoadReferences(data.crimeComponent);
         previousCharacterDataComponent.LoadReferences(data.previousCharacterDataComponent);
         traitComponent.LoadReferences(data.traitComponent);
-
+        buffStatsBonus = new BuffStatsBonus();
+        buffStatsBonus.LoadReferences(data.buffStatusBonus);
         //Place marker after loading references
         if (data.hasMarker) {
             if (!marker) {

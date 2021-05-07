@@ -109,7 +109,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataPiercingAndResistancesComponent piercingAndResistancesComponent;
     public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
     public SaveDataCharacterTraitComponent traitComponent;
-
+    public SaveDataBuffStatsBonus buffStatusBonus;
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
     #endregion
@@ -185,6 +185,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         piercingAndResistancesComponent = new SaveDataPiercingAndResistancesComponent(); piercingAndResistancesComponent.Save(data.piercingAndResistancesComponent);
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
         traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
+        buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
 
         isInfoUnlocked = data.isInfoUnlocked;
 
