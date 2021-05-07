@@ -225,9 +225,13 @@ namespace Interrupts {
                             actor.logComponent.PrintLogIfActive(log);
                             return;
                         }
+                    } else {
+                        bool hasFoundNewVillage = FindNewVillageProcessing(actor, true, ref log);
+                        if (hasFoundNewVillage) {
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
                     }
-                } else {
-                    FindNewVillageProcessing(actor, true, ref log);
                 }
             } else {
                 log += "\nCharacter is not part of a village or habitable structure";
@@ -396,6 +400,10 @@ namespace Interrupts {
         }
         private bool FindNewVillageProcessing(Character actor, bool checkIfThereAreOtherFindVillageJob, ref string log) {
             log += "\nCreate a Found New Village Job";
+            if (actor.traitContainer.HasTrait("Enslaved")) {
+                log += "\nCharacter is Enslaved, do not find village";
+                return false;
+            }
             Area targetArea = actor.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
             if (targetArea != null) {
                 if (!checkIfThereAreOtherFindVillageJob || !FactionMemberAlreadyHasFindVillageJob(actor.faction)) {
