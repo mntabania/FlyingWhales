@@ -304,6 +304,7 @@ public class StructureInfoUI : InfoUIBase {
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         SetData(portal);
         OpenMenu();
+        activeStructure.CenterOnStructure();
     }
 
     private void OnReceiveKeyCodeSignal(KeyCode p_key) {
