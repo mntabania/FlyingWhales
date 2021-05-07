@@ -57,16 +57,14 @@ public class MinionListUI : PopupMenuBase {
     private void CreateNewActiveMinionItem(Minion minion) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(activeMinionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+        CharacterClassData summonData = CharacterManager.Instance.GetOrCreateCharacterClassData(minion.GetMinionClassName(minion.minionPlayerSkillType));
+        CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(summonData.combatBehaviourType);
         item.SetObject(minion.character);
         item.SetAsDefaultBehaviour();
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
-
-        if (TraitManager.Instance.allTraits.ContainsKey(minion.character.characterClass.traitNameOnTamedByPlayer)) {
-            Trait trait = TraitManager.Instance.allTraits[minion.character.characterClass.traitNameOnTamedByPlayer];
-            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, PlayerUI.Instance.minionListHoverPosition, trait.name));
-            item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
-        }
+        item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name));
+        item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());
     }
     private void CreateNewReserveMinionItem(PLAYER_SKILL_TYPE minionPlayerSkillType) {
         //Should no longer have reserve items
@@ -180,9 +178,11 @@ public class MinionListUI : PopupMenuBase {
                 UIManager.Instance.ShowSmallInfo(combatBehaviour.description, _hoverPosition, combatBehaviour.name);
             }
         }
+        PlayerUI.Instance.OnHoverSpellChargeRemaining(minionPlayerSkill, p_data);
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
     }
     private void OnHoverExitDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        Tooltip.Instance.HideSmallInfo();
         UIManager.Instance.HideSmallInfo();
         PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
