@@ -719,32 +719,32 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
-        public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] types) where T : TileObject {
-            //List<TileObject> objs = new List<TileObject>();
-            for (int i = 0; i < types.Length; i++) {
-                TILE_OBJECT_TYPE type = types[i];
-                if (groupedTileObjects.ContainsKey(type)) {
-                    List<TileObject> objs = groupedTileObjects[type];
-                    if (objs != null) {
-                        for (int j = 0; j < objs.Count; j++) {
-                            TileObject t = objs[j];
-                            if (t is T converted) {
-                                return converted;
-                            }
+        public T GetFirstTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+            if (groupedTileObjects.ContainsKey(type)) {
+                List<TileObject> objs = groupedTileObjects[type];
+                if (objs != null) {
+                    for (int j = 0; j < objs.Count; j++) {
+                        TileObject t = objs[j];
+                        if (t is T converted) {
+                            return converted;
                         }
                     }
                 }
             }
-            //for (int i = 0; i < pointsOfInterest.Count; i++) {
-            //    IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-            //    if (poi is TileObject) {
-            //        TileObject obj = poi as TileObject;
-            //        if (obj.tileObjectType == type) {
-            //            return obj as T;
-            //        }
-            //    }
-            //}
             return null;
+        }
+        public T GetFirstTileObjectOfType<T>(TILE_OBJECT_TYPE type1, TILE_OBJECT_TYPE type2, TILE_OBJECT_TYPE type3, TILE_OBJECT_TYPE type4) where T : TileObject {
+            T obj = GetFirstTileObjectOfType<T>(type1);
+            if (obj == null) {
+                obj = GetFirstTileObjectOfType<T>(type2);
+                if (obj == null) {
+                    obj = GetFirstTileObjectOfType<T>(type3);
+                    if (obj == null) {
+                        obj = GetFirstTileObjectOfType<T>(type4);
+                    }
+                }
+            }
+            return obj;
         }
         public T GetTileObjectOfType<T>() where T : TileObject {
             //List<TileObject> objs = new List<TileObject>();
@@ -756,72 +756,72 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
-        public bool AnyTileObjectsOfType<T>(TILE_OBJECT_TYPE tileObjectType, System.Func<T, bool> validityChecker = null) where T : TileObject {
+        public bool AnyBuiltTileObjectsOfType(TILE_OBJECT_TYPE tileObjectType) {
             if (groupedTileObjects.ContainsKey(tileObjectType)) {
                 List<TileObject> tileObjects = groupedTileObjects[tileObjectType];
-                if (validityChecker != null) {
-                    for (int i = 0; i < tileObjects.Count; i++) {
-                        TileObject tileObject = tileObjects[i];
-                        if (tileObject is T obj) {
-                            if (validityChecker.Invoke(obj)) {
-                                return true;
-                            }
-                        }
-
+                for (int i = 0; i < tileObjects.Count; i++) {
+                    TileObject t = tileObjects[i];
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                        return true;
                     }
-                } else {
-                    //if no validity checker was provided then check if count of tile objects is greater than 0.
-                    return tileObjects.Count > 0;
                 }
-
             }
             return false;
         }
-        public bool AnyTileObjectsOfType<T>(TILE_OBJECT_TYPE tileObjectType, out string log, System.Func<T, bool> validityChecker = null) where T : TileObject {
+        public bool AnyUnbuiltTileObjectsOfType(TILE_OBJECT_TYPE tileObjectType) {
+            if (groupedTileObjects.ContainsKey(tileObjectType)) {
+                List<TileObject> tileObjects = groupedTileObjects[tileObjectType];
+                for (int i = 0; i < tileObjects.Count; i++) {
+                    TileObject t = tileObjects[i];
+                    if (t.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public bool AnyBuiltTileObjectsOfTypeUnownedOrOwnedBy(TILE_OBJECT_TYPE tileObjectType, Character p_character1, Character p_character2, out string log) {
             log = $"Checking for tile objects of type {tileObjectType.ToString()} at {ToString()}";
             if (groupedTileObjects.ContainsKey(tileObjectType)) {
                 List<TileObject> tileObjects = groupedTileObjects[tileObjectType];
-                if (validityChecker != null) {
-                    log += $"\nFound {tileObjects.Count.ToString()}, checking validity...";
-                    for (int i = 0; i < tileObjects.Count; i++) {
-                        TileObject tileObject = tileObjects[i];
-                        if (tileObject is T obj) {
-                            log += $"\nChecking validity of {obj.nameWithID}";
-                            if (validityChecker.Invoke(obj)) {
-                                log += $"\n{obj.nameWithID} is valid! Returning true!";
-                                return true;
-                            } else {
-                                log += $"\n{obj.nameWithID} is not valid! Map Object State {obj.mapObjectState.ToString()}. Character Owner {obj.characterOwner?.name}";
-                            }
-                        }
-
+                log += $"\nFound {tileObjects.Count}, checking validity...";
+                for (int i = 0; i < tileObjects.Count; i++) {
+                    TileObject t = tileObjects[i];
+                    log += $"\nChecking validity of {t.nameWithID}";
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && (t.characterOwner == null || t.characterOwner == p_character1 || t.characterOwner == p_character2)) {
+                        log += $"\n{t.nameWithID} is valid! Returning true!";
+                        return true;
+                    } else {
+                        log += $"\n{t.nameWithID} is not valid! Map Object State {t.mapObjectState.ToString()}. Character Owner {t.characterOwner?.name}";
                     }
-                } else {
-                    //if no validity checker was provided then check if count of tile objects is greater than 0.
-                    return tileObjects.Count > 0;
+
                 }
             }
             return false;
         }
-        public int GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE type, Func<TileObject, bool> criteria) {
+        public int GetNumberOfTileObjects(TILE_OBJECT_TYPE type) {
             if (groupedTileObjects.ContainsKey(type)) {
                 List<TileObject> tileObjects = groupedTileObjects[type];
                 if (tileObjects != null) {
-                    if (criteria == null) {
-                        return tileObjects.Count;
-                    } else {
-                        int count = 0;
-                        for (int i = 0; i < tileObjects.Count; i++) {
-                            TileObject t = tileObjects[i];
-                            if (criteria.Invoke(t)) {
-                                count++;
-                            }
-                        }
-                        return count;
-                    }
-                } 
+                    return tileObjects.Count;
+                }
             }
             return 0;
+        }
+        public int GetNumberOfBuiltTileObjects(TILE_OBJECT_TYPE type) {
+            int count = 0;
+            if (groupedTileObjects.ContainsKey(type)) {
+                List<TileObject> tileObjects = groupedTileObjects[type];
+                if (tileObjects != null) {
+                    for (int i = 0; i < tileObjects.Count; i++) {
+                        TileObject t = tileObjects[i];
+                        if (t.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                            count++;
+                        }
+                    }
+                }
+            }
+            return count;
         }
         public T GetResourcePileObjectWithLowestCount<T>(bool excludeMaximum = true) where T : ResourcePile {
             T chosenPile = null;

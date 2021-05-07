@@ -166,10 +166,10 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
         int eggCount = 0;
         if (character.homeSettlement != null) {
             residentCount = character.homeSettlement.residents.Count(x => x.isDead == false && x.race == character.race); //&& (x is GiantSpider || x is SmallSpider))
-            eggCount = character.homeSettlement.GetNumberOfTileObjectsThatMeetCriteria(eggType, null);
+            eggCount = character.homeSettlement.GetNumberOfTileObjects(eggType);
         } else if (character.homeStructure != null) {
             residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
-            eggCount = character.homeStructure.GetNumberOfTileObjectsThatMeetCriteria(eggType, null);
+            eggCount = character.homeStructure.GetNumberOfTileObjects(eggType);
         } else if (character.HasTerritory()) {
             residentCount = character.homeRegion.GetCountOfAliveCharacterWithSameTerritory(character);
             eggCount = character.territory.tileObjectComponent.GetNumberOfTileObjectsInHexTile(eggType);
