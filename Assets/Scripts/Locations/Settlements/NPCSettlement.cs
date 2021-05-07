@@ -653,8 +653,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
             if (!character.isDead && character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(this)
             && owner.IsHostileWith(character.faction) 
-            && character.traitContainer.HasTrait("Restrained") == false
-            && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
+            && !character.traitContainer.HasTrait("Restrained")
+            && character.combatComponent.combatMode != COMBAT_MODE.Passive
+            && !character.traitContainer.HasTrait("Enslaved")) {
                 hostileCharacters.Add(character);
             }
         }
