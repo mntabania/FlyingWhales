@@ -120,8 +120,8 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         return character.jobComponent.TriggerRoamAroundTile(out producedJob);
     }
     private bool HasResidentFromSameHomeThatIsNotDeadAndEnslaved(Character character) {
-        List<Character> residents = null;
-        bool hasBorrowedList = PopulateResidentsFromSameHome(residents, character);
+        List<Character> residents;
+        bool hasBorrowedList = PopulateResidentsFromSameHome(out residents, character);
         bool decision = true;
         if (residents != null) {
             decision = false;
@@ -142,8 +142,8 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         return decision;
     }
     private bool HasResidentFromSameHomeThatHasMonsterAbductJob(Character character) {
-        List<Character> residents = null;
-        bool hasBorrowedList = PopulateResidentsFromSameHome(residents, character);
+        List<Character> residents;
+        bool hasBorrowedList = PopulateResidentsFromSameHome(out residents, character);
         bool decision = true;
         if (residents != null) {
             decision = false;
@@ -164,8 +164,8 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         return decision;
     }
     private bool HasResidentFromSameHomeThatHasTortureOrMonsterButcherJob(Character character) {
-        List<Character> residents = null;
-        bool hasBorrowedList = PopulateResidentsFromSameHome(residents, character);
+        List<Character> residents;
+        bool hasBorrowedList = PopulateResidentsFromSameHome(out residents, character);
         bool decision = true;
         if (residents != null) {
             decision = false;
@@ -187,8 +187,9 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
     }
 
     //Returns true if has borrowed list from the pool
-    private bool PopulateResidentsFromSameHome(List<Character> residents, Character character) {
+    private bool PopulateResidentsFromSameHome(out List<Character> residents, Character character) {
         bool hasBorrowedList = false;
+        residents = null;
         if (character.homeSettlement != null) {
             residents = character.homeSettlement.residents;
         } else if (character.homeStructure != null) {
