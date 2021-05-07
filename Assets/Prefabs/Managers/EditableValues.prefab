@@ -61,7 +61,7 @@ MonoBehaviour:
   _triggerFlawManaCost: 25
   _buildStructureManaCost: 8
   _chaosOrbExpulsionThresholdFromRaid: 400
-  _chaosOrbExpulsionThreshold: 500
+  _chaosOrbExpulsionThreshold: 700
   _sortingOrdersInBetweenHexTileRows: 20
   currencyHoverData: {fileID: 11400000, guid: 4554e545483287347a940b31691f1945, type: 2}
   _initialChaoticEnergyCustom: 50
