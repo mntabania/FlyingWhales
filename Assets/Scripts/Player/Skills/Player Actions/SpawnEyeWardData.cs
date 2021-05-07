@@ -58,7 +58,6 @@ public class SpawnEyeWardData : PlayerAction {
             return false;
 		}
         if (beholder.eyeWards.Count >= beholder.GetCurrentMaxEyeCount()) {
-            Debug.LogError(beholder.eyeWards.Count + " -- " + beholder.GetCurrentMaxEyeCount());
             return false;
         }
         return true;
