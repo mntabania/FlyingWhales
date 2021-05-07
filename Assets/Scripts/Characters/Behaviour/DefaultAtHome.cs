@@ -372,13 +372,11 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log = $"{log}\n{character.name} has a lover {lover.name}.";
             }
             //get built un owned beds or beds owned by this characters lover.
-            if (!character.currentStructure.AnyTileObjectsOfType<Bed>(TILE_OBJECT_TYPE.BED, out var objectLog, bed => 
-                bed.mapObjectState == MAP_OBJECT_STATE.BUILT && (bed.characterOwner == null || bed.characterOwner == character || (lover != null && bed.characterOwner == lover)))) {
+            if (!character.currentStructure.AnyBuiltTileObjectsOfTypeUnownedOrOwnedBy(TILE_OBJECT_TYPE.BED, character, lover, out var objectLog)) { //bed => bed.mapObjectState == MAP_OBJECT_STATE.BUILT && (bed.characterOwner == null || bed.characterOwner == character || (lover != null && bed.characterOwner == lover)))
                 //if there are none, check if there are any unbuilt beds (Means there is an active job at the structure)
                 //if there are no unbuilt beds then the character can create a craft missing bed job.
                 log = log + objectLog;
-                return !character.currentStructure.AnyTileObjectsOfType<Bed>(TILE_OBJECT_TYPE.BED,
-                    bed => bed.mapObjectState == MAP_OBJECT_STATE.UNBUILT);
+                return !character.currentStructure.AnyUnbuiltTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             } else {
                 //do not create craft bed since character found an unowned bed or a bed that is owned by his/her lover
                 log = log + objectLog;
@@ -390,10 +388,9 @@ public class DefaultAtHome : CharacterBehaviourComponent {
     private bool CanCreateCraftMissingTableJob(Character character) {
         if (character.currentStructure is Wilderness == false) {
             //check if there are any built tables at structure
-            if (!character.currentStructure.AnyTileObjectsOfType<Table>(TILE_OBJECT_TYPE.TABLE, table => table.mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+            if (!character.currentStructure.AnyBuiltTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)) {
                 //if none, then check if there are any unbuilt tables at structure, if there are none, then allow job creation
-                return !character.currentStructure.AnyTileObjectsOfType<Table>(TILE_OBJECT_TYPE.TABLE,
-                    table => table.mapObjectState == MAP_OBJECT_STATE.UNBUILT);
+                return !character.currentStructure.AnyUnbuiltTileObjectsOfType(TILE_OBJECT_TYPE.TABLE);
             } else {
                 //do not create craft table since character found a built table
                 return false;

@@ -823,11 +823,20 @@ namespace Locations.Settlements {
             RuinarchListPool<Area>.Release(areaChoices);
             return chosenTileObject;
         }
-        public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] type) where T : TileObject {
+        public T GetFirstTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
             for (int i = 0; i < allStructures.Count; i++) {
                 T obj = allStructures[i].GetFirstTileObjectOfType<T>(type);
+                if (obj != null) {
+                    return obj;
+                }
+            }
+            return null;
+        }
+        public T GetFirstTileObjectOfType<T>(TILE_OBJECT_TYPE type1, TILE_OBJECT_TYPE type2, TILE_OBJECT_TYPE type3, TILE_OBJECT_TYPE type4) where T : TileObject {
+            for (int i = 0; i < allStructures.Count; i++) {
+                T obj = allStructures[i].GetFirstTileObjectOfType<T>(type1, type2, type3, type4);
                 if(obj != null) {
-                    return obj as T;
+                    return obj;
                 }
             }
             return null;
@@ -855,10 +864,10 @@ namespace Locations.Settlements {
                 allStructures[i].PopulateTileObjectsOfType(objs);
             }
         }
-        public int GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE tileObjectType, System.Func<TileObject, bool> validityChecker) {
+        public int GetNumberOfTileObjects(TILE_OBJECT_TYPE tileObjectType) {
             int count = 0;
             for (int i = 0; i < allStructures.Count; i++) {
-                count += allStructures[i].GetNumberOfTileObjectsThatMeetCriteria(tileObjectType, validityChecker);
+                count += allStructures[i].GetNumberOfTileObjects(tileObjectType);
             }
             return count;
         }
