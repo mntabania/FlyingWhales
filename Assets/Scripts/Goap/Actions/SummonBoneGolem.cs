@@ -103,10 +103,10 @@ public class SummonBoneGolem : GoapAction {
                                 targetCorpse.grave.SetRespawnCorpseOnDestroy(false);
                                 targetCorpse.grave.gridTileLocation.structure.RemovePOI(targetCorpse.grave);
                             } else {
+                                targetCorpse.DestroyMarker();
                                 if (targetCorpse.currentRegion != null) {
                                     targetCorpse.currentRegion.RemoveCharacterFromLocation(targetCorpse);
                                 }
-                                targetCorpse.DestroyMarker();
                             }
                         }
                     }

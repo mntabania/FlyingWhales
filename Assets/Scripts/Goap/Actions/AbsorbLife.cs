@@ -56,10 +56,10 @@ public class AbsorbLife : GoapAction {
     public void AfterAbsorbSuccess(ActualGoapNode goapNode) {
         goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(2);
         if(goapNode.poiTarget is Character targetCharacter) {
-            if(targetCharacter.currentRegion != null) {
+            targetCharacter.DestroyMarker();
+            if (targetCharacter.currentRegion != null) {
                 targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
             }
-            targetCharacter.DestroyMarker();
         }
     }
     #endregion

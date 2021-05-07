@@ -753,10 +753,10 @@ public class CharacterManager : BaseMonoBehaviour {
             PlaceSummonInitially(summon, tile);
             //summon.CreateMarker();
             //summon.InitialCharacterPlacement(tile);
+            target.DestroyMarker();
             if (target.currentRegion != null) {
                 target.currentRegion.RemoveCharacterFromLocation(target);
             }
-            target.DestroyMarker();
             onRaisedFromDeadAction?.Invoke(target);
             AddNewLimboCharacter(target);
             RemoveCharacter(target);

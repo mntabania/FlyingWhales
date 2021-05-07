@@ -115,6 +115,9 @@ public class Summon : Character {
             Character carrier = isBeingCarriedBy;
             carrier?.UncarryPOI(this);
 
+            if (hasMarker) {
+                marker.OnDeath(deathTilePosition);
+            }
             if (destroyMarkerOnDeath) {
                 //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
                 if (currentRegion != null) {
@@ -153,10 +156,6 @@ public class Summon : Character {
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this as Character);
             eventDispatcher.ExecuteCharacterDied(this);
-            
-            if (hasMarker) {
-                marker.OnDeath(deathTilePosition);    
-            }
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 

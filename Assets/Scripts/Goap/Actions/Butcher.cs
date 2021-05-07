@@ -398,10 +398,10 @@ public class Butcher : GoapAction {
                 character.grave.SetRespawnCorpseOnDestroy(false);
                 character.grave.gridTileLocation.structure.RemovePOI(character.grave);
             } else {
+                character.DestroyMarker();
                 if (character.currentRegion != null) {
                     character.currentRegion.RemoveCharacterFromLocation(character);
                 }
-                character.DestroyMarker();    
             }
         }
 

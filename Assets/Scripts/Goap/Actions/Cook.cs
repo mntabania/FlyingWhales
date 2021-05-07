@@ -140,11 +140,11 @@ public class Cook : GoapAction {
         if(goapNode.poiTarget is Character targetCharacter) {
             goapNode.actor.UncarryPOI(addToLocation: false);
             if (targetCharacter.isDead) {
-                if (targetCharacter.currentRegion != null) {
-                    targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
-                }
                 if (targetCharacter.hasMarker) {
                     targetCharacter.DestroyMarker();
+                }
+                if (targetCharacter.currentRegion != null) {
+                    targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
                 }
             } else {
                 targetCharacter.SetDestroyMarkerOnDeath(true);

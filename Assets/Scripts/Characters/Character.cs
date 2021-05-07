@@ -713,8 +713,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void DestroyMarker(LocationGridTile destroyedAt = null, bool removeFromMasterList = true) {
         if (destroyedAt == null) {
-            gridTileLocation?.RemoveCharacterHere(this);
-            gridTileLocation?.structure.RemoveCharacterAtLocation(this);
+            LocationGridTile gridTile = gridTileLocation;
+            gridTile?.RemoveCharacterHere(this);
+            gridTile?.structure.RemoveCharacterAtLocation(this);
         } else {
             destroyedAt.RemoveCharacterHere(this);
             destroyedAt.structure.RemoveCharacterAtLocation(this);
@@ -5731,6 +5732,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             // if (_role != null) {
             //     _role.OnDeath(this);
             // }
+            marker?.OnDeath(deathTilePosition);
+
             if (destroyMarkerOnDeath) {
                 //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
                 if(currentRegion != null) {
@@ -5783,7 +5786,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetHP(0);
             currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
 
-            marker?.OnDeath(deathTilePosition);
 
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();

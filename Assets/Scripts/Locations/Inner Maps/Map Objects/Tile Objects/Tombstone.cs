@@ -89,20 +89,20 @@ public class Tombstone : TileObject {
                 character.SetGrave(null);
                 character.jobComponent.TriggerBuryMe();
             } else {
-                if (character.currentRegion != null) {
-                    character.currentRegion.RemoveCharacterFromLocation(character);
-                }
                 if (character.marker) {
                     character.DestroyMarker();
+                }
+                if (character.currentRegion != null) {
+                    character.currentRegion.RemoveCharacterFromLocation(character);
                 }
                 character.SetGrave(null);
             }
         } else {
             character.SetGrave(null);
+            character.DestroyMarker();
             if (character.currentRegion != null) {
                 character.currentRegion.RemoveCharacterFromLocation(character);
             }
-            character.DestroyMarker();
         }
         Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
