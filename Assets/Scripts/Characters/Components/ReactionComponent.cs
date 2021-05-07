@@ -568,6 +568,24 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\nActor is part if player faction and target has been abducted by player faction, did not trigger Fight or Flight response.";
                         return;
                     }
+                    if (disguisedActor is Kobold kobold) {
+                        if (kobold.currentJob != null && kobold.currentJob.jobType == JOB_TYPE.CAPTURE_CHARACTER && kobold.currentJob.poiTarget == targetCharacter) {
+                            debugLog = $"{debugLog}\nActor is kobold and {targetCharacter.name} is target of capture character";
+                            return;    
+                        }
+                        if (targetCharacter.gridTileLocation != null) {
+                            bool isTargetAtHomeOfKobold = false;
+                            if (kobold.homeStructure != null) {
+                                isTargetAtHomeOfKobold = targetCharacter.currentStructure == kobold.homeStructure;
+                            } else if (kobold.territory != null) {
+                                isTargetAtHomeOfKobold = targetCharacter.areaLocation == kobold.territory;
+                            }
+                            if (isTargetAtHomeOfKobold && !targetCharacter.limiterComponent.canMove) {
+                                debugLog = $"{debugLog}\nActor is kobold and {targetCharacter.name} is at home of kobold and cannot move.";
+                                return;    
+                            }
+                        }
+                    }
                     // //NOTE: Added checking for webbed so that spiders won't attack characters that they've webbed up
                     // if (disguisedActor.race == RACE.SPIDER && targetCharacter.traitContainer.HasTrait("Webbed")) {
                     //     debugLog = $"{debugLog}\nActor is a spider and target is webbed, did not trigger Fight or Flight response.";
