@@ -24,10 +24,10 @@ namespace Traits {
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
-                character.buffStatsBonus.originalAttack = (int)(character.combatComponent.attack * ((int)PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
+                character.buffStatsBonus.originalAttack = (int)(character.combatComponent.unModifiedAttack * ((int)PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
                 character.combatComponent.AdjustAttackModifier(character.buffStatsBonus.originalAttack);
 
-                character.buffStatsBonus.originalHP = ((int)(character.maxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100)));
+                character.buffStatsBonus.originalHP = ((int)(character.combatComponent.unModifiedMaxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100)));
                 character.combatComponent.AdjustMaxHPModifier(character.buffStatsBonus.originalHP);
             }
         }

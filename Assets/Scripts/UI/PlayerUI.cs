@@ -161,16 +161,20 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_GAINED_SPELL, OnGainSpell);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_LOST_SPELL, OnLostSpell);
         Messenger.AddListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.AddListener<MonsterAndDemonUnderlingCharges>(PlayerSkillSignals.ON_FINISH_UNDERLING_COOLDOWN, OnFinishUnderlingCoolDown);
         AdjustUIDisplayBaseOnGameMode();
         
     }
 
+    void OnFinishUnderlingCoolDown(MonsterAndDemonUnderlingCharges p_playerUnderlingComponent) {
+        string rawString = p_playerUnderlingComponent.characterClassName;
+        rawString += " is now available";
+        PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_playerUnderlingComponent.characterClassName)} is now available", popUpDisplayPoint, rawString.Length);
+    }
+
     void OnSpellCooldownFinished(SkillData p_skillData) {
         string rawString = p_skillData.name;
-        if (p_skillData.category == PLAYER_SKILL_CATEGORY.MINION) {
-            rawString += " is now available";
-            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} is now available", popUpDisplayPoint, rawString.Length);
-        } else { 
+        if (p_skillData.category != PLAYER_SKILL_CATEGORY.MINION && p_skillData.category != PLAYER_SKILL_CATEGORY.SUMMON) {
             rawString += " charge replenished by 1";
             PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} charge replenished by 1", popUpDisplayPoint, rawString.Length);
         }
@@ -634,7 +638,14 @@ public class PlayerUI : BaseMonoBehaviour {
     public void OnHoverSpell(SkillData skillData, UIHoverPosition position = null) {
         skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position);
     }
+    public void OnHoverSpellChargeRemaining(SkillData skillData) {
+        if (skillData.isInCooldown) {
+            Tooltip.Instance.ShowSmallInfo(skillData.name + " skill will be available at", autoReplaceText: false);
+        }
+    }
+
     public void OnHoverOutSpell(SkillData skillData) {
+        
         skillDetailsTooltip.HidePlayerSkillDetails();
     }
     #endregion
