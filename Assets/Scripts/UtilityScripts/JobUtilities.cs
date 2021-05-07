@@ -198,15 +198,15 @@ namespace UtilityScripts {
                     FishingShack fishingShack = fishingShacks[i] as FishingShack;
                     job.AddPriorityLocation(INTERACTION_TYPE.NONE, fishingShack.connectedOcean);
                     //needed to add areas of fishing spots, since oceans do not have location awareness added to them based on LocationAwarenessUtility.AddToAwarenessList
-                    List<TileObject> fishingSpots = RuinarchListPool<TileObject>.Claim();
-                    fishingShack.connectedOcean.PopulateTileObjectsList(fishingSpots, TILE_OBJECT_TYPE.FISHING_SPOT, null);
+                    List<FishingSpot> fishingSpots = RuinarchListPool<FishingSpot>.Claim();
+                    fishingShack.connectedOcean.PopulateTileObjectsOfType<FishingSpot>(fishingSpots);
                     for (int j = 0; j < fishingSpots.Count; j++) {
                         TileObject spot = fishingSpots[j];
                         if (spot.gridTileLocation != null) {
                             job.AddPriorityLocation(INTERACTION_TYPE.NONE, spot.gridTileLocation.area);
                         }
                     }
-                    RuinarchListPool<TileObject>.Release(fishingSpots);
+                    RuinarchListPool<FishingSpot>.Release(fishingSpots);
                 }
             }
             if (hunterLodge != null) {
