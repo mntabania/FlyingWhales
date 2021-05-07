@@ -13,11 +13,11 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
     public string GetDescription() {
         if (m_targetBeholder != null) {
             if (m_targetBeholder.GetRadiusLevel() >= 3) {
-                return "Increase the radius of each eyeward of this Beholder";
+                return "Increase the radius of each Demon Eye of this Snooper";
             }
             return $"Spend {EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_targetBeholder.GetRadiusLevel()).GetCostStringWithIcon()} to increase radius by 1.";
         } else {
-            return "Increase the radius of each eyeward of this Beholder";
+            return "Increase the radius of each Demon Eye of this Snooper";
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure target) {
@@ -47,7 +47,7 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
         m_targetBeholder = structure as Snooper;
         if (m_targetBeholder.GetRadiusLevel() >= 3) {
-            reasons += $"Beholder Radius already max level\n";
+            reasons += $"Snooper Radius already max level\n";
             return reasons;
         }
         if (PlayerManager.Instance.player.chaoticEnergy < EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_targetBeholder.GetRadiusLevel()).amount) {

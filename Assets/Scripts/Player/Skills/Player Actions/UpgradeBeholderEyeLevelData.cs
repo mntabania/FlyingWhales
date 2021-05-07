@@ -14,11 +14,11 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
     public string GetDescription() {
         if (m_targetBeholder != null) {
             if (m_targetBeholder.GetEyeLevel() >= 3) {
-                return "Increase the number of eyes Capacity of this Beholder";
+                return "Increase the number of Demon Eye capacity of this Snooper";
             }
-            return $"Spend {EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).GetCostStringWithIcon()} to increase maximum Eye count by 1.";
+            return $"Spend {EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).GetCostStringWithIcon()} to increase maximum Demon Eye count by 1.";
         } else {
-            return "Increase the number of eyes Capacity of this Beholder";
+            return "Increase the number of Demon Eye capacity of this Snooper";
         }
     }
 

@@ -18,13 +18,13 @@ namespace Inner_Maps.Location_Structures {
         public override string extraInfo2Header => $"Radius: Lv{m_radiusLevel+1}";
         public override string extraInfo2Description => $"{m_eyeWardRadius*2}x{m_eyeWardRadius*2}";
         #region getters
-        public override System.Type serializedData => typeof(SaveDataBeholder);
+        public override System.Type serializedData => typeof(SaveDataSnooper);
         #endregion
         public Snooper(Region location) : base(STRUCTURE_TYPE.SNOOPER, location){
             SetMaxHPAndReset(2500);
             eyeWards = new List<DemonEye>();
         }
-        public Snooper(Region location, SaveDataBeholder data) : base(location, data) {
+        public Snooper(Region location, SaveDataSnooper data) : base(location, data) {
             eyeWards = new List<DemonEye>();
         }
 
@@ -113,6 +113,7 @@ namespace Inner_Maps.Location_Structures {
         public bool RemoveEyeWard(DemonEye p_eyeWard) {
             if (eyeWards.Remove(p_eyeWard)) {
                 //broadcast signal
+                p_eyeWard.SetBeholderOwner(null);
                 Messenger.Broadcast(StructureSignals.UPDATE_EYE_WARDS, this);
                 return true;
             }
@@ -137,7 +138,7 @@ namespace Inner_Maps.Location_Structures {
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
-            SaveDataBeholder data = saveDataLocationStructure as SaveDataBeholder;
+            SaveDataSnooper data = saveDataLocationStructure as SaveDataSnooper;
             if(data.eyeWards != null) {
                 for (int i = 0; i < data.eyeWards.Count; i++) {
                     if (!string.IsNullOrEmpty(data.eyeWards[i])) {
@@ -173,7 +174,7 @@ namespace Inner_Maps.Location_Structures {
     }
 }
 
-public class SaveDataBeholder : SaveDataDemonicStructure {
+public class SaveDataSnooper : SaveDataDemonicStructure {
     public List<string> eyeWards;
     public int eyesLevel;
     public int radiusLevel;
