@@ -32,7 +32,7 @@ public class RumorComponent : CharacterComponent {
         if (_negativeInfoPool.Count == 0) {
             return null;
         }
-        List<ActualGoapNode> filteredInfo = new List<ActualGoapNode>();
+        List<ActualGoapNode> filteredInfo = RuinarchListPool<ActualGoapNode>.Claim();
         for (int i = 0; i < _negativeInfoPool.Count; i++) {
             ActualGoapNode node = _negativeInfoPool[i];
             if(node.descriptionLog != null) {
@@ -41,8 +41,9 @@ public class RumorComponent : CharacterComponent {
                 }
             }
         }
+        ActualGoapNode chosen = null;
         if(filteredInfo.Count > 0) {
-            return CollectionUtilities.GetRandomElement(filteredInfo);
+            chosen = CollectionUtilities.GetRandomElement(filteredInfo);
         }
         //_negativeInfoPool.Clear();
         // for (int i = 0; i < owner.logComponent.history.Count; i++) {
@@ -55,7 +56,8 @@ public class RumorComponent : CharacterComponent {
         //         }
         //     }
         // }
-        return null;
+        RuinarchListPool<ActualGoapNode>.Release(filteredInfo);
+        return chosen;
     }
     public void AddAssumedWitnessedOrInformedNegativeInfo(ActualGoapNode node) {
         if (!_negativeInfoPool.Contains(node)) {
@@ -268,7 +270,11 @@ public class RumorComponent : CharacterComponent {
         for (int i = 0; i < data.negativeInfoIDs.Count; i++) {
             string id = data.negativeInfoIDs[i];
             ActualGoapNode node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(id);
-            _negativeInfoPool.Add(node);
+            if (node.actor == null || node.poiTarget == null) {
+                //Do not add negative info if actor or target is no longer in the world or does not exist
+            } else {
+                _negativeInfoPool.Add(node);
+            }
         }
     }
     #endregion
