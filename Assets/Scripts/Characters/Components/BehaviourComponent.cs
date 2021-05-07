@@ -1046,7 +1046,8 @@ public class BehaviourComponent : CharacterComponent {
         }
     }
     private void OnCharacterAttacked(Character p_hitCharacter, Character p_attacker) {
-        if (!owner.combatComponent.isInCombat && owner.limiterComponent.canMove && owner.limiterComponent.canPerform && p_hitCharacter != owner &&
+        if (!owner.combatComponent.isInCombat && owner.limiterComponent.canMove && owner.limiterComponent.canPerform && p_hitCharacter != owner && 
+            p_hitCharacter.gridTileLocation != null && p_hitCharacter.gridTileLocation.corruptionComponent.isCorrupted &&
             p_hitCharacter.partyComponent.currentParty != null && owner.partyComponent.currentParty != null &&
             p_hitCharacter.partyComponent.currentParty == owner.partyComponent.currentParty && 
             (owner.currentActionNode == null || owner.currentActionNode.action.goapType != INTERACTION_TYPE.ASSAULT)) {
