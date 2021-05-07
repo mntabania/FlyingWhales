@@ -1361,6 +1361,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         hasChangedTargetDestination = data.hasChangedTargetDestination;
         perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         if(data.partySettlement == null) {
+#if UNITY_EDITOR
             string log = "Saving Party Error, No Party Settlement!";
             log += "\nName: " + data.partyName;
             log += "\nFaction: " + data.partyFaction?.name;
@@ -1380,10 +1381,11 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
             log += "\nResting Tavern: " + data.targetRestingTavern?.name;
             log += "\nCamp: " + data.targetCamp?.name;
             Debug.LogError(log);
+#endif
         } else {
             partySettlement = data.partySettlement.persistentID;
         }
-        partyFaction = data.partyFaction.persistentID;
+        partyFaction = data.partyFaction?.persistentID;
 
         //hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;

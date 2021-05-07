@@ -160,7 +160,7 @@ public class BehaviourComponent : CharacterComponent {
     private bool RemoveBehaviourComponent(CharacterBehaviourComponent component) {
         bool wasRemoved = currentBehaviourComponents.Remove(component);
         if (wasRemoved) {
-            // Debug.Log($"{owner.name} removed character behaviour {component}");
+            Debug.Log($"{owner.name} removed character behaviour {component}");
             component.OnRemoveBehaviourFromCharacter(owner);
             Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
         }
@@ -1059,6 +1059,33 @@ public class BehaviourComponent : CharacterComponent {
                 CharacterBehaviourComponent component = CharacterManager.Instance.GetCharacterBehaviourComponent(System.Type.GetType(behaviourStr));
                 component.OnLoadBehaviourToCharacter(owner);
             }    
+        }
+    }
+    #endregion
+
+    #region Demonic Defender
+    public void OnBecomeDemonicDefender() {
+        Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnCharacterHitDemonicStructure);
+        Messenger.AddListener<Character, Character>(CharacterSignals.CHARACTER_WAS_HIT, OnCharacterAttacked);
+    }
+    public void OnNoLongerDemonicDefender() {
+        Messenger.RemoveListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnCharacterHitDemonicStructure);
+        Messenger.RemoveListener<Character, Character>(CharacterSignals.CHARACTER_WAS_HIT, OnCharacterAttacked);
+    }
+    private void OnCharacterHitDemonicStructure(Character p_attacker, DemonicStructure p_demonicStructure) {
+        if (!owner.combatComponent.isInCombat && owner.limiterComponent.canMove && owner.limiterComponent.canPerform && 
+            (owner.currentActionNode == null || owner.currentActionNode.action.goapType != INTERACTION_TYPE.ASSAULT)) {
+            //if defender is not currently in combat and a demonic structure was hit, attack the character that hit it.
+            owner.combatComponent.Fight(p_attacker, CombatManager.Defending_Home, null, true);
+        }
+    }
+    private void OnCharacterAttacked(Character p_hitCharacter, Character p_attacker) {
+        if (!owner.combatComponent.isInCombat && owner.limiterComponent.canMove && owner.limiterComponent.canPerform && p_hitCharacter != owner &&
+            p_hitCharacter.partyComponent.currentParty != null && owner.partyComponent.currentParty != null &&
+            p_hitCharacter.partyComponent.currentParty == owner.partyComponent.currentParty && 
+            (owner.currentActionNode == null || owner.currentActionNode.action.goapType != INTERACTION_TYPE.ASSAULT)) {
+            //if defender is not currently in combat and a party member was hit, attack the character that hit it.
+            owner.combatComponent.Fight(p_attacker, CombatManager.Defending_Home, null, true);
         }
     }
     #endregion

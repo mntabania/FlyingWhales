@@ -199,7 +199,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         newTileObject.RevalidateTileObjectSlots();
         if (structureType == STRUCTURE_TYPE.IMP_HUT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.BEHOLDER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT) {
+        } else if (structureType == STRUCTURE_TYPE.SNOOPER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SNOOPER_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);    
         } else if (structureType == STRUCTURE_TYPE.BIOLAB && newTileObject.tileObjectType == TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT) {
             structure.AddObjectAsDamageContributor(newTileObject);    

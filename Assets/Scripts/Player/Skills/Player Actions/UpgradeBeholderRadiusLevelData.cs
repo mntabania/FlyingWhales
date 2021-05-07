@@ -9,7 +9,7 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
     public override string name => "Increase Radius";
     public override string description => GetDescription();
 
-    private Beholder m_targetBeholder;
+    private Snooper m_targetBeholder;
     public string GetDescription() {
         if (m_targetBeholder != null) {
             if (m_targetBeholder.GetRadiusLevel() >= 3) {
@@ -22,7 +22,7 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
     }
     public override bool CanPerformAbilityTowards(LocationStructure target) {
         bool canPerform = false;
-        m_targetBeholder = target as Beholder;
+        m_targetBeholder = target as Snooper;
         if (m_targetBeholder.GetRadiusLevel() < 3) {
             canPerform = true;
         } else {
@@ -38,14 +38,14 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
         return base.CanPerformAbilityTowards(target) && canPerform;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Beholder) {
+        if (target is Snooper) {
             return true;
         }
         return false;
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
-        m_targetBeholder = structure as Beholder;
+        m_targetBeholder = structure as Snooper;
         if (m_targetBeholder.GetRadiusLevel() >= 3) {
             reasons += $"Beholder Radius already max level\n";
             return reasons;
@@ -64,7 +64,7 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        (structure as Beholder).LevelUpRadius();
+        (structure as Snooper).LevelUpRadius();
         base.ActivateAbility(structure);
     }
     #endregion

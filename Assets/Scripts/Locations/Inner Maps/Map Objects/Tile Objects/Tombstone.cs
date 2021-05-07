@@ -38,7 +38,7 @@ public class Tombstone : TileObject {
         SaveDataTombstone saveDataTombstone = data as SaveDataTombstone;
         Assert.IsNotNull(saveDataTombstone);
         character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTombstone.characterID);
-        if (character.race.IsSapient()) {
+        if (character != null && character.race.IsSapient()) {
             AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
         }
     }

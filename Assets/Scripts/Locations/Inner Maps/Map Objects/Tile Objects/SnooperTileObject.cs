@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class BeholderTileObject : TileObject {
+public class SnooperTileObject : TileObject {
     
     public override Vector2 selectableSize => new Vector2(3f,4f);
     public override Vector3 worldPosition => mapVisual.visionTrigger.transform.position;
     public override Vector3 attackRangePosition => GetAttackRangePosForDemonicStructureTileObject();
 
-    public BeholderTileObject() {
-        Initialize(TILE_OBJECT_TYPE.BEHOLDER_TILE_OBJECT);
+    public SnooperTileObject() {
+        Initialize(TILE_OBJECT_TYPE.SNOOPER_TILE_OBJECT);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public BeholderTileObject(SaveDataTileObject data) {
+    public SnooperTileObject(SaveDataTileObject data) {
         
     }
     public override bool CanBeSelected() {

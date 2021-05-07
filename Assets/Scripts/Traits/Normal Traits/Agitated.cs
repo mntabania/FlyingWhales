@@ -5,9 +5,6 @@ using Random = UnityEngine.Random;
 
 namespace Traits {
     public class Agitated : Status {
-
-        private float m_addedAtk = 0f;
-        private float m_addedMaxHP = 0f;
         public override bool isSingleton => true;
         
         public Agitated() {
@@ -27,11 +24,11 @@ namespace Traits {
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
-                m_addedAtk = PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
-                character.combatComponent.AddAttackBaseOnPercentage(m_addedAtk / 100f);
+                character.buffStatsBonus.originalAttack = (int)(character.combatComponent.attack * ((int)PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
+                character.combatComponent.AdjustAttackModifier(character.buffStatsBonus.originalAttack);
 
-                float m_addedMaxHP = character.maxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100);
-                character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP);
+                character.buffStatsBonus.originalHP = ((int)(character.maxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100)));
+                character.combatComponent.AdjustMaxHPModifier(character.buffStatsBonus.originalHP);
             }
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
@@ -50,9 +47,9 @@ namespace Traits {
                         character.marker.UnberserkedMarker();
                     }
                 }
-                character.combatComponent.AdjustMaxHPModifier((int)m_addedMaxHP * -1);
-                character.combatComponent.SubtractAttackBaseOnPercentage(m_addedAtk);
-                m_addedAtk = 0f;
+                character.combatComponent.AdjustMaxHPModifier(-character.buffStatsBonus.originalHP);
+                character.combatComponent.AdjustAttackModifier(-character.buffStatsBonus.originalAttack);
+                character.buffStatsBonus.Reset();
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
