@@ -49,11 +49,12 @@ public class IgniteData : PlayerAction {
         Trait trait = null;
         //int duration = TraitManager.Instance.allTraits["Burning"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.IGNITE);
         int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.IGNITE);
-        if (traitable.traitContainer.AddTrait(traitable, "Burning", out trait, bypassElementalChance: true, 
-            overrideDuration: duration)) {
+        if (traitable.traitContainer.AddTrait(traitable, "Burning", out trait, bypassElementalChance: true, overrideDuration: duration)) {
             Burning burning = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
-            burning.SetIsPlayerSource(true);
-            TraitManager.Instance.ProcessBurningTrait(traitable, trait, ref bs);
+            if (burning != null) {
+                burning.SetIsPlayerSource(true);
+                TraitManager.Instance.ProcessBurningTrait(traitable, trait, ref bs);    
+            }
         }
     }
 }
