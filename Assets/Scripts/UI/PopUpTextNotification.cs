@@ -26,15 +26,20 @@ public static class PopUpTextNotification
         PopUpparent.gameObject.SetActive(true);
         m_mono.StopAllCoroutines();
         m_popupText.text = p_message;
-        m_parentGO.rectTransform.sizeDelta = new Vector2(p_stringCount * 10, m_parentGO.rectTransform.sizeDelta.y);
         Vector3 pos = PopUpparent.transform.position;
         if (p_startingPosition != null) {
             pos = PopUpparent.transform.position = p_startingPosition.transform.position;
         }
+        m_mono.StartCoroutine(EnvelopText());
         m_mono.StartCoroutine(Move(pos));
     }
-
+    static IEnumerator EnvelopText() {
+        yield return null;
+        m_parentGO.rectTransform.sizeDelta = m_popupText.rectTransform.sizeDelta;//new Vector2(p_stringCount * 10, m_parentGO.rectTransform.sizeDelta.y);
+        yield return null;
+    }
     static IEnumerator Move(Vector3 p_targetPos) {
+        yield return null;
         p_targetPos.y += 40;
         float timer = 0f;
         while (timer < 2f) {
@@ -42,7 +47,7 @@ public static class PopUpTextNotification
             PopUpparent.transform.position = Vector3.MoveTowards(PopUpparent.transform.position, p_targetPos, 120f * Time.deltaTime);
             yield return 0;
         }
-        m_popupText.text = string.Empty;
+        // m_popupText.text = string.Empty;
         PopUpparent.gameObject.SetActive(false);
     }
 }
