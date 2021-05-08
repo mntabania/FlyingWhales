@@ -327,8 +327,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         buffStatsBonus = new BuffStatsBonus();
         needsComponent.ResetSleepTicks();
-
-        destroyMarkerOnDeath = true;
     }
     public Character(SaveDataCharacter data) {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -729,7 +727,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (removeFromMasterList) {
             //In order to lessen the all character list (because it will keep on expanding), once character's body is destroyed, remove it from the master list
-            CharacterManager.Instance.RemoveCharacter(this);
+            //CharacterManager.Instance.RemoveCharacter(this);
         }
     }
     public void DisableMarker() {
