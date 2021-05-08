@@ -61,15 +61,15 @@ public class SummonListUI : PopupMenuBase {
     private void CreateNewActiveSummonItem(Summon summon) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(activeSummonItemPrefab.name, Vector3.zero, Quaternion.identity, summonListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
-        CharacterClassData summonData = CharacterManager.Instance.GetOrCreateCharacterClassData(summon.characterClass.className);
-        CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(summonData.combatBehaviourType);
+        //CharacterClassData summonData = CharacterManager.Instance.GetOrCreateCharacterClassData(summon.characterClass.className);
+        //CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(summonData.combatBehaviourType);
         item.SetObject(summon);
         item.SetAsDefaultBehaviour();
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
         
-        item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name));
-        item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
+        item.AddHoverEnterAction(data => OnHoverEnterActiveSummon(data));
+        item.AddHoverExitAction(OnHoverExitActiveSummon);    
         // if (!string.IsNullOrEmpty(summon.bredBehaviour) && TraitManager.Instance.allTraits.ContainsKey(summon.bredBehaviour)) {
         //     Trait trait = TraitManager.Instance.allTraits[summon.bredBehaviour];
         //     item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
@@ -121,6 +121,15 @@ public class SummonListUI : PopupMenuBase {
             }
         }
         return null;
+    }
+    private void OnHoverEnterActiveSummon(Character p_character) {
+        CharacterCombatBehaviour combatBehaviour = p_character.combatComponent.combatBehaviourParent.currentCombatBehaviour;
+        if (combatBehaviour != null) {
+            UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
+        }
+    }
+    private void OnHoverExitActiveSummon(Character p_character) {
+        UIManager.Instance.HideSmallInfo();
     }
 
     #region Listeners

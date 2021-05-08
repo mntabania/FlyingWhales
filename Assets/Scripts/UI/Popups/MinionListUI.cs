@@ -57,14 +57,14 @@ public class MinionListUI : PopupMenuBase {
     private void CreateNewActiveMinionItem(Minion minion) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(activeMinionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
-        CharacterClassData summonData = CharacterManager.Instance.GetOrCreateCharacterClassData(minion.GetMinionClassName(minion.minionPlayerSkillType));
-        CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(summonData.combatBehaviourType);
+        //CharacterClassData summonData = CharacterManager.Instance.GetOrCreateCharacterClassData(minion.GetMinionClassName(minion.minionPlayerSkillType));
+        //CharacterCombatBehaviour combatBehaviour = minion.character.combatComponent.combatBehaviourParent.currentCombatBehaviour;
         item.SetObject(minion.character);
         item.SetAsDefaultBehaviour();
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
-        item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name));
-        item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());
+        item.AddHoverEnterAction(data => OnHoverEnterActiveMinion(data));
+        item.AddHoverExitAction(OnHoverExitActiveMinion);
     }
     private void CreateNewReserveMinionItem(PLAYER_SKILL_TYPE minionPlayerSkillType) {
         //Should no longer have reserve items
@@ -119,6 +119,15 @@ public class MinionListUI : PopupMenuBase {
         if (minionListToggle.isOn) {
             minionListToggle.isOn = false;
         }
+    }
+    private void OnHoverEnterActiveMinion(Character p_character) {
+        CharacterCombatBehaviour combatBehaviour = p_character.combatComponent.combatBehaviourParent.currentCombatBehaviour;
+        if (combatBehaviour != null) {
+            UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
+        }
+    }
+    private void OnHoverExitActiveMinion(Character p_character) {
+        UIManager.Instance.HideSmallInfo();
     }
 
     #region Monster Underlings
