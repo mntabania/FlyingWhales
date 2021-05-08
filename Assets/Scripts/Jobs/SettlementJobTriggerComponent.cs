@@ -689,7 +689,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		Debug.Log(summary);
 	}
 	private void TryCreateRestrainJobs(Character target) {
-		if (CanCreateRestrainJob() && target.faction.IsHostileWith(_owner.owner) && target.limiterComponent.canPerform && target.limiterComponent.canMove && !target.traitContainer.HasTrait("Restrained")) {
+		if (CanCreateRestrainJob() && target.faction.IsHostileWith(_owner.owner) && target.limiterComponent.canPerform && 
+		    target.limiterComponent.canMove && !target.traitContainer.HasTrait("Restrained") && !target.traitContainer.HasTrait("Enslaved")) {
 			int combatantResidents = 
 				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
 			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.RESTRAIN);

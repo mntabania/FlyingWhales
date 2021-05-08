@@ -252,8 +252,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_summonList.Add(item);
-				item.SetInteractableState(PlayerManager.Instance.player.mana >= item.summonCost
-					&& CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClassName).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower
+				item.SetInteractableState(CharacterManager.Instance.GetOrCreateCharacterClassData(entry.Value.characterClassName).combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.Tower
 					&& entry.Value.currentCharges > 0);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);
@@ -287,6 +286,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
 				CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
 				UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_maraudUIView.UIModel.hoverPosition, combatBehaviour.name);
+			}
+			if (!p_monsterAndDemonUnderlingCharges.isDemon && p_monsterAndDemonUnderlingCharges.isReplenishing) {
+				PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(data, p_monsterAndDemonUnderlingCharges);
+			} else if(p_monsterAndDemonUnderlingCharges.isDemon && p_monsterAndDemonUnderlingCharges.isReplenishing){
+				SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType); 
+				PlayerUI.Instance.OnHoverSpellChargeRemaining(skillData, p_monsterAndDemonUnderlingCharges);
 			}
 			/*
 			if (p_monsterAndDemonUnderlingCharges.isDemon) {
@@ -364,7 +369,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_minionList.Add(item);
-				bool canDoAbility = skillData.CanPerformAbility();
+				bool canDoAbility = true;// skillData.CanPerformAbility();
 				item.SetInteractableState(canDoAbility);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);

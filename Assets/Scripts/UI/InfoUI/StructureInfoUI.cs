@@ -305,7 +305,7 @@ public class StructureInfoUI : InfoUIBase {
             return;
         }
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
-        if (portal != null) {
+        if(portal != null) {
             SetData(portal);
             OpenMenu();
             activeStructure.CenterOnStructure();

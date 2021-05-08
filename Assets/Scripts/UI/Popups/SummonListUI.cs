@@ -61,11 +61,15 @@ public class SummonListUI : PopupMenuBase {
     private void CreateNewActiveSummonItem(Summon summon) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(activeSummonItemPrefab.name, Vector3.zero, Quaternion.identity, summonListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+        CharacterClassData summonData = CharacterManager.Instance.GetOrCreateCharacterClassData(summon.characterClass.className);
+        CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(summonData.combatBehaviourType);
         item.SetObject(summon);
         item.SetAsDefaultBehaviour();
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
-
+        
+        item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name));
+        item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         // if (!string.IsNullOrEmpty(summon.bredBehaviour) && TraitManager.Instance.allTraits.ContainsKey(summon.bredBehaviour)) {
         //     Trait trait = TraitManager.Instance.allTraits[summon.bredBehaviour];
         //     item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
@@ -164,9 +168,23 @@ public class SummonListUI : PopupMenuBase {
         MonsterUnderlingQuantityNameplateItem item = go.GetComponent<MonsterUnderlingQuantityNameplateItem>();
         item.SetObject(p_underlingCharges);
         item.SetAsDisplayOnly();
+        item.AddHoverEnterAction(OnHoverEnterDemonUnderlingData);
+        item.AddHoverExitAction(OnHoverExitDemonUnderlingData);
         go.SetActive(p_underlingCharges.hasMaxCharge);
         _monsterUnderlingQuantityNameplateItems.Add(item);
         return item;
+    }
+    private void OnHoverEnterDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_data.characterClassName);
+        CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(cData.combatBehaviourType);
+        UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
+        PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(cData, p_data);
+        //PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(summonPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
+    }
+    private void OnHoverExitDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        Tooltip.Instance.HideSmallInfo();
+        UIManager.Instance.HideSmallInfo();
+        //PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     private MonsterUnderlingQuantityNameplateItem GetMonsterUnderlingQuantityNameplateItem(MonsterAndDemonUnderlingCharges p_underlingCharges) {
         for (int i = 0; i < _monsterUnderlingQuantityNameplateItems.Count; i++) {
@@ -195,10 +213,12 @@ public class SummonListUI : PopupMenuBase {
     }
     #endregion
 
-    private void OnHoverEnterReserveSummon(SkillData spellData) {
+    private void OnHoverEnterReserveSummon(SkillData spellData, MonsterAndDemonUnderlingCharges m_underling) {
+        PlayerUI.Instance.OnHoverSpellChargeRemaining(spellData, m_underling);
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData);
     }
     private void OnHoverExitReserveSummon(SkillData spellData) {
+        Tooltip.Instance.HideSmallInfo();
         PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     public void ToggleSummonList(bool isOn) {
