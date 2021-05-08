@@ -173,14 +173,16 @@ namespace Traits {
                     }
                 } else if (item.tileObjectType == TILE_OBJECT_TYPE.HERB_PLANT) {
                     HerbPlantProcessing(characterThatWillDoJob, item);
-                } else if (characterThatWillDoJob.partyComponent.hasParty) {
-                    if (characterThatWillDoJob.partyComponent.currentParty.isActive && characterThatWillDoJob.partyComponent.currentParty.currentQuest is HeirloomHuntPartyQuest quest) {
-                        if (quest.targetHeirloom == item) {
-                            quest.SetFoundHeirloom(true);
-                            characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM_PARTY, quest.targetHeirloom, quest.targetHeirloom.structureSpot, true);
-                        }
-                    }
-                } else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
+                } 
+                //else if (characterThatWillDoJob.partyComponent.hasParty) {
+                //    if (characterThatWillDoJob.partyComponent.currentParty.isActive && characterThatWillDoJob.partyComponent.currentParty.currentQuest is HeirloomHuntPartyQuest quest) {
+                //        if (quest.targetHeirloom == item) {
+                //            quest.SetFoundHeirloom(true);
+                //            characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM_PARTY, quest.targetHeirloom, quest.targetHeirloom.structureSpot, true);
+                //        }
+                //    }
+                //}
+                else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
                     bool wasReportJobCreated = false;
                     if (!PlayerManager.Instance.player.retaliationComponent.isRetaliating &&
                         characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
@@ -190,9 +192,9 @@ namespace Traits {
                          (characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && 
                           !(characterThatWillDoJob.partyComponent.currentParty.currentQuest is IRescuePartyQuest))) && 
                         (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
-                        if (characterThatWillDoJob.faction != null && characterThatWillDoJob.faction.isMajorNonPlayer && 
-                            !characterThatWillDoJob.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && 
-                            !characterThatWillDoJob.faction.HasActiveReportDemonicStructureJob(demonicStructure)) {
+                        if (characterThatWillDoJob.faction != null && characterThatWillDoJob.faction.isMajorNonPlayer) {
+                            //!characterThatWillDoJob.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) - Removed checking because characters no longer create counter attack quests
+                            //&& !characterThatWillDoJob.faction.HasActiveReportDemonicStructureJob(demonicStructure) - Removed checking because we now allow characters to create multiple report jobs
                             wasReportJobCreated = characterThatWillDoJob.jobComponent.CreateReportDemonicStructure(demonicStructure);
                             if (wasReportJobCreated) {
                                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "structure_discovered", null, LOG_TAG.Player, LOG_TAG.Major);

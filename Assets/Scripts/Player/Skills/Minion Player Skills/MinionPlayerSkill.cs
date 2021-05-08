@@ -17,8 +17,8 @@ public class MinionPlayerSkill : SkillData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         Minion minion = CharacterManager.Instance.CreateNewMinion(className, RACE.DEMON, false);
         //minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
-        minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
+        minion.Summon(targetTile);
         BaseSettlement settlement = null;
         if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE && targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN) {
             minion.character.MigrateHomeStructureTo(targetTile.structure);
@@ -32,8 +32,8 @@ public class MinionPlayerSkill : SkillData {
         Minion minion = CharacterManager.Instance.CreateNewMinion(className, RACE.DEMON, false);
         //minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
         //PlayerManager.Instance.player.AddMinion(minion);
-        minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
+        minion.Summon(targetTile);
         spawnedCharacter = minion.character;
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }

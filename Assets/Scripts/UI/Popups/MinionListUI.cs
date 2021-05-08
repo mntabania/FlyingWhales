@@ -45,9 +45,6 @@ public class MinionListUI : PopupMenuBase {
                 CreateNewActiveMinionItem(character.minion);
             }
         }
-        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count; i++) {
-            
-        }
     }
     private void UpdateMinionPlayerSkillItems() {
         for (int i = 0; i < _minionItems.Count; i++) {
