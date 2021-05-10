@@ -107,6 +107,7 @@ public class WorldSettingsData {
         worldType = World_Type.Oona;
         SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
         SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Small);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
@@ -120,6 +121,7 @@ public class WorldSettingsData {
         worldType = World_Type.Icalawa;
         SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
         SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Small);
         mapSettings.BlockMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
@@ -133,6 +135,7 @@ public class WorldSettingsData {
         worldType = World_Type.Pangat_Loo;
         SetVictoryCondition(VICTORY_CONDITION.Wipe_Out_Village_On_Day);
         SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Medium);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockNewVillages();
@@ -147,6 +150,7 @@ public class WorldSettingsData {
         SetVictoryCondition(VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans);
         SetDefaultSpellSettings();
         villageSettings.SetMigrationSpeed(MIGRATION_SPEED.Slow);
+        mapSettings.SetMapSize(MAP_SIZE.Large);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockVillagerMigrationForFactionType(FACTION_TYPE.Human_Empire);
@@ -161,6 +165,7 @@ public class WorldSettingsData {
         worldType = World_Type.Zenko;
         SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
         SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Large);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockNewVillages();
@@ -174,6 +179,7 @@ public class WorldSettingsData {
         worldType = World_Type.Aneem;
         SetVictoryCondition(VICTORY_CONDITION.Kill_By_Plague);
         SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Large);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();

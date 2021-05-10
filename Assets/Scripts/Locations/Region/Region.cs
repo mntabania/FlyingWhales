@@ -608,7 +608,7 @@ public class Region : ISavable, ILogFiller {
                 count++;
             }
         }
-        return count >= LandmarkManager.REGION_VILLAGE_CAPACITY;
+        return count >= WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillagesDuringPlay();
     }
     #endregion
 

@@ -102,6 +102,20 @@ public class MapSettings {
                 throw new ArgumentOutOfRangeException();
         }
     }
+    public int GetMaxVillagesDuringPlay() {
+        switch (mapSize) {
+            case MAP_SIZE.Small:
+                return 2;
+            case MAP_SIZE.Medium:
+                return 4;
+            case MAP_SIZE.Large:
+                return 6;
+            case MAP_SIZE.Extra_Large:
+                return 8;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
 
     #region Monster Migrations
     public void AllowMonsterMigrations() {
