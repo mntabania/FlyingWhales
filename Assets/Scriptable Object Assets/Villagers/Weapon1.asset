@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
+  m_Name: Weapon1
+  m_EditorClassIdentifier: 
+  resourceType: 3
+  resourceAmount: 50
+  purchaseCost: 100
+  tier: 1
+  description: This is weapon 1
+  imgIcon: {fileID: 21300000, guid: e71531b360b4d394b964b5100f269350, type: 3}
+  equipmentUpgradeData:
+    bonuses: 080000000700000000000000090000000a00000004000000
+    AdditionalPiercing: 12.5
+    AdditionalmaxHPPercentage: 50
+    AdditionalmaxHPActual: 0
+    AdditionalAttackPercentage: 0
+    AdditionalAttackActual: 300
+    elementAttackBonus: 2
+    slayerBonus: 2
+    wardBonus: 3

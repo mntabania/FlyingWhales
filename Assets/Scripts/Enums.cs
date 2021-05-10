@@ -1211,6 +1211,18 @@ public enum UPGRADE_BONUS {
     Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed, Applied_Blessed_On_Max_Level, None,
 }
 
+public enum EQUIPMENT_BONUS {
+    Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Fight, None,
+}
+
+public enum EQUIPMENT_SLAYER_BONUS { 
+    Monster_Slayer = 0, Elf_Slayer, Human_Slayer, Undead_SLayer, Demon_Slayer,
+}
+
+public enum EQUIPMENT_WARD_BONUS {
+    Monster_Ward = 0, Elf_Wawrd, Human_Ward, Undead_Ward, Demon_Ward,
+}
+
 public enum UNLOCKING_SKILL_REQUIREMENT {
     Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count, portal_level,
 }
@@ -1265,6 +1277,11 @@ public enum LIST_OF_CRITERIA {
 public enum OPINIONS { 
     NoOne = 0, Rival, Enemy, Acquaintance, Everyone,
 }
+
+public enum EQUIP_MATERIAL {
+    Diamond = 0, Stone, Mithrill, Wolf_Hide, Any_Metal, Any_Wood, Any_Cloth, Any_Leather,
+}
+
 
 public enum CHANCE_TYPE {
     Kleptomania_Pickpocket_Level_1, Kleptomania_Pickpocket_Level_2, Kleptomania_Rob_Other_House, Kleptomania_Rob_Any_Place,
