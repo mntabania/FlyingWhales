@@ -1582,6 +1582,20 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return false;
     }
+
+    public bool GenerateRatmen(LocationGridTile p_gridTile, int p_amount) {
+        if (FactionManager.Instance.ratmenFaction == null) {
+            //Only create ratmen faction if ratmen are spawned
+            FactionManager.Instance.CreateRatmenFaction();
+        }
+        int numOfRatmen = p_amount;
+        for (int k = 0; k < numOfRatmen; k++) {
+            Character character = CreateNewCharacter("Ratman", RACE.RATMAN, GENDER.MALE, FactionManager.Instance.ratmenFaction);
+            character.CreateMarker();
+            character.InitialCharacterPlacement(p_gridTile);
+        }
+        return true;
+    }
     #endregion
 
 }

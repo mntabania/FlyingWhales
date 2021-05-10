@@ -25,13 +25,15 @@ public class SkillProgressionManager {
 
 	private int CheckRequirement(PlayerSkillComponent p_availablePlayerSkills, int p_mana, PLAYER_SKILL_TYPE p_type) {
 		PlayerSkillData playerSkilldata = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
-
 		for (int x = 0; x < playerSkilldata.requirementData.requiredSkills.Count; ++x) {
 			if (!p_availablePlayerSkills.CheckIfSkillIsAvailable(playerSkilldata.requirementData.requiredSkills[x])) {
 				return -1;
 			}
 		}
 		if (playerSkilldata.tier <= 0) {
+			return -1;
+		}
+		if (playerSkilldata.requirementData.requiredArchetypes.Count > 0 && !playerSkilldata.requirementData.requiredArchetypes.Contains(PlayerSkillManager.Instance.selectedArchetype)) {
 			return -1;
 		}
 		/*
@@ -47,6 +49,7 @@ public class SkillProgressionManager {
 		if (playerSkilldata.requirementData.portalLevel <= (PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal).level) {
 			return playerSkilldata.GetUnlockCost();
 		}
+		UnityEngine.Debug.LogError("D");
 		return -1;
 	}
 }

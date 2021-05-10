@@ -9,8 +9,7 @@ public class RequirementData {
     public List<UNLOCKING_SKILL_REQUIREMENT> requirements = new List<UNLOCKING_SKILL_REQUIREMENT>();
 
     [HideInInspector]
-    public PLAYER_ARCHETYPE requiredArchetype;
-    [HideInInspector]
+    public List<PLAYER_ARCHETYPE> requiredArchetypes = new List<PLAYER_ARCHETYPE>();
     public List<PLAYER_SKILL_TYPE> requiredSkills = new List<PLAYER_SKILL_TYPE>();
     [HideInInspector]
     public int actionCount;
