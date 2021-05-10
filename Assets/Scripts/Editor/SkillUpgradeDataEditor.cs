@@ -126,7 +126,7 @@ public class SkillUpgradeDataEditor : Editor {
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             if (data.requirementData.requirements.Contains(UNLOCKING_SKILL_REQUIREMENT.Archetype)) {
-                data.requirementData.requiredArchetype = (PLAYER_ARCHETYPE)EditorGUILayout.EnumPopup("Required Archetype", data.requirementData.requiredArchetype);
+                DisplayArchetypesReqruiements(data.requirementData.requiredArchetypes, "required archetype(s)");
                 EditorGUILayout.Space();
             }
             if (data.requirementData.requirements.Contains(UNLOCKING_SKILL_REQUIREMENT.Skills)) {
@@ -175,6 +175,19 @@ public class SkillUpgradeDataEditor : Editor {
 
         for (int i = 0; i < list.Count; i++) {
             list[i] = (PLAYER_SKILL_TYPE)EditorGUILayout.EnumPopup((PLAYER_SKILL_TYPE)list[i]);
+        }
+    }
+
+    public void DisplayArchetypesReqruiements(List<PLAYER_ARCHETYPE> listInt, string caption) {
+        var list = listInt;
+        int newCount = Mathf.Max(0, EditorGUILayout.IntField(caption, list.Count));
+        while (newCount < list.Count)
+            list.RemoveAt(list.Count - 1);
+        while (newCount > list.Count)
+            list.Add(0);
+
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = (PLAYER_ARCHETYPE)EditorGUILayout.EnumPopup((PLAYER_ARCHETYPE)list[i]);
         }
     }
 

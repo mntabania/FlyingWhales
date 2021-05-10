@@ -53,7 +53,14 @@ public class FactionInfoHubUI : MonoBehaviour {
         Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
         Messenger.AddListener(FactionSignals.FORCE_FACTION_UI_RELOAD, ForceFactionReload);
         Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnLoadoutSelected);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
     }
+    private void OnFactionCreated(Faction p_createdFaction) {
+        if (p_createdFaction.factionType.type == FACTION_TYPE.Ratmen) {
+            AddFactionItem(p_createdFaction);
+        }
+    }
+
     public void InitializeAfterGameLoaded() {
         factionInfoUI.Initialize();
         PopulateInitialFactions();

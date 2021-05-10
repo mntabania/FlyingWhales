@@ -92,7 +92,7 @@ public class PlayerSkillData : ScriptableObject {
 
     [ContextMenu("Reset requirements except portal")]
     public void ResetAllRequirements() {
-        requirementData.requiredArchetype = PLAYER_ARCHETYPE.Normal;
+        requirementData.requiredArchetypes = new List<PLAYER_ARCHETYPE>();
         requirementData.requiredSkills.Clear();
         requirementData.actionCount = 0;
         requirementData.afflictionCount = 0;
