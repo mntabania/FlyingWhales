@@ -16,20 +16,31 @@ public class EquipmentUpgradeDataEditor : Editor {
     private ELEMENTAL_TYPE m_elementalBonus;
     private EQUIPMENT_SLAYER_BONUS m_equipmentSlayerBonus;
     private EQUIPMENT_WARD_BONUS m_equipmentWardBonus;
+    private CONCRETE_RESOURCES m_concreteResource;
+    private RESOURCE m_resourceType;
+
+    private bool m_isTypeResourcesNone;
     void OnEnable() {
         data = (EquipmentData)target;
         AssetDatabase.Refresh();
     }
 
     public override void OnInspectorGUI() {
+        DisplayResourcesEditor();
         EditorGUILayout.Space();
         DrawDefaultInspector();
         EditorGUILayout.Space();
         serializedObject.ApplyModifiedProperties();
         EditorGUILayout.Space();
+        DisplayCompatibleClasses();
         EditorGUILayout.TextArea("UPGRADE Stats/Skill Bonus");
         DisplayUpgradeBonus();
         serializedObject.ApplyModifiedProperties();
+        if (data.resourceType == RESOURCE.NONE) {
+            m_isTypeResourcesNone = true;
+        } else {
+            m_isTypeResourcesNone = false;
+        }
         if (GUI.changed) {
             EditorUtility.SetDirty(target);
         }
@@ -37,6 +48,20 @@ public class EquipmentUpgradeDataEditor : Editor {
 
     private void OnDisable() {
         //AssetDatabase.SaveAssets();
+    }
+
+    void DisplayCompatibleClasses() {
+        DisplayEnumList(data.compatibleClasses, "Classes That Can use this Equip");
+        EditorGUILayout.Space();
+    }
+
+    void DisplayResourcesEditor() {
+        m_resourceType = data.resourceType = (RESOURCE)EditorGUILayout.EnumPopup("Any of resource type", m_resourceType);
+        EditorGUILayout.Space();
+        if (m_isTypeResourcesNone) {
+            m_concreteResource = data.specificResource = (CONCRETE_RESOURCES)EditorGUILayout.EnumPopup("Specific Resource", m_concreteResource);
+            EditorGUILayout.Space();
+        }
     }
 
     void DisplayUpgradeBonus() {
@@ -65,15 +90,15 @@ public class EquipmentUpgradeDataEditor : Editor {
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
-                m_elementalBonus = data.equipmentUpgradeData.elementAttackBonus = (ELEMENTAL_TYPE)EditorGUILayout.EnumFlagsField("Element Bonus", m_elementalBonus);
+                m_elementalBonus = data.equipmentUpgradeData.elementAttackBonus = (ELEMENTAL_TYPE)EditorGUILayout.EnumPopup("Element Bonus", m_elementalBonus);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Slayer_Bonus)) {
-                m_equipmentSlayerBonus = data.equipmentUpgradeData.slayerBonus = (EQUIPMENT_SLAYER_BONUS)EditorGUILayout.EnumFlagsField("Slayer Bonus", m_equipmentSlayerBonus);
+                m_equipmentSlayerBonus = data.equipmentUpgradeData.slayerBonus = (EQUIPMENT_SLAYER_BONUS)EditorGUILayout.EnumPopup("Slayer Bonus", m_equipmentSlayerBonus);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Ward_Bonus)) {
-                m_equipmentWardBonus = data.equipmentUpgradeData.wardBonus = (EQUIPMENT_WARD_BONUS)EditorGUILayout.EnumFlagsField("Ward Bonus", m_equipmentWardBonus);
+                m_equipmentWardBonus = data.equipmentUpgradeData.wardBonus = (EQUIPMENT_WARD_BONUS)EditorGUILayout.EnumPopup("Ward Bonus", m_equipmentWardBonus);
                 EditorGUILayout.Space();
             }
         }
@@ -89,6 +114,19 @@ public class EquipmentUpgradeDataEditor : Editor {
 
         for (int i = 0; i < list.Count; i++) {
             list[i] = (EQUIPMENT_BONUS)EditorGUILayout.EnumPopup((EQUIPMENT_BONUS)list[i]);
+        }
+    }
+
+    public void DisplayEnumList(List<EQUIPMENT_CLASS_COMPATIBILITY> listInt, string caption) {
+        var list = listInt;
+        int newCount = Mathf.Max(0, EditorGUILayout.IntField(caption, list.Count));
+        while (newCount < list.Count)
+            list.RemoveAt(list.Count - 1);
+        while (newCount > list.Count)
+            list.Add(0);
+
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = (EQUIPMENT_CLASS_COMPATIBILITY)EditorGUILayout.EnumPopup((EQUIPMENT_CLASS_COMPATIBILITY)list[i]);
         }
     }
 }

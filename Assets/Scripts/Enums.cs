@@ -1223,6 +1223,14 @@ public enum EQUIPMENT_WARD_BONUS {
     Monster_Ward = 0, Elf_Wawrd, Human_Ward, Undead_Ward, Demon_Ward,
 }
 
+public enum EQUIPMENT_CLASS_COMPATIBILITY {
+    Knight = 0, Noble, Hero, Barbarian, Marauder, Cult_Leader, Archer, Hunter, Stalker, Mage, Shaman, Druid, Necromancer, Non_Combatant,
+}
+
+public enum CONCRETE_RESOURCES { 
+    Copper = 0, Iron, Mithril, Orichalcum, Fur, Munk, Wool, Spider_Silk, Moonthrea, Boarhide, Scale, Dragon, Stone, Diamond,
+}
+
 public enum UNLOCKING_SKILL_REQUIREMENT {
     Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count, portal_level,
 }

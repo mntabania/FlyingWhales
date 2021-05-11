@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Equipment
-{
-    
+public class Equipment {
+    public EquipmentData equipmentData;
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-
 public class EquipmentComponent {
 
     private Action<Equipment, Equipment> m_onWeaponChanged;
@@ -51,5 +50,11 @@ public class EquipmentComponent {
         m_onArmorChanged += p_iListener.OnArmorChanged;
         m_onAccessoryChanged += p_iListener.OnAccessoryChanged;
     }
-	#endregion
+
+    public void Unsubscribe(EquipmentEvensListener p_iListener) {
+        m_onWeaponChanged -= p_iListener.OnWeaponChanged;
+        m_onArmorChanged -= p_iListener.OnArmorChanged;
+        m_onAccessoryChanged -= p_iListener.OnAccessoryChanged;
+    }
+    #endregion
 }
