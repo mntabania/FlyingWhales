@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 5136533
+    totalSpriteSurfaceArea: 5140629
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -709,6 +709,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e298e16d6e4a4a345816aff73283be2a, type: 3}
   - {fileID: 21300000, guid: 7f2cff7dc5530914e9f81e3ee3efe61a, type: 3}
   - {fileID: 21300000, guid: e890368dada345a4b89ef7ee0526fbe3, type: 3}
+  - {fileID: 21300000, guid: 08c5768de165af04683bc8e58c0b1d0b, type: 3}
   - {fileID: 21300000, guid: adac0d8d8f3a37a4cbc51beeacd5ae9d, type: 3}
   - {fileID: 21300000, guid: 9d949a9d86f0c9f458c42a0331f5d9ed, type: 3}
   - {fileID: 21300000, guid: 66f672adbb8b30942abcdf8ad095033a, type: 3}
@@ -1495,6 +1496,7 @@ SpriteAtlas:
   - TREE_OBJECT#1
   - shore01000001-00
   - demonCryptChest00
+  - Copper Sword
   - TopRight
   - caveWallA-10111000-00
   - wood_floorA011

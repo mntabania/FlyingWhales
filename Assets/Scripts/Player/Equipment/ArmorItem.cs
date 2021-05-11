@@ -2,6 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Equipment {
-    public EquipmentData equipmentData;
+public class ArmorItem : EquipmentItem {
+
 }

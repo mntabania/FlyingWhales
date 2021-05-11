@@ -5,22 +5,18 @@ using System;
 
 public class EquipmentComponent {
 
-    private Action<Equipment, Equipment> m_onWeaponChanged;
-    private Action<Equipment, Equipment> m_onArmorChanged;
-    private Action<Equipment, Equipment> m_onAccessoryChanged;
-
-    public interface EquipmentEvensListener {
-        void OnWeaponChanged(Equipment p_currentWeapon, Equipment p_newWeapon);
-        void OnArmorChanged(Equipment p_currentArmor, Equipment p_newArmor);
-        void OnAccessoryChanged(Equipment p_currentAccessory, Equipment p_newAccessory);
-    }
-
-    public Equipment currentWeapon { private set; get; }
-    public Equipment currentArmor { private set; get; }
-    public Equipment currentAccessory { private set; get; }
+    public EquipmentItem currentWeapon { private set; get; }
+    public EquipmentItem currentArmor { private set; get; }
+    public EquipmentItem currentAccessory { private set; get; }
 
     public EquipmentComponent() {
         Reset();
+    }
+
+    public EquipmentComponent(SaveDataEquipmentComponent p_copy) {
+        currentWeapon = p_copy.currentWeapon;
+        currentArmor = p_copy.currentArmor;
+        currentAccessory = p_copy.currentAccessory;
     }
 
     void Reset() {
@@ -29,32 +25,65 @@ public class EquipmentComponent {
         currentAccessory = null;
     }
 
-    public void SetWeapon(Equipment p_newWeapon) {
-        m_onWeaponChanged?.Invoke(currentWeapon, p_newWeapon);
+    private void SetWeapon(EquipmentItem p_newWeapon, Character p_targetCharacter) {
+        //remove old weapon stats first
+        if(currentWeapon != null) {
+            EquipmentBonusProcessor.RemoveEquipBonusToTarget(currentWeapon.equipmentData, p_targetCharacter);
+        }
         currentWeapon = p_newWeapon;
+        //apply new weapon stats again
+        EquipmentBonusProcessor.ApplyEquipBonusToTarget(currentWeapon.equipmentData, p_targetCharacter);
     }
 
-    public void SetArmor(Equipment p_newArmor) {
-        m_onArmorChanged?.Invoke(currentArmor, p_newArmor);
+    private void SetArmor(EquipmentItem p_newArmor, Character p_targetCharacter) {
+        //remove old Armor stats first
+        if(currentArmor != null) {
+            EquipmentBonusProcessor.RemoveEquipBonusToTarget(currentArmor.equipmentData, p_targetCharacter);
+        }
         currentArmor = p_newArmor;
+        //apply new Armor stats again
+        EquipmentBonusProcessor.ApplyEquipBonusToTarget(currentArmor.equipmentData, p_targetCharacter);
     }
 
-    public void SetAccessory(Equipment p_newAaccessory) {
-        m_onAccessoryChanged?.Invoke(currentAccessory, p_newAaccessory);
+    private void SetAccessory(EquipmentItem p_newAaccessory, Character p_targetCharacter) {
+        //remove old Accessory stats first
+        if(currentAccessory != null) {
+            EquipmentBonusProcessor.RemoveEquipBonusToTarget(currentAccessory.equipmentData, p_targetCharacter);
+        }
         currentAccessory = p_newAaccessory;
+        //apply new Accessory stats again
+        EquipmentBonusProcessor.ApplyEquipBonusToTarget(currentAccessory.equipmentData, p_targetCharacter);
     }
 
-    #region Subs/Unsubs
-    public void Subscribe(EquipmentEvensListener p_iListener) {
-        m_onWeaponChanged += p_iListener.OnWeaponChanged;
-        m_onArmorChanged += p_iListener.OnArmorChanged;
-        m_onAccessoryChanged += p_iListener.OnAccessoryChanged;
+    public void SetEquipment(EquipmentItem p_newItem, Character p_targetCharacter) {
+        if(p_newItem is WeaponItem) {
+            SetWeapon(p_newItem, p_targetCharacter);
+		}
+        if (p_newItem is ArmorItem) {
+            SetArmor(p_newItem, p_targetCharacter);
+        }
+        if (p_newItem is AccessoryItem) {
+            SetAccessory(p_newItem, p_targetCharacter);
+        }
+    }
+}
+
+[System.Serializable]
+public class SaveDataEquipmentComponent : SaveData<EquipmentComponent> {
+    public EquipmentItem currentWeapon;
+    public EquipmentItem currentArmor;
+    public EquipmentItem currentAccessory;
+
+    #region Overrides
+    public override void Save(EquipmentComponent data) {
+        currentWeapon = data.currentWeapon;
+        currentArmor = data.currentArmor;
+        currentAccessory = data.currentAccessory;
     }
 
-    public void Unsubscribe(EquipmentEvensListener p_iListener) {
-        m_onWeaponChanged -= p_iListener.OnWeaponChanged;
-        m_onArmorChanged -= p_iListener.OnArmorChanged;
-        m_onAccessoryChanged -= p_iListener.OnAccessoryChanged;
+    public override EquipmentComponent Load() {
+        EquipmentComponent component = new EquipmentComponent(this);
+        return component;
     }
     #endregion
 }

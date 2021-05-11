@@ -120,6 +120,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterTraitComponent traitComponent { get; private set; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
     public BuffStatsBonus buffStatsBonus { get; private set; }
+    public EquipmentComponent equipmentComponent { get; private set; }
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -326,6 +327,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         buffStatsBonus = new BuffStatsBonus();
+        equipmentComponent = new EquipmentComponent();
         needsComponent.ResetSleepTicks();
     }
     public Character(SaveDataCharacter data) {
@@ -3714,6 +3716,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         item.SetCharacterOwner(this);
                     }
                 }
+            }
+            if (item is EquipmentItem equipment) {
+                equipmentComponent.SetEquipment(equipment, this);
             }
             return true;
         }
