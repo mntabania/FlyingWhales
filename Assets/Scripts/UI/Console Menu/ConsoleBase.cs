@@ -1422,7 +1422,8 @@ public class ConsoleBase : InfoUIBase {
         if (Enum.TryParse(typeParameterString, out type)) {
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region currRegion = GridMap.Instance.allRegions[i];
-                List<TileObject> objs = currRegion.GetTileObjectsOfType(type);
+                List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
+                currRegion.PopulateTileObjectsOfType(objs, type);
                 for (int j = 0; j < objs.Count; j++) {
                     TileObject currObj = objs[j];
                     if (currObj.id == id) {
@@ -1432,6 +1433,7 @@ public class ConsoleBase : InfoUIBase {
                         break;
                     }
                 }
+                RuinarchListPool<TileObject>.Release(objs);
             }
         } else {
             AddErrorMessage($"There is no tile object of type {typeParameterString}");

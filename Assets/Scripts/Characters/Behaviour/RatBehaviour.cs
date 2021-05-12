@@ -17,7 +17,7 @@ public class RatBehaviour : CharacterBehaviourComponent {
                 BaseSettlement targetSettlement = character.behaviourComponent.pestSettlementTarget;
                 if (targetSettlement != null) {
                     if (character.currentRegion != null) {
-                        Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(a => a.settlementOnArea == null && a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN);
+                        Area targetArea = character.currentRegion.GetRandomAreaThatIsNotMountainAndWaterAndNoSettlement();
                         if (targetArea != null) {
                             LocationGridTile targetTile = targetArea.gridTileComponent.GetRandomPassableTile();
                             if (targetTile != null) {

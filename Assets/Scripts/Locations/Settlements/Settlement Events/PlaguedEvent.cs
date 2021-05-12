@@ -37,11 +37,12 @@ namespace Locations.Settlements.Settlement_Events {
         public override void DeactivateEvent(NPCSettlement p_settlement) {
             if (p_settlement.owner != null) { RevertFactionEffects(p_settlement.owner); }
             
-            List<JobQueueItem> jobs = p_settlement.GetJobs(JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
+            List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+            p_settlement.PopulateJobsOfType(jobs, JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
             for (int i = 0; i < jobs.Count; i++) {
                 jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
             }
-            
+            RuinarchListPool<JobQueueItem>.Release(jobs);
             UnsubscribeListeners(p_settlement);
             p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
             if (!string.IsNullOrEmpty(_endScheduleTicket)) { SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket); }
@@ -143,10 +144,12 @@ namespace Locations.Settlements.Settlement_Events {
         private void RevertEffectsOfLeaderPreviousResponseToPlague(PLAGUE_EVENT_RESPONSE p_response, Faction p_faction, NPCSettlement p_settlement) {
             switch (p_response) {
                 case PLAGUE_EVENT_RESPONSE.Quarantine:
-                    List<JobQueueItem> jobs = p_settlement.GetJobs(JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
+                    List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+                    p_settlement.PopulateJobsOfType(jobs, JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
                     for (int i = 0; i < jobs.Count; i++) {
                         jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
                     }
+                    RuinarchListPool<JobQueueItem>.Release(jobs);
                     break;
             }
         }

@@ -13,7 +13,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
         producedJob = null;
         log += $"\n-{character.name} is wanderer";
         if (!character.HasTerritory() && character.currentRegion != null) {
-            Area initialTerritory = character.currentRegion.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.gridTileComponent.HasCorruption());
+            Area initialTerritory = character.currentRegion.GetRandomAreaThatIsNotMountainWaterAndNoStructureAndNoCorruption();
             if (initialTerritory != null) {
                 character.SetTerritory(initialTerritory);
             } else {
@@ -44,7 +44,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                     log += "\n-Is in home structure or territory";
                     if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.IsReturnHome()) {
                         log += $"\n-Just returned home";
-                        TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                        TileObject deskOrTable = character.currentStructure.GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                         log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
                         if (deskOrTable != null) {
                             log += $"\n-{character.name} will do action Sit on {deskOrTable}";
@@ -172,7 +172,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         }
 
                         log += "\n-Otherwise, sit if there is still an unoccupied Table or Desk";
-                        TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                        TileObject deskOrTable = character.currentStructure.GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                         if (deskOrTable != null) {
                             log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
                             character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);

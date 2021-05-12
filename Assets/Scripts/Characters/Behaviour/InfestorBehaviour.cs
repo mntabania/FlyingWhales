@@ -24,10 +24,10 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                 if(roll < 1) {
                     int currentCapacity = 0;
                     if(character.homeSettlement != null) {
-                        currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
+                        currentCapacity = character.homeSettlement.GetNumOfResidentsThatIsHasRaceAndClassOf(character.race, character.characterClass.className);
                     } else {
                         Area area = character.areaLocation;
-                        currentCapacity = area.locationCharacterTracker.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
+                        currentCapacity = area.locationCharacterTracker.GetNumOfCharactersInsideHexThatHasRaceAndClassOf(character.race, character.characterClass.className);
                     }
                     if(currentCapacity < 8) {
                         character.jobComponent.TriggerLayEgg(out producedJob);
@@ -43,10 +43,10 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
             if (roll < 7) { //7
                 int currentCapacity = 0;
                 if (character.homeSettlement != null) {
-                    currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
+                    currentCapacity = character.homeSettlement.GetNumOfResidentsThatIsHasRaceAndClassOf(character.race, character.characterClass.className, typeof(MonsterInvadeBehaviour));
                 } else {
                     Area area = character.areaLocation;
-                    currentCapacity = area.locationCharacterTracker.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className && !c.behaviourComponent.HasBehaviour(typeof(MonsterInvadeBehaviour)));
+                    currentCapacity = area.locationCharacterTracker.GetNumOfCharactersInsideHexThatHasRaceAndClassOf(character.race, character.characterClass.className, typeof(MonsterInvadeBehaviour));
                 }
                 if (currentCapacity >= 5) {
                     List<Area> targets = ObjectPoolManager.Instance.CreateNewAreaList();

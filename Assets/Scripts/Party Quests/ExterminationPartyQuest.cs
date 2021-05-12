@@ -86,13 +86,10 @@ public class ExterminationPartyQuest : PartyQuest {
     private void ProcessExterminationOrDisbandment() {
         if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
             Faction faction = assignedParty.partySettlement.owner;
-            if (targetStructure == null || targetStructure.hasBeenDestroyed || targetStructure.tiles.Count <= 0 || !targetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
-                    && !resident.partyComponent.IsAMemberOfParty(assignedParty)
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.IsPartOfSettlement(targetStructure.settlementLocation)
-                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))
-                    && !resident.traitContainer.HasTrait("Hibernating"))) {
+            if (targetStructure == null 
+                || targetStructure.hasBeenDestroyed 
+                || targetStructure.tiles.Count <= 0 
+                || !targetStructure.settlementLocation.HasResidentForExterminationPartyQuest(targetStructure.settlementLocation, faction, assignedParty)) {
                 assignedParty.GoBackHomeAndEndQuest();
             } else {
                 StartExterminationTimer();

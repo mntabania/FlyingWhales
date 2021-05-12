@@ -23,7 +23,7 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
                 if (character.gridTileLocation != null && targetSettlement != null) {
                     if (character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
                         log += $"\n-Character is already in target settlement";
-                        Character target = targetSettlement.GetRandomResidentThatMeetCriteria(resident => character != resident && !resident.isDead && !resident.isBeingSeized && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(targetSettlement) && !resident.traitContainer.HasTrait("Hibernating", "Indestructible"));
+                        Character target = targetSettlement.GetRandomResidentForInvasionTargetThatIsInsideSettlement(targetSettlement, character);
                         if (target != null) {
                             log += $"\n-Chosen target is {target.name}";
                             character.combatComponent.Fight(target, CombatManager.Hostility);
@@ -47,7 +47,7 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
                 MonsterInvadeGathering gathering = monsterInvadeGathering as MonsterInvadeGathering;
                 if (character.areaLocation == gathering.targetArea) {
                     log += "\n-Already in the target hex, will try to combat residents";
-                    Character target = gathering.targetArea.locationCharacterTracker.GetRandomCharacterInsideHexThatMeetCriteria<Character>(c => !c.isDead && c.IsTerritory(gathering.targetArea));
+                    Character target = gathering.targetArea.locationCharacterTracker.GetRandomCharacterInsideHexThatIsAliveAndConsidersAreaAsTerritory(gathering.targetArea);
                     if (target != null) {
                         log += $"\n-Chosen target is {target.name}";
                         character.combatComponent.Fight(target, CombatManager.Hostility);

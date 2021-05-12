@@ -21,7 +21,7 @@ public class MineBehaviour : CharacterBehaviourComponent {
                 for (int i = 0; i < mineShacks.Count; i++) {
                     MineShack mineShack = mineShacks[i] as MineShack;
                     if(mineShack != null && mineShack.connectedCave != null) {
-                        targetTile = mineShack.connectedCave.GetRandomPassableTileThatMeetCriteria(t => !t.isOccupied);
+                        targetTile = mineShack.connectedCave.GetRandomPassableTileThatIsNotOccupied();
                         if (targetTile != null) {
                             break;
                         }

@@ -5,7 +5,7 @@ using TMPro;
 using Traits;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UtilityScripts;
 public class ProvokeMenu : PopupMenuBase {
 
     [Header("Main")]
@@ -50,7 +50,7 @@ public class ProvokeMenu : PopupMenuBase {
 
     private void ProvokeAction(ref string targetText, ref string actorText) {
         bool succeedProvoke = false;
-        if (targetCharacter.relationshipContainer.GetEnemyCharacters().Count > 0) {
+        if (targetCharacter.relationshipContainer.GetFirstEnemyCharacter() != null) {
             //succeedProvoke = true;
             // CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
             // if (currentMood == CHARACTER_MOOD.GREAT) {
@@ -84,7 +84,8 @@ public class ProvokeMenu : PopupMenuBase {
         bool succeedUndermine = false;
         Character chosenCharacter = null;
         if (succeedProvoke) {
-            List<Character> enemyCharacters = targetCharacter.relationshipContainer.GetEnemyCharacters();
+            List<Character> enemyCharacters = RuinarchListPool<Character>.Claim();
+            targetCharacter.relationshipContainer.PopulateEnemyCharacters(enemyCharacters);
             while (chosenCharacter == null && enemyCharacters.Count > 0) {
                 int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                 Character character = enemyCharacters[index];
@@ -94,6 +95,7 @@ public class ProvokeMenu : PopupMenuBase {
                     chosenCharacter = character;
                 }
             }
+            RuinarchListPool<Character>.Release(enemyCharacters);
             if (chosenCharacter == null) {
                 actorText = "You should take revenge on your enemies.";
                 if (targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE)) {

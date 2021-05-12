@@ -54,7 +54,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     }
                 }
 
-                TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                TileObject deskOrTable = character.currentStructure.GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                 log = $"{log}\n-Sit if there is still an unoccupied Table or Desk in the current location";
                 if (deskOrTable != null) {
                     log = $"{log}\n  -{character.name} will do action Sit on {deskOrTable}";
@@ -89,7 +89,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     }
 
                     log = $"{log}\n-If character has a Close Friend who it considers Missing";
-                    Character missingCharacter = character.relationshipContainer.GetMissingCharacterWithOpinion(RelationshipManager.Close_Friend);
+                    Character missingCharacter = character.relationshipContainer.GetRandomMissingCharacterWithOpinion(RelationshipManager.Close_Friend);
                     if(missingCharacter != null) {
                         log = $"{log}\n-Missing close friend: {missingCharacter}";
                         if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
@@ -108,7 +108,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     }
 
                     log = $"{log}\n-If character has a Friend who it considers Missing";
-                    missingCharacter = character.relationshipContainer.GetMissingCharacterWithOpinion(RelationshipManager.Friend);
+                    missingCharacter = character.relationshipContainer.GetRandomMissingCharacterWithOpinion(RelationshipManager.Friend);
                     if (missingCharacter != null) {
                         log = $"{log}\n-Missing friend: {missingCharacter}";
                         if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
@@ -147,14 +147,14 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     }
 
                     log = $"{log}\n-If character has a Lover/Affair/Relative who it considers Missing";
-                    missingCharacter = character.relationshipContainer.GetMissingCharacterThatMeetCriteria(c => character.relationshipContainer.IsFamilyMember(c) || character.relationshipContainer.HasRelationshipWith(c, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR));
+                    missingCharacter = character.relationshipContainer.GetRandomMissingCharacterThatIsFamilyMemberOrLoverAffairOf(character);
                     if (missingCharacter != null) {
                         log = log + ("\n-Missing Lover/Affair/Relative: " + missingCharacter);
                         log = $"{log}\n-Character is combatant, 15% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
                         if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
                             && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, missingCharacter)) {
                             int chance = Random.Range(0, 100);
-                            log = $"{log}\nRoll: {chance.ToString()}";
+                            log = $"{log}\nRoll: {chance}";
                             if (chance < 40) {
                                 if (missingCharacter.IsConsideredInDangerBy(character)) {
                                     character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
@@ -345,7 +345,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 }
 
                 log = $"{log}\n-Otherwise, sit if there is still an unoccupied Table or Desk";
-                TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                TileObject deskOrTable = character.currentStructure.GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                 if (deskOrTable != null) {
                     log = $"{log}\n  -{character.name} will do action Sit on {deskOrTable}";
                     character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);

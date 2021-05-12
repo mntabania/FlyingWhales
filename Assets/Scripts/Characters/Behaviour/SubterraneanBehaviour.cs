@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UtilityScripts;
 
 public class SubterraneanBehaviour : CharacterBehaviourComponent {
 	public SubterraneanBehaviour() {
@@ -15,35 +16,33 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
         if (!character.isDead && character.gridTileLocation != null && !character.isNormalCharacter && !IsTamedMonster(character)) {
             if (character.behaviourComponent.subterraneanJustExitedCombat) {
                 log += $"\n-Just exited combat will teleport to new location";
-                List<LocationStructure> allCavesInTheRegion = character.currentRegion.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
-                if(allCavesInTheRegion != null) {
-                    LocationStructure chosenCave = null;
-                    while(chosenCave == null && allCavesInTheRegion.Count > 0) {
-                        LocationStructure potentialCave = UtilityScripts.CollectionUtilities.GetRandomElement(allCavesInTheRegion);
-                        if(potentialCave == character.currentStructure) {
-                            allCavesInTheRegion.Remove(potentialCave);
-                        } else {
-                            chosenCave = potentialCave;
-                        }
-                    }
-                    if(chosenCave != null) {
-                        log += $"\n-Will teleport to " + chosenCave.name;
-                        LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenCave.passableTiles);
-                        if(chosenTile != null) {
-                            LeaveWurmHoles(character.gridTileLocation);
+                List<LocationStructure> caves = character.currentRegion.GetStructuresAtLocation(STRUCTURE_TYPE.CAVE);
+                List<LocationStructure> allCavesInTheRegion = RuinarchListPool<LocationStructure>.Claim();
+                allCavesInTheRegion.AddRange(caves);
+                allCavesInTheRegion.Remove(character.currentStructure);
+                LocationStructure chosenCave = null;
+                if (allCavesInTheRegion.Count > 0) {
+                    chosenCave = UtilityScripts.CollectionUtilities.GetRandomElement(allCavesInTheRegion);
+                }
+                RuinarchListPool<LocationStructure>.Release(allCavesInTheRegion);
 
-                            CharacterManager.Instance.Teleport(character, chosenTile);
-                            Log historyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Subterranean", "burrow", providedTags: LOG_TAG.Combat);
-                            historyLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            historyLog.AddToFillers(chosenCave, chosenCave.GetNameRelativeTo(character), LOG_IDENTIFIER.LANDMARK_1);
-                            historyLog.AddLogToDatabase(true);
-                            return true;
-                        } else {
-                            log += $"\n-No passable tile in cave, will stay";
-                        }
+                if (chosenCave != null) {
+                    log += $"\n-Will teleport to " + chosenCave.name;
+                    LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenCave.passableTiles);
+                    if (chosenTile != null) {
+                        LeaveWurmHoles(character.gridTileLocation);
+
+                        CharacterManager.Instance.Teleport(character, chosenTile);
+                        Log historyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Subterranean", "burrow", providedTags: LOG_TAG.Combat);
+                        historyLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        historyLog.AddToFillers(chosenCave, chosenCave.GetNameRelativeTo(character), LOG_IDENTIFIER.LANDMARK_1);
+                        historyLog.AddLogToDatabase(true);
+                        return true;
                     } else {
-                        log += $"\n-No other caves found, will stay";
+                        log += $"\n-No passable tile in cave, will stay";
                     }
+                } else {
+                    log += $"\n-No other caves found, will stay";
                 }
             }
         }
@@ -54,7 +53,7 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
         LocationGridTile point2 = null;
         Region chosenRegion = GridMap.Instance.GetRandomRegion();
         for (int i = 0; i < 3; i++) {
-            Area chosenArea = chosenRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER);
+            Area chosenArea = chosenRegion.GetRandomAreaThatIsNotWater();
             LocationGridTile chosenTile = chosenArea.gridTileComponent.GetRandomPassableUnoccupiedNonWaterTile();
             point2 = chosenTile;
             if(point2 != null) {

@@ -37,7 +37,7 @@ namespace Traits {
                     } else if (validOpinions.Contains(OPINIONS.Everyone)) {
                         isRelationshipRequirementMet = true;
                     } else {
-                        isRelationshipRequirementMet = characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, validOpinions.ToArray());
+                        isRelationshipRequirementMet = characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, validOpinions);
                     }
                     if (isRelationshipRequirementMet) {
                         debugLog = $"{debugLog}\n-Character considers Target as {validOpinions.ComafyList()}, will trigger Angered interrupt";

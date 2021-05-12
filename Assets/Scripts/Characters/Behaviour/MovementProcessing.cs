@@ -12,7 +12,7 @@ public class MovementProcessing : CharacterBehaviourComponent {
         if(character.gridTileLocation != null && character.areaLocation == null) {
             log += $"\n-{character.name} is in a grid tile location with no hex tile, must go to nearest hex tile";
 
-            Area nearestArea = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => character.movementComponent.HasPathTo(h));
+            Area nearestArea = character.gridTileLocation.GetNearestAreaWithinRegionThatCharacterHasPathTo(character);
             //HexTile nearestHex = character.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
             character.jobComponent.TriggerMoveToArea(out producedJob, nearestArea);
             return true;

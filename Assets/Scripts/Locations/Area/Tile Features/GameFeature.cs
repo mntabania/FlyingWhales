@@ -33,13 +33,15 @@ namespace Locations.Area_Features {
         #region Overrides
         public override void GameStartActions(Area p_area) {
             owner = p_area;
-            List<Animal> animals = p_area.locationCharacterTracker.GetAllCharactersInsideHex<Animal>();
+            List<Character> animals = RuinarchListPool<Character>.Claim();
+            p_area.locationCharacterTracker.PopulateAnimalsListInsideHex(animals, includeBeingSeized: true);
             if (animals != null) {
                 for (int i = 0; i < animals.Count; i++) {
-                    Animal animal = animals[i];
+                    Animal animal = animals[i] as Animal;
                     AddOwnedAnimal(animal);
                 }
             }
+            RuinarchListPool<Character>.Release(animals);
 
             if (ownedAnimals.Count < MaxAnimals) {
                 int missingAnimals = MaxAnimals - ownedAnimals.Count;

@@ -39,7 +39,7 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
                 }
             }
             log += "\n-Sit if there is still an unoccupied Table or Desk";
-            TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+            TileObject deskOrTable = character.currentStructure.GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
             if (deskOrTable != null) {
                 log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
                 character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);

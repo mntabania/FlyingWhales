@@ -141,11 +141,13 @@ public class VampireBehaviour : CharacterBehaviourComponent {
     private LocationStructure GetFirstNonSettlementVampireCastles(Character character) {
         Region region = character.currentRegion;
         if (region != null && region.HasStructure(STRUCTURE_TYPE.VAMPIRE_CASTLE)) {
-            List<LocationStructure> vampireCastles = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.VAMPIRE_CASTLE);
-            for (int j = 0; j < vampireCastles.Count; j++) {
-                LocationStructure structure = vampireCastles[j];
-                if (structure.settlementLocation == null || structure.settlementLocation.owner == null) {
-                    return structure;
+            List<LocationStructure> vampireCastles = region.GetStructuresAtLocation(STRUCTURE_TYPE.VAMPIRE_CASTLE);
+            if (vampireCastles != null) {
+                for (int j = 0; j < vampireCastles.Count; j++) {
+                    LocationStructure structure = vampireCastles[j];
+                    if (structure.settlementLocation == null || structure.settlementLocation.owner == null) {
+                        return structure;
+                    }
                 }
             }
         }
@@ -163,7 +165,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         return area;
     }
     private Area GetNoStructurePlainAreaInRegion(Region region) {
-        return region.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
+        return region.GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage();
     }
 
     public static WeightedDictionary<Character> GetVampiricEmbraceTargetWeights(Character character) {

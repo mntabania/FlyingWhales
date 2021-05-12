@@ -23,7 +23,7 @@ public class WolfBehaviour : BaseMonsterBehaviour {
             //find Settlement where wolves are living at
             for (int i = 0; i < character.currentRegion.settlementsInRegion.Count; i++) {
                 BaseSettlement settlement = character.currentRegion.settlementsInRegion[i];
-                if (settlement is NPCSettlement && settlement.HasResidentThatMeetsCriteria(resident => character != resident && resident.race == RACE.WOLF)) {
+                if (settlement is NPCSettlement && settlement.HasResidentWithRace(RACE.WOLF, character)) {
                     if (settlementChoices == null) {
                         settlementChoices = new List<BaseSettlement>();
                     }
@@ -35,8 +35,7 @@ public class WolfBehaviour : BaseMonsterBehaviour {
                 //if there is a settlement found, set the wolf's home to that
                 BaseSettlement randomSettlement = CollectionUtilities.GetRandomElement(settlementChoices);
                 log += $"\n-Found valid settlement {randomSettlement.name}";
-                LocationStructure randomStructure = randomSettlement.GetRandomStructureThatMeetCriteria(structure =>
-                    structure.structureType != STRUCTURE_TYPE.WILDERNESS && structure.CanBeResidentHere(character));
+                LocationStructure randomStructure = randomSettlement.GetRandomStructureThatCharacterCanBeResidentAndIsNot(character, STRUCTURE_TYPE.WILDERNESS);
                 if (randomStructure != null) {
                     log += $"\n-Found valid structure at {randomSettlement.name}. Structure is {randomStructure.name}. Setting home to that.";
                     character.MigrateHomeStructureTo(randomStructure);
@@ -44,8 +43,8 @@ public class WolfBehaviour : BaseMonsterBehaviour {
                 }
             } else {
                 log += $"\n-Could not find valid settlement checking unoccupied monster lairs";
-                List<LocationStructure> monsterLairs = character.currentRegion.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.MONSTER_LAIR);
-                List<LocationStructure> choices = ObjectPoolManager.Instance.CreateNewStructuresList();
+                List<LocationStructure> monsterLairs = character.currentRegion.GetStructuresAtLocation(STRUCTURE_TYPE.MONSTER_LAIR);
+                List<LocationStructure> choices = RuinarchListPool<LocationStructure>.Claim();
                 //if there were no settlements found, then check if there are any unoccupied monster lairs
                 for (int i = 0; i < monsterLairs.Count; i++) {
                     LocationStructure monsterLair = monsterLairs[i];
@@ -57,7 +56,7 @@ public class WolfBehaviour : BaseMonsterBehaviour {
                 if (choices.Count > 0) {
                     randomStructure = CollectionUtilities.GetRandomElement(choices);
                 }
-                ObjectPoolManager.Instance.ReturnStructuresListToPool(choices);
+                RuinarchListPool<LocationStructure>.Release(choices);
                 if (randomStructure != null) {
                     log += $"\n-Found unoccupied monster lair {randomStructure.name}. Setting home to that.";
                     character.MigrateHomeStructureTo(randomStructure);
@@ -87,15 +86,12 @@ public class WolfBehaviour : BaseMonsterBehaviour {
         if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().day) &&
             GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && Random.Range(0, 2) == 1) {
             log += $"\n-Chance to hunt met. Will try to find target tile to hunt at.";
-            List<Area> choices = character.currentRegion.GetTilesWithFeature(AreaFeatureDB.Game_Feature).OrderBy(x =>
-                    Vector2.Distance(x.gridTileComponent.centerGridTile.centeredWorldLocation, character.worldPosition))
-                .ToList();
-            if (choices.Count > 0) {
-                Area tileWithGameFeature = choices[0];
+            Area nearestArea = character.currentRegion.GetAreaWithFeatureThatIsNearestTo(AreaFeatureDB.Game_Feature, character);
+            if (nearestArea != null) {
                 Hunting hunting = TraitManager.Instance.CreateNewInstancedTraitClass<Hunting>("Hunting");
-                hunting.SetTargetArea(tileWithGameFeature);
+                hunting.SetTargetArea(nearestArea);
                 character.traitContainer.AddTrait(character, hunting);
-                log += $"\n-Found valid hunting spot at {tileWithGameFeature}";
+                log += $"\n-Found valid hunting spot at {nearestArea}";
                 return true;
             } else {
                 log += $"\n-Could not find valid hunting spot";
@@ -125,6 +121,6 @@ public class WolfBehaviour : BaseMonsterBehaviour {
         return chosenArea;
     }
     private Area GetNoStructurePlainAreaInRegion(Region region) {
-        return region.GetRandomHexThatMeetCriteria(currArea => currArea.elevationComponent.IsFully(ELEVATION.PLAIN) && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
+        return region.GetRandomAreaThatIsUncorruptedFullyPlainNoStructureAndNotNextToOrPartOfVillage();
     }
 }

@@ -106,7 +106,7 @@ public class PlayerRetaliationComponent {
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
         //CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
         Region region = targetDemonicStructure.region;
-        Area spawnArea = region.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.gridTileComponent.HasCorruption());
+        Area spawnArea = region.GetRandomAreaThatIsNotMountainWaterAndNoCorruption();
         //List<Character> characters = new List<Character>();
         spawnedAngels.Clear();
         for (int i = 0; i < angelCount; i++) {

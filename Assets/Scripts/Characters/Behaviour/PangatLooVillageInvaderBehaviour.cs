@@ -47,9 +47,7 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
     private void PopulateTargetChoices(List<Character> p_targetChoices, List<Area> o_area) {
         for (int i = 0; i < o_area.Count; i++) {
             Area area = o_area[i];
-            area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c =>
-                c.isNormalCharacter && c.isDead == false && !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried() &&
-                !c.traitContainer.HasTrait("Hibernating", "Indestructible")); //Removed checking for allied with player because undead should attack all villagers in pangat loo
+            area.locationCharacterTracker.PopulateCharacterListInsideHexForPangatLooTargetForInvasion(p_targetChoices); //Removed checking for allied with player because undead should attack all villagers in pangat loo
         }
     }
     public NPCSettlement GetMainVillageSettlement() {

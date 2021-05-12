@@ -244,7 +244,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
                 for (int i = 0; i < targetStructure.unoccupiedTiles.Count; i++) {
                     LocationGridTile tile = targetStructure.unoccupiedTiles[i];
-                    if(tile.UnoccupiedNeighbours.Count > 0) {
+                    if(tile.HasUnoccupiedNeighbour(true)) {
                         choices.Add(tile);
                     }
                 }

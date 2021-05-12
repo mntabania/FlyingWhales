@@ -126,7 +126,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                                     if (roll < 90) {
                                         structureTypeToVisit = STRUCTURE_TYPE.ANCIENT_GRAVEYARD;
                                     }
-                                    LocationStructure chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
+                                    LocationStructure chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatHasTombstone(structureTypeToVisit);
                                     if (chosenStructure != null) {
                                         log += $"\n-Will visit " + chosenStructure.name;
                                         LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenStructure.passableTiles);
@@ -139,7 +139,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                                         } else {
                                             structureTypeToVisit = STRUCTURE_TYPE.CEMETERY;
                                         }
-                                        chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
+                                        chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatHasTombstone(structureTypeToVisit);
                                         if (chosenStructure != null) {
                                             log += $"\n-Will visit " + chosenStructure.name;
                                             LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenStructure.passableTiles);
@@ -307,6 +307,6 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
         return chosenArea;
     }
     private Area GetNoStructurePlainAreaInRegion(Region region) {
-        return region.GetRandomHexThatMeetCriteria(a => a.elevationComponent.IsFully(ELEVATION.PLAIN) && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
+        return region.GetRandomAreaThatIsUncorruptedFullyPlainNoStructureAndNotNextToOrPartOfVillage();
     }
 }

@@ -1741,15 +1741,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {
+        LocationGridTile chosenTile = null;
         if (!isDead && gridTileLocation != null) {
-            List<LocationGridTile> unoccupiedNeighbours = gridTileLocation.UnoccupiedNeighbours;
-            if (unoccupiedNeighbours.Count == 0) {
-                return null;
-            } else {
-                return unoccupiedNeighbours[UnityEngine.Random.Range(0, unoccupiedNeighbours.Count)];
+            List<LocationGridTile> unoccupiedNeighbours = RuinarchListPool<LocationGridTile>.Claim();
+            gridTileLocation.PopulateUnoccupiedNeighbours(unoccupiedNeighbours, true);
+            if (unoccupiedNeighbours.Count > 0) {
+                chosenTile = unoccupiedNeighbours[GameUtilities.RandomBetweenTwoNumbers(0, unoccupiedNeighbours.Count - 1)];
             }
+            RuinarchListPool<LocationGridTile>.Release(unoccupiedNeighbours);
         }
-        return null;
+        return chosenTile;
     }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;
@@ -3077,10 +3078,35 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void CreateRandomInitialTraits(List<string> buffPool = null, List<string> neutralPool = null, List<string> flawPool = null) {
         if (minion == null && race != RACE.DEMON && !(this is Summon) && race != RACE.RATMAN) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
- 
-            List<string> buffTraits = new List<string>(buffPool == null ? TraitManager.Instance.buffTraitPool : buffPool);
-            List<string> neutralTraits = new List<string>(neutralPool == null ? TraitManager.Instance.neutralTraitPool : neutralPool);
-            List<string> flawTraits = new List<string>(flawPool == null ? TraitManager.Instance.flawTraitPool : flawPool);
+
+            List<string> buffTraits;
+            List<string> neutralTraits;
+            List<string> flawTraits;
+            bool hasBorrowedBuffPool = false;
+            bool hasBorrowedNeutralPool = false;
+            bool hasBorrowedFlawPool = false;
+
+            if (buffPool != null) {
+                buffTraits = buffPool;
+            } else {
+                buffTraits = RuinarchListPool<string>.Claim();
+                buffTraits.AddRange(TraitManager.Instance.buffTraitPool);
+                hasBorrowedBuffPool = true;
+            }
+            if (neutralPool != null) {
+                neutralTraits = neutralPool;
+            } else {
+                neutralTraits = RuinarchListPool<string>.Claim();
+                neutralTraits.AddRange(TraitManager.Instance.neutralTraitPool);
+                hasBorrowedNeutralPool = true;
+            }
+            if (flawPool != null) {
+                flawTraits = flawPool;
+            } else {
+                flawTraits = RuinarchListPool<string>.Claim();
+                flawTraits.AddRange(TraitManager.Instance.flawTraitPool);
+                hasBorrowedFlawPool = true;
+            }
 
             //remove character's existing traits from pool, as well as any mutual exclusive traits because of said existing trait
             for (int i = 0; i < traitContainer.traits.Count; i++) {
@@ -3089,9 +3115,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 neutralTraits.Remove(trait.name);
                 flawTraits.Remove(trait.name);
                 if (trait.mutuallyExclusive != null) {
-                    buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, trait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-                    neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, trait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-                    flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, trait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(buffTraits, trait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(neutralTraits, trait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(flawTraits, trait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
                 }
             }
             
@@ -3108,12 +3134,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             traitContainer.AddTrait(this, chosenBuffTraitName);
             Trait buffTrait = traitContainer.GetTraitOrStatus<Trait>(chosenBuffTraitName);
             if (buffTrait.mutuallyExclusive != null) {
-                buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-                neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-                flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+                CollectionUtilities.RemoveElements(buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                CollectionUtilities.RemoveElements(neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                CollectionUtilities.RemoveElements(flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
             }
 
-            List<string> choices = new List<string>();
+            List<string> choices = RuinarchListPool<string>.Claim();
             //80% Trait 2: Buff + Neutral List
             if (GameUtilities.RollChance(80)) {
                 choices.AddRange(buffTraits);
@@ -3131,9 +3157,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 traitContainer.AddTrait(this, chosenBuffOrNeutralTraitName);
                 Trait buffOrNeutralTrait = traitContainer.GetTraitOrStatus<Trait>(chosenBuffOrNeutralTraitName);
                 if (buffOrNeutralTrait.mutuallyExclusive != null) {
-                    buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-                    neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-                    flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
                 }
             }
             
@@ -3151,6 +3177,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     throw new Exception("No more buff, neutral or flaw traits!");
                 }
                 traitContainer.AddTrait(this, chosenTrait);
+            }
+            RuinarchListPool<string>.Release(choices);
+            if (hasBorrowedBuffPool) {
+                RuinarchListPool<string>.Release(buffTraits);
+            }
+            if (hasBorrowedNeutralPool) {
+                RuinarchListPool<string>.Release(neutralTraits);
+            }
+            if (hasBorrowedFlawPool) {
+                RuinarchListPool<string>.Release(flawTraits);
             }
         }
     }
@@ -3584,9 +3620,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public Character GetDisabledCharacterToCheckOutThatHasIsInHomeSettlementOfThisCharacter() {
         //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
+        Character chosenCharacter = null;
         List<Character> charactersWithRel = relationshipContainer.charactersWithOpinion;
         if (charactersWithRel.Count > 0) {
-            List<Character> positiveCharacters = new List<Character>();
+            List<Character> positiveCharacters = RuinarchListPool<Character>.Claim();
             for (int i = 0; i < charactersWithRel.Count; i++) {
                 Character character = charactersWithRel[i];
                 if(character.isDead /*|| character.isMissing*/ || homeStructure == character.homeStructure) {
@@ -3605,10 +3642,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
             if (positiveCharacters.Count > 0) {
-                return positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
+                chosenCharacter = CollectionUtilities.GetRandomElement(positiveCharacters);
             }
+            RuinarchListPool<Character>.Release(positiveCharacters);
         }
-        return null;
+        return chosenCharacter;
     }
     //private void SetLastAssaultedCharacter(Character character) {
     //    lastAssaultedCharacter = character;
@@ -3838,12 +3876,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //The items must either be unowned or transfered to another resident in his home structure, depending on where the item is currently
         //If it is in home structure transfer it to another random resident, otherwise, unown only
 
-        List<Character> potentialOwners = null;
+        List<Character> potentialOwners = RuinarchListPool<Character>.Claim();
         if(homeStructure != null) {
             for (int i = 0; i < homeStructure.residents.Count; i++) {
                 Character resident = homeStructure.residents[i];
                 if(resident != this && resident.faction != null && resident.faction.isMajorFaction) {
-                    if (potentialOwners == null) { potentialOwners = new List<Character>(); }
                     potentialOwners.Add(resident);
                 }
             }
@@ -3862,6 +3899,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             i--;
         }
+        RuinarchListPool<Character>.Release(potentialOwners);
     }
     public void UnownOrTransferOwnershipOfItemsIn(LocationStructure structure) {
         //https://trello.com/c/LbfWIBBh/1866-item-ownership-dead
@@ -3869,12 +3907,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //The items must either be unowned or transfered to another resident in his home structure, depending on where the item is currently
         //If it is in home structure transfer it to another random resident, otherwise, unown only
 
-        List<Character> potentialOwners = null;
+        List<Character> potentialOwners = RuinarchListPool<Character>.Claim();
         if (structure != null) {
             for (int i = 0; i < structure.residents.Count; i++) {
                 Character resident = structure.residents[i];
                 if (resident != this && resident.faction != null && resident.faction.isMajorFaction) {
-                    if (potentialOwners == null) { potentialOwners = new List<Character>(); }
                     potentialOwners.Add(resident);
                 }
             }
@@ -3891,6 +3928,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 i--;
             }
         }
+        RuinarchListPool<Character>.Release(potentialOwners);
     }
     public void PickUpItem(TileObject item, bool changeCharacterOwnership = false, bool setOwnership = true) {
         item.isBeingCarriedBy?.UnobtainItem(item);

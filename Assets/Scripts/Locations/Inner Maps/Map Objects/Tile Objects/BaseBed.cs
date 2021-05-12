@@ -90,7 +90,7 @@ public abstract class BaseBed : TileObject {
                 character.tileObjectComponent.SetBedBeingUsed(null);
                 if (character.gridTileLocation != null && character.traitContainer.HasTrait("Paralyzed")) {
                     //When a paralyzed character awakens, place it on an adjacent tile in the same Structure
-                    LocationGridTile gridTile = character.gridTileLocation.GetFirstNeighborThatMeetCriteria(x => x.structure == character.gridTileLocation.structure && x.IsPassable());
+                    LocationGridTile gridTile = character.gridTileLocation.GetFirstNeighborThatIsPassableAndSameStructureAs(character.gridTileLocation.structure);
                     if(gridTile != null) {
                         character.marker.PlaceMarkerAt(gridTile);
                     } else {

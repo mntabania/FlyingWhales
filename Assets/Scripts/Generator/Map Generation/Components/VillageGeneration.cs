@@ -172,10 +172,11 @@ public class VillageGeneration : MapGenerationComponent {
 		yield return null;
 	}
 	public static IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
-		List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureSetting.structureType);
+		List<StructureConnector> availableStructureConnectors = RuinarchListPool<StructureConnector>.Claim();
+		npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureSetting.structureType);
 		// availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
 		List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
-		prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
+		CollectionUtilities.Shuffle(prefabChoices);
 		for (int j = 0; j < prefabChoices.Count; j++) {
 			GameObject prefabGO = prefabChoices[j];
 			LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
@@ -189,6 +190,7 @@ public class VillageGeneration : MapGenerationComponent {
 				break; //stop loop since structure was already placed.
 			}
 		}
+		RuinarchListPool<StructureConnector>.Release(availableStructureConnectors);
 		yield return null;
 	}
 	#endregion

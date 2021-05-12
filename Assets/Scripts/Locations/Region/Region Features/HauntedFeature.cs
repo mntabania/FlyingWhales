@@ -33,7 +33,7 @@ namespace Locations.Region_Features {
         }
 
         private int GetAncientGraveyardsInRegion(Region region) {
-            return LandmarkManager.Instance.GetSpecialStructuresOfType(STRUCTURE_TYPE.ANCIENT_GRAVEYARD).Count;
+            return LandmarkManager.Instance.GetStructuresOfTypeCount(STRUCTURE_TYPE.ANCIENT_GRAVEYARD);
         }
 
         private IEnumerator CreateSpecialStructure(STRUCTURE_TYPE p_structureType, Region p_region, Area p_area) {

@@ -30,72 +30,165 @@ namespace Locations {
         }
 
         #region Utilities
-        public List<T> GetAllCharactersInsideHex<T>() where T : Character {
-            List<T> characters = null;
+        public void PopulateCharacterListInsideHex(List<Character> p_characterList) {
             for (int i = 0; i < charactersAtLocation.Count; i++) {
-                Character character = charactersAtLocation[i];
-                if (character.gridTileLocation == null) { continue; }
-                if (character is T converted) {
-                    if (characters == null) { characters = new List<T>(); }
-                    characters.Add(converted);
-                }
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                p_characterList.Add(c);
             }
-            return characters;
         }
-        public void PopulateCharacterListInsideHexThatMeetCriteria(List<Character> p_characterList, Func<Character, bool> validityChecker) {
+        public void PopulateAnimalsListInsideHex(List<Character> p_characterList, bool includeBeingSeized = false) {
             for (int i = 0; i < charactersAtLocation.Count; i++) {
-                Character character = charactersAtLocation[i];
-                if (character.gridTileLocation == null) { continue; }
-                if (character.isBeingSeized) { continue; }
-                if (validityChecker == null || validityChecker.Invoke(character)) {
-                    p_characterList.Add(character);
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (!includeBeingSeized && c.isBeingSeized) { continue; }
+                if (c is Animal) {
+                    p_characterList.Add(c);
                 }
             }
         }
-        public T GetFirstCharacterInsideHexThatMeetCriteria<T>(Func<Character, bool> validityChecker) where T : Character {
+        public void PopulateAnimalsListInsideHexThatIsNotTheSameRaceAs(List<Character> p_characterList, RACE p_race) {
             for (int i = 0; i < charactersAtLocation.Count; i++) {
-                Character character = charactersAtLocation[i];
-                if (character.gridTileLocation == null) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                if (c is Animal && c.race != p_race) {
+                    p_characterList.Add(c);
+                }
+            }
+        }
+        public void PopulateCharacterListInsideHexThatHasTrait(List<Character> p_characterList, string p_traitName) {
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                if (c.traitContainer.HasTrait(p_traitName)) {
+                    p_characterList.Add(c);
+                }
+            }
+        }
+        public void PopulateCharacterListInsideHexThatHasTraitAndNotRace(List<Character> p_characterList, string p_traitName, RACE p_race) {
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                if (c.traitContainer.HasTrait(p_traitName) && c.race != p_race) {
+                    p_characterList.Add(c);
+                }
+            }
+        }
+        public void PopulateCharacterListInsideHexThatIsAlive(List<Character> p_characterList) {
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                if (!c.isDead) {
+                    p_characterList.Add(c);
+                }
+            }
+        }
+        public void PopulateCharacterListInsideHexForInvadeBehaviour(List<Character> p_characterList, Character p_exception = null) {
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                if ((p_exception == null || p_exception != c) && c.isNormalCharacter && c.isDead == false && c.isAlliedWithPlayer == false && !c.traitContainer.HasTrait("Hibernating", "Indestructible")
+                    && !c.isInLimbo && c.carryComponent.IsNotBeingCarried()) {
+                    p_characterList.Add(c);
+                }
+            }
+        }
+        public void PopulateCharacterListInsideHexForKoboldBehaviour(List<Character> p_characterList, Character p_exception = null) {
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                if (c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD && c.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER) == false) {
+                    p_characterList.Add(c);
+                }
+            }
+        }
+        public void PopulateCharacterListInsideHexForPangatLooTargetForInvasion(List<Character> p_characterList) {
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                if (c.isNormalCharacter && c.isDead == false && !c.isInLimbo
+                    && c.carryComponent.IsNotBeingCarried() 
+                    && !c.traitContainer.HasTrait("Hibernating", "Indestructible")) {
+                    p_characterList.Add(c);
+                }
+            }
+        }
+        public void PopulateCharacterListInsideHexForVengefulGhostBehaviour(List<Character> p_characterList, Character p_invader) {
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) { continue; }
+                if (c.isBeingSeized) { continue; }
+                if (c != p_invader && p_invader.IsHostileWith(c) 
+                    && !c.isDead 
+                    && !c.traitContainer.HasTrait("Hibernating", "Indestructible") 
+                    && !c.isInLimbo 
+                    && c.carryComponent.IsNotBeingCarried()) {
+                    p_characterList.Add(c);
+                }
+            }
+        }
+        public Character GetFirstCharacterInsideHexForBoneGolemBehaviour(Character p_boneGolem) {
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) {
                     continue; //skip this character
                 }
-                if (validityChecker.Invoke(character)) {
-                    if (character is T converted) {
-                        return converted;
-                    }
+                if (CharacterManager.Instance.IsCharacterConsideredTargetOfBoneGolem(p_boneGolem, c)) {
+                    return c;
                 }
-                
             }
             return null;
         }
-        public T GetRandomCharacterInsideHexThatMeetCriteria<T>(Func<Character, bool> validityChecker) where T : Character {
-            List<T> characters = null;
-
+        public Character GetFirstCharacterInsideHexThatIsAliveHostileNotAlliedWithPlayerThatHasPathTo(Character p_character) {
             for (int i = 0; i < charactersAtLocation.Count; i++) {
-                Character character = charactersAtLocation[i];
-                if (character.gridTileLocation == null) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) {
                     continue; //skip this character
                 }
-                if (validityChecker.Invoke(character)) {
-                    if (character is T converted) {
-                        if (characters == null) { characters = new List<T>(); }
-                        characters.Add(converted);
-                    }
+                if (p_character != c && p_character.IsHostileWith(c) && !c.isDead && !c.isAlliedWithPlayer
+                    && c.marker && c.marker.isMainVisualActive && p_character.movementComponent.HasPathTo(c.gridTileLocation)
+                    && !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried()
+                    && !c.traitContainer.HasTrait("Hibernating", "Indestructible")) {
+                    return c;
                 }
-                
-            }
-            if (characters != null && characters.Count > 0) {
-                return CollectionUtilities.GetRandomElement(characters);
             }
             return null;
         }
-        public int GetNumOfCharactersInsideHexThatMeetCriteria(Func<Character, bool> criteria) {
+        public Character GetRandomCharacterInsideHexThatIsAliveAndConsidersAreaAsTerritory(Area p_area) {
+            Character chosenCharacter = null;
+            List<Character> characters = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < charactersAtLocation.Count; i++) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) {
+                    continue; //skip this character
+                }
+                if (!c.isDead && c.IsTerritory(p_area)) {
+                    characters.Add(c);
+                }
+            }
+            if (characters.Count > 0) {
+                chosenCharacter = CollectionUtilities.GetRandomElement(characters);
+            }
+            RuinarchListPool<Character>.Release(characters);
+            return chosenCharacter;
+        }
+        public int GetNumOfCharactersInsideHexThatHasRaceAndClassOf(RACE p_race, string p_className, Type p_behaviourTypeException = null) {
             int count = 0;
             for (int i = 0; i < charactersAtLocation.Count; i++) {
-                Character character = charactersAtLocation[i];
-                if (character.gridTileLocation == null) {
+                Character c = charactersAtLocation[i];
+                if (c.gridTileLocation == null) {
                     continue; //skip this character
                 }
-                if (criteria.Invoke(character)) {
+                if (c.race == p_race && c.characterClass.className == p_className
+                    && (p_behaviourTypeException == null || !c.behaviourComponent.HasBehaviour(p_behaviourTypeException))) {
                     count++;
                 }
             }

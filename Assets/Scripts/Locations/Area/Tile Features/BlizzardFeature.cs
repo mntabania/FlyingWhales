@@ -104,8 +104,8 @@ namespace Locations.Area_Features {
 
         #region Characters Outisde
         private void PopulateInitialCharactersOutside(Area p_area) {
-            List<Character> allCharactersInArea = ObjectPoolManager.Instance.CreateNewCharactersList();
-            p_area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(allCharactersInArea, null);
+            List<Character> allCharactersInArea = RuinarchListPool<Character>.Claim();
+            p_area.locationCharacterTracker.PopulateCharacterListInsideHex(allCharactersInArea);
             if (allCharactersInArea != null) {
                 for (int i = 0; i < allCharactersInArea.Count; i++) {
                     Character character = allCharactersInArea[i];
@@ -114,7 +114,7 @@ namespace Locations.Area_Features {
                     }
                 }
             }
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(allCharactersInArea);
+            RuinarchListPool<Character>.Release(allCharactersInArea);
         }
         private void ClearCharactersOutside() {
             _charactersOutside.Clear();

@@ -153,7 +153,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         if (character.homeStructure != null) {
             character.homeStructure.PopulateCharacterListThatIsWebbed(p_characterList);
         } else if (character.HasTerritory()) {
-            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
+            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatHasTrait(p_characterList, "Webbed");
         }
     }
 }

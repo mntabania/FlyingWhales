@@ -70,7 +70,7 @@ namespace Interrupts {
                 //Character is a monster
                 log += "\n-Character is a monster";
                 log += "\n-Find an unoccupied Special Structure within the region and randomly select one. Clear out Territory data if it has one.";
-                LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatMeetCriteria(currStructure => !currStructure.IsOccupied() && currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0 && !IsSameAsCurrentHomeStructure(currStructure, actor));
+                LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatIsInAnUnoccupiedDungeonAndHasPassableTiles();
                 if (chosenHomeStructure != null) {
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                     log += "\n-Special Structure found: " + chosenHomeStructure.ToString();
@@ -81,7 +81,7 @@ namespace Interrupts {
                 if (!actor.HasTerritory()) {
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         log += "\n-Getting structureless hex tile in current region: " + currentRegion.name;
-                        Area area = currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
+                        Area area = currentRegion.GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage();
                         if (area != null) {
                             actor.SetTerritory(area);
                             log += "\n-Area found: " + area.locationName;
@@ -118,7 +118,7 @@ namespace Interrupts {
                 log += "\n-40% chance: find an unoccupied but Habitable Special Structure within the region and randomly select one as its new Home Structure";
                 log += "\n-Roll: " + roll;
                 if (roll < 40) {
-                    LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatMeetCriteria(s => !s.IsOccupied() && s.HasStructureTag(STRUCTURE_TAG.Shelter) && actor.previousCharacterDataComponent.previousHomeStructure != s && !IsSameAsCurrentHomeStructure(s, actor));
+                    LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatIsHabitableAndUnoccupiedButNot(actor.previousCharacterDataComponent.previousHomeStructure);
                     if (chosenHomeStructure != null) {
                         log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
@@ -130,7 +130,7 @@ namespace Interrupts {
                 log += "\n-20% chance: find an unoccupied Village or Village occupied only by Vagrants within the region and randomly select one of its Structures (prioritize Dwellings) as its new Home Structure.  Clear out Territory data if it has one.";
                 log += "\n-Roll: " + roll;
                 if (roll < 20) {
-                    BaseSettlement chosenSettlement = currentRegion.GetFirstSettlementInRegion(x => x.locationType == LOCATION_TYPE.VILLAGE && actor.previousCharacterDataComponent.previousHomeSettlement != x && actor.homeSettlement != x && (x.residents.Count <= 0 || x.AreAllResidentsVagrantOrFactionless()));
+                    BaseSettlement chosenSettlement = currentRegion.GetFirstSettlementInRegionThatIsAUnoccupiedOrFactionlessResidentVillageThatIsNotHomeOf(actor);
                     if (chosenSettlement != null) {
                         log += "\n-Chosen Settlement: " + chosenSettlement.name;
                         LocationStructure chosenHomeStructure = GetStructureInSettlementPrioritizeDwellingsExceptPrevious(chosenSettlement, actor);
@@ -145,7 +145,7 @@ namespace Interrupts {
                 log += "\n-Otherwise, set a random structure-less Area as its Territory and make character go there.";
                 if (!actor.HasTerritory()) {
                     log += "\n-Character has no territory";
-                    Area area = currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.gridTileComponent.HasCorruption());
+                    Area area = currentRegion.GetRandomAreaThatIsNotMountainWaterAndNoStructureAndNoCorruption();
                     if (area != null) {
                         actor.SetTerritory(area);
                         log += "\n-Territory found: " + area.locationName;
@@ -163,7 +163,7 @@ namespace Interrupts {
             if (actor.homeSettlement != null && actor.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                 log += "\nCharacter is still part of a village";
                 log += "\nFind an unoccupied House and set that as its Home Structure - exclude previous Home.";
-                LocationStructure chosenDwelling = actor.homeSettlement.GetFirstStructureThatMeetCriteria(s => !s.IsOccupied() && s is Dwelling && actor.previousCharacterDataComponent.previousHomeStructure != s && !IsSameAsCurrentHomeStructure(s, actor));
+                LocationStructure chosenDwelling = actor.homeSettlement.GetFirstStructureThatIsUnoccupiedDwelling(actor.previousCharacterDataComponent.previousHomeStructure);
                 if (chosenDwelling != null) {
                     log += "\nFound dwelling: " + chosenDwelling.name;
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenDwelling, affectSettlement: false);
@@ -187,7 +187,7 @@ namespace Interrupts {
                                 }
 
                                 log += "\nFind an unoccupied but Habitable Special Structure within the region";
-                                LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatMeetCriteria(s => !s.IsOccupied() && s.HasStructureTag(STRUCTURE_TAG.Shelter) && actor.previousCharacterDataComponent.previousHomeStructure != s && !IsSameAsCurrentHomeStructure(s, actor));
+                                LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatIsHabitableAndUnoccupiedButNot(actor.previousCharacterDataComponent.previousHomeStructure);
                                 if (chosenHomeStructure != null) {
                                     log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
                                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
@@ -196,7 +196,7 @@ namespace Interrupts {
                                 }
 
                                 log += "\n-Set a random structure-less Area as its Territory and make character go there";
-                                Area area = currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.gridTileComponent.HasCorruption());
+                                Area area = currentRegion.GetRandomAreaThatIsNotMountainWaterAndNoStructureAndNoCorruption();
                                 if (area != null) {
                                     actor.ClearTerritory();
                                     actor.SetTerritory(area);
@@ -280,7 +280,7 @@ namespace Interrupts {
                 roll = UnityEngine.Random.Range(0, 100);
                 log += "\n-Roll: " + roll;
                 if (roll < 15) {
-                    BaseSettlement chosenSettlement = currentRegion.GetFirstSettlementInRegion(x => x.locationType == LOCATION_TYPE.VILLAGE && x.residents.Count <= 0 && x != actor.previousCharacterDataComponent.previousHomeSettlement);
+                    BaseSettlement chosenSettlement = currentRegion.GetFirstSettlementInRegionThatIsAUnoccupiedVillageThatIsNotPreviousHomeOf(actor);
                     if (chosenSettlement != null) {
                         log += "\n-Chosen Settlement: " + chosenSettlement.name;
                         chosenHomeStructure = GetStructureInSettlementPrioritizeDwellingsExceptPrevious(chosenSettlement, actor);
@@ -297,7 +297,7 @@ namespace Interrupts {
                 roll = UnityEngine.Random.Range(0, 100);
                 log += "\n-Roll: " + roll;
                 if (roll < 15) {
-                    chosenHomeStructure = currentRegion.GetRandomStructureThatMeetCriteria(s => !s.IsOccupied() && s.HasStructureTag(STRUCTURE_TAG.Shelter) && actor.previousCharacterDataComponent.previousHomeStructure != s && !IsSameAsCurrentHomeStructure(s, actor));
+                    chosenHomeStructure = currentRegion.GetRandomStructureThatIsHabitableAndUnoccupiedButNot(actor.previousCharacterDataComponent.previousHomeStructure);
                     if (chosenHomeStructure != null) {
                         log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
@@ -307,7 +307,7 @@ namespace Interrupts {
                 }
 
                 log += "\n-Set a random structure-less Area as its Territory and make character go there";
-                Area area = currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.gridTileComponent.HasCorruption());
+                Area area = currentRegion.GetRandomAreaThatIsNotMountainWaterAndNoStructureAndNoCorruption();
                 if (area != null) {
                     actor.ClearTerritory();
                     actor.SetTerritory(area);
@@ -326,7 +326,7 @@ namespace Interrupts {
                 if (baseSettlement != actor.homeSettlement && baseSettlement != actor.previousCharacterDataComponent.previousHomeSettlement) {
                     if(baseSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                         if (baseSettlement is NPCSettlement npcSettlement) {
-                            chosenDwelling = npcSettlement.GetFirstStructureThatMeetCriteria(s => !s.IsOccupied() && s is Dwelling && actor.previousCharacterDataComponent.previousHomeStructure != s && !IsSameAsCurrentHomeStructure(s, actor));
+                            chosenDwelling = npcSettlement.GetFirstStructureThatIsUnoccupiedDwelling(actor.previousCharacterDataComponent.previousHomeStructure);
                             if (chosenDwelling != null) {
                                 identifier = "unoccupied";
                                 return chosenDwelling;
@@ -404,7 +404,7 @@ namespace Interrupts {
                 log += "\nCharacter is Enslaved, do not find village";
                 return false;
             }
-            Area targetArea = actor.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
+            Area targetArea = actor.currentRegion.GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage();
             if (targetArea != null) {
                 if (!checkIfThereAreOtherFindVillageJob || !FactionMemberAlreadyHasFindVillageJob(actor.faction)) {
                     log += "\nTriggered found new village";
@@ -462,7 +462,7 @@ namespace Interrupts {
             for (int i = 0; i < faction.ownedSettlements.Count; i++) {
                 BaseSettlement settlement = faction.ownedSettlements[i];
                 if (settlement != actor.previousCharacterDataComponent.previousHomeSettlement && settlement != actor.homeSettlement) {
-                    LocationStructure structureOfType = settlement.GetFirstStructureThatMeetCriteria(s => s.structureType == structureType && s != actor.previousCharacterDataComponent.previousHomeStructure && !IsSameAsCurrentHomeStructure(s, actor));
+                    LocationStructure structureOfType = settlement.GetFirstStructureWithStructureType(structureType, actor.previousCharacterDataComponent.previousHomeStructure, actor.homeStructure);
                     //if settlement has structure of type
                     if (structureOfType != null) {
                         if (leastVillagersSettlement == null || settlement.residents.Count < leastVillagersSettlement.residents.Count) {

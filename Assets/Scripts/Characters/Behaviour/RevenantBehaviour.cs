@@ -69,9 +69,9 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
     private int GetNumberOfGhostsInHome(Character character) {
         int ghostCount = 0;
         if(character.homeSettlement != null) {
-            ghostCount = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => !c.isDead && c is Summon summon && summon.summonType == SUMMON_TYPE.Ghost);
+            ghostCount = character.homeSettlement.GetNumberOfResidentsThatIsAliveMonsterAndMonsterTypeIs(SUMMON_TYPE.Ghost);
         } else if (character.homeStructure != null) {
-            ghostCount = character.homeStructure.GetNumberOfReidentsThatMeetCriteria(c => !c.isDead && c is Summon summon && summon.summonType == SUMMON_TYPE.Ghost);
+            ghostCount = character.homeStructure.GetNumberOfResidentsThatIsAliveMonsterAndMonsterTypeIs(SUMMON_TYPE.Ghost);
         } else if (character.HasTerritory()) {
             ghostCount = CharacterManager.Instance.allCharacters.Count(c => !c.isDead && c.IsTerritory(character.territory) && c is Summon summon && summon.summonType == SUMMON_TYPE.Ghost);
         }

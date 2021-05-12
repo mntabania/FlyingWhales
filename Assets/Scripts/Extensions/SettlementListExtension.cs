@@ -2,15 +2,12 @@
 using Locations.Settlements;
 
 public static class SettlementListExtension {
-    public static List<BaseSettlement> GetSettlementsThatAreUnownedOrHostileWithFaction(this List<BaseSettlement> p_settlements, LOCATION_TYPE p_locationType, Faction p_otherFaction) {
-        List<BaseSettlement> foundSettlements = null;
+    public static void PopulateSettlementsThatAreUnownedOrHostileWithFaction(this List<BaseSettlement> p_settlements, List<BaseSettlement> chosenSettlements, LOCATION_TYPE p_locationType, Faction p_otherFaction) {
         for (int i = 0; i < p_settlements.Count; i++) {
             BaseSettlement settlement = p_settlements[i];
             if (settlement.locationType == p_locationType && (settlement.owner == null || settlement.owner.IsHostileWith(p_otherFaction))) {
-                if (foundSettlements == null) { foundSettlements = new List<BaseSettlement>(); }
-                foundSettlements.Add(settlement);
+                chosenSettlements.Add(settlement);
             }
         }
-        return foundSettlements;
     }
 }

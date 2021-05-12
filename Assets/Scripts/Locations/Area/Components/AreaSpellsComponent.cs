@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Traits;
 using UnityEngine.Profiling;
+using UtilityScripts;
 #if UNITY_EDITOR
 using Packages.Rider.Editor;
 #endif
@@ -155,8 +156,8 @@ public class AreaSpellsComponent : AreaComponent {
         CameraShake();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickEarthquake);
 
-        List<Character> charactersInsideHex = ObjectPoolManager.Instance.CreateNewCharactersList();
-        owner.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(charactersInsideHex, c => !c.isDead);
+        List<Character> charactersInsideHex = RuinarchListPool<Character>.Claim();
+        owner.locationCharacterTracker.PopulateCharacterListInsideHexThatIsAlive(charactersInsideHex);
         if (charactersInsideHex != null) {
             for (int i = 0; i < charactersInsideHex.Count; i++) {
                 Character character = charactersInsideHex[i];
@@ -169,7 +170,7 @@ public class AreaSpellsComponent : AreaComponent {
                 }
             }
         }
-        ObjectPoolManager.Instance.ReturnCharactersListToPool(charactersInsideHex);
+        RuinarchListPool<Character>.Release(charactersInsideHex);
     }
     private void StopEarthquake() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEarthquake);
@@ -281,10 +282,12 @@ public class AreaSpellsComponent : AreaComponent {
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
-                        List<LocationGridTile> adjacentTiles = poi.gridTileLocation.UnoccupiedNeighboursWithinHex;
-                        if (adjacentTiles != null && adjacentTiles.Count > 0) {
-                            POIMove(poi, adjacentTiles[UnityEngine.Random.Range(0, adjacentTiles.Count)]);
+                        List<LocationGridTile> adjacentTiles = RuinarchListPool<LocationGridTile>.Claim();
+                        poi.gridTileLocation.PopulateUnoccupiedNeighboursWithNoCharactersInSameAreaAndStructure(adjacentTiles);
+                        if (adjacentTiles.Count > 0) {
+                            POIMove(poi, adjacentTiles[GameUtilities.RandomBetweenTwoNumbers(0, adjacentTiles.Count - 1)]);
                         }
+                        RuinarchListPool<LocationGridTile>.Release(adjacentTiles);
                     }
                 }
             }

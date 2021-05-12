@@ -19,13 +19,7 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
                 BaseSettlement settlement = null;
                 Character target = null;
                 if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                    target = settlement.GetRandomResidentThatMeetCriteria(resident => character != resident
-                    && !resident.isBeingSeized
-                    && !resident.isDead
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.IsPartOfSettlement(settlement)
-                    && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))
-                    && !resident.traitContainer.HasTrait("Hibernating", "Indestructible"));
+                    target = settlement.GetRandomResidentForInvasionTargetThatIsInsideSettlementAndHostileWithFaction(settlement, character.faction, character);
                 }
                 if (target != null) {
                     log += $"\n-Chosen target is {target.name}";

@@ -136,18 +136,19 @@ public class DouseFireState : CharacterState {
         if (isFetchingWater) {
             return true;
         }
-        List<TileObject> targets = stateComponent.owner.currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.WATER_WELL);
+        List<TileObject> targets = RuinarchListPool<TileObject>.Claim();
+        stateComponent.owner.currentRegion.PopulateTileObjectsOfType(targets, TILE_OBJECT_TYPE.WATER_WELL);
         TileObject nearestWater = null;
-        float nearestDist = 9999f;
+        float nearestDist = 0f;
         for (int i = 0; i < targets.Count; i++) {
             TileObject currObj = targets[i];
             float dist = Vector2.Distance(stateComponent.owner.gridTileLocation.localLocation, currObj.gridTileLocation.localLocation);
-            if (dist < nearestDist) {
+            if (nearestWater == null || dist < nearestDist) {
                 nearestWater = currObj;
                 nearestDist = dist;
             }
         }
-
+        RuinarchListPool<TileObject>.Release(targets);
         if (nearestWater != null) {
             stateComponent.owner.marker.GoTo(nearestWater.gridTileLocation, ObtainWater);
             isFetchingWater = true;

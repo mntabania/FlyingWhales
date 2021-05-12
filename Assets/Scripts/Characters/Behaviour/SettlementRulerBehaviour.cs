@@ -31,7 +31,8 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
             }
             if (character.homeSettlement.settlementType != null) {
                 // int existingBuildJobs = character.homeSettlement.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT);
-                List<JobQueueItem> buildJobs = character.homeSettlement.GetJobs(JOB_TYPE.BUILD_BLUEPRINT);
+                List<JobQueueItem> buildJobs = RuinarchListPool<JobQueueItem>.Claim();
+                character.homeSettlement.PopulateJobsOfType(buildJobs, JOB_TYPE.BUILD_BLUEPRINT);
                 if (buildJobs.Count < 2) {
                     log += $"\n-Check chance to build dwelling if not yet at max.";
                     int dwellingCount = character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING);
@@ -50,6 +51,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                             StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
                             if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
                                 log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
+                                RuinarchListPool<JobQueueItem>.Release(buildJobs);
                                 return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, connectorTile, out producedJob);    
                             }    
                         }
@@ -69,6 +71,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                             log += $"\n-Will try to build facility {targetFacility.ToString()}";
                             if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
                                 log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
+                                RuinarchListPool<JobQueueItem>.Release(buildJobs);
                                 return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, connectorTile, out producedJob);    
                             } else {
                                 log += $"\n-Could not find location to place facility {targetFacility.ToString()}";
@@ -78,6 +81,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                 } else {
                     log += $"\n-Maximum build blueprint jobs reached.";
                 }
+                RuinarchListPool<JobQueueItem>.Release(buildJobs);
             }
         }
         producedJob = null;

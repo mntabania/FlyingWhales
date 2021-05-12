@@ -235,7 +235,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             if (partySettlement.locationType == LOCATION_TYPE.DUNGEON) {
                 meetingPlace = partySettlement.GetRandomStructure();
             } else {
-                meetingPlace = partySettlement.GetRandomStructureThatMeetCriteria(s => s.structureType == STRUCTURE_TYPE.TAVERN && CanAMemberGoTo(s));
+                meetingPlace = partySettlement.GetRandomStructureWithTypeWhereAPartyHasPathTo(STRUCTURE_TYPE.TAVERN, this);
                 if(meetingPlace == null){
                     meetingPlace = partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                     if(meetingPlace == null) {

@@ -27,8 +27,11 @@ public class Region : ISavable, ILogFiller {
     public Area[,] areaMap => GridMap.Instance.map; //TODO:
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
-    public RegionFeatureComponent regionFeatureComponent { get; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
+
+
+    //Components
+    public RegionFeatureComponent regionFeatureComponent { get; }
     public BiomeDivisionComponent biomeDivisionComponent { get; }
     /// <summary>
     /// Number of tile objects in this region categorized by type.
@@ -165,15 +168,20 @@ public class Region : ISavable, ILogFiller {
         }
         return false;
     }
-    public List<Area> GetTilesWithFeature(string featureName) {
-        List<Area> tilesWithFeature = new List<Area>();
+    public Area GetAreaWithFeatureThatIsNearestTo(string featureName, Character p_character) {
+        float nearestDistance = 0f;
+        Area nearestArea = null;
         for (int i = 0; i < areas.Count; i++) {
-            Area tile = areas[i];
-            if (tile.featureComponent.HasFeature(featureName)) {
-                tilesWithFeature.Add(tile);
+            Area a = areas[i];
+            if (a.featureComponent.HasFeature(featureName)) {
+                float distance = Vector2.Distance(a.gridTileComponent.centerGridTile.centeredWorldLocation, p_character.worldPosition);
+                if (nearestArea == null || distance < nearestDistance) {
+                    nearestArea = a;
+                    nearestDistance = distance;
+                }
             }
         }
-        return tilesWithFeature;
+        return nearestArea;
     }
     public void PopulateAreasOccupiedByVillagers(List<Area> areas) {
         for (int i = 0; i < residents.Count; i++) {
@@ -257,19 +265,111 @@ public class Region : ISavable, ILogFiller {
         ObjectPoolManager.Instance.ReturnCharactersListToPool(validCharacters);
         return chosenCharacter;
     }
-    public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> validityChecker) {
-        List<Character> validCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+    public Character GetRandomCharacterForSuccubusMakeLove(Character p_succubus) {
+        List<Character> validCharacters = RuinarchListPool<Character>.Claim();
         Character chosenCharacter = null;
         for (int i = 0; i < charactersAtLocation.Count; i++) {
-            Character character = charactersAtLocation[i];
-            if (validityChecker.Invoke(character)) {
-                validCharacters.Add(character);
+            Character c = charactersAtLocation[i];
+            if (c.gender == GENDER.MALE && !c.isDead && (p_succubus.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null && !c.partyComponent.isActiveMember) {
+                if (c.limiterComponent.canPerform && !c.combatComponent.isInCombat && !c.hasBeenRaisedFromDead && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == p_succubus.currentRegion) {
+                    if (c.homeSettlement.GetFirstBuiltBedThatIsAvailableAndNoActiveUsers() != null) {
+                        validCharacters.Add(c);
+                    }
+                }
             }
         }
         if (validCharacters != null) {
             chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
         }
-        ObjectPoolManager.Instance.ReturnCharactersListToPool(validCharacters);
+        RuinarchListPool<Character>.Release(validCharacters);
+        return chosenCharacter;
+    }
+    public Character GetRandomCharacterForSuccubusMakeLoveTamed(Character p_succubus) {
+        List<Character> validCharacters = RuinarchListPool<Character>.Claim();
+        Character chosenCharacter = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character c = charactersAtLocation[i];
+            if (c.gender == GENDER.MALE && !c.isDead && (p_succubus.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null && !c.partyComponent.isActiveMember && c.faction != p_succubus.faction && c.homeRegion == p_succubus.currentRegion) {
+                if (c.limiterComponent.canPerform && !c.combatComponent.isInCombat && !c.hasBeenRaisedFromDead && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == p_succubus.currentRegion) {
+                    if (c.homeSettlement.GetFirstBuiltBedThatIsAvailableAndNoActiveUsers() != null) {
+                        validCharacters.Add(c);
+                    }
+                }
+            }
+        }
+        if (validCharacters != null) {
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        RuinarchListPool<Character>.Release(validCharacters);
+        return chosenCharacter;
+    }
+    public Character GetRandomCharacterThatIsFemaleVillagerAndNotDead() {
+        List<Character> validCharacters = RuinarchListPool<Character>.Claim();
+        Character chosenCharacter = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character c = charactersAtLocation[i];
+            if (!c.isDead && c.isNormalCharacter && c.gender == GENDER.FEMALE) {
+                validCharacters.Add(c);
+            }
+        }
+        if (validCharacters != null) {
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        RuinarchListPool<Character>.Release(validCharacters);
+        return chosenCharacter;
+    }
+    public Character GetRandomCharacterThatIsMaleVillagerAndNotDeadAndFactionIsNotTheSameAs(Character p_character) {
+        List<Character> validCharacters = RuinarchListPool<Character>.Claim();
+        Character chosenCharacter = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character c = charactersAtLocation[i];
+            if (c.gender == GENDER.MALE && c.isNormalCharacter && !c.isDead && c.homeRegion == p_character.currentRegion && c.faction != p_character.faction) {
+                validCharacters.Add(c);
+            }
+        }
+        if (validCharacters != null) {
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        RuinarchListPool<Character>.Release(validCharacters);
+        return chosenCharacter;
+    }
+    public Character GetRandomCharacterThatIsNotDeadAndInDemonFactionAndHasPathTo(Character p_character) {
+        List<Character> validCharacters = RuinarchListPool<Character>.Claim();
+        Character chosenCharacter = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character c = charactersAtLocation[i];
+            if (c != p_character && !c.isDead && c.movementComponent.HasPathTo(p_character.gridTileLocation) && c.faction?.factionType.type == FACTION_TYPE.Demons) {
+                validCharacters.Add(c);
+            }
+        }
+        if (validCharacters != null) {
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        RuinarchListPool<Character>.Release(validCharacters);
+        return chosenCharacter;
+    }
+    public Character GetRandomCharacterForMonsterScent(Character p_character) {
+        List<Character> validCharacters = RuinarchListPool<Character>.Claim();
+        Character chosenCharacter = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character c = charactersAtLocation[i];
+            if (!c.isDead
+                && c.limiterComponent.canPerform
+                && c.limiterComponent.canMove
+                && c.movementComponent.HasPathTo(p_character.gridTileLocation)
+                && !c.movementComponent.isStationary
+                && (c is Summon)
+                && !(c is Animal)
+                && !c.isInLimbo
+                && !CharacterManager.Instance.IsCharacterTheSameLycan(p_character, c)
+                && !c.partyComponent.hasParty) {
+                validCharacters.Add(c);
+            }
+        }
+        if (validCharacters != null) {
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        RuinarchListPool<Character>.Release(validCharacters);
         return chosenCharacter;
     }
     #endregion
@@ -372,39 +472,67 @@ public class Region : ISavable, ILogFiller {
         //}
         //return null;
     }
-    public LocationStructure GetRandomStructureThatMeetCriteria(System.Func<LocationStructure, bool> checker) {
-        List<LocationStructure> structureChoices = ObjectPoolManager.Instance.CreateNewStructuresList();
+    public LocationStructure GetRandomStructureThatIsInADungeonAndHasPassableTiles() {
+        List<LocationStructure> structureChoices = RuinarchListPool<LocationStructure>.Claim();
         LocationStructure chosenStructure = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
-            if (checker.Invoke(currStructure)) {
+            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
                 structureChoices.Add(currStructure);
             }
         }
         if (structureChoices != null && structureChoices.Count > 0) {
             chosenStructure = structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
         }
-        ObjectPoolManager.Instance.ReturnStructuresListToPool(structureChoices);
+        RuinarchListPool<LocationStructure>.Release(structureChoices);
         return chosenStructure;
     }
-    public LocationStructure GetRandomStructureOfTypeThatMeetCriteria(System.Func<LocationStructure, bool> checker, params STRUCTURE_TYPE[] type) {
-        List<LocationStructure> structureChoices = ObjectPoolManager.Instance.CreateNewStructuresList();
+    public LocationStructure GetRandomStructureThatIsInAnUnoccupiedDungeonAndHasPassableTiles() {
+        List<LocationStructure> structureChoices = RuinarchListPool<LocationStructure>.Claim();
         LocationStructure chosenStructure = null;
-        for (int i = 0; i < type.Length; i++) {
-            if (structures.ContainsKey(type[i])) {
-                List<LocationStructure> structuresOfType = structures[type[i]];
-                for (int j = 0; j < structuresOfType.Count; j++) {
-                    LocationStructure possibleStructure = structuresOfType[j];
-                    if (checker.Invoke(possibleStructure)) {
-                        structureChoices.Add(possibleStructure);
-                    }
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (!currStructure.IsOccupied() && currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
+                structureChoices.Add(currStructure);
+            }
+        }
+        if (structureChoices != null && structureChoices.Count > 0) {
+            chosenStructure = structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
+        }
+        RuinarchListPool<LocationStructure>.Release(structureChoices);
+        return chosenStructure;
+    }
+    public LocationStructure GetRandomStructureThatIsHabitableAndUnoccupiedButNot(LocationStructure p_exceptionStructure) {
+        List<LocationStructure> structureChoices = RuinarchListPool<LocationStructure>.Claim();
+        LocationStructure chosenStructure = null;
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (!currStructure.IsOccupied() && currStructure.HasStructureTag(STRUCTURE_TAG.Shelter) && p_exceptionStructure != currStructure) {
+                structureChoices.Add(currStructure);
+            }
+        }
+        if (structureChoices != null && structureChoices.Count > 0) {
+            chosenStructure = structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
+        }
+        RuinarchListPool<LocationStructure>.Release(structureChoices);
+        return chosenStructure;
+    }
+    public LocationStructure GetRandomStructureOfTypeThatHasTombstone(STRUCTURE_TYPE type) {
+        List<LocationStructure> structureChoices = RuinarchListPool<LocationStructure>.Claim();
+        LocationStructure chosenStructure = null;
+        if (structures.ContainsKey(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            for (int j = 0; j < structuresOfType.Count; j++) {
+                LocationStructure possibleStructure = structuresOfType[j];
+                if (possibleStructure.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE)) {
+                    structureChoices.Add(possibleStructure);
                 }
             }
         }
         if (structureChoices != null && structureChoices.Count > 0) {
             chosenStructure = structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
         }
-        ObjectPoolManager.Instance.ReturnStructuresListToPool(structureChoices);
+        RuinarchListPool<LocationStructure>.Release(structureChoices);
         return chosenStructure;
     }
     public LocationStructure GetRandomSpecialStructureExcept(List<LocationStructure> exceptions) {
@@ -445,25 +573,10 @@ public class Region : ISavable, ILogFiller {
         }
         return null;
     }
-    public List<LocationStructure> GetStructuresAtLocation() {
-        List<LocationStructure> structuresAtLocation = new List<LocationStructure>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                LocationStructure currStructure = kvp.Value[i];
-                structuresAtLocation.Add(currStructure);
-            }
-        }
-        return structuresAtLocation;
-    }
-    public List<T> GetStructuresAtLocation<T>(STRUCTURE_TYPE type) where T : LocationStructure{
-        List<T> structuresAtLocation = new List<T>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                LocationStructure currStructure = kvp.Value[i];
-                if (currStructure.structureType == type) {
-                    structuresAtLocation.Add(currStructure as T);
-                }
-            }
+    public List<LocationStructure> GetStructuresAtLocation(STRUCTURE_TYPE type) {
+        List<LocationStructure> structuresAtLocation = null;
+        if (structures.ContainsKey(type)) {
+            structuresAtLocation = structures[type];
         }
         return structuresAtLocation;
     }
@@ -504,53 +617,151 @@ public class Region : ISavable, ILogFiller {
     //public void BlockNotifications() {
     //    _canShowNotificationVotes--;
     //}
-    public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
-        List<TileObject> objs = new List<TileObject>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                List<TileObject> tileObjects = keyValuePair.Value[i].GetTileObjectsOfType(type);
-                if(tileObjects != null) {
-                    objs.AddRange(tileObjects);
-                }
+    public void PopulateTileObjectsOfType(List<TileObject> p_tileObjects, TILE_OBJECT_TYPE type) {
+        for (int i = 0; i < allStructures.Count; i++) {
+            List<TileObject> tileObjects = allStructures[i].GetTileObjectsOfType(type);
+            if (tileObjects != null && tileObjects.Count > 0) {
+                p_tileObjects.AddRange(tileObjects);
             }
         }
-        return objs;
     }
     public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                LocationStructure structure = keyValuePair.Value[i];
-                if (structure.HasTileObjectOfType(type)) {
-                    return true;
-                }
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure structure = allStructures[i];
+            if (structure.HasTileObjectOfType(type)) {
+                return true;
             }
         }
         return false;
     }
     public void PopulateTileObjectsOfType<T>(List<T> objs) where T : TileObject{
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                keyValuePair.Value[i].PopulateTileObjectsOfType(objs);
-            }
+        for (int i = 0; i < allStructures.Count; i++) {
+            allStructures[i].PopulateTileObjectsOfType(objs);
         }
     }
     #endregion
 
-    #region Hex Tile Map
-    public Area GetRandomHexThatMeetCriteria(System.Func<Area, bool> validityChecker) {
-        List<Area> hexes = RuinarchListPool<Area>.Claim();
-        Area chosenHex = null;
+    #region Areas
+    public Area GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage() {
+        List<Area> pool = RuinarchListPool<Area>.Claim();
+        Area chosenArea = null;
         for (int i = 0; i < areas.Count; i++) {
-            Area currHex = areas[i];
-            if (validityChecker.Invoke(currHex)) {
-                hexes.Add(currHex);
+            Area a = areas[i];
+            if (a.elevationType != ELEVATION.WATER 
+                && a.elevationType != ELEVATION.MOUNTAIN 
+                && !a.structureComponent.HasStructureInArea() 
+                && !a.IsNextToOrPartOfVillage() 
+                && !a.gridTileComponent.HasCorruption()) {
+                pool.Add(a);
             }
         }
-        if (hexes != null && hexes.Count > 0) {
-            chosenHex = CollectionUtilities.GetRandomElement(hexes);
+        if (pool != null && pool.Count > 0) {
+            chosenArea = CollectionUtilities.GetRandomElement(pool);
         }
-        RuinarchListPool<Area>.Release(hexes);
-        return chosenHex;
+        RuinarchListPool<Area>.Release(pool);
+        return chosenArea;
+    }
+    public Area GetRandomAreaThatIsNotMountainWaterAndNoStructureAndNoCorruption() {
+        List<Area> pool = RuinarchListPool<Area>.Claim();
+        Area chosenArea = null;
+        for (int i = 0; i < areas.Count; i++) {
+            Area a = areas[i];
+            if (a.elevationType != ELEVATION.WATER 
+                && a.elevationType != ELEVATION.MOUNTAIN 
+                && !a.structureComponent.HasStructureInArea() 
+                && !a.gridTileComponent.HasCorruption()) {
+                pool.Add(a);
+            }
+        }
+        if (pool != null && pool.Count > 0) {
+            chosenArea = CollectionUtilities.GetRandomElement(pool);
+        }
+        RuinarchListPool<Area>.Release(pool);
+        return chosenArea;
+    }
+    public Area GetRandomAreaThatIsNotMountainWaterAndNoCorruption() {
+        List<Area> pool = RuinarchListPool<Area>.Claim();
+        Area chosenArea = null;
+        for (int i = 0; i < areas.Count; i++) {
+            Area a = areas[i];
+            if (a.elevationType != ELEVATION.WATER 
+                && a.elevationType != ELEVATION.MOUNTAIN 
+                && !a.gridTileComponent.HasCorruption()) {
+                pool.Add(a);
+            }
+        }
+        if (pool != null && pool.Count > 0) {
+            chosenArea = CollectionUtilities.GetRandomElement(pool);
+        }
+        RuinarchListPool<Area>.Release(pool);
+        return chosenArea;
+    }
+    public Area GetRandomAreaThatIsUncorruptedFullyPlainNoStructureAndNotNextToOrPartOfVillage() {
+        List<Area> pool = RuinarchListPool<Area>.Claim();
+        Area chosenArea = null;
+        for (int i = 0; i < areas.Count; i++) {
+            Area a = areas[i];
+            if (a.elevationComponent.IsFully(ELEVATION.PLAIN) 
+                && !a.structureComponent.HasStructureInArea() 
+                && !a.IsNextToOrPartOfVillage() 
+                && !a.gridTileComponent.HasCorruption()) {
+                pool.Add(a);
+            }
+        }
+        if (pool != null && pool.Count > 0) {
+            chosenArea = CollectionUtilities.GetRandomElement(pool);
+        }
+        RuinarchListPool<Area>.Release(pool);
+        return chosenArea;
+    }
+    public Area GetRandomAreaThatIsNotMountainAndWaterAndNoSettlement() {
+        List<Area> pool = RuinarchListPool<Area>.Claim();
+        Area chosenArea = null;
+        for (int i = 0; i < areas.Count; i++) {
+            Area a = areas[i];
+            if (a.settlementOnArea == null && a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN) {
+                pool.Add(a);
+            }
+        }
+        if (pool != null && pool.Count > 0) {
+            chosenArea = CollectionUtilities.GetRandomElement(pool);
+        }
+        RuinarchListPool<Area>.Release(pool);
+        return chosenArea;
+    }
+    public Area GetRandomAreaThatIsNotWater() {
+        List<Area> pool = RuinarchListPool<Area>.Claim();
+        Area chosenArea = null;
+        for (int i = 0; i < areas.Count; i++) {
+            Area a = areas[i];
+            if (a.elevationType != ELEVATION.WATER) {
+                pool.Add(a);
+            }
+        }
+        if (pool != null && pool.Count > 0) {
+            chosenArea = CollectionUtilities.GetRandomElement(pool);
+        }
+        RuinarchListPool<Area>.Release(pool);
+        return chosenArea;
+    }
+    public Area GetRandomAreaThatIsNextToAVillageButNotMountainAndWaterAndNoSettlementAndWithPathTo(Character p_character) {
+        List<Area> pool = RuinarchListPool<Area>.Claim();
+        Area chosenArea = null;
+        for (int i = 0; i < areas.Count; i++) {
+            Area a = areas[i];
+            if (a.elevationType != ELEVATION.MOUNTAIN
+                && a.elevationType != ELEVATION.WATER 
+                && a.neighbourComponent.IsNextToVillage() 
+                && a.settlementOnArea == null
+                && p_character.movementComponent.HasPathTo(a)) {
+                pool.Add(a);
+            }
+        }
+        if (pool != null && pool.Count > 0) {
+            chosenArea = CollectionUtilities.GetRandomElement(pool);
+        }
+        RuinarchListPool<Area>.Release(pool);
+        return chosenArea;
     }
     #endregion
 
@@ -566,36 +777,54 @@ public class Region : ISavable, ILogFiller {
             }
         }
     }
-    public List<BaseSettlement> GetSettlementsInRegion(System.Func<BaseSettlement, bool> validityChecker) {
-        List<BaseSettlement> settlements = null;
+    public void PopulateSettlementsInRegionForInvadeBehaviour(List<BaseSettlement> settlements) {
         for (int i = 0; i < settlementsInRegion.Count; i++) {
             BaseSettlement settlement = settlementsInRegion[i];
-            if (validityChecker.Invoke(settlement)) {
-                if (settlements == null) {
-                    settlements = new List<BaseSettlement>();
-                }
-                if (settlements.Contains(settlement) == false) {
-                    settlements.Add(settlement);
-                }
+            if (settlement.HasResidentForInvadeBehaviour()) {
+                settlements.Add(settlement);
             }
         }
-        return settlements;
+    }
+    public void PopulateSettlementsInRegionForPestBehaviour(List<BaseSettlement> settlements, Character p_character) {
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = settlementsInRegion[i];
+            if (settlement.HasResidentThatIsNotDead(p_character)) {
+                settlements.Add(settlement);
+            }
+        }
+    }
+    public void PopulateSettlementsInRegionForGettingGeneralVillageTargets(List<BaseSettlement> settlements) {
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = settlementsInRegion[i];
+            if (settlement.HasResidentForGettingGeneralVillageTargets()) {//settlement.residents.Count > 0 && settlement.residents.Count(c => c != null && c.isNormalCharacter && !c.isAlliedWithPlayer && c.IsAble()) > 0
+                settlements.Add(settlement);
+            }
+        }
     }
     public void PopulateSettlementsInRegionThatHasAliveResidentExcept(List<BaseSettlement> settlements, Character exception, BaseSettlement exceptionSettlement) {
         for (int i = 0; i < settlementsInRegion.Count; i++) {
             BaseSettlement settlement = settlementsInRegion[i];
             if(settlement != exceptionSettlement) {
-                if (settlement.HasResidentThatMeetsCriteria(x => exception != x && !x.isDead)) {
+                if (settlement.HasResidentThatIsNotDead(exception)) {
                     settlements.Add(settlement);
                 }
             }
         }
     }
-    public BaseSettlement GetFirstSettlementInRegion(System.Func<BaseSettlement, bool> validityChecker) {
+    public BaseSettlement GetFirstSettlementInRegionThatIsAUnoccupiedOrFactionlessResidentVillageThatIsNotHomeOf(Character p_character) {
         for (int i = 0; i < settlementsInRegion.Count; i++) {
-            BaseSettlement settlement = settlementsInRegion[i];
-            if (validityChecker.Invoke(settlement)) {
-                return settlement;
+            BaseSettlement s = settlementsInRegion[i];
+            if (s.locationType == LOCATION_TYPE.VILLAGE && p_character.previousCharacterDataComponent.previousHomeSettlement != s && p_character.homeSettlement != s && (!s.HasResidents() || s.AreAllResidentsVagrantOrFactionless())) {
+                return s;
+            }
+        }
+        return null;
+    }
+    public BaseSettlement GetFirstSettlementInRegionThatIsAUnoccupiedVillageThatIsNotPreviousHomeOf(Character p_character) {
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement s = settlementsInRegion[i];
+            if (s.locationType == LOCATION_TYPE.VILLAGE && !s.HasResidents() && s != p_character.previousCharacterDataComponent.previousHomeSettlement) {
+                return s;
             }
         }
         return null;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
+using UtilityScripts;
 
 public abstract class CharacterBehaviourComponent {
 
@@ -90,7 +91,8 @@ public abstract class CharacterBehaviourComponent {
     #region Utilities
     protected WeightedDictionary<Character> GetCharacterToVisitWeights(Character actor) {
         WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
-        List<Character> positiveRelatables = actor.relationshipContainer.GetFriendCharacters();
+        List<Character> positiveRelatables = RuinarchListPool<Character>.Claim();
+        actor.relationshipContainer.PopulateFriendCharacters(positiveRelatables);
         for (int i = 0; i < positiveRelatables.Count; i++) {
             Character character = positiveRelatables[i];
             if (character.isDead || character.homeStructure == null || 
@@ -104,6 +106,7 @@ public abstract class CharacterBehaviourComponent {
             }
             weights.AddElement(character, weight);
         }
+        RuinarchListPool<Character>.Release(positiveRelatables);
         return weights;
     }
     #endregion

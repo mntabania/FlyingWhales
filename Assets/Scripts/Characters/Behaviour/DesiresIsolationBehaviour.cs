@@ -19,7 +19,7 @@ public class DesiresIsolationBehaviour : CharacterBehaviourComponent {
             int chance = 25;
             log += $"\n{character.name} will roll for idle sit: {roll}. Chance is {chance}";
             if (roll < chance) {
-                TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                TileObject deskOrTable = character.currentStructure.GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                 log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
                 if (deskOrTable != null) {
                     log += $"\n  -{character.name} will do action Sit on {deskOrTable}";

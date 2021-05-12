@@ -668,19 +668,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	private void TryCreateRestrainJobs() {
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is under siege, trying to create knockout jobs...";
 		if (CanCreateRestrainJob()) {
-			int combatantResidents = 
-				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
+			int combatantResidents = _owner.GetNumberOfResidentsThatHasTrait("Combatant");
 			int existingRestrainJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.RESTRAIN);
 			summary += $"\nCombatant residents: {combatantResidents.ToString()}";
 			summary += $"\nExisting restrain jobs: {existingRestrainJobs.ToString()}";
-			List<Character> hostileCharacters = _owner.GetHostileCharactersInSettlement();
-			if (hostileCharacters.Count > 0) {
-				Character target = hostileCharacters.First();
+			Character hostile = _owner.GetFirstHostileCharacterInSettlement();
+			if (hostile != null) {
 				int jobsToCreate = combatantResidents - existingRestrainJobs;
 				summary += $"\nWill create {jobsToCreate.ToString()} restrain jobs.";
 				for (int i = 0; i < jobsToCreate; i++) {
-					summary += $"\nWill create restrain job targeting {target.name}.";
-					CreateRestrainJob(target);
+					summary += $"\nWill create restrain job targeting {hostile.name}.";
+					CreateRestrainJob(hostile);
 				}	
 			}
 		} else {
@@ -770,13 +768,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	private void CheckDouseFireJobsValidity() {
 		if (_owner.firesInSettlement.Count == 0) {
 			//cancel all douse fire jobs
-			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DOUSE_FIRE);
+			List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+			_owner.PopulateJobsOfType(jobs, JOB_TYPE.DOUSE_FIRE);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
 					jqi.ForceCancelJob(false, "no more fires");	
 				}
 			}
+			RuinarchListPool<JobQueueItem>.Release(jobs);
 		}
 	}
 	private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
@@ -840,13 +840,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	private void CheckDryTilesValidity() {
 		if (wetTiles.Count == 0) {
 			//cancel all dry tiles jobs
-			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DRY_TILES);
+			List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+			_owner.PopulateJobsOfType(jobs, JOB_TYPE.DRY_TILES);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
 					jqi.ForceCancelJob(false, "no more wet floors");	
 				}
 			}
+			RuinarchListPool<JobQueueItem>.Release(jobs);
 		}
 	}
 	public void AddTileDryer(Character character) {
@@ -887,13 +889,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	private void CheckCleanseTilesValidity() {
 		if (poisonedTiles.Count == 0) {
 			//cancel all cleanse tiles jobs
-			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.CLEANSE_TILES);
+			List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+			_owner.PopulateJobsOfType(jobs, JOB_TYPE.CLEANSE_TILES);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
 					jqi.ForceCancelJob(false, "no more poisoned floors");	
 				}
 			}
+			RuinarchListPool<JobQueueItem>.Release(jobs);
 		}
 	}
 	public void AddPoisonCleanser(Character character) {
@@ -966,11 +970,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		_owner.AddToAvailableJobs(job);
 	}
 	private void CancelTendJobs() {
-		List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.TEND_FARM);
+		List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+		_owner.PopulateJobsOfType(jobs, JOB_TYPE.TEND_FARM);
 		for (int i = 0; i < jobs.Count; i++) {
 			JobQueueItem job = jobs[i];
 			job.ForceCancelJob(false);
 		}
+		RuinarchListPool<JobQueueItem>.Release(jobs);
 	}
 	#endregion
 

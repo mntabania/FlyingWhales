@@ -19,7 +19,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                 int chance = UnityEngine.Random.Range(0, 100);
                 log += $"\n  -RNG roll: {chance}";
                 if (chance < 50) {
-                    TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                    TileObject deskOrTable = character.currentStructure.GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                     if (deskOrTable != null) {
                         log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
                         character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
@@ -98,7 +98,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                 int sitChance = UnityEngine.Random.Range(0, 100);
                 log += $"\n  -RNG roll: {sitChance}";
                 if (sitChance < 15) {
-                    TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                    TileObject deskOrTable = character.currentStructure.GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                     if (deskOrTable != null) {
                         log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
                         character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);

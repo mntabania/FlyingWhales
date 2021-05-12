@@ -309,8 +309,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (!isUnderSiege) {
                 if(exterminateTargetStructure != null) {
                     if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
-                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
-                    && (resident.faction == null || owner == null || owner.IsHostileWith(resident.faction)))) {
+                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatIsNotDeadThatIsHostileWithFaction(owner)) {
                             owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
                         }
                     }
@@ -609,7 +608,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 log += "\n  -Ambitious: x1.5";
             }
             if (resident is Summon || resident.characterClass.IsZombie()) {
-                if(HasResidentThatMeetsCriteria(c => c.race.IsSapient() && ((c.gridTileLocation != null && c.gridTileLocation.IsPartOfSettlement(this)) || c.partyComponent.isMemberThatJoinedQuest))) {
+                if(HasResidentThatIsSapientAndInsideSettlementOrHasJoinedQuest()) {
                     weight *= 0;
                     log += "\n  -Resident is a Summon and there is atleast 1 Sapient resident inside settlement or in active party: x0";
                 }
@@ -644,8 +643,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void ResetNewRulerDesignationChance() {
         newRulerDesignationChance = 5;
     }
-    public List<Character> GetHostileCharactersInSettlement() {
-        List<Character> hostileCharacters = new List<Character>();
+    public Character GetFirstHostileCharacterInSettlement() {
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
             if(character.reactionComponent.disguisedCharacter != null) {
@@ -656,10 +654,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             && !character.traitContainer.HasTrait("Restrained")
             && character.combatComponent.combatMode != COMBAT_MODE.Passive
             && !character.traitContainer.HasTrait("Enslaved")) {
-                hostileCharacters.Add(character);
+                return character;
             }
         }
-        return hostileCharacters;
+        return null;
     }
     public void GenerateInitialOpinionBetweenResidents() {
         for (int i = 0; i < residents.Count; i++) {
@@ -820,13 +818,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void CheckIfInventoryJobsAreStillValid(TileObject item, LocationStructure structure) {
         if (structure == mainStorage && neededObjects.Contains(item.tileObjectType)) {
             if (mainStorage.GetNumberOfBuiltTileObjects(item.tileObjectType) >= 2) {
-                List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
+                List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+                PopulateJobsOfType(jobs, JOB_TYPE.CRAFT_OBJECT);
                 for (int i = 0; i < jobs.Count; i++) {
                     JobQueueItem jqi = jobs[i];
                     if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == item.tileObjectType) {
                         jqi.ForceCancelJob(false, "Settlement has enough");    
                     }
                 }
+                RuinarchListPool<JobQueueItem>.Release(jobs);
             }
             // if (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
             //     if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION).Count >= 2) {
@@ -1003,12 +1003,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (chosenPrison != null) {
                 SetPrison(chosenPrison);
             } else {
-                foreach (var kvp in structures) {
-                    if (kvp.Key != STRUCTURE_TYPE.WILDERNESS) {
-                        SetPrison(kvp.Value[0]);
+                for (int i = 0; i < allStructures.Count; i++) {
+                    LocationStructure s = allStructures[i];
+                    if (s.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                        SetPrison(s);
                         break;
                     }
-                } 
+                }
             }
         }
     }
@@ -1023,9 +1024,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else if (HasStructure(STRUCTURE_TYPE.CITY_CENTER)) {
             newStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         } else {
-            foreach (var kvp in structures) {
-                if (kvp.Key != STRUCTURE_TYPE.WILDERNESS) {
-                    newStorage = kvp.Value[0];
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure s = allStructures[i];
+                if (s.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    newStorage = s;
                     break;
                 }
             }
@@ -1051,20 +1053,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region POI
-    public List<IPointOfInterest> GetPointOfInterestsOfType(POINT_OF_INTEREST_TYPE type) {
-        List<IPointOfInterest> pois = new List<IPointOfInterest>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                pois.AddRange(keyValuePair.Value[i].GetPOIsOfType(type));
-            }
-        }
-        return pois;
-    }
-    public void GetTileObjectsThatAdvertise(List<TileObject> p_objectList, params INTERACTION_TYPE[] types) {
-        for (int i = 0; i < allStructures.Count; i++) {
-            allStructures[i].PopulateTileObjectsThatAdvertise(p_objectList, types);
-        }
-    }
     public void PopulateTileObjectsFromStructures<T>(List<T> objs, STRUCTURE_TYPE structureType) where T : TileObject {
         if (HasStructure(structureType)) {
             List<LocationStructure> structureList = structures[structureType];
@@ -1122,11 +1110,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return count;
     }
-    public int GetNumberOfJobsThatMeetCriteria(Func<GoapPlanJob, bool> criteria) {
+    public int GetNumberOfJobsThatTargetsTileObjectOfType(TILE_OBJECT_TYPE p_type) {
         int count = 0;
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if (job is GoapPlanJob goapJob && (criteria == null || criteria.Invoke(goapJob))) {
+            if (job is GoapPlanJob goapJob && goapJob.poiTarget is TileObject to && to.tileObjectType == p_type) {
                 count++;
             }
         }
@@ -1180,15 +1168,30 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
-    public List<JobQueueItem> GetJobs(params JOB_TYPE[] jobTypes) {
-        List<JobQueueItem> jobs = new List<JobQueueItem>();
+    public void PopulateJobsOfType(List<JobQueueItem> jobs, JOB_TYPE jobType) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if (jobTypes.Contains(job.jobType)) {
+            if (job.jobType == jobType) {
                 jobs.Add(job);
             }
         }
-        return jobs;
+    }
+    public void PopulateJobsOfType(List<JobQueueItem> jobs, JOB_TYPE jobType1, JOB_TYPE jobType2) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType1 || job.jobType == jobType2) {
+                jobs.Add(job);
+            }
+        }
+    }
+    public JobQueueItem GetFirstJobOfTypeThatCanBeAssignedTo(JOB_TYPE jobType, Character p_character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job.assignedCharacter == null && p_character.jobQueue.CanJobBeAddedToQueue(job)) {
+                return job;
+            }
+        }
+        return null;
     }
     public JobQueueItem GetJob(JOB_TYPE job, IPointOfInterest target) {
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -1244,7 +1247,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return null;
     }
     public bool AssignCharacterToJobBasedOnVision(Character character) {
-        List<JobQueueItem> choices = new List<JobQueueItem>();
+        List<JobQueueItem> choices = RuinarchListPool<JobQueueItem>.Claim();
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && job is GoapPlanJob) {
@@ -1255,11 +1258,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 }
             }
         }
+        JobQueueItem chosenJob = null;
         if (choices.Count > 0) {
-            JobQueueItem job = CollectionUtilities.GetRandomElement(choices);
-            return character.jobQueue.AddJobInQueue(job);
+            chosenJob = CollectionUtilities.GetRandomElement(choices);
         }
-        return false;
+        RuinarchListPool<JobQueueItem>.Release(choices);
+        return chosenJob != null && character.jobQueue.AddJobInQueue(chosenJob);
     }
     public JobQueueItem GetFirstJobBasedOnVision(Character character) {
         for (int i = 0; i < availableJobs.Count; i++) {

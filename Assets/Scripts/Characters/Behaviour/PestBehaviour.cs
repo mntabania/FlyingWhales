@@ -17,7 +17,7 @@ public class PestBehaviour : CharacterBehaviourComponent {
                 BaseSettlement targetSettlement = character.behaviourComponent.pestSettlementTarget;
                 if (targetSettlement != null) {
                     if (character.currentRegion != null) {
-                        Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(a => a.settlementOnArea == null && a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN);
+                        Area targetArea = character.currentRegion.GetRandomAreaThatIsNotMountainAndWaterAndNoSettlement();
                         if (targetArea != null) {
                             LocationGridTile targetTile = targetArea.gridTileComponent.GetRandomPassableTile();
                             if (targetTile != null) {
@@ -59,26 +59,37 @@ public class PestBehaviour : CharacterBehaviourComponent {
     }
     private BaseSettlement GetVillageTargetsByPriority(Character owner) {
         //get settlements in region that have normal characters living there.
-        List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
-            settlement => settlement.HasResidentThatMeetsCriteria(x => owner != x && !x.isDead)
-        );
-        if (settlementsInRegion != null) {
-            List<BaseSettlement> villageChoices = settlementsInRegion.Where(
-                x => x.locationType == LOCATION_TYPE.VILLAGE
-            ).ToList();
-            if (villageChoices.Count > 0) {
-                //a random village occupied by Villagers within current region
-                BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
-                return chosenVillage;
-            } else {
-                //a random special structure occupied by Villagers within current region
-                List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.DUNGEON).ToList();
-                if (specialStructureChoices.Count > 0) {
-                    BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
-                    return chosenSpecialStructure;
+        BaseSettlement chosenSettlement = null;
+        List<BaseSettlement> settlementsInRegion = RuinarchListPool<BaseSettlement>.Claim(); 
+        owner.currentRegion?.PopulateSettlementsInRegionForPestBehaviour(settlementsInRegion, owner);
+        if (settlementsInRegion.Count > 0) {
+            List<BaseSettlement> villageChoices = RuinarchListPool<BaseSettlement>.Claim();
+            for (int i = 0; i < settlementsInRegion.Count; i++) {
+                BaseSettlement s = settlementsInRegion[i];
+                if (s.locationType == LOCATION_TYPE.VILLAGE) {
+                    villageChoices.Add(s);
                 }
             }
+            if (villageChoices.Count > 0) {
+                //a random village occupied by Villagers within current region
+                chosenSettlement = CollectionUtilities.GetRandomElement(villageChoices);
+            } else {
+                //a random special structure occupied by Villagers within current region
+                List<BaseSettlement> specialStructureChoices = RuinarchListPool<BaseSettlement>.Claim();
+                for (int i = 0; i < settlementsInRegion.Count; i++) {
+                    BaseSettlement s = settlementsInRegion[i];
+                    if (s.locationType == LOCATION_TYPE.DUNGEON) {
+                        specialStructureChoices.Add(s);
+                    }
+                }
+                if (specialStructureChoices.Count > 0) {
+                    chosenSettlement = CollectionUtilities.GetRandomElement(specialStructureChoices);
+                }
+                RuinarchListPool<BaseSettlement>.Release(specialStructureChoices);
+            }
+            RuinarchListPool<BaseSettlement>.Release(villageChoices);
         }
+        RuinarchListPool<BaseSettlement>.Release(settlementsInRegion);
         // //no settlements in region.
         // //a random area occupied by Villagers within current region
         // List<HexTile> occupiedAreas = owner.currentRegion?.GetAreasOccupiedByVillagers();
@@ -86,6 +97,6 @@ public class PestBehaviour : CharacterBehaviourComponent {
         //     HexTile randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
         //     return new List<HexTile>() { randomArea };
         // }
-        return null;
+        return chosenSettlement;
     }
 }

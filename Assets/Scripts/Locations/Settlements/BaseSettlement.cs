@@ -208,10 +208,62 @@ namespace Locations.Settlements {
             }
             return true;
         }
-        public bool HasResidentThatMeetsCriteria(System.Func<Character, bool> criteria) {
+        public bool HasResidentWithRace(RACE p_race, Character p_exception = null) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if (criteria.Invoke(resident)) {
+                if ((p_exception == null || p_exception != resident) && resident.race == p_race) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasResidentThatIsNotDead(Character p_exception = null) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if ((p_exception == null || p_exception != resident) && !resident.isDead) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasResidentThatIsVillagerAndNotDead() {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isDead && resident.isNormalCharacter) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasResidentThatIsSapientAndInsideSettlementOrHasJoinedQuest() {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (resident.race.IsSapient() && ((resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(this)) || resident.partyComponent.isMemberThatJoinedQuest)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasResidentThatIsNotDeadThatIsHostileWithFaction(Faction p_faction, Character p_exception = null) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if ((p_exception == null || resident != p_exception) && !resident.isDead
+                    && (resident.faction == null || p_faction == null || p_faction.IsHostileWith(resident.faction))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasResidentForExterminationPartyQuest(BaseSettlement p_settlement, Faction p_faction, Party p_party) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isDead
+                    && !resident.partyComponent.IsAMemberOfParty(p_party)
+                    && !resident.isBeingSeized
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.IsPartOfSettlement(p_settlement)
+                    && (resident.faction == null || p_faction == null || p_faction.IsHostileWith(resident.faction))
+                    && !resident.traitContainer.HasTrait("Hibernating")) {
                     return true;
                 }
             }
@@ -237,30 +289,105 @@ namespace Locations.Settlements {
             }
             return chosenCharacter;
         }
-        public Character GetRandomResidentThatMeetCriteria(System.Func<Character, bool> criteria) {
+        public Character GetRandomResidentForInvasionTargetThatIsInsideSettlement(BaseSettlement p_settlement, Character p_exception = null) {
             Character chosenCharacter = null;
-            List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
+            List<Character> choices = RuinarchListPool<Character>.Claim();
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if (criteria.Invoke(resident)) {
+                if ((p_exception == null || p_exception != resident) 
+                    && !resident.isDead 
+                    && !resident.isBeingSeized 
+                    && resident.gridTileLocation != null 
+                    && resident.gridTileLocation.IsPartOfSettlement(p_settlement) 
+                    && !resident.traitContainer.HasTrait("Hibernating", "Indestructible")) {
                     choices.Add(resident);
                 }
             }
             if (choices != null && choices.Count > 0) {
                 chosenCharacter = CollectionUtilities.GetRandomElement(choices);
             }
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
+            RuinarchListPool<Character>.Release(choices);
             return chosenCharacter;
         }
-        public int GetNumOfResidentsThatMeetCriteria(System.Func<Character, bool> criteria) {
+        public Character GetRandomResidentForInvasionTargetThatIsInsideSettlementAndHostileWithFaction(BaseSettlement p_settlement, Faction p_faction, Character p_exception = null) {
+            Character chosenCharacter = null;
+            List<Character> choices = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if ((p_exception == null || p_exception != resident)
+                    && !resident.isBeingSeized
+                    && !resident.isDead
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.IsPartOfSettlement(p_settlement)
+                    && (resident.faction == null || p_faction == null || p_faction.IsHostileWith(resident.faction))
+                    && !resident.traitContainer.HasTrait("Hibernating", "Indestructible")) {
+                    choices.Add(resident);
+                }
+            }
+            if (choices != null && choices.Count > 0) {
+                chosenCharacter = CollectionUtilities.GetRandomElement(choices);
+            }
+            RuinarchListPool<Character>.Release(choices);
+            return chosenCharacter;
+        }
+        public int GetNumOfResidentsThatIsHasRaceAndClassOf(RACE p_race, string p_className, Type p_behaviourTypeException = null) {
             int count = 0;
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if (criteria.Invoke(resident)) {
+                if (resident.race == p_race 
+                    && resident.characterClass.className == p_className 
+                    && (p_behaviourTypeException == null || !resident.behaviourComponent.HasBehaviour(p_behaviourTypeException))) {
                     count++;
                 }
             }
             return count;
+        }
+        public int GetNumberOfResidentsThatIsAliveMonsterAndMonsterTypeIs(SUMMON_TYPE p_summonType) {
+            int count = 0;
+            for (int i = 0; i < residents.Count; i++) {
+                Character c = residents[i];
+                if (!c.isDead && c is Summon summon && summon.summonType == p_summonType) {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int GetNumberOfResidentsThatHasTrait(string p_traitName) {
+            int count = 0;
+            for (int i = 0; i < residents.Count; i++) {
+                Character c = residents[i];
+                if (c.traitContainer.HasTrait(p_traitName)) {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public bool HasResidents() {
+            return residents.Count > 0;
+        }
+        public bool HasResidentForInvadeBehaviour() {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (resident.isNormalCharacter 
+                    && resident.isDead == false 
+                    && resident.isAlliedWithPlayer == false 
+                    && !resident.traitContainer.HasTrait("Hibernating", "Indestructible") 
+                    && !resident.isInLimbo 
+                    && !resident.isBeingSeized 
+                    && resident.carryComponent.IsNotBeingCarried()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasResidentForGettingGeneralVillageTargets() {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (resident.isNormalCharacter && !resident.isAlliedWithPlayer && resident.IsAble()) {
+                    return true;
+                }
+            }
+            return false;
         }
         public bool AreAllResidentsVagrantOrFactionless() {
             for (int i = 0; i < residents.Count; i++) {
@@ -379,11 +506,22 @@ namespace Locations.Settlements {
             }
             return null;
         }
-        public LocationStructure GetFirstStructureThatMeetCriteria(Func<LocationStructure, bool> criteria) {
+        public LocationStructure GetFirstStructureThatIsUnoccupiedDwelling(LocationStructure p_exception = null) {
             for (int i = 0; i < allStructures.Count; i++) {
-                LocationStructure structure = allStructures[i];
-                if (criteria.Invoke(structure)) {
-                    return structure;
+                LocationStructure s = allStructures[i];
+                if ((p_exception == null || p_exception != s) && !s.IsOccupied() && s is Dwelling) {
+                    return s;
+                }
+            }
+            return null;
+        }
+        public LocationStructure GetFirstStructureWithStructureType(STRUCTURE_TYPE p_type, LocationStructure p_exception1 = null, LocationStructure p_exception2 = null) {
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure s = allStructures[i];
+                if ((p_exception1 == null || p_exception1 != s) 
+                    && (p_exception2 == null || p_exception2 != s)
+                    && s.structureType == p_type) {
+                    return s;
                 }
             }
             return null;
@@ -413,39 +551,76 @@ namespace Locations.Settlements {
                     return false;
             }
         }
-        public LocationStructure GetRandomStructureThatMeetCriteria(System.Func<LocationStructure, bool> criteria) {
-            List<LocationStructure> choices = ObjectPoolManager.Instance.CreateNewStructuresList();
+        public LocationStructure GetRandomStructureThatCharacterCanBeResidentAndIsNot(Character p_character, STRUCTURE_TYPE p_exceptionType) {
+            List<LocationStructure> choices = RuinarchListPool<LocationStructure>.Claim();
             LocationStructure chosenStructure = null;
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
-                if (criteria.Invoke(structure)) {
+                if (structure.structureType != p_exceptionType && structure.CanBeResidentHere(p_character)) {
                     choices.Add(structure);
                 }
             }
             if (choices.Count > 0) {
                 chosenStructure = CollectionUtilities.GetRandomElement(choices);
             }
-            ObjectPoolManager.Instance.ReturnStructuresListToPool(choices);
+            RuinarchListPool<LocationStructure>.Release(choices);
             return chosenStructure;
         }
-        public List<StructureConnector> GetStructureConnectorsForStructureType(STRUCTURE_TYPE p_structureType) {
+        public LocationStructure GetRandomStructureWithTypeWhereAPartyHasPathTo(STRUCTURE_TYPE p_type, Party p_party) {
+            List<LocationStructure> choices = RuinarchListPool<LocationStructure>.Claim();
+            LocationStructure chosenStructure = null;
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (structure.structureType == STRUCTURE_TYPE.TAVERN && p_party.CanAMemberGoTo(structure)) {
+                    choices.Add(structure);
+                }
+            }
+            if (choices.Count > 0) {
+                chosenStructure = CollectionUtilities.GetRandomElement(choices);
+            }
+            RuinarchListPool<LocationStructure>.Release(choices);
+            return chosenStructure;
+        }
+        public LocationStructure GetRandomStructureThatCharacterHasPathTo(Character p_character, LocationStructure p_exception1 = null, LocationStructure p_exception2 = null) {
+            List<LocationStructure> choices = RuinarchListPool<LocationStructure>.Claim();
+            LocationStructure chosenStructure = null;
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure s = allStructures[i];
+                if ((p_exception1 == null || p_exception1 != s)
+                    && (p_exception2 == null || p_exception2 != s)
+                    && p_character.movementComponent.HasPathToEvenIfDiffRegion(s.GetRandomPassableTile())) {
+                    choices.Add(s);
+                }
+            }
+            if (choices.Count > 0) {
+                chosenStructure = CollectionUtilities.GetRandomElement(choices);
+            }
+            RuinarchListPool<LocationStructure>.Release(choices);
+            return chosenStructure;
+        }
+        public void PopulateStructureConnectorsForStructureType(List<StructureConnector> p_connectors, STRUCTURE_TYPE p_structureType) {
             switch (p_structureType) {
                 case STRUCTURE_TYPE.FISHING_SHACK:
-                    return GetAvailableFishingSpotConnectors();
+                    PopulateAvailableFishingSpotConnectors(p_connectors);
+                    break;
                 case STRUCTURE_TYPE.QUARRY:
-                    return GetAvailableRockConnectors();
+                    PopulateAvailableRockConnectors(p_connectors);
+                    break;
                 case STRUCTURE_TYPE.LUMBERYARD:
-                    return GetAvailableTreeConnectors();
+                    PopulateAvailableTreeConnectors(p_connectors);
+                    break;
                 case STRUCTURE_TYPE.HUNTER_LODGE:
-                    return GetAvailableStructureConnectorsBasedOnGameFeature();
+                    PopulateAvailableStructureConnectorsBasedOnGameFeature(p_connectors);
+                    break;
                 case STRUCTURE_TYPE.MINE_SHACK:
-                    return GetAvailableOreVeinConnectors();
+                    PopulateAvailableOreVeinConnectors(p_connectors);
+                    break;
                 default:
-                    return GetAvailableStructureConnectors();
+                    PopulateAvailableStructureConnectors(p_connectors);
+                    break;
             }
         }
-        private List<StructureConnector> GetAvailableStructureConnectors() {
-            List<StructureConnector> connectors = new List<StructureConnector>();
+        private void PopulateAvailableStructureConnectors(List<StructureConnector> connectors) {
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
                 if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
@@ -457,10 +632,8 @@ namespace Locations.Settlements {
                     }
                 }
             }
-            return connectors;
         }
-        private List<StructureConnector> GetAvailableStructureConnectorsBasedOnGameFeature() {
-            List<StructureConnector> connectors = new List<StructureConnector>();
+        private void PopulateAvailableStructureConnectorsBasedOnGameFeature(List<StructureConnector> connectors) {
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
                 if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
@@ -476,7 +649,6 @@ namespace Locations.Settlements {
                     }
                 }
             }
-            return connectors;
         }
         public bool HasAvailableStructureConnectorsBasedOnGameFeature() {
             for (int i = 0; i < allStructures.Count; i++) {
@@ -496,45 +668,37 @@ namespace Locations.Settlements {
             }
             return false;
         }
-        private List<StructureConnector> GetAvailableRockConnectors() {
-            List<StructureConnector> connectors = new List<StructureConnector>();
+        private void PopulateAvailableRockConnectors(List<StructureConnector> connectors) {
             for (int i = 0; i < SettlementResources.rocks.Count; i++) {
                 Rock rock = SettlementResources.rocks[i];
                 if (rock.structureConnector != null && rock.structureConnector.isOpen) {
                     connectors.Add(rock.structureConnector);
                 }
             }
-            return connectors;
         }
-        private List<StructureConnector> GetAvailableTreeConnectors() {
-            List<StructureConnector> connectors = new List<StructureConnector>();
+        private void PopulateAvailableTreeConnectors(List<StructureConnector> connectors) {
             for (int i = 0; i < SettlementResources.trees.Count; i++) {
                 TreeObject treeObject = SettlementResources.trees[i];
                 if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
                     connectors.Add(treeObject.structureConnector);
                 }
             }
-            return connectors;
         }
-        private List<StructureConnector> GetAvailableFishingSpotConnectors() {
-            List<StructureConnector> connectors = new List<StructureConnector>();
+        private void PopulateAvailableFishingSpotConnectors(List<StructureConnector> connectors) {
             for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
                 FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
                 if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen) {
                     connectors.Add(fishingSpot.structureConnector);
                 }
             }
-            return connectors;
         }
-        private List<StructureConnector> GetAvailableOreVeinConnectors() {
-            List<StructureConnector> connectors = new List<StructureConnector>();
+        private void PopulateAvailableOreVeinConnectors(List<StructureConnector> connectors) {
             for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
                 OreVein oreVein = SettlementResources.oreVeins[i];
                 if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen) {
                     connectors.Add(oreVein.structureConnector);
                 }
             }
-            return connectors;
         }
 
         public int GetStructureCount(STRUCTURE_TYPE structureType) {
@@ -608,34 +772,23 @@ namespace Locations.Settlements {
         public Area GetRandomArea() {
             return areas[UnityEngine.Random.Range(0, areas.Count)];
         }
-        public LocationGridTile GetFirstPassableGridTileInSettlementThatMeetCriteria(System.Func<LocationGridTile, bool> validityChecker) {
+        public LocationGridTile GetRandomPassableGridTileInSettlementStructuresThatCharacterHasPathTo(Character p_character) {
+            LocationGridTile chosenTile = null;
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
                 for (int j = 0; j < structure.passableTiles.Count; j++) {
-                    LocationGridTile locationGridTile = structure.passableTiles[j];
-                    if (validityChecker.Invoke(locationGridTile)) {
-                        return locationGridTile;
+                    LocationGridTile t = structure.passableTiles[j];
+                    if (p_character.movementComponent.HasPathToEvenIfDiffRegion(t)) {
+                        tiles.Add(t);
                     }
                 }
             }
-            return null;
-        }
-        public LocationGridTile GetRandomPassableGridTileInSettlementThatMeetCriteria(System.Func<LocationGridTile, bool> validityChecker) {
-            List<LocationGridTile> locationGridTiles = null;
-            for (int i = 0; i < allStructures.Count; i++) {
-                LocationStructure structure = allStructures[i];
-                for (int j = 0; j < structure.passableTiles.Count; j++) {
-                    LocationGridTile locationGridTile = structure.passableTiles[j];
-                    if (validityChecker.Invoke(locationGridTile)) {
-                        if(locationGridTiles == null) { locationGridTiles = new List<LocationGridTile>(); }
-                        locationGridTiles.Add(locationGridTile);
-                    }
-                }
+            if(tiles.Count > 0) {
+                chosenTile = tiles[GameUtilities.RandomBetweenTwoNumbers(0, tiles.Count - 1)];
             }
-            if(locationGridTiles != null && locationGridTiles.Count > 0) {
-                return locationGridTiles[UnityEngine.Random.Range(0, locationGridTiles.Count)];
-            }
-            return null;
+            RuinarchListPool<LocationGridTile>.Release(tiles);
+            return chosenTile;
         }
         public void PopulatePassableTilesList(List<LocationGridTile> p_tiles) {
             for (int i = 0; i < allStructures.Count; i++) {
@@ -643,13 +796,13 @@ namespace Locations.Settlements {
                 p_tiles.AddRange(structure.passableTiles);
             }
         }
-        private void PopulateGridTilesInSettlementThatMeetCriteria(List<LocationGridTile> gridTiles, System.Func<LocationGridTile, bool> validityChecker) {
+        private void PopulateGridTilesInSettlementThatIsPassable(List<LocationGridTile> gridTiles) {
             for (int i = 0; i < areas.Count; i++) {
                 Area area = areas[i];
                 for (int j = 0; j < area.gridTileComponent.gridTiles.Count; j++) {
-                    LocationGridTile locationGridTile = area.gridTileComponent.gridTiles[j];
-                    if (validityChecker.Invoke(locationGridTile)) {
-                        gridTiles.Add(locationGridTile);
+                    LocationGridTile t = area.gridTileComponent.gridTiles[j];
+                    if (t.IsPassable()) {
+                        gridTiles.Add(t);
                     }
                 }
             }
@@ -718,8 +871,8 @@ namespace Locations.Settlements {
         protected virtual void SettlementWipedOut() { }
         public bool HasPathTowardsTileInSettlement(Character character, int tileCount) {
             bool hasPath = false;
-            List<LocationGridTile> locationGridTilesInSettlement = ObjectPoolManager.Instance.CreateNewGridTileList();
-            PopulateGridTilesInSettlementThatMeetCriteria(locationGridTilesInSettlement, tile => tile.IsPassable());
+            List<LocationGridTile> locationGridTilesInSettlement = RuinarchListPool<LocationGridTile>.Claim();
+            PopulateGridTilesInSettlementThatIsPassable(locationGridTilesInSettlement);
             if (locationGridTilesInSettlement.Count > 0) {
                 for (int i = 0; i < tileCount; i++) {
                     if (locationGridTilesInSettlement.Count == 0) {
@@ -739,7 +892,7 @@ namespace Locations.Settlements {
                     locationGridTilesInSettlement.RemoveAt(index);
                 }    
             }
-            ObjectPoolManager.Instance.ReturnGridTileListToPool(locationGridTilesInSettlement);
+            RuinarchListPool<LocationGridTile>.Release(locationGridTilesInSettlement);
             //default to true even if there are no unoccupied tiles in settlement 
             return hasPath;
         }

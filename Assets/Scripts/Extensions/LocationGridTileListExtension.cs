@@ -33,15 +33,17 @@ public static class LocationGridTileListExtension {
         return null;
     }
     public static LocationGridTile GetRandomPassableTile(this List<LocationGridTile> p_tiles) {
-        List<LocationGridTile> shuffled = CollectionUtilities.Shuffle(p_tiles);
+        LocationGridTile chosenTile = null;
+        List<LocationGridTile> shuffled = RuinarchListPool<LocationGridTile>.Claim();
+        CollectionUtilities.Shuffle(p_tiles, shuffled);
         for (int i = 0; i < shuffled.Count; i++) {
             LocationGridTile tile = shuffled[i];
             if (tile.IsPassable()) {
-                RuinarchListPool<LocationGridTile>.Release(shuffled);
-                return tile;
+                chosenTile = tile;
+                break;
             }
         }
         RuinarchListPool<LocationGridTile>.Release(shuffled);
-        return null;
+        return chosenTile;
     }
 }

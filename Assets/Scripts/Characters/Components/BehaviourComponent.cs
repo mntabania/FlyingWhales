@@ -263,33 +263,41 @@ public class BehaviourComponent : CharacterComponent {
     #region Utilities
     public void PopulateVillageTargetsByPriority(List<Area> areas) {
         //get settlements in region that have normal characters living there.
-        List<BaseSettlement> settlementsInRegion = owner.currentRegion?
-            .GetSettlementsInRegion(settlement => settlement.residents.Count > 0 && settlement.residents.Count(c => c != null && c.isNormalCharacter && !c.isAlliedWithPlayer && c.IsAble()) > 0);
-        if (settlementsInRegion != null) {
+        List<BaseSettlement> settlementsInRegion = RuinarchListPool<BaseSettlement>.Claim();
+        owner.currentRegion?.PopulateSettlementsInRegionForGettingGeneralVillageTargets(settlementsInRegion);
+        if (settlementsInRegion.Count > 0) {
             // List<BaseSettlement> villageChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.VILLAGE && (x.owner == null || !x.owner.IsFriendlyWith(PlayerManager.Instance.player.playerFaction))).ToList();
-            List<BaseSettlement> villageChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.VILLAGE, PlayerManager.Instance.player.playerFaction);
+            List<BaseSettlement> villageChoices = RuinarchListPool<BaseSettlement>.Claim();
+            settlementsInRegion.PopulateSettlementsThatAreUnownedOrHostileWithFaction(villageChoices, LOCATION_TYPE.VILLAGE, PlayerManager.Instance.player.playerFaction);
             if (villageChoices != null) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
                 areas.AddRange(chosenVillage.areas);
             } else {
                 //a random special structure occupied by Villagers within current region
-                List<BaseSettlement> specialStructureChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.DUNGEON, PlayerManager.Instance.player.playerFaction);
+                List<BaseSettlement> specialStructureChoices = RuinarchListPool<BaseSettlement>.Claim();
+                settlementsInRegion.PopulateSettlementsThatAreUnownedOrHostileWithFaction(specialStructureChoices, LOCATION_TYPE.DUNGEON, PlayerManager.Instance.player.playerFaction);
                 if (specialStructureChoices != null) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
                     areas.AddRange(chosenSpecialStructure.areas);
                 }
+                RuinarchListPool<BaseSettlement>.Release(specialStructureChoices);
             }
+            RuinarchListPool<BaseSettlement>.Release(villageChoices);
         }
+        RuinarchListPool<BaseSettlement>.Release(settlementsInRegion);
+
         //no settlements in region.
         //a random area occupied by Villagers within current region
-        List<Area> occupiedAreas = ObjectPoolManager.Instance.CreateNewAreaList();
-        owner.currentRegion?.PopulateAreasOccupiedByVillagers(occupiedAreas);
-        if (occupiedAreas != null) {
-            Area randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
-            areas.Add(randomArea);
+        if (areas.Count <= 0) {
+            List<Area> occupiedAreas = RuinarchListPool<Area>.Claim();
+            owner.currentRegion?.PopulateAreasOccupiedByVillagers(occupiedAreas);
+            if (occupiedAreas != null) {
+                Area randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
+                areas.Add(randomArea);
+            }
+            RuinarchListPool<Area>.Release(occupiedAreas);
         }
-        ObjectPoolManager.Instance.ReturnAreaListToPool(occupiedAreas);
     }
     #endregion
 

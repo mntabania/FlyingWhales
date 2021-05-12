@@ -48,7 +48,7 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                 }
             } else {
                 if(character.behaviourComponent.attackAreaTarget != null) {
-                    Character chosenTarget = character.behaviourComponent.attackAreaTarget.locationCharacterTracker.GetRandomCharacterInsideHexThatMeetCriteria<Character>(c => !c.isDead && c.IsTerritory(character.behaviourComponent.attackAreaTarget));
+                    Character chosenTarget = character.behaviourComponent.attackAreaTarget.locationCharacterTracker.GetRandomCharacterInsideHexThatIsAliveAndConsidersAreaAsTerritory(character.behaviourComponent.attackAreaTarget);
                     if(chosenTarget != null) {
                         log += "\n-Will attack resident: " + chosenTarget.name;
                         character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);

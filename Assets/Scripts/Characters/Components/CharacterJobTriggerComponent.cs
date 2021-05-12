@@ -423,18 +423,39 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.BURY_CHARACTER, target, owner);
 
         bool hasChosenTile = false;
-        Area chosenArea = owner.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.MOUNTAIN && a.elevationType != ELEVATION.WATER && a.neighbourComponent.IsNextToVillage() && a.settlementOnArea == null && owner.movementComponent.HasPathTo(a));
+        Area chosenArea = owner.currentRegion.GetRandomAreaThatIsNextToAVillageButNotMountainAndWaterAndNoSettlementAndWithPathTo(owner);
         if(chosenArea != null) {
-            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenArea.gridTileComponent.passableTiles.Where(t => owner.movementComponent.HasPathTo(t)));
-            if(chosenTile != null) {
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            for (int i = 0; i < chosenArea.gridTileComponent.passableTiles.Count; i++) {
+                LocationGridTile passable = chosenArea.gridTileComponent.passableTiles[i];
+                if (owner.movementComponent.HasPathTo(passable)) {
+                    tiles.Add(passable);
+                }
+            }
+            LocationGridTile chosenTile = null;
+            if (tiles.Count > 0) {
+                chosenTile = CollectionUtilities.GetRandomElement(tiles);
+            }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
+            if (chosenTile != null) {
                 hasChosenTile = true;
                 job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { chosenTile.structure, chosenTile });
             }
         }
         if (!hasChosenTile) {
             LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.IsPartOfSettlement(owner.homeSettlement) == false).ToList();
-            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            for (int i = 0; i < wilderness.unoccupiedTiles.Count; i++) {
+                LocationGridTile unoccupied = wilderness.unoccupiedTiles[i];
+                if (unoccupied.IsPartOfSettlement(owner.homeSettlement) == false) {
+                    tiles.Add(unoccupied);
+                }
+            }
+            LocationGridTile targetTile = null;
+            if (tiles.Count > 0) {
+                targetTile = CollectionUtilities.GetRandomElement(tiles);
+            }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
             job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { wilderness, targetTile });
         }
 		owner.jobQueue.AddJobInQueue(job);
@@ -879,7 +900,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
                 if (owner.IsInHomeSettlement() && owner.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
-                    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementStructuresThatCharacterHasPathTo(owner);
                 } else if (owner.isAtHomeStructure) {
                     chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                 } else if (owner.IsInTerritory()) {
@@ -922,7 +943,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
                 if (owner.IsInHomeSettlement() && owner.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
-                    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementStructuresThatCharacterHasPathTo(owner);
                 } else if (owner.isAtHomeStructure) {
                     chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                 } else if (owner.IsInTerritory()) {

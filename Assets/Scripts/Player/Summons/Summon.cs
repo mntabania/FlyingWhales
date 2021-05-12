@@ -215,7 +215,7 @@ public class Summon : Character {
         if (p_structure.HasReachedMaxResidentCapacity()) {
             return false;
         }
-        if (p_structure.HasResidentThatMeetCriteria(r => r.isNormalCharacter)) {
+        if (p_structure.HasVillagerResident()) {
             return false;
         }
         return true;

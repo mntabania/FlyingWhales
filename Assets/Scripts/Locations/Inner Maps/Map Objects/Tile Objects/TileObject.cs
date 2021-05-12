@@ -335,15 +335,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
+        LocationGridTile chosenTile = null;
         if (gridTileLocation != null) {
-            List<LocationGridTile> unoccupiedNeighbours = gridTileLocation.UnoccupiedNeighbours;
-            if (unoccupiedNeighbours.Count == 0) {
-                return null;
-            } else {
-                return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+            List<LocationGridTile> unoccupiedNeighbours = RuinarchListPool<LocationGridTile>.Claim();
+            gridTileLocation.PopulateUnoccupiedNeighbours(unoccupiedNeighbours, true);
+            if (unoccupiedNeighbours.Count > 0) {
+                chosenTile = unoccupiedNeighbours[GameUtilities.RandomBetweenTwoNumbers(0, unoccupiedNeighbours.Count - 1)];
             }
+            RuinarchListPool<LocationGridTile>.Release(unoccupiedNeighbours);
         }
-        return null;
+        return chosenTile;
     }
     //Returns the chosen action for the plan
     public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log) {
@@ -788,7 +789,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// <param name="type">The action type that need to be advertised.</param>
     /// <returns>If this tile object advertises the given action.</returns>
     public bool Advertises(INTERACTION_TYPE type) {
-        return advertisedActions != null && advertisedActions.Contains(type);
+        if (advertisedActions != null) {
+            for (int i = 0; i < advertisedActions.Count; i++) {
+                INTERACTION_TYPE advertised = advertisedActions[i];
+                if (advertised == type) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     /// <summary>
     /// Does this tile object advertise all of the given actions.

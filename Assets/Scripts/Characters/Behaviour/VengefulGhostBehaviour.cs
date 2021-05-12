@@ -39,7 +39,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
 
                 log += $"\n-20% chance to a character of the player faction";
                 if (GameUtilities.RollChance(20)) {
-                    Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c != character && !c.isDead && c.movementComponent.HasPathTo(character.gridTileLocation) && c.faction?.factionType.type == FACTION_TYPE.Demons);
+                    Character targetCharacter = character.currentRegion.GetRandomCharacterThatIsNotDeadAndInDemonFactionAndHasPathTo(character);
                     if (targetCharacter != null) {
                         log += $"\n-Chosen target character: " + targetCharacter.name;
                         character.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
@@ -115,7 +115,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
     private void PopulateTargetChoicesFor(List<Character> p_targetChoices, Character p_invader, List<Area> p_areas) {
         for (int i = 0; i < p_areas.Count; i++) {
             Area area = p_areas[i];
-            area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c => c != p_invader && p_invader.IsHostileWith(c) && IsCharacterValidForInvade(c));
+            area.locationCharacterTracker.PopulateCharacterListInsideHexForVengefulGhostBehaviour(p_targetChoices, p_invader);
         }
     }
     private bool IsCharacterValidForInvade(Character character) {

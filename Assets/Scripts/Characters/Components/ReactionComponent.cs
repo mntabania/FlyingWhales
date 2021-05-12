@@ -1351,11 +1351,9 @@ public class ReactionComponent : CharacterComponent {
                         Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
                     }
 
-                    List<JobQueueItem> douseFireJobs = actor.homeSettlement.GetJobs(JOB_TYPE.DOUSE_FIRE)
-                        .Where(j => j.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(j)).ToList();
-
-                    if (douseFireJobs.Count > 0) {
-                        actor.jobQueue.AddJobInQueue(douseFireJobs[0]);
+                    JobQueueItem douseJob = actor.homeSettlement.GetFirstJobOfTypeThatCanBeAssignedTo(JOB_TYPE.DOUSE_FIRE, actor);
+                    if (douseJob != null) {
+                        actor.jobQueue.AddJobInQueue(douseJob);
                     } else {
                         if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
                             actor.combatComponent.Flight(targetTileObject, "saw fire");
@@ -1605,8 +1603,9 @@ public class ReactionComponent : CharacterComponent {
         if (targetTileObject is CultistKit && !targetTileObject.IsOwnedBy(actor)) {
             debugLog = $"{debugLog}\n-Object is a cultist kit";
             if (targetTileObject.gridTileLocation != null) {
+                List<Character> validResidents = RuinarchListPool<Character>.Claim();
                 if (targetTileObject.structureLocation is ManMadeStructure && 
-                    targetTileObject.structureLocation.GetNumberOfResidentsExcluding(out var validResidents,actor) > 0) {
+                    targetTileObject.structureLocation.GetNumberOfResidentsAndPopulateListExcluding(validResidents, actor) > 0) {
                     debugLog = $"{debugLog}\n-Cultist kit is at structure with residents excluding the witness";
                     int chanceToCreateAssumption = 0;
                     if (actor.traitContainer.HasTrait("Suspicious") || actor.moodComponent.moodState == MOOD_STATE.Critical) {
@@ -1638,6 +1637,7 @@ public class ReactionComponent : CharacterComponent {
                         }
                     }
                 }
+                RuinarchListPool<Character>.Release(validResidents);
             } 
         }
 

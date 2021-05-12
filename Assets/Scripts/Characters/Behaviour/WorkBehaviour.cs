@@ -77,9 +77,8 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                         chance += 4;
                     }
                     if (roll < chance) {
-                        List<Character> enemies = character.relationshipContainer.GetEnemyCharacters();
-                        if (enemies.Count > 0) {
-                            Character chosenEnemy = CollectionUtilities.GetRandomElement(enemies);
+                        Character chosenEnemy = character.relationshipContainer.GetRandomEnemyCharacter();
+                        if (chosenEnemy != null) {
                             if(chosenEnemy.homeSettlement != null) {
                                 if (chosenEnemy.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
                                     Character spreadRumorOrNegativeInfoTarget = character.rumorComponent.GetRandomSpreadRumorOrNegativeInfoTarget(chosenEnemy);

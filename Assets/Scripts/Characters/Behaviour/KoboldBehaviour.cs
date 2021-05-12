@@ -155,16 +155,15 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         //return null;
     }
     private void PopulateFrozenCharactersSurroundingHome(List<Character> p_characterList, Character character) {
-        List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+        List<Area> surroundingAreas = RuinarchListPool<Area>.Claim();
         PopulateAreasSurroundingHome(surroundingAreas, character);
         //if (surroundingAreas != null) {
             for (int i = 0; i < surroundingAreas.Count; i++) {
                 Area area = surroundingAreas[i];
-                area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD &&
-                                                                                                                  c.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER) == false);
+                area.locationCharacterTracker.PopulateCharacterListInsideHexForKoboldBehaviour(p_characterList);
             }
         //}
-        ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
+        RuinarchListPool<Area>.Release(surroundingAreas);
     }
     private void PopulateFrozenCharactersInHome(List<Character> p_characterList, Character character) {
         if (character.homeSettlement?.mainStorage != null) {
@@ -173,7 +172,7 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         } else if (character.homeStructure != null) {
             character.homeStructure.PopulateCharacterListThatIsFrozenAndNotKobold(p_characterList);
         } else if (character.HasTerritory()) {
-            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
+            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatHasTraitAndNotRace(p_characterList, "Frozen", RACE.KOBOLD);
         }
     }
 

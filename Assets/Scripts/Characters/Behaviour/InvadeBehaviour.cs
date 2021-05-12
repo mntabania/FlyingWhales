@@ -56,36 +56,48 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
     private void PopulateTargetChoicesFor(List<Character> p_targetChoices, Character source, List<Area> p_areas) {
         for (int i = 0; i < p_areas.Count; i++) {
             Area area = p_areas[i];
-            area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c => c != source && IsCharacterValidForInvade(c));
+            area.locationCharacterTracker.PopulateCharacterListInsideHexForInvadeBehaviour(p_targetChoices, source);
         }
     }
-    private bool IsCharacterValidForInvade(Character character) {
-        return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false && !character.traitContainer.HasTrait("Hibernating", "Indestructible")
-            && !character.isInLimbo && !character.isBeingSeized && character.carryComponent.IsNotBeingCarried();
-    }
+    //private bool IsCharacterValidForInvade(Character character) {
+    //    return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false && !character.traitContainer.HasTrait("Hibernating", "Indestructible")
+    //        && !character.isInLimbo && !character.isBeingSeized && character.carryComponent.IsNotBeingCarried();
+    //}
     private void PopulateVillageTargetsByPriority(List<Area> areas, Character owner) {
         //get settlements in region that have normal characters living there.
-        List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
-            settlement => settlement.residents.Count(IsCharacterValidForInvade) > 0
-        );
-        if (settlementsInRegion != null) {
+        List<BaseSettlement> settlementsInRegion = RuinarchListPool<BaseSettlement>.Claim();
+        owner.currentRegion?.PopulateSettlementsInRegionForInvadeBehaviour(settlementsInRegion);
+        if (settlementsInRegion.Count > 0) {
             //Do not attack villages who are neutral/friendly with player faction
-            List<BaseSettlement> villageChoices = settlementsInRegion.Where(
-                x => x.locationType == LOCATION_TYPE.VILLAGE && (x.owner == null || x.owner.IsHostileWith(owner.faction))
-            ).ToList();
+            List<BaseSettlement> villageChoices = RuinarchListPool<BaseSettlement>.Claim();
+            for (int i = 0; i < settlementsInRegion.Count; i++) {
+                BaseSettlement s = settlementsInRegion[i];
+                if (s.locationType == LOCATION_TYPE.VILLAGE && (s.owner == null || s.owner.IsHostileWith(owner.faction))) {
+                    villageChoices.Add(s);
+                }
+            }
             if (villageChoices.Count > 0) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
                 areas.AddRange(chosenVillage.areas);
             } else {
                 //a random special structure occupied by Villagers within current region
-                List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.DUNGEON).ToList();
+                List<BaseSettlement> specialStructureChoices = RuinarchListPool<BaseSettlement>.Claim();
+                for (int i = 0; i < settlementsInRegion.Count; i++) {
+                    BaseSettlement s = settlementsInRegion[i];
+                    if (s.locationType == LOCATION_TYPE.DUNGEON) {
+                        specialStructureChoices.Add(s);
+                    }
+                }
                 if (specialStructureChoices.Count > 0) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
                     areas.AddRange(chosenSpecialStructure.areas);
                 }
+                RuinarchListPool<BaseSettlement>.Release(specialStructureChoices);
             }
-        } 
+            RuinarchListPool<BaseSettlement>.Release(villageChoices);
+        }
+        RuinarchListPool<BaseSettlement>.Release(settlementsInRegion);
         // //no settlements in region.
         // //a random area occupied by Villagers within current region
         // List<HexTile> occupiedAreas = owner.currentRegion?.GetAreasOccupiedByVillagers();

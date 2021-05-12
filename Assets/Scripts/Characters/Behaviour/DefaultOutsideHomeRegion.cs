@@ -46,7 +46,7 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                     }
 
                 } else {
-                    List<LocationStructure> taverns = character.currentRegion.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.TAVERN);
+                    List<LocationStructure> taverns = character.currentRegion.GetStructuresAtLocation(STRUCTURE_TYPE.TAVERN);
                     if (taverns != null && taverns.Count > 0) {
                         log += $"\n  -Has tavern in region";
                         LocationStructure chosenTavern = null;

@@ -109,9 +109,7 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
         return null;
     }
     private Character GetFirstHostileIntruderOf(Character actor, Area p_area) {
-        Character chosenTarget = p_area.locationCharacterTracker.GetFirstCharacterInsideHexThatMeetCriteria<Character>(target => actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer
-            && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation) && !target.isInLimbo && !target.isBeingSeized && target.carryComponent.IsNotBeingCarried()
-            && !target.traitContainer.HasTrait("Hibernating", "Indestructible"));
+        Character chosenTarget = p_area.locationCharacterTracker.GetFirstCharacterInsideHexThatIsAliveHostileNotAlliedWithPlayerThatHasPathTo(actor);
         return chosenTarget;
     }
     public override void OnAddBehaviourToCharacter(Character character) {

@@ -91,7 +91,7 @@ public class DragonBehaviour : BaseMonsterBehaviour {
                             if (character.gridTileLocation != null) {
                                 if (character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
                                     log += $"\n-Character is already in target settlement";
-                                    Character target = targetSettlement.GetRandomResidentThatMeetCriteria(resident => character != resident && !resident.isDead && !resident.isBeingSeized && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(targetSettlement) && !resident.traitContainer.HasTrait("Hibernating", "Indestructible"));
+                                    Character target = targetSettlement.GetRandomResidentForInvasionTargetThatIsInsideSettlement(targetSettlement, character);
                                     if (target != null) {
                                         log += $"\n-Chosen target is {target.name}";
                                         character.combatComponent.Fight(target, CombatManager.Hostility);

@@ -55,10 +55,10 @@ public class BuildCampfire : GoapAction {
         LocationGridTile targetTile = actor.gridTileLocation;
 
         if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
-            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.tileObjectComponent.objHere == null && x.IsPassable() && x.area == targetTile.area);
+            targetTile = targetTile.GetFirstNeighborThatIsPassableAndNoObjectAndSameAreaAs(targetTile.area);
         }
         if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
-            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.tileObjectComponent.objHere == null && x.IsPassable());
+            targetTile = targetTile.GetFirstNeighborThatIsPassableAndNoObject();
         }
         if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
             targetTile.structure.RemovePOI(targetTile.tileObjectComponent.objHere);
@@ -68,13 +68,13 @@ public class BuildCampfire : GoapAction {
         goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
 
         if (targetTile != null) {
-            LocationGridTile foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.tileObjectComponent.objHere == null && x.IsPassable() && x.area == targetTile.area);
+            LocationGridTile foodPileTile = targetTile.GetFirstNeighborThatIsPassableAndNoObjectAndSameAreaAs(targetTile.area);
 
             if(foodPileTile == null) {
-                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.tileObjectComponent.objHere == null && x.IsPassable());
+                foodPileTile = targetTile.GetFirstNeighborThatIsPassableAndNoObject();
             }
             if (foodPileTile == null) {
-                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.IsPassable());
+                foodPileTile = targetTile.GetFirstNeighborThatIsPassable();
             }
             if(foodPileTile != null) {
                 if(foodPileTile.tileObjectComponent.objHere != null) {

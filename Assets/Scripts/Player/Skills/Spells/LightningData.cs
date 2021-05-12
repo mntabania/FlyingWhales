@@ -28,7 +28,7 @@ public class LightningData : SkillData {
         targetTile.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage));
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Lightning Remnant");
 
-        List<LocationGridTile> crossNeighbours = targetTile.GetCrossNeighbours();
+        List<LocationGridTile> crossNeighbours = targetTile.FourNeighbours();
         for (int i = 0; i < crossNeighbours.Count; i++) {
             LocationGridTile neighbour = crossNeighbours[i];
             neighbour.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage));

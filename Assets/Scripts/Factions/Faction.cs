@@ -561,7 +561,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool HasMemberThatIsNotDeadHasHomeSettlementUnoccupiedDwelling() {
         for (int i = 0; i < characters.Count; i++) {
             Character m = characters[i];
-            if (!m.isDead && m.homeSettlement != null && m.homeSettlement.GetFirstStructureThatMeetCriteria(s => !s.IsOccupied() && s is Dwelling) != null) {
+            if (!m.isDead && m.homeSettlement != null && m.homeSettlement.GetFirstStructureThatIsUnoccupiedDwelling() != null) {
                 return true;
             }
         }
@@ -907,7 +907,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(Character p_character) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
             BaseSettlement s = ownedSettlements[i];
-            if (s != p_character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead)) {
+            if (s != p_character.homeSettlement && s.HasResidentThatIsNotDead()) {
                 return true;
             }
         }
