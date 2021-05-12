@@ -799,42 +799,48 @@ MonoBehaviour:
     type: 3}
   _xSeed: 0
   _ySeed: 0
-  _biomePerlinSettings:
-    noiseScale: 40.4
-    octaves: 3
-    persistance: 0
-    lacunarity: 2
-    seed: 0
-    offset: {x: 13.09, y: 12}
-    regions:
-    - name: Desert
-      height: 0.3
-      color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-    - name: Grassland
-      height: 0.65
-      color: {r: 0, g: 1, b: 0, a: 1}
-    - name: Snow
-      height: 1
-      color: {r: 1, g: 1, b: 1, a: 1}
-  _perlinElevationSettings:
-    noiseScale: 34.15
-    octaves: 4
-    persistance: 0.5
-    lacunarity: 2
-    seed: 0
-    offset: {x: 13.09, y: 12}
-    regions:
-    - name: Water
-      height: 0.25
-      color: {r: 0, g: 0, b: 1, a: 1}
-    - name: Plain
-      height: 0.65
-      color: {r: 0, g: 1, b: 0, a: 1}
-    - name: Cave
-      height: 1
-      color: {r: 0, g: 0, b: 0, a: 1}
-  _biomeTransitionXSeed: 0
-  _biomeTransitionYSeed: 0
+  whittakerDiagram:
+    totalPrecipitationRange:
+      minimum: 0
+      maximum: 500
+    precipitationTypeTable:
+      m_keys: 000000000100000002000000030000000400000005000000
+      m_values:
+      - minimum: 0
+        maximum: 80
+      - minimum: 80
+        maximum: 140
+      - minimum: 140
+        maximum: 240
+      - minimum: 240
+        maximum: 320
+      - minimum: 320
+        maximum: 420
+      - minimum: 420
+        maximum: 500
+    totalTemperatureRange:
+      minimum: -10
+      maximum: 30
+    temperatureTypeTable:
+      m_keys: 000000000100000002000000030000000400000005000000
+      m_values:
+      - minimum: -10
+        maximum: -6
+      - minimum: -6
+        maximum: -2
+      - minimum: -2
+        maximum: 10
+      - minimum: 10
+        maximum: 16
+      - minimum: 16
+        maximum: 25
+      - minimum: 25
+        maximum: 30
+  temperatureGradient: 0
+  warpNoiseScale: 2.8
+  warpSeed: 0
+  warpStrength: 0.13
+  warpWeight: -0.39
   pathLineRenderer: {fileID: 120253341268342332}
   _boundDrawer: {fileID: 603224281892743444}
   width: 0

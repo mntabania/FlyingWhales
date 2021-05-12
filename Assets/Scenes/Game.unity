@@ -43953,6 +43953,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85419986e1774078ade2f7ca74adbb9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileTypeAssets:
+    m_keys: 00000000010000000200000003000000040000000500000006000000
+    m_values:
+    - {fileID: 11400000, guid: 09dd2501e36f43b4f8f5ca15deb8a27d, type: 2}
+    - {fileID: 11400000, guid: 49312fb417f3513419c1b2ac22f6b70d, type: 2}
+    - {fileID: 11400000, guid: 5d1dfc24b82640c44bf0dd6e37c21a5f, type: 2}
+    - {fileID: 11400000, guid: 5d1dfc24b82640c44bf0dd6e37c21a5f, type: 2}
+    - {fileID: 11400000, guid: f661c32973f40b2459dd33272f6fd9c3, type: 2}
+    - {fileID: 11400000, guid: d50f2fc723074ad4d91fea1cde34cbba, type: 2}
+    - {fileID: 11400000, guid: 9c49ed01e47d38948bdb1fa1595e8183, type: 2}
   outsideTile: {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}
   grassTile: {fileID: 11400000, guid: 5d1dfc24b82640c44bf0dd6e37c21a5f, type: 2}
   soilTile: {fileID: 11400000, guid: 9730174dcd21daf4f9643570dea4e144, type: 2}

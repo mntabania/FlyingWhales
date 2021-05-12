@@ -92,6 +92,7 @@ namespace Inner_Maps {
         /// <see cref="InnerTileMap.GroundPerlin"/>
         /// </summary>
         public Ground_Type initialGroundType { get; private set; }
+        public Biome_Tile_Type specificBiomeTileType { get; private set; }
 
         private Dictionary<GridNeighbourDirection, LocationGridTile> _neighbours;
         private Dictionary<GridNeighbourDirection, LocationGridTile> _fourNeighbours;
@@ -1732,6 +1733,9 @@ namespace Inner_Maps {
             individualBiomeType = p_biome;
             BiomeDivision biomeDivision =  parentMap.region.biomeDivisionComponent.GetBiomeDivision(p_biome);
             biomeDivision?.AddTile(this);
+        }
+        public void SetSpecificBiomeType(Biome_Tile_Type p_type) {
+            specificBiomeTileType = p_type;
         }
         #endregion
 

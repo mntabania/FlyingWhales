@@ -294,6 +294,10 @@ namespace UtilityScripts {
             result.y = a.y - b.y;
             return result;
         }
+        public static int Roll() {
+            int roll = UnityEngine.Random.Range(0, 100);
+            return roll;
+        }
         /// <summary>
         /// Roll a chance. This rolls from 0 - 100.
         /// </summary>
