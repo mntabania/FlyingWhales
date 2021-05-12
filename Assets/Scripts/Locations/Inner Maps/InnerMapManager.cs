@@ -632,6 +632,9 @@ namespace Inner_Maps {
             for (int i = 0; i < 4; i++) {
                 mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER_SWORD));
             }
+            for (int i = 0; i < 4; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON_SWORD));
+            }
             //for (int i = 0; i < 2; i++) {
             //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
             //}

@@ -22,13 +22,14 @@ public static class EquipmentBonusProcessor
             p_targetCharacter.combatComponent.AdjustAttackModifier((int)p_equipData.equipmentUpgradeData.AdditionalAttackActual);
             break;
             case EQUIPMENT_BONUS.Atk_Percentage:
-            p_targetCharacter.combatComponent.AddAttackBaseOnPercentage(p_equipData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
+            float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
+            p_targetCharacter.combatComponent.AdjustAttackModifier((int)computedAttack);
             break;
             case EQUIPMENT_BONUS.Max_HP_Actual:
             p_targetCharacter.combatComponent.AdjustMaxHPModifier((int)p_equipData.equipmentUpgradeData.AdditionalmaxHPActual);
             break;
             case EQUIPMENT_BONUS.Max_HP_Percentage:
-            float addedHP = p_targetCharacter.maxHP * (p_equipData.equipmentUpgradeData.AdditionalmaxHPPercentage / 100f);
+            float addedHP = p_targetCharacter.combatComponent.unModifiedMaxHP * (p_equipData.equipmentUpgradeData.AdditionalmaxHPPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustMaxHPModifier((int)addedHP);
             break;
             case EQUIPMENT_BONUS.Increased_Piercing:
@@ -43,14 +44,17 @@ public static class EquipmentBonusProcessor
             p_targetCharacter.combatComponent.AdjustAttackModifier(-1 * (int)p_equipData.equipmentUpgradeData.AdditionalAttackActual);
             break;
             case EQUIPMENT_BONUS.Atk_Percentage:
-            p_targetCharacter.combatComponent.AddAttackBaseOnPercentage(-1 * (p_equipData.equipmentUpgradeData.AdditionalAttackPercentage / 100f));
+            float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
+            Debug.LogError(computedAttack);
+            p_targetCharacter.combatComponent.AdjustAttackModifier((int)-computedAttack);
             break;
             case EQUIPMENT_BONUS.Max_HP_Actual:
             p_targetCharacter.combatComponent.AdjustMaxHPModifier(-1 * (int)p_equipData.equipmentUpgradeData.AdditionalmaxHPActual);
             break;
             case EQUIPMENT_BONUS.Max_HP_Percentage:
-            float addedHP = p_targetCharacter.maxHP * (p_equipData.equipmentUpgradeData.AdditionalmaxHPPercentage / 100f);
-            p_targetCharacter.combatComponent.AdjustMaxHPModifier(-1 * (int)addedHP);
+            float addedHP = p_targetCharacter.combatComponent.unModifiedMaxHP * (p_equipData.equipmentUpgradeData.AdditionalmaxHPPercentage / 100f);
+            Debug.LogError(addedHP);
+            p_targetCharacter.combatComponent.AdjustMaxHPModifier((int)-addedHP);
             break;
             case EQUIPMENT_BONUS.Increased_Piercing:
             p_targetCharacter.piercingAndResistancesComponent.AdjustPiercing(-1 * p_equipData.equipmentUpgradeData.AdditionalPiercing);

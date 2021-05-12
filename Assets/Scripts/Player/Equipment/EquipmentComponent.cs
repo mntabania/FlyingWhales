@@ -29,6 +29,7 @@ public class EquipmentComponent {
         //remove old weapon stats first
         if(currentWeapon != null) {
             EquipmentBonusProcessor.RemoveEquipBonusToTarget(currentWeapon.equipmentData, p_targetCharacter);
+            p_targetCharacter.UnobtainItem(currentWeapon);
         }
         currentWeapon = p_newWeapon;
         //apply new weapon stats again
@@ -39,6 +40,7 @@ public class EquipmentComponent {
         //remove old Armor stats first
         if(currentArmor != null) {
             EquipmentBonusProcessor.RemoveEquipBonusToTarget(currentArmor.equipmentData, p_targetCharacter);
+            p_targetCharacter.UnobtainItem(currentArmor);
         }
         currentArmor = p_newArmor;
         //apply new Armor stats again
@@ -49,6 +51,7 @@ public class EquipmentComponent {
         //remove old Accessory stats first
         if(currentAccessory != null) {
             EquipmentBonusProcessor.RemoveEquipBonusToTarget(currentAccessory.equipmentData, p_targetCharacter);
+            p_targetCharacter.UnobtainItem(currentAccessory);
         }
         currentAccessory = p_newAaccessory;
         //apply new Accessory stats again
