@@ -33,7 +33,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
 			DetermineSettlementsForPitto(data);
 		} else {
-			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
+			// yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
 			yield return MapGenerator.Instance.StartCoroutine(DetermineVillageSpots(data));
 			succeess = TryAssignSettlementTiles(data);
 		}
@@ -62,9 +62,11 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}	
 		}
 
-		int stoneSourceCount = GetStoneSourceToGenerate(data.chosenWorldMapTemplate.regionCount);
-		int fertileCount = GetFertileToGenerate(data.chosenWorldMapTemplate.regionCount);
-		int gameCount = GetGameToGenerate(data.chosenWorldMapTemplate.regionCount);
+		int stoneSourceCount = Random.Range(1, 4);
+		int fertileCount = Random.Range(1, 4);
+		int gameCount = Random.Range(1, 4);
+		int poisonVentsCount = Random.Range(0, 5);
+		int vaporVentsCount = Random.Range(0, 5);
 
 		//stone source
 		for (int i = 0; i < stoneSourceCount; i++) {
@@ -86,6 +88,23 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		
 		yield return null;
+
+		List<Area> ventChoices = RuinarchListPool<Area>.Claim();
+		ventChoices.AddRange(GridMap.Instance.allAreas);
+		//poison vents
+		for (int i = 0; i < poisonVentsCount; i++) {
+			if (ventChoices.Count == 0) { break; }
+			Area tile = CollectionUtilities.GetRandomElement(ventChoices);
+			tile.featureComponent.AddFeature(AreaFeatureDB.Poison_Vents, tile);
+			ventChoices.Remove(tile);
+		}
+		//vapor vents
+		for (int i = 0; i < vaporVentsCount; i++) {
+			if (ventChoices.Count == 0) { break; }
+			Area tile = CollectionUtilities.GetRandomElement(ventChoices);
+			tile.featureComponent.AddFeature(AreaFeatureDB.Vapor_Vents, tile);
+			ventChoices.Remove(tile);
+		}
 		
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//pigs
@@ -116,104 +135,131 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}	
 		}
 	}
-	private bool IsAreaAtCorner(Area p_area) {
-		if (p_area.areaData.xCoordinate == 0) {
-			if (p_area.areaData.yCoordinate == 0 || p_area.areaData.yCoordinate == GridMap.Instance.height - 1) {
-				return true;
-			}
-		} else if (p_area.areaData.xCoordinate == GridMap.Instance.width - 1) {
-			if (p_area.areaData.yCoordinate == 0 || p_area.areaData.yCoordinate == GridMap.Instance.height - 1) {
-				return true;
-			}
-		}
-		return false;
-	}
-	private IEnumerator ComputeHabitabilityValues(MapGenerationData data) {
-		data.habitabilityValues = new int[data.width, data.height];
-		
-		int batchCount = 0;
-		for (int x = 0; x < data.width; x++) {
-			for (int y = 0; y < data.height; y++) {
-				Area area = GridMap.Instance.map[x, y];
-				int habitability = 0;
-				bool isAtCorner = IsAreaAtCorner(area);
-				bool isFullyPlain = area.elevationComponent.IsFully(ELEVATION.PLAIN);
-				if (isFullyPlain && !isAtCorner) {
-					int adjacentWaterTiles = 0;
-					int adjacentFlatTiles = 0;
-					int adjacentCaveTiles = 0;
-					habitability += 1;
-					for (int i = 0; i < area.neighbourComponent.neighbours.Count; i++) {
-						Area neighbour = area.neighbourComponent.neighbours[i];
-						if (neighbour.region != area.region) {
-							continue; //do not include neighbour if part of another region
-						}
-						if (neighbour.elevationType == ELEVATION.PLAIN) {
-							adjacentFlatTiles += 1;
-						} else if (neighbour.elevationType == ELEVATION.WATER) {
-							adjacentWaterTiles += 1;
-						} else if (neighbour.elevationType == ELEVATION.MOUNTAIN) {
-							adjacentCaveTiles += 1;
-						}
-
-						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature)) {
-							habitability += 3;
-						}	
-						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
-							habitability += 4;
-						}
-						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Fertile_Feature)) {
-							habitability += 5;
-						}
-						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Stone_Source_Feature)) {
-							habitability += 3;
-						}
-						if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Game_Feature)) {
-							habitability += 5;
-						}
-					}
-					if (adjacentWaterTiles == 1 || adjacentCaveTiles == 1) {
-						habitability += 5;
-					}
-					if (adjacentFlatTiles >= 1) {
-						habitability += 20;
-					} else {
-						habitability -= 10;
-					}
-				}
-				data.habitabilityValues[x, y] = habitability;
-				batchCount++;
-				if (batchCount >= MapGenerationData.WorldMapHabitabilityGenerationBatches) {
-					batchCount = 0;
-					yield return null;
-				}
-			}	
-		}
-	}
+	// private bool IsAreaAtCorner(Area p_area) {
+	// 	if (p_area.areaData.xCoordinate == 0) {
+	// 		if (p_area.areaData.yCoordinate == 0 || p_area.areaData.yCoordinate == GridMap.Instance.height - 1) {
+	// 			return true;
+	// 		}
+	// 	} else if (p_area.areaData.xCoordinate == GridMap.Instance.width - 1) {
+	// 		if (p_area.areaData.yCoordinate == 0 || p_area.areaData.yCoordinate == GridMap.Instance.height - 1) {
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
+	// private IEnumerator ComputeHabitabilityValues(MapGenerationData data) {
+	// 	data.habitabilityValues = new int[data.width, data.height];
+	// 	
+	// 	int batchCount = 0;
+	// 	for (int x = 0; x < data.width; x++) {
+	// 		for (int y = 0; y < data.height; y++) {
+	// 			Area area = GridMap.Instance.map[x, y];
+	// 			int habitability = 0;
+	// 			bool isAtCorner = IsAreaAtCorner(area);
+	// 			bool isFullyPlain = area.elevationComponent.IsFully(ELEVATION.PLAIN);
+	// 			if (isFullyPlain && !isAtCorner) {
+	// 				int adjacentWaterTiles = 0;
+	// 				int adjacentFlatTiles = 0;
+	// 				int adjacentCaveTiles = 0;
+	// 				habitability += 1;
+	// 				for (int i = 0; i < area.neighbourComponent.neighbours.Count; i++) {
+	// 					Area neighbour = area.neighbourComponent.neighbours[i];
+	// 					if (neighbour.region != area.region) {
+	// 						continue; //do not include neighbour if part of another region
+	// 					}
+	// 					if (neighbour.elevationType == ELEVATION.PLAIN) {
+	// 						adjacentFlatTiles += 1;
+	// 					} else if (neighbour.elevationType == ELEVATION.WATER) {
+	// 						adjacentWaterTiles += 1;
+	// 					} else if (neighbour.elevationType == ELEVATION.MOUNTAIN) {
+	// 						adjacentCaveTiles += 1;
+	// 					}
+	//
+	// 					if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature)) {
+	// 						habitability += 3;
+	// 					}	
+	// 					if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
+	// 						habitability += 4;
+	// 					}
+	// 					if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Fertile_Feature)) {
+	// 						habitability += 5;
+	// 					}
+	// 					if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Stone_Source_Feature)) {
+	// 						habitability += 3;
+	// 					}
+	// 					if (neighbour.featureComponent.HasFeature(AreaFeatureDB.Game_Feature)) {
+	// 						habitability += 5;
+	// 					}
+	// 				}
+	// 				if (adjacentWaterTiles == 1 || adjacentCaveTiles == 1) {
+	// 					habitability += 5;
+	// 				}
+	// 				if (adjacentFlatTiles >= 1) {
+	// 					habitability += 20;
+	// 				} else {
+	// 					habitability -= 10;
+	// 				}
+	// 			}
+	// 			data.habitabilityValues[x, y] = habitability;
+	// 			batchCount++;
+	// 			if (batchCount >= MapGenerationData.WorldMapHabitabilityGenerationBatches) {
+	// 				batchCount = 0;
+	// 				yield return null;
+	// 			}
+	// 		}	
+	// 	}
+	// }
 	private IEnumerator DetermineVillageSpots(MapGenerationData p_data) {
+		List<Area> villageSpotChoices = RuinarchListPool<Area>.Claim();
+
 		for (int x = 0; x < p_data.width; x++) {
 			for (int y = 0; y < p_data.height; y++) {
 				Area currentTile = GridMap.Instance.map[x, y];
-				int currentTileHabitability = p_data.GetHabitabilityValue(currentTile);
-				if (currentTileHabitability >= MapGenerationData.MinimumHabitabilityForVillage) {
+				if (IsAreaValidVillageSpotCandidate(currentTile) && IsAreaConnectedToNumberOfPlainTiles(currentTile, 6, 12)) {
 					p_data.AddVillageSpot(currentTile);
-					// int adjacentHabitable = 0;
-					// for (int i = 0; i < currentTile.neighbourComponent.neighbours.Count; i++) {
-					// 	Area neighbour = currentTile.neighbourComponent.neighbours[i];
-					// 	int habitability = p_data.GetHabitabilityValue(neighbour);
-					// 	if (habitability > 0) {
-					// 		adjacentHabitable++;
-					// 	}
-					// }
-					// if (adjacentHabitable >= 2) {
-					// 	p_data.AddVillageSpot(currentTile);
-					// }
 				}
 			}
 		}
 		Debug.Log($"Created {p_data.villageSpots.Count.ToString()} Village Spots");
 		yield return null;
 	}
+	private bool IsAreaValidVillageSpotCandidate(Area p_area) {
+		if (p_area.elevationType == ELEVATION.PLAIN) {
+			if (p_area.neighbourComponent.HasNeighbourWithElevation(ELEVATION.WATER) || 
+			    p_area.neighbourComponent.HasNeighbourWithElevation(ELEVATION.MOUNTAIN)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private bool IsAreaConnectedToNumberOfPlainTiles(Area p_area, int p_requiredNumber, int p_maxNumber) {
+		List<Area> connectedPlainAreas = RuinarchListPool<Area>.Claim();
+		connectedPlainAreas.Add(p_area);
+		
+		List<Area> areasToCheck = RuinarchListPool<Area>.Claim();
+		List<Area> checkedAreas = RuinarchListPool<Area>.Claim();
+		areasToCheck.AddRange(p_area.neighbourComponent.cardinalNeighbours);
+
+		while (areasToCheck.Count > 0) {
+			if (connectedPlainAreas.Count >= p_maxNumber) { break; }
+			Area currentArea = areasToCheck[0];
+			if (currentArea.elevationComponent.elevationType == ELEVATION.PLAIN) {
+				connectedPlainAreas.Add(currentArea);
+				//add neighbours as tile to be checked
+				for (int i = 0; i < currentArea.neighbourComponent.cardinalNeighbours.Count; i++) {
+					Area neighbour = currentArea.neighbourComponent.cardinalNeighbours[i];
+					if (!checkedAreas.Contains(neighbour) && !areasToCheck.Contains(neighbour)) {
+						areasToCheck.Add(neighbour);
+					}
+				}
+			}
+			areasToCheck.Remove(currentArea);
+			checkedAreas.Add(currentArea);
+		}
+
+		return connectedPlainAreas.Count >= p_requiredNumber;
+	}
+	
 	private bool TryAssignSettlementTiles(MapGenerationData data) {
 		int createdVillages = 0;
 		int villagesToCreate = WorldSettings.Instance.worldSettingsData.factionSettings.GetCurrentTotalVillageCountBasedOnFactions();
@@ -266,54 +312,6 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 		return createdVillages == villagesToCreate;
-	}
-	#endregion
-
-	#region Tile Feature Utilities
-	private int GetStoneSourceToGenerate(int regionCount) {
-		switch (regionCount) {
-			case 1:
-				return 1;
-			case 2:
-			case 3:
-				return 2;
-			case 4:
-			case 5:
-			case 6:
-				return 3;
-			default:
-				return 3;
-		}
-	}
-	private int GetFertileToGenerate(int regionCount) {
-		switch (regionCount) {
-			case 1:
-				return 1;
-			case 2:
-			case 3:
-				return 2;
-			case 4:
-			case 5:
-			case 6:
-				return 4;
-			default:
-				return 3;
-		}
-	}
-	private int GetGameToGenerate(int regionCount) {
-		switch (regionCount) {
-			case 1:
-				return 1;
-			case 2:
-			case 3:
-				return 2;
-			case 4:
-			case 5:
-			case 6:
-				return 3;
-			default:
-				return 3;
-		}
 	}
 	#endregion
 

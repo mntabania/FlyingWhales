@@ -876,15 +876,7 @@ namespace Inner_Maps {
                     tile.SetSpecificBiomeType(tileType);
                     Tile_Tag tileTag = RandomizeTileTag(tileType);
                     tileTagMap[x, y] = tileTag;
-                    
-                    // TileBase tileBase = tileTypeAssets[tileType];
-                    //
-                    // tile.tileType = tileType;
-                    // Tile_Tag tileTag = RandomizeTileTag(tileType);
-                    // tile.tileTag = tileTag;
-                    // TileBase objectTile = GetObjectAssetForTile(tileType, tileTag);
-                    // objectsTilemap.SetTile(position, objectTile);
-                    
+
                     batchCount++;
                     if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
                         batchCount = 0;
@@ -910,22 +902,22 @@ namespace Inner_Maps {
                     }
                 case Biome_Tile_Type.Grassland:
                     int grasslandRoll = GameUtilities.Roll();
-                    if (grasslandRoll < 5) {
+                    if (grasslandRoll < 3) {
                         return Tile_Tag.Tree;
-                    } else if (grasslandRoll < 20) {
+                    } else if (grasslandRoll < 18) {
                         return Tile_Tag.Decor;
-                    } else if (grasslandRoll < 23) {
+                    } else if (grasslandRoll < 21) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
                     }
                 case Biome_Tile_Type.Jungle:
                     int jungleRoll = GameUtilities.Roll();
-                    if (jungleRoll < 30) {
+                    if (jungleRoll < 25) {
                         return Tile_Tag.Tree;
-                    } else if (jungleRoll < 40) {
+                    } else if (jungleRoll < 35) {
                         return Tile_Tag.Decor;
-                    } else if (jungleRoll < 44) {
+                    } else if (jungleRoll < 39) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
@@ -943,17 +935,17 @@ namespace Inner_Maps {
                     }
                 case Biome_Tile_Type.Tundra:
                     int tundraRoll = GameUtilities.Roll();
-                    if (tundraRoll < 5) {
+                    if (tundraRoll < 3) {
                         return Tile_Tag.Tree;
-                    } else if (tundraRoll < 15) {
+                    } else if (tundraRoll < 13) {
                         return Tile_Tag.Decor;
-                    } else if (tundraRoll < 18) {
+                    } else if (tundraRoll < 16) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
                     }
                 case Biome_Tile_Type.Snow:
-                    return GameUtilities.RollChance(15) ? Tile_Tag.Decor : Tile_Tag.None;
+                    return GameUtilities.RollChance(10) ? Tile_Tag.Decor : Tile_Tag.None;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(p_tileType), p_tileType, null);
             }
@@ -998,7 +990,7 @@ namespace Inner_Maps {
                     }
                 case Tile_Tag.Tree:
                     if (BigTreeObject.CanBePlacedOnTile(p_tile)) {
-                        return GameUtilities.RollChance(50) ? TILE_OBJECT_TYPE.TREE_OBJECT : TILE_OBJECT_TYPE.BIG_TREE_OBJECT;    
+                        return GameUtilities.RollChance(25) ? TILE_OBJECT_TYPE.BIG_TREE_OBJECT : TILE_OBJECT_TYPE.TREE_OBJECT;    
                     } else {
                         return TILE_OBJECT_TYPE.TREE_OBJECT;
                     }

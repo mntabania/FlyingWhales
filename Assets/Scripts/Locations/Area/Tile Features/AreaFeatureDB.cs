@@ -12,5 +12,7 @@
         public static string Rain_Feature = "RainFeature";
         public static string Poison_Bloom_Feature = "PoisonBloomFeature";
         public static string Heat_Wave_Feature = "HeatWaveFeature";
+        public static string Poison_Vents = "PoisonVentsFeature";
+        public static string Vapor_Vents = "VaporVentsFeature";
     }
 }

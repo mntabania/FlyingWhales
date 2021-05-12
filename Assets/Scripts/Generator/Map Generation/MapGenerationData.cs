@@ -36,7 +36,7 @@ public class MapGenerationData {
 	public int width => chosenWorldMapTemplate.worldMapWidth;
 	public int height => chosenWorldMapTemplate.worldMapHeight;
 	public int regionCount => chosenWorldMapTemplate.regionCount;
-	public int[,] habitabilityValues;
+	// public int[,] habitabilityValues;
 	public List<Area> villageSpots;
 	public Dictionary<FactionTemplate, List<Area>> determinedVillages;
 	public Area portal;
@@ -46,11 +46,11 @@ public class MapGenerationData {
 		determinedVillages = new Dictionary<FactionTemplate, List<Area>>();
 	}
 	
-	#region Habitability
-	public int GetHabitabilityValue(Area p_area) {
-		return habitabilityValues[p_area.areaData.xCoordinate, p_area.areaData.yCoordinate];
-	}
-	#endregion
+	// #region Habitability
+	// public int GetHabitabilityValue(Area p_area) {
+	// 	return habitabilityValues[p_area.areaData.xCoordinate, p_area.areaData.yCoordinate];
+	// }
+	// #endregion
 
 	#region Village Spots
 	public void AddVillageSpot(Area p_villageSpot) {
