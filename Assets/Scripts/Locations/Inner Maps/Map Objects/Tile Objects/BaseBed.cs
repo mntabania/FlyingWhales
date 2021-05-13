@@ -6,7 +6,7 @@ public abstract class BaseBed : TileObject {
     private Character[] bedUsers; //array of characters, currently using the bed
 
     public override Character[] users {
-        get { return bedUsers.Where(x => x != null).ToArray(); }
+        get { return bedUsers; } //.Where(x => x != null).ToArray() //Remove use of ToArray
     }
     public BaseBed(int slots) {
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);

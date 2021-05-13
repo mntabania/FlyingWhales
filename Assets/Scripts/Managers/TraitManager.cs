@@ -237,25 +237,6 @@ public class TraitManager : BaseMonoBehaviour {
         trait.LoadFirstWaveInstancedTrait(saveDataTrait);
         return trait;
     }
-    public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {
-        List<Trait> traits = new List<Trait>();
-        foreach (Trait trait in _allTraits.Values) {
-            if(trait.type == type) {
-                traits.Add(trait);
-            }
-        }
-        return traits;
-    }
-    public List<string> GetAllBuffTraitsThatCharacterCanHave(Character character) {
-        List<string> allBuffs = new List<string>(buffTraitPool);
-        for (int i = 0; i < character.traitContainer.traits.Count; i++) {
-            Trait trait = character.traitContainer.traits[i];
-            if (trait.mutuallyExclusive != null) {
-                CollectionUtilities.RemoveElements(allBuffs, trait.mutuallyExclusive);
-            }
-        }
-        return allBuffs;
-    }
     /// <summary>
     /// Utility function to determine if this character's flaws can still be activated
     /// </summary>

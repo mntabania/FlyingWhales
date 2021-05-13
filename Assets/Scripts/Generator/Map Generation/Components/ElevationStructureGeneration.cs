@@ -219,17 +219,17 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
 		elevationStructure.SetOccupiedArea(occupiedArea);
 
-		List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
-		elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein(validWallsForOreVeins);
+		List<TileObject> validWallsForOreVeins = RuinarchListPool<TileObject>.Claim();
+		elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein(validWallsForOreVeins, TILE_OBJECT_TYPE.BLOCK_WALL);
 
 		var randomOreAmount = areaElevationIsland.tilesInIsland.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
 		for (int i = 0; i < randomOreAmount; i++) {
 			if (validWallsForOreVeins.Count == 0) { break; }
-			BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
+			BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins) as BlockWall;
 			CreateOreVeinAt(blockWall.gridTileLocation);
 			validWallsForOreVeins.Remove(blockWall);
 		}
-		RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
+		RuinarchListPool<TileObject>.Release(validWallsForOreVeins);
 	}
 	//private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
 	//	if (p_blockWall.gridTileLocation != null) {

@@ -45,6 +45,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     //tile slots
     private TileObjectSlotItem[] slots { get; set; } //for users
+    private Character[] _users;
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
 
@@ -105,7 +106,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual string neutralizer => string.Empty;
     public virtual Character[] users { //array of characters, currently using the tile object
         get {
-            return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
+            return GetUsers(); //Removed the use of ToArray //slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
         }
     }
     #endregion
@@ -841,6 +842,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 slotsParent.name = $"{ToString()} Slots";
             }
             slots = new TileObjectSlotItem[slotSettings.Count];
+            _users = new Character[slotSettings.Count];
             for (int i = 0; i < slotSettings.Count; i++) {
                 TileObjectSlotSetting currSetting = slotSettings[i];
                 GameObject currSlot = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotPrefab, Vector3.zero, Quaternion.identity, slotsParent.transform);
@@ -864,6 +866,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             Object.Destroy(slots[i].gameObject);
         }
         slots = null;
+        _users = null;
         hasCreatedSlots = false;
     }
     private TileObjectSlotItem GetNearestUnoccupiedSlot(Character character) {
@@ -929,7 +932,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region Users
     public virtual bool AddUser(Character newUser) {
-        if (users.Contains(newUser)) {
+        if (newUser != null && users.Contains(newUser)) {
             return true;
         }
         TileObjectSlotItem availableSlot = GetNearestUnoccupiedSlot(newUser);
@@ -953,6 +956,39 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return true;
         }
         return false;
+    }
+    public int GetUserCount() {
+        int userCount = 0;
+        Character[] users = this.users;
+        if (users != null && users.Length > 0) {
+            for (int i = 0; i < users.Length; i++) {
+                Character user = users[i];
+                if (user != null) {
+                    userCount++;
+                }
+            }
+        }
+        return userCount;
+    }
+    public Character GetFirstUser() {
+        if (users != null && users.Length > 0) {
+            for (int i = 0; i < users.Length; i++) {
+                Character user = users[i];
+                if (user != null) {
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
+    public Character[] GetUsers() {
+        if (slots != null) {
+            for (int i = 0; i < slots.Length; i++) {
+                TileObjectSlotItem item = slots[i];
+                _users[i] = item.user;
+            }
+        }
+        return _users;
     }
     #endregion
 
@@ -1229,12 +1265,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             //unbuilt object is no longer valid, remove it
             Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
             Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING,  this as IPointOfInterest);
-            List<JobQueueItem> jobs = new List<JobQueueItem>(allJobsTargetingThis);
+            List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
             jobs.AddRange(allExistingJobsTargetingThis);
             for (int i = 0; i < jobs.Count; i++) {
                 JobQueueItem jobQueueItem = jobs[i];
                 jobQueueItem.CancelJob(false);
             }
+            RuinarchListPool<JobQueueItem>.Release(jobs);
             gridTileLocation?.structure.RemovePOI(this);
             Debug.Log($"{GameManager.Instance.TodayLogString()}Unbuilt object {this} was removed!");
         }

@@ -30,6 +30,11 @@ public class ObjectPoolManager : MonoBehaviour {
     public List<GoapThread> _goapThreadPool { get; private set; }
     private List<UpdateCharacterNameThread> _updateCharacterNameThreadPool;
     private List<SQLLogInsertThread> _sqlInsertThreadPool;
+    private List<GoapPlanJob> _goapJobPool;
+    private List<CharacterStateJob> _stateJobPool;
+    private List<ConversationData> _conversationDataPool;
+    private List<ScheduledAction> _scheduledActionPool;
+
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
@@ -39,14 +44,10 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<List<Faction>> _factionListPool;
     private List<List<BaseSettlement>> _settlementListPool;
     private List<List<SkillData>> _skillDataPool;
-    private List<GoapPlanJob> _goapJobPool;
-    private List<CharacterStateJob> _stateJobPool;
-    private List<ConversationData> _conversationDataPool;
     private List<List<ConversationData>> _conversationDataListPool;
     private List<List<EMOTION>> _emotionListPool;
     private List<List<ILocation>> _ilocationListPool;
     private List<List<Area>> _areaListPool;
-
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -103,6 +104,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructILocationListPool();
         ConstructSkillDataListPool();
         ConstructAreaListPool();
+        ConstructScheduledActionPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -665,6 +667,24 @@ public class ObjectPoolManager : MonoBehaviour {
     }
     #endregion
 
+    #region Scheduled Actions
+    private void ConstructScheduledActionPool() {
+        _scheduledActionPool = new List<ScheduledAction>();
+    }
+    public ScheduledAction CreateNewScheduledAction() {
+        if (_scheduledActionPool.Count > 0) {
+            ScheduledAction data = _scheduledActionPool[0];
+            _scheduledActionPool.RemoveAt(0);
+            return data;
+        }
+        return new ScheduledAction();
+    }
+    public void ReturnScheduledActionToPool(ScheduledAction data) {
+        data.Reset();
+        _scheduledActionPool.Add(data);
+    }
+    #endregion
+
     // protected override void OnDestroy() {
     //     if (allObjectPools != null) {
     //         foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -724,5 +744,5 @@ public class ObjectPoolManager : MonoBehaviour {
     //     base.OnDestroy();
     //     Instance = null;
     // }
-        
+
 }

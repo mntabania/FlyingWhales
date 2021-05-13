@@ -105,14 +105,14 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             //if none of the jobs above were created, check for food piles inside this character's home/territory,
             if (GameUtilities.RollChance(15)) {
                 Profiler.BeginSample($"Kobold Get Food Piles at Home");
-                List<FoodPile> foodPiles = RuinarchListPool<FoodPile>.Claim();
+                List<TileObject> foodPiles = RuinarchListPool<TileObject>.Claim();
                 PopulateFoodPilesAtHome(foodPiles, character);
                 Profiler.EndSample();
                 FoodPile chosenPile = null;
                 if (foodPiles.Count > 0) {
-                    chosenPile = CollectionUtilities.GetRandomElement(foodPiles);
+                    chosenPile = CollectionUtilities.GetRandomElement(foodPiles) as FoodPile;
                 }
-                RuinarchListPool<FoodPile>.Release(foodPiles);
+                RuinarchListPool<TileObject>.Release(foodPiles);
                 if (chosenPile != null) {
                     Profiler.BeginSample($"Kobold Monster Eat Job");
                     //if there are any, create job to eat a random food pile
@@ -204,13 +204,13 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         //return null;
     }
 
-    private void PopulateFoodPilesAtHome(List<FoodPile> foodPiles, Character character) {
+    private void PopulateFoodPilesAtHome(List<TileObject> foodPiles, Character character) {
         if (character.homeSettlement != null) {
-            character.homeSettlement.PopulateTileObjectsOfType(foodPiles);
+            character.homeSettlement.PopulateTileObjectsOfType<FoodPile>(foodPiles);
         } else if (character.homeStructure != null) {
-            character.homeStructure.PopulateTileObjectsOfType(foodPiles);
+            character.homeStructure.PopulateTileObjectsOfType<FoodPile>(foodPiles);
         } else if (character.HasTerritory()) {
-            character.territory.tileObjectComponent.PopulateTileObjectsInArea(foodPiles);
+            character.territory.tileObjectComponent.PopulateTileObjectsInArea<FoodPile>(foodPiles);
         }
     }
 }

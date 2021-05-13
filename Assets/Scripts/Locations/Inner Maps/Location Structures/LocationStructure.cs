@@ -557,7 +557,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfType<T>(List<T> objs) where T : TileObject {
+        public void PopulateTileObjectsOfType<T>(List<TileObject> objs) where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T t) {
@@ -565,7 +565,15 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfTypeThatAdvertisesEatAndHasTileLocation<T>(List<T> objs) where T : TileObject {
+        public void PopulateTileObjectsOfType(List<TileObject> objs, TILE_OBJECT_TYPE p_type) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject t && t.tileObjectType == p_type) {
+                    objs.Add(t);
+                }
+            }
+        }
+        public void PopulateTileObjectsOfTypeThatAdvertisesEatAndHasTileLocation<T>(List<TileObject> objs) where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T t) {
@@ -575,14 +583,14 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein<T>(List<T> objs) where T : TileObject {
+        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein(List<TileObject> objs, TILE_OBJECT_TYPE p_type) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T t) {
+                if (poi is TileObject t && t.tileObjectType == p_type) {
                     if (t.gridTileLocation != null) {
-                        int caveNeighbours = t.gridTileLocation.neighbourList.Count(o => o.tileObjectComponent.objHere is BlockWall);
+                        int caveNeighbours = t.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(p_type);
                         if (caveNeighbours == 2 || caveNeighbours == 5) {
-                            if (t.gridTileLocation.neighbourList.Count(o => o.structure is Wilderness) >= 3) {
+                            if (t.gridTileLocation.GetCountOfNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS) >= 3) {
                                 objs.Add(t);
                             }
                         }
@@ -590,13 +598,13 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2<T>(List<T> objs) where T : TileObject {
+        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(List<TileObject> objs, TILE_OBJECT_TYPE p_type) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T t) {
+                if (poi is TileObject t && t.tileObjectType == p_type) {
                     if (t.gridTileLocation != null) {
                         List<LocationGridTile> caveNeighbours = RuinarchListPool<LocationGridTile>.Claim();
-                        t.gridTileLocation.PopulateFourNeighboursThatHasTileObjectOfType(caveNeighbours, TILE_OBJECT_TYPE.BLOCK_WALL);
+                        t.gridTileLocation.PopulateFourNeighboursThatHasTileObjectOfType(caveNeighbours, p_type);
                         int wildernessNeighboursCount = t.gridTileLocation.GetCountOfFourNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS);
                         if (caveNeighbours.Count == 2 && wildernessNeighboursCount == 1) {
                             List<GridNeighbourDirection> directions = RuinarchListPool<GridNeighbourDirection>.Claim();
@@ -611,7 +619,7 @@ namespace Inner_Maps.Location_Structures {
                             }
                             RuinarchListPool<GridNeighbourDirection>.Release(directions);
                         } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
-                            if(t.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.BLOCK_WALL) == 5 &&
+                            if(t.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(p_type) == 5 &&
                                    t.gridTileLocation.GetCountOfNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS) == 3) {
                                 objs.Add(t);
                             }
@@ -623,7 +631,7 @@ namespace Inner_Maps.Location_Structures {
            
         }
         public T GetRandomTileObjectOfTypeThatHasTileLocation<T>() where T : TileObject {
-            List<T> objs = RuinarchListPool<T>.Claim();
+            List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T t) {
@@ -634,13 +642,13 @@ namespace Inner_Maps.Location_Structures {
             }
             T chosenObj = null;
             if (objs.Count > 0) {
-                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)];
+                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)] as T;
             }
-            RuinarchListPool<T>.Release(objs);
+            RuinarchListPool<TileObject>.Release(objs);
             return chosenObj;
         }
         public T GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuilt<T>() where T : TileObject {
-            List<T> objs = RuinarchListPool<T>.Claim();
+            List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T t) {
@@ -651,9 +659,9 @@ namespace Inner_Maps.Location_Structures {
             }
             T chosenObj = null;
             if (objs.Count > 0) {
-                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)];
+                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)] as T;
             }
-            RuinarchListPool<T>.Release(objs);
+            RuinarchListPool<TileObject>.Release(objs);
             return chosenObj;
         }
         public T GetFirstTileObjectOfTypeThatIsAvailable<T>() where T : TileObject {
@@ -1198,7 +1206,24 @@ namespace Inner_Maps.Location_Structures {
             if (unoccupiedTiles.Count <= 0) {
                 return null;
             }
-            return unoccupiedTiles.ElementAt(UnityEngine.Random.Range(0, unoccupiedTiles.Count));
+            return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
+        }
+        public LocationGridTile GetRandomUnoccupiedTileThatHasNoCharacters() {
+            LocationGridTile chosenTile = null;
+            if (unoccupiedTiles.Count > 0) {
+                List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                for (int i = 0; i < unoccupiedTiles.Count; i++) {
+                    LocationGridTile t = unoccupiedTiles[i];
+                    if (t.charactersHere.Count <= 0) {
+                        tiles.Add(t);
+                    }
+                }
+                if (tiles.Count > 0) {
+                    chosenTile = tiles[GameUtilities.RandomBetweenTwoNumbers(0, tiles.Count - 1)];
+                }
+                RuinarchListPool<LocationGridTile>.Release(tiles);
+            }
+            return chosenTile;
         }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }

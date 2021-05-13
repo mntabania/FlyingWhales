@@ -88,7 +88,7 @@ public class VillageGeneration : MapGenerationComponent {
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 				List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, npcSettlement.owner, data);
 				List<TileObject> objectsInDwellings = RuinarchListPool<TileObject>.Claim();
-				npcSettlement.PopulateTileObjectsFromStructures(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
+				npcSettlement.PopulateTileObjectsFromStructures<TileObject>(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
 				for (int j = 0; j < objectsInDwellings.Count; j++) {
 					TileObject tileObject = objectsInDwellings[j];
 					tileObject.UpdateOwners();
@@ -224,7 +224,7 @@ public class VillageGeneration : MapGenerationComponent {
 
 				//update objects owners in dwellings
 				List<TileObject> objectsInDwellings = RuinarchListPool<TileObject>.Claim();
-				npcSettlement.PopulateTileObjectsFromStructures(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
+				npcSettlement.PopulateTileObjectsFromStructures<TileObject>(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
 				for (int j = 0; j < objectsInDwellings.Count; j++) {
 					TileObject tileObject = objectsInDwellings[j];
 					tileObject.UpdateOwners();

@@ -69,7 +69,7 @@ public class Sleep : GoapAction {
         if (target is BaseBed) {
             BaseBed targetBed = target as BaseBed;
             if (!targetBed.IsSlotAvailable()) {
-                if (targetBed.users.Contains(actor)) {
+                if (actor != null && targetBed.users.Contains(actor)) {
                     cost = 10;
                     costLog += " 10(Already in bed)"; //Mainly used for quarantine
                 } else {

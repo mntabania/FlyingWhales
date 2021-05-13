@@ -230,17 +230,17 @@ namespace Inner_Maps {
 			    (locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
 			    (locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure)));
             
-		    List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
-            elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins);
+		    List<TileObject> validWallsForOreVeins = RuinarchListPool<TileObject>.Claim();
+            elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins, TILE_OBJECT_TYPE.BLOCK_WALL);
 		    
 		    var randomOreAmount = elevationStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
 		    for (int i = 0; i < randomOreAmount; i++) {
 			    if (validWallsForOreVeins.Count == 0) { break; }
-			    BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
+			    BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins) as BlockWall;
 			    CreateOreVeinAt(blockWall.gridTileLocation);
 			    validWallsForOreVeins.Remove(blockWall);
 		    }
-            RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
+            RuinarchListPool<TileObject>.Release(validWallsForOreVeins);
         }
         //private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
         //    if (p_blockWall.gridTileLocation != null) {

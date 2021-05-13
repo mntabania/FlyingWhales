@@ -100,18 +100,18 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                         } else {
                             log += $"\n  -Outside settlement";
                             Campfire chosenCampfire = null;
-                            List<Campfire> campfires = RuinarchListPool<Campfire>.Claim();
-                            currentArea.tileObjectComponent.PopulateTileObjectsInArea(campfires);
+                            List<TileObject> campfires = RuinarchListPool<TileObject>.Claim();
+                            currentArea.tileObjectComponent.PopulateTileObjectsInArea<Campfire>(campfires);
                             if(campfires != null && campfires.Count > 0) {
                                 for (int i = 0; i < campfires.Count; i++) {
-                                    Campfire campfire = campfires[i];
+                                    TileObject campfire = campfires[i];
                                     if(campfire.characterOwner == null || campfire.IsOwnedBy(character) || (!character.IsHostileWith(campfire.characterOwner) && !character.relationshipContainer.IsEnemiesWith(campfire.characterOwner))){
-                                        chosenCampfire = campfire;
+                                        chosenCampfire = campfire as Campfire;
                                         break;
                                     }
                                 }
                             }
-                            RuinarchListPool<Campfire>.Release(campfires);
+                            RuinarchListPool<TileObject>.Release(campfires);
                             if (chosenCampfire != null) {
                                 log += $"\n  -Has available campfire within hex, warm up: " + chosenCampfire.nameWithID + ", 25% chance to roam around";
                                 int chance = UnityEngine.Random.Range(0, 100);

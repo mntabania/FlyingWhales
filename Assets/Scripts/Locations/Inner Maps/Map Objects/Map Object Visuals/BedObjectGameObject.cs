@@ -29,7 +29,7 @@ public class BedObjectGameObject : TileObjectGameObject {
     }
 
     public override void UpdateTileObjectVisual(TileObject bed) {
-        int userCount = bed.users.Length;
+        int userCount = bed.GetUserCount();
         if (userCount == 0) {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 
                 bed.state,

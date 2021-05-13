@@ -84,13 +84,13 @@ public class BuildWolfLair : GoapAction {
 
         structure.SetOccupiedArea(targetArea);
 
-        List<BlockWall> walls = RuinarchListPool<BlockWall>.Claim();
-        structure.PopulateTileObjectsOfType(walls);
+        List<TileObject> walls = RuinarchListPool<TileObject>.Claim();
+        structure.PopulateTileObjectsOfType(walls, TILE_OBJECT_TYPE.BLOCK_WALL);
         for (int i = 0; i < walls.Count; i++) {
             TileObject blockWall = walls[i];
             blockWall.baseMapObjectVisual.ApplyGraphUpdate();
         }
-        RuinarchListPool<BlockWall>.Release(walls);
+        RuinarchListPool<TileObject>.Release(walls);
         targetArea.areaItem.UpdatePathfindingGraph();
         //targetHex.UpdatePathfindingGraphCoroutine();
 

@@ -241,7 +241,9 @@ namespace Traits {
                 if(bed.users != null && bed.users.Length > 0) {
                     for (int i = 0; i < bed.users.Length; i++) {
                         Character user = bed.users[i];
-                        user.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true, isPlayerSource: isPlayerSource);
+                        if (user != null) {
+                            user.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true, isPlayerSource: isPlayerSource);
+                        }
                     }
                 }
             }

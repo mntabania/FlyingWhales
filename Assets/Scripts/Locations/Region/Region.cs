@@ -634,9 +634,9 @@ public class Region : ISavable, ILogFiller {
         }
         return false;
     }
-    public void PopulateTileObjectsOfType<T>(List<T> objs) where T : TileObject{
+    public void PopulateTileObjectsOfType<T>(List<TileObject> objs) where T : TileObject{
         for (int i = 0; i < allStructures.Count; i++) {
-            allStructures[i].PopulateTileObjectsOfType(objs);
+            allStructures[i].PopulateTileObjectsOfType<T>(objs);
         }
     }
     #endregion

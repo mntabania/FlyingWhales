@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
-
+using UtilityScripts;
 public class SchedulingManager : BaseMonoBehaviour {
 	public static SchedulingManager Instance;
 
@@ -18,6 +18,7 @@ public class SchedulingManager : BaseMonoBehaviour {
         _actionsToDo = new List<ScheduledAction>();
 	}
     protected override void OnDestroy() {
+        //Do not return to object pool scheduled action here since this is only done when game has ended or has changed scene, we can do garbage collection here
         schedules.Clear();
         schedules = null;
         _actionsToDo.Clear();
@@ -40,22 +41,35 @@ public class SchedulingManager : BaseMonoBehaviour {
 	}
 	internal string AddEntry(GameDate gameDate, Action act, object adder){
         if (!schedules.ContainsKey(gameDate)) {
-            schedules.Add(gameDate, new List<ScheduledAction>());
+            schedules.Add(gameDate, RuinarchListPool<ScheduledAction>.Claim());
         }
         string newID = GenerateScheduleID();
-        schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
+        ScheduledAction sa = ObjectPoolManager.Instance.CreateNewScheduledAction();
+        sa.SetData(newID, act, adder);
+        schedules[gameDate].Add(sa);
         // Debug.Log($"{GameManager.Instance.TodayLogString()}Created new schedule on {gameDate.ConvertToContinuousDaysWithTime()}. Action is {act.Method.Name}, by {adder}");
         return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){
-		schedules.Remove (gameDate);
+        if (schedules.ContainsKey(gameDate)) {
+            List<ScheduledAction> saList = schedules[gameDate];
+            if (saList != null) {
+                for (int i = 0; i < saList.Count; i++) {
+                    OnRemoveScheduledAction(saList[i]);
+                }
+                RuinarchListPool<ScheduledAction>.Release(saList);
+            }
+        }
+		schedules.Remove(gameDate);
 	}
     internal void RemoveSpecificEntry(int month, int day, int year, int hour, int continuousDays, Action act) {
         GameDate gameDate = new GameDate(month, day, year, hour);
         if (schedules.ContainsKey(gameDate)) {
             List<ScheduledAction> acts = schedules[gameDate];
             for (int i = 0; i < acts.Count; i++) {
-                if (acts[i].action.Target == act.Target) {
+                ScheduledAction sa = acts[i];
+                if (sa.action.Target == act.Target) {
+                    OnRemoveScheduledAction(sa);
                     schedules[gameDate].RemoveAt(i);
                     break;
                 }
@@ -66,7 +80,9 @@ public class SchedulingManager : BaseMonoBehaviour {
         if (schedules.ContainsKey(date)) {
             List<ScheduledAction> acts = schedules[date];
             for (int i = 0; i < acts.Count; i++) {
-                if (acts[i].action.Target == act.Target) {
+                ScheduledAction sa = acts[i];
+                if (sa.action.Target == act.Target) {
+                    OnRemoveScheduledAction(sa);
                     schedules[date].RemoveAt(i);
                     break;
                 }
@@ -79,8 +95,9 @@ public class SchedulingManager : BaseMonoBehaviour {
             for (int i = 0; i < acts.Count; i++) {
                 ScheduledAction action = acts[i];
                 if (action.scheduleID == id) {
-                    schedules[date].RemoveAt(i);
                     Debug.Log($"Removed scheduled item {action.ToString()} for {action.scheduler?.ToString()}. ID is {id}");
+                    OnRemoveScheduledAction(action);
+                    schedules[date].RemoveAt(i);
                     return true;
                 }
             }
@@ -94,6 +111,12 @@ public class SchedulingManager : BaseMonoBehaviour {
             }
         }
         return false;
+    }
+    private void OnRemoveScheduledAction(ScheduledAction p_sa) {
+        ObjectPoolManager.Instance.ReturnScheduledActionToPool(p_sa);
+    }
+    private void EvaluateRemovingOfSchedules() {
+
     }
     private void DoAsScheduled(List<ScheduledAction> acts) {
         int expectedIterations = acts.Count;
@@ -120,26 +143,40 @@ public class SchedulingManager : BaseMonoBehaviour {
         Debug.Log($"Clearing all schedules by {character.name}");
         Dictionary<GameDate, List<ScheduledAction>> temp = new Dictionary<GameDate, List<ScheduledAction>>(schedules);
         foreach (KeyValuePair<GameDate, List<ScheduledAction>> kvp in temp) {
-            List<ScheduledAction> newList = new List<ScheduledAction>(kvp.Value);
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                if (kvp.Value[i].scheduler == character) {
-                    newList.Remove(kvp.Value[i]);
+            //List<ScheduledAction> newList = RuinarchListPool<ScheduledAction>.Claim();
+            //newList.AddRange(kvp.Value);
+            List<ScheduledAction> saList = kvp.Value;
+            for (int i = 0; i < saList.Count; i++) {
+                ScheduledAction sa = saList[i];
+                if (sa.scheduler == character) {
+                    OnRemoveScheduledAction(sa);
+                    saList.RemoveAt(i);
+                    i--;
                 }
             }
-            schedules[kvp.Key] = newList;
+            //schedules[kvp.Key] = newList;
         }
     }
     public void ClearAllSchedulesBy(object obj) {
         Debug.Log($"Clearing all schedules by {obj.ToString()}");
         Dictionary<GameDate, List<ScheduledAction>> temp = new Dictionary<GameDate, List<ScheduledAction>>(schedules);
         foreach (KeyValuePair<GameDate, List<ScheduledAction>> kvp in temp) {
-            List<ScheduledAction> newList = new List<ScheduledAction>(kvp.Value);
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                if (kvp.Value[i].scheduler == obj) {
-                    newList.Remove(kvp.Value[i]);
+            List<ScheduledAction> saList = kvp.Value;
+            for (int i = 0; i < saList.Count; i++) {
+                ScheduledAction sa = saList[i];
+                if (sa.scheduler == obj) {
+                    OnRemoveScheduledAction(sa);
+                    saList.RemoveAt(i);
+                    i--;
                 }
             }
-            schedules[kvp.Key] = newList;
+            //List<ScheduledAction> newList = new List<ScheduledAction>(kvp.Value);
+            //for (int i = 0; i < kvp.Value.Count; i++) {
+            //    if (kvp.Value[i].scheduler == obj) {
+            //        newList.Remove(kvp.Value[i]);
+            //    }
+            //}
+            //schedules[kvp.Key] = newList;
         }
     }
     public string GenerateScheduleID() {
@@ -161,11 +198,16 @@ public class GameDateComparer : IEqualityComparer<GameDate> {
     }
 }
 
-public struct ScheduledAction {
+public class ScheduledAction {
     public string scheduleID;
     public Action action;
     public object scheduler; //the object that scheduled this action
 
+    public void SetData(string p_scheduleID, Action p_action, object p_scheduler) {
+        scheduleID = p_scheduleID;
+        action = p_action;
+        scheduler = p_scheduler;
+    }
     public bool IsScheduleStillValid() {
         if(scheduler != null) {
             if (scheduler is Character character) {
@@ -179,5 +221,11 @@ public struct ScheduledAction {
 
     public override string ToString() {
         return $"{scheduleID} - {action.Method.Name} by {scheduler}";
+    }
+
+    public void Reset() {
+        scheduleID = null;
+        action = null;
+        scheduler = null;
     }
 }

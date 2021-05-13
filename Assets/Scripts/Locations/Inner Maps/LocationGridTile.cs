@@ -1486,7 +1486,7 @@ namespace Inner_Maps {
                         for (int i = 0; i < bed.users.Length; i++) {
                             Character user = bed.users[i];
                             //Should only apply if user is not part of charactersHere list so that no duplicate calls shall take place
-                            if (!charactersHere.Contains(user)) {
+                            if (user != null && !charactersHere.Contains(user)) {
                                 callback.Invoke(user);
                             }
                         }

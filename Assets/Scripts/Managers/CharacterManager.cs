@@ -636,14 +636,12 @@ public class CharacterManager : BaseMonoBehaviour {
             }
             if (character.homeStructure != null && character.homeStructure.settlementLocation == npcSettlement) {
                 //place the character at a random unoccupied tile in his/her home
-                List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
-                LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                LocationGridTile chosenTile = character.homeStructure.GetRandomUnoccupiedTileThatHasNoCharacters();
                 character.InitialCharacterPlacement(chosenTile);
             } else {
                 //place the character at a random unoccupied tile in the npcSettlement's wilderness
                 LocationStructure wilderness = npcSettlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
-                LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                LocationGridTile chosenTile = wilderness.GetRandomUnoccupiedTileThatHasNoCharacters();
                 character.InitialCharacterPlacement(chosenTile);
             }
         }

@@ -1053,11 +1053,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region POI
-    public void PopulateTileObjectsFromStructures<T>(List<T> objs, STRUCTURE_TYPE structureType) where T : TileObject {
+    public void PopulateTileObjectsFromStructures<T>(List<TileObject> objs, STRUCTURE_TYPE structureType) where T : TileObject {
         if (HasStructure(structureType)) {
             List<LocationStructure> structureList = structures[structureType];
             for (int i = 0; i < structureList.Count; i++) {
-                structureList[i].PopulateTileObjectsOfType(objs);
+                structureList[i].PopulateTileObjectsOfType<T>(objs);
             }
         }
     }

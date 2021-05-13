@@ -266,13 +266,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	// }
 	private void OnSettlementChangedStorage(NPCSettlement npcSettlement) {
 		if (npcSettlement == _owner) {
-			List<ResourcePile> resourcePiles = RuinarchListPool<ResourcePile>.Claim();
-			_owner.region.PopulateTileObjectsOfType(resourcePiles);
+			List<TileObject> resourcePiles = RuinarchListPool<TileObject>.Claim();
+			_owner.region.PopulateTileObjectsOfType<ResourcePile>(resourcePiles);
 			for (int i = 0; i < resourcePiles.Count; i++) {
-				ResourcePile resourcePile = resourcePiles[i];
+				ResourcePile resourcePile = resourcePiles[i] as ResourcePile;
 				TryCreateHaulJob(resourcePile);
 			}
-			RuinarchListPool<ResourcePile>.Release(resourcePiles);
+			RuinarchListPool<TileObject>.Release(resourcePiles);
 		}
 	}
 	private void OnBurningSourceInactive(BurningSource burningSource) {
@@ -333,15 +333,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	#region Resources
 	public int GetTotalResource(RESOURCE resourceType) {
 		int resource = 0;
-		List<ResourcePile> piles = RuinarchListPool<ResourcePile>.Claim();
-		_owner.mainStorage.PopulateTileObjectsOfType(piles);
+		List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
+		_owner.mainStorage.PopulateTileObjectsOfType<ResourcePile>(piles);
 		for (int i = 0; i < piles.Count; i++) {
-			ResourcePile resourcePile = piles[i];
+			ResourcePile resourcePile = piles[i] as ResourcePile;
 			if (resourcePile.providedResource == resourceType) {
-				resource += piles[i].resourceInPile;	
+				resource += resourcePile.resourceInPile;	
 			}
 		}
-		RuinarchListPool<ResourcePile>.Release(piles);
+		RuinarchListPool<TileObject>.Release(piles);
 		return resource;
 	}
 	private int GetMinimumResource(RESOURCE resource) {
