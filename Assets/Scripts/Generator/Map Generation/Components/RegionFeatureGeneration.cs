@@ -24,22 +24,12 @@ public class RegionFeatureGeneration : MapGenerationComponent {
             chosenRegion.regionFeatureComponent.AddFeature(RegionFeatureDB.Dragon);
             chosenRegion.regionFeatureComponent.AddFeature(RegionFeatureDB.Crystals);
         } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
-            if (GameUtilities.RollChance(20)) { 
-                int regionsWithSpecialFeatureCount = 0;
-                if (GridMap.Instance.allRegions.Length == 1) {
-                    regionsWithSpecialFeatureCount = 1;
-                } else {
-                    regionsWithSpecialFeatureCount = GameUtilities.RollChance(80) ? 1 : 2;
-                }
-                List<Region> regionChoices = new List<Region>(GridMap.Instance.allRegions);
-                for (int i = 0; i < regionsWithSpecialFeatureCount; i++) {
-                    if (regionChoices.Count == 0) { break; }
-                    Region chosenRegion = CollectionUtilities.GetRandomElement(regionChoices);
-                    string chosenFeature = CollectionUtilities.GetRandomElement(regionFeatureChoices);
-                    chosenRegion.regionFeatureComponent.AddFeature(chosenFeature);
-                    regionChoices.Remove(chosenRegion);
-                    Debug.Log($"Added feature {chosenFeature} to {chosenRegion.name}");
-                }
+            if (GameUtilities.RollChance(20)) {
+                Region region = GridMap.Instance.mainRegion;
+                string chosenFeature = CollectionUtilities.GetRandomElement(regionFeatureChoices);
+                region.regionFeatureComponent.AddFeature(chosenFeature);
+                Debug.Log($"Added feature {chosenFeature} to {region.name}");
+                
             }
         }
         yield return null;

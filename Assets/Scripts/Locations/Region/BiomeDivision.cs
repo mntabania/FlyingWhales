@@ -9,6 +9,7 @@ using UtilityScripts;
 public class BiomeDivision {
     public BIOMES biome { get; private set; }
     public List<LocationGridTile> tiles { get; }
+    public List<Area> areas { get; }
     public MonsterMigrationBiomeAtomizedData[] faunaList { get; private set; }
     public int monsterMigrationChance { get; private set; }
 
@@ -17,6 +18,7 @@ public class BiomeDivision {
     public BiomeDivision(BIOMES p_biome) {
         biome = p_biome;
         tiles = new List<LocationGridTile>();
+        areas = new List<Area>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         AddListenersBasedOnBiome();
@@ -26,15 +28,22 @@ public class BiomeDivision {
         faunaList = p_data.faunaList;
         monsterMigrationChance = p_data.monsterMigrationChance;
         tiles = new List<LocationGridTile>();
+        areas = new List<Area>();
         _faunaListWeights = new WeightedDictionary<MonsterMigrationBiomeAtomizedData>();
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         AddListenersBasedOnBiome();
     }
-    public void AddTile(LocationGridTile p_area) {
-        tiles.Add(p_area);
+    public void AddTile(LocationGridTile p_tile) {
+        tiles.Add(p_tile);
     }
-    public void RemoveTile(LocationGridTile p_area) {
-        tiles.Remove(p_area);
+    public void RemoveTile(LocationGridTile p_tile) {
+        tiles.Remove(p_tile);
+    }
+    public void AddArea(Area p_area) {
+        areas.Add(p_area);
+    }
+    public void RemoveArea(Area p_area) {
+        areas.Remove(p_area);
     }
 
     #region Listeners
@@ -43,6 +52,17 @@ public class BiomeDivision {
         if (!WorldSettings.Instance.worldSettingsData.mapSettings.disableAllMonsterMigrations && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Affatt) {
             if(faunaList != null && faunaList.Length > 0) {
                 MonsterMigrationPerDay();
+            }
+        }
+    }
+    #endregion
+
+    #region Map Generation
+    public void PopulateUnreservedFullyFlatTiles(List<Area> p_listToPopulate, List<Area> p_reservedAreas) {
+        for (int i = 0; i < areas.Count; i++) {
+            Area area = areas[i];
+            if (area.elevationComponent.IsFully(ELEVATION.PLAIN) && !p_reservedAreas.Contains(area)) {
+                p_listToPopulate.Add(area);
             }
         }
     }
@@ -127,7 +147,7 @@ public class BiomeDivision {
     private bool HasTilePartOfThisBiomeDivision(LocationStructure p_structure) {
         for (int i = 0; i < p_structure.passableTiles.Count; i++) {
             LocationGridTile tile = p_structure.passableTiles[i];
-            if (tile.biomeType == biome) {
+            if (tile.mainBiomeType == biome) {
                 return true;
             }
         }
@@ -207,7 +227,7 @@ public class BiomeDivision {
     #region Desert
     private void TryRemoveFreezing(Character character, Area p_area) {
         if (GameManager.Instance.gameHasStarted) {
-            if (p_area.gridTileComponent.centerGridTile.biomeType == biome) {
+            if (p_area.gridTileComponent.centerGridTile.mainBiomeType == biome) {
                 character.traitContainer.RemoveTrait(character, "Freezing");
                 character.traitContainer.RemoveTrait(character, "Frozen");
             }    

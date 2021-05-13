@@ -18,7 +18,6 @@ public class VillageGeneration : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating Settlements...");
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
-			Assert.IsTrue(region.HasTileWithFeature(AreaFeatureDB.Inhabited_Feature));
 			yield return MapGenerator.Instance.StartCoroutine(CreateSettlements(region, data));
 			
 		}
@@ -47,7 +46,7 @@ public class VillageGeneration : MapGenerationComponent {
 			faction.factionType.SetAsDefault();
 			LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
 			for (int i = 0; i < setting.Value.Count; i++) {
-				Area settlementTile = setting.Value[i];
+				Area settlementTile = setting.Value[i].mainSpot;
 				VillageSetting villageSetting = factionTemplate.villageSettings[i];
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
 				createdSettlements.Add(npcSettlement);

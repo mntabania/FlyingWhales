@@ -19,10 +19,28 @@ public class AreaTileObjectComponent : AreaComponent {
     public bool RemoveItemInArea(TileObject item) {
         return itemsInArea.Remove(item);
     }
+    public bool HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE type) {
+        for (int i = 0; i < itemsInArea.Count; i++) {
+            if (itemsInArea[i].tileObjectType == type) {
+                return true;
+            }
+        }
+        return false;
+    }
     public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
         int count = 0;
         for (int i = 0; i < itemsInArea.Count; i++) {
             if (itemsInArea[i].tileObjectType == type) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type, TILE_OBJECT_TYPE type2) {
+        int count = 0;
+        for (int i = 0; i < itemsInArea.Count; i++) {
+            TileObject tileObject = itemsInArea[i];
+            if (tileObject.tileObjectType == type || tileObject.tileObjectType == type2) {
                 count++;
             }
         }

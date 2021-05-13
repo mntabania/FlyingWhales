@@ -25,7 +25,7 @@ public class MapGenerator : BaseMonoBehaviour {
         SaveManager.Instance.SetUseSaveData(false);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
-            new AreaGeneration(), new ElevationGeneration(), new SupportingFactionGeneration(), 
+            new AreaGeneration(), /*new ElevationGeneration(),*/ new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), /*new WorldMapBiomeGeneration(),*/ new FamilyTreeGeneration(), new RegionInnerMapGeneration(), /*new ElevationStructureGeneration(),*/ 
             new TileFeatureGeneration(), new RegionFeatureGeneration(), new VillageGeneration(),  new SpecialStructureGeneration(),
             new FactionFinalization(), new CharacterFinalization(), new SettlementFinalization(), new FeaturesActivation(), 

@@ -62,7 +62,7 @@ namespace Inner_Maps {
         public Tile_Type tileType { get; private set; }
         public Tile_State tileState { get; private set; }
         public Ground_Type groundType { get; private set; }
-        public BIOMES individualBiomeType { get; private set; }
+        public BIOMES mainBiomeType { get; private set; }
         public ELEVATION elevationType { get; private set; }
         public LocationStructure structure { get; private set; }
         public List<LocationGridTile> neighbourList { get; private set; }
@@ -106,7 +106,6 @@ namespace Inner_Maps {
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
         public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
-        public BIOMES biomeType => individualBiomeType;//area.biomeType;
         #endregion
         
         #region Pathfinding
@@ -143,7 +142,7 @@ namespace Inner_Maps {
             neighbourList = new List<LocationGridTile>();
             isDefault = true;
             connectorsOnTile = 0;
-            individualBiomeType = BIOMES.NONE;
+            mainBiomeType = BIOMES.NONE;
             elevationType = ELEVATION.PLAIN;
             //Components
             corruptionComponent = new GridTileCorruptionComponent(); corruptionComponent.SetOwner(this);
@@ -309,7 +308,7 @@ namespace Inner_Maps {
                 } else if (assetName.Contains("water") || assetName.Contains("pond")) {
                     return Ground_Type.Water;
                 } else if (assetName.Contains("dirt") || assetName.Contains("soil") || assetName.Contains("outside") || assetName.Contains("snow")) {
-                    if (biomeType == BIOMES.SNOW || biomeType == BIOMES.TUNDRA) {
+                    if (mainBiomeType == BIOMES.SNOW || mainBiomeType == BIOMES.TUNDRA) {
                         if (assetName.Contains("dirtsnow")) {
                             return Ground_Type.Snow_Dirt;
                         } else if (assetName.Contains("snow")) {
@@ -319,7 +318,7 @@ namespace Inner_Maps {
                             parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);
                             return Ground_Type.Tundra;
                         }
-                    } else if (biomeType == BIOMES.DESERT) {
+                    } else if (mainBiomeType == BIOMES.DESERT) {
                         if (structure != null && (structure.structureType == STRUCTURE_TYPE.CAVE || structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR)) {
                             //override tile to use stone
                             parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.stoneTile);
@@ -504,7 +503,7 @@ namespace Inner_Maps {
         /// Set this tile to the ground that it originally was, aka before anything was put on it.
         /// </summary>
         public void RevertTileToOriginalPerlin() {
-             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);
+             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, mainBiomeType);
              SetGroundTilemapVisual(groundTile);
         }
         public void DetermineNextGroundTypeAfterDestruction() {
@@ -531,7 +530,7 @@ namespace Inner_Maps {
                 // case Ground_Type.Corrupted:
                 case Ground_Type.Bone:
                     //if from structure, revert to original ground asset
-                    nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);
+                    nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, mainBiomeType);
                     break;
                 case Ground_Type.Desert_Grass:
                 case Ground_Type.Sand:
@@ -1429,14 +1428,11 @@ namespace Inner_Maps {
                 character.traitContainer.AddTrait(character, traitName);
             }
         }
-        public int GetNeighbourOfTypeCount(Ground_Type type, bool useFourNeighbours = false) {
+        public int GetDifferentElevationNeighboursCount() {
             int count = 0;
-            Dictionary<GridNeighbourDirection, LocationGridTile> n = _neighbours;
-            if (useFourNeighbours) {
-                n = FourNeighboursDictionary();
-            }
-            for (int i = 0; i < n.Values.Count; i++) {
-                if (_neighbours.Values.ElementAt(i).groundType == type) {
+            for (int j = 0; j < neighbourList.Count; j++) {
+                LocationGridTile neighbour = neighbourList[j];
+                if (neighbour.elevationType != this.elevationType) {
                     count++;
                 }
             }
@@ -1728,11 +1724,15 @@ namespace Inner_Maps {
 
         #region Biomes
         public void SetIndividualBiomeType(BIOMES p_biome) {
-            BiomeDivision previousBiomeDivision =  parentMap.region.biomeDivisionComponent.GetBiomeDivision(p_biome);
+            BiomeDivision previousBiomeDivision =  parentMap.region.biomeDivisionComponent.GetBiomeDivision(mainBiomeType);
             previousBiomeDivision?.RemoveTile(this);
-            individualBiomeType = p_biome;
+            mainBiomeType = p_biome;
             BiomeDivision biomeDivision =  parentMap.region.biomeDivisionComponent.GetBiomeDivision(p_biome);
             biomeDivision?.AddTile(this);
+            if (previousBiomeDivision != null) {
+                area.biomeComponent.OnTileInAreaChangedBiome(this, previousBiomeDivision.biome);    
+            }
+            
         }
         public void SetSpecificBiomeType(Biome_Tile_Type p_type) {
             specificBiomeTileType = p_type;

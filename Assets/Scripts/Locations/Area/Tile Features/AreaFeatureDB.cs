@@ -14,5 +14,6 @@
         public static string Heat_Wave_Feature = "HeatWaveFeature";
         public static string Poison_Vents = "PoisonVentsFeature";
         public static string Vapor_Vents = "VaporVentsFeature";
+        public static string Fish_Source = "FishSourceFeature";
     }
 }

@@ -71,6 +71,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					continue; //do not spawn other monsters in ancient graveyard for Pangat Loo since there are already skeletons there.
 				}
 				Assert.IsNotNull(structure.occupiedArea, $"Occupied area of {structure.name} is null!");
+				Assert.IsTrue(structure.tiles.Count > 0, $"{structure.name} has no tiles!");
 				BiomeDivision biomeDivision = structure.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(structure.tiles.First());
 				if (structure is RuinedZoo) {
 					continue; //skip

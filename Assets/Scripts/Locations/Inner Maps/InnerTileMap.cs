@@ -82,9 +82,9 @@ namespace Inner_Maps {
         };
         [NonSerialized] public PerlinNoiseSettings elevationPerlinSettings = new PerlinNoiseSettings() {
             noiseScale = 34.15f,
-            octaves = 4,
-            persistance = 0.5f,
-            lacunarity = 2f,
+            octaves = 3,
+            persistance = 0.2f,
+            lacunarity = 2,
             offset = new Vector2(13.09f, 12f),
             regions = new PerlinNoiseRegion[] {
                 new PerlinNoiseRegion() {
@@ -219,6 +219,8 @@ namespace Inner_Maps {
             upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
 
             Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, UpdateOrtigraphicSize);
+            
+            perlinTilemap.gameObject.SetActive(true);
         }
         protected IEnumerator GenerateGrid(int width, int height, MapGenerationComponent mapGenerationComponent) {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -245,6 +247,7 @@ namespace Inner_Maps {
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this, area);
                     area.gridTileComponent.AddGridTile(tile);
                     area.elevationComponent.OnTileAddedToArea(tile);
+                    area.biomeComponent.OnTileAddedToArea(tile);
                     tile.tileObjectComponent.CreateGenericTileObject();
                     tile.SetStructure(wilderness);
                     allTiles.Add(tile);
@@ -311,6 +314,7 @@ namespace Inner_Maps {
                     }
                     area.gridTileComponent.AddGridTile(tile);
                     area.elevationComponent.OnTileAddedToArea(tile);
+                    area.biomeComponent.OnTileAddedToArea(tile);
                     tile.SetStructure(wilderness);
                     tile.tileObjectComponent.genericTileObject.SetGridTileLocation(tile); //had to do this since I could not set tile location before setting structure because awareness list depends on it.
                     allTiles.Add(tile);
@@ -977,7 +981,7 @@ namespace Inner_Maps {
         private TILE_OBJECT_TYPE GetRandomTileObjectTypeForTileTag(Tile_Tag p_tag, LocationGridTile p_tile) {
             switch (p_tag) {
                 case Tile_Tag.Decor:
-                    switch (p_tile.biomeType) {
+                    switch (p_tile.mainBiomeType) {
                         case BIOMES.GRASSLAND:
                         case BIOMES.FOREST:
                             return CollectionUtilities.GetRandomElement(grasslandDecorChoices);
@@ -1021,7 +1025,7 @@ namespace Inner_Maps {
             if (currTile.tileObjectComponent.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
                 if (sampleDetail < 0.55f) {
                     if (GameUtilities.RollChance(50)) {
-                        if (currTile.biomeType == BIOMES.TUNDRA || currTile.biomeType == BIOMES.DESERT || currTile.biomeType == BIOMES.SNOW) {
+                        if (currTile.mainBiomeType == BIOMES.TUNDRA || currTile.mainBiomeType == BIOMES.DESERT || currTile.mainBiomeType == BIOMES.SNOW) {
                             TileBase tileBase = GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                             if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
                                 if (GameUtilities.RollChance(5)) {
@@ -1029,7 +1033,7 @@ namespace Inner_Maps {
                                     currTile.structure.AddPOI(obj, currTile);
                                 }
                             }
-                        } else if (currTile.biomeType == BIOMES.GRASSLAND || currTile.biomeType == BIOMES.FOREST) {
+                        } else if (currTile.mainBiomeType == BIOMES.GRASSLAND || currTile.mainBiomeType == BIOMES.FOREST) {
                             if (currTile.groundType == LocationGridTile.Ground_Type.Grass) {
                                 TileBase tileBase = GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                                 if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
@@ -1069,17 +1073,17 @@ namespace Inner_Maps {
                 }
 
                 if (GameUtilities.RollChance(3)) {
-                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(currTile.biomeType));
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(currTile.mainBiomeType));
                     Assert.IsNotNull(currTile.structure);
                     ConvertDetailToTileObject(currTile);
                     // TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WEREWOLF_PELT);
                     // currTile.structure.AddPOI(obj, currTile);
                 } else if (GameUtilities.RollChance(4)) {
-                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(currTile.biomeType));
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(currTile.mainBiomeType));
                     Assert.IsNotNull(currTile.structure);
                     ConvertDetailToTileObject(currTile);
                 } else if (GameUtilities.RollChance(3)) {
-                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(currTile.biomeType));
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(currTile.mainBiomeType));
                     Assert.IsNotNull(currTile.structure);
                     ConvertDetailToTileObject(currTile);
                 }

@@ -5,14 +5,6 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [System.Serializable]
-public struct WhittakerDiagramEntry {
-    [ReadOnly]public string name;
-    public Biome_Tile_Type tileType;
-    public Range precipitation;
-    public Range temperature;
-}
-
-[System.Serializable]
 public class WhittakerDiagram {
     [Header("Precipitation")]
     [Tooltip("The scale at which to take all precipitation values. Default is 0 - 1")]

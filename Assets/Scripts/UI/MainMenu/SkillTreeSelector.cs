@@ -90,7 +90,7 @@ public class SkillTreeSelector : MonoBehaviour {
         UIManager.Instance.initialWorldSetupMenu.Hide();
         GameManager.Instance.StartProgression();
         
-        InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
+        InnerMapManager.Instance.TryShowLocationMap(GridMap.Instance.mainRegion);
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         portal.CenterOnStructure();
     }
@@ -100,7 +100,7 @@ public class SkillTreeSelector : MonoBehaviour {
         GameManager.Instance.LoadProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
 
-        InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
+        InnerMapManager.Instance.TryShowLocationMap(GridMap.Instance.mainRegion);
         ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
         portal.CenterOnStructure();
     }

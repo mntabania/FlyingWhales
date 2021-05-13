@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Cellular_Automata;
 using Inner_Maps.Location_Structures;
 using Perlin_Noise;
+using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps {
@@ -49,7 +50,7 @@ namespace Inner_Maps {
                         if (elevation == neighbourElevation) {
                             ElevationIsland elevationIsland = elevationMap[neighbour.localPlace.x][neighbour.localPlace.y];
                             if (elevationIsland != null) {
-                                elevationIsland.AddTile(tile);
+                                elevationIsland.AddTile(tile, data);
                                 elevationMap[x][y] = elevationIsland;
                                 wasAddedToAdjacentElevationIsland = true;
                                 break;
@@ -58,7 +59,7 @@ namespace Inner_Maps {
                     }
                     if (!wasAddedToAdjacentElevationIsland) {
                         ElevationIsland elevationIsland = new ElevationIsland(elevation);
-                        elevationIsland.AddTile(tile);
+                        elevationIsland.AddTile(tile, data);
                         allElevationIslands.Add(elevationIsland);
                         elevationMap[x][y] = elevationIsland;
                     }
@@ -84,7 +85,7 @@ namespace Inner_Maps {
                         ElevationIsland otherIsland = allElevationIslands[j];
                         if (otherIsland.tiles.Count == 0) { continue; }
                         if (elevationIsland != otherIsland && elevationIsland.elevation == otherIsland.elevation && elevationIsland.IsAdjacentToIsland(otherIsland)) {
-                            elevationIsland.MergeWithIsland(otherIsland);
+                            elevationIsland.MergeWithIsland(otherIsland, data);
                         }
                         // yield return null;
                         batchCount++;
@@ -106,7 +107,7 @@ namespace Inner_Maps {
                 if (elevationIsland.tiles.Count < ElevationIsland.MinimumTileRequirement) {
                     ElevationIsland adjacentIsland = elevationIsland.GetFirstAdjacentIsland(allElevationIslands);
                     if (adjacentIsland != null) {
-                        adjacentIsland.MergeWithIsland(elevationIsland);    
+                        adjacentIsland.MergeWithIsland(elevationIsland, data);    
                     } else {
                         for (int j = 0; j < elevationIsland.tiles.Count; j++) {
                             LocationGridTile tileInIsland = elevationIsland.tiles.ElementAt(j);
@@ -120,6 +121,20 @@ namespace Inner_Maps {
             mapGenerationComponent.AddLog($"{region.name} GenerateElevationMap part 3 took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
             stopwatch.Reset();
 
+            //remove odd elevation borders. Border tiles that are not next to much tiles of the same elevation.
+            for (int i = 0; i < allElevationIslands.Count; i++) {
+                ElevationIsland island = allElevationIslands[i];
+                if (island.elevation == ELEVATION.WATER) {
+                    List<LocationGridTile> borderTiles = island.borderTiles;
+                    for (int j = 0; j < borderTiles.Count; j++) {
+                        LocationGridTile tile = borderTiles[j];
+                        if (tile.GetDifferentElevationNeighboursCount() == 5) {
+                            island.RemoveTile(tile, data);
+                        }
+                    }    
+                }
+            }
+            
             //clean up all biome islands list, remove islands with no tiles.
             for (int i = 0; i < allElevationIslands.Count; i++) {
                 ElevationIsland biomeIsland = allElevationIslands[i];
@@ -237,7 +252,7 @@ namespace Inner_Maps {
 		    for (int i = 0; i < randomOreAmount; i++) {
 			    if (validWallsForOreVeins.Count == 0) { break; }
 			    BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
-			    CreateOreVeinAt(blockWall.gridTileLocation);
+			    CreateOreVein(blockWall.gridTileLocation);
 			    validWallsForOreVeins.Remove(blockWall);
 		    }
             RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
@@ -265,7 +280,7 @@ namespace Inner_Maps {
         //    }
         //    return false;
         //}
-        private void CreateOreVeinAt(LocationGridTile tile) {
+        public void CreateOreVein(LocationGridTile tile) {
             if (tile != null) {
                 if (tile.tileObjectComponent.objHere != null) {
                     tile.structure.RemovePOI(tile.tileObjectComponent.objHere);
@@ -292,6 +307,7 @@ namespace Inner_Maps {
                     yield return null;
                 }
             }
+            
             RuinarchListPool<LocationGridTile>.Release(tiles);
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Draw Ocean took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
@@ -306,26 +322,34 @@ namespace Inner_Maps {
             int northMost = p_oceanStructure.tiles.Max(t => t.localPlace.y);
 		
             LocationGridTile northTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.y == northMost && t.tileObjectComponent.objHere == null));
-            CreateFishingSpot(northTile);
-		
-            LocationGridTile southTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.y == southMost && t.tileObjectComponent.objHere == null));
-            CreateFishingSpot(southTile);
-		
-            LocationGridTile westTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.x == westMost && t.tileObjectComponent.objHere == null));
-            CreateFishingSpot(westTile);
-		
-            LocationGridTile eastTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.x == eastMost && t.tileObjectComponent.objHere == null));
-            CreateFishingSpot(eastTile);
+            if (!northTile.IsAtEdgeOfMap()) {
+                CreateFishingSpot(northTile);    
+            }
             
+            LocationGridTile southTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.y == southMost && t.tileObjectComponent.objHere == null));
+            if (!southTile.IsAtEdgeOfMap()) {
+                CreateFishingSpot(southTile);
+            }
+
+            LocationGridTile westTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.x == westMost && t.tileObjectComponent.objHere == null));
+            if (!westTile.IsAtEdgeOfMap()) {
+                CreateFishingSpot(westTile);
+            }
+
+            LocationGridTile eastTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.x == eastMost && t.tileObjectComponent.objHere == null));
+            if (!eastTile.IsAtEdgeOfMap()) {
+                CreateFishingSpot(eastTile);
+            }
+
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Create Fishing Spots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
             stopwatch.Reset();
         }
-        private void CreateFishingSpot(LocationGridTile tile) {
+        public void CreateFishingSpot(LocationGridTile tile) {
             if (tile != null) {
                 TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.FISHING_SPOT);
                 tile.structure.AddPOI(well, tile);
-                well.mapObjectVisual.SetVisual(null);	
+                // well.mapObjectVisual.SetVisual(null);	
             }
         }
         private void SetAsWater(LocationGridTile tile, LocationStructure structure) {

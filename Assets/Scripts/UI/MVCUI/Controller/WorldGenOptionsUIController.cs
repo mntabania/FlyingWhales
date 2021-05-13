@@ -207,7 +207,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	private void AddDefaultFactionSetting() {
 		int maxFactions = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxFactions();
-		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillages();
+		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxStartingVillages();
 		int dividedVillages = maxVillages / maxFactions;
 		FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.AddFactionSetting(dividedVillages);
 		Sprite factionEmblem = FactionEmblemRandomizer.GetUnusedFactionEmblem();
@@ -218,7 +218,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		UpdateVillageCount();
 	}
 	private void UpdateVillageCount() {
-		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillages();
+		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxStartingVillages();
 		int currentVillageCount = WorldSettings.Instance.worldSettingsData.factionSettings.GetCurrentTotalVillageCountBasedOnFactions();
 		m_worldGenOptionsUIView.UpdateVillageCount(currentVillageCount, maxVillages);
 		onUpdateVillageCountAction?.Invoke();

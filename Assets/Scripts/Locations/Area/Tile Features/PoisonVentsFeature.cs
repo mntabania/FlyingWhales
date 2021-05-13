@@ -3,6 +3,10 @@ using Inner_Maps;
 using UtilityScripts;
 namespace Locations.Area_Features {
     public class PoisonVentsFeature : AreaFeature {
+        public PoisonVentsFeature() {
+            name = "Poison Vents";
+            description = "This location is naturally emitting poison clouds.";
+        }
         public override void OnAddFeature(Area p_area) {
             base.OnAddFeature(p_area);
             int randomVentAmount = UnityEngine.Random.Range(10, 21);

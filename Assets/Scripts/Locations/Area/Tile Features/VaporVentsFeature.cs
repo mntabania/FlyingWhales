@@ -3,6 +3,11 @@ using Inner_Maps;
 using UtilityScripts;
 namespace Locations.Area_Features {
     public class VaporVentsFeature : AreaFeature {
+        
+        public VaporVentsFeature() {
+            name = "Vapor Vents";
+            description = "This location is naturally emitting vapor.";
+        }
         public override void OnAddFeature(Area p_area) {
             base.OnAddFeature(p_area);
             int randomVentAmount = UnityEngine.Random.Range(10, 21);

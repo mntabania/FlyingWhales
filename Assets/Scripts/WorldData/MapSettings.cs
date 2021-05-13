@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UtilityScripts;
+using Random = System.Random;
 
 [System.Serializable]
 public class MapSettings {
@@ -88,7 +89,7 @@ public class MapSettings {
                 throw new ArgumentOutOfRangeException();
         }
     }
-    public int GetMaxVillages() {
+    public int GetMaxStartingVillages() {
         switch (mapSize) {
             case MAP_SIZE.Small:
                 return 1;
@@ -102,7 +103,7 @@ public class MapSettings {
                 throw new ArgumentOutOfRangeException();
         }
     }
-    public int GetMaxVillagesDuringPlay() {
+    public int GetMaxVillagesForMapSize() {
         switch (mapSize) {
             case MAP_SIZE.Small:
                 return 2;
@@ -112,6 +113,20 @@ public class MapSettings {
                 return 6;
             case MAP_SIZE.Extra_Large:
                 return 8;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    public int GetSpecialStructuresToCreate() {
+        switch (mapSize) {
+            case MAP_SIZE.Small:
+                return UnityEngine.Random.Range(0, 5);
+            case MAP_SIZE.Medium:
+                return UnityEngine.Random.Range(1, 7);
+            case MAP_SIZE.Large:
+                return UnityEngine.Random.Range(2, 9);
+            case MAP_SIZE.Extra_Large:
+                return UnityEngine.Random.Range(3, 11);
             default:
                 throw new ArgumentOutOfRangeException();
         }

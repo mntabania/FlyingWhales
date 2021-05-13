@@ -180,7 +180,7 @@ public class TreeObject : TileObject {
             if (location.corruptionComponent.isCorrupted) {
                 entType = SUMMON_TYPE.Corrupt_Ent;
             } else {
-                BIOMES biome = location.biomeType;
+                BIOMES biome = location.mainBiomeType;
                 switch (biome) {
                     case BIOMES.DESERT:
                         entType = SUMMON_TYPE.Desert_Ent;

@@ -53,6 +53,15 @@ public class AreaNeighbourComponent : AreaComponent {
         }
         return false;
     }
+    public bool HasCardinalNeighbourWithElevation(ELEVATION elevation) {
+        for (int i = 0; i < cardinalNeighbours.Count; i++) {
+            Area neighbour = cardinalNeighbours[i];
+            if (neighbour.elevationType == elevation) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool HasNeighbourWithFeature(string feature) {
         for (int i = 0; i < neighbours.Count; i++) {
             Area neighbour = neighbours[i];
@@ -118,7 +127,7 @@ public class AreaNeighbourComponent : AreaComponent {
         }
     }
     public Area GetNearestPlainAreaWithNoResident() {
-        if (owner.areaData.elevationType != ELEVATION.WATER && owner.areaData.elevationType != ELEVATION.MOUNTAIN) {
+        if (owner.elevationType != ELEVATION.WATER && owner.elevationType != ELEVATION.MOUNTAIN) {
             if (!owner.HasAliveVillagerResident()) {
                 return owner;
             }

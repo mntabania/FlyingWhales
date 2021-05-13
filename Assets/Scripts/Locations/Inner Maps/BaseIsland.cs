@@ -16,12 +16,16 @@ namespace Inner_Maps {
             color = Random.ColorHSV();
         }
 
-        public virtual void AddTile(LocationGridTile tile) {
+        public virtual void AddTile(LocationGridTile tile, MapGenerationData mapGenerationData) {
             tiles.Add(tile);
             AddOccupiedArea(tile.area);
             if (ShouldTileBeABorderTile(tile)) {
-                AddBorderTile(tile);
+                AddBorderTile(tile, mapGenerationData);
             }
+        }
+        public virtual void RemoveTile(LocationGridTile tile, MapGenerationData mapGenerationData) {
+            tiles.Remove(tile);
+            RemoveBorderTile(tile, mapGenerationData);
         }
         public void RemoveAllTiles() {
             tiles.Clear();
@@ -29,10 +33,10 @@ namespace Inner_Maps {
             occupiedAreas.Clear();
         }
 	
-        public void MergeWithIsland(BaseIsland otherIsland) {
+        public void MergeWithIsland(BaseIsland otherIsland, MapGenerationData mapGenerationData) {
             for (int i = 0; i < otherIsland.tiles.Count; i++) {
                 LocationGridTile tileInOtherIsland = otherIsland.tiles.ElementAt(i);
-                AddTile(tileInOtherIsland);
+                AddTile(tileInOtherIsland, mapGenerationData);
             }
             otherIsland.RemoveAllTiles();
         }
@@ -80,19 +84,19 @@ namespace Inner_Maps {
             }
             return false;
         }
-        protected virtual void AddBorderTile(LocationGridTile p_tile) {
+        protected virtual void AddBorderTile(LocationGridTile p_tile, MapGenerationData mapGenerationData) {
             borderTiles.Add(p_tile);
-            RevalidateBorderTilesNexTo(p_tile);
+            RevalidateBorderTilesNexTo(p_tile, mapGenerationData);
         }
-        protected virtual bool RemoveBorderTile(LocationGridTile p_tile) {
+        protected virtual bool RemoveBorderTile(LocationGridTile p_tile, MapGenerationData mapGenerationData) {
             return borderTiles.Remove(p_tile);
         }
-        private void RevalidateBorderTilesNexTo(LocationGridTile p_tile) {
+        private void RevalidateBorderTilesNexTo(LocationGridTile p_tile, MapGenerationData mapGenerationData) {
             for (int i = 0; i < p_tile.neighbourList.Count; i++) {
                 LocationGridTile neighbour = p_tile.neighbourList[i];
                 if (borderTiles.Contains(neighbour)) {
                     if (!ShouldTileBeABorderTile(neighbour)) {
-                        RemoveBorderTile(neighbour);
+                        RemoveBorderTile(neighbour, mapGenerationData);
                     }
                 }
             }

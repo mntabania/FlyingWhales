@@ -384,51 +384,25 @@ namespace Inner_Maps {
                 || UIManager.Instance.poiTestingUI.poi == character)) {
                 return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
-            //else if (UIManager.Instance.minionCommandsUI.gameObject.activeSelf && 
-            //           (UIManager.Instance.minionCommandsUI.targetPOI == tile.tileObjectComponent.objHere 
-            //            || UIManager.Instance.minionCommandsUI.targetPOI == character)) {
-            //    return; //do not show tooltip if right click menu is currently targeting the hovered object
-            //}
 
             //|| DEVELOPMENT_BUILD
 #if UNITY_EDITOR
             Area area = tile.area;
             string summary = tile.localPlace.ToString();
-            // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
-            // summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
-            // summary = $"{summary}\n<b>Initial Ground Type:</b>{tile.initialGroundType.ToString()}";
-            // summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
-            // summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>Area:</b>{(area.name ?? "None")}";
+            summary = $"{summary}<b>Area Biome:</b>{area.biomeType.ToString()}";
             summary = $"{summary}<b>Area Elevation:</b>{(area.elevationType.ToString() ?? "None")}";
             summary = $"{summary}<b>Area Passable Tiles:</b>{area.gridTileComponent.passableTiles.Count.ToString()}";
-            summary = $"{summary}\n<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
-            
-            summary = $"{summary}<b>Tile Biome:</b>{tile.biomeType.ToString()}";
+            summary = $"{summary}<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
+            summary = $"{summary}\n<b>Area Features:</b>{area.featureComponent.features.ComafyList()}";
+            summary = $"{summary}\n<b>Tile Biome:</b>{tile.mainBiomeType.ToString()}";
             summary = $"{summary}<b>Tile Elevation:</b>{tile.elevationType.ToString()}";
-            // summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
-            // summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
-            // summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";
-            summary = $"{summary} <b>Ground Type:</b>{tile.groundType.ToString()}";
-            summary = $"{summary} <b>Is Occupied:</b>{tile.isOccupied.ToString()}";
-            summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
-            summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
-            summary = $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
-            summary = $"{summary} <b>Has Mouse Events:</b>{tile.mouseEventsComponent.hasMouseEvents.ToString()}";
-            // summary = $"{summary}\nTile Traits: ";
-            // if (tile.tileObjectComponent.genericTileObject != null && tile.traits.Count > 0) {
-            //     summary = $"{summary}\n";
-            //     summary = tile.traits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
-            // } else {
-            //     summary = $"{summary}None";
-            // }
-            // summary = $"{summary}\nTile Statuses: ";
-            // if (tile.tileObjectComponent.genericTileObject != null && tile.statuses.Count > 0) {
-            //     summary = $"{summary}\n";
-            //     summary = tile.statuses.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
-            // } else {
-            //     summary = $"{summary}None";
-            // }
+            summary = $"{summary}<b>Ground Type:</b>{tile.groundType.ToString()}";
+            summary = $"{summary}<b>Is Occupied:</b>{tile.isOccupied.ToString()}";
+            summary = $"{summary}<b>Tile Type:</b>{tile.tileType.ToString()}";
+            summary = $"{summary}<b>Tile State:</b>{tile.tileState.ToString()}";
+            summary = $"{summary}<b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
+            summary = $"{summary}<b>Has Mouse Events:</b>{tile.mouseEventsComponent.hasMouseEvents.ToString()}";
 
             summary = $"{summary}\nWalls: ";
             if (tile.tileObjectComponent.walls != null && tile.tileObjectComponent.walls.Count > 0) {

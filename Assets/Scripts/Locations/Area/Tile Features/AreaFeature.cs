@@ -17,6 +17,9 @@
 		}
 		#endregion
 
+		public override string ToString() {
+			return name;
+		}
 	}
 	
 	public class SaveDataAreaFeature {

@@ -608,7 +608,7 @@ public class Region : ISavable, ILogFiller {
                 count++;
             }
         }
-        return count >= WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillagesDuringPlay();
+        return count >= WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillagesForMapSize();
     }
     #endregion
 

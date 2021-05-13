@@ -10,17 +10,9 @@ public class SaveDataHextile : SaveData<Area> {
     public int xCoordinate;
     public int yCoordinate;
     public string tileName;
-
-    public float elevationNoise;
-    public float moistureNoise;
-    public float temperature;
-    public BIOMES biomeType;
-    public ELEVATION elevationType;
-
+    
     //Tile Features
     public List<SaveDataAreaFeature> areaFeatureSaveData;
-    
-    public LANDMARK_TYPE landmarkType;
     
     //Components
     //public SaveDataHexTileSpellsComponent saveDataHexTileSpellsComponent;
@@ -31,12 +23,6 @@ public class SaveDataHextile : SaveData<Area> {
         xCoordinate = tile.areaData.xCoordinate;
         yCoordinate = tile.areaData.yCoordinate;
         tileName = tile.areaData.areaName;
-        elevationNoise = tile.elevationNoise;
-        moistureNoise = tile.moistureNoise;
-        temperature = tile.temperature;
-        biomeType = tile.biomeType;
-        elevationType = tile.elevationType;
-        // landmarkType = tile.landmarkOnTile?.specificLandmarkType ?? LANDMARK_TYPE.NONE;
         
         //tile features
         areaFeatureSaveData = new List<SaveDataAreaFeature>();
@@ -59,10 +45,5 @@ public class SaveDataHextile : SaveData<Area> {
         tile.areaData.xCoordinate = xCoordinate;
         tile.areaData.yCoordinate = yCoordinate;
         tile.areaData.areaName = tileName;
-        tile.areaData.elevationNoise = elevationNoise;
-        tile.areaData.moistureNoise = moistureNoise;
-        tile.areaData.temperature = temperature;
-        tile.areaData.biomeType = biomeType;
-        tile.areaData.elevationType = elevationType;
     }
 }
