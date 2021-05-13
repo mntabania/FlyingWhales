@@ -99,7 +99,11 @@ namespace Traits {
                 Character character = addedTo as Character;
                 // character.moodComponent.AddMoodEffect(moodEffect, this);
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
-                    character.combatComponent.SetElementalType(elementalType);
+                    if (!character.equipmentComponent.HasEquips()) {
+                        character.combatComponent.SetElementalType(elementalType);
+                    } else {
+                        character.combatComponent.elementalStatusWaitingList.Add(elementalType);
+                    }
                 }
             }
         }

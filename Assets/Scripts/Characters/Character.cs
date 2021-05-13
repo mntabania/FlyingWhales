@@ -3727,6 +3727,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool UnobtainItem(TileObject item) {
         if (RemoveItem(item)) {
+            RemoveBonusForUnobtainedEquipment(item);
             item.SetInventoryOwner(null);
             return true;
         }
@@ -3735,6 +3736,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool UnobtainItem(TILE_OBJECT_TYPE itemType) {
         TileObject removedItem = RemoveItem(itemType);
         if (removedItem != null) {
+            RemoveBonusForUnobtainedEquipment(removedItem);
             removedItem.SetInventoryOwner(null);
             return true;
         }
@@ -3743,10 +3745,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool UnobtainItem(string name) {
         TileObject removedItem = RemoveItem(name);
         if (removedItem != null) {
+            RemoveBonusForUnobtainedEquipment(removedItem);
             removedItem.SetInventoryOwner(null);
             return true;
         }
         return false;
+    }
+
+    void RemoveBonusForUnobtainedEquipment(TileObject p_tileObject) {
+        if (p_tileObject is EquipmentItem equipItem) {
+            equipmentComponent.RemoveEquipment(equipItem, this);
+        }
     }
     //public bool ConsumeToken(SpecialToken token) {
     //    token.OnConsumeToken(this);

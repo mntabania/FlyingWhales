@@ -9,8 +9,12 @@ using Locations.Settlements;
 public class CombatComponent : CharacterComponent {
     public int attack { get; private set; }
     public int attackModification { get; private set; }
+
+    public int attackModificationFromEquips { get; set; }
     public int maxHP { get; private set; }
     public int maxHPModification { get; private set; }
+
+    public int maxHPModificationFromEquips { get; private set; }
     public int attackSpeed { get; private set; }  //in milliseconds, The lower the amount the faster the attack rate
     public int numOfKilledCharacters { get; private set; }
     public COMBAT_MODE combatMode { get; private set; }
@@ -19,6 +23,8 @@ public class CombatComponent : CharacterComponent {
     public List<Character> bannedFromHostileList { get; private set; }
     public Dictionary<IPointOfInterest, CombatData> combatDataDictionary { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
+    public ELEMENTAL_TYPE initialElementalType { get; private set; }
+    public List<ELEMENTAL_TYPE> elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
     public CharacterCombatBehaviourParent combatBehaviourParent { get; private set; }
     public CombatSpecialSkillWrapper specialSkillParent { get; private set; }
     public bool willProcessCombat { get; private set; }
@@ -43,8 +49,9 @@ public class CombatComponent : CharacterComponent {
         combatBehaviourParent = new CharacterCombatBehaviourParent();
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
+        initialElementalType = ELEMENTAL_TYPE.Normal;
         //UpdateBasicData(true);
-	}
+    }
     public CombatComponent(SaveDataCombatComponent data) {
         hostilesInRange = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
@@ -53,11 +60,14 @@ public class CombatComponent : CharacterComponent {
 
         attack = data.attack;
         attackModification = data.attackModification;
+        attackModificationFromEquips = data.attackModificationFromWeapon;
         maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
+        maxHPModificationFromEquips = data.maxHPModificationFromWeapon;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
+        initialElementalType = data.initialElementalDamageType;
         willProcessCombat = data.willProcessCombat;
         numOfKilledCharacters = data.numOfKilledCharacters;
         specialSkillParent = data.specialSkillParent.Load();
@@ -151,17 +161,21 @@ public class CombatComponent : CharacterComponent {
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
     }
     public void UpdateElementalType() {
-        bool hasSetElementalType = false;
-        for (int i = (owner.traitContainer.traits.Count - 1); i >= 0; i--) {
-            Trait currTrait = owner.traitContainer.traits[i];
-            if (currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
-                SetElementalType(currTrait.elementalType);
-                hasSetElementalType = true;
-                break;
+        if (owner.equipmentComponent.HasEquips()) {
+            bool hasSetElementalType = false;
+            for (int i = (owner.traitContainer.traits.Count - 1); i >= 0; i--) {
+                Trait currTrait = owner.traitContainer.traits[i];
+                if (currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
+                    SetElementalType(currTrait.elementalType);
+                    hasSetElementalType = true;
+                    break;
+                }
             }
-        }
-        if (!hasSetElementalType) {
-            SetElementalType(owner.characterClass.elementalType);
+            if (!hasSetElementalType) {
+                SetElementalType(owner.characterClass.elementalType);
+            }
+        } else { 
+            
         }
     }
     //public void SetActionAndJobThatTriggeredCombat(ActualGoapNode node, GoapPlanJob job) {
@@ -1142,10 +1156,10 @@ public class CombatComponent : CharacterComponent {
         }
     }
     private void UpdateAttack() {
-        attack = unModifiedAttack + attackModification;
+        attack = unModifiedAttack + attackModification + attackModificationFromEquips;
     }
     private void UpdateMaxHP() {
-        maxHP = unModifiedMaxHP + maxHPModification;
+        maxHP = unModifiedMaxHP + maxHPModification + maxHPModificationFromEquips;
         if (maxHP < 0) {
             maxHP = 1;
         }
@@ -1175,12 +1189,28 @@ public class CombatComponent : CharacterComponent {
         attackModification += modification;
         UpdateAttack();
     }
+    public void AdjustAttackModifierFromEquips(int modification) {
+        attackModificationFromEquips += modification;
+        UpdateAttack();
+    }
+    public void AdjustMaxHPModifierFromEquips(int modification) {
+        maxHPModificationFromEquips += modification;
+        UpdateMaxHPAndProportionateHP();
+    }
     public void AddAttackBaseOnPercentage(float modification) {
         attackModification += (int)(modification * attack);
         UpdateAttack();
     }
     public void SubtractAttackBaseOnPercentage(float modification) {
         attackModification -= (int)(modification * attack);
+        UpdateAttack();
+    }
+    public void AddAttackFromEquipsBaseOnPercentage(float modification) {
+        attackModificationFromEquips += (int)(modification * attack);
+        UpdateAttack();
+    }
+    public void SubtractAttackFromEquipsBaseOnPercentage(float modification) {
+        attackModificationFromEquips -= (int)(modification * attack);
         UpdateAttack();
     }
     #endregion
@@ -1333,8 +1363,10 @@ public class SaveDataCombatData : SaveData<CombatData> {
 public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public int attack;
     public int attackModification;
+    public int attackModificationFromWeapon;
     public int maxHP;
     public int maxHPModification;
+    public int maxHPModificationFromWeapon;
     public int attackSpeed;
     public int numOfKilledCharacters;
 
@@ -1351,6 +1383,7 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public Dictionary<string, SaveDataCombatData> tileObjectCombatData;
 
     public ELEMENTAL_TYPE elementalDamageType;
+    public ELEMENTAL_TYPE initialElementalDamageType;
     public SaveDataCharacterCombatBehaviourParent combatBehaviourParent;
     public SaveDataCombatSpecialSkillWrapper specialSkillParent;
 
@@ -1360,8 +1393,10 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public override void Save(CombatComponent data) {
         attack = data.attack;
         attackModification = data.attackModification;
+        attackModificationFromWeapon = data.attackModificationFromEquips;
         maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
+        maxHPModificationFromWeapon = data.maxHPModificationFromEquips;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
         elementalDamageType = data.elementalDamage.type;

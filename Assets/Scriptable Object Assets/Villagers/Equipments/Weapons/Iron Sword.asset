@@ -21,12 +21,13 @@ MonoBehaviour:
   description: This is Copper Sword
   imgIcon: {fileID: 21300000, guid: 08c5768de165af04683bc8e58c0b1d0b, type: 3}
   equipmentUpgradeData:
-    bonuses: 00000000010000000400000006000000090000000a000000
+    bonuses: 000000000100000004000000060000000900000008000000
     AdditionalPiercing: 100
     AdditionalmaxHPPercentage: 100
     AdditionalmaxHPActual: 0
     AdditionalAttackPercentage: 100
     AdditionalAttackActual: 0
-    elementAttackBonus: 0
+    additionalResistanceBonus: 50
+    elementAttackBonus: 6
     slayerBonus: 0
     wardBonus: 2

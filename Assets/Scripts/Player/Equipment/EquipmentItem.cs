@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EquipmentItem : TileObject {
+    public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
     public EquipmentData equipmentData;
 
     public EquipmentItem() {

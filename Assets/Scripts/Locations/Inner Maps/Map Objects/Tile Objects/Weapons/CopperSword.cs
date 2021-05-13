@@ -9,6 +9,8 @@ public class CopperSword : WeaponItem {
         currentHP = maxHP;
         traitContainer.AddTrait(this, "Treasure");
         equipmentData = EquipmentDataHandler.Instance.GetEquipmentDataBaseOnName(this.name);
+
+        EquipmentBonusProcessor.SetBonusResistanceOnWeapon(this);
     }
     public CopperSword(SaveDataTileObject data) { }
 }
