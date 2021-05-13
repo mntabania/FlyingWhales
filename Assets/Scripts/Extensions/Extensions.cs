@@ -408,7 +408,9 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.EXCALIBUR:
             case TILE_OBJECT_TYPE.WEREWOLF_PELT:
             case TILE_OBJECT_TYPE.PHYLACTERY:
-                return true;
+            case TILE_OBJECT_TYPE.COPPER_SWORD:
+            case TILE_OBJECT_TYPE.IRON_SWORD:
+            return true;
             default:
                 return false;
         }
@@ -505,7 +507,9 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.MAGIC_CIRCLE:
             case TILE_OBJECT_TYPE.BLOCK_WALL:
             case TILE_OBJECT_TYPE.DESERT_ROSE:
-                return true;
+            case TILE_OBJECT_TYPE.COPPER_SWORD:
+            case TILE_OBJECT_TYPE.IRON_SWORD:
+            return true;
             default:
                 return false;
         }
