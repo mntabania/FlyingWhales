@@ -339,6 +339,7 @@ public class GoapPlanJob : JobQueueItem {
             assignedPlan = plan;
             if (prevPlan != null) {
                 prevPlan.OnUnattachPlanToJob(this);
+                ObjectPoolManager.Instance.ReturnGoapPlanToPool(prevPlan);
             }
             if (plan != null) {
                 plan.OnAttachPlanToJob(this);

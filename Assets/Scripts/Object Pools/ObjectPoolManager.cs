@@ -34,6 +34,8 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<CharacterStateJob> _stateJobPool;
     private List<ConversationData> _conversationDataPool;
     private List<ScheduledAction> _scheduledActionPool;
+    private List<SingleJobNode> _jobNodePool;
+    private List<GoapPlan> _goapPlanPool;
 
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
@@ -80,16 +82,6 @@ public class ObjectPoolManager : MonoBehaviour {
             }
             CreateNewPool(currPrefab, currPrefab.name, size, true, true, false); //50    
         }
-
-        ConstructGoapNodes();
-        ConstructOpinionDataPool();
-        ConstructTraitRemoveSchedulePool();
-        ConstructCombatDataPool();
-        ConstructInterruptPool();
-        ConstructPartyPool();
-        ConstructGoapThreadPool();
-        ConstructLogDatabaseThreadPool();
-        ConstructSQLInsertThreadPool();
         ConstructExpectedEffectsListPool();
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
@@ -98,13 +90,26 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructGridTileListPool();
         ConstructFactionListPool();
         ConstructSettlementListPool();
-        ConstructJobPool();
-        ConstructConversationPool();
         ConstructEmotionListPool();
         ConstructILocationListPool();
         ConstructSkillDataListPool();
         ConstructAreaListPool();
+
+
+        ConstructOpinionDataPool();
+        ConstructTraitRemoveSchedulePool();
+        ConstructCombatDataPool();
+        ConstructInterruptPool();
+        ConstructPartyPool();
+        ConstructGoapThreadPool();
+        ConstructLogDatabaseThreadPool();
+        ConstructSQLInsertThreadPool();
+        ConstructGoapNodes();
+        ConstructJobPool();
+        ConstructConversationPool();
         ConstructScheduledActionPool();
+        ConstructSingleJobNodePool();
+        ConstructGoapPlanPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -682,6 +687,60 @@ public class ObjectPoolManager : MonoBehaviour {
     public void ReturnScheduledActionToPool(ScheduledAction data) {
         data.Reset();
         _scheduledActionPool.Add(data);
+    }
+    #endregion
+
+    #region Goap Plan
+    private void ConstructGoapPlanPool() {
+        _goapPlanPool = new List<GoapPlan>();
+    }
+    public GoapPlan CreateNewGoapPlan(List<JobNode> p_nodes, IPointOfInterest p_target) {
+        GoapPlan plan = CreateNewGoapPlan();
+        plan.SetNodes(p_nodes);
+        plan.SetTarget(p_target);
+        return plan;
+    }
+    public GoapPlan CreateNewGoapPlan(ActualGoapNode p_action, IPointOfInterest p_target) {
+        GoapPlan plan = CreateNewGoapPlan();
+        plan.SetActionNodes(p_action);
+        plan.SetTarget(p_target);
+        return plan;
+    }
+    public GoapPlan CreateNewGoapPlan(ActualGoapNode p_action1, ActualGoapNode p_action2, IPointOfInterest p_target) {
+        GoapPlan plan = CreateNewGoapPlan();
+        plan.SetActionNodes(p_action1, p_action2);
+        plan.SetTarget(p_target);
+        return plan;
+    }
+    public GoapPlan CreateNewGoapPlan() {
+        if (_goapPlanPool.Count > 0) {
+            GoapPlan data = _goapPlanPool[0];
+            _goapPlanPool.RemoveAt(0);
+            return data;
+        }
+        return new GoapPlan();
+    }
+    public void ReturnGoapPlanToPool(GoapPlan data) {
+        data.Reset();
+        _goapPlanPool.Add(data);
+    }
+    #endregion
+
+    #region Job Nodes
+    private void ConstructSingleJobNodePool() {
+        _jobNodePool = new List<SingleJobNode>();
+    }
+    public SingleJobNode CreateNewSingleJobNode() {
+        if (_jobNodePool.Count > 0) {
+            SingleJobNode data = _jobNodePool[0];
+            _jobNodePool.RemoveAt(0);
+            return data;
+        }
+        return new SingleJobNode();
+    }
+    public void ReturnSingleJobNodeToPool(SingleJobNode data) {
+        data.Reset();
+        _jobNodePool.Add(data);
     }
     #endregion
 

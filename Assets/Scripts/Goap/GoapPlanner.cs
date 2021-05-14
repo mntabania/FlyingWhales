@@ -6,7 +6,7 @@ using Inner_Maps.Location_Structures;
 using Inner_Maps;
 using Locations;
 using Locations.Settlements;
-
+using UtilityScripts;
 public class GoapPlanner {
     public Character owner { get; private set; }
     public GOAP_PLANNING_STATUS status { get; private set; }
@@ -280,7 +280,8 @@ public class GoapPlanner {
             Debug.Log(rawPlanSummary);
             owner.logComponent.PrintCostLog();
             List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
-            GoapPlan plan = new GoapPlan(actualNodes, target, isPersonalPlan);
+            GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
+            plan.SetIsPersonalPlan(isPersonalPlan);
             return plan;
         }
         owner.logComponent.PrintCostLog();
@@ -312,7 +313,8 @@ public class GoapPlanner {
             owner.logComponent.PrintCostLog();
             //has a created plan
             List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
-            GoapPlan plan = new GoapPlan(actualNodes, target, isPersonalPlan);
+            GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
+            plan.SetIsPersonalPlan(isPersonalPlan);
             return plan;
         }
         owner.logComponent.PrintCostLog();
@@ -346,7 +348,7 @@ public class GoapPlanner {
                     }
                     Debug.Log(rawPlanSummary);
                     List<JobNode> plannedNodes = TransformRawPlanToActualNodes(_rawPlan, job, currentPlan);
-                    currentPlan.Reset(plannedNodes);
+                    currentPlan.SetNodes(plannedNodes);
                     return true;
                 }
             }
@@ -556,17 +558,17 @@ public class GoapPlanner {
         return state;
     }
     private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, GoapPlanJob job, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes
-        List<JobNode> actualPlan = null;
+        List<JobNode> actualPlan;
         int index = 0;
         if (currentPlan == null) {
-            actualPlan = new List<JobNode>();
+            actualPlan = RuinarchListPool<JobNode>.Claim();
         } else {
             actualPlan = currentPlan.allNodes;
             actualPlan.RemoveRange(0, currentPlan.currentNodeIndex + 1); //It's +1 because we want to remove also the current node of the actual plan since it is already in the rawPlan
             index = currentPlan.currentNodeIndex;
         }
-        List<int> tempNodeIndexHolder = new List<int>();
-        List<GoapNode> discardedNodes = new List<GoapNode>();
+        List<int> tempNodeIndexHolder = RuinarchListPool<int>.Claim();
+        List<GoapNode> discardedNodes = RuinarchListPool<GoapNode>.Claim();
         while (rawPlan.Count > 0) {
             tempNodeIndexHolder.Clear();
             for (int i = 0; i < rawPlan.Count; i++) {
@@ -580,7 +582,9 @@ public class GoapPlanner {
                 GoapNode rawNode = rawPlan[nodeIndex];
                 OtherData[] data = job.GetOtherDataFor(rawNode.action.goapType);
                 ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
-                SingleJobNode singleJobNode = new SingleJobNode(actualNode);
+                //SingleJobNode singleJobNode = new SingleJobNode(actualNode);
+                SingleJobNode singleJobNode = ObjectPoolManager.Instance.CreateNewSingleJobNode();
+                singleJobNode.SetActionNode(actualNode);
                 actualPlan.Insert(0, singleJobNode);
                 GoapNode node = rawPlan[nodeIndex];
                 rawPlan.RemoveAt(nodeIndex);
@@ -588,6 +592,8 @@ public class GoapPlanner {
             }
             index++;
         }
+        RuinarchListPool<int>.Release(tempNodeIndexHolder);
+        RuinarchListPool<GoapNode>.Release(discardedNodes);
         return actualPlan;
     }
 }
