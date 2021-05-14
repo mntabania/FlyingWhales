@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
   m_Name: Ring
   m_EditorClassIdentifier: 
-  resourceType: 4
+  resourceType: 0
   specificResource: 0
   resourceAmount: 100
   purchaseCost: 50
@@ -22,11 +22,12 @@ MonoBehaviour:
   imgIcon: {fileID: 21300000, guid: 08c5768de165af04683bc8e58c0b1d0b, type: 3}
   equipmentUpgradeData:
     bonuses: 00000000010000000400000006000000090000000a000000
-    AdditionalPiercing: 12.5
+    AdditionalPiercing: 5
     AdditionalmaxHPPercentage: 25
     AdditionalmaxHPActual: 0
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
+    additionalResistanceBonus: 40
     elementAttackBonus: 0
-    slayerBonus: 1
+    slayerBonus: 0
     wardBonus: 2

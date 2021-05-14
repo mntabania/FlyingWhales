@@ -410,6 +410,10 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.PHYLACTERY:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
             case TILE_OBJECT_TYPE.IRON_SWORD:
+            case TILE_OBJECT_TYPE.RING:
+            case TILE_OBJECT_TYPE.BRACER:
+            case TILE_OBJECT_TYPE.MINK_SHIRT:
+            case TILE_OBJECT_TYPE.FUR_SHIRT:
             return true;
             default:
                 return false;
@@ -509,6 +513,10 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.DESERT_ROSE:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
             case TILE_OBJECT_TYPE.IRON_SWORD:
+            case TILE_OBJECT_TYPE.RING:
+            case TILE_OBJECT_TYPE.BRACER:
+            case TILE_OBJECT_TYPE.MINK_SHIRT:
+            case TILE_OBJECT_TYPE.FUR_SHIRT:
             return true;
             default:
                 return false;

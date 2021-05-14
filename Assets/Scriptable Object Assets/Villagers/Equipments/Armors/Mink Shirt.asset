@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
   m_Name: Mink Shirt
   m_EditorClassIdentifier: 
-  resourceType: 4
+  resourceType: 0
   specificResource: 0
   resourceAmount: 100
   purchaseCost: 50
@@ -27,6 +27,7 @@ MonoBehaviour:
     AdditionalmaxHPActual: 0
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
+    additionalResistanceBonus: 0
     elementAttackBonus: 0
-    slayerBonus: 1
+    slayerBonus: 0
     wardBonus: 2

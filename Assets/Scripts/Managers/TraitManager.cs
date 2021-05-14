@@ -50,7 +50,8 @@ public class TraitManager : BaseMonoBehaviour {
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
         "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic", "Burning At Stake",
         "Lycanphiliac", "Lycanphobic", "Interesting", "Pest", "Night Zombie", "Finite Zombie", "Plague Reservoir", "Quarantined", 
-        "Plague Caring", "Plague Cared", "Enslaved", "Travelling", "Walker Zombie", "Boomer Zombie", "Protection", "Being Drained", "Empowered"
+        "Plague Caring", "Plague Cared", "Enslaved", "Travelling", "Walker Zombie", "Boomer Zombie", "Protection", "Being Drained", "Empowered",
+        "Monster Slayer",
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {

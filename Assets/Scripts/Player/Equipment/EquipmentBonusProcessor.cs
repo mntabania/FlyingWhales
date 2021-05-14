@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System;
+using Traits;
 
 public static class EquipmentBonusProcessor
 {
+    private static Dictionary<EQUIPMENT_SLAYER_BONUS, string> traitDictionary = new Dictionary<EQUIPMENT_SLAYER_BONUS, string>
+    {
+            { EQUIPMENT_SLAYER_BONUS.Monster_Slayer, "Monster Slayer" },
+    };
+
     public static void ApplyEquipBonusToTarget(EquipmentItem p_equipItem, Character p_targetCharacter) {
         p_equipItem.equipmentData.equipmentUpgradeData.bonuses.ForEach((eachBonus) => {
             ApplyEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter);
@@ -45,6 +50,16 @@ public static class EquipmentBonusProcessor
             case EQUIPMENT_BONUS.Increased_5_Random_Resistance:
             ApplyResistanceBonusOnCharacter(p_equipItem, p_targetCharacter);
             break;
+            case EQUIPMENT_BONUS.Slayer_Bonus:
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                Slayer monsterSlayerTrait = trait as Slayer;
+                monsterSlayerTrait.stackCount++;
+                Debug.LogError("ADD: " + p_targetCharacter.name + " -- " + monsterSlayerTrait.stackCount);
+            } else {
+                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+            }
+            break;
         }
     }
 
@@ -76,6 +91,17 @@ public static class EquipmentBonusProcessor
             case EQUIPMENT_BONUS.Increased_4_Random_Resistance:
             case EQUIPMENT_BONUS.Increased_5_Random_Resistance:
             RemoveResistanceBonusOnCharacter(p_equipItem, p_targetCharacter);
+            break;
+            case EQUIPMENT_BONUS.Slayer_Bonus:
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                Slayer monsterSlayerTrait = trait as Slayer;
+                monsterSlayerTrait.stackCount--;
+                Debug.LogError("REMOVE: " + p_targetCharacter .name + " -- " + monsterSlayerTrait.stackCount);
+                if (monsterSlayerTrait.stackCount <= 0) {
+                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                }
+            }
             break;
         }
     }
@@ -122,5 +148,9 @@ public static class EquipmentBonusProcessor
             RESISTANCE addElem = (RESISTANCE)item;
             p_equipItem.resistanceBonuses.Add(addElem);
         }
+    }
+
+    static bool DoesCharacterhaveThisTrait(string p_trait, Character p_character) {
+        return p_character.traitContainer.HasTrait(p_trait);
     }
 }
