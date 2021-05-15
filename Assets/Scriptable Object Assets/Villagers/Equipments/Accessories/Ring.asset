@@ -17,17 +17,17 @@ MonoBehaviour:
   resourceAmount: 100
   purchaseCost: 50
   tier: 1
-  compatibleClasses: 000000000100000002000000
-  description: This is Copper Sword
-  imgIcon: {fileID: 21300000, guid: 08c5768de165af04683bc8e58c0b1d0b, type: 3}
+  compatibleClasses: 0b000000090000000c0000000a000000
+  description: This is ring
+  imgIcon: {fileID: 21300000, guid: 11539cea24b72df4682c57a99db1ddce, type: 3}
   equipmentUpgradeData:
-    bonuses: 00000000010000000400000006000000090000000a000000
-    AdditionalPiercing: 5
-    AdditionalmaxHPPercentage: 25
-    AdditionalmaxHPActual: 0
-    AdditionalAttackPercentage: 25
-    AdditionalAttackActual: 0
-    additionalResistanceBonus: 40
+    bonuses: 07000000050000000a000000
+    AdditionalPiercing: 0
+    AdditionalmaxHPPercentage: 0
+    AdditionalmaxHPActual: 300
+    AdditionalAttackPercentage: 0
+    AdditionalAttackActual: 30
+    additionalResistanceBonus: 0
     elementAttackBonus: 0
     slayerBonus: 0
-    wardBonus: 2
+    wardBonus: 1

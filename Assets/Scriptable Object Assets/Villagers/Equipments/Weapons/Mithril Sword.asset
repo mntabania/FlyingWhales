@@ -12,21 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
   m_Name: Mithril Sword
   m_EditorClassIdentifier: 
-  resourceType: 4
+  resourceType: 0
   specificResource: 0
   resourceAmount: 100
   purchaseCost: 50
   tier: 1
   compatibleClasses: 000000000100000002000000
-  description: This is Copper Sword
-  imgIcon: {fileID: 21300000, guid: 08c5768de165af04683bc8e58c0b1d0b, type: 3}
+  description: This is Mithril Sword
+  imgIcon: {fileID: 21300000, guid: 263b829918332514c83a88d36e41a17f, type: 3}
   equipmentUpgradeData:
-    bonuses: 00000000010000000400000006000000090000000a000000
-    AdditionalPiercing: 12.5
-    AdditionalmaxHPPercentage: 25
+    bonuses: 0000000006000000
+    AdditionalPiercing: 100
+    AdditionalmaxHPPercentage: 0
     AdditionalmaxHPActual: 0
-    AdditionalAttackPercentage: 25
+    AdditionalAttackPercentage: 75
     AdditionalAttackActual: 0
+    additionalResistanceBonus: 0
     elementAttackBonus: 0
-    slayerBonus: 1
+    slayerBonus: 0
     wardBonus: 2
