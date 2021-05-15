@@ -29,7 +29,7 @@ namespace Generator.Map_Generation.Components {
 	        List<Area> locationChoices = RuinarchListPool<Area>.Claim();
 	        for (int i = 0; i < data.unreservedAreas.Count; i++) {
 		        Area area = data.unreservedAreas[i];
-		        if (area.elevationComponent.IsFully(ELEVATION.PLAIN) && area.featureComponent.features.Count == 0) {
+		        if (area.elevationComponent.IsFully(ELEVATION.PLAIN) && area.featureComponent.features.Count == 0 && area.primaryStructureInArea is Wilderness) {
 			        locationChoices.Add(area);
 		        }
 	        }

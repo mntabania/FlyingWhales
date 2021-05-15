@@ -901,11 +901,11 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 o_cannotPlaceReason = string.Empty;
                 return false;
             }
-            LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
-            if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
-                o_cannotPlaceReason = string.Empty;
-                return false;
-            }
+            // LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
+            // if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
+            //     o_cannotPlaceReason = string.Empty;
+            //     return false;
+            // }
         }
         //Note: Demonic structure can now be built if there is one tile that is on or beside a corrupted tile, so the checker for it is now moved to DemonicStructurePlayerSkill - CanBuildDemonicStructureOn
         //if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {

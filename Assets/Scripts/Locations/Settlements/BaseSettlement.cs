@@ -32,6 +32,7 @@ namespace Locations.Settlements {
         public string bookmarkName => $"{iconRichText} {name}";
         public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
         public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
+        public List<Area> reservedAreas { get; }
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
@@ -59,6 +60,7 @@ namespace Locations.Settlements {
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+            reservedAreas = new List<Area>();
             SetLocationType(locationType);
             StartListeningForFires();
             ConstructDefaultActions();
@@ -75,6 +77,7 @@ namespace Locations.Settlements {
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+            reservedAreas = new List<Area>();
             SetLocationType(data.locationType);
             StartListeningForFires();
             ConstructDefaultActions();
@@ -524,6 +527,18 @@ namespace Locations.Settlements {
                     connectors.Add(fishingSpot.structureConnector);
                 }
             }
+            for (int i = 0; i < reservedAreas.Count; i++) {
+                Area area = reservedAreas[i];
+                for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
+                    TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
+                    if (tileObject is FishingSpot fishingSpot) {
+                        if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen && 
+                            !connectors.Contains(fishingSpot.structureConnector)) {
+                            connectors.Add(fishingSpot.structureConnector);
+                        }
+                    }
+                }
+            }
             return connectors;
         }
         private List<StructureConnector> GetAvailableOreVeinConnectors() {
@@ -532,6 +547,18 @@ namespace Locations.Settlements {
                 OreVein oreVein = SettlementResources.oreVeins[i];
                 if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen) {
                     connectors.Add(oreVein.structureConnector);
+                }
+            }
+            for (int i = 0; i < reservedAreas.Count; i++) {
+                Area area = reservedAreas[i];
+                for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
+                    TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
+                    if (tileObject is OreVein oreVein) {
+                        if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen && 
+                            !connectors.Contains(oreVein.structureConnector)) {
+                            connectors.Add(oreVein.structureConnector);
+                        }
+                    }
                 }
             }
             return connectors;
@@ -676,6 +703,18 @@ namespace Locations.Settlements {
             }
             ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
             return chosenArea;
+        }
+        public void AddReservedAreas(List<Area> p_areas) {
+            reservedAreas.AddRange(p_areas);
+        }
+        public bool HasReservedSpotWithFeature(string p_feature) {
+            for (int i = 0; i < reservedAreas.Count; i++) {
+                Area area = reservedAreas[i];
+                if (area.featureComponent.HasFeature(p_feature)) {
+                    return true;
+                }
+            }
+            return false;
         }
         #endregion
 

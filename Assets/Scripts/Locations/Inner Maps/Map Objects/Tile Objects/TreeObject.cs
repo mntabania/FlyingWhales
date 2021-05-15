@@ -131,6 +131,9 @@ public class TreeObject : TileObject {
             ent.marker.PlaceMarkerAt(gridTileLocation);
             ent.marker.SetVisualState(false);
         }
+        if (structureConnector != null && gridTileLocation != null) {
+            structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
+        }
         UpdateSettlementResourcesParent();
     }
     protected override void CreateMapObjectVisual() {

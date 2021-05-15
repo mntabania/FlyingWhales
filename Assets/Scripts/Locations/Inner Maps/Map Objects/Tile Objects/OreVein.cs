@@ -67,6 +67,10 @@ public class OreVein : TileObject {
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
         mapVisual.UpdateTileObjectVisual(this);
 
+        if (structureConnector != null) {
+            structureConnector.OnPlaceConnector(tile.parentMap);    
+        }
+
         base.OnPlaceTileObjectAtTile(tile);
     }
     public override void ConstructDefaultActions() {
