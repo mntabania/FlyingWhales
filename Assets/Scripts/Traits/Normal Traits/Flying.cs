@@ -8,11 +8,18 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Traits {
-    public class MonsterSlayer : Slayer {
+    public class Flying : Trait {
 
-        public MonsterSlayer() {
-            name = "Monster Slayer";
-            description = "Grants additional damage to wild monsters.";
+        protected Character owner;
+
+        #region Getter
+        public int stackCount = 0;
+        public override Type serializedData => typeof(SaveDataFlying);
+        #endregion
+
+        public Flying() {
+            name = "Flying";
+            description = "Flying Creature";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;
@@ -21,8 +28,8 @@ namespace Traits {
         #region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataMonsterSlayer saveDataMonsterSlayer = saveDataTrait as SaveDataMonsterSlayer;
-            Assert.IsNotNull(saveDataMonsterSlayer);
+            SaveDataFlying flying = saveDataTrait as SaveDataFlying;
+            Assert.IsNotNull(flying);
         }
         #endregion
 
@@ -45,3 +52,15 @@ namespace Traits {
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataFlying : SaveDataTrait {
+    public int stackCount;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Traits.Flying flying = trait as Traits.Flying;
+        Assert.IsNotNull(flying);
+        stackCount = flying.stackCount;
+    }
+}
+#endregion

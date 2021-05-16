@@ -52,6 +52,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterTrait defaultCharacterTrait { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     public List<TileObject> items { get; private set; }
+    public List<TileObject> equipmentInventory { get; private set; }
     public List<TileObject> ownedItems { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
@@ -287,6 +288,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
+        equipmentInventory = new List<TileObject>();
         ownedItems = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -335,6 +337,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         shouldDoActionOnFirstTickUponLoadGame = true;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
+        equipmentInventory = new List<TileObject>();
         ownedItems = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -2744,7 +2747,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
-        
+
+        //weapon ward and slayer bonus calculator
+        float increaseDamage = EquipmentBonusProcessor.GetSlayerBonusDamage(responsibleCharacter, this, amount);
+        float reducedDamage = EquipmentBonusProcessor.GetWardBonusDamage(responsibleCharacter, this, amount);
+        //weapon ward and slayer bonus calculator
+        amount += (int)increaseDamage;
+        amount -= (int)reducedDamage;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
                 marker.ShowHealthAdjustmentEffect(amount);
@@ -3765,19 +3774,37 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    return false;
     //}
     private bool AddItem(TileObject item) {
-        if (!items.Contains(item)) {
-            items.Add(item);
-            //item.OnTileObjectAddedToInventoryOf(this);
-            Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
-            return true;
+        if (item is EquipmentItem) {
+            if (!equipmentInventory.Contains(item)) {
+                equipmentInventory.Add(item);
+                //item.OnTileObjectAddedToInventoryOf(this);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
+                return true;
+            }
+        } else {
+            if (!items.Contains(item)) {
+                items.Add(item);
+                //item.OnTileObjectAddedToInventoryOf(this);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
+                return true;
+            }
         }
+        
         return false;
     }
     private bool RemoveItem(TileObject item) {
-        if (items.Remove(item)) {
-            Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
-            return true;
+        if (item is EquipmentItem) {
+            if (equipmentInventory.Remove(item)) {
+                Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+                return true;
+            }
+        } else {
+            if (items.Remove(item)) {
+                Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+                return true;
+            }
         }
+        
         return false;
     }
     private TileObject RemoveItem(TILE_OBJECT_TYPE itemType) {
@@ -5940,7 +5967,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (vampireTrait != null && !vampireTrait.isInVampireBatForm) {
             vampireTrait.SetIsInVampireBatForm(true);
             movementComponent.AdjustSpeedModifier(0.20f);
-            movementComponent.SetIsFlying(true);
+            movementComponent.SetToFlying();
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5951,7 +5978,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (vampireTrait != null && vampireTrait.isInVampireBatForm) {
             vampireTrait.SetIsInVampireBatForm(false);
             movementComponent.AdjustSpeedModifier(-0.20f);
-            movementComponent.SetIsFlying(false);
+            movementComponent.SetToNonFlying();
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }

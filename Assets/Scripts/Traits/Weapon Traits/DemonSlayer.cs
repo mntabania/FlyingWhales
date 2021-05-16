@@ -8,11 +8,11 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Traits {
-    public class MonsterSlayer : Slayer {
+    public class DemonSlayer : Slayer {
 
-        public MonsterSlayer() {
-            name = "Monster Slayer";
-            description = "Grants additional damage to wild monsters.";
+        public DemonSlayer() {
+            name = "Demon Slayer";
+            description = "Grants additional damage to demons.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;

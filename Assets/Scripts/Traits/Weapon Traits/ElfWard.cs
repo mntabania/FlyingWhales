@@ -8,11 +8,11 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Traits {
-    public class MonsterSlayer : Slayer {
+    public class ElfWard : Ward {
 
-        public MonsterSlayer() {
-            name = "Monster Slayer";
-            description = "Grants additional damage to wild monsters.";
+        public ElfWard() {
+            name = "Elf Ward";
+            description = "Reduce damage taken from Elves.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;
@@ -21,7 +21,7 @@ namespace Traits {
         #region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataMonsterSlayer saveDataMonsterSlayer = saveDataTrait as SaveDataMonsterSlayer;
+            SaveDataMonsterWard saveDataMonsterSlayer = saveDataTrait as SaveDataMonsterWard;
             Assert.IsNotNull(saveDataMonsterSlayer);
         }
         #endregion

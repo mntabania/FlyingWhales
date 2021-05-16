@@ -21,7 +21,7 @@ public class MovementComponent : CharacterComponent {
     public bool isStationary { get; private set; }
     public bool cameFromWurmHole { get; private set; }
     public bool isTravellingInWorld { get; private set; }
-    public bool isFlying { get; private set; }
+    public bool isFlying => owner.traitContainer.HasTrait("Flying");
     public Region targetRegionToTravelInWorld { get; private set; }
     public List<LocationStructure> structuresToAvoid { get; }
     public int enableDiggingCounter { get; private set; }
@@ -57,7 +57,7 @@ public class MovementComponent : CharacterComponent {
         isStationary = data.isStationary;
         cameFromWurmHole = data.cameFromWurmHole;
         isTravellingInWorld = data.isTravellingInWorld;
-        isFlying = data.isFlying;
+        //isFlying = data.isFlying;
         enableDiggingCounter = data.enableDiggingCounter;
         avoidSettlementsCounter = data.avoidSettlementsCounter;
         traversableTags = data.traversableTags;
@@ -190,15 +190,14 @@ public class MovementComponent : CharacterComponent {
     public void SetCameFromWurmHole(bool state) {
         cameFromWurmHole = state;
     }
-    public void SetIsFlying(bool state) {
-        if(isFlying != state) {
-            isFlying = state;
-            if (isFlying) {
-                SetTagAsTraversable(InnerMapManager.Obstacle_Tag); //flying characters can traverse the obstacles tag
-            } else {
-                SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
-            }
-        }
+    public void SetToFlying() {
+        owner.traitContainer.AddTrait(owner, "Flying");
+        SetTagAsTraversable(InnerMapManager.Obstacle_Tag);
+    }
+
+    public void SetToNonFlying() {
+        owner.traitContainer.RemoveTrait(owner, "Flying");
+        SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
     }
 
     #region Listeners
@@ -705,7 +704,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
     public bool isStationary;
     public bool cameFromWurmHole;
     public bool isTravellingInWorld;
-    public bool isFlying;
+    //public bool isFlying;
     public string targetRegionToTravelInWorld;
     public List<string> structuresToAvoid;
 
@@ -727,7 +726,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
         isStationary = data.isStationary;
         cameFromWurmHole = data.cameFromWurmHole;
         isTravellingInWorld = data.isTravellingInWorld;
-        isFlying = data.isFlying;
+        //isFlying = data.isFlying;
 
         if(data.targetRegionToTravelInWorld != null) {
             targetRegionToTravelInWorld = data.targetRegionToTravelInWorld.persistentID;

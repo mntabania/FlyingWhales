@@ -49,7 +49,6 @@ public class SkillProgressionManager {
 		if (playerSkilldata.requirementData.portalLevel <= (PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal).level) {
 			return playerSkilldata.GetUnlockCost();
 		}
-		UnityEngine.Debug.LogError("D");
 		return -1;
 	}
 }

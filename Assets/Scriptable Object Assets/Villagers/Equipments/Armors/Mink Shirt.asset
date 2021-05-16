@@ -29,5 +29,5 @@ MonoBehaviour:
     AdditionalAttackActual: 0
     additionalResistanceBonus: 0
     elementAttackBonus: 0
-    slayerBonus: 0
-    wardBonus: 2
+    slayerBonus: 4
+    wardBonus: 4

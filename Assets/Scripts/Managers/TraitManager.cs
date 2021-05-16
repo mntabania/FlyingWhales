@@ -51,7 +51,8 @@ public class TraitManager : BaseMonoBehaviour {
         "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic", "Burning At Stake",
         "Lycanphiliac", "Lycanphobic", "Interesting", "Pest", "Night Zombie", "Finite Zombie", "Plague Reservoir", "Quarantined", 
         "Plague Caring", "Plague Cared", "Enslaved", "Travelling", "Walker Zombie", "Boomer Zombie", "Protection", "Being Drained", "Empowered",
-        "Monster Slayer",
+        "Monster Slayer", "Monster Ward", "Elf Slayer", "Elf Ward", "Human Slayer", "Human Ward", "Undead Slayer", "Undead Ward",
+        "Demon Slayer", "Demon Ward", "Flying",
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {

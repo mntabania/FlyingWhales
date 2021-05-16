@@ -6,9 +6,22 @@ using Traits;
 
 public static class EquipmentBonusProcessor
 {
-    private static Dictionary<EQUIPMENT_SLAYER_BONUS, string> traitDictionary = new Dictionary<EQUIPMENT_SLAYER_BONUS, string>
+    private static Dictionary<EQUIPMENT_SLAYER_BONUS, string> traitDictionaryForSlayer = new Dictionary<EQUIPMENT_SLAYER_BONUS, string>
     {
             { EQUIPMENT_SLAYER_BONUS.Monster_Slayer, "Monster Slayer" },
+            { EQUIPMENT_SLAYER_BONUS.Elf_Slayer, "Elf Slayer" },
+            { EQUIPMENT_SLAYER_BONUS.Human_Slayer, "Human Slayer" },
+            { EQUIPMENT_SLAYER_BONUS.Demon_Slayer, "Demon Slayer" },
+            { EQUIPMENT_SLAYER_BONUS.Undead_SLayer, "Undead Slayer" },
+    };
+
+    private static Dictionary<EQUIPMENT_WARD_BONUS, string> traitDictionaryForWard = new Dictionary<EQUIPMENT_WARD_BONUS, string>
+    {
+            { EQUIPMENT_WARD_BONUS.Monster_Ward, "Monster Ward" },
+            { EQUIPMENT_WARD_BONUS.Elf_Wawrd, "Elf Ward" },
+            { EQUIPMENT_WARD_BONUS.Human_Ward, "Human Ward" },
+            { EQUIPMENT_WARD_BONUS.Demon_Ward, "Demon Ward" },
+            { EQUIPMENT_WARD_BONUS.Undead_Ward, "Undead Ward" },
     };
 
     public static void ApplyEquipBonusToTarget(EquipmentItem p_equipItem, Character p_targetCharacter) {
@@ -51,13 +64,39 @@ public static class EquipmentBonusProcessor
             ApplyResistanceBonusOnCharacter(p_equipItem, p_targetCharacter);
             break;
             case EQUIPMENT_BONUS.Slayer_Bonus:
-            if (p_targetCharacter.traitContainer.HasTrait(traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus])) {
-                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
                 Slayer monsterSlayerTrait = trait as Slayer;
                 monsterSlayerTrait.stackCount++;
-                Debug.LogError("ADD: " + p_targetCharacter.name + " -- " + monsterSlayerTrait.stackCount);
             } else {
-                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                Slayer monsterSlayerTrait = trait as Slayer;
+                monsterSlayerTrait.stackCount++;
+            }
+            break;
+            case EQUIPMENT_BONUS.Ward_Bonus:
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+                Ward monsterSLayerWard = trait as Ward;
+                monsterSLayerWard.stackCount++;
+            } else {
+                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+                Ward monsterWard = trait as Ward;
+                monsterWard.stackCount++;
+            }
+            break;
+            case EQUIPMENT_BONUS.Flight:
+            if (p_targetCharacter.traitContainer.HasTrait("Flying")) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Flying");
+                Flying flyingTrait = trait as Flying;
+                flyingTrait.stackCount++;
+            } else {
+                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, "Flying");
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Flying");
+                Flying flyingTrait = trait as Flying;
+                flyingTrait.stackCount++;
             }
             break;
         }
@@ -93,13 +132,32 @@ public static class EquipmentBonusProcessor
             RemoveResistanceBonusOnCharacter(p_equipItem, p_targetCharacter);
             break;
             case EQUIPMENT_BONUS.Slayer_Bonus:
-            if (p_targetCharacter.traitContainer.HasTrait(traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus])) {
-                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
                 Slayer monsterSlayerTrait = trait as Slayer;
                 monsterSlayerTrait.stackCount--;
-                Debug.LogError("REMOVE: " + p_targetCharacter .name + " -- " + monsterSlayerTrait.stackCount);
                 if (monsterSlayerTrait.stackCount <= 0) {
-                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, traitDictionary[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                }
+            }
+            break;
+            case EQUIPMENT_BONUS.Ward_Bonus:
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+                Ward monsterWard = trait as Ward;
+                monsterWard.stackCount--;
+                if (monsterWard.stackCount <= 0) {
+                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+                }
+            }
+            break;
+            case EQUIPMENT_BONUS.Flight:
+            if (p_targetCharacter.traitContainer.HasTrait("Flying")) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Flying");
+                Flying flyingTrait = trait as Flying;
+                flyingTrait.stackCount--;
+                if (flyingTrait.stackCount <= 0) {
+                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, "Flying");
                 }
             }
             break;
@@ -150,7 +208,43 @@ public static class EquipmentBonusProcessor
         }
     }
 
-    static bool DoesCharacterhaveThisTrait(string p_trait, Character p_character) {
-        return p_character.traitContainer.HasTrait(p_trait);
+    public static float GetSlayerBonusDamage(Character p_damager, Character p_damageReceiver, float p_currentAmountDagame) {
+        float adjustedAttack = 0;
+        if (p_damageReceiver != null && p_damager != null && p_damager.traitContainer != null && p_damageReceiver.faction != null && p_damageReceiver.faction.factionType != null && p_damager.traitContainer.HasTrait(traitDictionaryForSlayer[EQUIPMENT_SLAYER_BONUS.Monster_Slayer]) && p_damageReceiver.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        if (p_damageReceiver != null && p_damager != null && p_damager.traitContainer != null && p_damager.traitContainer.HasTrait(traitDictionaryForSlayer[EQUIPMENT_SLAYER_BONUS.Human_Slayer]) && p_damageReceiver.race == RACE.HUMANS) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        if (p_damageReceiver != null && p_damager != null && p_damager.traitContainer != null && p_damager.traitContainer.HasTrait(traitDictionaryForSlayer[EQUIPMENT_SLAYER_BONUS.Elf_Slayer]) && p_damageReceiver.race == RACE.ELVES) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        if (p_damageReceiver != null && p_damager != null && p_damager.traitContainer != null && p_damager.traitContainer.HasTrait(traitDictionaryForSlayer[EQUIPMENT_SLAYER_BONUS.Demon_Slayer]) && p_damageReceiver.faction.factionType.type == FACTION_TYPE.Demons) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        if (p_damageReceiver != null && p_damager != null && p_damager.traitContainer != null && p_damager.traitContainer.HasTrait(traitDictionaryForSlayer[EQUIPMENT_SLAYER_BONUS.Undead_SLayer]) && p_damageReceiver.IsUndead()) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        return adjustedAttack;
+    }
+
+    public static float GetWardBonusDamage(Character p_damager, Character p_damageReceiver, float p_currentAmountDagame) {
+        float adjustedAttack = 0;
+        if (p_damageReceiver != null && p_damager != null && p_damageReceiver.traitContainer != null && p_damager.faction != null && p_damageReceiver.faction.factionType != null && p_damageReceiver.traitContainer.HasTrait(traitDictionaryForWard[EQUIPMENT_WARD_BONUS.Monster_Ward]) && p_damager.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        if (p_damageReceiver != null && p_damager != null && p_damageReceiver.traitContainer != null && p_damageReceiver.traitContainer.HasTrait(traitDictionaryForWard[EQUIPMENT_WARD_BONUS.Human_Ward]) && p_damager.race == RACE.HUMANS) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        if (p_damageReceiver != null && p_damager != null && p_damageReceiver.traitContainer != null && p_damageReceiver.traitContainer.HasTrait(traitDictionaryForWard[EQUIPMENT_WARD_BONUS.Elf_Wawrd]) && p_damager.race == RACE.ELVES) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        if (p_damageReceiver != null && p_damager != null && p_damageReceiver.traitContainer != null && p_damageReceiver.traitContainer.HasTrait(traitDictionaryForWard[EQUIPMENT_WARD_BONUS.Demon_Ward]) && p_damager.faction.factionType.type == FACTION_TYPE.Demons) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        if (p_damageReceiver != null && p_damager != null && p_damageReceiver.traitContainer != null && p_damageReceiver.traitContainer.HasTrait(traitDictionaryForWard[EQUIPMENT_WARD_BONUS.Undead_Ward]) && p_damager.IsUndead()) {
+            adjustedAttack = p_currentAmountDagame * 0.5f;
+        }
+        return adjustedAttack;
     }
 }
