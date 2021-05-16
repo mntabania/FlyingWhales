@@ -103,6 +103,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             Area tile = tiles[i];
             newNpcSettlement.AddAreaToSettlement(tile);
         }
+        if (saveDataNpcSettlement.reservedAreas != null) {
+            List<Area> reservedAreas = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.reservedAreas, GridMap.Instance.map);
+            newNpcSettlement.AddReservedAreas(reservedAreas);    
+        }
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
@@ -123,6 +127,11 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             newPlayerSettlement.AddAreaToSettlement(tile);
         }
 
+        if (saveDataPlayerSettlement.reservedAreas != null) {
+            List<Area> reservedAreas = GameUtilities.GetHexTilesGivenCoordinates(saveDataPlayerSettlement.reservedAreas, GridMap.Instance.map);
+            newPlayerSettlement.AddReservedAreas(reservedAreas);    
+        }
+        
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;

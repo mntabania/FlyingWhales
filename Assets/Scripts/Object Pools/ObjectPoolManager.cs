@@ -3,6 +3,7 @@ using System.Collections;
 using EZObjectPools;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Interrupts;
 using Inner_Maps.Location_Structures;
@@ -10,6 +11,7 @@ using Inner_Maps;
 using Locations.Settlements;
 using Locations;
 using Threads;
+using Debug = UnityEngine.Debug;
 
 public class ObjectPoolManager : MonoBehaviour {
 
@@ -74,9 +76,9 @@ public class ObjectPoolManager : MonoBehaviour {
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
             int size = 0;
-            if (currPrefab.name == "TileObjectGameObject") {
-                size = 5000;
-            }
+            // if (currPrefab.name == "TileObjectGameObject") {
+            //     size = 5000;
+            // }
             CreateNewPool(currPrefab, currPrefab.name, size, true, true, false); //50    
         }
 
@@ -103,6 +105,16 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructILocationListPool();
         ConstructSkillDataListPool();
         ConstructAreaListPool();
+        
+        InitialPoolObjectCreation("TILEOBJECTGAMEOBJECT", 20000);
+    }
+    private void InitialPoolObjectCreation(string p_poolName, int p_objectCount) {
+        if (!allObjectPools.ContainsKey(p_poolName)) {
+            throw new Exception($"Object Pool does not have key {p_poolName}");
+        }
+        EZObjectPool objectPoolToUse = allObjectPools[p_poolName];
+        Stopwatch stopwatch = new Stopwatch();
+        StartCoroutine(objectPoolToUse.InstantiatePoolCoroutine(p_objectCount, stopwatch));
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {

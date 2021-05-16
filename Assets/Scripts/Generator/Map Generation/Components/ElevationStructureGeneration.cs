@@ -113,44 +113,44 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 
 		if (island.elevation == ELEVATION.WATER) {
-			yield return MapGenerator.Instance.StartCoroutine(WaterCellAutomata(locationGridTiles, elevationStructure));
+			// yield return MapGenerator.Instance.StartCoroutine(WaterCellAutomata(locationGridTiles, elevationStructure));
 		} else if (island.elevation == ELEVATION.MOUNTAIN) {
-			yield return MapGenerator.Instance.StartCoroutine(MountainCellAutomata(locationGridTiles, elevationStructure, island));
+			// yield return MapGenerator.Instance.StartCoroutine(MountainCellAutomata(locationGridTiles, elevationStructure, island));
 		}
 		yield return null;
 	}
-	private IEnumerator WaterCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
-		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 1, 20); //2
-		
-		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
-		
-		MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawMapCoroutine(tileMap, cellMap, null, InnerMapManager.Instance.assetManager.shoreTile, 
-			null, (locationGridTile) => SetAsWater(locationGridTile, elevationStructure)));
-
-		//create water wells
-		int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
-		int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
-		int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
-		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
-		
-		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.tileObjectComponent.objHere == null));
-		CreateFishingSpot(northTile);
-		
-		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.tileObjectComponent.objHere == null));
-		CreateFishingSpot(southTile);
-		
-		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.tileObjectComponent.objHere == null));
-		CreateFishingSpot(westTile);
-		
-		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.tileObjectComponent.objHere == null));
-		CreateFishingSpot(eastTile);
-
-		Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
-		elevationStructure.SetOccupiedArea(occupiedArea);
-		
-		yield return null;
-	}
+	// private IEnumerator WaterCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
+	// 	LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
+	// 	int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 1, 20); //2
+	// 	
+	// 	Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
+	// 	
+	// 	MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawElevationMapCoroutine(tileMap, cellMap, null, InnerMapManager.Instance.assetManager.shoreTile, 
+	// 		null, (locationGridTile) => SetAsWater(locationGridTile, elevationStructure)));
+	//
+	// 	//create water wells
+	// 	int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
+	// 	int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
+	// 	int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
+	// 	int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
+	// 	
+	// 	LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.tileObjectComponent.objHere == null));
+	// 	CreateFishingSpot(northTile);
+	// 	
+	// 	LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.tileObjectComponent.objHere == null));
+	// 	CreateFishingSpot(southTile);
+	// 	
+	// 	LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.tileObjectComponent.objHere == null));
+	// 	CreateFishingSpot(westTile);
+	// 	
+	// 	LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.tileObjectComponent.objHere == null));
+	// 	CreateFishingSpot(eastTile);
+	//
+	// 	Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
+	// 	elevationStructure.SetOccupiedArea(occupiedArea);
+	// 	
+	// 	yield return null;
+	// }
 	private void CreateFishingSpot(LocationGridTile tile) {
 		if (tile != null) {
 			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.FISHING_SPOT);
@@ -172,65 +172,65 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 		return true;
 	}
-	private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, AreaElevationIsland areaElevationIsland) {
-		List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => ShouldTileBePartOfMountain(t, locationGridTiles)).ToList();
-		
-		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
-		int fillPercent = 12;
-		int smoothing = 2;
-		if (areaElevationIsland.tilesInIsland.Count > 1) { 
-			fillPercent = 30;
-			smoothing = 2;
-		}
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, smoothing, fillPercent);
-		
-		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
-		
-		yield return MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawMapCoroutine(tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, 
-			null, 
-			(locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
-			(locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure)));
-
-		for (int i = 0; i < areaElevationIsland.tilesInIsland.Count; i++) {
-			Area tile = areaElevationIsland.tilesInIsland[i];
-			LocationGridTile randomTile = tile.gridTileComponent.centerGridTile;
-			for (int j = 0; j < tile.neighbourComponent.neighbours.Count; j++) {
-				Area neighbour = tile.neighbourComponent.neighbours[j];
-				if (areaElevationIsland.tilesInIsland.Contains(neighbour)) {
-					LocationGridTile targetTile = neighbour.gridTileComponent.centerGridTile;
-					bool hasPath = PathGenerator.Instance.GetPath(randomTile, targetTile, GRID_PATHFINDING_MODE.NORMAL) != null;
-					if (hasPath) {
-						continue; //already has path towards center of neighbour, skip.
-					}
-					//neighbour is part of elevation island, make path towards each other
-					List<LocationGridTile> path = PathGenerator.Instance.GetPath(randomTile, targetTile, GRID_PATHFINDING_MODE.CAVE_INTERCONNECTION);
-					if (path != null) {
-						for (int k = 0; k < path.Count; k++) {
-							LocationGridTile pathTile = path[k];
-							if (pathTile.tileObjectComponent.objHere is BlockWall) {
-								pathTile.structure.RemovePOI(pathTile.tileObjectComponent.objHere);
-							}		
-						}	
-					}
-				}
-			}
-			yield return null;
-		}
-		Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
-		elevationStructure.SetOccupiedArea(occupiedArea);
-
-		List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
-		elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein(validWallsForOreVeins);
-
-		var randomOreAmount = areaElevationIsland.tilesInIsland.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
-		for (int i = 0; i < randomOreAmount; i++) {
-			if (validWallsForOreVeins.Count == 0) { break; }
-			BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
-			CreateOreVeinAt(blockWall.gridTileLocation);
-			validWallsForOreVeins.Remove(blockWall);
-		}
-		RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
-	}
+	// private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, AreaElevationIsland areaElevationIsland) {
+	// 	List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => ShouldTileBePartOfMountain(t, locationGridTiles)).ToList();
+	// 	
+	// 	LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
+	// 	int fillPercent = 12;
+	// 	int smoothing = 2;
+	// 	if (areaElevationIsland.tilesInIsland.Count > 1) { 
+	// 		fillPercent = 30;
+	// 		smoothing = 2;
+	// 	}
+	// 	int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, smoothing, fillPercent);
+	// 	
+	// 	Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
+	// 	
+	// 	yield return MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawElevationMapCoroutine(tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, 
+	// 		null, 
+	// 		(locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
+	// 		(locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure)));
+	//
+	// 	for (int i = 0; i < areaElevationIsland.tilesInIsland.Count; i++) {
+	// 		Area tile = areaElevationIsland.tilesInIsland[i];
+	// 		LocationGridTile randomTile = tile.gridTileComponent.centerGridTile;
+	// 		for (int j = 0; j < tile.neighbourComponent.neighbours.Count; j++) {
+	// 			Area neighbour = tile.neighbourComponent.neighbours[j];
+	// 			if (areaElevationIsland.tilesInIsland.Contains(neighbour)) {
+	// 				LocationGridTile targetTile = neighbour.gridTileComponent.centerGridTile;
+	// 				bool hasPath = PathGenerator.Instance.GetPath(randomTile, targetTile, GRID_PATHFINDING_MODE.NORMAL) != null;
+	// 				if (hasPath) {
+	// 					continue; //already has path towards center of neighbour, skip.
+	// 				}
+	// 				//neighbour is part of elevation island, make path towards each other
+	// 				List<LocationGridTile> path = PathGenerator.Instance.GetPath(randomTile, targetTile, GRID_PATHFINDING_MODE.CAVE_INTERCONNECTION);
+	// 				if (path != null) {
+	// 					for (int k = 0; k < path.Count; k++) {
+	// 						LocationGridTile pathTile = path[k];
+	// 						if (pathTile.tileObjectComponent.objHere is BlockWall) {
+	// 							pathTile.structure.RemovePOI(pathTile.tileObjectComponent.objHere);
+	// 						}		
+	// 					}	
+	// 				}
+	// 			}
+	// 		}
+	// 		yield return null;
+	// 	}
+	// 	Area occupiedArea = elevationStructure.tiles.ElementAt(0).area;
+	// 	elevationStructure.SetOccupiedArea(occupiedArea);
+	//
+	// 	List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
+	// 	elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein(validWallsForOreVeins);
+	//
+	// 	var randomOreAmount = areaElevationIsland.tilesInIsland.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
+	// 	for (int i = 0; i < randomOreAmount; i++) {
+	// 		if (validWallsForOreVeins.Count == 0) { break; }
+	// 		BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
+	// 		CreateOreVeinAt(blockWall.gridTileLocation);
+	// 		validWallsForOreVeins.Remove(blockWall);
+	// 	}
+	// 	RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
+	// }
 	//private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
 	//	if (p_blockWall.gridTileLocation != null) {
 	//		int caveNeighbours = p_blockWall.gridTileLocation.neighbourList.Count(t => t.tileObjectComponent.objHere is BlockWall);

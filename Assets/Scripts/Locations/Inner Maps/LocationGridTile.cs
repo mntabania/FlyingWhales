@@ -199,7 +199,7 @@ namespace Inner_Maps {
         public void SetTileType(Tile_Type tileType) {
             this.tileType = tileType;
         }
-        private void SetGroundType(Ground_Type newGroundType, bool isInitial = false) {
+        public void SetGroundType(Ground_Type newGroundType, bool isInitial = false) {
             Ground_Type previousType = this.groundType;
             this.groundType = newGroundType;
             if (tileObjectComponent.genericTileObject != null) {
@@ -370,7 +370,7 @@ namespace Inner_Maps {
         }
         public void SetGroundTilemapVisual(TileBase tileBase, bool updateEdges = false) {
             parentMap.groundTilemap.SetTile(localPlace, tileBase);
-            parentMap.groundTilemap.RefreshTile(localPlace);
+            // parentMap.groundTilemap.RefreshTile(localPlace);
             if (tileObjectComponent.genericTileObject.mapObjectVisual != null && tileObjectComponent.genericTileObject.mapObjectVisual.usedSprite != null) {
                 //if this tile's map object is shown and is showing a visual, update it's sprite to use the updated sprite.
                 tileObjectComponent.genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
@@ -551,22 +551,12 @@ namespace Inner_Maps {
         #region Structures
         public void SetStructure(LocationStructure p_structure) {
             Assert.IsNotNull(p_structure);
-            Profiler.BeginSample("Remove Tile");
             LocationStructure previousStructure = structure;
             structure?.RemoveTile(this);
-            Profiler.EndSample();
             
             structure = p_structure;
-            
-            Profiler.BeginSample("Add Tile");
             structure.AddTile(this);
-            Profiler.EndSample();
-            
-            Profiler.BeginSample("Generic Tile Object Initialize");
-            tileObjectComponent.genericTileObject.ManualInitialize(this);
-            Profiler.EndSample();
 
-            Profiler.BeginSample("Update Awareness");
             if(tileObjectComponent.objHere != null) {
                 //Whenever a grid tile changes its structure (might be because a new structure is built on top of it), the object inside must update its awareness to that new structure
                 LocationAwarenessUtility.RemoveFromAwarenessList(tileObjectComponent.objHere);
@@ -580,7 +570,6 @@ namespace Inner_Maps {
                     structure.AddCharacterAtLocation(character);
                 }    
             }
-            Profiler.EndSample();
         }
         public void SetTileState(Tile_State state) {
             if (structure != null) {
@@ -987,7 +976,7 @@ namespace Inner_Maps {
         }
         public bool HasNeighbouringWalledStructure() {
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {
-                if (keyValuePair.Value.structure != null && keyValuePair.Value.structure.structureType.IsOpenSpace() == false) {
+                if (keyValuePair.Value.structure != null && !keyValuePair.Value.structure.structureType.IsOpenSpace()) {
                     return true;
                 }
             }

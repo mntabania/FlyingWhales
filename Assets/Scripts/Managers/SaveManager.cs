@@ -99,7 +99,6 @@ public class SaveManager : MonoBehaviour {
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
             GridMap.Instance.allAreas,
-            GridMap.Instance.mainRegion.innerMap.biomePerlinSettings,
             GridMap.Instance.mainRegion.innerMap.elevationPerlinSettings
         );
         scenarioSave.worldMapSave = worldMapSave;

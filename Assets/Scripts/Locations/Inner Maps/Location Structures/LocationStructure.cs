@@ -55,13 +55,10 @@ namespace Inner_Maps.Location_Structures {
 
         /// <summary>
         /// List of areas that this structure has a tile on.
-        /// NOTE: This can have duplicates of the same Area, this is so that there is
-        /// no need to count the number of tiles that occupy a area, when trying to remove that area from the list
-        /// so it is safe to assume that number of tiles = length of this list.
         /// NOTE: This is not filled out in wilderness structure! Because it is not needed.
         /// NOTE: This isn't saved because this is filled out anytime a tile is added to this structure, and since those tiles are saved, there is no need to save this.
         /// </summary>
-        public List<Area> occupiedAreas { get; private set; }
+        public Dictionary<Area, int> occupiedAreas { get; private set; }
         public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
         #region getters
@@ -101,7 +98,7 @@ namespace Inner_Maps.Location_Structures {
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
-            occupiedAreas = new List<Area>();
+            occupiedAreas = new Dictionary<Area, int>();
             SetMaxHPAndReset(3000);
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
@@ -121,7 +118,7 @@ namespace Inner_Maps.Location_Structures {
             unoccupiedTiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
-            occupiedAreas = new List<Area>();
+            occupiedAreas = new Dictionary<Area, int>();
 
             persistentID = data.persistentID;
             this.region = location;
@@ -292,7 +289,7 @@ namespace Inner_Maps.Location_Structures {
             hasActiveSocialGathering = state;
         }
         public virtual bool HasTileOnArea(Area p_area) {
-            return (occupiedArea != null && occupiedArea == p_area) || occupiedAreas.Contains(p_area);
+            return (occupiedArea != null && occupiedArea == p_area) || occupiedAreas.ContainsKey(p_area);
         }
         #endregion
 
@@ -1153,7 +1150,7 @@ namespace Inner_Maps.Location_Structures {
                 //     SetSettlementLocation(settlement);
                 // }
                 if (structureType != STRUCTURE_TYPE.WILDERNESS) {
-                    AddOccupiedArea(tile.area);
+                    AddOccupiedAreaVote(tile.area);
                 }
                 OnTileAddedToStructure(tile);
             }
@@ -1162,7 +1159,7 @@ namespace Inner_Maps.Location_Structures {
             if (tiles.Remove(tile)) {
                 OnTileRemovedFromStructure(tile);
                 if (structureType != STRUCTURE_TYPE.WILDERNESS) {
-                    RemoveOccupiedArea(tile.area);
+                    ReduceOccupiedAreaVote(tile.area);
                 }
             }
             RemovePassableTile(tile);
@@ -1220,11 +1217,19 @@ namespace Inner_Maps.Location_Structures {
         }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }
-        private void AddOccupiedArea(Area p_area) {
-            occupiedAreas.Add(p_area);
+        private void AddOccupiedAreaVote(Area p_area) {
+            if (!occupiedAreas.ContainsKey(p_area)) {
+                occupiedAreas.Add(p_area, 0);
+            }
+            occupiedAreas[p_area]++;
         }
-        private void RemoveOccupiedArea(Area p_area) {
-            occupiedAreas.Remove(p_area);
+        private void ReduceOccupiedAreaVote(Area p_area) {
+            if (occupiedAreas.ContainsKey(p_area)) {
+                occupiedAreas[p_area]--;
+                if (occupiedAreas[p_area] <= 0) {
+                    occupiedAreas.Remove(p_area);
+                }
+            }
         }
         #endregion
 
@@ -1248,7 +1253,7 @@ namespace Inner_Maps.Location_Structures {
 
             //transfer tiles to either the wilderness or work npcSettlement
             List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
-            LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            LocationStructure wilderness = region.wilderness;
             for (int i = 0; i < tilesInStructure.Count; i++) {
                 LocationGridTile tile = tilesInStructure[i];
                 tile.tileObjectComponent.ClearWallObjects();

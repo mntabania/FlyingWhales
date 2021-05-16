@@ -265,7 +265,7 @@ namespace Generator.Map_Generation.Components {
 		}
 		private IEnumerator GenerateMonsterLair(Area hexTile, LocationStructure structure) {
 			List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(hexTile.gridTileComponent.gridTiles);
-			LocationStructure wilderness = hexTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+			LocationStructure wilderness = hexTile.region.wilderness;
 			InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region, wilderness);
 			structure.SetOccupiedArea(hexTile);
 			yield return null;

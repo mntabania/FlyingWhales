@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
+  m_Name: TORCH
+  m_EditorClassIdentifier: 
+  defaultTileMapAsset: {fileID: 11400000, guid: 420cd68c3857f674ab5826490a791bb9,
+    type: 2}
+  defaultSprite: {fileID: 21300000, guid: f65e95031a5778745b5b7e8740e9293b, type: 3}
+  tileObjectAssets:
+    biomeAssets:
+      m_keys: 06000000
+      m_values:
+      - activeTile:
+        - {fileID: 21300000, guid: f65e95031a5778745b5b7e8740e9293b, type: 3}
+        - {fileID: 21300000, guid: f626551d73d6e3244b00a22f41ac76c7, type: 3}
+        - {fileID: 21300000, guid: 3e754cdc0f2805a489b22801aeb6dc31, type: 3}
+        - {fileID: 21300000, guid: 28111fccc68dc8f488f5fb0e4955c044, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: 420cd68c3857f674ab5826490a791bb9, type: 2}
+  corruptedTileObjectAssets:
+    biomeAssets:
+      m_keys: 
+      m_values: []

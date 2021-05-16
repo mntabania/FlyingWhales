@@ -38,6 +38,8 @@ public class Region : ISavable, ILogFiller {
     /// NOTE: This just includes BUILT objects!
     /// </summary>
     public Dictionary<TILE_OBJECT_TYPE, int> objectsInRegionCount { get; private set; }
+    public LocationStructure wilderness { get; private set; }
+    
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
@@ -83,6 +85,9 @@ public class Region : ISavable, ILogFiller {
     }
 
     #region Loading
+    public void LoadWilderness(Wilderness p_wilderness) {
+        wilderness = p_wilderness;
+    }
     public void LoadReferences(SaveDataRegion saveDataRegion) {
         string summary = $"Loading {name} references:";
         summary = $"{summary}\nLoading Residents:";
@@ -309,7 +314,7 @@ public class Region : ISavable, ILogFiller {
     }
     public void GenerateStructures() {
         CreateStructureList();
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS);
+        wilderness = LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS);
     }
     public void AddStructure(LocationStructure structure) {
         Debug.Assert(!structure.hasBeenDestroyed, $"Structure {structure} has been destroyed but is being added to {name}");
@@ -657,6 +662,7 @@ public class Region : ISavable, ILogFiller {
         settlementsInRegion?.Clear();
         settlementsInRegion = null;
     }
+    
 }
 
 public class Border {

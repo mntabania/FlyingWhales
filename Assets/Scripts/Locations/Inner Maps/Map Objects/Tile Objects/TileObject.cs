@@ -110,8 +110,23 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     #endregion
 
-    public TileObject() { }
-    public TileObject(SaveDataTileObject data) { }
+    public TileObject() {
+        allJobsTargetingThis = new List<JobQueueItem>();
+        allExistingJobsTargetingThis = new List<JobQueueItem>();
+        charactersThatAlreadyAssumed = new List<Character>();
+        logComponent = new LogComponent(); logComponent.SetOwner(this);
+        hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
+        eventDispatcher = new TileObjectEventDispatcher();
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+    }
+    public TileObject(SaveDataTileObject data) {
+        allJobsTargetingThis = new List<JobQueueItem>();
+        allExistingJobsTargetingThis = new List<JobQueueItem>();
+        charactersThatAlreadyAssumed = new List<Character>();
+        advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
+        eventDispatcher = new TileObjectEventDispatcher();
+        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+    }
 
 
     protected virtual void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
@@ -119,9 +134,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         id = UtilityScripts.Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
         name = GenerateName();
-        allJobsTargetingThis = new List<JobQueueItem>();
-        allExistingJobsTargetingThis = new List<JobQueueItem>();
-        charactersThatAlreadyAssumed = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
         currentHP = maxHP;
@@ -132,10 +144,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             AddCommonAdvertisements();
         }
         ConstructDefaultActions();
-        logComponent = new LogComponent(); logComponent.SetOwner(this);
-        hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
-        eventDispatcher = new TileObjectEventDispatcher();
-        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
@@ -144,9 +152,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         id = UtilityScripts.Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
         name = data.name;
-        allJobsTargetingThis = new List<JobQueueItem>();
-        allExistingJobsTargetingThis = new List<JobQueueItem>();
-        charactersThatAlreadyAssumed = new List<Character>();
+        
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
         currentHP = data.currentHP;
@@ -156,13 +162,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SetPOIState(data.poiState);
         CreateTraitContainer();
         LoadResources(data);
-        advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
         ConstructDefaultActions();
-
         logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
         hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
-        eventDispatcher = new TileObjectEventDispatcher();
-        bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }

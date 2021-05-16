@@ -83,11 +83,13 @@ namespace Inner_Maps {
 
         public bool isAnInnerMapShowing => currentlyShowingMap != null;
         private LocationGridTile lastClickedTile;
+        private Dictionary<TILE_OBJECT_TYPE, TileObjectScriptableObject> _tileObjectScriptableObjects;
         
         #region Monobehaviours
         private void Awake() {
             Instance = this;
             mainGraphMask = 0;
+            _tileObjectScriptableObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectScriptableObject>();
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
@@ -368,6 +370,13 @@ namespace Inner_Maps {
                 }
             }
             return points;
+        }
+        public TileObjectScriptableObject GetTileObjectScriptableObject(TILE_OBJECT_TYPE p_tileObjectType) {
+            if (!_tileObjectScriptableObjects.ContainsKey(p_tileObjectType)) {
+                TileObjectScriptableObject loadedData = Resources.Load<TileObjectScriptableObject>($"Tile Object Data/{p_tileObjectType.ToString()}");
+                _tileObjectScriptableObjects.Add(p_tileObjectType, loadedData);
+            }
+            return _tileObjectScriptableObjects[p_tileObjectType];
         }
         #endregion
 
@@ -692,8 +701,7 @@ namespace Inner_Maps {
                 }
                 if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
                     TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
-                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
-                        : setting.biomeAssets[BIOMES.NONE];
+                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] : setting.biomeAssets[BIOMES.NONE];
                     return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
                 }
             }
@@ -714,6 +722,23 @@ namespace Inner_Maps {
                 if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
                     TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
                     BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets[BIOMES.NONE];
+                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
+                }
+            }
+            return null;
+        }
+        public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE tileObjectType, POI_STATE state, BIOMES biome, bool corrupted = false) {
+            if (tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
+                throw new Exception($"Artifact asset from just TILE_OBJECT_TYPE has not been handled yet.");
+            } else {
+                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
+                if (!assetDictionary.ContainsKey(tileObjectType)) {
+                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
+                    assetDictionary = assetManager.tileObjectTiles;
+                }
+                if (assetDictionary.ContainsKey(tileObjectType)) {
+                    TileObjectTileSetting setting = assetDictionary[tileObjectType];
+                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] : setting.biomeAssets[BIOMES.NONE];
                     return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
                 }
             }
@@ -965,6 +990,8 @@ namespace Inner_Maps {
                 Destroy(pathfinder);
                 tileObjectSlotSettings?.Clear();
                 wallResourceAssets?.Clear();
+                _tileObjectScriptableObjects.Clear();
+                _tileObjectScriptableObjects = null;
                 base.OnDestroy();
                 Instance = null;    
             }

@@ -880,7 +880,7 @@ public class ReactionComponent : CharacterComponent {
                                             debugLog = $"{debugLog}\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
                                             if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                                                 if (targetCharacter.currentActionNode == null) {
-                                                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.wilderness);
                                                 }
                                             } else {
                                                 debugLog = $"{debugLog}\n-Already has a move character job targeting character";

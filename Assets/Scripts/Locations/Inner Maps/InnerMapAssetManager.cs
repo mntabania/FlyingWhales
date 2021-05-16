@@ -84,7 +84,7 @@ namespace Inner_Maps {
         
         [Header("Demon")]
         public TileBase demonStoneRuleTile;
-
+        
         public TileBase GetOutsideFloorTile(BIOMES p_biomeType) {
             switch (p_biomeType) {
                 case BIOMES.SNOW:

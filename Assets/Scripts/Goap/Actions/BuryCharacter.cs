@@ -30,7 +30,7 @@ public class BuryCharacter : GoapAction {
         if (otherData != null && otherData.Length >= 1 && otherData[0].obj is LocationStructure) {
             return otherData[0].obj as LocationStructure;
         } else {
-            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? actor.currentRegion.wilderness;
         }
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {

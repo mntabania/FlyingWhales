@@ -6,15 +6,13 @@ namespace Scenario_Maps {
     public class ScenarioWorldMapSave {
         public WorldMapTemplate worldMapTemplate;
         public List<SaveDataArea> areaSaves;
-        public PerlinNoiseSettings biomePerlinNoiseSettings;
         public PerlinNoiseSettings elevationPerlinNoiseSettings;
         public int xSeed;
         public int ySeed;
         public List<SpecialStructureSetting> specialStructureSaves;
         
-        public void SaveWorld(WorldMapTemplate p_worldMapTemplate, List<Area> p_areas, PerlinNoiseSettings p_biomeSettings, PerlinNoiseSettings p_elevationSettings) {
+        public void SaveWorld(WorldMapTemplate p_worldMapTemplate, List<Area> p_areas, PerlinNoiseSettings p_elevationSettings) {
             worldMapTemplate = p_worldMapTemplate;
-            biomePerlinNoiseSettings = p_biomeSettings;
             elevationPerlinNoiseSettings = p_elevationSettings;
             SaveAreas(p_areas);
         }

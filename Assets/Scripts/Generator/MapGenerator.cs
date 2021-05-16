@@ -74,6 +74,7 @@ public class MapGenerator : BaseMonoBehaviour {
             loadingWatch.Stop();
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
+            data.SetFinishedMapGenerationCoroutine(true);
             WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();
             
@@ -138,7 +139,8 @@ public class MapGenerator : BaseMonoBehaviour {
             yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-
+            
+            data.SetFinishedMapGenerationCoroutine(true);
             WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();
             

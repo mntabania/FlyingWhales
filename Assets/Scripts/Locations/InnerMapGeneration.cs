@@ -12,7 +12,12 @@ public partial class LandmarkManager {
     public IEnumerator GenerateRegionMap(Region region, MapGenerationComponent mapGenerationComponent, MapGenerationData data) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
-        innerTileMap.Initialize(region, Random.Range(0f, 99999f), Random.Range(0f, 99999f), Random.Range(0, 99999), Random.Range(0, 99999));
+
+        float xSeed = 1f;//Random.Range(0f, 99999f);
+        float ySeed = 1f;//Random.Range(0f, 99999f);
+        int biomeSeed = 1;//Random.Range(0, 99999);
+        int elevationSeed = 1;//Random.Range(0, 99999);
+        innerTileMap.Initialize(region, xSeed, ySeed, biomeSeed, elevationSeed);
         region.GenerateStructures();
         yield return StartCoroutine(innerTileMap.GenerateMap(mapGenerationComponent, data));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
@@ -20,7 +25,7 @@ public partial class LandmarkManager {
     public IEnumerator GenerateScenarioMap(Region region, MapGenerationComponent mapGenerationComponent, MapGenerationData data, ScenarioMapData scenarioMapData) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
-        innerTileMap.Initialize(region, scenarioMapData.worldMapSave.xSeed, scenarioMapData.worldMapSave.ySeed, scenarioMapData.worldMapSave.biomePerlinNoiseSettings, scenarioMapData.worldMapSave.elevationPerlinNoiseSettings);
+        innerTileMap.Initialize(region, scenarioMapData.worldMapSave.xSeed, scenarioMapData.worldMapSave.ySeed, scenarioMapData.worldMapSave.elevationPerlinNoiseSettings);
         region.GenerateStructures();
         yield return StartCoroutine(innerTileMap.GenerateMap(mapGenerationComponent, data));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
@@ -31,7 +36,7 @@ public partial class LandmarkManager {
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
         float xSeed = saveDataInnerMap.xSeed;
         float ySeed = saveDataInnerMap.ySeed;
-        innerTileMap.Initialize(region, xSeed, ySeed, saveDataInnerMap.biomePerlinNoiseSettings, saveDataInnerMap.elevationPerlinNoiseSettings);
+        innerTileMap.Initialize(region, xSeed, ySeed, saveDataInnerMap.elevationPerlinNoiseSettings);
         yield return StartCoroutine(innerTileMap.LoadMap(mapGenerationComponent, saveDataInnerMap, saveData));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }

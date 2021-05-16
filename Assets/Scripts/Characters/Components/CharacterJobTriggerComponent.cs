@@ -432,7 +432,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
         if (!hasChosenTile) {
-            LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            LocationStructure wilderness = owner.currentRegion.wilderness;
             List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.IsPartOfSettlement(owner.homeSettlement) == false).ToList();
             LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
             job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { wilderness, targetTile });
@@ -1963,7 +1963,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
 		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE) ??
                                                 npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? 
-		                                        npcSettlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+		                                        npcSettlement.region.wilderness;
 		    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, owner, npcSettlement);
 		    buryJob.SetCanTakeThisJobChecker(JobManager.Can_Take_Bury_Job);
 		    buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[]{ targetStructure });
@@ -1982,7 +1982,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                                     owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
             }
             if (targetStructure == null) {
-	            targetStructure = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+	            targetStructure = owner.currentRegion.wilderness;
             }
             if (owner.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomPassableTile())) {
                 GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, owner);
@@ -2468,7 +2468,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 RuinarchListPool<MagicCircle>.Release(magicCircles);
             } else {
 			    MagicCircle newCircle = InnerMapManager.Instance.CreateNewTileObject<MagicCircle>(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
-			    List<LocationGridTile> choices = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).unoccupiedTiles.ToList();
+			    List<LocationGridTile> choices = owner.currentRegion.wilderness.unoccupiedTiles.ToList();
 			    if (choices.Count > 0) {
 				    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
 				    targetTile.structure.AddPOI(newCircle, targetTile);
