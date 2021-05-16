@@ -18,16 +18,16 @@ MonoBehaviour:
   purchaseCost: 50
   tier: 1
   compatibleClasses: 000000000100000002000000
-  description: This is Copper Sword
-  imgIcon: {fileID: 21300000, guid: 08c5768de165af04683bc8e58c0b1d0b, type: 3}
+  description: This is Iron Sword
+  imgIcon: {fileID: 21300000, guid: 52be75f6a62dc45428d5795bbb44a384, type: 3}
   equipmentUpgradeData:
-    bonuses: 00000000010000000400000006000000090000000a000000
-    AdditionalPiercing: 100
+    bonuses: 0000000006000000
+    AdditionalPiercing: 50
     AdditionalmaxHPPercentage: 100
     AdditionalmaxHPActual: 0
-    AdditionalAttackPercentage: 100
+    AdditionalAttackPercentage: 50
     AdditionalAttackActual: 0
     additionalResistanceBonus: 50
     elementAttackBonus: 6
-    slayerBonus: 2
+    slayerBonus: 0
     wardBonus: 2
