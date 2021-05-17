@@ -72,6 +72,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     public string territory;
     public List<string> items;
+    public List<string> equipmentInventory;
     public List<string> ownedItems;
     public List<string> jobs;
     public List<string> forceCancelJobsOnTickEnded;
@@ -109,7 +110,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
     public SaveDataCharacterTraitComponent traitComponent;
     public SaveDataBuffStatsBonus buffStatusBonus;
-    public SaveDataEquipmentComponent equipmentComponent;
+    //public SaveDataEquipmentComponent equipmentComponent;
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
     #endregion
@@ -186,7 +187,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
         traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
         buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
-        equipmentComponent = new SaveDataEquipmentComponent(); equipmentComponent.Save(data.equipmentComponent);
+        //equipmentComponent = new SaveDataEquipmentComponent(); equipmentComponent.Save(data.equipmentComponent);
 
         isInfoUnlocked = data.isInfoUnlocked;
 
@@ -251,6 +252,10 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         items = new List<string>();
         for (int i = 0; i < data.items.Count; i++) {
             items.Add(data.items[i].persistentID);
+        }
+        equipmentInventory = new List<string>();
+        for (int i = 0; i < data.equipmentInventory.Count; i++) {
+            equipmentInventory.Add(data.equipmentInventory[i].persistentID);
         }
         ownedItems = new List<string>();
         for (int i = 0; i < data.ownedItems.Count; i++) {

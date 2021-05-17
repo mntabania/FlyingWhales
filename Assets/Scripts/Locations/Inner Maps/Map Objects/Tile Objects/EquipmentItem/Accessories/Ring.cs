@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class CopperSword : WeaponItem {
-    public CopperSword() {
-        Initialize(TILE_OBJECT_TYPE.COPPER_SWORD, false);
-        
+public class Ring : AccessoryItem {
+    public Ring() {
+        Initialize(TILE_OBJECT_TYPE.RING, false);
+
         maxHP = 700;
         currentHP = maxHP;
         traitContainer.AddTrait(this, "Treasure");
         equipmentData = EquipmentDataHandler.Instance.GetEquipmentDataBaseOnName(this.name);
+
+        EquipmentBonusProcessor.SetBonusResistanceOnWeapon(this);
     }
-    public CopperSword(SaveDataTileObject data) { }
+    public Ring(SaveDataTileObject data) { }
 }

@@ -908,6 +908,10 @@ public enum TILE_OBJECT_TYPE {
     KENNEL_TILE_OBJECT = 182,
     COPPER_SWORD = 183,
     IRON_SWORD = 184,
+    RING = 185,
+    BRACER = 186,
+    FUR_SHIRT = 187,
+    MINK_SHIRT = 188,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1083,7 +1087,7 @@ public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { None, Gender, Race, Class, Trait }
 public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INVADER, FIGHTER, RESEARCHER, }
-public enum RESOURCE { FOOD, WOOD, STONE, METAL, NONE }
+public enum RESOURCE { FOOD, WOOD, STONE, METAL, NONE, CLOTH, LEATHER }
 public enum MAP_OBJECT_STATE { BUILT, UNBUILT, BUILDING }
 public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peaceful = 3, Divine_Worship = 4, Nature_Worship = 5, Demon_Worship = 6,
     Reveres_Vampires = 7, Reveres_Werewolves = 8, Hates_Vampires = 9, Hates_Werewolves = 10, Bone_Golem_Makers = 11,
@@ -1214,7 +1218,7 @@ public enum UPGRADE_BONUS {
 }
 
 public enum EQUIPMENT_BONUS {
-    Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Fight, None,
+    Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Flight, None,
 }
 
 public enum EQUIPMENT_SLAYER_BONUS { 

@@ -18,6 +18,8 @@ public class EquipmentUpgradeData {
     [HideInInspector]
     public float AdditionalAttackActual;
     [HideInInspector]
+    public float additionalResistanceBonus;
+    [HideInInspector]
     public ELEMENTAL_TYPE elementAttackBonus;
     [HideInInspector]
     public EQUIPMENT_SLAYER_BONUS slayerBonus;
