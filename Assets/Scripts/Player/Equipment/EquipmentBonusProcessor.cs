@@ -24,43 +24,70 @@ public static class EquipmentBonusProcessor
             { EQUIPMENT_WARD_BONUS.Undead_Ward, "Undead Ward" },
     };
 
-    public static void ApplyEquipBonusToTarget(EquipmentItem p_equipItem, Character p_targetCharacter) {
+    public static void ApplyEquipBonusToTarget(EquipmentItem p_equipItem, Character p_targetCharacter, bool p_initializedStackCountOnly = false) {
+        if (p_equipItem.equipmentData == null) {
+            p_equipItem.AssignData();
+        }
         p_equipItem.equipmentData.equipmentUpgradeData.bonuses.ForEach((eachBonus) => {
-            ApplyEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter);
+            ApplyEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter, p_initializedStackCountOnly);
         });  
     }
 
     public static void RemoveEquipBonusToTarget(EquipmentItem p_equipItem, Character p_targetCharacter) {
+        if (p_equipItem.equipmentData == null) {
+            p_equipItem.AssignData();
+        }
         p_equipItem.equipmentData.equipmentUpgradeData.bonuses.ForEach((eachBonus) => {
             RemoveEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter);
         });
     }
 
-    static void ApplyEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter) {
+    static void ApplyEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter, bool p_initializedStackCountOnly = false) {
         switch (p_equipBonus) {
             case EQUIPMENT_BONUS.Atk_Actual:
+            if (p_initializedStackCountOnly) {
+                return;
+            }
             p_targetCharacter.combatComponent.AdjustAttackModifierFromEquips((int)p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackActual);
             break;
             case EQUIPMENT_BONUS.Atk_Percentage:
+            if (p_initializedStackCountOnly) {
+                return;
+            }
             float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustAttackModifierFromEquips((int)computedAttack);
             break;
             case EQUIPMENT_BONUS.Max_HP_Actual:
+            if (p_initializedStackCountOnly) {
+                return;
+            }
             p_targetCharacter.combatComponent.AdjustMaxHPModifierFromEquips((int)p_equipItem.equipmentData.equipmentUpgradeData.AdditionalmaxHPActual);
             break;
             case EQUIPMENT_BONUS.Max_HP_Percentage:
+            if (p_initializedStackCountOnly) {
+                return;
+            }
             float addedHP = p_targetCharacter.combatComponent.unModifiedMaxHP * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalmaxHPPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustMaxHPModifierFromEquips((int)addedHP);
             break;
             case EQUIPMENT_BONUS.Increased_Piercing:
+            if (p_initializedStackCountOnly) {
+                return;
+            }
             p_targetCharacter.piercingAndResistancesComponent.AdjustPiercing(p_equipItem.equipmentData.equipmentUpgradeData.AdditionalPiercing);
             break;
             case EQUIPMENT_BONUS.Attack_Element:
+            if (p_initializedStackCountOnly) {
+                return;
+            }
             p_targetCharacter.combatComponent.SetElementalType(p_equipItem.equipmentData.equipmentUpgradeData.elementAttackBonus);
             break;
             case EQUIPMENT_BONUS.Increased_3_Random_Resistance:
             case EQUIPMENT_BONUS.Increased_4_Random_Resistance:
             case EQUIPMENT_BONUS.Increased_5_Random_Resistance:
+            if (p_initializedStackCountOnly) {
+                return;
+            }
             ApplyResistanceBonusOnCharacter(p_equipItem, p_targetCharacter);
             break;
             case EQUIPMENT_BONUS.Slayer_Bonus:
@@ -93,7 +120,7 @@ public static class EquipmentBonusProcessor
                 Flying flyingTrait = trait as Flying;
                 flyingTrait.stackCount++;
             } else {
-                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, "Flying");
+                p_targetCharacter.movementComponent.SetToFlying();
                 Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Flying");
                 Flying flyingTrait = trait as Flying;
                 flyingTrait.stackCount++;
@@ -123,8 +150,10 @@ public static class EquipmentBonusProcessor
             break;
             case EQUIPMENT_BONUS.Attack_Element:
             EquipmentComponent ec = p_targetCharacter.equipmentComponent;
-            EquipmentItem ei = ec.GetRandomRemainingEquipment(p_equipItem);
-            ProcessElementAfterRemovingSomeItem(ec, ei, p_targetCharacter);
+            if (ec.allEquipments.Count > 0 && ec.allEquipments[ec.allEquipments.Count - 1] == p_equipItem){
+                EquipmentItem ei = ec.GetRandomRemainingEquipment(p_equipItem);
+                ProcessElementAfterRemovingSomeItem(ec, ei, p_targetCharacter);
+            }
             break;
             case EQUIPMENT_BONUS.Increased_3_Random_Resistance:
             case EQUIPMENT_BONUS.Increased_4_Random_Resistance:
@@ -157,7 +186,7 @@ public static class EquipmentBonusProcessor
                 Flying flyingTrait = trait as Flying;
                 flyingTrait.stackCount--;
                 if (flyingTrait.stackCount <= 0) {
-                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, "Flying");
+                    p_targetCharacter.movementComponent.SetToNonFlying();
                 }
             }
             break;
@@ -168,9 +197,7 @@ public static class EquipmentBonusProcessor
         if (ei != null) {
             p_targetCharacter.combatComponent.SetElementalType(ei.equipmentData.equipmentUpgradeData.elementAttackBonus);
         } else if (p_targetCharacter.combatComponent.elementalStatusWaitingList.Count > 0) {
-            int index = UnityEngine.Random.Range(0, p_targetCharacter.combatComponent.elementalStatusWaitingList.Count);
-            p_targetCharacter.combatComponent.SetElementalType(p_targetCharacter.combatComponent.elementalStatusWaitingList[index]);
-            p_targetCharacter.combatComponent.elementalStatusWaitingList.RemoveAt(index);
+            p_targetCharacter.combatComponent.UpdateElementalType();
         } else {
             p_targetCharacter.combatComponent.SetElementalType(p_targetCharacter.combatComponent.initialElementalType);
         }
@@ -198,7 +225,7 @@ public static class EquipmentBonusProcessor
         } else if (p_equipItem.equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_5_Random_Resistance)) {
             resistanceCount = 5;
         }
-        var sequence = Enumerable.Range(1, (int)RESISTANCE.Physical + 1).OrderBy(n => n * n + UnityEngine.Random.Range(1, (int)RESISTANCE.Physical + 1) * (new System.Random()).Next());
+        var sequence = Enumerable.Range(1, (int)RESISTANCE.Physical).OrderBy(n => n * n + UnityEngine.Random.Range(1, (int)RESISTANCE.Physical) * (new System.Random()).Next());
 
         var result = sequence.Distinct().Take(resistanceCount);
 
@@ -210,7 +237,7 @@ public static class EquipmentBonusProcessor
 
     public static float GetSlayerBonusDamage(Character p_damager, Character p_damageReceiver, float p_currentAmountDagame) {
         float adjustedAttack = 0;
-        if (p_damageReceiver != null && p_damager != null && p_damager.traitContainer != null && p_damageReceiver.faction != null && p_damageReceiver.faction.factionType != null && p_damager.traitContainer.HasTrait(traitDictionaryForSlayer[EQUIPMENT_SLAYER_BONUS.Monster_Slayer]) && p_damageReceiver.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+        if (p_damageReceiver != null && p_damager != null && p_damager.traitContainer != null && p_damageReceiver.faction != null && p_damageReceiver.faction.factionType != null && p_damager.traitContainer.HasTrait(traitDictionaryForSlayer[EQUIPMENT_SLAYER_BONUS.Monster_Slayer]) && p_damageReceiver.isWildMonster) {
             adjustedAttack = p_currentAmountDagame * 0.5f;
         }
         if (p_damageReceiver != null && p_damager != null && p_damager.traitContainer != null && p_damager.traitContainer.HasTrait(traitDictionaryForSlayer[EQUIPMENT_SLAYER_BONUS.Human_Slayer]) && p_damageReceiver.race == RACE.HUMANS) {
@@ -230,7 +257,7 @@ public static class EquipmentBonusProcessor
 
     public static float GetWardBonusDamage(Character p_damager, Character p_damageReceiver, float p_currentAmountDagame) {
         float adjustedAttack = 0;
-        if (p_damageReceiver != null && p_damager != null && p_damageReceiver.traitContainer != null && p_damager.faction != null && p_damageReceiver.faction.factionType != null && p_damageReceiver.traitContainer.HasTrait(traitDictionaryForWard[EQUIPMENT_WARD_BONUS.Monster_Ward]) && p_damager.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+        if (p_damageReceiver != null && p_damager != null && p_damageReceiver.traitContainer != null && p_damager.faction != null && p_damageReceiver.faction.factionType != null && p_damageReceiver.traitContainer.HasTrait(traitDictionaryForWard[EQUIPMENT_WARD_BONUS.Monster_Ward]) && p_damager.isWildMonster) {
             adjustedAttack = p_currentAmountDagame * 0.5f;
         }
         if (p_damageReceiver != null && p_damager != null && p_damageReceiver.traitContainer != null && p_damageReceiver.traitContainer.HasTrait(traitDictionaryForWard[EQUIPMENT_WARD_BONUS.Human_Ward]) && p_damager.race == RACE.HUMANS) {

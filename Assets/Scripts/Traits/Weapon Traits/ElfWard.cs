@@ -18,14 +18,6 @@ namespace Traits {
             ticksDuration = 0;
         }
 
-        #region Loading
-        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataMonsterWard saveDataMonsterSlayer = saveDataTrait as SaveDataMonsterWard;
-            Assert.IsNotNull(saveDataMonsterSlayer);
-        }
-        #endregion
-
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);

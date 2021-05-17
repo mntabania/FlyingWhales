@@ -68,6 +68,8 @@ public class CombatComponent : CharacterComponent {
         combatMode = data.combatMode;
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
         initialElementalType = data.initialElementalDamageType;
+        elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
+        data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         willProcessCombat = data.willProcessCombat;
         numOfKilledCharacters = data.numOfKilledCharacters;
         specialSkillParent = data.specialSkillParent.Load();
@@ -161,20 +163,18 @@ public class CombatComponent : CharacterComponent {
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
     }
     public void UpdateElementalType() {
-        if (owner.equipmentComponent.HasEquips()) {
+        if (!owner.equipmentComponent.HasEquips()) {
             bool hasSetElementalType = false;
-            for (int i = (owner.traitContainer.traits.Count - 1); i >= 0; i--) {
-                Trait currTrait = owner.traitContainer.traits[i];
-                if (currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
-                    SetElementalType(currTrait.elementalType);
-                    hasSetElementalType = true;
-                    break;
-                }
+            elementalStatusWaitingList.ForEach((eachElem) => Debug.LogError(eachElem));
+            if (elementalStatusWaitingList.Count > 0) {
+                int index = UnityEngine.Random.Range(0, elementalStatusWaitingList.Count);
+                hasSetElementalType = true;
+                SetElementalType(elementalStatusWaitingList[index]);
             }
             if (!hasSetElementalType) {
-                SetElementalType(owner.characterClass.elementalType);
+                SetElementalType(initialElementalType);
             }
-        } else { 
+        } else {
             
         }
     }
@@ -1281,6 +1281,9 @@ public class CombatComponent : CharacterComponent {
                 bannedFromHostileList.Add(character);
             }
         }
+        initialElementalType = data.initialElementalDamageType;
+        elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
+        data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         combatBehaviourParent.LoadReferences(data.combatBehaviourParent);
         specialSkillParent.LoadReferences();
     }
@@ -1384,6 +1387,7 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
 
     public ELEMENTAL_TYPE elementalDamageType;
     public ELEMENTAL_TYPE initialElementalDamageType;
+    public List<ELEMENTAL_TYPE> elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
     public SaveDataCharacterCombatBehaviourParent combatBehaviourParent;
     public SaveDataCombatSpecialSkillWrapper specialSkillParent;
 
@@ -1399,6 +1403,8 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
         maxHPModificationFromWeapon = data.maxHPModificationFromEquips;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
+        initialElementalDamageType = data.initialElementalType;
+        data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         elementalDamageType = data.elementalDamage.type;
         willProcessCombat = data.willProcessCombat;
         numOfKilledCharacters = data.numOfKilledCharacters;
