@@ -57,8 +57,10 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         producedJob = null;
                         return true;
                     } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
-                        Area targetArea = GetNoStructurePlainAreaInAllRegions();
-                        if (targetArea != null) {
+                        // Area targetArea = GetNoStructurePlainAreaInAllRegions();
+                        VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
+                        if (villageSpot != null) {
+                            Area targetArea = villageSpot.mainSpot;
                             log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetArea}";
                             //Build vampire castle
                             List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);

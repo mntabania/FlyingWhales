@@ -275,6 +275,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		p_data.SetReservedAreas(alreadyReservedAreas); //do not cleanup reserved list since it will still be used after this
 		p_data.SetUnreservedAreas(unreservedAreas); //do not cleanup unreservedAreas list since it will still be used after this 
 		
+		GridMap.Instance.mainRegion.SetVillageSpots(p_data.villageSpots);
+		
 		Debug.Log($"Created {p_data.villageSpots.Count.ToString()} Village Spots");
 		yield return null;
 	}

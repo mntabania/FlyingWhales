@@ -24,7 +24,7 @@ public class Region : ISavable, ILogFiller {
     public List<Faction> factionsHere { get; private set; }
     public List<Character> residents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
-    public Area[,] areaMap => GridMap.Instance.map; //TODO:
+    public Area[,] areaMap => GridMap.Instance.map;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
@@ -39,6 +39,7 @@ public class Region : ISavable, ILogFiller {
     /// </summary>
     public Dictionary<TILE_OBJECT_TYPE, int> objectsInRegionCount { get; private set; }
     public LocationStructure wilderness { get; private set; }
+    public List<VillageSpot> villageSpots { get; private set; }
     
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
@@ -59,6 +60,7 @@ public class Region : ISavable, ILogFiller {
         regionFeatureComponent = new RegionFeatureComponent();
         settlementsInRegion = new List<BaseSettlement>();
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
+        villageSpots = new List<VillageSpot>();
     }
     public Region(Area coreTile, string p_name = "") : this() {
         persistentID = System.Guid.NewGuid().ToString();
@@ -118,7 +120,11 @@ public class Region : ISavable, ILogFiller {
             Faction faction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(factionHereID);
             factionsHere.Add(faction);
         }
-        
+        //village spots
+        for (int i = 0; i < saveDataRegion.villageSpots.Length; i++) {
+            VillageSpot villageSpot = saveDataRegion.villageSpots[i].Load();
+            villageSpots.Add(villageSpot);
+        }
         Debug.Log(summary);
     }
     #endregion
@@ -613,7 +619,7 @@ public class Region : ISavable, ILogFiller {
                 count++;
             }
         }
-        return count >= WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillagesForMapSize();
+        return count >= villageSpots.Count;
     }
     #endregion
 
@@ -647,6 +653,22 @@ public class Region : ISavable, ILogFiller {
     }
     #endregion
 
+    #region Village Spots
+    public void SetVillageSpots(List<VillageSpot> p_villageSpots) {
+        villageSpots.Clear();
+        villageSpots.AddRange(p_villageSpots);
+    }
+    public VillageSpot GetRandomUnoccupiedVillageSpot() {
+        for (int i = 0; i < villageSpots.Count; i++) {
+            VillageSpot villageSpot = villageSpots[i];
+            if (!villageSpot.mainSpot.structureComponent.HasStructureInArea() && !villageSpot.mainSpot.IsNextToOrPartOfVillage() && !villageSpot.mainSpot.gridTileComponent.HasCorruption()) {
+                return villageSpot;
+            }
+        }
+        return null;
+    }
+    #endregion
+
     public void CleanUp() {
         areas?.Clear();
         areas = null;
@@ -661,6 +683,8 @@ public class Region : ISavable, ILogFiller {
         structures = null;
         settlementsInRegion?.Clear();
         settlementsInRegion = null;
+        villageSpots?.Clear();
+        villageSpots = null;
     }
     
 }

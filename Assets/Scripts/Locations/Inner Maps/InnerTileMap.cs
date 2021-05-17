@@ -161,6 +161,8 @@ namespace Inner_Maps {
             upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
 
             Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, UpdateOrtigraphicSize);
+            
+            perlinTilemap.gameObject.SetActive(false);
         }
         public void Initialize(Region location, float xSeed, float ySeed, int biomeSeed, int elevationSeed) {
             region = location;
@@ -192,7 +194,7 @@ namespace Inner_Maps {
 
             Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, UpdateOrtigraphicSize);
             
-            perlinTilemap.gameObject.SetActive(true);
+            perlinTilemap.gameObject.SetActive(false);
         }
         protected IEnumerator GenerateGrid(int width, int height, MapGenerationComponent mapGenerationComponent, System.Diagnostics.Stopwatch stopwatch) {
             stopwatch.Reset();

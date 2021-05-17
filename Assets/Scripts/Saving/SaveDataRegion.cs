@@ -15,6 +15,7 @@ public class SaveDataRegion : SaveData<Region> {
     public string[] residentIDs;
     public string[] charactersAtLocationIDs;
     public SaveDataInnerMap innerMapSave;
+    public SaveDataVillageSpot[] villageSpots;
     //public Dictionary<GridNeighbourDirection, string> neighboursWithDirection;
     //public List<string> neighbours;
     public string[] factionsHereIDs;
@@ -60,6 +61,14 @@ public class SaveDataRegion : SaveData<Region> {
         for (int i = 0; i < region.factionsHere.Count; i++) {
             Faction factionHere = region.factionsHere[i];
             factionsHereIDs[i] = factionHere.persistentID;
+        }
+
+        villageSpots = new SaveDataVillageSpot[region.villageSpots.Count];
+        for (int i = 0; i < region.villageSpots.Count; i++) {
+            VillageSpot villageSpot = region.villageSpots[i];
+            SaveDataVillageSpot saveDataVillageSpot = new SaveDataVillageSpot();
+            saveDataVillageSpot.Save(villageSpot);
+            villageSpots[i] = saveDataVillageSpot;
         }
 
         //Components

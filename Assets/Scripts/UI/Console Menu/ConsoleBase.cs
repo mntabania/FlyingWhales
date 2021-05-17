@@ -110,7 +110,8 @@ public class ConsoleBase : InfoUIBase {
             {"/log_alive_villagers", LogAliveVillagers},
             {"/kill_villagers", KillAllVillagers},
             {"/adjust_se", AdjustSpiritEnergy},
-            {"/adjust_mm", AdjustMigrationMeter}
+            {"/adjust_mm", AdjustMigrationMeter},
+            {"/toggle_vs", ToggleVillageSpots}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -123,7 +124,6 @@ public class ConsoleBase : InfoUIBase {
         tglShowPOIHoverData.onValueChanged.RemoveAllListeners();
         tglShowPOIHoverData.onValueChanged.AddListener(OnToggleShowPOIHoverData);
     }
-    
     private void Update() {
         if (!isShowing) {
             return;
@@ -1589,6 +1589,22 @@ public class ConsoleBase : InfoUIBase {
             LocationGridTile tile = GridMap.Instance.mainRegion.innerMap.allTiles[i];
             if (tile.structure == null) {
                 AddErrorMessage($"{tile.ToString()} has no structure!");
+            }
+        }
+    }
+    private void ToggleVillageSpots(string[] obj) {
+        if (GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.activeInHierarchy) {
+            //deactivate
+            GridMap.Instance.mainRegion.innerMap.perlinTilemap.ClearAllTiles();
+            GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.SetActive(false);
+        } else {
+            //activate
+            GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.SetActive(true);
+            for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
+                VillageSpot villageSpot = GridMap.Instance.mainRegion.villageSpots[i];
+                Color color = Color.black;
+                color.a = 0.5f;
+                villageSpot.ColorArea(villageSpot.mainSpot, color);
             }
         }
     }

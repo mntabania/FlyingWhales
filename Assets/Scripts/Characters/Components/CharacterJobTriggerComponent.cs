@@ -3028,17 +3028,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = null;
 	    return false;
     }
-    public void TriggerBuildVampireCastle(LocationGridTile targetTile, string structurePrefabName = "") {
-	    if (!owner.jobQueue.HasJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE)) {
-		    var otherData = new OtherData[] {new StringOtherData(structurePrefabName)};
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.tileObjectComponent.genericTileObject, otherData, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.tileObjectComponent.genericTileObject);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.tileObjectComponent.genericTileObject, owner);
-		    goapPlan.SetDoNotRecalculate(true);
-		    job.SetAssignedPlan(goapPlan);
-		    owner.jobQueue.AddJobInQueue(job);
-	    }
-    }
     public bool TriggerImprisonBloodSource(out JobQueueItem producedJob, ref string log) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.IMPRISON_BLOOD_SOURCE)) {
 		    log += $"\nWill try to imprison blood source";
