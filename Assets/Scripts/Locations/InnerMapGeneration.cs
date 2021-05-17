@@ -13,10 +13,10 @@ public partial class LandmarkManager {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
 
-        float xSeed = 1f;//Random.Range(0f, 99999f);
-        float ySeed = 1f;//Random.Range(0f, 99999f);
-        int biomeSeed = 1;//Random.Range(0, 99999);
-        int elevationSeed = 1;//Random.Range(0, 99999);
+        float xSeed = Random.Range(0f, 99999f);
+        float ySeed = Random.Range(0f, 99999f);
+        int biomeSeed = Random.Range(0, 99999);
+        int elevationSeed = Random.Range(0, 99999);
         innerTileMap.Initialize(region, xSeed, ySeed, biomeSeed, elevationSeed);
         region.GenerateStructures();
         yield return StartCoroutine(innerTileMap.GenerateMap(mapGenerationComponent, data));
