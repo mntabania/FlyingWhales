@@ -4444,6 +4444,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         GoapPlanJob currentTopPrioJob = job as GoapPlanJob;
         if(currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;
+#if DEBUG_LOG
+            if (plan.startingNode != null && plan.startingNode.singleNode != null && plan.startingNode.singleNode.actor != this) {
+                Debug.LogError($"{name} has a finished job from another character {currentTopPrioJob.jobType.ToString()} {currentTopPrioJob.ToString()} of {plan.startingNode.singleNode.actor?.name}");
+                jobQueue.RemoveJobInQueue(currentTopPrioJob, false, string.Empty);
+                return;
+            }
+#endif
             ActualGoapNode currentNode = plan.currentActualNode;
 #if DEBUG_PROFILER
             Profiler.BeginSample($"{name} - {currentNode.action.name} - Can Do Goap Action");
