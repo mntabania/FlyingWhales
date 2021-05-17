@@ -18,7 +18,7 @@ public class FireBall : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         expiryDate = GameManager.Instance.Today().AddTicks((int)PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
     }
-    public FireBall(SaveDataFireBall data) {
+    public FireBall(SaveDataFireBall data) : base(data) {
         //SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;

@@ -9,7 +9,7 @@ public class WinterRose : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
-    public WinterRose(SaveDataTileObject data) { }
+    public WinterRose(SaveDataTileObject data) : base(data) { }
 
     public void WinterRoseEffect() {
         if(gridTileLocation != null) {

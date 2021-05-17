@@ -24,7 +24,7 @@ public sealed class PoisonCloud : MovingTileObject {
         
         SetDoExpireEffect(true);
     }
-    public PoisonCloud(SaveDataPoisonCloud data) {
+    public PoisonCloud(SaveDataPoisonCloud data) : base(data) {
         //SaveDataPoisonCloud saveDataPoisonCloud = data as SaveDataPoisonCloud;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;

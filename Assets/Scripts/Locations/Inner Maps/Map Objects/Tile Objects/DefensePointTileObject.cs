@@ -12,7 +12,7 @@ public class DefensePointTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public DefensePointTileObject(SaveDataTileObject data) {
+    public DefensePointTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

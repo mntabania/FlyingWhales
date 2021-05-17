@@ -9,5 +9,5 @@ public class HerbPlant : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
-    public HerbPlant(SaveDataTileObject data) { }
+    public HerbPlant(SaveDataTileObject data) : base(data) { }
 }

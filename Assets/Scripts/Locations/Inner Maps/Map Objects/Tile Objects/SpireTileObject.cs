@@ -11,7 +11,7 @@ public class SpireTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public SpireTileObject(SaveDataTileObject data) {
+    public SpireTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

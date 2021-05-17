@@ -10,7 +10,7 @@ public class Ice : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
-    public Ice(SaveDataTileObject data) { }
+    public Ice(SaveDataTileObject data) : base(data) { }
     
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();

@@ -4,7 +4,7 @@ public class ShelfScrolls : TileObject{
     public ShelfScrolls() {
         Initialize(TILE_OBJECT_TYPE.SHELF_SCROLLS);
     }
-    public ShelfScrolls(SaveDataTileObject data) {
+    public ShelfScrolls(SaveDataTileObject data) : base(data) {
         
     }
     

@@ -21,7 +21,7 @@ public class FrostyFog : MovingTileObject {
         traitContainer.RemoveTrait(this, "Flammable");
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public FrostyFog(SaveDataFrostyFog data) {
+    public FrostyFog(SaveDataFrostyFog data) : base(data) {
         //SaveDataFrostyFog saveDataFrostyFog = data as SaveDataFrostyFog;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;

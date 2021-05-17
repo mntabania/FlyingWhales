@@ -22,7 +22,7 @@ public class Vapor : MovingTileObject {
         SetDoExpireEffect(true);
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public Vapor(SaveDataVapor data) {
+    public Vapor(SaveDataVapor data) : base(data) {
         //SaveDataVapor saveDataVapor = data as SaveDataVapor;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;

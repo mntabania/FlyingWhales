@@ -10,6 +10,6 @@
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
-    public Phylactery(SaveDataTileObject data) { }
+    public Phylactery(SaveDataTileObject data) : base(data) { }
     protected override string GenerateName() { return "Phylactery"; }
 }

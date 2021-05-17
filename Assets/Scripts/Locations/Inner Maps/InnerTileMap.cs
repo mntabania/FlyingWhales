@@ -97,6 +97,7 @@ namespace Inner_Maps {
         public float warpSeed;
         public float warpStrength = 0.2f;
         public float warpWeight = 0.6f;
+        public float temperatureSeed;
 
         [Header("For Testing")]
         [SerializeField] protected LineRenderer pathLineRenderer;
@@ -137,12 +138,16 @@ namespace Inner_Maps {
         #endregion
 
         #region Generation
-        public void Initialize(Region location, float xSeed, float ySeed, PerlinNoiseSettings elevationSettings) {
+        public void Initialize(Region location, float xSeed, float ySeed, PerlinNoiseSettings elevationSettings, float p_warpWeight, float p_temperatureSeed) {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
 
+            warpSeed = xSeed;
+            precipitationPerlinSettings.seed = (int)ySeed;
             elevationPerlinSettings = elevationSettings;
+            warpWeight = p_warpWeight;
+            temperatureSeed = p_temperatureSeed;
 
             //set tile map sorting orders
             groundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
@@ -164,6 +169,7 @@ namespace Inner_Maps {
 
             warpSeed = xSeed;
             precipitationPerlinSettings.seed = (int)ySeed;
+            temperatureSeed = Random.Range(0f, 0.25f);
             
             if (GameUtilities.RollChance(50)) {
                 warpWeight = -0.39f;    
@@ -749,7 +755,7 @@ namespace Inner_Maps {
             yield return null;
         }
         private IEnumerator BiomePerlin(MapGenerationData p_data) {
-            float[,] temperatureMap = Noise.GenerateTemperatureGradient(width, height, temperatureGradient, warpNoiseScale, warpSeed, warpStrength, warpWeight); 
+            float[,] temperatureMap = Noise.GenerateTemperatureGradient(width, height, temperatureGradient, warpNoiseScale, warpSeed, warpStrength, warpWeight, temperatureSeed); 
             float[,] precipitationMap = Noise.GenerateNoiseMap(precipitationPerlinSettings, width, height);
             tileTagMap = new Tile_Tag[width, height];
             

@@ -26,7 +26,7 @@ public class FishingSpot : TileObject {
         }
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public FishingSpot(SaveDataTileObject data) { }
+    public FishingSpot(SaveDataTileObject data) : base(data) { }
 
     #region Loading
     public override void LoadSecondWave(SaveDataTileObject data) {

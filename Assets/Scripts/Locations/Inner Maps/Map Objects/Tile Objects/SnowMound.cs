@@ -9,7 +9,7 @@ public class SnowMound : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.EXTRACT_ITEM);
     }
-    public SnowMound(SaveDataTileObject data) { }
+    public SnowMound(SaveDataTileObject data) : base(data) { }
 
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();

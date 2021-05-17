@@ -72,11 +72,10 @@ namespace Perlin_Noise {
         /// <param name="warpStrength">The strength of the warp.</param>
         /// <param name="warpWeight">The weight of the warp (How much the gradient is affected by the warp)</param>
         /// <returns>A float map that represents a linear gradient.</returns>
-        public static float[,] GenerateTemperatureGradient(int p_width, int p_height, Gradient_Direction gradientDirection, float warpNoiseScale, float warpSeed, float warpStrength, float warpWeight) {
+        public static float[,] GenerateTemperatureGradient(int p_width, int p_height, Gradient_Direction gradientDirection, float warpNoiseScale, float warpSeed, float warpStrength, float warpWeight, float seed) {
             float xSeed = warpSeed;
             float ySeed = warpSeed;
-            float random = Random.Range(0f, 0.25f);
-            
+            float random = seed;
             float[,] noiseMap = new float[p_width, p_height];
             for (int x = 0; x < p_width; x++) {
                 for (int y = 0; y < p_height; y++) {

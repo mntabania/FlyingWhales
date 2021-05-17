@@ -12,7 +12,7 @@ public class SnooperTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public SnooperTileObject(SaveDataTileObject data) {
+    public SnooperTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

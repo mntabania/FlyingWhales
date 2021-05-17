@@ -2,7 +2,7 @@
     public Pew() {
         Initialize(TILE_OBJECT_TYPE.PEW);
     }
-    public Pew(SaveDataTileObject data) {
+    public Pew(SaveDataTileObject data) : base(data) {
         
     }
 }

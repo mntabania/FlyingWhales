@@ -25,7 +25,7 @@ public partial class LandmarkManager {
     public IEnumerator GenerateScenarioMap(Region region, MapGenerationComponent mapGenerationComponent, MapGenerationData data, ScenarioMapData scenarioMapData) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
-        innerTileMap.Initialize(region, scenarioMapData.worldMapSave.xSeed, scenarioMapData.worldMapSave.ySeed, scenarioMapData.worldMapSave.elevationPerlinNoiseSettings);
+        innerTileMap.Initialize(region, scenarioMapData.worldMapSave.xSeed, scenarioMapData.worldMapSave.ySeed, scenarioMapData.worldMapSave.elevationPerlinNoiseSettings, 0.39f, 0.25f);
         region.GenerateStructures();
         yield return StartCoroutine(innerTileMap.GenerateMap(mapGenerationComponent, data));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
@@ -36,7 +36,7 @@ public partial class LandmarkManager {
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
         float xSeed = saveDataInnerMap.xSeed;
         float ySeed = saveDataInnerMap.ySeed;
-        innerTileMap.Initialize(region, xSeed, ySeed, saveDataInnerMap.elevationPerlinNoiseSettings);
+        innerTileMap.Initialize(region, xSeed, ySeed, saveDataInnerMap.elevationPerlinNoiseSettings, saveDataInnerMap.warpWeight, saveDataInnerMap.temperatureSeed);
         yield return StartCoroutine(innerTileMap.LoadMap(mapGenerationComponent, saveDataInnerMap, saveData));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }

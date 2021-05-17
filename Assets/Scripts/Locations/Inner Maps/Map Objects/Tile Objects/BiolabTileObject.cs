@@ -12,7 +12,7 @@ public class BiolabTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public BiolabTileObject(SaveDataTileObject data) {
+    public BiolabTileObject(SaveDataTileObject data) : base(data){
         
     }
     public override bool CanBeSelected() {

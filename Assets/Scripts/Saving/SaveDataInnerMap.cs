@@ -9,12 +9,16 @@ public class SaveDataInnerMap : SaveData<InnerTileMap> {
     public float ySeed;
     public PerlinNoiseSettings elevationPerlinNoiseSettings;
     public Dictionary<Point, SaveDataLocationGridTile> tileSaves;
+    public float warpWeight;
+    public float temperatureSeed;
     
     public override void Save(InnerTileMap innerTileMap) {
         xSeed = innerTileMap.xSeed;
         ySeed = innerTileMap.ySeed;
         elevationPerlinNoiseSettings = innerTileMap.elevationPerlinSettings;
         tileSaves = new Dictionary<Point, SaveDataLocationGridTile>();
+        warpWeight = innerTileMap.warpWeight;
+        temperatureSeed = innerTileMap.temperatureSeed;
         for (int x = 0; x < innerTileMap.width; x++) {
             for (int y = 0; y < innerTileMap.height; y++) {
                 LocationGridTile locationGridTile = innerTileMap.map[x, y];

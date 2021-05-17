@@ -12,7 +12,7 @@ public class MeddlerTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public MeddlerTileObject(SaveDataTileObject data) {
+    public MeddlerTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

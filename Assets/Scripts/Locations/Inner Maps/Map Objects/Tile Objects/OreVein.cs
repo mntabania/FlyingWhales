@@ -19,7 +19,7 @@ public class OreVein : TileObject {
         Initialize(TILE_OBJECT_TYPE.ORE_VEIN);
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public OreVein(SaveDataTileObject data) { }
+    public OreVein(SaveDataTileObject data) : base(data) { }
     
     public override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {

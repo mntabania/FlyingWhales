@@ -12,7 +12,7 @@ public class CryptTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public CryptTileObject(SaveDataTileObject data) {
+    public CryptTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

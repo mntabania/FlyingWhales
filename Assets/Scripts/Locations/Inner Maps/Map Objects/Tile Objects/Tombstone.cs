@@ -30,7 +30,7 @@ public class Tombstone : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.DROP_CORPSE);
         _respawnCorpseOnDestroy = true;
     }
-    public Tombstone(SaveDataTombstone data) {
+    public Tombstone(SaveDataTombstone data) : base(data) {
         _respawnCorpseOnDestroy = true;
     }
     public override void LoadSecondWave(SaveDataTileObject data) {

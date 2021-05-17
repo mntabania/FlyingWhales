@@ -14,7 +14,7 @@ public class StructureTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.RemoveTrait(this, "Flammable");
     }
-    public StructureTileObject(SaveDataTileObject data) { }
+    public StructureTileObject(SaveDataTileObject data) : base(data) { }
 
     #region Overrides
     public override string ToString() {

@@ -14,5 +14,5 @@ public class Tool : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
-    public Tool(SaveDataTileObject data) { }
+    public Tool(SaveDataTileObject data) : base(data) { }
 }

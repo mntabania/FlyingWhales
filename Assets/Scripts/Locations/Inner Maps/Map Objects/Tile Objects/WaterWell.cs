@@ -18,7 +18,7 @@ public class WaterWell : TileObject {
         }
         // BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public WaterWell(SaveDataTileObject data) { }
+    public WaterWell(SaveDataTileObject data) : base(data) { }
 
     // public override void UpdateSettlementResourcesParent() {
     //     BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;

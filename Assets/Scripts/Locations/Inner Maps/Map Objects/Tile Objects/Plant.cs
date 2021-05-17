@@ -6,5 +6,5 @@ public class Plant : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
-    public Plant(SaveDataTileObject data) { }
+    public Plant(SaveDataTileObject data) : base(data) { }
 }

@@ -12,7 +12,7 @@ public class DefilerTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public DefilerTileObject(SaveDataTileObject data) {
+    public DefilerTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

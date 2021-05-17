@@ -9,7 +9,7 @@ public class DemonicStructureBlockerTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public DemonicStructureBlockerTileObject(SaveDataTileObject data) {
+    public DemonicStructureBlockerTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {
