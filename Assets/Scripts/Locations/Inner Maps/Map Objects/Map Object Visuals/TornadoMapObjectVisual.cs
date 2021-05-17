@@ -256,7 +256,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (gridTileLocation == null) {
             return;
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Tornado Per Tick");
+#endif
         SkillData tornadoData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.TORNADO);
         int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(tornadoData);
         float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(tornadoData);
@@ -285,7 +287,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 //}
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void DealDamage(IDamageable damageable, int processedDamage, float piercing) {
         if (damageable.CanBeDamaged()) {
@@ -321,13 +325,13 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
             && (damageable is Character) == false && damageable.mapObjectVisual.IsTweening() == false;
     }
 
-    #region Abstract Member Implementation
+#region Abstract Member Implementation
     public override void UpdateTileObjectVisual(TileObject obj) { }
-    #endregion
+#endregion
 
-    #region Listeners
+#region Listeners
     private void OnTileObjectRemovedFromTile(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
        RemoveDamageable(tileObject);
     }
-    #endregion
+#endregion
 }

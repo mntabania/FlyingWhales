@@ -38,23 +38,27 @@ namespace Locations.Area_Features {
             expirationKey = SchedulingManager.Instance.AddEntry(expiryDate, () => owner.featureComponent.RemoveFeature(this, owner), this);
         }
         private void EmitPoisonCloudsPerTick() {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Emit Poison Cloud Per Tick");
+#endif
             if (UnityEngine.Random.Range(0, 100) < 60 && owner != null) {
                 LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(owner.gridTileComponent.gridTiles);
                 PoisonCloud cloud = InnerMapManager.Instance.SpawnPoisonCloud(chosenTile, 3);
                 cloud.SetIsPlayerSource(isPlayerSource);
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
         public void SetIsPlayerSource(bool p_state) {
             isPlayerSource = p_state;
         }
         
-        #region Expiry
+#region Expiry
         public void SetExpiryInTicks(int ticks) {
             expiryInTicks = ticks;
         }
-        #endregion
+#endregion
     }
     
     [System.Serializable]

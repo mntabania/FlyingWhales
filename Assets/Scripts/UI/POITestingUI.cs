@@ -68,8 +68,10 @@ public class POITestingUI : MonoBehaviour {
     public bool CreateKnockoutJob(Character character, Character targetCharacter) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, character);
         character.jobQueue.AddJobInQueue(job);
+#if DEBUG_LOG
         character.logComponent.PrintLogIfActive(
             $"Added a KNOCKOUT Job to {this.name} with target {targetCharacter.name}");
+#endif
         return true;
     }
     public void ChatWithThisCharacter() {
@@ -172,9 +174,9 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
-    #endregion
+#endregion
 
-    #region Tile Object Testing
+#region Tile Object Testing
     public void PoisonTable() {
         if (poi is Table) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, INTERACTION_TYPE.POISON, poi, activeCharacter);
@@ -253,9 +255,9 @@ public class POITestingUI : MonoBehaviour {
         poi.traitContainer.RestrainAndImprison(poi, activeCharacter, activeCharacter.faction, null);
         HideUI();
     }
-    #endregion
+#endregion
 
-    #region Grid Tile Testing
+#region Grid Tile Testing
     public void GoHere() {
         if (poi is Character) {
             GoToCharacter();
@@ -282,5 +284,5 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
-    #endregion
+#endregion
 }

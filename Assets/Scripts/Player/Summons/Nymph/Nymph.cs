@@ -54,21 +54,33 @@ public abstract class Nymph : Summon {
     }
     private void ExecuteAOEEffect() {
         if (Random.Range(0, 100) < 25) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Nymph - Adjust HP Current Tile");
+#endif
             gridTileLocation.tileObjectComponent.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
+#if DEBUG_PROFILER
             Profiler.EndSample();
-            
+#endif
+
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Nymph - Adjust HP Neighbours");
+#endif
             for (int i = 0; i < gridTileLocation.neighbourList.Count; i++) {
                 LocationGridTile tile = gridTileLocation.neighbourList[i];
                 tile.tileObjectComponent.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Nymph - Schedule AOE Effect");
+#endif
         //reschedule after 20 minutes
         ScheduleAOEEffect();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     #endregion
 
@@ -79,5 +91,5 @@ public abstract class Nymph : Summon {
             ScheduleAOEEffect();
         }
     }
-    #endregion
+#endregion
 }

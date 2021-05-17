@@ -76,17 +76,21 @@ public abstract class Ent : Summon {
         isTree = state;
     }
     public void SubscribeToAwakenEntEvent(TreeObject p_tree) {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{p_tree.nameWithID} subscribed to {name} ({id.ToString()})({persistentID}) Awaken Event");
+#endif
         _awakenEntEvent += p_tree.TryAwakenEnt;
     }
     public void UnsubscribeToAwakenEntEvent(TreeObject p_tree) {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{p_tree.nameWithID} unsubscribed from {name} ({id.ToString()})({persistentID}) Awaken Event");
+#endif
         _awakenEntEvent -= p_tree.TryAwakenEnt;
     }
     private void ExecuteAwakenEntEvent() {
         _awakenEntEvent?.Invoke(this);
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]

@@ -21,7 +21,9 @@ namespace Plague.Death_Effect {
                     VarietyZombie(p_character);
                     break;
             }
+#if DEBUG_LOG
             Debug.Log("Activated Zombie Effect");
+#endif
         }
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {

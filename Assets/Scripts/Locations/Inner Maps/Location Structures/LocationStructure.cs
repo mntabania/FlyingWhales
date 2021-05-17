@@ -898,7 +898,9 @@ namespace Inner_Maps.Location_Structures {
         }
         public void OnlyAddPOIToList(IPointOfInterest p_poi) {
             if (!pointsOfInterest.Contains(p_poi)) {
+#if DEBUG_LOG
                 Debug.Log($"Added {p_poi.name} to {name}");
+#endif
                 pointsOfInterest.Add(p_poi);
                 if (p_poi is TileObject tileObject) {
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
@@ -911,7 +913,9 @@ namespace Inner_Maps.Location_Structures {
         }
         public void OnlyRemovePOIFromList(IPointOfInterest p_poi) {
             if (pointsOfInterest.Remove(p_poi)) {
+#if DEBUG_LOG
                 Debug.Log($"Removed {p_poi.name} from {name}");
+#endif
                 if (p_poi is TileObject tileObject) {
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
                         groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
@@ -1113,9 +1117,9 @@ namespace Inner_Maps.Location_Structures {
         //         }
         //     }
         // }
-        #endregion
+#endregion
 
-        #region Tiles
+#region Tiles
         protected virtual void OnTileAddedToStructure(LocationGridTile tile) {
             if (structureType != STRUCTURE_TYPE.WILDERNESS) {
                 tile.area.structureComponent.AddStructureInArea(this);    
@@ -1233,25 +1237,29 @@ namespace Inner_Maps.Location_Structures {
         private void RemoveOccupiedArea(Area p_area) {
             occupiedAreas.Remove(p_area);
         }
-        #endregion
+#endregion
 
-        #region Structure Objects
+#region Structure Objects
         public void SetOccupiedArea(Area p_area) {
             occupiedArea = p_area;
+#if DEBUG_LOG
             Debug.Log($"Set Occupied area of {name} to {occupiedArea}");
+#endif
         }
         private void OnClickStructure() {
             Selector.Instance.Select(this);
         }
-        #endregion
+#endregion
 
-        #region Destroy
+#region Destroy
         protected virtual void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             if (hasBeenDestroyed) {
                 return;
             }
             hasBeenDestroyed = true;
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
+#endif
 
             //transfer tiles to either the wilderness or work npcSettlement
             List<LocationGridTile> tilesInStructure = RuinarchListPool<LocationGridTile>.Claim();
@@ -1338,9 +1346,9 @@ namespace Inner_Maps.Location_Structures {
             }
             eventDispatcher.ExecuteStructureDestroyed(this);
         }
-        #endregion
+#endregion
 
-        #region Player Action Target
+#region Player Action Target
         public List<PLAYER_SKILL_TYPE> actions { get; private set; }
 
         public virtual void ConstructDefaultActions() {
@@ -1360,9 +1368,9 @@ namespace Inner_Maps.Location_Structures {
         public void ClearPlayerActions() {
             actions.Clear();
         }
-        #endregion
+#endregion
         
-        #region Selectable
+#region Selectable
         public bool IsCurrentlySelected() {
             return UIManager.Instance.structureInfoUI.isShowing 
                    && UIManager.Instance.structureInfoUI.activeStructure == this;
@@ -1386,9 +1394,9 @@ namespace Inner_Maps.Location_Structures {
         public bool CanBeSelected() {
             return true;
         }
-        #endregion
+#endregion
 
-        #region HP
+#region HP
         public void AddObjectAsDamageContributor(IDamageable damageable) {
             objectsThatContributeToDamage.Add(damageable);
             if(damageable is TileObject to) {
@@ -1436,9 +1444,9 @@ namespace Inner_Maps.Location_Structures {
         public void ResetHP() {
             currentHP = maxHP;
         }
-        #endregion
+#endregion
 
-        #region Residents
+#region Residents
         public bool AddResident(Character character) {
             if (!residents.Contains(character)) { //residents.Count < maxResidentCapacity && 
                 residents.Add(character);
@@ -1557,9 +1565,9 @@ namespace Inner_Maps.Location_Structures {
             }
             return count;
         }
-        #endregion
+#endregion
 
-        #region Rooms
+#region Rooms
         public void CreateRoomsBasedOnStructureObject(LocationStructureObject structureObject) {
             if (structureObject.roomTemplates == null || structureObject.roomTemplates.Length == 0) { return; }
             rooms = new StructureRoom[structureObject.roomTemplates.Length];
@@ -1585,25 +1593,25 @@ namespace Inner_Maps.Location_Structures {
             room = null;
             return false;
         }
-        #endregion
+#endregion
 
-        #region IPartyTargetDestination
+#region IPartyTargetDestination
         public virtual bool IsAtTargetDestination(Character character) {
             return character.currentStructure == this;
         }
-        #endregion
+#endregion
 
-        #region Building
+#region Building
         public void OnBuiltNewStructureFromBlueprint() {
             if (settlementLocation is NPCSettlement settlement) {
                 settlement.OnStructureBuilt(this);
             }
         }
-        #endregion
+#endregion
 
         public virtual void OnCharacterUnSeizedHere(Character character) { }
 
-        #region Testing
+#region Testing
         public virtual string GetTestingInfo() {
             string summary = $"{name} Info:";
             summary += "\nDamage Contributing Objects:";
@@ -1613,18 +1621,18 @@ namespace Inner_Maps.Location_Structures {
             }
             return summary;
         }
-        #endregion
+#endregion
         
-        #region IStoredTarget
+#region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return !hasBeenDestroyed;
         }
         public void SetAsStoredTarget(bool p_state) {
             isStoredAsTarget = p_state;
         }
-        #endregion
+#endregion
 
-        #region IBookmarkable
+#region IBookmarkable
         public void OnSelectBookmark() {
             LeftSelectAction();
         }
@@ -1637,6 +1645,6 @@ namespace Inner_Maps.Location_Structures {
         public void OnHoverOutBookmarkItem() {
             UIManager.Instance.HideStructureNameplateTooltip();
         }
-        #endregion
+#endregion
     }
 }

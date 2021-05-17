@@ -21,7 +21,9 @@ namespace Plague.Death_Effect {
                     Meteor(p_character);
                     break;
             }
+#if DEBUG_LOG
             Debug.Log("Activated Explosion Death Effect");
+#endif
         }
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {

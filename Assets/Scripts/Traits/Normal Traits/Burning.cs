@@ -232,7 +232,9 @@ namespace Traits {
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger
                 return;
             }
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Burning - Tick Ended Part 1");
+#endif
             owner.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true, isPlayerSource: isPlayerSource);
 
             //Sleeping characters in bed should also receive damage
@@ -247,12 +249,16 @@ namespace Traits {
                     }
                 }
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
 
             if (Random.Range(0, 100) >= 2) {
                 return;
             }
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Burning - Tick Ended Part 2");
+#endif
             _burningSpreadChoices.Clear();
             if (ShouldSpreadFire()) {
                 LocationGridTile origin = owner.gridTileLocation;
@@ -277,12 +283,14 @@ namespace Traits {
                 }
                 RuinarchListPool<LocationGridTile>.Release(affectedTiles);
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
 
         }
-        #endregion
+#endregion
 
-        #region Douser
+#region Douser
         public void SetDouser(Character character) {
             douser = character;
             if (douser == null) {
@@ -296,9 +304,9 @@ namespace Traits {
                 SetDouser(null); 
             }
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         public void CharacterBurningProcess(Character character) {
             if (character.isDead) {
                 //Should not process if character is dead
@@ -316,9 +324,9 @@ namespace Traits {
         private bool ShouldSpreadFire() {
             return owner is IPointOfInterest && owner.gridTileLocation != null; //only spread fire of this is owned by a POI
         }
-        #endregion
+#endregion
 
-        #region IElementalTrait
+#region IElementalTrait
         public void SetIsPlayerSource(bool p_state) {
             if (isPlayerSource != p_state) {
                 isPlayerSource = p_state;
@@ -331,7 +339,7 @@ namespace Traits {
                 }
             }
         }
-        #endregion
+#endregion
 
     }
 }

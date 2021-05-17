@@ -77,10 +77,12 @@ public class FireBall : MovingTileObject {
             //object has been destroyed
             _fireBallMapVisual.Expire();
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
 
-    #region Moving Tile Object
+#region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_fireBallMapVisual != null) {
             if (_fireBallMapVisual.isSpawned) {
@@ -91,7 +93,7 @@ public class FireBall : MovingTileObject {
         tile = null;
         return false;
     }
-    #endregion
+#endregion
 }
 #region Save Data
 public class SaveDataFireBall : SaveDataMovingTileObject {

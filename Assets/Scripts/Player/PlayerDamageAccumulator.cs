@@ -36,7 +36,9 @@ public class PlayerDamageAccumulator {
             accumulatedDamage -= subtractFromAccumulatedDamage;
             
             if(numOfChaosOrbs > 0) {
+#if DEBUG_LOG
                 Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnPlayerDamageDone] - [" + numOfChaosOrbs + "]");
+#endif
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_expelChaosOrbsOn.centeredWorldLocation, numOfChaosOrbs, p_expelChaosOrbsOn.parentMap);
             }
         }

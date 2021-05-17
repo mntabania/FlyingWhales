@@ -178,9 +178,11 @@ public class ShareInformation : GoapAction {
         }
 
         if (actor != recipient) {
+#if DEBUG_LOG
             string weightLog = "Share Information of " + sharer.name + " to " + recipient.name + ": " + reactable.name + " with actor " + actor.name + " and target " + target.name;
             weightLog += "\nBase Belief Weight: 50";
             weightLog += "\nBase Disbelief Weight: 50";
+#endif
 
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             int beliefWeight = 50;
@@ -194,58 +196,86 @@ public class ShareInformation : GoapAction {
 
             if ((reactable is Rumor || reactable is Assumption) && recipient.traitContainer.HasTrait("Suspicious")) {
                 disbeliefWeight += 2000;
+#if DEBUG_LOG
                 weightLog += "\nRecipient is Suspicious: Disbelief + 2000";
+#endif
             } else if (reactable is ActualGoapNode || reactable is InterruptHolder) {
                 beliefWeight += 100;
+#if DEBUG_LOG
                 weightLog += "\nIf information is a real Action or Interrupt: Believe Weight +100";
+#endif
             }
             if (opinionLabelOfRecipientToSharer == RelationshipManager.Friend) {
                 beliefWeight += 100;
+#if DEBUG_LOG
                 weightLog += "\nSource is Friend: Belief + 100";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Close_Friend) {
                 beliefWeight += 250;
+#if DEBUG_LOG
                 weightLog += "\nSource is Close Friend: Belief + 250";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Enemy) {
                 disbeliefWeight += 100;
+#if DEBUG_LOG
                 weightLog += "\nSource is Enemy: Disbelief + 100";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Rival) {
                 disbeliefWeight += 250;
+#if DEBUG_LOG
                 weightLog += "\nSource is Rival: Disbelief + 250";
+#endif
             }
 
             REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(recipient);
             if (reactableEffect == REACTABLE_EFFECT.Positive) {
                 if (opinionLabelOfRecipientToActor == RelationshipManager.Friend || opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
                     beliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nActor is Friend/Close Friend: Belief + 500";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy) {
                     disbeliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nSource is Enemy: Disbelief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
                     disbeliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nSource is Rival: Disbelief + 500";
+#endif
                 }
             } else if (reactableEffect == REACTABLE_EFFECT.Negative) {
                 if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy || opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
                     beliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nActor is Enemy/Rival: Belief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Friend) {
                     disbeliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nSource is Friend: Disbelief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
                     disbeliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nSource is Close Friend: Disbelief + 500";
+#endif
                 }
             }
+#if DEBUG_LOG
             weightLog += "\nTotal Belief Weight: " + beliefWeight;
             weightLog += "\nTotal Disbelief Weight: " + disbeliefWeight;
+#endif
 
             weights.AddElement("Belief", beliefWeight);
             weights.AddElement("Disbelief", disbeliefWeight);
 
             string result = weights.PickRandomElementGivenWeights();
+#if DEBUG_LOG
             weightLog += "\nResult: " + result;
             sharer.logComponent.PrintLogIfActive(weightLog);
+#endif
 
             if (result == "Belief") {
                 //Recipient believes
@@ -264,9 +294,9 @@ public class ShareInformation : GoapAction {
             believeLog.AddLogToDatabase(true);
         }
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -275,5 +305,5 @@ public class ShareInformation : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

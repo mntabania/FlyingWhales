@@ -13,7 +13,9 @@ public class VampireBehaviour : CharacterBehaviourComponent {
     }
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n-{character.name} is a vampire";
+#endif
         if ((character.moodComponent.moodState == MOOD_STATE.Bad || character.moodComponent.moodState == MOOD_STATE.Critical) && character.traitContainer.HasTrait("Hemophobic")) {
             return character.jobComponent.TriggerSuicideJob(out producedJob, "Hemophobic Vampire");
         }
@@ -26,32 +28,48 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
 
         if (character.characterClass.className == "Vampire Lord") {
+#if DEBUG_LOG
             log += $"\n-{character.name} is a Vampire Lord";
+#endif
             if (character.homeStructure == null || character.homeStructure.structureType != STRUCTURE_TYPE.VAMPIRE_CASTLE) {
+#if DEBUG_LOG
                 log += $"\n-{character.name} does not have a home structure or does not live at a vampire castle";
+#endif
                 var structureSetting = new StructureSetting(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE); //character.faction.factionType.mainResource
                 if (character.homeSettlement != null) {
+#if DEBUG_LOG
                     log += $"\n-{character.name} has a home settlement {character.homeSettlement.name}";
+#endif
                     LocationStructure unoccupiedCastle = character.homeSettlement.GetFirstUnoccupiedStructureOfType(STRUCTURE_TYPE.VAMPIRE_CASTLE);
                     if (unoccupiedCastle != null) {
+#if DEBUG_LOG
                         log += $"\n-{character.homeSettlement.name} has an unoccupied vampire castle {unoccupiedCastle.name}. Setting home to that.";
+#endif
                         //Transfer home
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().tileObjectComponent.genericTileObject);
                         producedJob = null;
                         return true;
-                    } else if (GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
+                    } else if (GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants) { //15
+#if DEBUG_LOG
                         log += $"\n-{character.homeSettlement.name} does not have an unoccupied vampire castle, and successfully rolled to build a new one";
+#endif
                         //Build vampire castle
                         if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureSetting, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
+#if DEBUG_LOG
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
+#endif
                             return character.jobComponent.TriggerBuildVampireCastle(targetTile, out producedJob, structurePrefabName);    
                         }    
                     }
                 } else {
+#if DEBUG_LOG
                     log += $"\n-{character.name} does not have a home settlement. Will try to find unoccupied vampire castles in the wild.";
+#endif
                     LocationStructure unoccupiedCastle = GetFirstNonSettlementVampireCastles(character);
                     if (unoccupiedCastle != null) {
+#if DEBUG_LOG
                         log += $"\n-Found unoccupied castle {unoccupiedCastle.name}";
+#endif
                         //Transfer home
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().tileObjectComponent.genericTileObject);
                         producedJob = null;
@@ -59,7 +77,9 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                     } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
                         Area targetArea = GetNoStructurePlainAreaInAllRegions();
                         if (targetArea != null) {
+#if DEBUG_LOG
                             log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetArea}";
+#endif
                             //Build vampire castle
                             List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
@@ -67,20 +87,26 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                                 return character.jobComponent.TriggerBuildVampireCastle(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);    
                             }
                         } else {
+#if DEBUG_LOG
                             log += $"\n-Could not find valid Area in wild to build a vampire castle.";
+#endif
                         }
                     }
                 }
             }
 
             if (character.homeStructure != null) {
+#if DEBUG_LOG
                 log += $"\n-{character.name} has a home. Will check if it has a prisoner there.";
+#endif
                 bool hasPrisonerAtHome = false;
                 for (int i = 0; i < character.homeStructure.charactersHere.Count; i++) {
                     Character otherCharacter = character.homeStructure.charactersHere[i];
                     Prisoner prisoner = otherCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
                     if (otherCharacter != character && prisoner != null && !otherCharacter.isDead) {
+#if DEBUG_LOG
                         log += $"\n-{character.name} found a prisoner at home: {otherCharacter.name}. Will not create Imprison blood source.";
+#endif
                         hasPrisonerAtHome = true;
                         break;
                     }
@@ -99,18 +125,30 @@ public class VampireBehaviour : CharacterBehaviourComponent {
             if (!vampire.hasAlreadyBecomeVampireLord) {
                 if (PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 2) {
                     if (character.characterClass.className == "Necromancer") {
+#if DEBUG_LOG
                         log += $"\n-{character.name} is not yet a vampire lord. But is a necromancer, not becoming a Vampire Lord.";
+#endif
                     } else if (character.characterClass.className == "Werewolf") {
+#if DEBUG_LOG
                         log += $"\n-{character.name} is not yet a vampire lord. But is currently a Werewolf, not becoming a Vampire Lord.";
+#endif
                     } else if (character.traitContainer.HasTrait("Enslaved")) {
+#if DEBUG_LOG
                         log += $"\n-{character.name} is Enslaved, not becoming a Vampire Lord.";
+#endif
                     } else {
+#if DEBUG_LOG
                         log += $"\n-{character.name} is not yet a vampire lord. Rolling for chance to check converted villagers.";
+#endif
                         if (ChanceData.RollChance(CHANCE_TYPE.Vampire_Lord_Chance, ref log)) { //10
+#if DEBUG_LOG
                             log += $"\n-{character.name} converted villagers are {vampire.numOfConvertedVillagers.ToString()}.";
+#endif
                             if (vampire.numOfConvertedVillagers >= 3) {
                                 //Become vampire lord
+#if DEBUG_LOG
                                 log += $"\n-{character.name} will become a vampire lord.";
+#endif
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Vampire_Lord, character);
                                 producedJob = null;
                                 return true;
@@ -122,13 +160,19 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
 
         if (character.needsComponent.isSulking) {
+#if DEBUG_LOG
             log += $"\n-{character.name} is sulking. Rolling for chance to vampiric embrace.";
+#endif
             if (GameUtilities.RollChance(3, ref log)) { //3
                 WeightedDictionary<Character> embraceWeights = GetVampiricEmbraceTargetWeights(character);
+#if DEBUG_LOG
                 log += $"\n-{embraceWeights.GetWeightsSummary("Vampiric Embrace weights:")}.";
+#endif
                 if (embraceWeights.GetTotalOfWeights() > 0) {
                     Character chosenEmbraceTarget = embraceWeights.PickRandomElementGivenWeights();
+#if DEBUG_LOG
                     log += $"\n-Chosen target is {chosenEmbraceTarget.name}";
+#endif
                     return character.jobComponent.CreateVampiricEmbraceJob(JOB_TYPE.VAMPIRIC_EMBRACE, chosenEmbraceTarget, out producedJob);
                 }
             }

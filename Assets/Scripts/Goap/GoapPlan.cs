@@ -108,7 +108,9 @@ public class GoapPlan {
             currentNode = allNodes[nextNodeIndex];
             currentNodeIndex = nextNodeIndex;
         } else {
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()} current node of Plan was set to null {GetPlanSummary()}");
+#endif
             currentNode = null;
         }
     }
@@ -234,7 +236,7 @@ public class GoapPlan {
         return summary;
     }
 
-    #region Object Pool
+#region Object Pool
     public void Reset() {
         for (int i = 0; i < allNodes.Count; i++) {
             JobNode jn = allNodes[i];
@@ -255,7 +257,7 @@ public class GoapPlan {
         isBeingRecalculated = false;
         doNotRecalculate = false;
     }
-    #endregion
+#endregion
     //public void OnActionInPlanFinished(Character actor, GoapAction action, string result) {
     //    if (endNode == null || action == endNode.action) {
     //        if (result == InteractionManager.Goap_State_Success) {

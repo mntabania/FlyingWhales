@@ -15,17 +15,23 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         bool hasJob = false;
+#if DEBUG_LOG
         log += $"\n-Character is defending";
+#endif
         Party party = character.partyComponent.currentParty;
         if (party.isActive && party.partyState == PARTY_STATE.Working) {
+#if DEBUG_LOG
             log += $"\n-Party is working";
+#endif
             DemonDefendPartyQuest quest = party.currentQuest as DemonDefendPartyQuest;
             LocationStructure targetStructure = quest.targetStructure;
             Area targetArea = quest.targetArea;
 
             Character memberInCombat = party.GetMemberInCombatExcept(character);
              if (memberInCombat != null) {
+#if DEBUG_LOG
                 log += $"\n-{memberInCombat.name} is in combat, will try to combat also";
+#endif
                 bool hasFought = false;
                 CombatState combatState = memberInCombat.stateComponent.currentState as CombatState;
                 if (combatState.currentClosestHostile != null) {
@@ -64,20 +70,28 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
                     quest.SetIsSuccessful(true);
                     Character target = GetFirstHostileIntruderOf(character, targetStructure);
                     if (target != null) {
+#if DEBUG_LOG
                         log += $"\n-Chosen target is {target.name}";
+#endif
                         character.combatComponent.Fight(target, CombatManager.Hostility);
                     } else {
+#if DEBUG_LOG
                         log += $"\n-Roam around";
+#endif
                         hasJob = character.jobComponent.TriggerRoamAroundTile(out producedJob);
                     }
                 }
             } else if (targetArea != null) {
                 Character target = GetFirstHostileIntruderOf(character, targetArea);
                 if (target != null) {
+#if DEBUG_LOG
                     log += $"\n-Chosen target is {target.name}";
+#endif
                     character.combatComponent.Fight(target, CombatManager.Hostility);
                 } else {
+#if DEBUG_LOG
                     log += $"\n-Roam around";
+#endif
                     hasJob = character.jobComponent.TriggerRoamAroundTile(out producedJob);
                 }
             }

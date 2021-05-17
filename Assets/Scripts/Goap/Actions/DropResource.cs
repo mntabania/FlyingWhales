@@ -58,8 +58,10 @@ public class DropResource : GoapAction {
         SetState("Drop Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -77,18 +79,18 @@ public class DropResource : GoapAction {
         Character actor = node.actor;
         actor.UncarryPOI();
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasTakenEnoughAmount(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is ResourcePile) {
             return true;
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -100,9 +102,9 @@ public class DropResource : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreDropSuccess(ActualGoapNode goapNode) {
         //int givenFood = goapNode.actor.food;
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -128,5 +130,5 @@ public class DropResource : GoapAction {
         //    foodPile.AdjustFoodInPile(givenFood);
         //}
     }
-    #endregion
+#endregion
 }

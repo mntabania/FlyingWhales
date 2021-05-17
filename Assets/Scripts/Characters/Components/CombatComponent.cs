@@ -85,23 +85,35 @@ public class CombatComponent : CharacterComponent {
     //    SetOnProcessCombatAction(null);
     //}
     private void ProcessCombatBehavior() {
+#if DEBUG_LOG
         string log = $"{owner.name} process combat switch is turned on, processing combat...";
+#endif
         if (owner.interruptComponent.isInterrupted) {
+#if DEBUG_LOG
             log +=
                 $"\n-Character is interrupted: {owner.interruptComponent.currentInterrupt.name}, will not process combat";
+#endif
         } else {
             if (owner.combatComponent.isInCombat) {
+#if DEBUG_LOG
                 log += "\n-Character is already in combat, determining combat action to do";
+#endif
                 Messenger.Broadcast(CharacterSignals.DETERMINE_COMBAT_REACTION, owner);
             } else {
+#if DEBUG_LOG
                 log += "\n-Character is not in combat, will add Combat job if there is a hostile or avoid in range";
+#endif
                 if (hostilesInRange.Count > 0 || avoidInRange.Count > 0) {
                     if (!owner.jobQueue.HasJob(JOB_TYPE.COMBAT)) {
+#if DEBUG_LOG
                         log += "\n-No existing combat job, Combat job added";
+#endif
                         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
                         owner.jobQueue.AddJobInQueue(job);
                     } else {
+#if DEBUG_LOG
                         log += "\n-Has existing combat job, no combat job added";
+#endif
                     }
                 }
                 //Removed this because this part will not be called because we are checking here if owner.combatComponent.isInCombat and we are already in the else condition of owner.combatComponent.isInCombat from the code above
@@ -116,7 +128,9 @@ public class CombatComponent : CharacterComponent {
             }
             //avoidReason = string.Empty;
         }
+#if DEBUG_LOG
         owner.logComponent.PrintLogIfActive(log);
+#endif
         //execute any external combat actions. This assumes that this character entered combat state.
 
         //NOTE: Commented this out temporarily because we no longer immediately switch the state of the character to combat, instead we create a job and add it to its job queue
@@ -216,201 +230,291 @@ public class CombatComponent : CharacterComponent {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Fight or Flight
+#region Fight or Flight
     public CombatReaction GetFightOrFlightReaction(IPointOfInterest target, string fightReason) {
+#if DEBUG_LOG
         string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
+#endif
         //return new CombatReaction(COMBAT_REACTION.Flight);
 
         if (!owner.limiterComponent.canPerform || !owner.limiterComponent.canMove) {
+#if DEBUG_LOG
             debugLog += "\n-Character cannot move/perform, will not fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
             return new CombatReaction(COMBAT_REACTION.None);
         }
         if (IsHostileInRange(target) || IsAvoidInRange(target)) {
+#if DEBUG_LOG
             debugLog += "\n-Target is already in hostile/avoid list, will no longer trigger fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
             return new CombatReaction(COMBAT_REACTION.None);
         }
         if (owner.behaviourComponent.HasBehaviour(typeof(DisablerBehaviour))) {
+#if DEBUG_LOG
             debugLog += "\n-Character is a Disabler";
             debugLog += "\n-FLIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
         if (owner.traitContainer.HasTrait("Enslaved") && owner.isNormalCharacter && target is Character targetChar && targetChar.isNormalCharacter) {
+#if DEBUG_LOG
             debugLog += "\n-Character is a villager slave and target is a villager";
             debugLog += "\n-FLIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
         if (target is Character) {
             if (owner.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Glass_Cannon) 
                 || owner.combatComponent.combatBehaviourParent.IsCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR.Healer)) {
+#if DEBUG_LOG
                 debugLog += "\n-Owner is glass cannon/healer and is part of an active party";
+#endif
                 if (owner.partyComponent.HasReachablePartymateToFleeTo()) {
                     if (!owner.partyComponent.HasPartymateInVision()) {
+#if DEBUG_LOG
                         debugLog += "\n-Owner has no party member in vision, will flee";
                         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                         return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Vulnerable);
                     } else {
+#if DEBUG_LOG
                         debugLog += "\n-Owner has party member in vision";
+#endif
                     }
                 }
             }
         }
         if (owner.traitContainer.HasTrait("Berserked") || owner is Summon || owner.characterClass.IsZombie() || owner.race == RACE.DEMON) {
+#if DEBUG_LOG
             debugLog += "\n-Character is berserked/monster/zombie/demon";
             debugLog += "\n-FIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
             return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
         } else if (owner.race == RACE.RATMAN && owner.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+#if DEBUG_LOG
             debugLog += "\n-Character is Ratman and in a Ratmen faction";
+#endif
             BaseSettlement settlement = null;
             if(owner.gridTileLocation != null && owner.gridTileLocation.IsPartOfSettlement(out settlement) && settlement.owner != null && settlement.owner != owner.faction) {
+#if DEBUG_LOG
                 debugLog += "\n-Character is inside an occupied Settlement owned by a different faction, Flight";
                 debugLog += "\n-FLIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                 return new CombatReaction(COMBAT_REACTION.Flight);
             } else {
+#if DEBUG_LOG
                 debugLog += "\n-FIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                 return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
             }
         } else if (owner.traitContainer.HasTrait("Drunk")) {
+#if DEBUG_LOG
             debugLog += "\n-Character is drunk, 50% chance to Fight";
+#endif
             if (GameUtilities.RollChance(50)) {
+#if DEBUG_LOG
                 debugLog += "\n-FIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                 return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
             } else {
+#if DEBUG_LOG
                 debugLog += "\n-FLIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                 return new CombatReaction(COMBAT_REACTION.Flight);
             }
         } else if (target is TileObject targetTileObject) {
+#if DEBUG_LOG
             debugLog += "\n-Target is object";
+#endif
             if (owner.traitContainer.HasTrait("Coward")) {
+#if DEBUG_LOG
                 debugLog += "\n-Character is coward";
                 debugLog += "\n-FLIGHT";
+#endif
                 Coward coward = owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
                 if (!coward.TryActivatePassOut(owner)) {
+#if DEBUG_LOG
                     owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                     return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Coward);
                 }
+#if DEBUG_LOG
                 debugLog += "\n-Coward character passed out instead";
                 owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                 return default;
             } else if (targetTileObject.traitContainer.HasTrait("Dangerous")) {
+#if DEBUG_LOG
                 debugLog += "\n-Object is dangerous";
+#endif
                 if (string.IsNullOrEmpty(targetTileObject.neutralizer) == false &&
                     owner.traitContainer.HasTrait(targetTileObject.neutralizer)) {
+#if DEBUG_LOG
                     debugLog += $"\n-Character has neutralizer trait {targetTileObject.neutralizer}";
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                     return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 } else {
+#if DEBUG_LOG
                     debugLog += "\n-FLIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                     return new CombatReaction(COMBAT_REACTION.Flight);
                 }
             } else {
+#if DEBUG_LOG
                 debugLog += "\n-FIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                 return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
             }
         } else if (target is Character targetCharacter) {
+#if DEBUG_LOG
             debugLog += "\n-Target is character";
+#endif
             bool isOwnerCombatant = owner.characterClass.IsCombatant() || owner.characterClass.className == "Noble";
             if (!isOwnerCombatant) {
+#if DEBUG_LOG
                 debugLog += "\n-Character is non-combatant";
+#endif
                 if (owner.traitContainer.HasTrait("Coward")) {
+#if DEBUG_LOG
                     debugLog += "\n-Character is coward";
                     debugLog += "\n-FLIGHT";
+#endif
                     Coward coward = owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
                     if (!coward.TryActivatePassOut(owner)) {
+#if DEBUG_LOG
                         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                         return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Coward);
                     }
+#if DEBUG_LOG
                     debugLog += "\n-Coward character passed out instead";
                     owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                     return default;
                 } else {
                     bool isTargetCombatant = targetCharacter.characterClass.IsCombatant() || targetCharacter.characterClass.className == "Noble";
                     if (!isTargetCombatant) {
+#if DEBUG_LOG
                         debugLog += "\n-Target is non-combatant";
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                         return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                     } else if (HasCharacterInVisionWithSameHostile(targetCharacter) && owner.IsInHomeSettlement()) {
+#if DEBUG_LOG
                         debugLog += "\n-Character has someone in vision with the same hostile target and Character is in home settlement";
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                         return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                     } else if (targetCharacter.characterClass.className == "Noble") {
+#if DEBUG_LOG
                         debugLog += "\n-Target is Noble";
                         debugLog += "\n-FLIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                         return new CombatReaction(COMBAT_REACTION.Flight);
                     } else {
+#if DEBUG_LOG
                         debugLog += "\n-95% chance to Flight";
+#endif
                         if (GameUtilities.RollChance(95)) {
+#if DEBUG_LOG
                             debugLog += "\n-FLIGHT";
                             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                             return new CombatReaction(COMBAT_REACTION.Flight);
                         } else {
+#if DEBUG_LOG
                             debugLog += "\n-FIGHT";
                             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                             return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                         }
                     }
                 }
             } else {
+#if DEBUG_LOG
                 debugLog += "\n-Character is combatant";
+#endif
                 if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
+#if DEBUG_LOG
                     debugLog += "\n-Target is immune to character elemental damage";
+#endif
                     if (HasCharacterInVisionWithSameHostile(targetCharacter)) {
+#if DEBUG_LOG
                         debugLog += "\n-Character has someone in vision with the same hostile target";
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                         return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                     } else {
+#if DEBUG_LOG
                         debugLog += "\n-FLIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                         return new CombatReaction(COMBAT_REACTION.Flight);
                     }
                 } else if (owner.traitContainer.HasTrait("Coward", "Vampire") && owner.currentHP <= Mathf.CeilToInt(owner.maxHP * 0.2f)) {
+#if DEBUG_LOG
                     debugLog += "\n-Character is coward/vampire bat and and HP is 20% or less of Max HP";
+#endif
                     Coward coward = owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
                     if(coward != null) {
                         if (!coward.TryActivatePassOut(owner)) {
+#if DEBUG_LOG
                             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                             return new CombatReaction(COMBAT_REACTION.Flight, CombatManager.Coward);
                         }
+#if DEBUG_LOG
                         debugLog += "\n-Coward character passed out instead";
                         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                         return default;
                     }
                     Vampire vampire = owner.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                     if (vampire != null) {
                         if (vampire.CanTransformIntoBat()) {
+#if DEBUG_LOG
                             debugLog += "\n-Character can transform into a bat, flee";
                             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                             return new CombatReaction(COMBAT_REACTION.Flight, "can escape as a vampire bat");
                         }
                     }
+#if DEBUG_LOG
                     debugLog += "\n-Character is a coward/vampire but cannot flee, fight instead";
                     owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                     return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 } else {
+#if DEBUG_LOG
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
+#endif
                     return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 }
             }
         }
+#if DEBUG_LOG
         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
         return new CombatReaction(COMBAT_REACTION.None);
     }
     public void FightOrFlight(IPointOfInterest target, CombatReaction combatReaction, 
@@ -419,7 +523,9 @@ public class CombatComponent : CharacterComponent {
             Fight(target, combatReaction.reason, connectedAction, isLethal);
         } else if (combatReaction.reaction == COMBAT_REACTION.Flight) {
             if (owner.movementComponent.isStationary) {
+#if DEBUG_LOG
                 owner.logComponent.PrintLogIfActive($"Supposed to FLIGHT for {owner.name} against {target.nameWithID} but character is STATIONARY, fight insted");
+#endif
                 Fight(target, combatReaction.reason, connectedAction, isLethal);
             } else {
                 Flight(target, combatReaction.reason);
@@ -433,7 +539,9 @@ public class CombatComponent : CharacterComponent {
         }
     }
     public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
+#if DEBUG_LOG
         string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
+#endif
         bool hasFought = false;
         bool cannotFight = (reason == CombatManager.Hostility && target is Character targetCharacter && bannedFromHostileList.Contains(targetCharacter)) || !owner.limiterComponent.canPerform;
         if (!cannotFight) {
@@ -459,20 +567,30 @@ public class CombatComponent : CharacterComponent {
                     targetTileObject.AdjustRepairCounter(1);
                 }
                 target.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
+#if DEBUG_LOG
                 debugLog += $"\n{target.name} was added to {owner.name}'s hostile range!";
+#endif
                 hasFought = true;
             } else {
+#if DEBUG_LOG
                 debugLog += $"\n{target.name} is already in {owner.name}'s hostile range!";
+#endif
             }
         } else {
+#if DEBUG_LOG
             debugLog += $"\n{owner.name} cannot fight!";
+#endif
         }
+#if DEBUG_LOG
         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
         return hasFought;
     }
     public bool Flight(IPointOfInterest target, string reason = "") {
         if (owner.movementComponent.isStationary) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"Triggered FLIGHT response for {owner.name} against {target.nameWithID} but character is STATIONARY, cannot flee");
+#endif
             return false;
         }
         bool hasFled = false;
@@ -489,7 +607,9 @@ public class CombatComponent : CharacterComponent {
                 //}
             }
         }
+#if DEBUG_LOG
         string debugLog = $"Triggered FLIGHT response for {owner.name} against {target.nameWithID}";
+#endif
         if (owner.limiterComponent.canMove) {
             if (!IsAvoidInRange(target)) {
                 if (owner.marker.IsPOIInVision(target)) {
@@ -503,8 +623,9 @@ public class CombatComponent : CharacterComponent {
                         newCombatData.SetFlightData(reason);
                         combatDataDictionary.Add(target, newCombatData);
                     }
-
+#if DEBUG_LOG
                     debugLog += $"\n{target.name} was added to {owner.name}'s avoid range!";
+#endif
                     hasFled = true;
                     if (target is Character) {
                         Character targetCharacter = target as Character;
@@ -514,10 +635,14 @@ public class CombatComponent : CharacterComponent {
                     }
                 }
             } else {
+#if DEBUG_LOG
                 debugLog += $"\n{target.name} is already {owner.name}'s avoid range!";
+#endif
             }
         } else {
+#if DEBUG_LOG
             debugLog += $"\n{owner.name} cannot move!";
+#endif
             if (target is Character) {
                 Character targetCharacter = target as Character;
                 if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
@@ -525,12 +650,16 @@ public class CombatComponent : CharacterComponent {
                 }
             }
         }
+#if DEBUG_LOG
         owner.logComponent.PrintLogIfActive(debugLog);
+#endif
         return hasFled;
     }
     public void FlightAll(string reason = "") {
         if (owner.movementComponent.isStationary) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"Triggered FLIGHT ALL response for {owner.name} but character is STATIONARY, cannot flee");
+#endif
             return;
         }
         //Demons no longer trigger Flight
@@ -538,7 +667,9 @@ public class CombatComponent : CharacterComponent {
         if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
             return;
         }
+#if DEBUG_LOG
         string debugLog = $"Triggered FLIGHT ALL response for {owner.name}";
+#endif
         if (hostilesInRange.Count > 0) {
             if (owner.limiterComponent.canMove) {
                 for (int i = 0; i < hostilesInRange.Count; i++) {
@@ -578,9 +709,9 @@ public class CombatComponent : CharacterComponent {
             //avoidReason = reason;
         }
     }
-    #endregion
+#endregion
 
-    #region Hostiles
+#region Hostiles
     //private bool AddHostileInRange(IPointOfInterest poi, bool processCombatBehaviour = true, bool isLethal = true) {
     //    //Not yet applicable
     //    //if (!IsHostileInRange(poi)) {
@@ -600,7 +731,9 @@ public class CombatComponent : CharacterComponent {
             } else if (poi is Character targetCharacter) {
                 AddPOIToBannedFromHostile(targetCharacter);
             }
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"{poi.name} was removed from {owner.name}'s hostile range.");
+#endif
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior) {
                 if (owner.combatComponent.isInCombat) {
@@ -826,9 +959,9 @@ public class CombatComponent : CharacterComponent {
     public bool IsHostileInRange(IPointOfInterest p_poi) {
         return hostilesInRange.Contains(p_poi);
     }
-    #endregion
+#endregion
 
-    #region Avoid
+#region Avoid
     private bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
         if (owner.limiterComponent.canMove) {
         //if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
@@ -845,7 +978,9 @@ public class CombatComponent : CharacterComponent {
         if (avoidInRange.Remove(poi)) {
             if (processCombatBehavior) {
                 SetWillProcessCombat(true);
+#if DEBUG_LOG
                 owner.logComponent.PrintLogIfActive($"{poi.name} was removed from {owner.name}'s avoid range!");
+#endif
                 //if (owner.combatComponent.isInCombat) {
                 //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
                 //}
@@ -887,7 +1022,9 @@ public class CombatComponent : CharacterComponent {
     public void ClearAvoidInRange(bool processCombatBehavior = true) {
         if (avoidInRange.Count > 0) {
             avoidInRange.Clear();
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"{owner.name} cleared avoid range!");
+#endif
             if (processCombatBehavior) {
                 SetWillProcessCombat(true);
                 //if (owner.combatComponent.isInCombat) {
@@ -899,9 +1036,9 @@ public class CombatComponent : CharacterComponent {
     public bool IsAvoidInRange(IPointOfInterest p_poi) {
         return avoidInRange.Contains(p_poi);
     }
-    #endregion
+#endregion
 
-    #region Combat Data
+#region Combat Data
     public CombatData GetCombatData(IPointOfInterest target) {
         if (combatDataDictionary.ContainsKey(target)) {
             return combatDataDictionary[target];
@@ -1107,9 +1244,9 @@ public class CombatComponent : CharacterComponent {
         //default is still Hostility
         return CombatManager.Hostility;
     }
-    #endregion
+#endregion
 
-    #region Jobs
+#region Jobs
     public void OnJobRemovedFromQueue(JobQueueItem job) {
         //Dropped Combat Related Jobs should remove target from hostile list if not yet in actual combat with it?
         //https://trello.com/c/GXzaAAsP/1361-dropped-combat-related-jobs-should-remove-target-from-hostile-list-if-not-yet-in-actual-combat-with-it
@@ -1129,9 +1266,9 @@ public class CombatComponent : CharacterComponent {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Basic Data
+#region Basic Data
     public void UpdateBasicData(bool resetHP) {
         UpdateAttack();
         UpdateAttackSpeed();
@@ -1183,9 +1320,9 @@ public class CombatComponent : CharacterComponent {
         attackModification -= (int)(modification * attack);
         UpdateAttack();
     }
-    #endregion
+#endregion
 
-    #region Prisoner
+#region Prisoner
     private void OnCharacterBecomePrisoner(Prisoner prisoner) {
         if (prisoner.IsConsideredPrisonerOf(owner)) {
             CombatData combatData = GetCombatData(prisoner.owner);
@@ -1194,15 +1331,15 @@ public class CombatComponent : CharacterComponent {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Killed Characters
+#region Killed Characters
     public void AdjustNumOfKilledCharacters(int amount) {
         numOfKilledCharacters += amount;
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataCombatComponent data) {
         for (int i = 0; i < data.hostileCharactersInRange.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.hostileCharactersInRange[i]);
@@ -1254,7 +1391,7 @@ public class CombatComponent : CharacterComponent {
         combatBehaviourParent.LoadReferences(data.combatBehaviourParent);
         specialSkillParent.LoadReferences();
     }
-    #endregion
+#endregion
 }
 
 public struct CombatReaction {
@@ -1310,7 +1447,7 @@ public class SaveDataCombatData : SaveData<CombatData> {
     public string connectedAction;
     public bool isLethal;
 
-    #region Overrides
+#region Overrides
     public override void Save(CombatData data) {
         base.Save(data);
         reasonForCombat = data.reasonForCombat;
@@ -1326,7 +1463,7 @@ public class SaveDataCombatData : SaveData<CombatData> {
         CombatData component = new CombatData(this);
         return component;
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -1356,7 +1493,7 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
 
     public bool willProcessCombat;
 
-    #region Overrides
+#region Overrides
     public override void Save(CombatComponent data) {
         attack = data.attack;
         attackModification = data.attackModification;
@@ -1418,5 +1555,5 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
         CombatComponent component = new CombatComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

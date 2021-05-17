@@ -24,18 +24,25 @@ public class Dance : GoapAction {
         SetState("Dance Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
-
+#endif
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Danced > 5)";
-        } 
+#endif
+        }
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost}(10 x Times Danced)";
+#endif
 
         Character[] inVisionCharacters = actor.marker.inVisionCharacters.ToArray(); 
         for (int i = 0; i < inVisionCharacters.Length; i++) {
@@ -44,12 +51,15 @@ public class Dance : GoapAction {
                 invisionCharacter.currentActionNode != null && invisionCharacter.currentActionNode.action != null && 
                 (invisionCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.SING || invisionCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.PLAY_GUITAR)) {
                 cost -= 35;
+#if DEBUG_LOG
                 costLog += " -35(Has Friend/Close Friend in vision that is singing or playing a guitar)";
+#endif
                 break;
             }
         }
-        
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -74,9 +84,9 @@ public class Dance : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreDanceSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -87,5 +97,5 @@ public class Dance : GoapAction {
     //public void AfterDanceSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
     //}
-    #endregion
+#endregion
 }

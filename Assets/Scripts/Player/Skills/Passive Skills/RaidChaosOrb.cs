@@ -12,6 +12,8 @@ public class RaidChaosOrb : PassiveSkill {
     private void OnRaidDamageProduceChaosOrb(Character character) {
         int orbsCount = 1;
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, orbsCount, character.gridTileLocation.parentMap);
+#if DEBUG_LOG
         Debug.Log("Chaos Orb Produced - [" + character.name + "] - [OnRaidDamageProduceChaosOrb] - [" + orbsCount + "]");
+#endif
     }
 }

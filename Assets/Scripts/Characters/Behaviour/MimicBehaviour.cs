@@ -16,8 +16,9 @@ public class MimicBehaviour : BaseMonsterBehaviour {
         _actionWeights.AddElement("Revert", 5); //5
     }
     protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n-{character.name} is Mimic";
-
+#endif
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
         if (character.currentStructure is Kennel && chosenAction == "Revert") {
             chosenAction = "Stand";

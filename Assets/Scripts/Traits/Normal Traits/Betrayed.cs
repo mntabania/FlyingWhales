@@ -27,7 +27,9 @@ namespace Traits {
         }
         private void SpawnGhostOf(Character character) {
             if (character.gridTileLocation == null) {
+#if DEBUG_LOG
                 Debug.Log($"{character.name} was not placed because {character.name} no longer has a gridTileLocation.");
+#endif
                 return;
             }
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.neutralFaction, null, character.homeRegion);

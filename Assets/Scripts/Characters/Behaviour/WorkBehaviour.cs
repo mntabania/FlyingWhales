@@ -10,7 +10,9 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     }
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log = $"{log}\n-{character.name} will try to do settlement work...";
+#endif
         if (character.faction != null && character.faction.isMajorNonPlayer && !character.isFactionLeader && !character.isSettlementRuler && !character.crimeComponent.hasReportedCrime) {
             character.crimeComponent.SetHasReportedCrime(true);
             for (int i = 0; i < character.crimeComponent.witnessedCrimes.Count; i++) {
@@ -26,14 +28,20 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         }
 
         if (character.moodComponent.moodState == MOOD_STATE.Normal) {
+#if DEBUG_LOG
             log = $"{log}\n-{character.name} is in normal mood, will do settlement work";
+#endif
             return character.behaviourComponent.PlanWorkActions(out producedJob);
         } else {
+#if DEBUG_LOG
             log = $"{log}\n-{character.name} is low/critical mood, 4% chance - flaw, 4% chance - undermine";
+#endif
             bool triggeredFlaw = false;
             if (TraitManager.Instance.CanStillTriggerFlaws(character)) {
                 int roll = Random.Range(0, 100);
+#if DEBUG_LOG
                 log = $"{log}\n-Flaw Roll: {roll.ToString()}";
+#endif
                 if (roll < 4) {
                     List<Trait> flawTraits = RuinarchListPool<Trait>.Claim();
                     for (int i = 0; i < character.traitContainer.traits.Count; i++) {
@@ -46,22 +54,30 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                         Trait chosenFlaw = flawTraits[Random.Range(0, flawTraits.Count)];
                         string logKey = chosenFlaw.TriggerFlaw(character);
                         if (logKey == "flaw_effect") {
+#if DEBUG_LOG
                             log = $"{log}\n-{character.name} triggered flaw: {chosenFlaw.name}";
+#endif
                             triggeredFlaw = true;
                             //When flaw is triggered, leave from party
                             //if (character.partyComponent.hasParty) {
                             //    character.partyComponent.currentParty.RemoveMember(character);
                             //}
                         } else {
+#if DEBUG_LOG
                             log = $"{log}\n-{character.name} failed to trigger flaw: {chosenFlaw.name}";
+#endif
                         }
                     } else {
+#if DEBUG_LOG
                         log = $"{log}\n-{character.name} has no Flaws to trigger";
+#endif
                     }
                     RuinarchListPool<Trait>.Release(flawTraits);
                 }
             } else {
+#if DEBUG_LOG
                 log = $"{log}\n-{character.name} can no longer trigger flaws";
+#endif
             }
 
             if (triggeredFlaw) {
@@ -69,9 +85,11 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 return true;
             } else {
                 if (character.traitContainer.HasTrait("Diplomatic") == false && character.characterClass.className != "Hero") {
-                    log = $"{log}\n-{character.name} will try to trigger Undermine";
                     int roll = Random.Range(0, 100);
+#if DEBUG_LOG
+                    log = $"{log}\n-{character.name} will try to trigger Undermine";
                     log = $"{log}\n-Undermine Roll: {roll.ToString()}";
+#endif
                     int chance = 4;
                     if (character.traitContainer.HasTrait("Treacherous")) {
                         chance += 4;
@@ -116,7 +134,9 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                                 }
                             }
                         } else {
+#if DEBUG_LOG
                             log = $"{log}\n-{character.name} does not have enemy or rival";
+#endif
                         }
                     }    
                 }

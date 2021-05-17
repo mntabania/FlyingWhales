@@ -297,8 +297,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             Psychopath psychopath = owner.traitContainer.GetTraitOrStatus<Psychopath>("Psychopath");
             psychopath.AdjustOpinion(target, opinionText, opinionValue);
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Psychopath");
+#endif
             opinionValue = 0;
         }
         relationshipData.opinions.AdjustOpinion(opinionText, opinionValue);
@@ -337,8 +339,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         string opinionLabelBeforeChange = GetOpinionLabel(target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Psychopath, setting the value to zero...");
+#endif
             opinionValue = 0;
         }
         relationshipData.opinions.SetOpinion(opinionText, opinionValue);
@@ -706,9 +710,9 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return RelationshipManager.Acquaintance;
     }
-    #endregion
+#endregion
 
-    #region Awareness
+#region Awareness
     public AWARENESS_STATE GetAwarenessState(Character character) {
         if (relationships.ContainsKey(character.id)) {
             return relationships[character.id].awareness.state;
@@ -724,9 +728,9 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public bool BreakUp(Character owner, Character targetCharacter, string reason) {
         if (HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
             owner.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, targetCharacter, reason);
@@ -734,16 +738,16 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Listeners
+#region Listeners
     private void OnCharacterChangedName(Character character) {
         if (HasRelationshipWith(character)) {
             IRelationshipData relationshipData = GetRelationshipDataWith(character);
             relationshipData.SetTargetName(character.name);
         }
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

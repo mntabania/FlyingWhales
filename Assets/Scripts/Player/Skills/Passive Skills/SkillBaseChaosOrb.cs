@@ -19,26 +19,34 @@ public class SkillBaseChaosOrb : PassiveSkill {
     private void OnZapDone(IPointOfInterest p_character) {
         Character character = p_character as Character;
         if (character != null && character.race.IsSapient() && character.isNormalAndNotAlliedWithPlayer) {
+#if DEBUG_LOG
             Debug.Log("Chaos Orb Produced - [" + character.name + "] - [Zap] - [1]");
+#endif
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap);
         }
     }
 
     private void OnAgitateDone(IPointOfInterest p_character) {
+#if DEBUG_LOG
         Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [On Agitate] - [1]");
+#endif
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap);
     }
 
     private void OnRemoveBuffDone(IPointOfInterest p_character) {
         Character character = p_character as Character;
         if (character != null && character.race.IsSapient() && character.isNormalAndNotAlliedWithPlayer) {
+#if DEBUG_LOG
             Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnRemoveBuffDone] - [1]");
+#endif
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap);
         }
     }
 
     private void OnExpelDone(IPointOfInterest p_character) {
+#if DEBUG_LOG
         Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnExpelDone] - [1]");
+#endif
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 1, p_character.gridTileLocation.parentMap);
     }
 
@@ -46,7 +54,9 @@ public class SkillBaseChaosOrb : PassiveSkill {
         if (p_character.isNormalAndNotAlliedWithPlayer) {
             Character responsibleCharacter = p_character.traitContainer.GetTraitOrStatus<Trait>("Dead").responsibleCharacter;
             if (responsibleCharacter is Summon && responsibleCharacter.behaviourComponent.isAgitated) {
+#if DEBUG_LOG
                 Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [killed by agitated] - [2]");
+#endif
                 LocationGridTile chaosOrbSpawnLocation = !responsibleCharacter.hasMarker ? responsibleCharacter.deathTilePosition : responsibleCharacter.gridTileLocation;
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, chaosOrbSpawnLocation.centeredWorldLocation, 2, chaosOrbSpawnLocation.parentMap);
             }
@@ -57,7 +67,9 @@ public class SkillBaseChaosOrb : PassiveSkill {
         Character character = p_traitable as Character;
         if (character != null && character.race.IsSapient() && character.isNormalAndNotAlliedWithPlayer) {
             if (p_trait.name == "Starving" || p_trait.name == "Sulking" || p_trait.name == "Exhausted") {
+#if DEBUG_LOG
                 Debug.Log("Chaos Orb Produced - [" + character.name + "] - [Sulking Starving Exhausted] - [1]");
+#endif
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
             }
         }
@@ -65,7 +77,9 @@ public class SkillBaseChaosOrb : PassiveSkill {
 
     private void OnCharacterFinishedAction(Character p_character, GoapPlanJob p_job) {
         if (p_job.isTriggeredFlaw) {
+#if DEBUG_LOG
             Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnCharacterFinishedAction - trigger flaw] - [2]");
+#endif
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.worldPosition, 2, p_character.gridTileLocation.parentMap);
         }
     }

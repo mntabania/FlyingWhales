@@ -94,14 +94,18 @@ namespace Locations.Settlements {
             if (!residents.Contains(character)) {
                 if (!ignoreCapacity) {
                     if (IsResidentsFull()) {
+#if DEBUG_LOG
                         Debug.LogWarning(
                             $"{GameManager.Instance.TodayLogString()}Cannot add {character.name} as resident of {name} because residency is already full!");
+#endif
                         return false; //npcSettlement is at capacity
                     }
                 }
                 if (!CanCharacterBeAddedAsResidentBasedOnFaction(character)) {
+#if DEBUG_LOG
                     character.logComponent.PrintLogIfActive(
                         $"{character.name} tried to become a resident of {name} but their factions conflicted");
+#endif
                     return false;
                 }
                 //region.AddResident(character);
@@ -131,7 +135,9 @@ namespace Locations.Settlements {
         }
         public virtual void AssignCharacterToDwellingInArea(Character character, LocationStructure dwellingOverride = null) {
             if (structures == null) {
+#if DEBUG_LOG
                 Debug.LogWarning($"{name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
+#endif
                 return;
             }
             //Note: Removed this because, even if there are no dwellings left, home structure should be set to city center
@@ -164,8 +170,10 @@ namespace Locations.Settlements {
 
             if (chosenDwelling == null) {
                 //if the code reaches here, it means that the npcSettlement could not find a dwelling for the character
+#if DEBUG_LOG
                 Debug.LogWarning(
                     $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {name}, setting home to Town Center");
+#endif
                 LocationStructure cityCenter = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                 if (cityCenter != null) {
                     chosenDwelling = cityCenter;
@@ -397,9 +405,9 @@ namespace Locations.Settlements {
             }
             return true;
         }
-        #endregion
+#endregion
 
-        #region Faction
+#region Faction
         public virtual void SetOwner(Faction p_newOwner) {
             this.owner = p_newOwner;
         
@@ -414,9 +422,9 @@ namespace Locations.Settlements {
                 area.areaItem.UpdatePathfindingGraph();
             }
         }
-        #endregion
+#endregion
 
-        #region Structures
+#region Structures
         public void GenerateStructures(params LocationStructure[] preCreatedStructures) {
             for (int i = 0; i < preCreatedStructures.Length; i++) {
                 LocationStructure structure = preCreatedStructures[i];
@@ -716,20 +724,24 @@ namespace Locations.Settlements {
             }
             return count;
         }
-        #endregion
+#endregion
 
-        #region Tiles
+#region Tiles
         public void AddAreaToSettlement(Area p_area) {
             if (p_area.settlementOnArea != null) {
                 //allow villages to overwrite settlement on area that is set to a cave or a special structure 
                 if (p_area.settlementOnArea.locationType == LOCATION_TYPE.VILLAGE) {
+#if DEBUG_LOG
                     Debug.LogWarning($"Could not add {p_area} to settlement {name} because it is already part of {p_area.settlementOnArea.name}");
+#endif
                     return;    
                 }
             }
             if (areas.Contains(p_area) == false) {
                 areas.Add(p_area);
+#if DEBUG_LOG
                 Debug.Log($"Added tile {p_area.ToString()} to settlement {name}");
+#endif
                 p_area.SetSettlementOnArea(this);
                 //if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                 //    p_area.SetCorruption(true);
@@ -747,7 +759,9 @@ namespace Locations.Settlements {
         }
         public virtual bool RemoveAreaFromSettlement(Area p_area) {
             if (areas.Remove(p_area)) {
+#if DEBUG_LOG
                 Debug.Log($"Removed tile {p_area.ToString()} from settlement {name}");
+#endif
                 p_area.SetSettlementOnArea(null);
                 //if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                 //    p_area.SetCorruption(false);
@@ -830,9 +844,9 @@ namespace Locations.Settlements {
             ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
             return chosenArea;
         }
-        #endregion
+#endregion
 
-        #region Fire
+#region Fire
         private void StartListeningForFires() {
             Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
             Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
@@ -865,9 +879,9 @@ namespace Locations.Settlements {
             }
             
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         protected virtual void SettlementWipedOut() { }
         public bool HasPathTowardsTileInSettlement(Character character, int tileCount) {
             bool hasPath = false;
@@ -927,9 +941,9 @@ namespace Locations.Settlements {
             }
         }
 
-        #endregion
+#endregion
 
-        #region Tile Object
+#region Tile Object
         public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
             for (int i = 0; i < allStructures.Count; i++) {
                 if (allStructures[i].HasTileObjectOfType(type)) {
@@ -1024,9 +1038,9 @@ namespace Locations.Settlements {
             }
             return count;
         }
-        #endregion
+#endregion
 
-        #region Party
+#region Party
         public void AddParty(Party party) {
             if (!parties.Contains(party)) {
                 parties.Add(party);
@@ -1044,9 +1058,9 @@ namespace Locations.Settlements {
             }
             return null;
         }
-        #endregion
+#endregion
 
-        #region IPartyTargetDestination
+#region IPartyTargetDestination
         public LocationGridTile GetRandomPassableTile() {
             LocationStructure structure = GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             if(structure == null) {
@@ -1060,9 +1074,9 @@ namespace Locations.Settlements {
         public bool IsAtTargetDestination(Character character) {
             return character.currentSettlement == this;
         }
-        #endregion
+#endregion
 
-        #region Player Action Target
+#region Player Action Target
         public virtual void ConstructDefaultActions() {
             actions = new List<PLAYER_SKILL_TYPE>();
         }
@@ -1080,18 +1094,18 @@ namespace Locations.Settlements {
         public void ClearPlayerActions() {
             actions.Clear();
         }
-        #endregion
+#endregion
 
-        #region IStoredTarget
+#region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return true;
         }
         public void SetAsStoredTarget(bool p_state) {
             isStoredAsTarget = p_state;
         }
-        #endregion
+#endregion
 
-        #region IBookmarkable
+#region IBookmarkable
         public void OnSelectBookmark() {
             UIManager.Instance.ShowSettlementInfo(this);
         }
@@ -1100,14 +1114,14 @@ namespace Locations.Settlements {
         }
         public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) { }
         public void OnHoverOutBookmarkItem() { }
-        #endregion
+#endregion
 
-        #region Loading
+#region Loading
         public virtual void LoadReferences(SaveDataBaseSettlement data) {
             if (!string.IsNullOrEmpty(data.factionOwnerID)) {
                 owner =  DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(data.factionOwnerID);    
             }
         }
-        #endregion
+#endregion
     }
 }

@@ -648,9 +648,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             //}
         }
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, isPlayerSource: isPlayerSource);
+#if DEBUG_LOG
         attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.attack.ToString()}";
+#endif
         if (currentHP <= 0) {
+#if DEBUG_LOG
             attackSummary = $"{attackSummary}\n{name}'s hp has reached 0.";
+#endif
         }
         if (characterThatAttacked.marker) {
             for (int i = 0; i < characterThatAttacked.marker.inVisionCharacters.Count; i++) {
@@ -767,9 +771,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Traits
+#region Traits
     public ITraitContainer traitContainer { get; private set; }
     public TraitProcessor traitProcessor => TraitManager.tileObjectTraitProcessor;
     public void CreateTraitContainer() {
@@ -781,9 +785,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected void ProcessTraitsOnTickStarted() {
         traitContainer.ProcessOnTickStarted(this);
     }
-    #endregion
+#endregion
 
-    #region GOAP
+#region GOAP
     /// <summary>
     /// Does this tile object advertise a given action type.
     /// </summary>
@@ -813,9 +817,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return true;
     }
-    #endregion
+#endregion
 
-    #region Tile Object Slots
+#region Tile Object Slots
     protected virtual void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
@@ -928,9 +932,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             CreateTileObjectSlots();
         }
     }
-    #endregion
+#endregion
 
-    #region Users
+#region Users
     public virtual bool AddUser(Character newUser) {
         if (newUser != null && users.Contains(newUser)) {
             return true;
@@ -990,9 +994,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return _users;
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void DoCleanup() {
         traitContainer?.RemoveAllTraitsAndStatuses(this);
     }
@@ -1100,7 +1104,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// <param name="p_newOwner"></param>
     public virtual void SetInventoryOwner(Character p_newOwner) {
         this.isBeingCarriedBy = p_newOwner;
+#if DEBUG_LOG
         Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
+#endif
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
         // if (tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION && tileObjectType != TILE_OBJECT_TYPE.TOOL) {
@@ -1199,9 +1205,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return worldPosition;
     }
-    #endregion
+#endregion
 
-    #region Inspect
+#region Inspect
     public virtual void OnInspect(Character inspector) { //, out Log log
         //if (LocalizationManager.Instance.HasLocalizedValue("TileObject", this.GetType().ToString(), "on_inspect")) {
         //    log = GameManager.CreateNewLog(GameManager.Instance.Today(), "TileObject", this.GetType().ToString(), "on_inspect");
@@ -1210,9 +1216,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //}
         
     }
-    #endregion
+#endregion
 
-    #region Map Object
+#region Map Object
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
         mapVisual = obj.GetComponent<TileObjectGameObject>();
@@ -1273,12 +1279,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
             RuinarchListPool<JobQueueItem>.Release(jobs);
             gridTileLocation?.structure.RemovePOI(this);
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}Unbuilt object {this} was removed!");
+#endif
         }
     }
-    #endregion
+#endregion
 
-    #region Resources
+#region Resources
     public void ConstructResources() {
         storedResources = new Dictionary<RESOURCE, int>() {
             { RESOURCE.FOOD, 0 },
@@ -1333,13 +1341,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         int newAmount = storedResources[resource] + amount;
         return newAmount <= maxResourceValues[resource];
     }
-    #endregion
+#endregion
 
     public override string ToString() {
         return $"{name} {id.ToString()}";
     }
 
-    #region Player Action Target
+#region Player Action Target
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
@@ -1354,9 +1362,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void ClearPlayerActions() {
         actions.Clear();
     }
-    #endregion
+#endregion
 
-    #region Selectable
+#region Selectable
     public virtual bool IsCurrentlySelected() {
         return UIManager.Instance.tileObjectInfoUI.isShowing &&
                UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
@@ -1377,25 +1385,25 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool CanBeSelected() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Logs
+#region Logs
     /// <summary>
     /// Called when this object has been added as a filler in a log.
     /// </summary>
     public virtual void OnReferencedInALog() { }
-    #endregion
+#endregion
     
-    #region IStoredTarget
+#region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return mapVisual != null;
     }
     public void SetAsStoredTarget(bool p_state) {
         isStoredAsTarget = p_state;
     }
-    #endregion
+#endregion
 
-    #region IBookmarkable
+#region IBookmarkable
     public void OnSelectBookmark() {
         LeftSelectAction();
     }
@@ -1408,14 +1416,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void OnHoverOutBookmarkItem() {
         UIManager.Instance.HideTileObjectNameplateTooltip();
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void DestroyPermanently() {
         //Removed this temporarily because there are many loose ends and reference errors in saving/loading with a null tile object
         //DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]

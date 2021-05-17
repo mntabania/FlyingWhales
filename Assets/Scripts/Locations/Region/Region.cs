@@ -70,7 +70,9 @@ public class Region : ISavable, ILogFiller {
         AddTile(coreTile);
         regionColor = GenerateRandomRegionColor();
         biomeDivisionComponent = new BiomeDivisionComponent();
+#if DEBUG_LOG
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
+#endif
     }
     public Region(SaveDataRegion data) : this() {
         persistentID = data.persistentID;
@@ -85,30 +87,42 @@ public class Region : ISavable, ILogFiller {
         biomeDivisionComponent = data.regionDivisionComponent.Load();
     }
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataRegion saveDataRegion) {
+#if DEBUG_LOG
         string summary = $"Loading {name} references:";
         summary = $"{summary}\nLoading Residents:";
+#endif
         for (int i = 0; i < saveDataRegion.residentIDs.Length; i++) {
             string residentID = saveDataRegion.residentIDs[i];
             Character resident = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(residentID);
             if (resident != null) {
                 residents.Add(resident);
-                summary = $"{summary}\n- {resident.name}";    
+#if DEBUG_LOG
+                summary = $"{summary}\n- {resident.name}";
+#endif
             } else {
+#if DEBUG_LOG
                 Debug.LogWarning($"Trying to add resident at {name} with ID {residentID} but could not find character with that ID");
+#endif
             }
-            
+
         }
+#if DEBUG_LOG
         summary = $"{summary}\nLoading characters at Location:";
+#endif
         for (int i = 0; i < saveDataRegion.charactersAtLocationIDs.Length; i++) {
             string charactersAtLocationID = saveDataRegion.charactersAtLocationIDs[i];
             Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(charactersAtLocationID);
             if (character != null) {
                 charactersAtLocation.Add(character);
-                summary = $"{summary}\n- {character.name}";    
+#if DEBUG_LOG
+                summary = $"{summary}\n- {character.name}";
+#endif
             } else {
+#if DEBUG_LOG
                 Debug.LogWarning($"Trying to add character at location {name} with ID {charactersAtLocationID} but could not find character with that ID");
+#endif
             }
         }
         for (int i = 0; i < saveDataRegion.factionsHereIDs.Length; i++) {
@@ -116,21 +130,22 @@ public class Region : ISavable, ILogFiller {
             Faction faction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(factionHereID);
             factionsHere.Add(faction);
         }
-        
+#if DEBUG_LOG
         Debug.Log(summary);
+#endif
     }
-    #endregion
+#endregion
 
-    #region Tiles
+#region Tiles
     public void AddTile(Area tile) {
         if (!areas.Contains(tile)) {
             areas.Add(tile);
             tile.SetRegion(this);
         }
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void SetName(string name) {
         this.name = name;
     }
@@ -193,9 +208,9 @@ public class Region : ISavable, ILogFiller {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Characters
+#region Characters
     public void LoadCharacterHere(Character character) {
         charactersAtLocation.Add(character);
         character.SetRegionLocation(this);
@@ -372,9 +387,9 @@ public class Region : ISavable, ILogFiller {
         RuinarchListPool<Character>.Release(validCharacters);
         return chosenCharacter;
     }
-    #endregion
+#endregion
 
-    #region Faction
+#region Faction
     public void AddFactionHere(Faction faction) {
         if (!IsFactionHere(faction) && faction.isMajorFaction) {
             factionsHere.Add(faction);
@@ -400,9 +415,9 @@ public class Region : ISavable, ILogFiller {
     public bool IsFactionHere(Faction faction) {
         return factionsHere.Contains(faction);
     }
-    #endregion
+#endregion
     
-    #region Structures
+#region Structures
     public void CreateStructureList() {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         allStructures = new List<LocationStructure>();
@@ -583,9 +598,9 @@ public class Region : ISavable, ILogFiller {
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
     }
-    #endregion
+#endregion
 
-    #region Inner Map
+#region Inner Map
     public void SetRegionInnerMap(RegionInnerTileMap regionInnerTileMap) {
         _regionInnerTileMap = regionInnerTileMap;
     }
@@ -639,9 +654,9 @@ public class Region : ISavable, ILogFiller {
             allStructures[i].PopulateTileObjectsOfType<T>(objs);
         }
     }
-    #endregion
+#endregion
 
-    #region Areas
+#region Areas
     public Area GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage() {
         List<Area> pool = RuinarchListPool<Area>.Claim();
         Area chosenArea = null;
@@ -763,9 +778,9 @@ public class Region : ISavable, ILogFiller {
         RuinarchListPool<Area>.Release(pool);
         return chosenArea;
     }
-    #endregion
+#endregion
 
-    #region Settlements
+#region Settlements
     public void UpdateSettlementsInRegion() {
         settlementsInRegion.Clear();
         for (int i = 0; i < areas.Count; i++) {
@@ -839,9 +854,9 @@ public class Region : ISavable, ILogFiller {
         }
         return count >= WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillagesDuringPlay();
     }
-    #endregion
+#endregion
 
-    #region Tile Objects
+#region Tile Objects
     public void AddTileObjectInRegion(TileObject tileObject) {
         if (!objectsInRegionCount.ContainsKey(tileObject.tileObjectType)) {
             objectsInRegionCount.Add(tileObject.tileObjectType, 0);
@@ -869,7 +884,7 @@ public class Region : ISavable, ILogFiller {
         }
         return 0;
     }
-    #endregion
+#endregion
 
     public void CleanUp() {
         areas?.Clear();

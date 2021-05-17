@@ -72,7 +72,9 @@ public class MapGenerationData {
 			determinedVillages.Add(p_faction, new List<Area>());
 		}
 		determinedVillages[p_faction].Add(p_area);
+#if DEBUG_LOG
 		Debug.Log($"Determined Village for {p_faction.name}: {p_area.ToString()}");
+#endif
 	}
-	#endregion
+#endregion
 }

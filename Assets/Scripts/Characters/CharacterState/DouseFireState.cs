@@ -168,7 +168,9 @@ public class DouseFireState : CharacterState {
         if (isDousingFire) {
             return;
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample("DouseNearestFire");
+#endif
         ITraitable nearestFire = null;
         float nearest = 99999f;
         if (currentTarget != null && currentTarget.worldObject != null && currentTarget.traitContainer.GetTraitOrStatus<Burning>("Burning") != null) {
@@ -195,8 +197,10 @@ public class DouseFireState : CharacterState {
             Assert.IsNotNull(burning, $"Burning of {nearestFire} is null.");
             burning.SetDouser(stateComponent.owner);
             stateComponent.owner.marker.GoTo(nearestFire, DouseFire);
-        } 
+        }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void DouseFire() {
         if (currentTarget != null && currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.owner)) {
@@ -222,7 +226,7 @@ public class DouseFireState : CharacterState {
         }
         return false;
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

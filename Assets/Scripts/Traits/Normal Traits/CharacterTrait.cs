@@ -440,7 +440,9 @@ namespace Traits {
                 p_character.eventDispatcher.SubscribeToCharacterLostTrait(this);
             }
             traitsFromOtherCharacterThatThisIsAwareOf[p_character].Add(p_trait.name);
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has become aware of {p_character.name}'s trait {p_trait.name}");
+#endif
         }
         public bool IsAwareOfTrait(Character p_character, Trait p_trait) {
             if (traitsFromOtherCharacterThatThisIsAwareOf.ContainsKey(p_character)) {
@@ -448,14 +450,16 @@ namespace Traits {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region CharacterEventDispatcher.ITraitListener Implementation
+#region CharacterEventDispatcher.ITraitListener Implementation
         public void OnCharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
         public void OnCharacterLostTrait(Character p_character, Trait p_lostTrait, Character p_removedBy) {
             if (traitsFromOtherCharacterThatThisIsAwareOf.ContainsKey(p_character)) {
                 if (traitsFromOtherCharacterThatThisIsAwareOf[p_character].Remove(p_lostTrait.name)) {
+#if DEBUG_LOG
                     Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has lost awareness of {p_character.name}'s trait {p_lostTrait.name} because that trait was removed!");
+#endif
                     if (traitsFromOtherCharacterThatThisIsAwareOf[p_character].Count == 0) {
                         traitsFromOtherCharacterThatThisIsAwareOf.Remove(p_character);
                         p_character.eventDispatcher.UnsubscribeToCharacterLostTrait(this);    
@@ -463,9 +467,9 @@ namespace Traits {
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Food Piles
+#region Food Piles
         public void AddFoodPileAsReactedTo(FoodPile p_foodPile) {
             alreadyReactedToFoodPiles.Add(p_foodPile);
         }
@@ -475,7 +479,7 @@ namespace Traits {
         public bool HasAlreadyReactedToFoodPile(FoodPile p_foodPile) {
             return alreadyReactedToFoodPiles.Contains(p_foodPile);
         }
-        #endregion
+#endregion
     }
 }
 

@@ -10,7 +10,9 @@ public class TriggerFlawChaosOrb : PassiveSkill {
     }
 
     void OnTriggerFlawSuccess(Character p_character) {
+#if DEBUG_LOG
         Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnTriggerFlawSuccess] - [1]");
+#endif
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 1, p_character.gridTileLocation.parentMap);
     }
 }

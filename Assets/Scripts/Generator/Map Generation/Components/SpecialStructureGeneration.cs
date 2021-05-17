@@ -89,10 +89,12 @@ namespace Generator.Map_Generation.Components {
 		        }
 	        }
 	        yield return null;
+#if DEBUG_LOG
 	        Debug.Log($"Created {createdCount.ToString()} {p_structureType.ToString()}");
+#endif
         }
 
-        #region Structure Creation
+#region Structure Creation
 		private IEnumerator CreateSpecialStructure(STRUCTURE_TYPE p_structureType, Region p_region, Area p_area, NPCSettlement p_settlement) {
 			if (p_structureType == STRUCTURE_TYPE.MONSTER_LAIR) {
 				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(p_region, p_structureType, p_settlement);
@@ -108,9 +110,9 @@ namespace Generator.Map_Generation.Components {
 			structure.SetOccupiedArea(hexTile);
 			yield return null;
 		}
-		#endregion
+#endregion
 		
-		#region Chances
+#region Chances
 		private int GetLoopCount(STRUCTURE_TYPE p_structureType, MapGenerationData data) {
 			switch (p_structureType) {
 				case STRUCTURE_TYPE.MONSTER_LAIR:
@@ -278,9 +280,9 @@ namespace Generator.Map_Generation.Components {
 					return 0;
 			}
 		}
-		#endregion
+#endregion
 		
-		#region Utilities
+#region Utilities
 		private List<Area> GetLocationChoices(STRUCTURE_TYPE p_structureType) {
 			switch (p_structureType) {
 				case STRUCTURE_TYPE.MONSTER_LAIR:
@@ -384,6 +386,6 @@ namespace Generator.Map_Generation.Components {
 			}
 			return false;
 		}
-		#endregion
+#endregion
     }
 }

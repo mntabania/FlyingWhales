@@ -92,7 +92,9 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         while (thread.IsAlive) {
             yield return null;
         }
+#if DEBUG_LOG
         Debug.Log($"Saved new game at {savePath}");
+#endif
         
         //Need to close connection to database so .db file can be zipped.
         DatabaseManager.Instance.mainSQLDatabase.SaveInMemoryDatabaseToFile($"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
@@ -108,7 +110,9 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         File.Delete($"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
         
         loadingWatch.Stop();
+#if DEBUG_LOG
         Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+#endif
         yield return null;
         
         UIManager.Instance.optionsMenu.HideSaveLoading();
@@ -120,9 +124,9 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     private void SaveCurrentDataToFile() {
         SaveGame.Save(filePath, currentSaveDataProgress);
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void SetCurrentSaveDataPath(string path) {
         currentSaveDataPath = path;
     }
@@ -168,7 +172,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataProgress?.CleanUp();
         currentSaveDataProgress = null;
     }
-    #endregion
+#endregion
 
     // #region JSON Net
     // public void SaveData<T>(string identifier, T obj) {

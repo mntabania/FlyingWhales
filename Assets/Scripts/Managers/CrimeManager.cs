@@ -273,12 +273,14 @@ public class CrimeManager : BaseMonoBehaviour {
                     string emotions = crimeSeverityObj.EffectAndReaction(witness, actor, target, crimeTypeObj, crime, reactionStatus);
                     if (emotions != string.Empty) {
                         if (!CharacterManager.Instance.EmotionsChecker(emotions)) {
+#if DEBUG_LOG
                             string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                             error += $"\n-Witness: {witness}";
                             error += $"\n-Action: {crime.name}";
                             error += $"\n-Actor: {actor.name}";
                             error += $"\n-Target: {target.nameWithID}";
                             witness.logComponent.PrintLogErrorIfActive(error);
+#endif
                         } else {
                             //add log of emotions felt
                             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "emotions_crime_" + reactionStatus.ToString().ToLower(), null, LogUtilities.Life_Changes_Crimes_Tags);
@@ -426,9 +428,9 @@ public class CrimeManager : BaseMonoBehaviour {
     //    reactor.relationshipContainer.AdjustOpinion(reactor, actor, "Heinous Crime", -40);
     //    MakeCharacterACriminal(actor, null, CRIME_SEVERITY.Heinous, interrupt);
     //}
-    #endregion
+#endregion
 
-    #region Crime Severity
+#region Crime Severity
     public CrimeSeverity GetCrimeSeverity(CRIME_SEVERITY severityType) {
         if (_crimeSeverities.ContainsKey(severityType)) {
             return _crimeSeverities[severityType];
@@ -441,7 +443,7 @@ public class CrimeManager : BaseMonoBehaviour {
         }
         return null;
     }
-    #endregion
+#endregion
 }
 
 public class CrimeData : ISavable {
@@ -459,11 +461,11 @@ public class CrimeData : ISavable {
     public List<Faction> factionsThatConsidersWanted { get; private set; }
     public bool isRemoved { get; private set; }
 
-    #region getters
+#region getters
     public CrimeType crimeTypeObj => CrimeManager.Instance.GetCrimeType(crimeType);
     public OBJECT_TYPE objectType => OBJECT_TYPE.Crime;
     public System.Type serializedData => typeof(SaveDataCrimeData);
-    #endregion
+#endregion
 
     public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
@@ -511,7 +513,7 @@ public class CrimeData : ISavable {
     }
 
 
-    #region Listeners
+#region Listeners
     private void SubscribeToListeners() {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
@@ -535,9 +537,9 @@ public class CrimeData : ISavable {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region General
+#region General
     public void SetCrimeStatus(CRIME_STATUS status) {
         if(crimeStatus != status) {
             crimeStatus = status;
@@ -596,9 +598,9 @@ public class CrimeData : ISavable {
         //    witnesses[i].crimeComponent.RemoveWitnessedCrime(this);
         //}
     }
-    #endregion
+#endregion
 
-    #region Witnesses
+#region Witnesses
     public bool IsWitness(Character character) {
         return witnesses.Contains(character);
     }
@@ -618,9 +620,9 @@ public class CrimeData : ISavable {
         //If there are no witnesses do not consider this true
         return false;
     }
-    #endregion
+#endregion
 
-    #region Faction
+#region Faction
     public void AddFactionThatConsidersWanted(Faction faction) {
         if (!factionsThatConsidersWanted.Contains(faction)) {
             factionsThatConsidersWanted.Add(faction);
@@ -681,9 +683,9 @@ public class CrimeData : ISavable {
     public bool HasWanted() {
         return factionsThatConsidersWanted.Count > 0;
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataCrimeData data) {
         if (!string.IsNullOrEmpty(data.crime)) {
             if(data.crimableType == CRIMABLE_TYPE.Action) {
@@ -719,7 +721,7 @@ public class CrimeData : ISavable {
             factionsThatConsidersWanted.Add(targetFaction);
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -741,11 +743,11 @@ public class SaveDataCrimeData : SaveData<CrimeData>, ISavableCounterpart {
     public List<string> witnesses;
     public List<string> factionsThatConsidersWanted;
 
-    #region getters
+#region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Crime;
-    #endregion
+#endregion
 
-    #region Overrides
+#region Overrides
     public override void Save(CrimeData data) {
         persistentID = data.persistentID;
         crimeSeverity = data.crimeSeverity;
@@ -789,5 +791,5 @@ public class SaveDataCrimeData : SaveData<CrimeData>, ISavableCounterpart {
         CrimeData interrupt = new CrimeData(this);
         return interrupt;
     }
-    #endregion
+#endregion
 }

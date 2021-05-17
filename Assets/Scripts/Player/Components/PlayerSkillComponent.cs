@@ -237,7 +237,9 @@ public class PlayerSkillComponent {
 
     private void ResetPlayerSpellChoices() {
         currentSpellChoices.Clear();
+#if DEBUG_LOG
         Debug.Log("Reset player spell choices.");
+#endif
     }
     public void AddCurrentPlayerSpellChoice(PLAYER_SKILL_TYPE p_skillType) {
         currentSpellChoices.Add(p_skillType);
@@ -679,11 +681,13 @@ public class PlayerSkillComponent {
         PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(passiveSkills);
         passiveSkill.ActivateSkill();
         this.passiveSkills.Add(passiveSkills);
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}Activated passive skill {passiveSkills.ToString()}.");
+#endif
     }
-    #endregion
+#endregion
 
-    #region Blackmail
+#region Blackmail
     /// <summary>
     /// Has the player already stored blackmail for a given character.
     /// </summary>
@@ -692,9 +696,9 @@ public class PlayerSkillComponent {
     public bool AlreadyHasBlackmail(Character p_character) {
         return PlayerManager.Instance.player.HasHostageIntel(p_character);
     }
-    #endregion
+#endregion
 
-    #region Bookmarks
+#region Bookmarks
     private string GetSpellUnlockedString() {
         return lastSpellUnlockSummary;
     }
@@ -723,9 +727,9 @@ public class PlayerSkillComponent {
         isPreviousPortalUpgradeBookmarked = true;
         PlayerManager.Instance.player.bookmarkComponent.AddBookmark(previousPortalUpgradedBookmark, BOOKMARK_CATEGORY.Portal);
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void OnLoadSaveData() {
         for (int i = 0; i < spells.Count; i++) {
             PLAYER_SKILL_TYPE skillType = spells[i];
@@ -805,7 +809,7 @@ public class PlayerSkillComponent {
         
         currentSpellChoices = data.currentSpellChoices;
     }
-    #endregion
+#endregion
 }
 [System.Serializable]
 public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {

@@ -95,7 +95,9 @@ public class SchedulingManager : BaseMonoBehaviour {
             for (int i = 0; i < acts.Count; i++) {
                 ScheduledAction action = acts[i];
                 if (action.scheduleID == id) {
+#if DEBUG_LOG
                     Debug.Log($"Removed scheduled item {action.ToString()} for {action.scheduler?.ToString()}. ID is {id}");
+#endif
                     OnRemoveScheduledAction(action);
                     schedules[date].RemoveAt(i);
                     return true;
@@ -125,13 +127,21 @@ public class SchedulingManager : BaseMonoBehaviour {
             ScheduledAction action = acts[i];
             if (schedules[checkGameDate].Contains(action)) {
                 //only perform scheduled action, if it still present in the original actions list.
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"Is Action Still Valid");
+#endif
                 bool isScheduleStillValid = action.IsScheduleStillValid();
+#if DEBUG_PROFILER
                 Profiler.EndSample();
-                if(isScheduleStillValid && action.action.Target != null){
+#endif
+                if(isScheduleStillValid && action.action.Target != null) {
+#if DEBUG_PROFILER
                     Profiler.BeginSample($"{action.ToString()} Invoke");
+#endif
                     action.action();
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                 }
             }
 			
@@ -140,7 +150,9 @@ public class SchedulingManager : BaseMonoBehaviour {
         Assert.IsTrue(expectedIterations == actualIterations, $"Scheduling Manager inconsistency with performing scheduled actions! Performed actions were {actualIterations} but expected actions were {expectedIterations.ToString()}");
 	}
     public void ClearAllSchedulesBy(Character character) {
+#if DEBUG_LOG
         Debug.Log($"Clearing all schedules by {character.name}");
+#endif
         Dictionary<GameDate, List<ScheduledAction>> temp = new Dictionary<GameDate, List<ScheduledAction>>(schedules);
         foreach (KeyValuePair<GameDate, List<ScheduledAction>> kvp in temp) {
             //List<ScheduledAction> newList = RuinarchListPool<ScheduledAction>.Claim();
@@ -158,7 +170,9 @@ public class SchedulingManager : BaseMonoBehaviour {
         }
     }
     public void ClearAllSchedulesBy(object obj) {
+#if DEBUG_LOG
         Debug.Log($"Clearing all schedules by {obj.ToString()}");
+#endif
         Dictionary<GameDate, List<ScheduledAction>> temp = new Dictionary<GameDate, List<ScheduledAction>>(schedules);
         foreach (KeyValuePair<GameDate, List<ScheduledAction>> kvp in temp) {
             List<ScheduledAction> saList = kvp.Value;

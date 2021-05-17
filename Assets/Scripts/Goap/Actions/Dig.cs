@@ -21,8 +21,10 @@ public class Dig : GoapAction {
         SetState("Dig Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 0;
     }
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
@@ -41,15 +43,15 @@ public class Dig : GoapAction {
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     [UsedImplicitly]
     public void AfterDigSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AdjustHP(-goapNode.poiTarget.maxHP, ELEMENTAL_TYPE.Normal, true);
         // goapNode.poiTarget.gridTileLocation.structure.RemovePOI(goapNode.poiTarget);
     }
-    #endregion
+#endregion
 
     private bool IsTargetMissingDig(ActualGoapNode node) {
         //Different target missing for dig since, we need to allow the actor to dig block walls from another structure

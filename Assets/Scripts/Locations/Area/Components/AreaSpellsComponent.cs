@@ -251,7 +251,9 @@ public class AreaSpellsComponent : AreaComponent {
         to.structure.AddPOI(poi, to);
     }
     private void PerTickEarthquake() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Per Tick Earthquake");
+#endif
         if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingLocation == owner.region) {
             if (InnerMapCameraMove.Instance.CanSee(_centerEarthquakeTile)) {
                 if (!DOTween.IsTweening(InnerMapCameraMove.Instance.camera)) {
@@ -305,11 +307,13 @@ public class AreaSpellsComponent : AreaComponent {
         if (currentEarthquakeDuration >= 3) {
             SetHasEarthquake(false);
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    #endregion
+#endregion
     
-    #region Brimstones
+#region Brimstones
     public void SetHasBrimstones(bool state, bool p_isCastedByPlayer = true) {
         if (hasBrimstones != state) {
             isBrimstoneCastedByPlayer = p_isCastedByPlayer;
@@ -385,7 +389,9 @@ public class AreaSpellsComponent : AreaComponent {
     //    }
     //}
     private void PerTickBrimstones() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Per Tick Brimstones");
+#endif
         currentBrimstonesDuration++;
         if (isBrimstoneCastedByPlayer){
             if (currentBrimstonesDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.BRIMSTONES)) {
@@ -396,15 +402,17 @@ public class AreaSpellsComponent : AreaComponent {
                 SetHasBrimstones(false);
             }
         }
-        
+
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void ResetBrimstoneDuration() {
         currentBrimstonesDuration = 0;
     }
-    #endregion
+#endregion
 
-    #region Electric Storm
+#region Electric Storm
     public void SetHasElectricStorm(bool state, bool p_isCastedByPlayer = true) {
         if (hasElectricStorm != state) {
             isElectricStormCastedByPlayer = p_isCastedByPlayer;
@@ -455,7 +463,9 @@ public class AreaSpellsComponent : AreaComponent {
         }
     }
     private void PerTickElectricStorm() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Per Tick Electric Storm");
+#endif
         currentElectricStormDuration++;
         if (isElectricStormCastedByPlayer) {
             if (currentElectricStormDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ELECTRIC_STORM)) {
@@ -466,15 +476,17 @@ public class AreaSpellsComponent : AreaComponent {
                 SetHasElectricStorm(false);
             }
         }
-        
+
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void ResetElectricStormDuration() {
         currentElectricStormDuration = 0;
     }
-    #endregion
+#endregion
     
-    #region Iceteroids
+#region Iceteroids
     public void SetHasIceteroids(bool state) {
         if (hasIceteroids != state) {
             hasIceteroids = state;
@@ -517,17 +529,21 @@ public class AreaSpellsComponent : AreaComponent {
     //                piercingPower: PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.ICETEROIDS));
     //}
     private void PerTickIceteroids() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Per Tick Iceteroids");
+#endif
         currentIceteroidsDuration++;
         if (currentIceteroidsDuration >= PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.ICETEROIDS)) {
             SetHasIceteroids(false);
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void ResetIceteroidDuration() {
         currentIceteroidsDuration = 0;
     }
-    #endregion
+#endregion
 }
 
 public class SaveDataAreaSpellsComponent : SaveData<AreaSpellsComponent> {

@@ -61,7 +61,9 @@ public class DoorTileObject : TileObject {
 
     public void Open() {
         if (mapVisual == null) { return; }
+#if DEBUG_LOG
         Debug.Log($"Opened door {this} at {structureLocation} {gridTileLocation}");
+#endif
         isOpen = true;
         _doorGameObject.SetBlockerState(false);
         mapVisual.SetVisualAlpha(0f);
@@ -69,7 +71,9 @@ public class DoorTileObject : TileObject {
     }
     public void Close() {
         if (mapVisual == null) { return; }
+#if DEBUG_LOG
         Debug.Log($"Closed door {this} at {structureLocation} {gridTileLocation}");
+#endif
         isOpen = false;
         _doorGameObject.SetBlockerState(true);
         mapVisual.SetVisualAlpha(1f);

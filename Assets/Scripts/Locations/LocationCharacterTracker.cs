@@ -15,18 +15,30 @@ namespace Locations {
         }
         public void RemoveCharacterFromLocation(Character p_character) {
             charactersAtLocation.Remove(p_character);
-            
+
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Check job applicability - Remove Status");
+#endif
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, p_character as IPointOfInterest);
+#if DEBUG_PROFILER
             Profiler.EndSample();
-                
+#endif
+
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Check job applicability - Apprehend");
+#endif
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, p_character as IPointOfInterest);
+#if DEBUG_PROFILER
             Profiler.EndSample();
-                
+#endif
+
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Check job applicability - Knockout");
+#endif
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.KNOCKOUT, p_character as IPointOfInterest);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
 
         #region Utilities
@@ -194,12 +206,12 @@ namespace Locations {
             }
             return count;
         }
-        #endregion
+#endregion
 
-        #region Testing
+#region Testing
         public string GetCharactersSummary() {
             return charactersAtLocation.ComafyList();
         }
-        #endregion
+#endregion
     }
 }

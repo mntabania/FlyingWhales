@@ -71,10 +71,12 @@ public class BallLightning : MovingTileObject {
             //object has been destroyed
             _ballLightningMapVisual.Expire();
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
 
-    #region Moving Tile Object
+#region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_ballLightningMapVisual != null) {
             if (_ballLightningMapVisual.isSpawned) {
@@ -85,7 +87,7 @@ public class BallLightning : MovingTileObject {
         tile = null;
         return false;
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

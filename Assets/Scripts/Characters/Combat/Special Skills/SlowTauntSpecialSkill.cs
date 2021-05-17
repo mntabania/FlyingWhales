@@ -19,7 +19,9 @@ public class SlowTauntSpecialSkill : CombatSpecialSkill {
                 Character taunted = tauntedCharacters[i];
                 taunted.interruptComponent.TriggerInterrupt(INTERRUPT.Taunted, p_character);
             }
-            p_character.logComponent.PrintLogIfActive("TAUNT SPECIAL SKILL OF " + p_character.name + " ACTIVATED!");
+#if DEBUG_LOG
+            p_character.logComponent.PrintLogIfActive("SLOW TAUNT SPECIAL SKILL OF " + p_character.name + " ACTIVATED!");
+#endif
         }
         ObjectPoolManager.Instance.ReturnCharactersListToPool(tauntedCharacters);
         return hasActivated;
@@ -41,5 +43,5 @@ public class SlowTauntSpecialSkill : CombatSpecialSkill {
             }
         }
     }
-    #endregion
+#endregion
 }

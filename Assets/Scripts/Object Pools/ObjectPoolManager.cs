@@ -555,12 +555,14 @@ public class ObjectPoolManager : MonoBehaviour {
         return new GoapPlanJob();
     }
     public void ReturnGoapPlanJobToPool(GoapPlanJob job) {
+#if DEBUG_LOG
         Debug.Log($"Returned job {job.ToString()} to pool");
+#endif
         job.Reset();
         if (!_goapJobPool.Contains(job)) {
             _goapJobPool.Add(job);    
         } else {
-#if UNITY_EDITOR
+#if DEBUG_LOG
             Debug.LogError("Job instance is already in pool but is added again!");
 #endif
         }
@@ -578,9 +580,9 @@ public class ObjectPoolManager : MonoBehaviour {
         job.Reset();
         _stateJobPool.Add(job);
     }
-    #endregion
+#endregion
 
-    #region Conversation
+#region Conversation
     private void ConstructConversationPool() {
         _conversationDataPool = new List<ConversationData>();
         _conversationDataListPool = new List<List<ConversationData>>();
@@ -616,9 +618,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _conversationDataListPool.Add(data);
     }
-    #endregion
+#endregion
 
-    #region Emotions
+#region Emotions
     private void ConstructEmotionListPool() {
         _emotionListPool = new List<List<EMOTION>>();
     }
@@ -634,9 +636,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _emotionListPool.Add(data);
     }
-    #endregion
+#endregion
 
-    #region ILocation
+#region ILocation
     private void ConstructILocationListPool() {
         _ilocationListPool = new List<List<ILocation>>();
     }
@@ -652,9 +654,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _ilocationListPool.Add(data);
     }
-    #endregion
+#endregion
     
-    #region Area
+#region Area
     private void ConstructAreaListPool() {
         _areaListPool = new List<List<Area>>();
     }
@@ -670,9 +672,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _areaListPool.Add(data);
     }
-    #endregion
+#endregion
 
-    #region Scheduled Actions
+#region Scheduled Actions
     private void ConstructScheduledActionPool() {
         _scheduledActionPool = new List<ScheduledAction>();
     }
@@ -688,9 +690,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Reset();
         _scheduledActionPool.Add(data);
     }
-    #endregion
+#endregion
 
-    #region Goap Plan
+#region Goap Plan
     private void ConstructGoapPlanPool() {
         _goapPlanPool = new List<GoapPlan>();
     }
@@ -724,9 +726,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Reset();
         _goapPlanPool.Add(data);
     }
-    #endregion
+#endregion
 
-    #region Job Nodes
+#region Job Nodes
     private void ConstructSingleJobNodePool() {
         _jobNodePool = new List<SingleJobNode>();
     }
@@ -742,7 +744,7 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Reset();
         _jobNodePool.Add(data);
     }
-    #endregion
+#endregion
 
     // protected override void OnDestroy() {
     //     if (allObjectPools != null) {

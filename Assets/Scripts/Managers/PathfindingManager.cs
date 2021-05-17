@@ -155,9 +155,13 @@ public class PathfindingManager : BaseMonoBehaviour {
     private void Update() {
         for (int i = 0; i < _allAgents.Count; i++) {
             CharacterAIPath currentAI = _allAgents[i];
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{currentAI.marker.character.name} - Pathfinding Update");
+#endif
             currentAI.marker.ManualUpdate();
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
     }
     protected override void OnDestroy() {
@@ -167,9 +171,9 @@ public class PathfindingManager : BaseMonoBehaviour {
         base.OnDestroy();
         Instance = null;
     }
-    #endregion
+#endregion
 
-    #region Graph Updates
+#region Graph Updates
     public void ApplyGraphUpdateSceneCoroutine(GraphUpdateScene gus) {
         StartCoroutine(UpdateGraph(gus));
     }
@@ -177,5 +181,5 @@ public class PathfindingManager : BaseMonoBehaviour {
         yield return null;
         gus.Apply();
     }
-    #endregion
+#endregion
 }

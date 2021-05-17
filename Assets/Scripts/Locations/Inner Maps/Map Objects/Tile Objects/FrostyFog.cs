@@ -84,10 +84,12 @@ public class FrostyFog : MovingTileObject {
             //object has been destroyed
             _frostyFogMapVisual.Expire();
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
 
-    #region Moving Tile Object
+#region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_frostyFogMapVisual != null) {
             if (_frostyFogMapVisual.isSpawned) {
@@ -98,9 +100,9 @@ public class FrostyFog : MovingTileObject {
         tile = null;
         return false;
     }
-    #endregion
+#endregion
 
-    #region Size and Stacks
+#region Size and Stacks
     public void SetStacks(int stacks) {
         this.stacks = stacks;
         UpdateSizeBasedOnStacks();
@@ -126,7 +128,7 @@ public class FrostyFog : MovingTileObject {
             SetSize(6);
         }
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

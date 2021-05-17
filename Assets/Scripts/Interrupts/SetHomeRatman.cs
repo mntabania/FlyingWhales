@@ -33,7 +33,9 @@ namespace Interrupts {
         #endregion
 
         private void SetNewHomeStructure(Character actor) {
+#if DEBUG_LOG
             string log = "Setting new home for ratman " + actor.name;
+#endif
             Region currentRegion = actor.currentRegion;
             if(currentRegion != null) {
                 List<BaseSettlement> settlementChoices = ObjectPoolManager.Instance.CreateNewSettlementList();
@@ -50,13 +52,17 @@ namespace Interrupts {
                     actor.ClearTerritoryAndMigrateHomeSettlementTo(chosenSettlement);
                 }
             } else {
+#if DEBUG_LOG
                 log += "\n-Character has no current region";
+#endif
             }
             //If all else fails, check if character has home structure and if it is already destroyed, set it to null
             if (actor.homeStructure != null && actor.homeStructure.hasBeenDestroyed) {
                 actor.MigrateHomeStructureTo(null, affectSettlement: false);
             }
+#if DEBUG_LOG
             actor.logComponent.PrintLogIfActive(log);
+#endif
         }
 
         private void PopulateSettlementChoices(List<BaseSettlement> settlementChoices, Region region) {

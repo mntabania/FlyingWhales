@@ -57,17 +57,27 @@ public class CombatManager : BaseMonoBehaviour {
     }
 
     public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null, bool createHitEffect = true, bool setAsPlayerSource = false) {
+#if DEBUG_PROFILER
         Profiler.BeginSample("Apply Elemental Damage - Get Data");
+#endif
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Apply Elemental Damage - Create Hit Effect");
+#endif
         if (target != null && createHitEffect) {
             CreateHitEffectAt(target, elementalType);
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Apply Elemental Damage - Wake Sleeping");
+#endif
         if (damage < 0) {
             //Damage should awaken sleeping characters
             if (target.traitContainer.HasTrait("Resting")) {
@@ -81,62 +91,104 @@ public class CombatManager : BaseMonoBehaviour {
                 targetCharacter.reactionComponent.SetDisguisedCharacter(null);
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Add Elemental Trait");
+#endif
             bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, 
                 out Trait trait, characterResponsible); //, out trait
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             if (hasSuccessfullyAdded) {
                 Trait elementalTrait = target.traitContainer.GetTraitOrStatus<Trait>(elementalDamage.addedTraitName);
                 if(elementalTrait is IElementalTrait ielementalTrait && setAsPlayerSource) {
                     ielementalTrait.SetIsPlayerSource(true);
                 }
+#if DEBUG_PROFILER
                 Profiler.BeginSample("Apply Elemental Damage - Chain Electric");
+#endif
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
                     ChainElectricDamage(target, damage, characterResponsible, target, setAsPlayerSource);
                 }
+#if DEBUG_PROFILER
                 Profiler.EndSample();
-                
+#endif
+
+#if DEBUG_PROFILER
                 Profiler.BeginSample("Apply Elemental Damage - Elemental Trait Processor");
+#endif
                 if (elementalTraitProcessor != null) {
                     elementalTraitProcessor.Invoke(target, trait);    
                 } else {
                     DefaultElementalTraitProcessor(target, trait);
                 }
+#if DEBUG_PROFILER
                 Profiler.EndSample();
-                
+#endif
+
             }
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample("Apply Elemental Damage - General Element Process");
+#endif
         GeneralElementProcess(target, characterResponsible);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
-        if(elementalType == ELEMENTAL_TYPE.Earth) {
+#endif
+
+        if (elementalType == ELEMENTAL_TYPE.Earth) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Earth Process");
+#endif
             EarthElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Wind) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Wind Process");
+#endif
             WindElementProcess(target, characterResponsible);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Fire) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Fire Process");
+#endif
             FireElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Water) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Water Process");
+#endif
             WaterElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Electric) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Electric Process");
+#endif
             ElectricElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Normal) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Normal Process");
+#endif
             NormalElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
     }
     public void ModifyDamage(ref int damage, ELEMENTAL_TYPE elementalType, float piercingPower, ITraitable target) {
@@ -277,7 +329,7 @@ public class CombatManager : BaseMonoBehaviour {
 
     }
     
-    #region Explosion
+#region Explosion
     public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius, bool isPlayerSource) {
         StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible, radius, isPlayerSource));
         if (characterResponsible == null) {
@@ -468,9 +520,9 @@ public class CombatManager : BaseMonoBehaviour {
     //        }
     //    }
     //}
-    #endregion
+#endregion
 
-    #region Elemental Type Processes
+#region Elemental Type Processes
     private void EarthElementProcess(ITraitable target) {
         string elements = string.Empty;
         if (target.traitContainer.HasTrait("Zapped")) {
@@ -561,9 +613,9 @@ public class CombatManager : BaseMonoBehaviour {
             burning.SetSourceOfBurning(burningSource, traitable);
         }
     }
-    #endregion
+#endregion
 
-    #region Projectiles
+#region Projectiles
     public Projectile CreateNewProjectile(Character actor, ELEMENTAL_TYPE elementalType, Transform parent, Vector3 worldPos) {
         GameObject projectileGO = null;
         if (actor != null && actor is Dragon) {
@@ -573,9 +625,9 @@ public class CombatManager : BaseMonoBehaviour {
         }
         return projectileGO.GetComponent<Projectile>();
     }
-    #endregion
+#endregion
 
-    #region Piercing
+#region Piercing
     public static void ModifyValueByPiercingAndResistance(ref int p_value, float p_piercingPower, float p_resistance) {
         float percentMultiplier = (100f - (p_resistance - p_piercingPower)) / 100f;
         if(percentMultiplier > 1f) {
@@ -596,9 +648,9 @@ public class CombatManager : BaseMonoBehaviour {
         float rawComputedValue = p_value * percentMultiplier;
         p_value = rawComputedValue;
     }
-    #endregion
+#endregion
 
-    #region Combat Behaviour
+#region Combat Behaviour
     private void ConstructAllCharacterCombatBehaviours() {
         CHARACTER_COMBAT_BEHAVIOUR[] behaviourTypes = CollectionUtilities.GetEnumValues<CHARACTER_COMBAT_BEHAVIOUR>();
         characterCombatBehaviours = new Dictionary<CHARACTER_COMBAT_BEHAVIOUR, CharacterCombatBehaviour>();
@@ -618,9 +670,9 @@ public class CombatManager : BaseMonoBehaviour {
         }
         return null;
     }
-    #endregion
+#endregion
 
-    #region Combat Special Skill
+#region Combat Special Skill
     private void ConstructAllCombatSpecialSkills() {
         COMBAT_SPECIAL_SKILL[] skillTypes = CollectionUtilities.GetEnumValues<COMBAT_SPECIAL_SKILL>();
         combatSpecialSkills = new Dictionary<COMBAT_SPECIAL_SKILL, CombatSpecialSkill>();
@@ -640,7 +692,7 @@ public class CombatManager : BaseMonoBehaviour {
         }
         return null;
     }
-    #endregion
+#endregion
 
     public bool IsDamageSourceFromPlayerSpell(object source) {
         if (source != null) {

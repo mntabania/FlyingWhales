@@ -304,7 +304,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void SetIsUnderSiege(bool state) {
         if(isUnderSiege != state) {
             isUnderSiege = state;
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
+#endif
             Messenger.Broadcast(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
             if (!isUnderSiege) {
                 if(exterminateTargetStructure != null) {
@@ -331,20 +333,28 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
 
         isPlagued = state;
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Plagued state changed to {isPlagued.ToString()}");
+#endif
         
     }
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Settlement On Tick Ended");
+#endif
         ProcessForcedCancelJobsOnTickEnded();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void OnDayStarted() {
         hasTriedToStealCorpse = false;
         ClearAllBlacklistToAllExistingJobs();
     }
     private void OnHourStarted() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{name} settlement OnHourStarted");
+#endif
         CheckSlaveResidents();
         CheckForJudgePrisoners();
         if(locationType == LOCATION_TYPE.VILLAGE) {
@@ -380,12 +390,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
-        migrationComponent.OnHourStarted();    
+        migrationComponent.OnHourStarted();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    #endregion
+#endregion
 
-    #region Tiles
+#region Tiles
     public override bool RemoveAreaFromSettlement(Area area) {
         if (base.RemoveAreaFromSettlement(area)) {
             npcSettlementEventDispatcher.ExecuteTileRemovedEvent(area, this);
@@ -393,9 +405,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Characters
+#region Characters
     public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == id) {
             return 0;
@@ -480,12 +492,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         npcSettlementEventDispatcher.ExecuteSettlementRulerChangedEvent(newRuler, this);
     }
     private void CheckForNewRulerDesignation() {
+        int chance = Random.Range(0, 100);
+#if DEBUG_LOG
         string debugLog =
             $"{GameManager.Instance.TodayLogString()}Checking for new npcSettlement ruler designation for {name}";
         debugLog += $"\n-Chance: {newRulerDesignationChance.ToString()}";
-        int chance = Random.Range(0, 100);
         debugLog += $"\n-Roll: {chance.ToString()}";
         Debug.Log(debugLog);
+#endif
         if (chance < newRulerDesignationChance) {
             DesignateNewRuler();
         } else {
@@ -496,53 +510,73 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(owner == null) {
             return;
         }
+#if DEBUG_LOG
         string log = $"{GameManager.Instance.TodayLogString()}Designating a new npcSettlement ruler for: {region.name}(chance it triggered: {newRulerDesignationChance})";
+#endif
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
             if(resident.faction != owner) {
                 continue;
             }
+#if DEBUG_LOG
             log += $"\n\n-{resident.name}";
-            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
+#endif
+            if (resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
+#if DEBUG_LOG
                 log += "\nEither dead or missing or seized or enslaved, will not be part of candidates for ruler";
+#endif
                 continue;
             }
 
             if (owner != null && resident.crimeComponent.IsWantedBy(owner)) {
+#if DEBUG_LOG
                 log += "\nMember is wanted by the faction owner of this settlement " + owner.name + ", skipping...";
+#endif
                 continue;
             }
             bool isInsideSettlement = resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(this);
             bool isInAnActiveParty = resident.partyComponent.isMemberThatJoinedQuest;
 
             if(!isInsideSettlement && !isInAnActiveParty) {
+#if DEBUG_LOG
                 log += "\nMember is not inside settlement and not in active party, skipping...";
+#endif
                 continue;
             }
 
             int weight = 50;
+#if DEBUG_LOG
             log += "\n  -Base Weight: +50";
+#endif
             if (owner != null && owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
                 Vampire vampire = resident.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                 if (vampire != null && vampire.DoesFactionKnowThisVampire(owner)) {
                     weight += 100;
+#if DEBUG_LOG
                     log += "\n  -Faction reveres vampires and member is a known vampire: +100";
+#endif
                 }
             }
             if (owner != null && owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
                 if (resident.isLycanthrope && resident.lycanData.DoesFactionKnowThisLycan(owner)) {
                     weight += 100;
+#if DEBUG_LOG
                     log += "\n  -Faction reveres werewolves and member is a known Lycanthrope: +100";
+#endif
                 }
             }
             if (resident.isFactionLeader) {
                 weight += 100;
+#if DEBUG_LOG
                 log += "\n  -Faction Leader: +100";
+#endif
             }
             if (resident.characterClass.className == "Noble") {
                 weight += 40;
+#if DEBUG_LOG
                 log += "\n  -Noble: +40";
+#endif
             }
             int numberOfFriends = 0;
             int numberOfEnemies = 0;
@@ -565,9 +599,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     weightToAdd = (numberOfFriends * 20);    
                 }
                 weight += weightToAdd;
+#if DEBUG_LOG
                 log += $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{weightToAdd}";
+#endif
             }
-            
+
             // if(numberOfFriends > 0) {
             //     weight += (numberOfFriends * 20);
             //     log +=
@@ -575,49 +611,71 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             // }
             if (resident.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
+#if DEBUG_LOG
                 log += "\n  -Inspiring: +25";
+#endif
             }
             if (resident.traitContainer.HasTrait("Authoritative")) {
                 weight += 50;
+#if DEBUG_LOG
                 log += "\n  -Authoritative: +50";
+#endif
             }
 
 
             if (numberOfEnemies > 0) {
                 weight += (numberOfEnemies * -10);
+#if DEBUG_LOG
                 log += $"\n  -Num of Enemies/Rivals in the NPCSettlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
+#endif
             }
             if (resident.traitContainer.HasTrait("Unattractive")) {
                 weight += -20;
+#if DEBUG_LOG
                 log += "\n  -Unattractive: -20";
+#endif
             }
             if (resident.hasUnresolvedCrime) {
                 weight += -50;
+#if DEBUG_LOG
                 log += "\n  -Has Unresolved Crime: -50";
+#endif
             }
             if (resident.traitContainer.HasTrait("Worker")) {
                 weight += -40;
+#if DEBUG_LOG
                 log += "\n  -Civilian: -40";
+#endif
             }
             if (weight < 1) {
                 weight = 1;
+#if DEBUG_LOG
                 log += "\n  -Weight cannot be less than 1, setting weight to 1";
+#endif
             }
             if (resident.traitContainer.HasTrait("Ambitious")) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
+#if DEBUG_LOG
                 log += "\n  -Ambitious: x1.5";
+#endif
             }
             if (resident is Summon || resident.characterClass.IsZombie()) {
                 if(HasResidentThatIsSapientAndInsideSettlementOrHasJoinedQuest()) {
                     weight *= 0;
+#if DEBUG_LOG
                     log += "\n  -Resident is a Summon and there is atleast 1 Sapient resident inside settlement or in active party: x0";
+#endif
                 }
             }
             if (resident.traitContainer.HasTrait("Enslaved")) {
                 weight *= 0;
+#if DEBUG_LOG
                 log += "\n  -Enslaved: x0";
+#endif
             }
+#if DEBUG_LOG
             log += $"\n  -TOTAL WEIGHT: {weight}";
+#endif
             if (weight > 0) {
                 newRulerDesignationWeights.AddElement(resident, weight);
             }
@@ -625,20 +683,28 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(newRulerDesignationWeights.Count > 0) {
             Character chosenRuler = newRulerDesignationWeights.PickRandomElementGivenWeights();
             if (chosenRuler != null) {
+#if DEBUG_LOG
                 log += $"\nCHOSEN RULER: {chosenRuler.name}";
+#endif
                 if (willLog) {
                     chosenRuler.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, chosenRuler);
                 } else {
                     SetRuler(chosenRuler);
                 }
             } else {
+#if DEBUG_LOG
                 log += "\nCHOSEN RULER: NONE";
+#endif
             }
         } else {
+#if DEBUG_LOG
             log += "\nCHOSEN RULER: NONE";
+#endif
         }
         ResetNewRulerDesignationChance();
+#if DEBUG_LOG
         Debug.Log(log);
+#endif
     }
     private void ResetNewRulerDesignationChance() {
         newRulerDesignationChance = 5;
@@ -804,9 +870,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return true;
     }
-    #endregion
+#endregion
 
-    #region Tile Objects
+#region Tile Objects
     public void OnItemAddedToLocation(TileObject item, LocationStructure structure) {
         CheckIfInventoryJobsAreStillValid(item, structure);
         settlementJobTriggerComponent.OnItemAddedToStructure(item, structure);
@@ -851,9 +917,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             // }
         }
     }
-    #endregion
+#endregion
 
-    #region Structures
+#region Structures
     protected override void OnStructureAdded(LocationStructure structure) {
         base.OnStructureAdded(structure);
         if(cityCenter == null && structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
@@ -968,9 +1034,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
         return choices.PickRandomElementGivenWeights();
     }
-    #endregion
+#endregion
 
-    #region Inner Map
+#region Inner Map
     public IEnumerator PlaceInitialObjectsCoroutine() {
         PlaceResourcePiles();
         yield return null;
@@ -1050,9 +1116,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void LoadMainStorage(LocationStructure mainStorage) {
         SetMainStorage(mainStorage);
     }
-    #endregion
+#endregion
 
-    #region POI
+#region POI
     public void PopulateTileObjectsFromStructures<T>(List<TileObject> objs, STRUCTURE_TYPE structureType) where T : TileObject {
         if (HasStructure(structureType)) {
             List<LocationStructure> structureList = structures[structureType];
@@ -1073,28 +1139,34 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
-    #endregion
+#endregion
 
-    #region Jobs
+#region Jobs
     public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
         if (position == -1) {
             availableJobs.Add(job);
         } else {
             availableJobs.Insert(position, job);
         }
+#if DEBUG_LOG
         if (job is GoapPlanJob goapJob) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI} was added to {name}'s available jobs");
         } else {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");
         }
+#endif
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
+#if DEBUG_LOG
                 Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI?.name} was removed from {name}'s available jobs");
+#endif
             } else {
+#if DEBUG_LOG
                 Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");
+#endif
             }
             OnJobRemovedFromAvailableJobs(job);
             return true;
@@ -1577,9 +1649,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region IJobOwner
+#region IJobOwner
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
         //RemoveFromAvailableJobs(job);
     }
@@ -1593,7 +1665,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
         if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+#if DEBUG_LOG
             Debug.Log(GameManager.Instance.TodayLogString() + " " + name + " added to forced cancel job " + job.name);
+#endif
             forcedCancelJobsOnTickEnded.Add(job);
         }
     }
@@ -1605,9 +1679,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             forcedCancelJobsOnTickEnded.Clear();
         }
     }
-    #endregion
+#endregion
 
-    #region Faction
+#region Faction
     public override void SetOwner(Faction p_newOwner) {
         Faction previousOwner = this.owner;
         base.SetOwner(p_newOwner);
@@ -1621,9 +1695,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         migrationComponent.ForceRandomizePerHourIncrement();
         npcSettlementEventDispatcher.ExecuteFactionOwnerChangedEvent(previousOwner, p_newOwner, this);
     }
-    #endregion
+#endregion
 
-    #region Settlement Type
+#region Settlement Type
     public void SetSettlementType(SETTLEMENT_TYPE type) {
         if (locationType == LOCATION_TYPE.VILLAGE) {
             //Only set settlement type for villages. Do not include Dungeons. NOTE: Might be better to separate villages and dungeons into their own classes.
@@ -1647,9 +1721,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //     SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
         // }
     }
-    #endregion
+#endregion
 
-    #region Needed Items
+#region Needed Items
     public void AddNeededItems(TILE_OBJECT_TYPE tileObjectType) {
         //Allowed duplicate entries because multiple events can add the same item, and we don't want that item to be removed when only one event ends
         //And this is alright since the inventory jobs can handle duplicate values.
@@ -1659,22 +1733,22 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void RemoveNeededItems(TILE_OBJECT_TYPE tileObjectType) {
         neededObjects.Remove(tileObjectType);
     }
-    #endregion
+#endregion
 
-    #region Party Quests
+#region Party Quests
     public void OnFinishedQuest(PartyQuest quest) {
         migrationComponent.OnFinishedQuest(quest);
     }
-    #endregion
+#endregion
 
-    #region IPlayerActionTarget
+#region IPlayerActionTarget
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
         AddPlayerAction(PLAYER_SKILL_TYPE.INDUCE_MIGRATION);
         AddPlayerAction(PLAYER_SKILL_TYPE.STIFLE_MIGRATION);
         //AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
     }
-    #endregion
+#endregion
 
     public override string ToString() {
         return name;

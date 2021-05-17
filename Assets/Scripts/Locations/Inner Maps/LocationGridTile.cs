@@ -525,23 +525,37 @@ namespace Inner_Maps {
         #region Structures
         public void SetStructure(LocationStructure p_structure) {
             Assert.IsNotNull(p_structure);
+#if DEBUG_PROFILER
             Profiler.BeginSample("Remove Tile");
+#endif
             LocationStructure previousStructure = structure;
             structure?.RemoveTile(this);
+#if DEBUG_PROFILER
             Profiler.EndSample();
-            
-            structure = p_structure;
-            
-            Profiler.BeginSample("Add Tile");
-            structure.AddTile(this);
-            Profiler.EndSample();
-            
-            Profiler.BeginSample("Generic Tile Object Initialize");
-            tileObjectComponent.genericTileObject.ManualInitialize(this);
-            Profiler.EndSample();
+#endif
 
+            structure = p_structure;
+
+#if DEBUG_PROFILER
+            Profiler.BeginSample("Add Tile");
+#endif
+            structure.AddTile(this);
+#if DEBUG_PROFILER
+            Profiler.EndSample();
+#endif
+
+#if DEBUG_PROFILER
+            Profiler.BeginSample("Generic Tile Object Initialize");
+#endif
+            tileObjectComponent.genericTileObject.ManualInitialize(this);
+#if DEBUG_PROFILER
+            Profiler.EndSample();
+#endif
+
+#if DEBUG_PROFILER
             Profiler.BeginSample("Update Awareness");
-            if(tileObjectComponent.objHere != null) {
+#endif
+            if (tileObjectComponent.objHere != null) {
                 //Whenever a grid tile changes its structure (might be because a new structure is built on top of it), the object inside must update its awareness to that new structure
                 LocationAwarenessUtility.RemoveFromAwarenessList(tileObjectComponent.objHere);
                 LocationAwarenessUtility.AddToAwarenessList(tileObjectComponent.objHere, this);
@@ -552,9 +566,11 @@ namespace Inner_Maps {
                 for (int i = 0; i < charactersHere.Count; i++) {
                     Character character = charactersHere[i];
                     structure.AddCharacterAtLocation(character);
-                }    
+                }
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
         public void SetTileState(Tile_State state) {
             if (structure != null) {
@@ -566,11 +582,13 @@ namespace Inner_Maps {
             }
             tileState = state;
         }
-        #endregion
+#endregion
 
-        #region Characters
+#region Characters
         public void AddCharacterHere(Character character) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{character.name} Add Character To Tile");
+#endif
             // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
             if (character.race.IsSapient()) {
@@ -723,7 +741,9 @@ namespace Inner_Maps {
             } else {
                 character.movementComponent.SetHasMovedOnCorruption(false);
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
 
         public Character GetCharacterWithRace(RACE p_lookUprace) {
@@ -749,9 +769,9 @@ namespace Inner_Maps {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         public LocationGridTile GetNeighbourAtDirection(GridNeighbourDirection dir) {
             if (_neighbours.ContainsKey(dir)) {
                 return _neighbours[dir];
@@ -1677,7 +1697,7 @@ namespace Inner_Maps {
             LocationGridTile exitTile = GetNearestEdgeTileFromThis(direction);
             return exitTile;
         }
-        #endregion
+#endregion
 
         public void InstantPlaceDemonicStructure(StructureSetting p_structureSetting) {
             List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(p_structureSetting.structureType, p_structureSetting.resource);
@@ -1694,7 +1714,7 @@ namespace Inner_Maps {
             }
         }
 
-        #region Hextile
+#region Hextile
         public Area GetNearestHexTileWithinRegion() {
             if (area.elevationType != ELEVATION.WATER && area.elevationType != ELEVATION.MOUNTAIN) {
                 return area;
@@ -1767,9 +1787,9 @@ namespace Inner_Maps {
             }
             return nearestArea;
         }
-        #endregion
+#endregion
 
-        #region Blueprints
+#region Blueprints
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
             if (hasBlueprint) {
@@ -1778,18 +1798,18 @@ namespace Inner_Maps {
                 area.RemoveBlueprint();
             }
         }
-        #endregion
+#endregion
 
-        #region Connectors
+#region Connectors
         public void AddConnector() {
             connectorsOnTile++;
         }
         public void RemoveConnector() {
             connectorsOnTile--;
         }
-        #endregion
+#endregion
 
-        #region Plagued Rats
+#region Plagued Rats
         public void AddPlaguedRats(bool p_randomizedPosition = false, bool isFromSpell = false) {
             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Rat, PlayerManager.Instance.player.playerFaction, homeRegion: parentMap.region);
             summon.OnSummonAsPlayerMonster();
@@ -1813,16 +1833,16 @@ namespace Inner_Maps {
             summon.jobQueue.CancelAllJobs();
             Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         }
-        #endregion
+#endregion
 
-        #region Spawn Necronomicon
+#region Spawn Necronomicon
         public void AddNecronomicon() {
             Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
             this.structure.AddPOI(artifact, this);
         }
-        #endregion
+#endregion
 
-        #region Meteor
+#region Meteor
         public int meteorCount { get; private set; }
         public void AddMeteor() {
             SetIsDefault(false);
@@ -1832,9 +1852,9 @@ namespace Inner_Maps {
         public void RemoveMeteor() {
             meteorCount--;
         }
-        #endregion
+#endregion
 
-        #region Biomes
+#region Biomes
         public void SetIndividualBiomeType(BIOMES p_biome) {
             BiomeDivision previousBiomeDivision =  parentMap.region.biomeDivisionComponent.GetBiomeDivision(p_biome);
             previousBiomeDivision?.RemoveTile(this);
@@ -1842,17 +1862,17 @@ namespace Inner_Maps {
             BiomeDivision biomeDivision =  parentMap.region.biomeDivisionComponent.GetBiomeDivision(p_biome);
             biomeDivision?.AddTile(this);
         }
-        #endregion
+#endregion
 
-        #region Elevation
+#region Elevation
         public void SetElevation(ELEVATION p_elevation) {
             ELEVATION previousElevation = elevationType;
             elevationType = p_elevation;
             area.elevationComponent.OnTileInAreaChangedElevation(this, previousElevation);
         }
-        #endregion
+#endregion
 
-        #region Node Points
+#region Node Points
         public GridNodeBase GetGridNodeByWorldPosition(Vector3 p_worldPos) {
             for (int i = 0; i < nodePoints.Length; i++) {
                 Vector3 pos = GetNodePointWorldLocation(nodePoints[i]);
@@ -1969,16 +1989,16 @@ namespace Inner_Maps {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Saving
+#region Saving
         public void SetIsDefault(bool state) {
             isDefault = state;
             // Debug.Log($"{GameManager.Instance.TodayLogString()}Is Default state of {this} set to: {isDefault.ToString()}");
         }
-        #endregion
+#endregion
 
-        #region Clean Up
+#region Clean Up
         public void CleanUp() {
             parentMap = null;
             parentTileMap = null;
@@ -1995,7 +2015,7 @@ namespace Inner_Maps {
             // charactersHere = null;
             tileObjectComponent.CleanUp();
         }
-        #endregion
+#endregion
     }
 
     [Serializable]

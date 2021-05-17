@@ -10,33 +10,47 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
         priority = 10;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n{character.name} is an Invader";
+#endif
         if (character.behaviourComponent.invadeVillageTarget.Count <= 0) {
+#if DEBUG_LOG
             log += $"\n-No invade target yet, setting one...";
+#endif
             character.behaviourComponent.ResetInvadeVillageTarget();
             PopulateVillageTargetsByPriority(character.behaviourComponent.invadeVillageTarget, character);
             //character.behaviourComponent.SetInvadeVillageTarget(PopulateVillageTargetsByPriority(character));
             if (character.behaviourComponent.invadeVillageTarget.Count <= 0) {
+#if DEBUG_LOG
                 log += $"\n-Still no invade target, roam around.";
+#endif
                 return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
             }
             producedJob = null;
             return true;
         } else {
+#if DEBUG_LOG
             log += $"\n-Already has village target";
+#endif
             Area areaLocation = character.areaLocation;
             if (areaLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(areaLocation)) {
+#if DEBUG_LOG
                 log += $"\n-Already att village target, will find character to attack";
+#endif
                 //character is already at target village
                 List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
                 PopulateTargetChoicesFor(targets, character, character.behaviourComponent.invadeVillageTarget);
                 if (targets.Count > 0) {
                     //Fight a random target
                     Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
+#if DEBUG_LOG
                     log += $"\n-Chosen target is {chosenTarget.name}";
+#endif
                     character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
                 } else {
+#if DEBUG_LOG
                     log += $"\n-No more valid targets, clearing target village data...";
+#endif
                     //No more valid targets exist, clearing village target. 
                     character.behaviourComponent.ResetInvadeVillageTarget();
                 }
@@ -44,7 +58,9 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
                 producedJob = null;
                 return true;
             } else {
+#if DEBUG_LOG
                 log += $"\n-character is not yet at village target, will go there now...";
+#endif
                 //character is not yet at target village
                 Area targetArea =
                     CollectionUtilities.GetRandomElement(character.behaviourComponent.invadeVillageTarget);

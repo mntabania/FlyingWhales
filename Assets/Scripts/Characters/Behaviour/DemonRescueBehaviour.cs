@@ -10,10 +10,14 @@ public class DemonRescueBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         bool hasJob = false;
+#if DEBUG_LOG
         log += $"\n-Character is rescuing";
+#endif
         Party party = character.partyComponent.currentParty;
         if (party.isActive && party.partyState == PARTY_STATE.Working) {
+#if DEBUG_LOG
             log += $"\n-Party is working";
+#endif
             DemonRescuePartyQuest quest = party.currentQuest as DemonRescuePartyQuest;
             DemonicStructure targetStructure = quest.targetDemonicStructure;
 
@@ -42,8 +46,10 @@ public class DemonRescueBehaviour : CharacterBehaviourComponent {
                     }
                 }
             } else {
+#if DEBUG_LOG
                 log += "\n-Has tile object that contribute damage";
                 log += "\n-Adding tile object as hostile";
+#endif
                 TileObject chosenTileObject = null;
                 IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
                 if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {

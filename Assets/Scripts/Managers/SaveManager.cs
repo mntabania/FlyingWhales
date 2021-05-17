@@ -111,12 +111,14 @@ public class SaveManager : MonoBehaviour {
         }
         string path = $"{Application.streamingAssetsPath}/Scenario Maps/{fileName}.json";
         SaveGame.Save(path, scenarioSave);
-        
-        Debug.Log($"Saved new scenario at {path}");
-    }
-    #endregion
 
-    #region Loading
+#if DEBUG_LOG
+        Debug.Log($"Saved new scenario at {path}");
+#endif
+    }
+#endregion
+
+#region Loading
     public void LoadSaveDataPlayer() {
         savePlayerManager.LoadSaveDataPlayer();
         if (alwaysResetBonusTutorialsOnStartup) {
@@ -126,9 +128,9 @@ public class SaveManager : MonoBehaviour {
             savePlayerManager.currentSaveDataPlayer?.ResetSpecialPopupsProgress();
         }
     }
-    #endregion
+#endregion
 
-    #region Tile Features
+#region Tile Features
     public static SaveDataAreaFeature ConvertAreaFeatureToSaveData(AreaFeature p_areaFeature) {
         SaveDataAreaFeature saveDataTrait = null;
         System.Type type = System.Type.GetType($"Locations.Tile_Features.SaveData{p_areaFeature.GetType().Name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
@@ -139,11 +141,11 @@ public class SaveManager : MonoBehaviour {
         }
         return saveDataTrait;
     }
-    #endregion
+#endregion
 
-    #region Scenario Maps
+#region Scenario Maps
     public ScenarioMapData GetScenarioMapData(string path) {
         return SaveGame.Load<ScenarioMapData>(path);
     }
-    #endregion
+#endregion
 }

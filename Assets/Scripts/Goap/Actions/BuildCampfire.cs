@@ -22,8 +22,10 @@ public class BuildCampfire : GoapAction {
         SetState("Build Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) {
@@ -37,9 +39,9 @@ public class BuildCampfire : GoapAction {
             goapNode.actor.gridTileLocation.PopulateTilesInRadius(gridTiles, 3, includeImpassable: false, includeTilesWithObject: false);
         }
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -47,9 +49,9 @@ public class BuildCampfire : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         LocationGridTile targetTile = actor.gridTileLocation;
@@ -92,5 +94,5 @@ public class BuildCampfire : GoapAction {
         }
         // campfire.logComponent.AddHistory(goapNode.descriptionLog);
     }
-    #endregion
+#endregion
 }

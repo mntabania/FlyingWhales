@@ -220,9 +220,10 @@ namespace Traits {
             return false;
         }
 
-        private Character GetHuntPreyTarget() { 
+        private Character GetHuntPreyTarget() {
+#if DEBUG_LOG
             string log = $"{GameManager.Instance.TodayLogString()} {owner.name} will try to get hunt prey target";
-            
+#endif
             WeightedDictionary<Character> choices = new WeightedDictionary<Character>();
             int animalCount = 0;
             var size = Physics2D.OverlapCircleNonAlloc(owner.worldPosition, 20f, _triggerFlawNearbyTargets, GameUtilities.Filtered_Layer_Mask);
@@ -252,9 +253,9 @@ namespace Traits {
                     }
                 }
             }
-            
-            
-            
+
+
+
             // int animalCount = 0;
             // for (int i = 0; i < owner.currentRegion.charactersAtLocation.Count; i++) { 
             //     Character otherCharacter = owner.currentRegion.charactersAtLocation[i]; 
@@ -279,15 +280,21 @@ namespace Traits {
             //         }
             //     }
             // }
-             
+
+#if DEBUG_LOG
             log += $"\n{choices.GetWeightsSummary("Weights are:")}";
-		    if (choices.GetTotalOfWeights() > 0) {
+#endif
+            if (choices.GetTotalOfWeights() > 0) {
 			    Character target = choices.PickRandomElementGivenWeights();
+#if DEBUG_LOG
 			    log += $"\nChosen target is {target.name}";
                 owner.logComponent.PrintLogIfActive(log);
+#endif
                 return target;
             }
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(log);
+#endif
             return null;
         }
         public override string GetTriggerFlawEffectDescription(Character character, string key) {
@@ -582,7 +589,7 @@ namespace Traits {
             isInWerewolfForm = state;
         }
 
-        #region Additional Data
+#region Additional Data
         public void SetDislikesBeingLycan(bool state) {
             dislikesBeingLycan = state;
         }
@@ -624,9 +631,9 @@ namespace Traits {
             }
             SetDislikesBeingLycan(GameUtilities.RollChance(50));
         }
-        #endregion
+#endregion
 
-        #region Aware Characters
+#region Aware Characters
         public void AddAwareCharacter(Character character) {
             if (!awareCharacters.Contains(character)) {
                 awareCharacters.Add(character);
@@ -659,7 +666,7 @@ namespace Traits {
             }
             return false;
         }
-        #endregion
+#endregion
     }
 
     [System.Serializable]
@@ -679,7 +686,7 @@ namespace Traits {
 
         public bool isInWerewolfForm;
 
-        #region Overrides
+#region Overrides
         public override void Save(LycanthropeData data) {
             activeForm = data.activeForm.persistentID;
             limboForm = data.limboForm.persistentID;
@@ -722,6 +729,6 @@ namespace Traits {
             data.LoadAwareCharacters(SaveUtilities.ConvertIDListToCharacters(awareCharacterIDs));
             return data;
         }
-        #endregion
+#endregion
     }
 }

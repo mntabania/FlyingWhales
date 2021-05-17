@@ -94,7 +94,9 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         parentMarker.AddPOIAsInVisionRange(poi);
     }
     public void TransferAllDifferentStructureCharacters() {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} is transferring all objects in different structures to its normal vision");
+#endif
         for (int i = 0; i < parentMarker.inVisionPOIsButDiffStructure.Count; i++) {
             IPointOfInterest poi = parentMarker.inVisionPOIsButDiffStructure[i];
             if (poi.gridTileLocation == null) { continue; }
@@ -106,7 +108,9 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         }
     }
     public void ReCategorizeVision() {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} Re categorizing objects in its normal vision");
+#endif
         //List<IPointOfInterest> poisInVision = new List<IPointOfInterest>(parentMarker.inVisionPOIs);
         for (int i = 0; i < parentMarker.inVisionPOIs.Count; i++) {
             IPointOfInterest pointOfInterest = parentMarker.inVisionPOIs[i];
@@ -172,7 +176,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         return shouldAddToVision;
     }
 
-    #region Different Structure Handling
+#region Different Structure Handling
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
         //if (parentMarker.character.combatComponent.isInCombat) { return; } //if character is in combat, ignore this
         //if the character that arrived at the new structure is in this character different structure list
@@ -270,21 +274,23 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     private bool IsTheSameStructureOrSameOpenSpace(LocationStructure structure1, LocationStructure structure2) {
         return structure1 != null && structure2 != null && (structure1 == structure2 || (structure1.structureType.IsOpenSpace() && structure2.structureType.IsOpenSpace()));
     }
-    #endregion
+#endregion
 
     [ContextMenu("Log Diff Struct")]
     public void LogCharactersInDifferentStructures() {
+#if DEBUG_LOG
         string summary = $"{parentMarker.character.name}'s diff structure pois";
         for (int i = 0; i < parentMarker.inVisionPOIsButDiffStructure.Count; i++) {
             summary += $"\n{parentMarker.inVisionPOIsButDiffStructure[i].name}";
         }
         Debug.Log(summary);
+#endif
     }
 
-    #region Utilities
+#region Utilities
     public void OnDeath() {
         parentMarker.inVisionPOIsButDiffStructure.Clear();
         OnDisable();
     }
-    #endregion
+#endregion
 }

@@ -654,9 +654,13 @@ namespace Traits {
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                     Trait trait = traitOverrideFunctions[i];
+#if DEBUG_PROFILER
                     Profiler.BeginSample($"{owner.name} - {trait.name} - Tick Started Process");
+#endif
                     trait.OnTickStarted(owner);
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                 }
             }
             //if (allTraitsAndStatuses != null) {
@@ -694,9 +698,9 @@ namespace Traits {
             //    }
             //}
         }
-        #endregion
+#endregion
         
-        #region Schedule Tickets
+#region Schedule Tickets
         public void AddScheduleTicket(string traitName, string ticket, GameDate removeDate) {
             TraitRemoveSchedule traitRemoveSchedule = ObjectPoolManager.Instance.CreateNewTraitRemoveSchedule();
             traitRemoveSchedule.removeDate = removeDate;
@@ -758,9 +762,9 @@ namespace Traits {
             }
             return default;
         }
-        #endregion
+#endregion
         
-        #region Switches
+#region Switches
         //public void SwitchOnTrait(string name) {
         //    if (traitSwitches.ContainsKey(name)) {
         //        traitSwitches[name] = true;
@@ -792,9 +796,9 @@ namespace Traits {
         public bool HasTrait(string traitName) {
             return allTraitsAndStatuses.ContainsKey(traitName);
         }
-        #endregion
+#endregion
         
-        #region Trait Override Functions
+#region Trait Override Functions
         public void AddTraitOverrideFunction(string identifier, Trait trait) {
             if (traitOverrideFunctions.ContainsKey(identifier)) {
                 traitOverrideFunctions[identifier].Add(trait);
@@ -825,9 +829,9 @@ namespace Traits {
         //public bool RemoveOnEnterGridTileTrait(Trait trait) {
         //    return onEnterGridTileTraits.Remove(trait);
         //}
-        #endregion
+#endregion
 
-        #region Inquiry
+#region Inquiry
         public bool HasTangibleTrait() {
             for (int i = 0; i < statuses.Count; i++) {
                 Status currTrait = statuses[i];
@@ -837,9 +841,9 @@ namespace Traits {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Loading
+#region Loading
         private bool LoadUnInstancedTrait(ITraitable addTo, string traitName) {
             Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
             Trait trait = TraitManager.Instance.allTraits[traitName];
@@ -910,9 +914,9 @@ namespace Traits {
             //    traitSwitches.Add(pair.Key, pair.Value);
             //}
         }
-        #endregion
+#endregion
 
-        #region Clean Up
+#region Clean Up
         public void CleanUp() {
             allTraitsAndStatuses?.Clear();
             traits?.Clear();
@@ -922,7 +926,7 @@ namespace Traits {
             scheduleTickets?.Clear();
             //traitSwitches?.Clear();
         }
-        #endregion
+#endregion
     }
 }
 

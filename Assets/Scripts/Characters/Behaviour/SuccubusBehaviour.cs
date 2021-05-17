@@ -6,7 +6,9 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
 	}
 	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} is a succubus";
+#endif
         if (character.reactionComponent.disguisedCharacter != null) {
             if (character.isAtHomeStructure || character.IsInTerritory() || character.IsInHomeSettlement()) {
                 if (character.previousCurrentActionNode != null && (character.previousCurrentActionNode.associatedJobType == JOB_TYPE.IDLE_RETURN_HOME || character.previousCurrentActionNode.associatedJobType == JOB_TYPE.RETURN_TERRITORY)) {
@@ -23,31 +25,41 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
             } else {
                 Character targetCharacter = character.currentRegion.GetRandomCharacterForSuccubusMakeLove(character);
                 if (targetCharacter != null) {
+#if DEBUG_LOG
                     log += $"\n-Target for make love is: " + targetCharacter.name;
+#endif
                     if (character.movementComponent.HasPathToEvenIfDiffRegion(targetCharacter.gridTileLocation)) {
                         if (character.jobComponent.TriggerMakeLoveJob(targetCharacter, out producedJob)) {
                             return true;
                         }
                     } else {
+#if DEBUG_LOG
                         log += $"\n-No path to target, drop disguise";
+#endif
                         character.reactionComponent.SetDisguisedCharacter(null);
                         return true;
                     }
                 } else {
+#if DEBUG_LOG
                     log += $"\n-No Character to be targeted for make love, drop disguise";
+#endif
                     character.reactionComponent.SetDisguisedCharacter(null);
                     return true;
                 }
             }
         } else {
             if (character.isAtHomeStructure || character.IsInTerritory() || character.IsInHomeSettlement()) {
-                log += $"\n-Character is in home and not in disguise, 1% chance to disguise";
                 int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
+                log += $"\n-Character is in home and not in disguise, 1% chance to disguise";
                 log += "\nRoll: " + roll;
+#endif
                 if (roll < 1) { //1
                     Character targetCharacter = character.currentRegion.GetRandomCharacterThatIsFemaleVillagerAndNotDead();
                     if (targetCharacter != null) {
+#if DEBUG_LOG
                         log += $"\n-Target for disguise is: " + targetCharacter.name;
+#endif
                         if (character.currentRegion.GetRandomCharacterForSuccubusMakeLove(character) != null) {
                             if (character.jobComponent.TriggerDisguiseJob(targetCharacter, out producedJob)) {
                                 return true;
@@ -56,13 +68,17 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
                     }
                 }
             } else {
+#if DEBUG_LOG
                 log += $"\n-Character is not in home and not in disguise, will return home";
+#endif
                 if (character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob)) {
                     return true;
                 }
             }
         }
+#if DEBUG_LOG
         log += $"\n-Character will roam";
+#endif
         character.jobComponent.TriggerRoamAroundTile(out producedJob);
         return true;
 	}
@@ -76,7 +92,9 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
                 if (p_character.currentRegion.GetRandomCharacterThatIsMaleVillagerAndNotDeadAndFactionIsNotTheSameAs(p_character) != null) {
                     Character targetCharacter = p_character.currentRegion.GetRandomCharacterThatIsFemaleVillagerAndNotDead();
                     if (targetCharacter != null) {
+#if DEBUG_LOG
                         p_log += $"\n-Target for disguise is: " + targetCharacter.name;
+#endif
                         if (p_character.currentRegion.GetRandomCharacterForSuccubusMakeLoveTamed(p_character) != null) {
                             if (p_character.jobComponent.TriggerDisguiseJob(targetCharacter, out p_producedJob)) {
                                 return true;
@@ -115,18 +133,24 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
             } else {
                 Character targetCharacter = character.currentRegion.GetRandomCharacterForSuccubusMakeLoveTamed(character);
                 if (targetCharacter != null) {
+#if DEBUG_LOG
                     log += $"\n-Target for make love is: " + targetCharacter.name;
+#endif
                     if (character.movementComponent.HasPathToEvenIfDiffRegion(targetCharacter.gridTileLocation)) {
                         if (character.jobComponent.TriggerMakeLoveJob(targetCharacter, out producedJob)) {
                             return true;
                         }
                     } else {
+#if DEBUG_LOG
                         log += $"\n-No path to target, drop disguise";
+#endif
                         character.reactionComponent.SetDisguisedCharacter(null);
                         return true;
                     }
                 } else {
+#if DEBUG_LOG
                     log += $"\n-No Character to be targeted for make love, drop disguise";
+#endif
                     character.reactionComponent.SetDisguisedCharacter(null);
                     return true;
                 }

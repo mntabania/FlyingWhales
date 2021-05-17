@@ -15,28 +15,38 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+#if DEBUG_LOG
             string log = "Setting new lair for " + interruptHolder.actor.name;
             log += "\n-Setting lair in current region";
+#endif
             Region currentRegion = interruptHolder.actor.currentRegion;
             LocationStructure lair = GetLairInRegion(currentRegion);
             if(lair != null) {
                 interruptHolder.actor.necromancerTrait.SetLairStructure(lair);
             } else {
+#if DEBUG_LOG
                 log += "\n-Setting lair in all regions";
+#endif
                 interruptHolder.actor.necromancerTrait.SetLairStructure(GetLairInAllRegions());
             }
             if(interruptHolder.actor.necromancerTrait.lairStructure != null) {
+#if DEBUG_LOG
                 log += "\n-Lair is set: " + interruptHolder.actor.necromancerTrait.lairStructure.GetNameRelativeTo(interruptHolder.actor) + " in " + interruptHolder.actor.necromancerTrait.lairStructure.region.name;
                 log += "\n-Migrating home to lair";
+#endif
                 interruptHolder.actor.MigrateHomeStructureTo(interruptHolder.actor.necromancerTrait.lairStructure);
                 interruptHolder.actor.ClearTerritory();
+#if DEBUG_LOG
                 interruptHolder.actor.logComponent.PrintLogIfActive(log);
+#endif
                 return true;
             }
+#if DEBUG_LOG
             interruptHolder.actor.logComponent.PrintLogIfActive(log);
+#endif
             return false;
         }
-        #endregion
+#endregion
 
         private LocationStructure GetLairInAllRegions() {
             LocationStructure chosenLair = null;

@@ -85,27 +85,43 @@ public abstract class Crops : TileObject {
     /// <returns></returns>
     public abstract int GetRipeningTicks();
     private void PerTickGrowth() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{name} - Crop Per Tick Growth");
+#endif
         if (_remainingRipeningTicks == -1) {
             //if value is set to -1 then it means that this crop has just started growing, set its remaining ripening ticks here
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{name} - Crop Per Tick Growth - Get Ripening");
+#endif
             _remainingRipeningTicks = GetRipeningTicks();
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
         if (_remainingRipeningTicks == 0) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{name} - Set Growth State");
+#endif
             SetGrowthState(Growth_State.Ripe);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
         _remainingRipeningTicks = _remainingRipeningTicks - growthRate;
         //Make sure to set this to be at maximum 0, so as not to trigger the above -1 if statement, since that is meant to reset the per tick growth
         _remainingRipeningTicks = Mathf.Max(0, _remainingRipeningTicks);
         if (mapVisual != null) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{name} - Update Visual");
-            mapVisual.UpdateTileObjectVisual(this);    
+#endif
+            mapVisual.UpdateTileObjectVisual(this);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void SetGrowthRate(int growthRate) {
         _growthRate = growthRate;
@@ -113,7 +129,7 @@ public abstract class Crops : TileObject {
     public void SetRemainingRipeningTicks(int value) {
         _remainingRipeningTicks = value;
     }
-    #endregion
+#endregion
     
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
@@ -131,7 +147,7 @@ public abstract class Crops : TileObject {
         //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }
 
-    #region Testing
+#region Testing
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
         data += $"\n\tGrowth State {currentGrowthState.ToString()}";
@@ -140,7 +156,7 @@ public abstract class Crops : TileObject {
         data += $"\n\tRemaining ticks until ripe: {remainingRipeningTicks.ToString()}";
         return data;
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

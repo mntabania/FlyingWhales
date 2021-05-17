@@ -84,7 +84,9 @@ public class ReportCorruptedStructure : GoapAction {
     #endregion
     
      private void TriggerCounterattack(Character character, LocationStructure targetDemonicStructure) {
+#if DEBUG_LOG
         string debugLog = GameManager.Instance.TodayLogString() + "Counterattack!";
+#endif
 
         //LocationStructure targetDemonicStructure = InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure() ? 
         //    CollectionUtilities.GetRandomElement(InnerMapManager.Instance.worldKnownDemonicStructures): 
@@ -95,7 +97,9 @@ public class ReportCorruptedStructure : GoapAction {
             //but results in the destruction of the portal
             return;
         }
+#if DEBUG_LOG
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
+#endif
 
         if(character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Counterattack, targetDemonicStructure)) {
             character.faction.partyQuestBoard.CreateCounterattackPartyQuest(character, character.homeSettlement, targetDemonicStructure);
@@ -113,9 +117,11 @@ public class ReportCorruptedStructure : GoapAction {
         //        Debug.LogError("No faction for counterattack!");
         //    }    
         //}
-        
-        
+
+
+#if DEBUG_LOG
         Debug.Log(debugLog);
+#endif
         //List<Character> characters = new List<Character>();
         //int count = 0;
         //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

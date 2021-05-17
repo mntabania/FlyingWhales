@@ -170,7 +170,9 @@ namespace Inner_Maps {
             _ySeed = ySeed;
 
             BiomeOrder chosenOrder = CollectionUtilities.GetRandomElement(_biomeOrders);
+#if DEBUG_LOG
             Debug.Log($"Chosen biome order is {chosenOrder.ToString()}");
+#endif
             for (int i = 0; i < chosenOrder.biomesInOrder.Length; i++) {
                 BIOMES biomes = chosenOrder.biomesInOrder[i];
                 PerlinNoiseRegion perlinNoiseRegion = biomePerlinSettings.regions[i];
@@ -346,9 +348,9 @@ namespace Inner_Maps {
             
             
         } 
-        #endregion
+#endregion
 
-        #region Visuals
+#region Visuals
         protected void ClearAllTileMaps() {
             for (var i = 0; i < _allTilemaps.Length; i++) {
                 _allTilemaps[i].ClearAllTiles();
@@ -377,9 +379,9 @@ namespace Inner_Maps {
         public void SetUpperGroundVisual(Vector3Int[] locations, TileBase[] assets) {
             upperGroundTilemap.SetTiles(locations, assets);
         }
-        #endregion
+#endregion
 
-        #region Data Getting
+#region Data Getting
         public void GetUnoccupiedTilesInRadius(List<LocationGridTile> tiles, LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
             int mapSizeX = map.GetUpperBound(0);
             int mapSizeY = map.GetUpperBound(1);
@@ -422,9 +424,9 @@ namespace Inner_Maps {
             }
             return null;
         }
-        #endregion
+#endregion
         
-        #region Points of Interest
+#region Points of Interest
         public void PlaceObject(TileObject obj, LocationGridTile tile, bool placeAsset = true) {
             tile.tileObjectComponent.SetObjectHere(obj);
             //switch (obj.poiType) {
@@ -505,9 +507,9 @@ namespace Inner_Maps {
             }
         
         }
-        #endregion
+#endregion
 
-        #region Data Setting
+#region Data Setting
         public void UpdateTilesWorldPosition() {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -519,7 +521,7 @@ namespace Inner_Maps {
         public void SetWorldPosition() {
             worldPos = transform.position;
         }
-        #endregion
+#endregion
 
         void UpdateOrtigraphicSize(Camera p_cam, float p_float) {
            
@@ -535,7 +537,7 @@ namespace Inner_Maps {
             //SpawnCenterGo();
         }
 
-        #region Utilities
+#region Utilities
         public void Open() { }
         public void Close() { }
         public virtual void OnMapGenerationFinished() {
@@ -596,9 +598,9 @@ namespace Inner_Maps {
             }
             return null;
         }
-        #endregion
+#endregion
 
-        #region Structures
+#region Structures
         public List<LocationStructure> PlaceBuiltStructureTemplateAt(GameObject p_structurePrefab, Area p_area, BaseSettlement p_settlement) {
             GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_structurePrefab.name, p_area.gridTileComponent.centerGridTile.centeredLocalLocation, Quaternion.identity, structureParent);
             
@@ -686,14 +688,15 @@ namespace Inner_Maps {
                 TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.BLOCK_WALL);
                 structure.AdjustHP(-(missingWalls * tileObjectData.maxHP));
             }
-
+#if DEBUG_LOG
             Debug.Log($"Placed {structure} at {centerTile}");
+#endif
             return structure;
             // hexTile.innerMapHexTile.Occupy();
         }
-        #endregion
+#endregion
 
-        #region Details
+#region Details
         private void ConvertDetailToTileObject(LocationGridTile tile) {
             Sprite sprite = detailsTilemap.GetSprite(tile.localPlace);
             TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(InnerMapManager.Instance.GetTileObjectTypeFromTileAsset(sprite));
@@ -963,9 +966,9 @@ namespace Inner_Maps {
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Monobehaviours
+#region Monobehaviours
         public void Update() {
             Character activeCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             if (activeCharacter != null && activeCharacter.currentRegion == region
@@ -989,9 +992,9 @@ namespace Inner_Maps {
                 HidePath();
             }
         }
-        #endregion
+#endregion
 
-        #region Cleanup
+#region Cleanup
         public void CleanUp() {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -1008,7 +1011,7 @@ namespace Inner_Maps {
             Destroy(centerGo);
             centerGo = null;
         }
-        #endregion
+#endregion
         
     }
 }

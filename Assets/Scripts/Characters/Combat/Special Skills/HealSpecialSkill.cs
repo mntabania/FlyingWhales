@@ -13,7 +13,9 @@ public class HealSpecialSkill : CombatSpecialSkill {
         if(validTarget != null) {
             validTarget.AdjustHP(100, ELEMENTAL_TYPE.Normal);
             GameManager.Instance.CreateParticleEffectAt(validTarget, PARTICLE_EFFECT.Heal, false);
+#if DEBUG_LOG
             p_character.logComponent.PrintLogIfActive("HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + validTarget.name);
+#endif
             return true;
         }
         return base.TryActivateSkill(p_character);
@@ -41,5 +43,5 @@ public class HealSpecialSkill : CombatSpecialSkill {
         }
         return base.GetValidTargetFor(p_character);
     }
-    #endregion
+#endregion
 }

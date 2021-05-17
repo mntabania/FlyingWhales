@@ -310,14 +310,18 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				Character character = CollectionUtilities.GetRandomElement(characterChoices);
 				character.traitContainer.AddTrait(character, "Evil");
 				characterChoices.Remove(character);
+#if DEBUG_LOG
 				Debug.Log($"Added evil trait to {character.name}");
+#endif
 			}
 		
 			//treacherous
 			if (hasTreacherousCharacter == false && characterChoices.Count > 0) {
 				Character character = CollectionUtilities.GetRandomElement(characterChoices);
 				character.traitContainer.AddTrait(character, "Treacherous");
+#if DEBUG_LOG
 				Debug.Log($"Added treacherous trait to {character.name}");
+#endif
 			}	
 		}
 		
@@ -333,9 +337,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		
 		yield return null;
 	}
-	#endregion
+#endregion
 
-	#region Artifacts
+#region Artifacts
 	private static void GenerateArtifacts() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//if demo build, always spawn necronomicon at ancient ruins
@@ -384,7 +388,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
 			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.ANCIENT_RUIN).AddPOI(excalibur);
+#if DEBUG_LOG
 			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
+#endif
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			List<LocationStructure> landmarks = LandmarkManager.Instance.GetStructuresOfType(STRUCTURE_TYPE.MONSTER_LAIR);
             if (landmarks != null && landmarks.Count > 0) {
@@ -440,5 +446,5 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			}
 		}
 	}
-	#endregion
+#endregion
 }

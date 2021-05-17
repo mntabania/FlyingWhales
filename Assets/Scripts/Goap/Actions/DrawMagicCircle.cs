@@ -15,8 +15,10 @@ public class DrawMagicCircle : GoapAction {
         SetState("Draw Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     // public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
@@ -25,9 +27,9 @@ public class DrawMagicCircle : GoapAction {
     //     }
     //     return base.GetTargetTileToGoTo(goapNode);
     // }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterDrawSuccess(ActualGoapNode goapNode) {
         // goapNode.actor.gridTileLocation.structure.AddPOI(
         //         InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MAGIC_CIRCLE), 
@@ -37,5 +39,5 @@ public class DrawMagicCircle : GoapAction {
             tileObject.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
         }
     }
-    #endregion
+#endregion
 }

@@ -12,8 +12,9 @@ namespace Plague.Symptom {
             if (PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, p_character);    
             }
-            
+#if DEBUG_LOG
             Debug.Log("Activated Seizure Symptom");
+#endif
         }
         public override void PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (GameUtilities.RollChance(1.5f)) {

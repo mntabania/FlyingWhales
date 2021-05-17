@@ -120,9 +120,11 @@ namespace Events.World_Events {
         }
         private void SetCurrentCultLeaderInWorld(Character character) {
             _currentCultLeader = character;
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}Set cult leader in world to {_currentCultLeader?.name ?? "Null"}");
+#endif
         }
-        #endregion
+#endregion
     }
 
     public class SaveDataCultLeaderEvent : SaveDataWorldEvent {

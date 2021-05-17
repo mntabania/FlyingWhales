@@ -19,11 +19,16 @@ namespace Events.World_Events {
         private void OnHourStarted() {
             var hoursBasedOnTicks = GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick);
             if (hoursBasedOnTicks == 9 || hoursBasedOnTicks == 13) {
-                string debugLog = $"{GameManager.Instance.TodayLogString()}Checking for villager migration:";
+                string debugLog = string.Empty;
+#if DEBUG_LOG
+                debugLog = $"{GameManager.Instance.TodayLogString()}Checking for villager migration:";
+#endif
                 NPCSettlement randomSettlement = LandmarkManager.Instance.GetRandomActiveSapientSettlement();
                 if(randomSettlement != null) {
                     int unoccupiedDwellings = randomSettlement.GetUnoccupiedDwellingCount();
+#if DEBUG_LOG
                     debugLog = $"{debugLog}\n{randomSettlement.name} was chosen. It has {unoccupiedDwellings.ToString()} unoccupied dwellings.";
+#endif
                     int baseChance = 4;
                     if (GameManager.Instance.Today().day >= 12) {
                         baseChance = 2;
@@ -42,7 +47,9 @@ namespace Events.World_Events {
                         List<PreCharacterData> unspawnedCharacters = RuinarchListPool<PreCharacterData>.Claim();
                         DatabaseManager.Instance.familyTreeDatabase.ForcePopulateAllUnspawnedCharactersThatFitFaction(unspawnedCharacters, randomSettlement.owner.race, randomSettlement.owner);
                         LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(randomSettlement.region.innerMap.allEdgeTiles);
+#if DEBUG_LOG
                         debugLog = $"{debugLog}\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
+#endif
                         for (int i = 0; i < randomAmount; i++) {
                             if (unspawnedCharacters.Count <= 0) { break; }
                             PreCharacterData characterToSpawn = CollectionUtilities.GetRandomElement(unspawnedCharacters);
@@ -68,12 +75,16 @@ namespace Events.World_Events {
                             newCharacter.CreateMarker();
                             newCharacter.InitialCharacterPlacement(edgeTile);
                             newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
+#if DEBUG_LOG
                             Debug.Log($"Spawned new villager {newCharacter.name} at {edgeTile}");
+#endif
                             newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
                             newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
                             Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
 
+#if DEBUG_LOG
                             debugLog = $"{debugLog}\nNew character {newCharacter.name} was spawned.";
+#endif
 
                             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "WorldEvents", "VillagerMigration", "new_villager", providedTags: LOG_TAG.Major);
                             log.AddToFillers(newCharacter, newCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -85,10 +96,12 @@ namespace Events.World_Events {
                         RuinarchListPool<PreCharacterData>.Release(unspawnedCharacters);
                     }
                 }
+#if DEBUG_LOG
                 Debug.Log(debugLog);
+#endif
             }
         }
-        #endregion
+#endregion
 
         public override SaveDataWorldEvent Save() {
             SaveDataVillagerMigration save = new SaveDataVillagerMigration();

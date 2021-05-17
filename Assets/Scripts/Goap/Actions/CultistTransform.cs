@@ -14,13 +14,15 @@ public class CultistTransform : GoapAction {
         SetState("Transform Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
         Character character = goapNode.actor;
         LocationGridTile gridTileLocation = character.gridTileLocation;
@@ -36,5 +38,5 @@ public class CultistTransform : GoapAction {
             UIManager.Instance.characterInfoUI.CloseMenu();    
         }
     }
-    #endregion
+#endregion
 }

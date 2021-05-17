@@ -15,7 +15,9 @@ namespace Plague.Symptom {
                     chosenMonster.combatComponent.Fight(p_character, CombatManager.Monster_Scent);
                 }
             }
+#if DEBUG_LOG
             Debug.Log("Activated Monster Scent Symptom");
+#endif
         }
         protected override bool CanActivateSymptomOn(Character p_character) {
             bool state = base.CanActivateSymptomOn(p_character);

@@ -979,7 +979,9 @@ namespace Inner_Maps {
 
         protected override void OnDestroy() {
             if (Application.isPlaying) {
+#if DEBUG_LOG
                 Debug.Log("Cleaning up inner maps...");
+#endif
                 if (innerMaps != null) {
                     for (int i = 0; i < innerMaps.Count; i++) {
                         InnerTileMap innerTileMap = innerMaps[i];

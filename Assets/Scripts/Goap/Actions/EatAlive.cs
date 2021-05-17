@@ -19,8 +19,10 @@ public class EatAlive : GoapAction {
         SetState("Eat Alive Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
@@ -55,9 +57,9 @@ public class EatAlive : GoapAction {
     public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
         return !node.actor.isNormalCharacter && node.target is Character targetCharacter && targetCharacter.isNormalCharacter;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PerTickEatAliveSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AdjustHP(-10, ELEMENTAL_TYPE.Normal, true, goapNode.actor, showHPBar: true);
 
@@ -70,5 +72,5 @@ public class EatAlive : GoapAction {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
         }
     }
-    #endregion
+#endregion
 }

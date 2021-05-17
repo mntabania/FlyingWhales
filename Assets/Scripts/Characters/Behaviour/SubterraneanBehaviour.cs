@@ -12,10 +12,14 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
 	}
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} is a subterranean";
+#endif
         if (!character.isDead && character.gridTileLocation != null && !character.isNormalCharacter && !IsTamedMonster(character)) {
             if (character.behaviourComponent.subterraneanJustExitedCombat) {
+#if DEBUG_LOG
                 log += $"\n-Just exited combat will teleport to new location";
+#endif
                 List<LocationStructure> caves = character.currentRegion.GetStructuresAtLocation(STRUCTURE_TYPE.CAVE);
                 List<LocationStructure> allCavesInTheRegion = RuinarchListPool<LocationStructure>.Claim();
                 allCavesInTheRegion.AddRange(caves);
@@ -27,7 +31,9 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
                 RuinarchListPool<LocationStructure>.Release(allCavesInTheRegion);
 
                 if (chosenCave != null) {
+#if DEBUG_LOG
                     log += $"\n-Will teleport to " + chosenCave.name;
+#endif
                     LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenCave.passableTiles);
                     if (chosenTile != null) {
                         LeaveWurmHoles(character.gridTileLocation);
@@ -39,10 +45,14 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
                         historyLog.AddLogToDatabase(true);
                         return true;
                     } else {
+#if DEBUG_LOG
                         log += $"\n-No passable tile in cave, will stay";
+#endif
                     }
                 } else {
+#if DEBUG_LOG
                     log += $"\n-No other caves found, will stay";
+#endif
                 }
             }
         }

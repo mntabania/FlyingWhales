@@ -9,9 +9,11 @@ public class WurmBehaviour : BaseMonsterBehaviour {
 	}
 	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} is a wurm";
         log += $"\n-Do nothing";
-        return false;
+#endif
+		return false;
         //if (character.gridTileLocation != null) {
         //    if (character.reactionComponent.isHidden) {
         //        log += $"\n-1% chance to move to another place in the current region";
@@ -43,15 +45,21 @@ public class WurmBehaviour : BaseMonsterBehaviour {
         //return false;
 	}
 	protected override bool TamedBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
+#if DEBUG_LOG
 		p_log = $"{p_log}\n-Will try to transfer to a random unoccupied wilderness or cave spot in current settlement";
+#endif
 		if (GameUtilities.RollChance(15, ref p_log)) {
 			LocationGridTile targetBurrowTile = GetBurrowTargetTile(p_character);
 			if (targetBurrowTile != null && p_character.jobComponent.TriggerIdleBurrow(targetBurrowTile, out p_producedJob)) {
+#if DEBUG_LOG
 				p_log = $"{p_log}\n-Will burrow to {targetBurrowTile}";
+#endif
 				return true;
 			}
 		}
+#if DEBUG_LOG
 		p_log = $"{p_log}\n-Will stay idle for 8 hours";
+#endif
 		return p_character.jobComponent.PlanIdleLongStandStill(out p_producedJob);
 	}
 

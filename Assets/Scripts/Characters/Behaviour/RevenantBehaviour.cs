@@ -12,22 +12,30 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
     }
     protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} is a revenant";
+#endif
         if (character.gridTileLocation != null && (character.isAtHomeStructure || character.IsInHomeSettlement() || character.IsInTerritory())) {
             TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
             if(currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT || currentTimeOfDay == TIME_IN_WORDS.LATE_NIGHT || currentTimeOfDay == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                log += $"\n-Early/Late Night or After Midnight, 10% chance to spawn a ghost";
                 int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
+                log += $"\n-Early/Late Night or After Midnight, 10% chance to spawn a ghost";
                 log += $"\n-Roll: " + roll;
-                if(roll < 10) {
+#endif
+                if (roll < 10) {
                     TrySpawnGhost(character, ref log);
                 }
             }
             if (character.HasHome() && !character.IsAtHome()) {
+#if DEBUG_LOG
                 log += "\n-Return to territory";
+#endif
                 return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
             } else {
+#if DEBUG_LOG
                 log += "\n-Already in territory or has no territory, Roam";
+#endif
                 return character.jobComponent.TriggerRoamAroundTile(out producedJob);
             }
         }
@@ -50,7 +58,9 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
         if (p_character is Revenant revenant) {
             int numberOfGhosts = GetNumberOfGhostsInHome(revenant);
             if (numberOfGhosts < 5) {
+#if DEBUG_LOG
                 p_log += $"\n-Will spawn ghost";
+#endif
                 Character betrayer = revenant.GetRandomBetrayer();
                 LocationGridTile tile = GetTileToSpawnGhostRelativeTo(revenant);
                 var targetFaction = p_character.faction ?? FactionManager.Instance.undeadFaction;
@@ -59,7 +69,9 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
                 CharacterManager.Instance.PlaceSummonInitially(ghost, tile);
                 return true;
             } else {
+#if DEBUG_LOG
                 p_log += $"\n-Already reached maximum number of spawned ghosts: 5";
+#endif
                 return false;
             }
         }

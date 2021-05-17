@@ -11,7 +11,9 @@ public class PestBehaviour : CharacterBehaviourComponent {
         priority = 10;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        log += $"\n{character.name} is a Rat";
+#if DEBUG_LOG
+        log += $"\n{character.name} is a Pest";
+#endif
         if (!character.limiterComponent.canDoFullnessRecovery) {
             if (character.behaviourComponent.pestSettlementTarget != null) {
                 BaseSettlement targetSettlement = character.behaviourComponent.pestSettlementTarget;
@@ -38,7 +40,9 @@ public class PestBehaviour : CharacterBehaviourComponent {
                 }
             }
             if (character.behaviourComponent.pestSettlementTarget != null) {
+#if DEBUG_LOG
                 log += $"\n-Already has village target";
+#endif
                 BaseSettlement targetSettlement = character.behaviourComponent.pestSettlementTarget;
                 if (targetSettlement != null) {
                     if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {

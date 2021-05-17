@@ -9,7 +9,9 @@ public class HeirloomHuntBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-Character is hunting heirloom";
+#endif
         //HeirloomHuntParty heirloomHuntParty = character.partyComponent.currentParty as HeirloomHuntParty;
         //log += $"\n-Heirloom is already in designated spot, leave party";
         //if (heirloomHuntParty.targetHeirloom.IsInStructureSpot()) {

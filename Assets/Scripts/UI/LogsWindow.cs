@@ -94,9 +94,13 @@ public class LogsWindow : MonoBehaviour {
         Stopwatch timer = new Stopwatch();
         timer.Start();
 #endif
+#if DEBUG_PROFILER
         Profiler.BeginSample("Get Logs that match criteria");
+#endif
         List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsThatMatchCriteria(_objPersistentID, SharedSearch, SharedEnabledFilters);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         int historyCount = logs?.Count ?? 0;
         int historyLastIndex = historyCount - 1;
         int missingItems = historyCount - logHistoryItems.Count;
@@ -160,7 +164,7 @@ public class LogsWindow : MonoBehaviour {
         historyScrollView.verticalNormalizedPosition = 1;
     }
 
-    #region Search
+#region Search
     public void DoSearch() {
         UpdateAllHistoryInfo();
     }
@@ -177,9 +181,9 @@ public class LogsWindow : MonoBehaviour {
         searchField.SetTextWithoutNotify(string.Empty);
         OnEndSearchEdit(string.Empty);
     }
-    #endregion
+#endregion
 
-    #region Filters
+#region Filters
     public void ToggleFilters() {
         filterGO.gameObject.SetActive(!filterGO.activeInHierarchy);
     }
@@ -213,5 +217,5 @@ public class LogsWindow : MonoBehaviour {
         }
         UpdateAllHistoryInfo();
     }
-    #endregion
+#endregion
 }

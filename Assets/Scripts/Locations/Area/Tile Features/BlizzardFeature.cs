@@ -133,7 +133,9 @@ namespace Locations.Area_Features {
 
         #region Effects
         private void BlizzardDamageAndFreezingProcess(Area hex) {
+#if DEBUG_LOG
             string summary = $"{GameManager.Instance.TodayLogString()}Starting freezing check...";
+#endif
             SkillData blizzardData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.BLIZZARD);
             int baseChance = (int)PlayerSkillManager.Instance.GetChanceBonusPerLevel(blizzardData);
             float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(blizzardData);
@@ -147,8 +149,10 @@ namespace Locations.Area_Features {
                 //summary =
                 //    $"{summary}\nRolling freezing check for {character.name}. Roll is {roll.ToString()}. Chance is {chance.ToString()}";
                 if (GameUtilities.RollChance(baseChance)) {
+#if DEBUG_LOG
                     summary =
                         $"{summary}\n\tChance met for {character.name}. Adding Freezing trait...";
+#endif
                     character.traitContainer.AddTrait(character, "Freezing", bypassElementalChance: true);
                     Freezing freezing = character.traitContainer.GetTraitOrStatus<Freezing>("Freezing");
                     freezing?.SetIsPlayerSource(isPlayerSource);
@@ -165,20 +169,22 @@ namespace Locations.Area_Features {
             }
             //reschedule 15 minutes after.
             RescheduleBlizzardDamageAndFreezingProcess(hex);
+#if DEBUG_LOG
             Debug.Log(summary);
+#endif
         }
         private void RescheduleBlizzardDamageAndFreezingProcess(Area p_area) {
             if (p_area.featureComponent.HasFeature(name) == false) { return; }
             GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(6));
             _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => BlizzardDamageAndFreezingProcess(p_area), this);
         }
-        #endregion
+#endregion
 
-        #region Expiry
+#region Expiry
         public void SetExpiryInTicks(int ticks) {
             expiryInTicks = ticks;
         }
-        #endregion
+#endregion
         public void SetIsPlayerSource(bool p_state) {
             isPlayerSource = p_state;
         }

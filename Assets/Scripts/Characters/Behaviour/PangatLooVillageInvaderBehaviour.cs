@@ -9,37 +9,48 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
         priority = 450;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n{character.name} is a Pangat Loo Invader";
-
+#endif
         NPCSettlement targetSettlement = GetMainVillageSettlement(); //this is guaranteed to be the main village in Pangat Loo map
         if (targetSettlement != null) {
             if (character.currentSettlement == targetSettlement) {
+#if DEBUG_LOG
                 log += $"\n-Already at village target, will find character to attack";
+#endif
                 //character is already at target village
                 List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
                 PopulateTargetChoices(targets, targetSettlement.areas);
                 if (targets.Count > 0) {
                     //Fight a random target
                     Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
+#if DEBUG_LOG
                     log += $"\n-Chosen target is {chosenTarget.name}";
+#endif
                     character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
                     ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
                     producedJob = null;
                     return true;
                 } else {
+#if DEBUG_LOG
                     log += $"\n-No more valid targets, roam";
+#endif
                     ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
                     return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 }
             } else {
+#if DEBUG_LOG
                 log += $"\n-character is not yet at village target, will go there now...";
+#endif
                 //character is not yet at target village
                 Area targetArea = CollectionUtilities.GetRandomElement(targetSettlement.areas);
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.gridTiles);
                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
             }    
         } else {
+#if DEBUG_LOG
             log += $"\n-character does not have an invade village target, roam";
+#endif
             //character could not find a valid target settlement
             return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         }

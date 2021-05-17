@@ -302,7 +302,9 @@ namespace UtilityScripts {
         /// <returns>Whether or not the given chance was met.</returns>
         public static bool RollChance(int chance, ref string log) {
             int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
             log += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+#endif
             return roll < chance;
         }
         /// <summary>

@@ -99,21 +99,29 @@ public class GameManager : BaseMonoBehaviour {
     
     private void Update() {
         if (_gameHasStarted && !isPaused) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Tick Started Call");
+#endif
             if (Math.Abs(timeElapsed) <= 0f) {
                 TickStarted();
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             timeElapsed += Time.deltaTime;
             if (timeElapsed >= progressionSpeed) {
                 timeElapsed = 0f;
+#if DEBUG_PROFILER
                 Profiler.BeginSample("Tick Ended Call");
+#endif
                 TickEnded();
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
             }
         }
     }
-    #endregion
+#endregion
     public void Initialize() {
         today = new GameDate(startMonth, startDay, startYear, startTick);
         BaseParticleEffect.particleEffectActivated = AddActiveEffect;
@@ -233,49 +241,89 @@ public class GameManager : BaseMonoBehaviour {
     private void TickStarted() {
         if (today.tick % ticksPerHour == 0 && !IsStartOfGame()) {
             //hour reached
+#if DEBUG_PROFILER
             Profiler.BeginSample("Hour Started");
+#endif
             Messenger.Broadcast(Signals.HOUR_STARTED);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample("Tick Started Signal");
+#endif
         Messenger.Broadcast(Signals.TICK_STARTED);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Tick Started - Update UI");
+#endif
         Messenger.Broadcast(UISignals.UPDATE_UI);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    private void TickEnded(){
+    private void TickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample("Check Schedules");
+#endif
         Messenger.Broadcast(Signals.CHECK_SCHEDULES);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Character Tick Ended Movement");
+#endif
         Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Process All Unprocessed POIS");
+#endif
         Messenger.Broadcast(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Character Tick Ended");
+#endif
         Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Generic Tick Ended Signal");
+#endif
         Messenger.Broadcast(Signals.TICK_ENDED);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
         today.tick += 1;
         if (today.tick > ticksPerDay) {
             today.tick = 1;
+#if DEBUG_PROFILER
             Profiler.BeginSample("Tick Ended - Day Started");
+#endif
             DayStarted(false);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample("Tick Ended - Update UI");
+#endif
         Messenger.Broadcast(UISignals.UPDATE_UI);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void SetTick(int amount) {
         today.tick = amount;
@@ -533,7 +581,7 @@ public class GameManager : BaseMonoBehaviour {
         }
     }
 
-    #region Particle Effects
+#region Particle Effects
     public GameObject CreateParticleEffectAt(Vector3 worldLocation, InnerTileMap innerTileMap, PARTICLE_EFFECT particle, int sortingOrder = -1) {
         GameObject prefab = null;
         GameObject go = null;
@@ -680,23 +728,23 @@ public class GameManager : BaseMonoBehaviour {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region For Testing
+#region For Testing
     [ContextMenu("Print Event Table")]
     public void PrintEventTable() {
         Messenger.PrintEventTable();
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     private bool IsStartOfGame() {
         if (today.year == startYear && today.month == startMonth && today.day == startDay && today.tick == startTick) {
             return true;
         }
         return false;
     }
-    #endregion
+#endregion
 
     public static Log CreateNewLog() {
         return LogPool.Claim();

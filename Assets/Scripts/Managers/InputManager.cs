@@ -210,7 +210,9 @@ namespace Ruinarch {
             return _allowedHotKeys[p_keyCode];
         }
         public void SetAllHotkeysEnabledState(bool p_state) {
+#if DEBUG_LOG
             Debug.Log($"Set all hotkeys state to {p_state.ToString()}");
+#endif
             List<KeyCode> keys = _allowedHotKeysList;
             for (int i = 0; i < keys.Count; i++) {
                 KeyCode key = keys[i];
@@ -219,11 +221,13 @@ namespace Ruinarch {
         }
         public void SetSpecificHotkeyEnabledState(KeyCode p_keyCode, bool p_state) {
             _allowedHotKeys[p_keyCode] = p_state;
+#if DEBUG_LOG
             Debug.Log($"Set hotkeys state of {p_keyCode} to {p_state}");
+#endif
         }
-        #endregion
+#endregion
 
-        #region Initialization
+#region Initialization
         private void Initialize() {
             buttonsToHighlight = new HashSet<string>();
             Messenger.MarkAsPermanent(UISignals.SHOW_SELECTABLE_GLOW);
@@ -259,9 +263,9 @@ namespace Ruinarch {
                 button.StartGlow();
             }
         }
-        #endregion
+#endregion
 
-        #region Cursor
+#region Cursor
         public void SetCursorTo(Cursor_Type type) {
             if (currentCursorType == type) {
                 return; //ignore 
@@ -286,14 +290,16 @@ namespace Ruinarch {
             }
             currentCursorType = type;
             Cursor.SetCursor(cursors[type], hotSpot, cursorMode);
+#if DEBUG_LOG
             Debug.Log($"Set cursor to {currentCursorType.ToString()}");
+#endif
         }
         public void RevertToPreviousCursor() {
             SetCursorTo(previousCursorType);
         }
-        #endregion
+#endregion
 
-        #region Spells
+#region Spells
         /// <summary>
         /// Cancel actions based on a hardcoded process
         /// </summary>
@@ -395,9 +401,9 @@ namespace Ruinarch {
             }
             return false;
         }
-        #endregion
+#endregion
         
-        #region Utilities
+#region Utilities
         private void OnActiveSceneChanged(Scene current, Scene next) {
             if (next.name == "Game") {
                 runUpdate = true;
@@ -416,16 +422,16 @@ namespace Ruinarch {
             var currentSelectedGameObject = EventSystem.current.currentSelectedGameObject;
             return currentSelectedGameObject != null && currentSelectedGameObject.activeInHierarchy;
         }
-        #endregion
+#endregion
 
-        #region Selection
+#region Selection
         public void Select(ISelectable objToSelect) {
             objToSelect.LeftSelectAction();
             Messenger.Broadcast(ControlsSignals.SELECTABLE_LEFT_CLICKED, objToSelect);
         }
-        #endregion
+#endregion
 
-        #region Report A Bug
+#region Report A Bug
         private void ReportABug() {
             YesNoConfirmation yesNoConfirmation = null;
             if (UIManager.Instance != null) {
@@ -440,18 +446,18 @@ namespace Ruinarch {
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Events
+#region Events
         public static void AddOnUpdateEvent(System.Action p_event) {
             m_onUpdateEvent += p_event;
         }
         public static void RemoveOnUpdateEvent(System.Action p_event) {
             m_onUpdateEvent -= p_event;
         } 
-        #endregion
+#endregion
         
-        #region Center Cycle
+#region Center Cycle
         private void CharacterCenterCycle() {
             if (DatabaseManager.Instance.characterDatabase.aliveVillagersList != null && DatabaseManager.Instance.characterDatabase.aliveVillagersList.Count > 0) {
                 //normal objects to center
@@ -476,6 +482,6 @@ namespace Ruinarch {
             }
             return objToSelect;
         }
-        #endregion
+#endregion
     }
 }

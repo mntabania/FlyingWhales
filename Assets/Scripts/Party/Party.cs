@@ -195,9 +195,13 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         OnMeetingPlaceDestroyed(structure);
     }
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Party On Tick Ended");
+#endif
         ProcessForcedCancelJobsOnTickEnded();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void OnHourStarted() {
         if (isActive) {
@@ -214,9 +218,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             JobRemovedFromJobBoard(p_job);
         }
     }
-    #endregion
+#endregion
 
-    #region General
+#region General
     //private void SetTakeQuestSchedule() {
     //    takeQuestSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.MORNING);
     //}
@@ -317,9 +321,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public void SetHasChangedTargetDestination(bool state) {
         hasChangedTargetDestination = state;
     }
-    #endregion
+#endregion
 
-    #region States
+#region States
     public void SetPartyState(PARTY_STATE state, bool goHome = false) {
         if (partyState != state) {
             PARTY_STATE prevState = partyState;
@@ -362,18 +366,18 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         beaconComponent.UpdateBeaconCharacter();
     }
-    #endregion
+#endregion
 
-    #region None State
+#region None State
     private void OnSwitchToNoneState(PARTY_STATE prevState) {
         //DropQuest();
     }
     private void OnSwitchFromNoneState(PARTY_STATE prevState) {
         //DropQuest();
     }
-    #endregion  
+#endregion
 
-    #region Waiting State
+#region Waiting State
     private void OnSwitchToWaitingState(PARTY_STATE prevState) {
         if (isPlayerParty) {
             StartWaitTimer();
@@ -453,9 +457,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     //        }
     //    }
     //}
-    #endregion
+#endregion
 
-    #region Moving State
+#region Moving State
     private void OnSwitchToMovingState(PARTY_STATE prevState, bool goHome) {
         //Currently if the party switches to moving state, we must check if the previous target destination is already the home settlement of the party, if it is, all moving state of the party must be to go home
         //So that the party member will not go to the working destination again
@@ -503,9 +507,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Resting State
+#region Resting State
     private void OnSwitchToRestingState(PARTY_STATE prevState) {
         //hasRested = true;
         SetStartedTrueRestingState(false);
@@ -597,9 +601,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void SetStartedTrueRestingState(bool p_state) {
         startedTrueRestingState = p_state;
     }
-    #endregion
+#endregion
 
-    #region Working State
+#region Working State
     private void OnSwitchToWorkingState(PARTY_STATE prevState) {
         if (prevState == PARTY_STATE.Waiting) {
             SetTargetDestination(currentQuest.GetTargetDestination());
@@ -610,9 +614,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
     private void OnSwitchFromWorkingState(PARTY_STATE prevState) {
     }
-    #endregion
+#endregion
 
-    #region Quest
+#region Quest
     private void AcceptQuest(PartyQuest quest) {
         if (!isActive && quest != null) {
             SetCurrentQuest(quest);
@@ -704,9 +708,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void SetCanAcceptQuests(bool state) {
         canAcceptQuests = state;
     }
-    #endregion
+#endregion
 
-    #region Members
+#region Members
     public bool AddMember(Character character) {
         if (!members.Contains(character)) {
             members.Add(character);
@@ -980,10 +984,14 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
     private void CharacterDies(Character character) {
         if (membersThatJoinedQuest.Contains(character)) {
+#if DEBUG_LOG
             Debug.Log("TO BE ADDED: " + character.nameWithID);
+#endif
             if (!deadMembers.Contains(character)) {
                 deadMembers.Add(character);
+#if DEBUG_LOG
                 Debug.Log("ADDED: " + character.nameWithID);
+#endif
                 
             }
         }
@@ -1006,9 +1014,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Disbandment
+#region Disbandment
     private void DisbandParty() {
         if (isDisbanded) { return; }
         
@@ -1030,9 +1038,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         Messenger.Broadcast(PartySignals.DISBAND_PARTY, this);
         DestroyParty();
     }
-    #endregion
+#endregion
 
-    #region Party Walk Speed
+#region Party Walk Speed
     private void UpdatePartyWalkSpeed() {
         if (!isPlayerParty) { return; } //Party Walk Speed applies only on demon parties for now
         if(membersThatJoinedQuest.Count > 0) {
@@ -1058,9 +1066,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataParty data) {
         jobBoard.LoadReferences(data.jobBoard);
         
@@ -1119,9 +1127,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region IJobOwner
+#region IJobOwner
     private void JobRemovedFromJobBoard(JobQueueItem job) {
         if(job.jobType == JOB_TYPE.BUILD_CAMP) {
             SetStartedTrueRestingState(true);
@@ -1140,7 +1148,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
     public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
         if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+#if DEBUG_LOG
             Debug.Log(GameManager.Instance.TodayLogString() + " " + name + " added to forced cancel job " + job.name);
+#endif
             forcedCancelJobsOnTickEnded.Add(job);
         }
     }
@@ -1201,9 +1211,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         forcedCancelJobsOnTickEnded.Clear();
     }
-    #endregion
+#endregion
 
-    #region IBookmarkable
+#region IBookmarkable
     public void OnSelectBookmark() {
         CenterOnParty();
         UIManager.Instance.ShowPartyInfo(this);
@@ -1225,9 +1235,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public void OnHoverOutBookmarkItem() {
         UIManager.Instance.HideSmallInfo();
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void CenterOnParty() {
         if (beaconComponent.currentBeaconCharacter != null) {
             beaconComponent.currentBeaconCharacter.CenterOnCharacter();
@@ -1237,9 +1247,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             members[0].CenterOnCharacter();
         }
     }
-    #endregion
+#endregion
 
-    #region Object Pool
+#region Object Pool
     private void DestroyParty() {
         beaconComponent.OnDestroyParty();
         ObjectPoolManager.Instance.ReturnPartyToPool(this);
@@ -1281,9 +1291,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         DatabaseManager.Instance.partyDatabase.RemoveParty(this);
         Messenger.Broadcast(PartySignals.PARTY_DESTROYED, this);
     }
-	#endregion
+#endregion
         
-    #region Subscribe/Unsubscribe
+#region Subscribe/Unsubscribe
     public void Subscribe(PartyEventsIListener p_iListener) {
         onQuestFailed += p_iListener.OnQuestFailed;
         onQuestSucceed += p_iListener.OnQuestSucceed;
@@ -1293,7 +1303,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         onQuestFailed -= p_iListener.OnQuestFailed;
         onQuestSucceed -= p_iListener.OnQuestSucceed;
     }
-    #endregion
+#endregion
 }
 
 
@@ -1342,11 +1352,11 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public SaveDataPartyBeaconComponent beaconComponent;
     public SaveDataPartyDamageAccumulator damageAccumulator;
 
-    #region getters
+#region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party;
-    #endregion
+#endregion
 
-    #region Overrides
+#region Overrides
     public override void Save(Party data) {
         persistentID = data.persistentID;
         partyName = data.partyName;
@@ -1448,5 +1458,5 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         Party party = PartyManager.Instance.CreateNewParty(this);
         return party;
     }
-    #endregion
+#endregion
 }

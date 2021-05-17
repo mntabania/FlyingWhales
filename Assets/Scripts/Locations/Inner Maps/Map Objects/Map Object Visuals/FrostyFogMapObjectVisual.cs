@@ -123,17 +123,21 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Frosty Fog Per Tick");
+#endif
         for (int i = 0; i < _objsInRange.Count; i++) {
             _objsInRange[i].traitContainer.AddTrait(_objsInRange[i], "Freezing");
             Freezing freezing = _objsInRange[i].traitContainer.GetTraitOrStatus<Freezing>("Freezing");
             freezing?.SetIsPlayerSource(owner.isPlayerSource);
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    #endregion
+#endregion
 
-    #region Size
+#region Size
     public void SetSize(int size) {
         _size = size;
         ChangeScaleBySize();
@@ -149,9 +153,9 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         // _snowFlakesEffect.transform.localScale = new Vector3(_size, _size, _size);
         // _waveEffect.transform.localScale = new Vector3(_size, _size, _size);
     }
-    #endregion
+#endregion
 
-    #region Triggers
+#region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
@@ -166,9 +170,9 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
             RemoveObject(traitable);   
         }
     }
-    #endregion
+#endregion
     
-    #region POI's
+#region POI's
     private void AddObject(ITraitable obj) {
         if (!_objsInRange.Contains(obj)) {
             _objsInRange.Add(obj);
@@ -177,11 +181,13 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void RemoveObject(ITraitable obj) {
         _objsInRange.Remove(obj);
     }
-    #endregion
+#endregion
     
-    #region Expiration
+#region Expiration
     public void Expire() {
+#if DEBUG_LOG
         Debug.Log($"{this.name} expired!");
+#endif
         _frostyFogEffect.Stop();
         _snowFlakesEffect.Stop();
         _waveEffect.Stop();
@@ -200,9 +206,9 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         yield return new WaitForSeconds(4.5f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
-    #endregion
+#endregion
 
-    #region Particles
+#region Particles
     private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
@@ -214,5 +220,5 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _snowFlakesEffect.Pause();
         _waveEffect.Pause();
     }
-    #endregion
+#endregion
 }

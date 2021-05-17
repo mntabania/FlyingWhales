@@ -29,8 +29,10 @@ public class DropRestrained : GoapAction {
         SetState("Drop Success", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -100,9 +102,9 @@ public class DropRestrained : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -120,9 +122,9 @@ public class DropRestrained : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         // if (poiTarget is Character) {
         //     Character target = poiTarget as Character;
@@ -132,9 +134,9 @@ public class DropRestrained : GoapAction {
         // }
         return actor.IsPOICarriedOrInInventory(poiTarget);
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreDropSuccess(ActualGoapNode goapNode) {
         if (goapNode.associatedJobType == JOB_TYPE.TRITON_KIDNAP) {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "triton_kidnap", goapNode, logTags);
@@ -261,5 +263,5 @@ public class DropRestrained : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 }

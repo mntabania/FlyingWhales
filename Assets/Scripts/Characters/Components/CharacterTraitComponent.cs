@@ -86,21 +86,23 @@ public class CharacterTraitComponent : CharacterComponent {
             if (GameUtilities.RollChance(20)) {
                 LocationGridTile gridTile = owner.gridTileLocation;
                 if (gridTile != null) {
+#if DEBUG_LOG
                     Debug.Log("Chaos Orb Produced - [" + owner.name + "] - [Status Effect] - [" + 1 + "]");
+#endif
                     Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, 1, gridTile.parentMap);
                 }
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataCharacterTraitComponent data) {
         if (willProcessPlayerSourceChaosOrb) {
             Messenger.AddListener(Signals.TICK_STARTED, TickStartedProcessPlayerSourceChaosOrb);
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -109,7 +111,7 @@ public class SaveDataCharacterTraitComponent : SaveData<CharacterTraitComponent>
     public bool willProcessPlayerSourceChaosOrb;
     public bool isOtherTick;
 
-    #region Overrides
+#region Overrides
     public override void Save(CharacterTraitComponent data) {
         hasAgoraphobicReactedThisTick = data.hasAgoraphobicReactedThisTick;
         willProcessPlayerSourceChaosOrb = data.willProcessPlayerSourceChaosOrb;
@@ -120,5 +122,5 @@ public class SaveDataCharacterTraitComponent : SaveData<CharacterTraitComponent>
         CharacterTraitComponent component = new CharacterTraitComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

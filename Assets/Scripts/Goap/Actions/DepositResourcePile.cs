@@ -57,8 +57,10 @@ public class DepositResourcePile : GoapAction {
         SetState("Deposit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -158,9 +160,9 @@ public class DepositResourcePile : GoapAction {
     public override void OnActionStarted(ActualGoapNode node) {
         node.actor.ShowItemVisualCarryingPOI(node.poiTarget as TileObject);
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     //private bool IsActorWoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
     //    if (actor.supply > actor.role.reservedSupply) {
     //        WoodPile supplyPile = poiTarget as WoodPile;
@@ -177,9 +179,9 @@ public class DepositResourcePile : GoapAction {
     private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.IsPOICarriedOrInInventory(poiTarget);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -211,9 +213,9 @@ public class DepositResourcePile : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreDepositSuccess(ActualGoapNode goapNode) {
         ResourcePile pile = goapNode.poiTarget as ResourcePile;
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -260,7 +262,7 @@ public class DepositResourcePile : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 
 
     private bool IsTargetMissingOverride(ActualGoapNode node) {

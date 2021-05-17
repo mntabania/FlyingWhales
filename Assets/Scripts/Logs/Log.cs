@@ -249,17 +249,21 @@ public class Log {
         
     #region Addition
     public void AddLogToDatabase(bool releaseLogAfter = false) {
+#if DEBUG_PROFILER
         Profiler.BeginSample("Add Log To Database");
+#endif
         DatabaseManager.Instance.mainSQLDatabase.InsertLogUsingMultiThread(this);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
 
         if (releaseLogAfter) {
             LogPool.Release(this);
         }
     }
-    #endregion
+#endregion
 
-    #region Tags
+#region Tags
     public void AddTag(LOG_TAG tag) {
         if (!tags.Contains(tag)) {
             tags.Add(tag);    
@@ -279,9 +283,9 @@ public class Log {
             }    
         }
     }
-    #endregion
+#endregion
 
-    #region Updates
+#region Updates
     public bool TryUpdateLogAfterRename(Character updatedCharacter, bool force = false) {
         if (IsInvolved(updatedCharacter) || force) {
             if (fillers != null) {
@@ -311,15 +315,15 @@ public class Log {
         ResetText();
         FinalizeText();
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public bool IsImportant() {
         return tags.Contains(LOG_TAG.Major);
     }
-    #endregion
+#endregion
 
-    #region Object Pools
+#region Object Pools
     public void Reset() {
         fillers.Clear();
         tags.Clear();
@@ -334,5 +338,5 @@ public class Log {
         hasBeenFinalized = false;
         _logText = string.Empty;
     }
-    #endregion
+#endregion
 }

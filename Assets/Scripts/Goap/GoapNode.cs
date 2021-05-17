@@ -142,41 +142,73 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         SetJob(job);
         isStealth = IsActionStealth(job);
         avoidCombat = IsActionAvoidCombat(job);
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set Current Action Node");
+#endif
         actor.SetCurrentActionNode(this, job, plan);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Doing Action Signal");
+#endif
         Messenger.Broadcast(JobSignals.CHARACTER_DOING_ACTION, actor, this);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         //actor.marker.UpdateActionIcon();
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - On Action Started");
+#endif
         action.OnActionStarted(this);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         //poiTarget.AddTargettedByAction(this);
 
         //Set Crime Type
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set Crime Type");
+#endif
         SetCrimeType();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
 
         //Move To Do Action
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Reset End Reached");
+#endif
         actor.marker.pathfindingAI.ResetEndReachedDistance();
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set target to go to");
+#endif
         SetTargetToGoTo();
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Create Thought Bubble Log");
+#endif
         CreateThoughtBubbleLog();
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Check and move to do action");
+#endif
         CheckAndMoveToDoAction(job);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void SetTargetToGoTo() {
         if (targetStructure == null) {
@@ -368,38 +400,56 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else {
             if (targetPOIToGoTo == null) {
                 if (targetTile == actor.gridTileLocation) {
+#if DEBUG_PROFILER
                     Profiler.BeginSample("Perform Goap Action 1");
+#endif
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                 } else {
                     if ((action.canBePerformedEvenIfPathImpossible == false && !actor.movementComponent.HasPathTo(targetTile)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
+#if DEBUG_PROFILER
                     Profiler.BeginSample("GoTo 1");
+#endif
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                 }
             } else {
                 if(actor.gridTileLocation == targetPOIToGoTo.gridTileLocation) {
+#if DEBUG_PROFILER
                     Profiler.BeginSample("Perform Goap Action 2");
+#endif
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                 } else {
                     if ((action.canBePerformedEvenIfPathImpossible == false && !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
+#if DEBUG_PROFILER
                     Profiler.BeginSample("Go To POI");
+#endif
                     actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                 }
             }
         }
         return true;
     }
     private void OnArriveAtTargetLocation() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{actor.name} - {action.name} - OnArriveAtTargetLocation");
+#endif
         if(action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
             if(actor.hasMarker && actor.marker.IsPOIInVision(poiTarget)) {
                 //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
@@ -413,7 +463,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else {
             actor.PerformGoapAction();
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(this);
@@ -421,7 +473,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         bool isInvalidOnVision = action.IsInvalidOnVision(this, out invalidVisionReason);
         bool isInvalidStealth = IsInvalidStealth();
         if (goapActionInvalidity.isInvalid || isInvalidOnVision || isInvalidStealth) {
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!\nDebug Log:\n {goapActionInvalidity.debugLog}");
+#endif
             if (!string.IsNullOrEmpty(invalidVisionReason) && string.IsNullOrEmpty(goapActionInvalidity.reason)) {
                 //if goap action invalidity reason is empty and invalidity reason for vision is not, then copy over value of vision invalidity, so that it will be used for the invalid log.
                 goapActionInvalidity.reason = invalidVisionReason;
@@ -509,8 +563,10 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         Messenger.Broadcast(JobSignals.STARTED_PERFORMING_ACTION, this);
     }
     public void ActionInterruptedWhilePerforming(bool shouldDoAfterEffect) {
-        string log =
-            $"{GameManager.Instance.TodayLogString()}{actor.name} is interrupted while doing goap action: {action.goapName}";
+//#if DEBUG_LOG
+//        string log =
+//            $"{GameManager.Instance.TodayLogString()}{actor.name} is interrupted while doing goap action: {action.goapName}";
+//#endif
         if (shouldDoAfterEffect) {
             string result = GoapActionStateDB.GetStateResult(action.goapType, currentState.name);
             if (result == InteractionManager.Goap_State_Success) {
@@ -626,21 +682,27 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public void SetTargetStructure(LocationStructure structure) {
         targetStructure = structure;
     }
-    #endregion
+#endregion
 
-    #region Action State
+#region Action State
     public void OnActionStateSet(string stateName) {
+#if DEBUG_LOG
         Debug.Log($"Set action state of {actor.name}'s {action.goapName} to {stateName}");
+#endif
         currentStateName = stateName;
         OnPerformActualActionToTarget();
         ExecuteCurrentActionState();
     }
     private void ExecuteCurrentActionState() {
         if (!action.states.ContainsKey(currentStateName)) {
+#if DEBUG_LOG
             Debug.LogError(
                 $"Failed to execute current action state for {actor.name} because {action.goapName} does not have state with name: {currentStateName}");
+#endif
         }
+#if DEBUG_LOG
         Debug.Log($"Executing action state of {actor.name}'s {action.goapName}, {currentStateName}");
+#endif
         GoapActionState currentState = action.states[currentStateName];
 
         IPointOfInterest target = poiTarget;
@@ -787,7 +849,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
     }
     private void PerTickEffect() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{actor.name} - {action.name} - Per Tick Effect");
+#endif
         GoapActionState currentState = action.states[currentStateName];
         currentStateDuration++;
 
@@ -822,11 +886,17 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
         //}
         if (currentStateDuration >= currentState.duration) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{actor.name} - {action.name} - End Per Tick Effect");
+#endif
             EndPerTickEffect();
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void OnPerformActualActionToTarget() {
         if (GoapActionStateDB.GetStateResult(action.goapType, currentStateName) != InteractionManager.Goap_State_Success) {
@@ -857,9 +927,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public void OverrideCurrentStateDuration(int val) {
         currentStateDuration = val;
     }
-    #endregion
+#endregion
 
-    #region Log
+#region Log
     private void CreateDescriptionLog(GoapActionState actionState) {
         if (descriptionLog == null) {
             descriptionLog = actionState.CreateDescriptionLog(this);
@@ -913,9 +983,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         return tags;
     }
-    #endregion
+#endregion
 
-    #region Jobs
+#region Jobs
     public void OnAttachPlanToJob(GoapPlanJob job) {
         isStealth = job.isStealth;
     }
@@ -932,15 +1002,15 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             
     //    }
     //}
-    #endregion
+#endregion
     
-    #region Character
+#region Character
     public void AddAwareCharacter(Character character) {
         awareCharacters.Add(character);
     }
-    #endregion
+#endregion
 
-    #region General
+#region General
     public override string ToString() {
         return $"Action: {action?.name ?? "Null"}. Actor: {actor.name} . Target: {poiTarget?.name ?? "Null"}";
     }
@@ -950,9 +1020,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 || associatedJobType == JOB_TYPE.RETURN_HOME_URGENT
                 || associatedJobType == JOB_TYPE.FLEE_TO_HOME;
     }
-    #endregion
+#endregion
 
-    #region IRumorable
+#region IRumorable
     public void SetAsRumor(Rumor newRumor) {
         if(rumor != newRumor) {
             rumor = newRumor;
@@ -964,9 +1034,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Assumption
+#region Assumption
     public void SetAsAssumption(Assumption newAssumption) {
         if (assumption != newAssumption) {
             assumption = newAssumption;
@@ -978,9 +1048,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Illusion
+#region Illusion
     //Illusion actions are actions that are not really performed by the actor physically but is perceived by the witnesses that is was performed
     //Example: Trespassing
     public void SetAsIllusion() {
@@ -988,9 +1058,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         currentStateName = GoapActionStateDB.goapActionStates[goapType][0].name;
         CreateDescriptionLog(currentState);
     }
-    #endregion
+#endregion
 
-    #region IReactable
+#region IReactable
     public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
         return action.ReactionToActor(actor, target, witness, this, status);
     }
@@ -1013,9 +1083,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return action.GetReactableEffect(this, witness);
     }
-    #endregion
+#endregion
 
-    #region Crime
+#region Crime
     public void SetCrimeType() {
         if(crimeType == CRIME_TYPE.Unset) {
             Character actor = this.actor;
@@ -1029,9 +1099,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             crimeType = action.GetCrimeType(actor, target, this);
         }
     }
-    #endregion
+#endregion
 
-    #region Unique Action Data
+#region Unique Action Data
     private UniqueActionData CreateUniqueActionData(GoapAction action) {
         if (action.uniqueActionDataType != null) {
             UniqueActionData data = System.Activator.CreateInstance(action.uniqueActionDataType) as UniqueActionData;
@@ -1045,9 +1115,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         Assert.IsNotNull(converted, $"Trying to get converted unique action data of {action.goapName} of actor {actor.name} but it could not be converted! Unique action data value is {uniqueActionData}");
         return converted;
     }
-    #endregion
+#endregion
 
-    #region Stealth
+#region Stealth
     private bool IsInvalidStealth() {
         //If action is stealth and there is a character in vision that can witness and considers the action as a crime, then return false, this means that the actor must not do the action because there are witnesses
         //Only do this if the actor is a Villager, otherwise, it does not make sense for monsters to be stealthy
@@ -1065,9 +1135,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void DoActionUponLoadingSavedGame() {
         if(actionStatus == ACTION_STATUS.STARTED) {
             //TODO: Resume doing action
@@ -1187,7 +1257,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -1230,11 +1300,11 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
 
     public SaveDataUniqueActionData uniqueActionData;
 
-    #region getters
+#region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Action;
-    #endregion
+#endregion
 
-    #region Overrides
+#region Overrides
     public override void Save(ActualGoapNode data) {
         persistentID = data.persistentID;
         isStealth = data.isStealth;
@@ -1335,5 +1405,5 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         ActualGoapNode action = new ActualGoapNode(this);
         return action;
     }
-    #endregion
+#endregion
 }
