@@ -30,8 +30,10 @@ public class Poison : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +{cost}(RNG)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
@@ -90,9 +92,9 @@ public class Poison : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Assault;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PrePoisonSuccess(ActualGoapNode goapNode) {
         //NOTE: Added poison trait to pre effect so that anyone that can react to this action, can access that trait, 
         //even though the action has not yet been completed
@@ -101,9 +103,9 @@ public class Poison : GoapAction {
         poisoned?.SetIsPlayerSource(goapNode.associatedJobType == JOB_TYPE.CULTIST_POISON);
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.TOOL);
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -124,13 +126,13 @@ public class Poison : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Precondition
+#region Precondition
     private bool HasTool(Character character, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return character.HasItem(TILE_OBJECT_TYPE.TOOL);
     }
-    #endregion
+#endregion
 
     //#region Intel Reactions
     //private List<string> PoisonSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {

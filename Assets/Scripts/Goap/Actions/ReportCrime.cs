@@ -26,8 +26,10 @@ public class ReportCrime : GoapAction {
         SetState("Report Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -103,9 +105,9 @@ public class ReportCrime : GoapAction {
     //    }
     //    return REACTABLE_EFFECT.Neutral;
     //}
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterReportSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         ICrimeable crime = otherData[0].obj as ICrimeable;

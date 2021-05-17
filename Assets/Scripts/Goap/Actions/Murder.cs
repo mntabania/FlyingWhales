@@ -17,8 +17,10 @@ public class Murder : GoapAction {
         SetState("Murder Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -90,15 +92,15 @@ public class Murder : GoapAction {
         }
         return CRIME_TYPE.Murder;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterMurderSuccess(ActualGoapNode goapNode) {
         (goapNode.poiTarget as Character).Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -106,5 +108,5 @@ public class Murder : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

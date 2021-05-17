@@ -24,20 +24,26 @@ public class RemovePoison : GoapAction {
         SetState("Remove Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = "";
+#if DEBUG_LOG
+        string costLog = string.Empty;
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             //target is at structure that character is avoiding
+#if DEBUG_LOG
             costLog += $" +2000(Location of target is in avoid structure)";
             actor.logComponent.AppendCostLog(costLog);
+#endif
             return 2000;
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreRemovePoisonSuccess(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     //}

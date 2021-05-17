@@ -27,8 +27,10 @@ public class VampiricEmbrace : GoapAction {
         SetState("Embrace Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
@@ -122,9 +124,9 @@ public class VampiricEmbrace : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Vampire;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -135,9 +137,9 @@ public class VampiricEmbrace : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterEmbraceSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         if (goapNode.poiTarget is Character targetCharacter) {
@@ -184,5 +186,5 @@ public class VampiricEmbrace : GoapAction {
         //Infected infected = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Infected>("Infected");
         //infected?.InfectTarget(actor);
     }
-    #endregion
+#endregion
 }

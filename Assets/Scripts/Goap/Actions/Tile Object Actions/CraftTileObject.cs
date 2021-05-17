@@ -86,10 +86,12 @@ public class CraftTileObject : GoapAction {
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(150, 201);
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -104,9 +106,9 @@ public class CraftTileObject : GoapAction {
         actor.UncarryPOI();
         (node.poiTarget as TileObject).SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);    
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreCraftSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         TileObject obj = goapNode.poiTarget as TileObject;

@@ -24,13 +24,15 @@ public class StudyMonster : GoapAction {
         SetState("Study Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -38,16 +40,16 @@ public class StudyMonster : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasUnconscious(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         Character target = poiTarget as Character;
         return target.traitContainer.HasTrait("Unconscious");
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterStudySuccess(ActualGoapNode goapNode) {
         //IPointOfInterest target = goapNode.poiTarget;
         //if(target is Character) {
@@ -55,6 +57,6 @@ public class StudyMonster : GoapAction {
         //    PlayerManager.Instance.player.archetype.AddMonster(new RaceClass(targetCharacter.race, targetCharacter.characterClass.className));
         //}
     }
-    #endregion
+#endregion
 }
 

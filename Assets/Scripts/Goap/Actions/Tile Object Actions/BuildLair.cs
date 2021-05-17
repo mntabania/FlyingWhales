@@ -23,8 +23,10 @@ public class BuildLair : GoapAction {
 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -60,9 +62,9 @@ public class BuildLair : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         Character actor = goapNode.actor;
@@ -103,7 +105,7 @@ public class BuildLair : GoapAction {
         goapNode.actor.necromancerTrait.SetLairStructure(structure);
         goapNode.actor.MigrateHomeStructureTo(structure);
     }
-    #endregion
+#endregion
 
     //#region Requirement
     //protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {

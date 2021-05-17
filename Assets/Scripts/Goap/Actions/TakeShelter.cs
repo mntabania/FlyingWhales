@@ -46,13 +46,15 @@ public class TakeShelter : GoapAction {
         SetState("Take Shelter Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -60,9 +62,9 @@ public class TakeShelter : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterTakeShelterSuccess(ActualGoapNode goapNode) {
         bool shouldSetShelter = goapNode.actor.gridTileLocation != null && 
             (goapNode.actor.areaLocation.featureComponent.HasFeature(AreaFeatureDB.Blizzard_Feature) 
@@ -79,5 +81,5 @@ public class TakeShelter : GoapAction {
             goapNode.actor.trapStructure.SetForcedStructure(goapNode.targetStructure);
         }
     }
-    #endregion
+#endregion
 }

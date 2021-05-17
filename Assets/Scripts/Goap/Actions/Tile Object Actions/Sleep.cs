@@ -29,11 +29,15 @@ public class Sleep : GoapAction {
         SetState("Rest Success", goapNode); 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -47,8 +51,10 @@ public class Sleep : GoapAction {
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
@@ -59,55 +65,79 @@ public class Sleep : GoapAction {
             if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
                 cost = 2000;
+#if DEBUG_LOG
                 costLog += $" +{cost}(Location of target is in avoid structure)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return cost;
             }
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}:";
+#endif
         cost = 0;
         if (target is BaseBed) {
             BaseBed targetBed = target as BaseBed;
             if (!targetBed.IsSlotAvailable()) {
                 if (actor != null && targetBed.users.Contains(actor)) {
                     cost = 10;
+#if DEBUG_LOG
                     costLog += " 10(Already in bed)"; //Mainly used for quarantine
+#endif
                 } else {
                     cost += 2000;
-                    costLog += " +2000(Fully Occupied)";    
+#if DEBUG_LOG
+                    costLog += " +2000(Fully Occupied)";
+#endif
                 }
             } else if (actor.traitContainer.HasTrait("Travelling")) {
                 cost += 100;
+#if DEBUG_LOG
                 costLog += " +100(Travelling)";
+#endif
             } else {
                 if (targetBed.IsOwnedBy(actor) || targetBed.structureLocation == actor.homeStructure) {
                     if(actor.needsComponent.isExhausted || actor.traitContainer.HasTrait("Drunk")) {
                         cost += UtilityScripts.Utilities.Rng.Next(30, 51);
+#if DEBUG_LOG
                         costLog += $" +{cost}(Owned/Location is in home structure, Exhausted/Drunk)";
+#endif
                     } else {
                         cost += UtilityScripts.Utilities.Rng.Next(5, 16);
+#if DEBUG_LOG
                         costLog += $" +{cost}(Owned/Location is in home structure)";
+#endif
                     }
                 } else if (actor.needsComponent.isExhausted) {
                     BaseSettlement settlement = null;
                     if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {
                         cost += UtilityScripts.Utilities.Rng.Next(130, 151);
+#if DEBUG_LOG
                         costLog += $" +{cost}(Exhausted, Is in Friend home structure)";
+#endif
                     } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
                         cost += 2000;
+#if DEBUG_LOG
                         costLog += " +2000(Exhausted, Is in Enemy home structure)";
+#endif
                     } else if (targetBed.gridTileLocation != null && targetBed.gridTileLocation.IsPartOfSettlement(out settlement) && settlement.owner != null && settlement.owner != actor.faction) {
                         cost += 200;
+#if DEBUG_LOG
                         costLog += " +200(Exhausted, Inside settlement of different faction)";
+#endif
                     } else {
                         cost = UtilityScripts.Utilities.Rng.Next(80, 101);
+#if DEBUG_LOG
                         costLog += $" +{cost}(Else)";
+#endif
                     }
                 } else {
                     cost += 2000;
+#if DEBUG_LOG
                     costLog += $" +{cost}(Not Exhausted)";
+#endif
                 }
-                
+
                 Character alreadySleepingCharacter = null;
                 for (int i = 0; i < targetBed.users.Length; i++) {
                     if (targetBed.users[i] != null) {
@@ -120,18 +150,26 @@ public class Sleep : GoapAction {
                     string opinionLabel = actor.relationshipContainer.GetOpinionLabel(alreadySleepingCharacter);
                     if (opinionLabel == RelationshipManager.Friend) {
                         cost += 20;
+#if DEBUG_LOG
                         costLog += " +20(Friend Occupies)";
+#endif
                     } else if (opinionLabel == RelationshipManager.Acquaintance) {
                         cost += 25;
+#if DEBUG_LOG
                         costLog += " +25(Acquaintance Occupies)";
+#endif
                     } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival || opinionLabel == string.Empty) {
                         cost += 100;
+#if DEBUG_LOG
                         costLog += " +100(Enemy/Rival/None Occupies)";
+#endif
                     }
                 }
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
         //LocationStructure targetStructure = target.gridTileLocation.structure;
         //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
@@ -175,9 +213,9 @@ public class Sleep : GoapAction {
         }
         return goapActionInvalidity;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -197,9 +235,9 @@ public class Sleep : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreRestSuccess(ActualGoapNode goapNode) {
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
@@ -242,7 +280,7 @@ public class Sleep : GoapAction {
     //public void PreTargetMissing() {
     //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
-    #endregion
+#endregion
 
     // private bool CanSleepInBed(Character character, TileObject tileObject) {
     //     return (tileObject as Bed).CanSleepInBed(character);

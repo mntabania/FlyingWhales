@@ -270,7 +270,9 @@ public class GoapAction {
         
         //* TimeOfDaysCostMultiplier(actor) removed cost multiplier since action should be disabled if time of day is invalid
         int distanceCost = GetDistanceCost(actor, target, job);
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog($"+{distanceCost.ToString()}(Distance Cost)");
+#endif
         return (baseCost * PreconditionCostMultiplier()) + distanceCost;
     }
     protected bool IsTargetMissing(ActualGoapNode node, out string p_targetMissingLog) {
@@ -435,9 +437,9 @@ public class GoapAction {
             log.AddLogToDatabase(true);
         }
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     protected void SetPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, OtherData[], JOB_TYPE, bool> condition) {
         basePrecondition = new Precondition(effect, condition);
     }
@@ -465,9 +467,9 @@ public class GoapAction {
         isOverridden = false; 
         return basePrecondition;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     protected void AddExpectedEffect(GoapEffect effect) {
         baseExpectedEffects.Add(effect);
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(effect.conditionType, effect.target));
@@ -548,13 +550,13 @@ public class GoapAction {
         isOverriden = false;
         return baseExpectedEffects;
     }
-    #endregion
+#endregion
 
-    #region Crime
+#region Crime
     public virtual CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.None;
     }
-    #endregion
+#endregion
 }
 
 public struct GoapActionInvalidity {

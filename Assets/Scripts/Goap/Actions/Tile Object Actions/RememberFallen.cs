@@ -29,11 +29,15 @@ public class RememberFallen : GoapAction {
         SetState("Remember Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -47,32 +51,44 @@ public class RememberFallen : GoapAction {
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Reminisced > 5)";
+#endif
         }
         if (actor.traitContainer.HasTrait("Psychopath") || actor.partyComponent.isActiveMember) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Psychopath or active member in a party)";
+#endif
         }
         if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical || !actor.limiterComponent.isSociable) {
             cost -= 15;
+#if DEBUG_LOG
             costLog += " -15(Low or Critical Mood or Unsociable)";
+#endif
         }
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost.ToString()}(10 x Times Reminisced)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -113,9 +129,9 @@ public class RememberFallen : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -137,9 +153,9 @@ public class RememberFallen : GoapAction {
         }
         return false;   
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreRememberSuccess(ActualGoapNode goapNode) {
         Tombstone tombstone = goapNode.poiTarget as Tombstone;
         goapNode.descriptionLog.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -158,5 +174,5 @@ public class RememberFallen : GoapAction {
     //    Tombstone tombstone = goapNode.poiTarget as Tombstone;
     //    goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
-    #endregion
+#endregion
 }

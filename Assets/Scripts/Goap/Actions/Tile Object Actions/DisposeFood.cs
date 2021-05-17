@@ -26,8 +26,10 @@
         SetState("Dispose Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void OnActionStarted(ActualGoapNode node) {
@@ -45,22 +47,22 @@
         IPointOfInterest poiTarget = node.poiTarget;
         actor.UncarryPOI(poiTarget);
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.IsPOICarriedOrInInventory(poiTarget);
     }
-    #endregion
+#endregion
     
-    #region Effects
+#region Effects
     public void AfterDisposeSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is FoodPile foodPile) {
             goapNode.actor.UncarryPOI(foodPile, addToLocation: true);
             foodPile.AdjustHP(-foodPile.maxHP, ELEMENTAL_TYPE.Normal);
         }
     }
-    #endregion
+#endregion
     
     private bool IsTargetMissingOverride(ActualGoapNode node) {
         Character actor = node.actor;

@@ -25,8 +25,10 @@ public class ShareInformation : GoapAction {
         SetState("Share Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -157,9 +159,9 @@ public class ShareInformation : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Rumormongering;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterShareSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         IReactable reactable = otherData[0].obj as IReactable;

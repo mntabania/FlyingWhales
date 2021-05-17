@@ -24,8 +24,10 @@ public class RaiseCorpse : GoapAction {
         SetState("Raise Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -47,9 +49,9 @@ public class RaiseCorpse : GoapAction {
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -61,9 +63,9 @@ public class RaiseCorpse : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterRaiseSuccess(ActualGoapNode goapNode) {
         IPointOfInterest targetPOI = goapNode.poiTarget;
         Character target = null;
@@ -79,6 +81,6 @@ public class RaiseCorpse : GoapAction {
             Debug.LogWarning($"Could not raise {target?.name} because it's marker is null!");
         }
     }
-    #endregion
+#endregion
 
 }

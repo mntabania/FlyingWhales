@@ -22,8 +22,10 @@ public class RemoveBuff : GoapAction {
         SetState("Remove Buff Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +0(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 0;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
@@ -36,9 +38,9 @@ public class RemoveBuff : GoapAction {
             log.AddToFillers(null, stringOtherData.str, LOG_IDENTIFIER.STRING_1);
         }
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
         bool hasMetRequirements = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (hasMetRequirements) {
@@ -46,9 +48,9 @@ public class RemoveBuff : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterRemoveBuffSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         if (otherData != null && otherData.Length == 1 && otherData[0] is StringOtherData stringOtherData) {
@@ -65,9 +67,9 @@ public class RemoveBuff : GoapAction {
         //goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
         //Messenger.Broadcast(Signals.UPDATE_ALL_NOTIFICATION_LOGS, goapNode.descriptionLog);
     }
-    #endregion
+#endregion
 
-    #region Reactions
+#region Reactions
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         if (witness.traitContainer.HasTrait("Cultist") == false) {
@@ -114,5 +116,5 @@ public class RemoveBuff : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Demon_Worship;
     }
-    #endregion
+#endregion
 }

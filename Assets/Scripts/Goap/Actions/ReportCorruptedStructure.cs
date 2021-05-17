@@ -23,8 +23,10 @@ public class ReportCorruptedStructure : GoapAction {
         SetState("Report Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -46,9 +48,9 @@ public class ReportCorruptedStructure : GoapAction {
         LocationStructure structureToReport = node.otherData[0].obj as LocationStructure;
         log.AddToFillers(structureToReport, structureToReport.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_2);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -56,9 +58,9 @@ public class ReportCorruptedStructure : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreReportSuccess(ActualGoapNode goapNode) {
     //    object[] otherData = goapNode.otherData;
     //    LocationStructure structureToReport = otherData[0] as LocationStructure;
@@ -81,7 +83,7 @@ public class ReportCorruptedStructure : GoapAction {
         //Remove counter attack temporarily, since we now have retaliation
         //TriggerCounterattack(goapNode.actor, structureToReport);
     }
-    #endregion
+#endregion
     
      private void TriggerCounterattack(Character character, LocationStructure targetDemonicStructure) {
 #if DEBUG_LOG

@@ -61,8 +61,10 @@ public class Repair : GoapAction {
         SetState("Repair Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -122,9 +124,9 @@ public class Repair : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         actor.UncarryPOI();
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreRepairSuccess(ActualGoapNode goapNode) {
         //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         TileObject obj = goapNode.poiTarget as TileObject;
@@ -195,9 +197,9 @@ public class Repair : GoapAction {
         //goapNode.actor.AdjustSupply((int) (data.constructionCost * 0.5f));
 
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     // private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
     //     TileObject obj = poiTarget as TileObject;
     //     TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
@@ -227,6 +229,6 @@ public class Repair : GoapAction {
         //Reference: https://trello.com/c/efBw7BWE/4166-repair-can-use-both-stone-and-wood-and-metal-for-structures-and-objects
         return actor.carryComponent.carriedPOI is ResourcePile && !(actor.carryComponent.carriedPOI is FoodPile);
     }
-    #endregion
+#endregion
 
 }

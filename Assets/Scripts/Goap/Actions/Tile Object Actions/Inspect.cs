@@ -19,22 +19,28 @@ public class Inspect : GoapAction {
         SetState("Inspect Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = "";
+#if DEBUG_LOG
+        string costLog = string.Empty;
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
+#if DEBUG_LOG
                 costLog += $" +2000(Location of target is in avoid structure)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -42,9 +48,9 @@ public class Inspect : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreInspectSuccess(ActualGoapNode goapNode) {
         //goapNode.descriptionLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -62,5 +68,5 @@ public class Inspect : GoapAction {
     //public void AfterTargetMissing(ActualGoapNode goapNode) {
     //    actor.RemoveAwareness(poiTarget);
     //}
-    #endregion
+#endregion
 }
