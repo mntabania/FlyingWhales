@@ -884,6 +884,7 @@ namespace Inner_Maps {
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
             // }
+            if (!GameManager.Instance.gameHasStarted) { tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null); }
 		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);	
 		    tile.SetTileType(LocationGridTile.Tile_Type.Wall);
 		    tile.SetTileState(LocationGridTile.Tile_State.Occupied);
@@ -896,6 +897,7 @@ namespace Inner_Maps {
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
             // }
+            if (!GameManager.Instance.gameHasStarted) { tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null); }
 		    tile.SetStructure(structure);
 		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);
 		    // tile.SetStructure(structure);

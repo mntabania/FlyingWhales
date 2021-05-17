@@ -809,7 +809,6 @@ namespace Inner_Maps {
                     TILE_OBJECT_TYPE tileObjectType = p_data.generatedMapPerlinDetailsMap[x][y];
                     if (tileObjectType != TILE_OBJECT_TYPE.NONE && (tile.structure is Wilderness || tile.structure is Ocean || tile.structure is Cave)) {
                         Sprite sprite = detailsTilemap.GetSprite(tile.localPlace);
-                        detailsTilemap.SetTile(tile.localPlace, null);
                         TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
                         if (obj is BlockWall blockWall) {
                             blockWall.SetWallType(WALL_TYPE.Stone);
@@ -829,6 +828,7 @@ namespace Inner_Maps {
                             yield return null;
                         }    
                     }
+                    detailsTilemap.SetTile(tile.localPlace, null);
                 }
             }
             stopwatch.Stop();

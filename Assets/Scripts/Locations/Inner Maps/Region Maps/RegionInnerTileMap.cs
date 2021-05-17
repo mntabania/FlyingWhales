@@ -35,9 +35,7 @@ namespace Inner_Maps {
             yield return StartCoroutine(GroundPerlin(allTiles, xSize, ySize, xSeed, ySeed, data));
             yield return StartCoroutine(GenerateElevationMap(mapGenerationComponent, data, stopwatch));
             // yield return StartCoroutine(GenerateDetails(mapGenerationComponent, xSize, ySize, stopwatch));
-            Debug.Log("Before Gradually Generate Tile Objects");
             StartCoroutine(GraduallyGenerateTileObjects(data));
-            Debug.Log("After Gradually Generate Tile Objects");
             groundMapLocalBounds = groundTilemap.localBounds;
         }
         public IEnumerator LoadMap(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, SaveDataCurrentProgress saveData) {
