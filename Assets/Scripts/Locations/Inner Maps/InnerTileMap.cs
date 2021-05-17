@@ -820,9 +820,16 @@ namespace Inner_Maps {
                         // Debug.Log($"Created {tileObjectType.ToString()} at {tile}");
 
                         count++;
-                        int batchCount = p_data.hasFinishedMapGenerationCoroutine ? 
-                            MapGenerationData.TileObjectCreationBatchesAfterWorldGeneration : 
-                            MapGenerationData.TileObjectCreationBatches;
+                        int batchCount;
+                        if (p_data.hasFinishedMapGenerationCoroutine) {
+                            if (UIManager.Instance.IsWaitingForTileObjectGenerationToComplete()) {
+                                batchCount = MapGenerationData.TileObjectCreationBatchesWhileWaiting;
+                            } else {
+                                batchCount = MapGenerationData.TileObjectCreationBatchesAfterWorldGeneration;
+                            }
+                        } else {
+                            batchCount = MapGenerationData.TileObjectCreationBatches;
+                        }
                         if (count >= batchCount) {
                             count = 0;
                             yield return null;

@@ -29,7 +29,8 @@ public class MapGenerationData {
 	public static int JobLoadingBatches = 300;  
 	public static int LocationGridTileSecondaryWaveBatches = 300;
 	public static int TileObjectCreationBatches = 10;
-	public static int TileObjectCreationBatchesAfterWorldGeneration = 10;
+	public static int TileObjectCreationBatchesAfterWorldGeneration = 5;
+	public static int TileObjectCreationBatchesWhileWaiting = 30;
 	
 	//constants
 	public const float XOffset = 2.56f;

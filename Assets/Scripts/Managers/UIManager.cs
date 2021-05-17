@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Diagnostics;
+using System.Globalization;
 using DG.Tweening;
 using Factions;
 using Inner_Maps;
@@ -22,6 +24,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
+using Debug = UnityEngine.Debug;
 using Prison = Tutorial.Prison;
 
 public class UIManager : BaseMonoBehaviour {
@@ -2016,5 +2019,38 @@ public class UIManager : BaseMonoBehaviour {
         (notificationHoverPos.transform as RectTransform).anchoredPosition = notificationHoverPosModifiedPosition;
     }
     #endregion
-    
+
+    #region Wait Window
+    [Header("Wait Window")] 
+    [SerializeField] private GameObject waitWindow;
+    public void ShowWaitForTileObjectGenerationToFinishWindow() {
+        Pause();
+        SetSpeedTogglesState(false);
+        InnerMapCameraMove.Instance.DisableMovement();
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
+        waitWindow.SetActive(true);
+        StartCoroutine(WaitForTileObjectGenerationToFinish());
+    }
+    private void HideWaitForTileObjectGenerationToFinishWindow() {
+        SetSpeedTogglesState(true);
+        InnerMapCameraMove.Instance.EnableMovement();
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
+        waitWindow.SetActive(false);
+    }
+    private IEnumerator WaitForTileObjectGenerationToFinish() {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        while (WorldConfigManager.Instance.mapGenerationData.isGeneratingTileObjects) {
+            yield return null;
+        }
+        HideWaitForTileObjectGenerationToFinishWindow();
+        GameManager.Instance.StartProgression();
+        stopwatch.Stop();
+        Debug.Log($"WaitForTileObjectGenerationToFinish took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+    }
+    public bool IsWaitingForTileObjectGenerationToComplete() {
+        return waitWindow.activeInHierarchy;
+    }
+    #endregion
+
 }
