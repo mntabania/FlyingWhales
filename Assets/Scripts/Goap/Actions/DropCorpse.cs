@@ -28,8 +28,10 @@ public class DropCorpse : GoapAction {
         SetState("Drop Success", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -81,9 +83,9 @@ public class DropCorpse : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -101,9 +103,9 @@ public class DropCorpse : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         // if (poiTarget is Character) {
         //     Character target = poiTarget as Character;
@@ -113,9 +115,9 @@ public class DropCorpse : GoapAction {
         // }
         return actor.IsPOICarriedOrInInventory(poiTarget);
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreDropSuccess(ActualGoapNode goapNode) {
     //    //GoapActionState currentState = this.states[goapNode.currentStateName];
     //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -131,5 +133,5 @@ public class DropCorpse : GoapAction {
         }
         goapNode.actor.UncarryPOI(goapNode.poiTarget, dropLocation: tile);
     }
-    #endregion
+#endregion
 }

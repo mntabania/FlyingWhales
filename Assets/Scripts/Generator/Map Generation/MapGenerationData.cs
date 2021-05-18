@@ -82,7 +82,9 @@ public class MapGenerationData {
 			determinedVillages.Add(p_faction, new List<VillageSpot>());
 		}
 		determinedVillages[p_faction].Add(p_spot);
+#if DEBUG_LOG
 		Debug.Log($"Determined Village for {p_faction.name}: {p_spot.ToString()}");
+#endif
 	}
 	public void SetUnreservedAreas(List<Area> p_areas) {
 		unreservedAreas = p_areas;
@@ -190,5 +192,5 @@ public class MapGenerationData {
 		caveBorderTilesCategorizedByArea = null;
 		generatedMapPerlinDetailsMap = null;
 	}
-	#endregion
+#endregion
 }

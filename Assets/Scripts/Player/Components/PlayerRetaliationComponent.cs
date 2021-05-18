@@ -90,7 +90,6 @@ public class PlayerRetaliationComponent {
         SetAngelCount(angelCount + 1);
     }
     private void DivineIntervention() {
-        string debugLog = GameManager.Instance.TodayLogString() + "Angel Retaliation";
         LocationStructure targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
         //if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
         //    targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
@@ -103,10 +102,9 @@ public class PlayerRetaliationComponent {
             //attackingCharacters = null;
             return;
         }
-        debugLog += "\n-TARGET: " + targetDemonicStructure.name;
         //CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
         Region region = targetDemonicStructure.region;
-        Area spawnArea = region.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.gridTileComponent.HasCorruption());
+        Area spawnArea = region.GetRandomAreaThatIsNotMountainWaterAndNoCorruption();
         //List<Character> characters = new List<Character>();
         spawnedAngels.Clear();
         for (int i = 0; i < angelCount; i++) {
@@ -132,9 +130,9 @@ public class PlayerRetaliationComponent {
     private string GetRetaliationBookmarkText() {
         return "Retaliation: " + retaliationCounter + "/" + MAX_RETALIATION_COUNTER;
     }
-    #endregion
+#endregion
 
-    #region Angels
+#region Angels
     private void SetAngelCount(int amount) {
         angelCount = amount;
     }
@@ -176,12 +174,15 @@ public class PlayerRetaliationComponent {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Triggers
+#region Triggers
     public void CharacterDeathRetaliation(Character p_character) {
-        string debugLog = "ADD RETALIATION COUNTER!";
+        string debugLog = string.Empty;
+#if DEBUG_LOG
+        debugLog = "ADD RETALIATION COUNTER!";
         debugLog += "\nDeath of " + p_character.name;
+#endif
         if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation_Character_Death), ref debugLog)) {
             if (!p_character.traitContainer.HasTrait("Cultist") && p_character.isNormalCharacter) {
                 if (AddRetaliationCounter()) {
@@ -192,12 +193,17 @@ public class PlayerRetaliationComponent {
                 }
             }
         }
+#if DEBUG_LOG
         Debug.Log(debugLog);
+#endif
     }
     public void StructureDestroyedRetaliation(LocationStructure p_structure) {
         if (p_structure.settlementLocation != null && p_structure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE && p_structure.settlementLocation.owner != null && p_structure.settlementLocation.owner.isMajorNonPlayer) {
-            string debugLog = "ADD RETALIATION COUNTER!";
+            string debugLog = string.Empty;
+#if DEBUG_LOG
+            debugLog = "ADD RETALIATION COUNTER!";
             debugLog += "\nDestruction of " + p_structure.name;
+#endif
             if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation_Structure_Destroy), ref debugLog)) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_structure_destroyed", null, LOG_TAG.Player, LOG_TAG.Major);
@@ -206,13 +212,18 @@ public class PlayerRetaliationComponent {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             }
+#if DEBUG_LOG
             Debug.Log(debugLog);
+#endif
         }
     }
     public void ResourcePileRetaliation(TileObject p_pile, LocationGridTile removedFrom) {
         if (removedFrom != null && removedFrom.structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-            string debugLog = "ADD RETALIATION COUNTER!";
+            string debugLog = string.Empty;
+#if DEBUG_LOG
+            debugLog = "ADD RETALIATION COUNTER!";
             debugLog += "\nDestruction/Loss of " + p_pile.name;
+#endif
             if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Retaliation_Resource_Pile), ref debugLog)) {
                 if (AddRetaliationCounter()) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "retaliation_pile_loss", null, LOG_TAG.Player, LOG_TAG.Major);
@@ -221,7 +232,9 @@ public class PlayerRetaliationComponent {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             }
+#if DEBUG_LOG
             Debug.Log(debugLog);
+#endif
         }
     }
     public void ReportDemonicStructureRetaliation(Character p_character) {
@@ -232,15 +245,15 @@ public class PlayerRetaliationComponent {
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataPlayerRetaliationComponent data) {
         spawnedAngels = SaveUtilities.ConvertIDListToCharacters(data.spawnedAngels);
     }
-    #endregion
+#endregion
 
-    #region UI
+#region UI
     private void OnHoverOverRetaliationBookmark(UIHoverPosition position) {
         UIManager.Instance.ShowSmallInfo("Angels will spawn and head towards your Portal once the Retaliation Counter reaches Max Count. " +
                                          "The Retaliation Counter may rise whenever you kill Villagers, ruin their structures or destroy their resources.", 
@@ -280,7 +293,7 @@ public class PlayerRetaliationComponent {
         }
         return objToSelect;
     }
-    #endregion
+#endregion
 }
 
 public class SaveDataPlayerRetaliationComponent : SaveData<PlayerRetaliationComponent> {

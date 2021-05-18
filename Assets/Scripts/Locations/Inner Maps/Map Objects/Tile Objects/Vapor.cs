@@ -89,10 +89,12 @@ public class Vapor : MovingTileObject {
         if (!hasExpired && currentHP == 0) {
             _vaporMapVisualObject.Expire();
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
 
-    #region Moving Tile Object
+#region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_vaporMapVisualObject != null) {
             if (_vaporMapVisualObject.isSpawned) {
@@ -103,9 +105,9 @@ public class Vapor : MovingTileObject {
         tile = null;
         return false;
     }
-    #endregion
+#endregion
 
-    #region Size
+#region Size
     private void SetSize(int size) {
         this.size = size;
         if (_vaporMapVisualObject != null) {
@@ -127,9 +129,9 @@ public class Vapor : MovingTileObject {
             SetSize(6);
         }
     }
-    #endregion
+#endregion
 
-    #region Expire Effect
+#region Expire Effect
     private void ExpireEffect() {
         if (gridTileLocation != null) {
             int radius = 0;
@@ -158,7 +160,7 @@ public class Vapor : MovingTileObject {
             }
         }
     }
-    #endregion
+#endregion
 }
 #region Save Data
 public class SaveDataVapor : SaveDataMovingTileObject {

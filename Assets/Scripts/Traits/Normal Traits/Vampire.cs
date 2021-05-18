@@ -111,10 +111,12 @@ namespace Traits {
                 // }
                 WeightedDictionary<Character> embraceChoices = VampireBehaviour.GetVampiricEmbraceTargetWeights(character);
                 if (embraceChoices.GetTotalOfWeights() > 0) {
-                    string log = embraceChoices.GetWeightsSummary($"{character.name} embrace choices:");
                     Character target = embraceChoices.PickRandomElementGivenWeights();
+#if DEBUG_LOG
+                    string log = embraceChoices.GetWeightsSummary($"{character.name} embrace choices:");
                     log = $"{log}\n- Chosen target is {target.name}";
                     Debug.Log(log);
+#endif
                     character.jobComponent.CreateVampiricEmbraceJob(JOB_TYPE.TRIGGER_FLAW, target);
                 } else {
                     return "no_victim";
@@ -219,9 +221,9 @@ namespace Traits {
             }
             return false;
         }
-        #endregion
+#endregion
         
-        #region Loading
+#region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataVampire saveDataVampire = saveDataTrait as SaveDataVampire;
@@ -244,7 +246,7 @@ namespace Traits {
                 _owner = character;
             }
         }
-        #endregion
+#endregion
 
         public bool CanTransformIntoBat() {
             return PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 1;

@@ -218,7 +218,9 @@ public class AreaGeneration : MapGenerationComponent {
 		}
 
 		data.chosenWorldMapTemplate = chosenTemplate;
+#if DEBUG_LOG
 		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
+#endif
 		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data));
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data) {
@@ -253,13 +255,15 @@ public class AreaGeneration : MapGenerationComponent {
 		});
 		yield return null;
 	}
-	#endregion
+#endregion
 
-	#region Scenario Maps
+#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading World Map...");
 		data.chosenWorldMapTemplate = scenarioMapData.worldMapSave.worldMapTemplate;
+#if DEBUG_LOG
 		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
+#endif
 		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data, scenarioMapData));
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data, ScenarioMapData scenarioMapData) {
@@ -296,15 +300,17 @@ public class AreaGeneration : MapGenerationComponent {
 		});
 		yield return null;
 	}
-	#endregion
+#endregion
 	
-	#region Saved World
+#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading world map...");
 		data.chosenWorldMapTemplate = saveData.worldMapSave.worldMapTemplate;
 		WorldSettings.Instance.worldSettingsData.SetWorldType(saveData.worldMapSave.worldType);
 		saveData.LoadDate();
+#if DEBUG_LOG
 		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
+#endif
 		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data, saveData));
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data, SaveDataCurrentProgress saveData) {
@@ -341,6 +347,6 @@ public class AreaGeneration : MapGenerationComponent {
 		});
 		yield return null;
 	}
-	#endregion
+#endregion
 	
 }

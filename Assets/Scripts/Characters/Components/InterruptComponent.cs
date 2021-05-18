@@ -47,12 +47,16 @@ public class InterruptComponent : CharacterComponent {
         Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
         if (!triggeredInterrupt.isSimulateneous) {
             if (isInterrupted) {
+#if DEBUG_LOG
                 owner.logComponent.PrintLogIfActive(
                     $"Cannot trigger interrupt {interrupt} because there is already a current interrupt: {currentInterrupt.name}");
+#endif
                 return false;
             }
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} triggered a non simultaneous interrupt: {triggeredInterrupt.name}");
+#endif
 
             InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
             interruptHolder.Initialize(triggeredInterrupt, owner, targetPOI, identifier, reason);
@@ -86,7 +90,9 @@ public class InterruptComponent : CharacterComponent {
         return true;
     }
     private void TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered, string reason) {
+#if DEBUG_LOG
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
+#endif
         InterruptHolder newTriggeredInterrupt = ObjectPoolManager.Instance.CreateNewInterrupt();
         newTriggeredInterrupt.Initialize(interrupt, owner, targetPOI, identifier, reason);
         ExecuteStartInterrupt(newTriggeredInterrupt, actionThatTriggered);
@@ -142,7 +148,9 @@ public class InterruptComponent : CharacterComponent {
         }
     }
     private void PerTickSimultaneousInterrupt() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Per Tick Simultaneous Interrupt");
+#endif
         if (hasTriggeredSimultaneousInterrupt) {
             currentSimultaneousInterruptDuration++;
             if (currentSimultaneousInterruptDuration > 2) {
@@ -150,7 +158,9 @@ public class InterruptComponent : CharacterComponent {
                 SetSimultaneousInterrupt(null);
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void ForceEndNonSimultaneousInterrupt() {
         if (isInterrupted) {
@@ -253,15 +263,15 @@ public class InterruptComponent : CharacterComponent {
             ForceEndNonSimultaneousInterrupt();
         }
     }
-    #endregion
+#endregion
 
-    #region Miscellaneous
+#region Miscellaneous
     public void SetRaidTargetSettlement(BaseSettlement settlement) {
         raidTargetSettlement = settlement;
     }
-    #endregion
+#endregion
 
-    #region Necromancer
+#region Necromancer
     public bool NecromanticTransform() {
         if (CanNecromanticTransform()) {
             if (owner.HasItem("Necronomicon")) {
@@ -276,9 +286,9 @@ public class InterruptComponent : CharacterComponent {
         }
         return false; 
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataInterruptComponent data) {
         if (!string.IsNullOrEmpty(data.currentInterruptID)) {
             currentInterrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.currentInterruptID);
@@ -289,7 +299,7 @@ public class InterruptComponent : CharacterComponent {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -299,7 +309,7 @@ public class SaveDataInterruptComponent : SaveData<InterruptComponent> {
     public string triggeredSimultaneousInterruptID;
     public int currentSimultaneousInterruptDuration;
 
-    #region Overrides
+#region Overrides
     public override void Save(InterruptComponent data) {
         currentDuration = data.currentDuration;
         currentSimultaneousInterruptDuration = data.currentSimultaneousInterruptDuration;
@@ -317,5 +327,5 @@ public class SaveDataInterruptComponent : SaveData<InterruptComponent> {
         InterruptComponent component = new InterruptComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

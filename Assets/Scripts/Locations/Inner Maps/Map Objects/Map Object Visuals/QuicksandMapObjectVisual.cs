@@ -123,7 +123,9 @@ public class QuicksandMapObjectVisual : MapObjectVisual<TileObject> {
     
     #region Expiration
     public void Expire() {
+#if DEBUG_LOG
         Debug.Log($"{this.name} expired!");
+#endif
         _quicksandEffect.Stop();
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
@@ -136,9 +138,9 @@ public class QuicksandMapObjectVisual : MapObjectVisual<TileObject> {
         yield return new WaitForSeconds(0.8f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
-    #endregion
+#endregion
 
-    #region Particles
+#region Particles
     private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
@@ -146,5 +148,5 @@ public class QuicksandMapObjectVisual : MapObjectVisual<TileObject> {
         yield return new WaitForSeconds(0.1f);
         _quicksandEffect.Pause();
     }
-    #endregion
+#endregion
 }

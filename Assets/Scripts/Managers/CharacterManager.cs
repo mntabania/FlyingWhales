@@ -11,6 +11,7 @@ using Settings;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Traits;
 using Random = UnityEngine.Random;
 
 public class CharacterManager : BaseMonoBehaviour {
@@ -635,14 +636,12 @@ public class CharacterManager : BaseMonoBehaviour {
             }
             if (character.homeStructure != null && character.homeStructure.settlementLocation == npcSettlement) {
                 //place the character at a random unoccupied tile in his/her home
-                List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
-                LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                LocationGridTile chosenTile = character.homeStructure.GetRandomUnoccupiedTileThatHasNoCharacters();
                 character.InitialCharacterPlacement(chosenTile);
             } else {
                 //place the character at a random unoccupied tile in the npcSettlement's wilderness
                 LocationStructure wilderness = npcSettlement.region.wilderness;
-                List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
-                LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                LocationGridTile chosenTile = wilderness.GetRandomUnoccupiedTileThatHasNoCharacters();
                 character.InitialCharacterPlacement(chosenTile);
             }
         }
@@ -1104,6 +1103,46 @@ public class CharacterManager : BaseMonoBehaviour {
         //has not conversed for the given amount of time.
         return lastConversationDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(minutes))
             .IsBefore(GameManager.Instance.Today());
+    }
+    public bool IsCharacterTheSameLycan(Character character1, Character character2) {
+        LycanthropeData lycanData = null;
+        if (character1.isLycanthrope) {
+            lycanData = character1.lycanData;
+        } else if (character2.isLycanthrope) {
+            lycanData = character2.lycanData;
+        }
+        if (lycanData != null) {
+            return (lycanData.originalForm == character1 || lycanData.lycanthropeForm == character1) && (lycanData.originalForm == character2 || lycanData.lycanthropeForm == character2);
+        }
+        return false;
+    }
+    public bool IsCharacterConsideredTargetOfBoneGolem(Character p_considerer, Character p_targetCharacter) {
+        if (p_considerer != p_targetCharacter
+            && p_targetCharacter.gridTileLocation != null
+            && !p_targetCharacter.isDead
+            && !p_targetCharacter.isAlliedWithPlayer
+            && p_targetCharacter.marker
+            && p_targetCharacter.marker.isMainVisualActive
+            && p_considerer.movementComponent.HasPathTo(p_targetCharacter.gridTileLocation)
+            && !p_targetCharacter.isInLimbo
+            && !p_targetCharacter.isBeingSeized
+            && p_targetCharacter.carryComponent.IsNotBeingCarried()) {
+            if (!p_targetCharacter.traitContainer.HasTrait("Hibernating", "Indestructible")) {
+                if (p_considerer.IsHostileWith(p_targetCharacter)) {
+                    if (!IsCharacterConsideredPrisonerOf(p_considerer, p_targetCharacter)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public bool IsCharacterConsideredPrisonerOf(Character p_considerer, Character p_targetCharacter) {
+        Prisoner prisoner = p_targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+        if (prisoner != null) {
+            return prisoner.IsConsideredPrisonerOf(p_considerer);
+        }
+        return false;
     }
     #endregion
 

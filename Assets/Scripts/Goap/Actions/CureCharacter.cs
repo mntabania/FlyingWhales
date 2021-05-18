@@ -29,15 +29,21 @@ public class CureCharacter : GoapAction {
         SetState("Cure Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = "";
+#if DEBUG_LOG
+        string costLog = string.Empty;
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             //target is at structure that character is avoiding
+#if DEBUG_LOG
             costLog += $" +2000(Location of target is in avoid structure)";
             actor.logComponent.AppendCostLog(costLog);
+#endif
             return 2000;
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -103,9 +109,9 @@ public class CureCharacter : GoapAction {
         }
         return REACTABLE_EFFECT.Positive;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreCureSuccess(ActualGoapNode goapNode) {
         TileObject chosenHealingPotion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
         if (chosenHealingPotion != null && chosenHealingPotion.traitContainer.HasTrait("Poisoned")) {
@@ -148,16 +154,16 @@ public class CureCharacter : GoapAction {
             goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.HEALING_POTION);
         }
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
         //return true;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -165,7 +171,7 @@ public class CureCharacter : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
     //#region Intel Reactions
     //private List<string> CureSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {

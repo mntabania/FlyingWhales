@@ -202,12 +202,16 @@ namespace Inner_Maps.Location_Structures {
             startingSummonCount = 2;
             PlayerManager.Instance.player.underlingsComponent.GainMonsterUnderlingMaxChargesFromKennel(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
             // PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(p_summon.summonType, p_summon.gainedKennelSummonCapacity);
+#if DEBUG_LOG
             Debug.Log($"Set occupant of {name} to {occupyingSummon?.name}");
+#endif
             Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void UnOccupyKennelAndCheckForNewOccupant() {
             Assert.IsNotNull(occupyingSummon, $"Problem un occupying summon at {name}");
+#if DEBUG_LOG
             Debug.Log($"Removed {occupyingSummon.name} as occupant of {name}");
+#endif
             occupyingSummon.eventDispatcher.UnsubscribeToCharacterDied(this);
             PlayerManager.Instance.player.underlingsComponent.LoseMonsterUnderlingMaxChargesFromKennel(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity);
             // PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge(occupyingSummon.summonType, -occupyingSummon.gainedKennelSummonCapacity);
@@ -254,7 +258,7 @@ namespace Inner_Maps.Location_Structures {
             Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         
-        #region Border Tiles
+#region Border Tiles
         public void AddBorderTile(LocationGridTile p_tile) {
             if (!borderTiles.Contains(p_tile)) {
                 borderTiles.Add(p_tile);    
@@ -281,7 +285,7 @@ namespace Inner_Maps.Location_Structures {
         public LocationGridTile GetRandomBorderTile() {
             return CollectionUtilities.GetRandomElement(borderTiles);
         }
-        #endregion
+#endregion
 
     }
 }

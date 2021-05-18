@@ -90,7 +90,7 @@ public class VillageGeneration : MapGenerationComponent {
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 				List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, npcSettlement.owner, data);
 				List<TileObject> objectsInDwellings = RuinarchListPool<TileObject>.Claim();
-				npcSettlement.PopulateTileObjectsFromStructures(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
+				npcSettlement.PopulateTileObjectsFromStructures<TileObject>(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
 				for (int j = 0; j < objectsInDwellings.Count; j++) {
 					TileObject tileObject = objectsInDwellings[j];
 					tileObject.UpdateOwners();
@@ -151,6 +151,8 @@ public class VillageGeneration : MapGenerationComponent {
 				//make structure setting list and unplaced structures list identical so that unplaced structures will try to be placed on next iteration.
 				structuresToPlace.Clear();
 				structuresToPlace.AddRange(unplacedStructures);
+
+#if DEBUG_LOG
 				if (i + 1 == 2) {
 					//last iteration
 					string summary = $"Was unable to place the following structures:";
@@ -159,6 +161,7 @@ public class VillageGeneration : MapGenerationComponent {
 					}
 					Debug.Log(summary);
 				}
+#endif
 			}
 		}
 	}
@@ -174,10 +177,11 @@ public class VillageGeneration : MapGenerationComponent {
 		yield return null;
 	}
 	private IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
-		List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureSetting.structureType);
+		List<StructureConnector> availableStructureConnectors = RuinarchListPool<StructureConnector>.Claim();
+		npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureSetting.structureType);
 		// availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
 		List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
-		prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
+		CollectionUtilities.Shuffle(prefabChoices);
 		for (int j = 0; j < prefabChoices.Count; j++) {
 			GameObject prefabGO = prefabChoices[j];
 			LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
@@ -193,11 +197,12 @@ public class VillageGeneration : MapGenerationComponent {
 				Debug.LogWarning($"Could not find structure connector for {prefabObject.name}. Choices are:\n{availableStructureConnectors.ComafyList()}");
 			}
 		}
+		RuinarchListPool<StructureConnector>.Release(availableStructureConnectors);
 		yield return null;
 	}
-	#endregion
+#endregion
 
-	#region Scenario Maps
+#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		if (scenarioMapData.villageSettlementTemplates != null) {
 			for (int i = 0; i < scenarioMapData.villageSettlementTemplates.Length; i++) {
@@ -226,7 +231,7 @@ public class VillageGeneration : MapGenerationComponent {
 
 				//update objects owners in dwellings
 				List<TileObject> objectsInDwellings = RuinarchListPool<TileObject>.Claim();
-				npcSettlement.PopulateTileObjectsFromStructures(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
+				npcSettlement.PopulateTileObjectsFromStructures<TileObject>(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
 				for (int j = 0; j < objectsInDwellings.Count; j++) {
 					TileObject tileObject = objectsInDwellings[j];
 					tileObject.UpdateOwners();
@@ -404,15 +409,15 @@ public class VillageGeneration : MapGenerationComponent {
 			citizenCount += 1;
 		}
 	}
-	#endregion
+#endregion
 	
-	#region Saved World
+#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
-	#endregion
+#endregion
 
-	#region Settlement Structures
+#region Settlement Structures
 	private List<StructureSetting> GenerateFacilities(NPCSettlement settlement, Faction faction, int facilityCount) {
 		List<StructureSetting> structures = new List<StructureSetting>(); //{ new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
 		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
@@ -509,9 +514,9 @@ public class VillageGeneration : MapGenerationComponent {
 		RuinarchListPool<Area>.Release(tilesInRange);
 		return structureWeights;
 	}
-	#endregion
+#endregion
 
-	#region Residents
+#region Residents
 	private void GenerateResidentConfiguration(int providedCitizenCount, int dwellingCount, out int coupleCharacters, out int singleCharacters) {
 		singleCharacters = 0;
 		coupleCharacters = 0;
@@ -553,7 +558,9 @@ public class VillageGeneration : MapGenerationComponent {
 	}
 	private List<Character> GenerateSettlementResidents(int dwellingCount, NPCSettlement npcSettlement, Faction faction, MapGenerationData data, int providedCitizenCount = -1) {
 		GenerateResidentConfiguration(providedCitizenCount, dwellingCount, out var coupleCharacters, out var singleCharacters);
+#if DEBUG_LOG
 		Debug.Log($"Provided citizen count is {providedCitizenCount.ToString()}. Singles: {singleCharacters.ToString()}. Couples: {coupleCharacters.ToString()}");
+#endif
 		
 		List<Character> createdCharacters = new List<Character>();
 		int citizenCount = 0;
@@ -727,9 +734,9 @@ public class VillageGeneration : MapGenerationComponent {
 			p_character.religionComponent.ChangeReligion(RELIGION.Demon_Worship);
 		}
 	}
-	#endregion
+#endregion
 
-	#region Relationships
+#region Relationships
 	private void ApplyPreGeneratedCharacterRelationships(MapGenerationData data) {
 		foreach (var pair in DatabaseManager.Instance.familyTreeDatabase.allFamilyTreesDictionary) {
 			for (int i = 0; i < pair.Value.Count; i++) {
@@ -744,9 +751,9 @@ public class VillageGeneration : MapGenerationComponent {
 			}
 		}
 	}
-	#endregion
+#endregion
 
-	#region Settlement Generation Utilities
+#region Settlement Generation Utilities
 	private LOCATION_TYPE GetLocationTypeForRace(RACE race) {
 		switch (race) {
 			case RACE.HUMANS:
@@ -756,6 +763,6 @@ public class VillageGeneration : MapGenerationComponent {
 				throw new Exception($"There was no location type provided for race {race.ToString()}");
 		}
 	}
-	#endregion
+#endregion
 	
 }

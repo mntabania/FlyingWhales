@@ -27,23 +27,34 @@ public class Daydream : GoapAction {
         SetState("Daydream Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Daydreamed > 5)";
-        } 
+#endif
+        }
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost.ToString()}(10 x Times Daydreamed)";
+#endif
         if (actor.traitContainer.HasTrait("Lazy")) {
             cost -= 25;
-            costLog += $" -25(Actor is Lazy)";    
+#if DEBUG_LOG
+            costLog += $" -25(Actor is Lazy)";
+#endif
         }
-        
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -54,9 +65,9 @@ public class Daydream : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreDaydreamSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -68,9 +79,9 @@ public class Daydream : GoapAction {
     //public void AfterDaydreamSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
     //}
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -87,5 +98,5 @@ public class Daydream : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

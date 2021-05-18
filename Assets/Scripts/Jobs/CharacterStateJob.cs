@@ -64,9 +64,13 @@ public class CharacterStateJob : JobQueueItem {
             }
         }
         if (assignedState == null) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Character State Job - Process Job - Switch To State - {targetState.ToString()}");
+#endif
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             if (hasBeenReset) { return true; } //Need to check since job can be reset when the assignedCharacter switches states.
             //check if the new state is the assigned character's state, before assigning the state to this job.
             if (newState != null && assignedCharacter.stateComponent.currentState == newState) {
@@ -85,14 +89,22 @@ public class CharacterStateJob : JobQueueItem {
             }
         } else {
             if (assignedState.isDone) {
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"Character State Job - Process Job - Cancel Job - isDone");
+#endif
                 CancelJob(false);
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
                 return true;
             } else if(assignedState.isPaused) {
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"Character State Job - Process Job - Resume State - {assignedState.stateName}");
+#endif
                 assignedState.ResumeState();
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
                 if (assignedState != null) {
                     if (assignedState.isDone && assignedCharacter.currentJob == this) {
                         assignedCharacter.SetCurrentJob(null);
@@ -177,7 +189,7 @@ public class CharacterStateJob : JobQueueItem {
         assignedState = null;
         targetPOI = null;
     }
-    #endregion
+#endregion
 
     public void SetAssignedState(CharacterState state) {
         if (state != null) {

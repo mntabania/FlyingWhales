@@ -191,10 +191,14 @@ public class SpellItem : NameplateItem<SkillData> {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Spell Item Per Tick Effect");
+#endif
         float fillAmount = ((float)spellData.currentCooldownTick / spellData.cooldown);
         cooldownCoverImage.DOFillAmount(fillAmount, 0.4f);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void StopCooldownFill() {
         cooldownCoverImage.fillAmount = 0f;
@@ -202,7 +206,7 @@ public class SpellItem : NameplateItem<SkillData> {
         //cooldownCoverImage.DOFillAmount(0f, 0.4f).OnComplete(UpdateInteractableState);
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
     }
-    #endregion
+#endregion
 
     public override void Reset() {
         base.Reset();

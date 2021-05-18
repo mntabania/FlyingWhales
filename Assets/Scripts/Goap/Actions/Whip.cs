@@ -20,8 +20,10 @@ public class Whip : GoapAction {
         SetState("Whip Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
@@ -75,9 +77,9 @@ public class Whip : GoapAction {
             reactions.Add(EMOTION.Anger);
         }
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterWhipSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
@@ -90,5 +92,5 @@ public class Whip : GoapAction {
         target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
         target.traitContainer.AddTrait(target, "Injured", goapNode.actor, goapNode);
     }
-    #endregion
+#endregion
 }

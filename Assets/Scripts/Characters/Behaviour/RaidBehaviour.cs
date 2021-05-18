@@ -11,12 +11,18 @@ public class RaidBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         bool hasJob = false;
+#if DEBUG_LOG
         log += $"\n-Character is raiding";
+#endif
         Party party = character.partyComponent.currentParty;
         if (party.isActive && party.partyState == PARTY_STATE.Working) {
+#if DEBUG_LOG
             log += $"\n-Party is working";
+#endif
             if (party.targetDestination.IsAtTargetDestination(character)) {
+#if DEBUG_LOG
                 log += $"\n-Character is at target destination, do work";
+#endif
                 RaidPartyQuest quest = party.currentQuest as RaidPartyQuest;
                 if (quest.target == null) {
                     party.GoBackHomeAndEndQuest();
@@ -38,7 +44,9 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                 //    return true;
                 //} else {
                 if(party.targetDestination is BaseSettlement settlement) {
+#if DEBUG_LOG
                     log += $"\n-Roam around";
+#endif
                     LocationStructure structure = settlement.GetRandomStructure();
                     if(structure != null) {
                         LocationGridTile tile = structure.GetRandomPassableTile();

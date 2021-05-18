@@ -71,7 +71,9 @@ public class Ghost : Summon {
     }
     
     private void FearCheck() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Ghost Fear Check");
+#endif
         if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().tick)) {
             if (UnityEngine.Random.Range(0, 100) < 15) {
                 //cast fear on random hostile
@@ -102,7 +104,9 @@ public class Ghost : Summon {
                 }
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
 }
 

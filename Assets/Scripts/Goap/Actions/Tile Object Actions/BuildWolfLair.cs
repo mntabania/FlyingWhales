@@ -23,8 +23,10 @@ public class BuildWolfLair : GoapAction {
 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -62,9 +64,9 @@ public class BuildWolfLair : GoapAction {
         }
         return goapActionInvalidity;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         Character actor = goapNode.actor;
@@ -84,21 +86,21 @@ public class BuildWolfLair : GoapAction {
 
         structure.SetOccupiedArea(targetArea);
 
-        List<BlockWall> walls = RuinarchListPool<BlockWall>.Claim();
-        structure.PopulateTileObjectsOfType(walls);
+        List<TileObject> walls = RuinarchListPool<TileObject>.Claim();
+        structure.PopulateTileObjectsOfType(walls, TILE_OBJECT_TYPE.BLOCK_WALL);
         for (int i = 0; i < walls.Count; i++) {
             TileObject blockWall = walls[i];
             blockWall.baseMapObjectVisual.ApplyGraphUpdate();
         }
-        RuinarchListPool<BlockWall>.Release(walls);
+        RuinarchListPool<TileObject>.Release(walls);
         targetArea.areaItem.UpdatePathfindingGraph();
         //targetHex.UpdatePathfindingGraphCoroutine();
 
         goapNode.actor.MigrateHomeStructureTo(structure);
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -111,5 +113,5 @@ public class BuildWolfLair : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

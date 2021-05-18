@@ -46,7 +46,7 @@ public class AreaTileObjectComponent : AreaComponent {
         }
         return count;
     }
-    public void PopulateTileObjectsInArea<T>(List<T> tileObjects) where T : TileObject {
+    public void PopulateTileObjectsInArea<T>(List<TileObject> tileObjects) where T : TileObject {
         for (int i = 0; i < itemsInArea.Count; i++) {
             TileObject tileObject = itemsInArea[i];
             if (tileObject is T obj) {

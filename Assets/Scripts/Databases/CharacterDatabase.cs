@@ -45,19 +45,23 @@ public class CharacterDatabase {
     }
     private void RemoveFromAliveVillagersList(Character p_character) {
         if (aliveVillagersList.Remove(p_character)) {
+#if DEBUG_LOG
             Debug.Log($"Removed {p_character.name} from alive villagers list. All alive villagers are {aliveVillagersList.ComafyList()}");
+#endif
         }
     }
     private void AddToAliveVillagersList(Character p_character) {
         if (!aliveVillagersList.Contains(p_character)) {
             aliveVillagersList.Add(p_character);
+#if DEBUG_LOG
             Debug.Log($"Added {p_character.name} to alive villagers list. All alive villagers are {aliveVillagersList.ComafyList()}");
+#endif
         }
     }
     private bool IsConsideredVillager(Character p_character) {
         return p_character.isNormalCharacter && p_character.race != RACE.RATMAN;
     }
-    #endregion
+#endregion
     
     internal void AddCharacter(Character character, bool addToAliveVillagersList = true) {
         allCharacters.Add(character.persistentID, character);

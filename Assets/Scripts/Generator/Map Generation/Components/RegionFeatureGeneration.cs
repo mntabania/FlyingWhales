@@ -28,24 +28,25 @@ public class RegionFeatureGeneration : MapGenerationComponent {
                 Region region = GridMap.Instance.mainRegion;
                 string chosenFeature = CollectionUtilities.GetRandomElement(regionFeatureChoices);
                 region.regionFeatureComponent.AddFeature(chosenFeature);
+#if DEBUG_LOG
                 Debug.Log($"Added feature {chosenFeature} to {region.name}");
-                
+#endif
             }
         }
         yield return null;
     }
 
-    #region Scenario Maps
+#region Scenario Maps
     public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
         yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
     }
-    #endregion
+#endregion
     
-    #region Saved World
+#region Saved World
     public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
         yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
     }
-    #endregion
+#endregion
     
     // public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
     //     if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {

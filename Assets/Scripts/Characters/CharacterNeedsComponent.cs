@@ -212,14 +212,18 @@ public class CharacterNeedsComponent : CharacterComponent {
     #endregion
 
     private void PerHour() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{owner.name} Needs Component Hour Started");
+#endif
         if (!_hasTriggeredThisHour) {
             _hasTriggeredThisHour = true;
             EveryOtherHour();
         } else {
             _hasTriggeredThisHour = false;
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void EveryOtherHour() {
         if (HasNeeds() == false) { return; }
@@ -228,37 +232,55 @@ public class CharacterNeedsComponent : CharacterComponent {
 
     public void CheckExtremeNeeds(Interrupt interruptThatTriggered = null) {
         if (HasNeeds() == false) { return; }
+#if DEBUG_LOG
         string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} will check his/her needs.";
+#endif
         if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
+#if DEBUG_LOG
             summary += $"\n{owner.name} is starving. Planning fullness recovery actions...";
+#endif
             PlanFullnessRecoveryActions();
         }
         if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
+#if DEBUG_LOG
             summary += $"\n{owner.name} is exhausted. Planning tiredness recovery actions...";
+#endif
             PlanTirednessRecoveryActions();
         }
         // if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted)) {
         //     summary += $"\n{owner.name} is sulking. Planning happiness recovery actions...";
         //     PlanHappinessRecoveryActions();
         // }
-        Debug.Log(summary);
+#if DEBUG_LOG
+        owner.logComponent.PrintLogIfActive(summary);
+#endif
     }
     public void CheckExtremeNeedsWhileInActiveParty(Interrupt interruptThatTriggered = null) {
         if (HasNeeds() == false) { return; }
+#if DEBUG_LOG
         string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} will check his/her needs.";
+#endif
         if ((isStarving || isHungry) && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
+#if DEBUG_LOG
             summary += $"\n{owner.name} is starving. Planning fullness recovery actions...";
+#endif
             PlanFullnessRecoveryActionsWhileInActiveParty();
         }
         if ((isExhausted || isTired) && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
+#if DEBUG_LOG
             summary += $"\n{owner.name} is exhausted. Planning tiredness recovery actions...";
+#endif
             PlanTirednessRecoveryActionsWhileInActiveParty();
         }
         if (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted) {
+#if DEBUG_LOG
             summary += $"\n{owner.name} is sulking. Planning happiness recovery actions...";
+#endif
             PlanHappinessRecoveryWhileInActiveParty();
         }
-        Debug.Log(summary);
+#if DEBUG_LOG
+        owner.logComponent.PrintLogIfActive(summary);
+#endif
     }
     private void CheckStarving() {
         if (isStarving) {
@@ -272,7 +294,9 @@ public class CharacterNeedsComponent : CharacterComponent {
             /*&& _character.isAtHomeRegion && _character.homeNpcSettlement != null*/; //Characters living on a region without a npcSettlement must not decrease needs
     }
     public void DecreaseNeeds() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{owner.name} Decrease Needs");
+#endif
         //Stamina is not affected by HasNeeds checker, so anyone, even demons will decrease their stamina
         if (doNotGetDrained <= 0) {
             if (owner.marker && owner.marker.isMoving) {
@@ -298,7 +322,9 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (!doesNotGetBored) {
             AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public string GetNeedsSummary() {
         string summary = $"Fullness: {fullness.ToString(CultureInfo.InvariantCulture)}/{FULLNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
@@ -310,14 +336,18 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustFullnessDecreaseRate(float amount) {
         fullnessDecreaseRate += amount;
+#if DEBUG_LOG
         Debug.Log($"{owner.name} adjusted fullness decrease rate by {amount.ToString()}. New value is {fullnessDecreaseRate.ToString()}");
+#endif
     }
     public void AdjustTirednessDecreaseRate(float amount) {
         tirednessDecreaseRate += amount;
     }
     public void AdjustHappinessDecreaseRate(float amount) {
         happinessDecreaseRate += amount;
+#if DEBUG_LOG
         Debug.Log($"Adjusted happiness decrease rate of {owner.name} by {amount.ToString(CultureInfo.InvariantCulture)} new decrease rate is {happinessDecreaseRate.ToString(CultureInfo.InvariantCulture)}");
+#endif
     }
     public void AdjustStaminaDecreaseRate(float amount) {
         staminaDecreaseRate += amount;
@@ -338,7 +368,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         hopeLowerBound = amount;
     }
 
-    #region Tiredness
+#region Tiredness
     public void ResetTirednessMeter() {
         bool wasTired = isTired;
         bool wasExhausted = isExhausted;
@@ -350,7 +380,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustTiredness(float adjustment) {
         if(adjustment < 0 && owner.traitContainer.HasTrait("Vampire")) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
+#endif
             return;
         }
         bool wasTired = isTired;
@@ -634,12 +666,16 @@ public class CharacterNeedsComponent : CharacterComponent {
     private GoapPlanJob PlanTirednessRecoveryBase(JOB_TYPE jobType, bool shouldSetScheduleJobID) {
         if (!owner.limiterComponent.canDoTirednessRecovery) {
             //No matter what, if character has the limiter "cannot do tiredness recovery", he will not do tiredness recovery
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is cannot do tiredness recovery");
+#endif
             return null;
         }
         //No matter what happens, we do not allow characters to sleep if they are burning/poisoned because it does not make sense
         if (owner.traitContainer.HasTrait("Burning", "Poisoned")) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is poisoned or burning will not plan tiredness recovery...");
+#endif
             return null;
         }
         bool triggerSpooked = false;
@@ -693,9 +729,9 @@ public class CharacterNeedsComponent : CharacterComponent {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Happiness
+#region Happiness
     public void ResetHappinessMeter() {
         if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
@@ -843,7 +879,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     private bool PlanHappinessRecoveryBase() {
         if (!owner.limiterComponent.canDoHappinessRecovery) {
             //No matter what, if character has the limiter "cannot do happiness recovery", he will not do happiness recovery
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is cannot do happiness recovery");
+#endif
             return false;
         }
         if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
@@ -905,9 +943,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     public void SetForcedHappinessRecoveryTimeChoices(params TIME_IN_WORDS[] timeInWords) {
         forcedHappinessRecoveryChoices = timeInWords;
     }
-    #endregion
+#endregion
 
-    #region Fullness
+#region Fullness
     public void ResetFullnessMeter() {
         bool wasHungry = isHungry;
         bool wasStarving = isStarving;
@@ -1270,12 +1308,16 @@ public class CharacterNeedsComponent : CharacterComponent {
     private GoapPlanJob PlanFullnessRecoveryBase(JOB_TYPE jobType) {
         if (!owner.limiterComponent.canDoFullnessRecovery) {
             //No matter what, if character has the limiter "cannot do fullness recovery", he will not do fullness recovery
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is cannot do fullness recovery");
+#endif
             return null;
         }
         //No matter what happens if the character is burning, he/she wil not trigger fullness recovery
         if (owner.traitContainer.HasTrait("Burning")) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is burning will not plan fullness recovery...");
+#endif
             return null;
         }
         //This base recovery creation function is different from tiredness/happiness because instead of adding the job in the job queue we only return the created job
@@ -1296,9 +1338,9 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         return null;
     }
-    #endregion
+#endregion
 
-    #region Stamina
+#region Stamina
     public void ResetStaminaMeter() {
         bool wasSpent = isSpent;
         bool wasDrained = isDrained;
@@ -1404,9 +1446,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     public void UpdateBaseStaminaDecreaseRate() {
         baseStaminaDecreaseRate = Mathf.RoundToInt(owner.characterClass.staminaReduction * (owner.raceSetting.staminaReductionMultiplier == 0f ? 1f : owner.raceSetting.staminaReductionMultiplier));
     }
-    #endregion
+#endregion
 
-    #region Hope
+#region Hope
     public void ResetHopeMeter() {
         bool wasDiscouraged = isDiscouraged;
         bool wasHopeless = isHopeless;
@@ -1499,9 +1541,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     public void AdjustDoNotGetDiscouraged(int amount) {
         doNotGetDiscouraged += amount;
     }
-    #endregion
+#endregion
 
-    #region Events
+#region Events
     public void OnCharacterLeftLocation(Region location) {
         // if (location == _character.homeRegion) {
         //     //character left home region
@@ -1520,7 +1562,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
         if (owner == character) {
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{character.name} has finished job {job.ToString()}");
+#endif
             //after doing an extreme needs type job, check again if the character needs to recover more of that need.
             if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
                 if (character.traitContainer.HasTrait("Pest") || character is Rat) {
@@ -1547,13 +1591,13 @@ public class CharacterNeedsComponent : CharacterComponent {
             character.jobQueue.AddJobInQueue(job);
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataCharacterNeedsComponent data) {
         //Currently N/A
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -1598,7 +1642,7 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
     public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords;
     public TIME_IN_WORDS[] forcedHappinessRecoveryChoices;
 
-    #region Overrides
+#region Overrides
     public override void Save(CharacterNeedsComponent data) {
         doNotGetHungry = data.doNotGetHungry;
         doNotGetTired = data.doNotGetTired;
@@ -1639,5 +1683,5 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
         CharacterNeedsComponent component = new CharacterNeedsComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

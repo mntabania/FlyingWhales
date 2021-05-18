@@ -86,10 +86,12 @@ public class CraftTileObject : GoapAction {
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(150, 201);
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -104,9 +106,9 @@ public class CraftTileObject : GoapAction {
         actor.UncarryPOI();
         (node.poiTarget as TileObject).SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);    
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreCraftSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         TileObject obj = goapNode.poiTarget as TileObject;
@@ -143,7 +145,9 @@ public class CraftTileObject : GoapAction {
                     resourcePile?.AdjustResourceInPile(-ingredient.amount);
                 } else {
                     if (!actor.UnobtainItem(neededItem)) {
+#if DEBUG_LOG
                         actor.logComponent.PrintLogErrorIfActive("Trying to craft " + obj.name + " but " + actor + " does not have " + neededItem);
+#endif
                     }
                 }
             }
@@ -187,9 +191,9 @@ public class CraftTileObject : GoapAction {
         //ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
         //carriedPile.AdjustResourceInPile(-TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     //private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
     //    int cost = TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
     //    if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {
@@ -218,9 +222,9 @@ public class CraftTileObject : GoapAction {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) is ResourcePile pile && 
                pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.METAL_PILE); 
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -231,6 +235,6 @@ public class CraftTileObject : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
 }

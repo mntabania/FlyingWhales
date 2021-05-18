@@ -161,8 +161,10 @@ namespace Traits {
         private void CheckRemovalChance() {
             _chanceToRemove = chanceToRemove + GetChanceIncreasePerHour();
             float roll = Random.Range(0f, 100f);
+#if DEBUG_LOG
             Debug.Log(
                 $"{GameManager.Instance.TodayLogString()} {owner.name} is rolling for chance to remove catatonic. Roll is {roll.ToString()}. Chance is {chanceToRemove.ToString()}");
+#endif
             if (roll <= chanceToRemove) {
                 owner.traitContainer.RemoveTrait(owner, this);
             }
@@ -170,7 +172,7 @@ namespace Traits {
         private float GetChanceIncreasePerHour() {
             return 100f / (MaxDays * 24f);
         }
-        #endregion
+#endregion
     }
 }
 

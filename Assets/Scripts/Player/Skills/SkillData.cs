@@ -276,7 +276,9 @@ public class SkillData : IPlayerSkill {
         }
     }
     protected virtual void PerTickCooldown() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{name} Per Tick Cooldown");
+#endif
         currentCooldownTick++;
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
         if(currentCooldownTick >= cooldown) {
@@ -302,7 +304,9 @@ public class SkillData : IPlayerSkill {
             //    StartCooldown();
             //}
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public virtual void FinishCooldown() {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
@@ -333,9 +337,9 @@ public class SkillData : IPlayerSkill {
         }
         return str;
     }
-    #endregion
+#endregion
 
-    #region Attributes
+#region Attributes
     public void SetIsUnlockBaseOnRequirements(bool p_isUnlocked) {
         isUnlockedBaseOnRequirements = p_isUnlocked;
     }
@@ -415,5 +419,5 @@ public class SkillData : IPlayerSkill {
     public void SetCurrentLevel(int amount) {
         currentLevel = amount;
     }
-    #endregion
+#endregion
 }

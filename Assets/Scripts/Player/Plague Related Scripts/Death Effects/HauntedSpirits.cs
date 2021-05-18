@@ -24,7 +24,9 @@ namespace Plague.Death_Effect {
             //        CreateSpirits(3, p_character);
             //        break;
             //}
+#if DEBUG_LOG
             Debug.Log("Activated Haunted Spirits Effect");
+#endif
         }
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {

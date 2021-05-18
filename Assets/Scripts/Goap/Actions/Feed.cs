@@ -29,8 +29,10 @@ public class Feed : GoapAction {
         SetState("Feed Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -116,9 +118,9 @@ public class Feed : GoapAction {
         }
         return REACTABLE_EFFECT.Positive;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreFeedSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is Character targetCharacter) {
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Eating");
@@ -164,9 +166,9 @@ public class Feed : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -176,9 +178,9 @@ public class Feed : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 12)) {
             return true;
@@ -198,5 +200,5 @@ public class Feed : GoapAction {
         return false;
         //return actor.supply >= 20;
     }
-    #endregion
+#endregion
 }

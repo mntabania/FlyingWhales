@@ -32,7 +32,7 @@ namespace Locations.Region_Features {
         }
 
         private int GetAncientRuinsInRegion(Region region) {
-            return LandmarkManager.Instance.GetSpecialStructuresOfType(STRUCTURE_TYPE.ANCIENT_RUIN).Count;
+            return LandmarkManager.Instance.GetStructuresOfTypeCount(STRUCTURE_TYPE.ANCIENT_RUIN);
         }
         private IEnumerator CreateSpecialStructure(STRUCTURE_TYPE p_structureType, Region p_region, Area p_area) {
             NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(p_region, LOCATION_TYPE.DUNGEON, p_area);

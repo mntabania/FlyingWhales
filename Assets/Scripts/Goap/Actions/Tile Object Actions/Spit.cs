@@ -34,11 +34,15 @@ public class Spit : GoapAction {
     //    node.actor.needsComponent.AdjustDoNotGetBored(-1);
     //}
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -52,49 +56,67 @@ public class Spit : GoapAction {
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 131);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Spat > 5)";
+#endif
         }
         if (!actor.partyComponent.isActiveMember) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Is not in active party quest)";
+#endif
         }
         if (!actor.traitContainer.HasTrait("Angry", "Annoyed", "Drunk")) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Not angry, annoyed or drunk)";
+#endif
         }
         Betrayed betrayed = actor.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
         if (target is Tombstone tombstone) {
             if (betrayed != null && betrayed.IsResponsibleForTrait(tombstone.character)) {
                 cost -= 25;
+#if DEBUG_LOG
                 costLog += " -25(Actor is betrayed by target)";
-            }    
+#endif
+            }
         }
         if (actor.traitContainer.HasTrait("Evil")) {
             cost -= 10;
+#if DEBUG_LOG
             costLog += " -10(Evil)";
+#endif
         }
         if (actor.traitContainer.HasTrait("Treacherous")) {
             cost -= 10;
+#if DEBUG_LOG
             costLog += " -10(Treacherous)";
+#endif
         }
 
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost.ToString()}(10 x Times Spat)";
 
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
@@ -124,9 +146,9 @@ public class Spit : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -148,9 +170,9 @@ public class Spit : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
@@ -161,7 +183,7 @@ public class Spit : GoapAction {
     //public void AfterSpitSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
     //}
-    #endregion
+#endregion
 
     //#region Intel Reactions
     //private List<string> SpitSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {

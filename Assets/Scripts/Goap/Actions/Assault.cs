@@ -51,8 +51,10 @@ public class Assault : GoapAction {
         SetState("Combat Start", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +50(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 50;
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
@@ -315,9 +317,9 @@ public class Assault : GoapAction {
         string reason = GetReason(node);
         log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -332,11 +334,13 @@ public class Assault : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreCombatStart(ActualGoapNode goapNode) {
+#if DEBUG_LOG
         Debug.Log($"{goapNode.actor} will start combat towards {goapNode.poiTarget.name}");
+#endif
         string combatReason = CombatManager.Action;
         bool isLethal = goapNode.associatedJobType.IsJobLethal();
         if(goapNode.associatedJobType == JOB_TYPE.DEMON_KILL) {
@@ -354,7 +358,7 @@ public class Assault : GoapAction {
         //     }
         // }
     }
-    #endregion
+#endregion
 
     private string GetReason(ActualGoapNode action) {
         string key = action.actor.combatComponent.GetCombatActionReason(action, action.poiTarget);

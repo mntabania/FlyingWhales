@@ -245,16 +245,17 @@ namespace Generator.Map_Generation.Components {
 		      //   }
 	       //  }
 	       //  yield return null;
+#if DEBUG_LOG
 	       //  Debug.Log($"Created {createdCount.ToString()} {p_structureType.ToString()}"); 
         // }
-        
+#endif
         private IEnumerator TryCreateSpecialStructure(STRUCTURE_TYPE p_structureType, Area p_area) {
 	        // chosenArea.featureComponent.RemoveAllFeatures(chosenArea);
 	        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(p_area.region, LOCATION_TYPE.DUNGEON, p_area);
 	        yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(p_structureType, p_area.region, p_area, settlement));
         }
 
-        #region Structure Creation
+#region Structure Creation
 		private IEnumerator CreateSpecialStructure(STRUCTURE_TYPE p_structureType, Region p_region, Area p_area, NPCSettlement p_settlement) {
 			if (p_structureType == STRUCTURE_TYPE.MONSTER_LAIR) {
 				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(p_region, p_structureType, p_settlement);
@@ -270,9 +271,9 @@ namespace Generator.Map_Generation.Components {
 			structure.SetOccupiedArea(hexTile);
 			yield return null;
 		}
-		#endregion
+#endregion
 		
-		#region Chances
+#region Chances
 		private int GetLoopCount(STRUCTURE_TYPE p_structureType, MapGenerationData data) {
 			switch (p_structureType) {
 				case STRUCTURE_TYPE.MONSTER_LAIR:
@@ -440,9 +441,9 @@ namespace Generator.Map_Generation.Components {
 					return 0;
 			}
 		}
-		#endregion
+#endregion
 		
-		#region Utilities
+#region Utilities
 		private List<Area> GetLocationChoices(STRUCTURE_TYPE p_structureType) {
 			switch (p_structureType) {
 				case STRUCTURE_TYPE.MONSTER_LAIR:
@@ -546,6 +547,6 @@ namespace Generator.Map_Generation.Components {
 			}
 			return false;
 		}
-		#endregion
+#endregion
     }
 }

@@ -108,7 +108,9 @@ public class DatabaseManager : MonoBehaviour {
     }
 
     private void OnSceneUnloaded(Scene unloaded) {
+#if DEBUG_LOG
         Debug.Log($"Scene {unloaded.name} was unloaded.");
+#endif
         if (unloaded.name == "Game") {
             //TODO: Dispose of old databases.
             DisposeDatabases();

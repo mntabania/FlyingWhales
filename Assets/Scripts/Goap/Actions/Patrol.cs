@@ -17,8 +17,10 @@ public class Patrol : GoapAction {
         SetState("Patrol Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
@@ -30,5 +32,5 @@ public class Patrol : GoapAction {
         //patrol action should never be invalid
         return goapActionInvalidity;
     }
-    #endregion
+#endregion
 }

@@ -18,8 +18,10 @@ public class Trespassing : GoapAction {
         SetState("Trespass Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     //public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -49,5 +51,5 @@ public class Trespassing : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Trespassing;
     }
-    #endregion
+#endregion
 }

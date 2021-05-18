@@ -24,13 +24,15 @@ public class Accident : GoapAction {
         SetState("Accident Success", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +5(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 5;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -38,9 +40,9 @@ public class Accident : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreAccidentSuccess(ActualGoapNode goapNode) {
         GoapAction actionToDo = goapNode.otherData[0].obj as GoapAction;
         // goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
@@ -51,12 +53,14 @@ public class Accident : GoapAction {
         int randomHpToLose = UnityEngine.Random.Range(5, 26);
         float percentMaxHPToLose = randomHpToLose / 100f;
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
+#if DEBUG_LOG
         Debug.Log(
             $"Accident of {goapNode.actor.name} percent: {percentMaxHPToLose}, max hp: {goapNode.actor.maxHP}, lost hp: {actualHPToLose}");
+#endif
         goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
         if (!goapNode.actor.HasHealth()) {
             goapNode.actor.Death(deathFromAction: goapNode);
         }
     }
-    #endregion
+#endregion
 }

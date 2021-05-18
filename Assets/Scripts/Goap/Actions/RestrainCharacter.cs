@@ -31,8 +31,10 @@ public class RestrainCharacter : GoapAction {
         SetState("Restrain Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -156,9 +158,9 @@ public class RestrainCharacter : GoapAction {
         }
         return REACTABLE_EFFECT.Negative;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -171,9 +173,9 @@ public class RestrainCharacter : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterRestrainSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Target gains Restrained trait.
         Faction factionThatImprisoned = null;
@@ -191,13 +193,13 @@ public class RestrainCharacter : GoapAction {
 
         goapNode.poiTarget.traitContainer.RestrainAndImprison(goapNode.poiTarget, goapNode.actor, factionThatImprisoned, characterThatImprisoned);
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool TargetUnconsciousOrParalyzed(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         return target.traitContainer.HasTrait("Unconscious", "Paralyzed");
     }
-    #endregion
+#endregion
 
     //#region Intel Reactions
     //private List<string> SuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {

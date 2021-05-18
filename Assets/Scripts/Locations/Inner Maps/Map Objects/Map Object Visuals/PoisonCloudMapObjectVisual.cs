@@ -133,7 +133,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Poison Cloud Per Tick");
+#endif
         choices.Clear();
         int size = _size / 2;
         List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
@@ -144,17 +146,26 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
         RuinarchListPool<LocationGridTile>.Release(tiles);
         Assert.IsTrue(choices.Count > 0);
+#if DEBUG_LOG
         string summary = $"{GameManager.Instance.TodayLogString()}Per tick check of poison cloud.";
+#endif
         ITraitable chosenTraitable = UtilityScripts.CollectionUtilities.GetRandomElement(choices);
         chosenTraitable.traitContainer.AddTrait(chosenTraitable, "Poisoned");
         Poisoned poisoned = chosenTraitable.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
         poisoned?.SetIsPlayerSource(_poisonCloud.isPlayerSource);
+
+#if DEBUG_LOG
         summary = $"{summary}\nChance met! Target is {chosenTraitable.ToString()}";
         Debug.Log(summary);
+#endif
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void Explode() {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} has exploded!");
+#endif
         _cloudEffect.TriggerSubEmitter(0);
         _poisonCloud.SetDoExpireEffect(false);
         Expire();
@@ -185,9 +196,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     //         Expire();    
     //     }
     // }
-    #endregion
+#endregion
     
-    #region Triggers
+#region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
@@ -220,9 +231,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region POI's
+#region POI's
     private void AddObject(ITraitable obj) {
         if (!_objsInRange.Contains(obj)) {
             _objsInRange.Add(obj);
@@ -241,11 +252,13 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             Explode();
         }
     }
-    #endregion
+#endregion
     
-    #region Expiration
+#region Expiration
     public void Expire() {
+#if DEBUG_LOG
         Debug.Log($"{this.name} expired!");
+#endif
         _poisonCloud.OnExpire();
         _cloudEffect.Stop();
         visionTrigger.SetAllCollidersState(false);
@@ -264,9 +277,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         yield return new WaitForSeconds(2f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
-    #endregion
+#endregion
 
-    #region Particles
+#region Particles
     private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
@@ -276,9 +289,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _cloudEffect.Pause();
         _explosionEffect.Pause();
     }
-    #endregion
+#endregion
 
-    #region Size
+#region Size
     public void SetSize(int size) {
         _size = size;
         ChangeScaleBySize();
@@ -290,5 +303,5 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         // gameObject.transform.localScale = new Vector3(_size, _size, _size);
         // _cloudEffect.transform.localScale = new Vector3(_size, _size, _size);
     }
-    #endregion
+#endregion
 }

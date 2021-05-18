@@ -23,7 +23,9 @@ public class Fish : GoapAction {
         SetState("Fish Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (job.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
             if (target.gridTileLocation != null && actor.gridTileLocation != null) {
                 LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
@@ -33,15 +35,19 @@ public class Fish : GoapAction {
 
                 if (distance > distanceToCheck) {
                     //target is at structure that character is avoiding
+#if DEBUG_LOG
                     costLog += $" +2000(Location of target too far from actor)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     return 2000;
                 }
             }
         }
-        int cost = UtilityScripts.Utilities.Rng.Next(80, 101); 
+        int cost = UtilityScripts.Utilities.Rng.Next(80, 101);
+#if DEBUG_LOG
         costLog += $" +{cost.ToString()}(Random Cost Between 80-100)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -89,9 +95,9 @@ public class Fish : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -103,9 +109,9 @@ public class Fish : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreFishSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
         //if (goapNode.actor.characterClass.IsCombatant()) {
@@ -144,5 +150,5 @@ public class Fish : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 }

@@ -37,7 +37,7 @@ public class LeaveHomeData : SchemeData {
 
         BaseSettlement homeSettlement = character.homeSettlement;
         if (homeSettlement != null) {
-            LocationStructure chosenStructure = homeSettlement.GetRandomStructureThatMeetCriteria(s => s != character.previousCharacterDataComponent.previousHomeStructure && s != character.homeStructure && character.movementComponent.HasPathToEvenIfDiffRegion(s.GetRandomPassableTile()));
+            LocationStructure chosenStructure = homeSettlement.GetRandomStructureThatCharacterHasPathTo(character, character.previousCharacterDataComponent.previousHomeStructure, character.homeStructure);
             if (chosenStructure != null) {
                 LocationGridTile chosenTile = chosenStructure.GetRandomPassableTile();
                 if(chosenTile != null) {

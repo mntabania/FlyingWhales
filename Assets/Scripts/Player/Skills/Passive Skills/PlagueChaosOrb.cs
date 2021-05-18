@@ -15,7 +15,9 @@ public class PlagueChaosOrb : PassiveSkill {
     private void OnTraitAdded(Character character, Trait trait) {
         if (GameUtilities.RollChance(50)) {
             if (trait.name == "Depressed" || trait.name == "Insomnia" || trait.name == "Lethargic") { //|| trait.name == "Paralyzed"
+#if DEBUG_LOG
                 Debug.Log("Chaos Orb Produced - [" + character.name + "] - [Became Depressed - Insomnia - Lethargic] - [1]");
+#endif
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
             }
         }
@@ -25,7 +27,9 @@ public class PlagueChaosOrb : PassiveSkill {
         if (GameUtilities.RollChance(50)) {
             Character character = interrupt.actor;
             if (character.faction.factionType.type != FACTION_TYPE.Demon_Cult && (interrupt.interrupt.type == INTERRUPT.Seizure || interrupt.interrupt.type == INTERRUPT.Sneeze || interrupt.interrupt.type == INTERRUPT.Puke)) {
+#if DEBUG_LOG
                 Debug.Log("Chaos Orb Produced - [" + character.name + "] - [Became Depressed - Insomnia - Lethargic] - [1]");
+#endif
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.gridTileLocation.parentMap);
             }
         }

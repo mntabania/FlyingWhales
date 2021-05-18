@@ -18,13 +18,17 @@ public class NightCreatureChaosOrb : PassiveSkill {
     void OnCharacterRaiseDeadByNecro(Summon p_character) {
         if (CharacterManager.Instance.necromancerInTheWorld != null && CharacterManager.Instance.necromancerInTheWorld.faction.factionType.type == FACTION_TYPE.Undead) {
             LocationGridTile chaosOrbSpawnLocation = !p_character.hasMarker ? p_character.deathTilePosition : p_character.gridTileLocation;
+#if DEBUG_LOG
             Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnCharacterRaiseDeadByNecro] - [1]");
+#endif
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, chaosOrbSpawnLocation.centeredWorldLocation, 1, chaosOrbSpawnLocation.parentMap);
         }
         
     }
     void OnCharacterBecameVampire(Character p_character) {
+#if DEBUG_LOG
         Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnCharacterBecameVampire] - [3]");
+#endif
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 3, p_character.gridTileLocation.parentMap);
     }
 
@@ -37,7 +41,9 @@ public class NightCreatureChaosOrb : PassiveSkill {
                     LocationGridTile chaosOrbSpawnLocation = !responsibleCharacter.hasMarker ? responsibleCharacter.deathTilePosition : responsibleCharacter.gridTileLocation;
                     Assert.IsNotNull(chaosOrbSpawnLocation, $"Chaos orb spawn location of {responsibleCharacter.name} is null. Character that died is {p_character.name}");
                     Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, chaosOrbSpawnLocation.centeredWorldLocation, orbsCount, chaosOrbSpawnLocation.parentMap);
+#if DEBUG_LOG
                     Debug.Log("Chaos Orb Produced - [" + responsibleCharacter.name + "] - [Killed by Skeleton(with 1 necro) or killed by necro or killed by vampire] - [2]");
+#endif
                 }
             }
         }

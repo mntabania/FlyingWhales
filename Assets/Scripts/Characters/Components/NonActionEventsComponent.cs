@@ -114,7 +114,9 @@ public class NonActionEventsComponent : CharacterComponent {
         return false;
     }
     private void TriggerChatCharacter(Character target, Log overrideLog) {
+#if DEBUG_LOG
         string strLog = $"{owner.name} chat with {target.name}";
+#endif
 
         Character disguisedActor = owner;
         Character disguisedTarget = target;
@@ -135,8 +137,9 @@ public class NonActionEventsComponent : CharacterComponent {
         chatWeights.AddElement(Argument, 20);
         chatWeights.AddElement(Insult, 20);
         chatWeights.AddElement(Praise, 20);
-
+#if DEBUG_LOG
         strLog += $"\n\n{chatWeights.GetWeightsSummary("BASE WEIGHTS")}";
+#endif
 
         MOOD_STATE actorMood = disguisedActor.moodComponent.moodState;
         MOOD_STATE targetMood = disguisedTarget.moodComponent.moodState;
@@ -148,93 +151,129 @@ public class NonActionEventsComponent : CharacterComponent {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Argument, 15);
             chatWeights.AddWeightToElement(Insult, 20);
+#if DEBUG_LOG
             strLog += "\n\nActor Mood is Low, modified weights...";
             strLog += "\nWarm Chat: -20, Argument: +15, Insult: +20";
+#endif
         } else if (actorMood == MOOD_STATE.Critical) {
             chatWeights.AddWeightToElement(Warm_Chat, -40);
             chatWeights.AddWeightToElement(Argument, 30);
             chatWeights.AddWeightToElement(Insult, 50);
+#if DEBUG_LOG
             strLog += "\n\nActor Mood is Critical, modified weights...";
             strLog += "\nWarm Chat: -40, Argument: +30, Insult: +50";
+#endif
         }
 
         if (targetMood == MOOD_STATE.Bad) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Argument, 15);
+#if DEBUG_LOG
             strLog += "\n\nTarget Mood is Low, modified weights...";
             strLog += "\nWarm Chat: -20, Argument: +15";
+#endif
         } else if (targetMood == MOOD_STATE.Critical) {
             chatWeights.AddWeightToElement(Warm_Chat, -40);
             chatWeights.AddWeightToElement(Argument, 30);
+#if DEBUG_LOG
             strLog += "\n\nTarget Mood is Critical, modified weights...";
             strLog += "\nWarm Chat: -40, Argument: +30";
+#endif
         }
 
         if (actorOpinionLabel == RelationshipManager.Close_Friend || actorOpinionLabel == RelationshipManager.Friend) {
             chatWeights.AddWeightToElement(Awkward_Chat, -15);
+#if DEBUG_LOG
             strLog += "\n\nActor's opinion of Target is Close Friend or Friend, modified weights...";
             strLog += "\nAwkward Chat: -15";
+#endif
         } else if (actorOpinionLabel == RelationshipManager.Enemy || actorOpinionLabel == RelationshipManager.Rival) {
             chatWeights.AddWeightToElement(Awkward_Chat, 15);
+#if DEBUG_LOG
             strLog += "\n\nActor's opinion of Target is Enemy or Rival, modified weights...";
             strLog += "\nAwkward Chat: +15";
+#endif
         }
 
         if (targetOpinionLabel == RelationshipManager.Close_Friend || targetOpinionLabel == RelationshipManager.Friend) {
             chatWeights.AddWeightToElement(Awkward_Chat, -15);
+#if DEBUG_LOG
             strLog += "\n\nTarget's opinion of Actor is Close Friend or Friend, modified weights...";
             strLog += "\nAwkward Chat: -15";
+#endif
         } else if (targetOpinionLabel == RelationshipManager.Enemy || targetOpinionLabel == RelationshipManager.Rival) {
             chatWeights.AddWeightToElement(Awkward_Chat, 15);
+#if DEBUG_LOG
             strLog += "\n\nTarget's opinion of Actor is Enemy or Rival, modified weights...";
             strLog += "\nAwkward Chat: +15";
+#endif
         }
 
-        if(compatibility != -1) {
+        if (compatibility != -1) {
+#if DEBUG_LOG
             strLog += $"\n\nActor and Target Compatibility is {compatibility}, modified weights...";
+#endif
             if (compatibility == 0) {
                 chatWeights.AddWeightToElement(Awkward_Chat, 15);
                 chatWeights.AddWeightToElement(Argument, 20);
                 chatWeights.AddWeightToElement(Insult, 15);
+#if DEBUG_LOG
                 strLog += "\nAwkward Chat: +15, Argument: +20, Insult: +15";
+#endif
             } else if (compatibility == 1) {
                 chatWeights.AddWeightToElement(Awkward_Chat, 10);
                 chatWeights.AddWeightToElement(Argument, 10);
                 chatWeights.AddWeightToElement(Insult, 10);
+#if DEBUG_LOG
                 strLog += "\nAwkward Chat: +10, Argument: +10, Insult: +10";
+#endif
             } else if (compatibility == 2) {
                 chatWeights.AddWeightToElement(Awkward_Chat, 5);
                 chatWeights.AddWeightToElement(Argument, 5);
                 chatWeights.AddWeightToElement(Insult, 5);
+#if DEBUG_LOG
                 strLog += "\nAwkward Chat: +5, Argument: +5, Insult: +5";
+#endif
             } else if (compatibility == 3) {
                 chatWeights.AddWeightToElement(Praise, 5);
+#if DEBUG_LOG
                 strLog += "\nPraise: +5";
+#endif
             } else if (compatibility == 4) {
                 chatWeights.AddWeightToElement(Praise, 10);
+#if DEBUG_LOG
                 strLog += "\nPraise: +10";
+#endif
             } else if (compatibility == 5) {
                 chatWeights.AddWeightToElement(Praise, 20);
+#if DEBUG_LOG
                 strLog += "\nPraise: +20";
+#endif
             }
         }
 
         if (disguisedActor.traitContainer.HasTrait("Hothead")) {
             chatWeights.AddWeightToElement(Argument, 15);
+#if DEBUG_LOG
             strLog += "\n\nActor is Hotheaded, modified weights...";
             strLog += "\nArgument: +15";
+#endif
         }
         if (disguisedTarget.traitContainer.HasTrait("Hothead")) {
             chatWeights.AddWeightToElement(Argument, 15);
+#if DEBUG_LOG
             strLog += "\n\nTarget is Hotheaded, modified weights...";
             strLog += "\nArgument: +15";
+#endif
         }
 
         if (disguisedActor.traitContainer.HasTrait("Diplomatic")) {
             chatWeights.AddWeightToElement(Insult, -30);
             chatWeights.AddWeightToElement(Praise, 30);
+#if DEBUG_LOG
             strLog += "\n\nActor is Diplomatic, modified weights...";
             strLog += "\nInsult: -30, Praise: +30";
+#endif
         }
 
         if (!disguisedActor.limiterComponent.isSociable) {
@@ -243,13 +282,17 @@ public class NonActionEventsComponent : CharacterComponent {
             chatWeights.AddWeightToElement(Argument, 20);
             chatWeights.AddWeightToElement(Insult, 50);
             chatWeights.AddWeightToElement(Praise, -20);
+#if DEBUG_LOG
             strLog += "\n\nActor is unsociable";
+#endif
         }
         if (!disguisedTarget.limiterComponent.isSociable) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Awkward_Chat, 20);
             chatWeights.AddWeightToElement(Argument, 20);
+#if DEBUG_LOG
             strLog += "\n\nTarget is unsociable";
+#endif
         }
 
         Trait angryActor = disguisedActor.traitContainer.GetTraitOrStatus<Trait>("Angry");
@@ -262,14 +305,18 @@ public class NonActionEventsComponent : CharacterComponent {
             chatWeights.AddWeightToElement(Argument, 50);
             chatWeights.AddWeightToElement(Insult, 100);
             chatWeights.AddWeightToElement(Praise, -50);
+#if DEBUG_LOG
             strLog += "\n\nActor is angry with target";
+#endif
         }
         if (angryTarget != null && angryTarget.responsibleCharacters != null && angryTarget.responsibleCharacters.Contains(disguisedActor)) {
             //target is angry with actor
             chatWeights.AddWeightToElement(Warm_Chat, -50);
             chatWeights.AddWeightToElement(Awkward_Chat, 20);
             chatWeights.AddWeightToElement(Argument, 50);
+#if DEBUG_LOG
             strLog += "\n\nTarget is angry with actor";
+#endif
         }
 
         //Vampire
@@ -338,18 +385,20 @@ public class NonActionEventsComponent : CharacterComponent {
 
         if (disguisedActor.traitContainer.HasTrait("Hero") || disguisedTarget.traitContainer.HasTrait("Hero")) {
             chatWeights.RemoveElement(Argument);
+#if DEBUG_LOG
             strLog += "\n\nActor or target is Hero, removing argument weight...";
+#endif
         }
-        
-
+#if DEBUG_LOG
         strLog += $"\n\n{chatWeights.GetWeightsSummary("FINAL WEIGHTS")}";
+#endif
 
         string result = chatWeights.PickRandomElementGivenWeights();
         if (!string.IsNullOrEmpty(result)) {
+#if DEBUG_LOG
             strLog += $"\nResult: {result}";
-
             owner.logComponent.PrintLogIfActive(strLog);
-
+#endif
             bool adjustOpinionBothSides = false;
             int opinionValue = 0;
 
@@ -399,9 +448,9 @@ public class NonActionEventsComponent : CharacterComponent {
     public void SetLastConversationDate(GameDate date) {
         lastConversationDate = date;
     }
-    #endregion
+#endregion
 
-    #region Break Up
+#region Break Up
     public void NormalBreakUp(Character target, string reason) {
         RELATIONSHIP_TYPE relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
         TriggerBreakUp(target, relationship, reason);
@@ -436,9 +485,9 @@ public class NonActionEventsComponent : CharacterComponent {
             //owner.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
         }
     }
-    #endregion
+#endregion
 
-    #region Flirt
+#region Flirt
     public bool NormalFlirtCharacter(Character target, Log overrideLog) {
         Character disguisedActor = owner;
         Character disguisedTarget = target;
@@ -584,20 +633,20 @@ public class NonActionEventsComponent : CharacterComponent {
         
         return "flirted_back";
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataNonActionEventsComponent data) {
         //Currently N/A
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
 public class SaveDataNonActionEventsComponent : SaveData<NonActionEventsComponent> {
     public GameDate lastConversationDate;
 
-    #region Overrides
+#region Overrides
     public override void Save(NonActionEventsComponent data) {
         lastConversationDate = data.lastConversationDate;
     }
@@ -606,5 +655,5 @@ public class SaveDataNonActionEventsComponent : SaveData<NonActionEventsComponen
         NonActionEventsComponent component = new NonActionEventsComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

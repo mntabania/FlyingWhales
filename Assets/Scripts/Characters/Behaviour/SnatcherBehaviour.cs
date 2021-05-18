@@ -28,15 +28,26 @@ namespace Characters.Behaviour {
                             return true;
                         }
                     } else {
+#if DEBUG_LOG
                         Debug.LogWarning($"{character.name} could not find a near demonic structure!");
+#endif
                     }
                 } else {
-                    List<LocationGridTile> choices = areaLocation.gridTileComponent.gridTiles.Where(
-                        t => !t.structure.IsTilePartOfARoom(t, out var room) && t.IsPassable() && PathfindingManager.Instance.HasPath(character.gridTileLocation, t)
-                    ).ToList();
+                    List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
+                    LocationGridTile chosen = null;
+                    for (int i = 0; i < areaLocation.gridTileComponent.gridTiles.Count; i++) {
+                        LocationGridTile t = areaLocation.gridTileComponent.gridTiles[i];
+                        if (!t.structure.IsTilePartOfARoom(t, out var room) && t.IsPassable() && PathfindingManager.Instance.HasPath(character.gridTileLocation, t)) {
+                            choices.Add(t);
+                        }
+                    }
                     if (choices.Count > 0) {
+                        chosen = CollectionUtilities.GetRandomElement(choices);
+                    }
+                    RuinarchListPool<LocationGridTile>.Release(choices);
+                    if (chosen != null) {
                         //character is already at demonic structure, just roam around there
-                        return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_CORRUPTION, out producedJob, CollectionUtilities.GetRandomElement(choices));
+                        return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_CORRUPTION, out producedJob, chosen);
                     } else {
                         character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                         return true;

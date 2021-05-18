@@ -23,8 +23,10 @@ public class Sit : GoapAction {
        
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -38,9 +40,9 @@ public class Sit : GoapAction {
         }
         return goapActionInvalidity;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     //public void PerTickSitSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustStamina(0.3f);
     //}
@@ -50,9 +52,9 @@ public class Sit : GoapAction {
     //public void PreTargetMissing(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
     //}
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -62,5 +64,5 @@ public class Sit : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

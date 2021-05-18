@@ -189,10 +189,14 @@ public class Summon : Character {
         }
     }
     protected override void OnTickStarted() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{name} OnTickStarted");
+#endif
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public override void OnUnseizePOI(LocationGridTile tileLocation) {
         base.OnUnseizePOI(tileLocation);
@@ -217,7 +221,7 @@ public class Summon : Character {
         if (p_structure.HasReachedMaxResidentCapacity()) {
             return false;
         }
-        if (p_structure.HasResidentThatMeetCriteria(r => r.isNormalCharacter)) {
+        if (p_structure.HasVillagerResident()) {
             return false;
         }
         return true;
@@ -227,9 +231,9 @@ public class Summon : Character {
         Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
         movementComponent.UpdateSpeed();
     }
-    #endregion
+#endregion
 
-    #region Virtuals
+#region Virtuals
     /// <summary>
     /// What should a summon do when it is placed.
     /// </summary>
@@ -261,9 +265,9 @@ public class Summon : Character {
     public virtual void OnSummonAsPlayerMonster() {
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
-    #endregion
+#endregion
 
-    #region Player Action Target
+#region Player Action Target
     public override void ConstructDefaultActions() {
         if (actions == null) {
             actions = new List<PLAYER_SKILL_TYPE>();
@@ -282,9 +286,9 @@ public class Summon : Character {
         AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
         AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
     }
-    #endregion
+#endregion
 
-    #region Selecatble
+#region Selecatble
     public override bool IsCurrentlySelected() {
         Character characterToSelect = this;
         if (isLycanthrope) {
@@ -293,16 +297,16 @@ public class Summon : Character {
         return UIManager.Instance.monsterInfoUI.isShowing &&
                UIManager.Instance.monsterInfoUI.activeMonster == characterToSelect;
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void SetShowNotificationOnDeath(bool showNotificationOnDeath) {
         this.showNotificationOnDeath = showNotificationOnDeath;
     }
     public void SetIsVolatile(bool isVolatile) {
         isVolatileMonster = isVolatile;
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]

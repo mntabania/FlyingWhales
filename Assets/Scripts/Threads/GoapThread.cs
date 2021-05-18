@@ -77,6 +77,7 @@ public class GoapThread : Multithread {
         //removed by aaron for awareness update GridMap.Instance.UpdateAwarenessInAllRegions();
     }
     private void CreateNewPlan() {
+#if DEBUG_LOG
         log = $"-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF {actor.name} WITH TARGET {target?.nameWithID}" ??
               $"None ({actor.currentRegion.name})-----------------------";
         if (goalType != INTERACTION_TYPE.NONE) {
@@ -96,6 +97,7 @@ public class GoapThread : Multithread {
                 }
             }
         }
+#endif
 
         string planLog = string.Empty;
         GoapPlan plan = null;
@@ -103,42 +105,64 @@ public class GoapThread : Multithread {
             //provided goal type
             GoapAction action = InteractionManager.Instance.goapActionData[goalType];
             if (target.CanAdvertiseActionToActor(actor, action, job)) {
+#if DEBUG_LOG
                 log += $"\n{target.name} Can advertise actions to {actor.name}";
+#endif
                 plan = actor.planner.PlanActions(target, action, isPersonalPlan, ref planLog, job);
             } else {
+#if DEBUG_LOG
                 log += $"\n{target.name} Cannot advertise actions to {actor.name}";
+#endif
             }
         } else {
             //default
             plan = actor.planner.PlanActions(target, goalEffect, isPersonalPlan, ref planLog, job);
         }
+#if DEBUG_LOG
         log += $"\nGOAP TREE LOG: {planLog}";
-        if(plan != null) {
+#endif
+        if (plan != null) {
+#if DEBUG_LOG
             log += "\n\nGENERATED PLAN: ";
             log += plan.LogPlan();
+#endif
             createdPlan = plan;
         } else {
+#if DEBUG_LOG
             log += "\n\nNO PLAN WAS GENERATED! End goap...";
+#endif
         }
     }
     private void RecalculatePlan() {
+#if DEBUG_LOG
         log =
             $"-----------------RECALCULATING PLAN OF {actor.name} WITH TARGET {recalculationPlan.target.name} ({actor.currentRegion.name})-----------------------";
+#endif
         if (recalculationPlan.isEnd) {
+#if DEBUG_LOG
             log += "\nPlan has already ended! Cannot recalculate!";
+#endif
             return;
         }
+#if DEBUG_LOG
         log +=
             $"\nGOAL ACTION: {recalculationPlan.endNode.singleNode.action.goapName} - {recalculationPlan.target.name}";
+#endif
         string planLog = string.Empty;
         bool success = actor.planner.RecalculatePathForPlan(recalculationPlan, job, ref planLog);
+#if DEBUG_LOG
         log += $"\nGOAP TREE LOG: {planLog}";
+#endif
         if (success) {
+#if DEBUG_LOG
             log += "\nGENERATED PLAN: ";
             log += recalculationPlan.LogPlan();
+#endif
             createdPlan = recalculationPlan;
         } else {
+#if DEBUG_LOG
             log += "\nFAILED TO RECALCULATE PLAN!";
+#endif
         }
     }
 

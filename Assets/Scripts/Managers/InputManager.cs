@@ -36,26 +36,27 @@ namespace Ruinarch {
         private bool runUpdate;
         private bool _isShiftDown;
 
-        private Dictionary<KeyCode, bool> allowedHotKeys = new Dictionary<KeyCode, bool>() {
-            {KeyCode.F1, true},
-            {KeyCode.F2, true},
-            {KeyCode.F3, true},
-            {KeyCode.F4, true},
-            {KeyCode.F5, true},
-            {KeyCode.F6, true},
-            {KeyCode.F7, true},
-            {KeyCode.F8, true},
-            {KeyCode.F9, true},
-            {KeyCode.F10, true},
-            {KeyCode.Space, true},
-            {KeyCode.Escape, true},
-            {KeyCode.Alpha1, true},
-            {KeyCode.Alpha2, true},
-            {KeyCode.Alpha3, true},
-            {KeyCode.Tab, true},
-            {KeyCode.R, true},
-            {KeyCode.LeftAlt, true},
-            {KeyCode.LeftShift, true},
+        private Dictionary<KeyCode, bool> _allowedHotKeys;
+        private List<KeyCode> _allowedHotKeysList = new List<KeyCode>() {
+            {KeyCode.F1},
+            {KeyCode.F2},
+            {KeyCode.F3},
+            {KeyCode.F4},
+            {KeyCode.F5},
+            {KeyCode.F6},
+            {KeyCode.F7},
+            {KeyCode.F8},
+            {KeyCode.F9},
+            {KeyCode.F10},
+            {KeyCode.Space},
+            {KeyCode.Escape},
+            {KeyCode.Alpha1},
+            {KeyCode.Alpha2},
+            {KeyCode.Alpha3},
+            {KeyCode.Tab},
+            {KeyCode.R},
+            {KeyCode.LeftAlt},
+            {KeyCode.LeftShift},
         };
 
         #region getters
@@ -206,23 +207,27 @@ namespace Ruinarch {
                     return false;
                 }    
             }
-            return allowedHotKeys[p_keyCode];
+            return _allowedHotKeys[p_keyCode];
         }
         public void SetAllHotkeysEnabledState(bool p_state) {
+#if DEBUG_LOG
             Debug.Log($"Set all hotkeys state to {p_state.ToString()}");
-            List<KeyCode> keys = allowedHotKeys.Keys.ToList();
+#endif
+            List<KeyCode> keys = _allowedHotKeysList;
             for (int i = 0; i < keys.Count; i++) {
                 KeyCode key = keys[i];
                 SetSpecificHotkeyEnabledState(key, p_state);
             }
         }
         public void SetSpecificHotkeyEnabledState(KeyCode p_keyCode, bool p_state) {
-            allowedHotKeys[p_keyCode] = p_state;
-            // Debug.Log($"Set hotkeys state of {p_keyCode.ToString()} to {p_state.ToString()}");
+            _allowedHotKeys[p_keyCode] = p_state;
+#if DEBUG_LOG
+            Debug.Log($"Set hotkeys state of {p_keyCode} to {p_state}");
+#endif
         }
-        #endregion
+#endregion
 
-        #region Initialization
+#region Initialization
         private void Initialize() {
             buttonsToHighlight = new HashSet<string>();
             Messenger.MarkAsPermanent(UISignals.SHOW_SELECTABLE_GLOW);
@@ -232,6 +237,15 @@ namespace Ruinarch {
             Messenger.AddListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveUnHighlightSignal);
             Messenger.AddListener<RuinarchToggle>(UISignals.TOGGLE_SHOWN, OnToggleShown);
             Messenger.AddListener<RuinarchButton>(UISignals.BUTTON_SHOWN, OnButtonShown);
+
+            ConstructHotKeys();
+        }
+        private void ConstructHotKeys() {
+            _allowedHotKeys = new Dictionary<KeyCode, bool>();
+            for (int i = 0; i < _allowedHotKeysList.Count; i++) {
+                KeyCode hotKey = _allowedHotKeysList[i];
+                _allowedHotKeys.Add(hotKey, true);
+            }
         }
         private void OnReceiveHighlightSignal(string name) {
             buttonsToHighlight.Add(name);
@@ -249,9 +263,9 @@ namespace Ruinarch {
                 button.StartGlow();
             }
         }
-        #endregion
+#endregion
 
-        #region Cursor
+#region Cursor
         public void SetCursorTo(Cursor_Type type) {
             if (currentCursorType == type) {
                 return; //ignore 
@@ -276,14 +290,16 @@ namespace Ruinarch {
             }
             currentCursorType = type;
             Cursor.SetCursor(cursors[type], hotSpot, cursorMode);
-            // Debug.Log($"Set cursor to {currentCursorType.ToString()}");
+#if DEBUG_LOG
+            Debug.Log($"Set cursor to {currentCursorType.ToString()}");
+#endif
         }
         public void RevertToPreviousCursor() {
             SetCursorTo(previousCursorType);
         }
-        #endregion
+#endregion
 
-        #region Spells
+#region Spells
         /// <summary>
         /// Cancel actions based on a hardcoded process
         /// </summary>
@@ -385,9 +401,9 @@ namespace Ruinarch {
             }
             return false;
         }
-        #endregion
+#endregion
         
-        #region Utilities
+#region Utilities
         private void OnActiveSceneChanged(Scene current, Scene next) {
             if (next.name == "Game") {
                 runUpdate = true;
@@ -406,16 +422,16 @@ namespace Ruinarch {
             var currentSelectedGameObject = EventSystem.current.currentSelectedGameObject;
             return currentSelectedGameObject != null && currentSelectedGameObject.activeInHierarchy;
         }
-        #endregion
+#endregion
 
-        #region Selection
+#region Selection
         public void Select(ISelectable objToSelect) {
             objToSelect.LeftSelectAction();
             Messenger.Broadcast(ControlsSignals.SELECTABLE_LEFT_CLICKED, objToSelect);
         }
-        #endregion
+#endregion
 
-        #region Report A Bug
+#region Report A Bug
         private void ReportABug() {
             YesNoConfirmation yesNoConfirmation = null;
             if (UIManager.Instance != null) {
@@ -430,18 +446,18 @@ namespace Ruinarch {
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Events
+#region Events
         public static void AddOnUpdateEvent(System.Action p_event) {
             m_onUpdateEvent += p_event;
         }
         public static void RemoveOnUpdateEvent(System.Action p_event) {
             m_onUpdateEvent -= p_event;
         } 
-        #endregion
+#endregion
         
-        #region Center Cycle
+#region Center Cycle
         private void CharacterCenterCycle() {
             if (DatabaseManager.Instance.characterDatabase.aliveVillagersList != null && DatabaseManager.Instance.characterDatabase.aliveVillagersList.Count > 0) {
                 //normal objects to center
@@ -466,6 +482,6 @@ namespace Ruinarch {
             }
             return objToSelect;
         }
-        #endregion
+#endregion
     }
 }

@@ -1186,15 +1186,17 @@ public class LocationStructureObject : PooledObject, ISelectable {
             for (int y = bounds.yMin; y < bounds.yMax; y++) {
                 Vector3Int pos = new Vector3Int(x, y, 0);
                 TileBase tb = _groundTileMap.GetTile(pos);
+#if DEBUG_LOG
                 if (tb != null) {
                     Debug.Log($"{pos.ToString()} - {tb.name}");
                 }
+#endif
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Interaction
+#region Interaction
     private void SetClickColliderState(bool p_state) {
         if (_clickCollider != null) {
             if (p_state) {
@@ -1204,7 +1206,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
             }    
         }
     }
-    #endregion
+#endregion
 
     public Vector3 worldPosition {
         get {

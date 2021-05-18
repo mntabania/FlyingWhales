@@ -740,11 +740,12 @@ public class UIManager : BaseMonoBehaviour {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
 
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
+        _raycastResults.Clear();
+        //_raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, _raycastResults);
 
-        if (raycastResults.Count > 0) {
-            foreach (var go in raycastResults) {
+        if (_raycastResults.Count > 0) {
+            foreach (var go in _raycastResults) {
                 if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                     //Debug.Log(go.gameObject.name, go.gameObject);
                     return true;
@@ -756,11 +757,12 @@ public class UIManager : BaseMonoBehaviour {
     public bool IsMouseOnUIOrMapObject() {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
+        _raycastResults.Clear();
+        //List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, _raycastResults);
 
-        if (raycastResults.Count > 0) {
-            foreach (var go in raycastResults) {
+        if (_raycastResults.Count > 0) {
+            foreach (var go in _raycastResults) {
                 if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI") 
                     || go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                     //Debug.Log(go.gameObject.name, go.gameObject);
@@ -773,11 +775,12 @@ public class UIManager : BaseMonoBehaviour {
     public int GetMouseOnUIOrMapObjectValue() {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
+        _raycastResults.Clear();
+        //List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, _raycastResults);
 
-        if (raycastResults.Count > 0) {
-            foreach (var go in raycastResults) {
+        if (_raycastResults.Count > 0) {
+            foreach (var go in _raycastResults) {
                 if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI")) {
                     return 0;
                 } else if (go.gameObject.CompareTag("Character Marker")) {

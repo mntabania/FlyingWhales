@@ -102,11 +102,11 @@ public class HeirloomHuntPartyQuest : PartyQuest {
         }
     }
     private void ProcessSettingTargetHex() {
-        Area chosenArea = regionToSearch.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER && h != targetArea);
+        //Area chosenArea = regionToSearch.GetRandomAreaThatMeetCriteria(h => h.elevationType != ELEVATION.WATER && h != targetArea);
         //if (chosenHex == null) {
         //    DisbandParty();
         //} else {
-        targetArea = chosenArea;
+        //targetArea = chosenArea;
         //}
     }
     //public Character GetMemberCarryingHeirloom() {

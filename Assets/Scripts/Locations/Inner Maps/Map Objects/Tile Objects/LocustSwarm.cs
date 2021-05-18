@@ -66,7 +66,9 @@ public class LocustSwarm : MovingTileObject {
                 Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_REPAIRED, this as TileObject, amount);
             }
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
     public override void Neutralize() {
         _locustSwarmMapObjectVisual.Expire();

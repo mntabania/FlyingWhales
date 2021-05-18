@@ -55,6 +55,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			AddLog($"TryAssignSettlementTiles took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
 		}
 		
+#if DEBUG_LOG
+#endif
 	}
 	private void GenerateFeaturesForAllTiles(MapGenerationData data) {
 		// Stopwatch stopwatch = new Stopwatch();
@@ -348,9 +350,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return createdVillages == startingVillagesToCreate;
 	}
-	#endregion
+#endregion
 
-	#region Settlement Generation Utilities
+#region Settlement Generation Utilities
 	private List<Area> GetNeighbouringTiles(List<Area> tiles) {
 		List<Area> neighbouringTiles = new List<Area>();
 		for (int i = 0; i < tiles.Count; i++) {
@@ -364,9 +366,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return neighbouringTiles;
 	}
-	#endregion
+#endregion
 
-	#region Scenario Maps
+#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		SaveDataArea[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
 		for (int x = 0; x < data.width; x++) {
@@ -562,9 +564,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 	}
-	#endregion
+#endregion
 	
-	#region Saved World
+#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		SaveDataArea[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
 		for (int x = 0; x < data.width; x++) {
@@ -582,5 +584,5 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 	}
-	#endregion
+#endregion
 }

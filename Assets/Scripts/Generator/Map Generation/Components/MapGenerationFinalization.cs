@@ -229,7 +229,8 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		}
 	}
 	private IEnumerator LandmarkItemGeneration() {
-		List<LocationStructure> allSpecialStructures = LandmarkManager.Instance.GetAllSpecialStructures();
+		List<LocationStructure> allSpecialStructures = RuinarchListPool<LocationStructure>.Claim();
+		LandmarkManager.Instance.PopulateAllSpecialStructures(allSpecialStructures);
 		for (int i = 0; i < allSpecialStructures.Count; i++) {
 			LocationStructure structure = allSpecialStructures[i];
 			if (structure.structureType != STRUCTURE_TYPE.CAVE) {
@@ -258,7 +259,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
-				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
+				List<LocationStructure> caves = region.GetStructuresAtLocation(STRUCTURE_TYPE.CAVE);
 				List<ItemSetting> itemChoices = caveData.itemGenerationSetting.GetItemChoicesForBiome();
 				for (int j = 0; j < caves.Count; j++) {
 					LocationStructure cave = caves[j];
@@ -309,14 +310,18 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				Character character = CollectionUtilities.GetRandomElement(characterChoices);
 				character.traitContainer.AddTrait(character, "Evil");
 				characterChoices.Remove(character);
+#if DEBUG_LOG
 				Debug.Log($"Added evil trait to {character.name}");
+#endif
 			}
 		
 			//treacherous
 			if (hasTreacherousCharacter == false && characterChoices.Count > 0) {
 				Character character = CollectionUtilities.GetRandomElement(characterChoices);
 				character.traitContainer.AddTrait(character, "Treacherous");
+#if DEBUG_LOG
 				Debug.Log($"Added treacherous trait to {character.name}");
+#endif
 			}	
 		}
 		
@@ -332,9 +337,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		
 		yield return null;
 	}
-	#endregion
+#endregion
 
-	#region Artifacts
+#region Artifacts
 	private static void GenerateArtifacts() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//if demo build, always spawn necronomicon at ancient ruins
@@ -364,29 +369,35 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			// Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
 			// structure.AddPOI(artifact);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
-			List<LocationStructure> structures = LandmarkManager.Instance.GetSpecialStructuresOfType(STRUCTURE_TYPE.TEMPLE);
-			List<ARTIFACT_TYPE> artifactChoices = new List<ARTIFACT_TYPE>() {
-				ARTIFACT_TYPE.Necronomicon, ARTIFACT_TYPE.Heart_Of_The_Wind, ARTIFACT_TYPE.Gorgon_Eye, ARTIFACT_TYPE.Berserk_Orb, ARTIFACT_TYPE.Ankh_Of_Anubis
-			};
-			for (int i = 0; i < structures.Count; i++) {
-				if (artifactChoices.Count == 0) { break; }
-				LocationStructure structure = structures[i];
-				ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
-				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
-				structure.AddPOI(artifact);
-				artifactChoices.Remove(randomArtifact);
+			List<LocationStructure> structures = LandmarkManager.Instance.GetStructuresOfType(STRUCTURE_TYPE.TEMPLE);
+			if (structures != null) {
+				List<ARTIFACT_TYPE> artifactChoices = new List<ARTIFACT_TYPE>() {
+					ARTIFACT_TYPE.Necronomicon, ARTIFACT_TYPE.Heart_Of_The_Wind, ARTIFACT_TYPE.Gorgon_Eye, ARTIFACT_TYPE.Berserk_Orb, ARTIFACT_TYPE.Ankh_Of_Anubis
+				};
+				for (int i = 0; i < structures.Count; i++) {
+					if (artifactChoices.Count == 0) { break; }
+					LocationStructure structure = structures[i];
+					ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
+					Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
+					structure.AddPOI(artifact);
+					artifactChoices.Remove(randomArtifact);
+				}
 			}
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 			//excalibur
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
 			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.ANCIENT_RUIN).AddPOI(excalibur);
+#if DEBUG_LOG
 			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
+#endif
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-			List<LocationStructure> landmarks = LandmarkManager.Instance.GetSpecialStructuresOfType(STRUCTURE_TYPE.MONSTER_LAIR);
-			LocationStructure structure = landmarks[0];
-			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
-			structure.AddPOI(artifact);
+			List<LocationStructure> landmarks = LandmarkManager.Instance.GetStructuresOfType(STRUCTURE_TYPE.MONSTER_LAIR);
+            if (landmarks != null && landmarks.Count > 0) {
+				LocationStructure structure = landmarks[0];
+				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
+				structure.AddPOI(artifact);
+			}
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
 			int artifactCount = 4;
 			List<ARTIFACT_TYPE> artifactChoices = new List<ARTIFACT_TYPE>() {
@@ -396,7 +407,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			for (int i = 0; i < artifactCount; i++) {
 				if (artifactChoices.Count == 0) { break; }
 				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-				LocationStructure specialStructure = randomRegion.GetRandomStructureThatMeetCriteria(currStructure => currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
+				LocationStructure specialStructure = randomRegion.GetRandomStructureThatIsInADungeonAndHasPassableTiles();
 				if (specialStructure != null) {
 					ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
 					Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
@@ -405,10 +416,12 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				}
 			}
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
-			List<LocationStructure> landmarks = LandmarkManager.Instance.GetSpecialStructuresOfType(STRUCTURE_TYPE.MAGE_TOWER);
-			LocationStructure structure = landmarks[0];
-			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
-			structure.AddPOI(artifact);
+			List<LocationStructure> landmarks = LandmarkManager.Instance.GetStructuresOfType(STRUCTURE_TYPE.MAGE_TOWER);
+			if (landmarks != null && landmarks.Count > 0) {
+				LocationStructure structure = landmarks[0];
+				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
+				structure.AddPOI(artifact);
+			}
 		} else {
 			int artifactCount = GridMap.Instance.allRegions.Length <= 2 ? 1 : 2;
 			List<TILE_OBJECT_TYPE> artifactChoices = new List<TILE_OBJECT_TYPE>(WorldConfigManager.Instance.initialArtifactChoices);
@@ -416,7 +429,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			for (int i = 0; i < artifactCount; i++) {
 				if (artifactChoices.Count == 0) { break; }
 				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-				LocationStructure specialStructure = randomRegion.GetRandomStructureThatMeetCriteria(currStructure => currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
+				LocationStructure specialStructure = randomRegion.GetRandomStructureThatIsInADungeonAndHasPassableTiles();
 				if (specialStructure != null) {
 					TILE_OBJECT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
 					if (randomArtifact.IsArtifact(out ARTIFACT_TYPE artifactType)) {
@@ -433,5 +446,5 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			}
 		}
 	}
-	#endregion
+#endregion
 }

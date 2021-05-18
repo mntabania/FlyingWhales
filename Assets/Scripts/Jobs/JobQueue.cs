@@ -34,7 +34,9 @@ public class JobQueue {
                 if (canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
                     //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
+#if DEBUG_LOG
                     owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {job.name} is the job.");
+#endif
                     return false;
                 }
             }
@@ -157,7 +159,9 @@ public class JobQueue {
             owner.combatComponent.OnJobRemovedFromQueue(job);
             job.UnassignJob(shouldDoAfterEffect, reason);
             string ownerName = owner.name;
+#if DEBUG_LOG
             Debug.Log(GameManager.Instance.TodayLogString() + $"{job.name} has been removed from {ownerName} job queue.");
+#endif
             bool state = job.OnRemoveJobFromQueue();
             job.originalOwner?.OnJobRemovedFromCharacterJobQueue(job, owner);
             return state;

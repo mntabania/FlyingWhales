@@ -42,14 +42,18 @@ public class TakeResource : GoapAction {
         SetState("Take Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = 0;
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
                 cost = 2000;
+#if DEBUG_LOG
                 costLog += $" +{cost}(Location of target is in avoid structure)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return cost;
             }
         }
@@ -58,8 +62,10 @@ public class TakeResource : GoapAction {
             if (target.gridTileLocation.IsPartOfSettlement(out settlement)) {
                 if (settlement.owner != null && actor.homeSettlement != settlement) {
                     //If target is in a claimed settlement and actor's home settlement is not the target's settlement, do not harvest, even if the faction owner of the target's settlement is also the faciton of the actor
+#if DEBUG_LOG
                     costLog += $" +2000(Target's settlement is not the actor's home settlement)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     return 2000;
                 }
             }
@@ -69,28 +75,40 @@ public class TakeResource : GoapAction {
                 if (actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Vampire")) {
                     int currCost = 450; //UtilityScripts.Utilities.Rng.Next(450, 501);
                     cost += currCost;
+#if DEBUG_LOG
                     costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Cannibal)";
+#endif
                 } else if (actor.needsComponent.isStarving) {
                     int currCost = 700; //UtilityScripts.Utilities.Rng.Next(700, 751);
                     cost += currCost;
+#if DEBUG_LOG
                     costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Starving)";
+#endif
                 } else {
                     cost += 2000;
+#if DEBUG_LOG
                     costLog += $" +2000(Obtain Personal Food, Elf/Human Meat, not Starving/Cannibal)";
+#endif
                 }
             } else {
                 // int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
                 cost = 400;
+#if DEBUG_LOG
                 costLog += $" +{cost}(Obtain Personal Food, not Elf/Human Meat)";
+#endif
             }
         } else {
             if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && 
                 settlement.locationType == LOCATION_TYPE.VILLAGE && settlement != actor.homeSettlement) {
                 cost = 2000;
+#if DEBUG_LOG
                 costLog += $" +{cost}(Resource pile is at another village)";
+#endif
             } else {
                 cost = 400;
-                costLog += $" +{cost}(not Obtain Personal Food)";    
+#if DEBUG_LOG
+                costLog += $" +{cost}(not Obtain Personal Food)";
+#endif
             }
             if (job.jobType == JOB_TYPE.BUILD_BLUEPRINT && target is ResourcePile resourcePile) {
                 int neededResource = GetNeededResource(job, otherData, resourcePile);
@@ -98,12 +116,16 @@ public class TakeResource : GoapAction {
                     int availableResources = actor.homeSettlement.settlementJobTriggerComponent.GetTotalResource(resourcePile.providedResource);
                     if (availableResources < neededResource) {
                         cost = 2000;
-                        costLog += $" +{cost}(Settlement does not have enough resources for building)";    
+#if DEBUG_LOG
+                        costLog += $" +{cost}(Settlement does not have enough resources for building)";
+#endif
                     }
                 }
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -123,9 +145,9 @@ public class TakeResource : GoapAction {
         ResourcePile resourcePile = node.poiTarget as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -136,9 +158,9 @@ public class TakeResource : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreTakeSuccess(ActualGoapNode goapNode) {
         ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
         Assert.IsNotNull(resourcePile);
@@ -185,7 +207,7 @@ public class TakeResource : GoapAction {
         //goapNode.descriptionLog.AddToFillers(null, takenResource.ToString(), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
-    #endregion
+#endregion
 
     private void CarryResourcePile(Character carrier, ResourcePile pile, int amount, bool setOwnership) {
         if (pile.isBeingCarriedBy == null || pile.isBeingCarriedBy != carrier) {

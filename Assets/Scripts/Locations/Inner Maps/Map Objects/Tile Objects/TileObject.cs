@@ -45,6 +45,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     //tile slots
     private TileObjectSlotItem[] slots { get; set; } //for users
+    private Character[] _users;
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
 
@@ -105,7 +106,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual string neutralizer => string.Empty;
     public virtual Character[] users { //array of characters, currently using the tile object
         get {
-            return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
+            return GetUsers(); //Removed the use of ToArray //slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
         }
     }
     #endregion
@@ -337,15 +338,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
+        LocationGridTile chosenTile = null;
         if (gridTileLocation != null) {
-            List<LocationGridTile> unoccupiedNeighbours = gridTileLocation.UnoccupiedNeighbours;
-            if (unoccupiedNeighbours.Count == 0) {
-                return null;
-            } else {
-                return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+            List<LocationGridTile> unoccupiedNeighbours = RuinarchListPool<LocationGridTile>.Claim();
+            gridTileLocation.PopulateUnoccupiedNeighbours(unoccupiedNeighbours, true);
+            if (unoccupiedNeighbours.Count > 0) {
+                chosenTile = unoccupiedNeighbours[GameUtilities.RandomBetweenTwoNumbers(0, unoccupiedNeighbours.Count - 1)];
             }
+            RuinarchListPool<LocationGridTile>.Release(unoccupiedNeighbours);
         }
-        return null;
+        return chosenTile;
     }
     //Returns the chosen action for the plan
     public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log) {
@@ -648,9 +650,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             //}
         }
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, isPlayerSource: isPlayerSource);
+#if DEBUG_LOG
         attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.attack.ToString()}";
+#endif
         if (currentHP <= 0) {
+#if DEBUG_LOG
             attackSummary = $"{attackSummary}\n{name}'s hp has reached 0.";
+#endif
         }
         if (characterThatAttacked.marker) {
             for (int i = 0; i < characterThatAttacked.marker.inVisionCharacters.Count; i++) {
@@ -767,9 +773,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Traits
+#region Traits
     public ITraitContainer traitContainer { get; private set; }
     public TraitProcessor traitProcessor => TraitManager.tileObjectTraitProcessor;
     public void CreateTraitContainer() {
@@ -781,16 +787,24 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected void ProcessTraitsOnTickStarted() {
         traitContainer.ProcessOnTickStarted(this);
     }
-    #endregion
+#endregion
 
-    #region GOAP
+#region GOAP
     /// <summary>
     /// Does this tile object advertise a given action type.
     /// </summary>
     /// <param name="type">The action type that need to be advertised.</param>
     /// <returns>If this tile object advertises the given action.</returns>
     public bool Advertises(INTERACTION_TYPE type) {
-        return advertisedActions != null && advertisedActions.Contains(type);
+        if (advertisedActions != null) {
+            for (int i = 0; i < advertisedActions.Count; i++) {
+                INTERACTION_TYPE advertised = advertisedActions[i];
+                if (advertised == type) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     /// <summary>
     /// Does this tile object advertise all of the given actions.
@@ -805,9 +819,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return true;
     }
-    #endregion
+#endregion
 
-    #region Tile Object Slots
+#region Tile Object Slots
     protected virtual void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
@@ -834,6 +848,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 slotsParent.name = $"{ToString()} Slots";
             }
             slots = new TileObjectSlotItem[slotSettings.Count];
+            _users = new Character[slotSettings.Count];
             for (int i = 0; i < slotSettings.Count; i++) {
                 TileObjectSlotSetting currSetting = slotSettings[i];
                 GameObject currSlot = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotPrefab, Vector3.zero, Quaternion.identity, slotsParent.transform);
@@ -857,6 +872,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             Object.Destroy(slots[i].gameObject);
         }
         slots = null;
+        _users = null;
         hasCreatedSlots = false;
     }
     private TileObjectSlotItem GetNearestUnoccupiedSlot(Character character) {
@@ -918,11 +934,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             CreateTileObjectSlots();
         }
     }
-    #endregion
+#endregion
 
-    #region Users
+#region Users
     public virtual bool AddUser(Character newUser) {
-        if (users.Contains(newUser)) {
+        if (newUser != null && users.Contains(newUser)) {
             return true;
         }
         TileObjectSlotItem availableSlot = GetNearestUnoccupiedSlot(newUser);
@@ -947,9 +963,42 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return false;
     }
-    #endregion
+    public int GetUserCount() {
+        int userCount = 0;
+        Character[] users = this.users;
+        if (users != null && users.Length > 0) {
+            for (int i = 0; i < users.Length; i++) {
+                Character user = users[i];
+                if (user != null) {
+                    userCount++;
+                }
+            }
+        }
+        return userCount;
+    }
+    public Character GetFirstUser() {
+        if (users != null && users.Length > 0) {
+            for (int i = 0; i < users.Length; i++) {
+                Character user = users[i];
+                if (user != null) {
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
+    public Character[] GetUsers() {
+        if (slots != null) {
+            for (int i = 0; i < slots.Length; i++) {
+                TileObjectSlotItem item = slots[i];
+                _users[i] = item.user;
+            }
+        }
+        return _users;
+    }
+#endregion
 
-    #region Utilities
+#region Utilities
     public void DoCleanup() {
         traitContainer?.RemoveAllTraitsAndStatuses(this);
     }
@@ -1057,7 +1106,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// <param name="p_newOwner"></param>
     public virtual void SetInventoryOwner(Character p_newOwner) {
         this.isBeingCarriedBy = p_newOwner;
+#if DEBUG_LOG
         Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
+#endif
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
         // if (tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION && tileObjectType != TILE_OBJECT_TYPE.TOOL) {
@@ -1156,9 +1207,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return worldPosition;
     }
-    #endregion
+#endregion
 
-    #region Inspect
+#region Inspect
     public virtual void OnInspect(Character inspector) { //, out Log log
         //if (LocalizationManager.Instance.HasLocalizedValue("TileObject", this.GetType().ToString(), "on_inspect")) {
         //    log = GameManager.CreateNewLog(GameManager.Instance.Today(), "TileObject", this.GetType().ToString(), "on_inspect");
@@ -1167,9 +1218,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //}
         
     }
-    #endregion
+#endregion
 
-    #region Map Object
+#region Map Object
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
         mapVisual = obj.GetComponent<TileObjectGameObject>();
@@ -1222,19 +1273,22 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             //unbuilt object is no longer valid, remove it
             Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
             Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING,  this as IPointOfInterest);
-            List<JobQueueItem> jobs = new List<JobQueueItem>(allJobsTargetingThis);
+            List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
             jobs.AddRange(allExistingJobsTargetingThis);
             for (int i = 0; i < jobs.Count; i++) {
                 JobQueueItem jobQueueItem = jobs[i];
                 jobQueueItem.CancelJob(false);
             }
+            RuinarchListPool<JobQueueItem>.Release(jobs);
             gridTileLocation?.structure.RemovePOI(this);
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}Unbuilt object {this} was removed!");
+#endif
         }
     }
-    #endregion
+#endregion
 
-    #region Resources
+#region Resources
     public void ConstructResources() {
         storedResources = new Dictionary<RESOURCE, int>() {
             { RESOURCE.FOOD, 0 },
@@ -1289,13 +1343,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         int newAmount = storedResources[resource] + amount;
         return newAmount <= maxResourceValues[resource];
     }
-    #endregion
+#endregion
 
     public override string ToString() {
         return $"{name} {id.ToString()}";
     }
 
-    #region Player Action Target
+#region Player Action Target
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
@@ -1310,9 +1364,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void ClearPlayerActions() {
         actions.Clear();
     }
-    #endregion
+#endregion
 
-    #region Selectable
+#region Selectable
     public virtual bool IsCurrentlySelected() {
         return UIManager.Instance.tileObjectInfoUI.isShowing &&
                UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
@@ -1333,25 +1387,25 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool CanBeSelected() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Logs
+#region Logs
     /// <summary>
     /// Called when this object has been added as a filler in a log.
     /// </summary>
     public virtual void OnReferencedInALog() { }
-    #endregion
+#endregion
     
-    #region IStoredTarget
+#region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return mapVisual != null;
     }
     public void SetAsStoredTarget(bool p_state) {
         isStoredAsTarget = p_state;
     }
-    #endregion
+#endregion
 
-    #region IBookmarkable
+#region IBookmarkable
     public void OnSelectBookmark() {
         LeftSelectAction();
     }
@@ -1364,14 +1418,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void OnHoverOutBookmarkItem() {
         UIManager.Instance.HideTileObjectNameplateTooltip();
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void DestroyPermanently() {
         //Removed this temporarily because there are many loose ends and reference errors in saving/loading with a null tile object
         //DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]

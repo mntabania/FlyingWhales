@@ -17,8 +17,10 @@ public class Mine : GoapAction {
         SetState("Mine Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -30,9 +32,9 @@ public class Mine : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreMineSuccess(ActualGoapNode goapNode) {
     //    if (goapNode.actor.characterClass.IsCombatant()) {
     //        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
@@ -68,5 +70,5 @@ public class Mine : GoapAction {
                 break;
         }
     }
-    #endregion
+#endregion
 }

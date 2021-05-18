@@ -63,8 +63,10 @@ public class BuildBlueprint : GoapAction {
         SetState("Build Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
@@ -84,9 +86,9 @@ public class BuildBlueprint : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         actor.UncarryPOI();
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -107,9 +109,9 @@ public class BuildBlueprint : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasResource(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         if (poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
             if (poiTarget.HasResourceAmount(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost)) {
@@ -122,9 +124,9 @@ public class BuildBlueprint : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreBuildSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             if (goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile) {
@@ -161,6 +163,6 @@ public class BuildBlueprint : GoapAction {
         }
         //PlayerUI.Instance.ShowGeneralConfirmation("New Structure", $"A new {structure.name} has been built at {spot.gridTileLocation.structure.location.name}");
     }
-    #endregion
+#endregion
 }
 

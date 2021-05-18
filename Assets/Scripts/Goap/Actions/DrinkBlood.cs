@@ -46,28 +46,40 @@ public class DrinkBlood : GoapAction {
         SetState("Drink Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = 0;
         if (job.jobType == JOB_TYPE.TRIGGER_FLAW) {
             if (actor.traitContainer.HasTrait("Cannibal")) {
                 cost = UtilityScripts.Utilities.Rng.Next(450, 551);
+#if DEBUG_LOG
                 costLog += $" {cost}(Actor is cannibal and job is trigger flaw)";
+#endif
             } else {
                 if (!target.traitContainer.HasTrait("Vampire")) {
                     cost = UtilityScripts.Utilities.Rng.Next(450, 551);
+#if DEBUG_LOG
                     costLog += $" {cost}(Actor not cannibal, target not vampire, and job is trigger flaw)";
+#endif
                 } else {
                     cost = 2000;
+#if DEBUG_LOG
                     costLog += $" {cost}(Actor not cannibal, target vampire, and job is trigger flaw)";
+#endif
                 }
             }
+#if DEBUG_LOG
             actor.logComponent.AppendCostLog(costLog);
+#endif
             return cost;
         }
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -77,15 +89,19 @@ public class DrinkBlood : GoapAction {
                     CRIME_SEVERITY severity = actor.partyComponent.currentParty.partyFaction.GetCrimeSeverity(actor, actor, CRIME_TYPE.Vampire);
                     if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                         //Should not target non-animals if party faction considers Vampire a crime
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, target is not animal and party faction considers crime)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 } else {
                     if (!actor.needsComponent.isStarving) {
                         //Should not target animals if actor is not starvinf
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, target is animal and actor is not starving)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
@@ -97,8 +113,10 @@ public class DrinkBlood : GoapAction {
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
@@ -107,15 +125,19 @@ public class DrinkBlood : GoapAction {
         if (target is Character targetCharacter) {
             if (targetCharacter.traitContainer.HasTrait("Vampire") && !actor.traitContainer.HasTrait("Cannibal")) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += " +2000(Vampire target, not Cannibal actor)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 //Skip further cost processing
                 return cost;
             }
             if (!targetCharacter.traitContainer.HasTrait("Vampire") && actor.traitContainer.HasTrait("Cannibal")) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += " +2000(not Vampire target, Cannibal actor)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 //Skip further cost processing
                 return cost;
             }
@@ -124,19 +146,25 @@ public class DrinkBlood : GoapAction {
                 if(actor.currentRegion != targetCharacter.currentRegion || awarenessState == AWARENESS_STATE.Missing || awarenessState == AWARENESS_STATE.Presumed_Dead
                     || targetCharacter.partyComponent.isMemberThatJoinedQuest) {
                     cost += 2000;
+#if DEBUG_LOG
                     costLog += " +2000(not Vagrant and not Same Region/Missing/Presumed Dead/Joined a Party Quest)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     //Skip further cost processing
                     return cost;
                 }
             }
             if (targetCharacter.limiterComponent.canPerform && targetCharacter.limiterComponent.canMove) {
                 cost += 80;
+#if DEBUG_LOG
                 costLog += " +80(Can Perform and Move)";
+#endif
             }
             if (!targetCharacter.race.IsSapient()) {
                 cost += 200;
+#if DEBUG_LOG
                 costLog += " +200(Not Sapient)";
+#endif
             }
             if (actor.needsComponent.isHungry || (!actor.needsComponent.isHungry && !actor.needsComponent.isStarving)) {
                 //if (actor.currentRegion != targetCharacter.currentRegion) {
@@ -149,25 +177,37 @@ public class DrinkBlood : GoapAction {
                 string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     cost += 2000;
+#if DEBUG_LOG
                     costLog += " +2000(Hungry, Friend/Close)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     //Skip further cost processing
                     return cost;
                 } else if (actor.homeStructure != null && targetCharacter.currentStructure == actor.homeStructure && targetCharacter.traitContainer.HasTrait("Prisoner")) {
                     cost += 0;
+#if DEBUG_LOG
                     costLog += " +0(Hungry, Prisoner and inside actor home)";
+#endif
                 } else if (opinionLabel == RelationshipManager.Rival) {
                     cost += 20;
+#if DEBUG_LOG
                     costLog += " +20(Hungry, Rival)";
+#endif
                 } else if (opinionLabel == RelationshipManager.Enemy) {
                     cost += 40;
+#if DEBUG_LOG
                     costLog += " +40(Hungry, Enemy)";
+#endif
                 } else if (opinionLabel == RelationshipManager.Acquaintance) {
                     cost += 75;
+#if DEBUG_LOG
                     costLog += " +75(Hungry, Acquaintance)";
+#endif
                 } else {
                     cost += 40;
+#if DEBUG_LOG
                     costLog += " +40(Hungry, Other)";
+#endif
                 }
             } else if (actor.needsComponent.isStarving) {
                 //if (actor.currentRegion != targetCharacter.currentRegion) {
@@ -180,29 +220,45 @@ public class DrinkBlood : GoapAction {
                 string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (actor.homeStructure != null && targetCharacter.currentStructure == actor.homeStructure && targetCharacter.traitContainer.HasTrait("Prisoner")) {
                     cost += 0;
+#if DEBUG_LOG
                     costLog += " +0(Starving, Prisoner and inside actor home)";
+#endif
                 } else if (opinionLabel == RelationshipManager.Close_Friend) {
                     cost += 400;
+#if DEBUG_LOG
                     costLog += " +400(Starving, Close Friend)";
+#endif
                 } else if (opinionLabel == RelationshipManager.Friend) {
                     cost += 300;
+#if DEBUG_LOG
                     costLog += " +300(Starving, Friend)";
+#endif
                 } else if (opinionLabel == RelationshipManager.Rival) {
                     cost += 20;
+#if DEBUG_LOG
                     costLog += " +20(Starving, Rival)";
+#endif
                 } else if (opinionLabel == RelationshipManager.Enemy) {
                     cost += 40;
+#if DEBUG_LOG
                     costLog += " +40(Starving, Enemy)";
+#endif
                 } else if (opinionLabel == RelationshipManager.Acquaintance) {
                     cost += 75;
+#if DEBUG_LOG
                     costLog += " +75(Starving, Acquaintance)";
+#endif
                 } else {
                     cost += 40;
+#if DEBUG_LOG
                     costLog += " +40(Starving, Other)";
+#endif
                 }
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -323,9 +379,9 @@ public class DrinkBlood : GoapAction {
     public override bool IsFullnessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -339,16 +395,16 @@ public class DrinkBlood : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasUnconsciousOrRestingTarget(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         Character target = poiTarget as Character;
         return target.traitContainer.HasTrait("Unconscious", "Resting");
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     //public void PreDrinkSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
     //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
@@ -416,5 +472,5 @@ public class DrinkBlood : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 }

@@ -12,10 +12,16 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
     }
     
     protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n{character.name} is Kobold";
+#endif
         if (UnityEngine.Random.Range(0, 100) < 10) {
+#if DEBUG_LOG
             log += $"\nChance to place freezing trap met.";
+#endif
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Kobold Place Freezing Trap");
+#endif
             List<Area> areaChoices = ObjectPoolManager.Instance.CreateNewAreaList();
             PopulateValidHexTilesNextToHome(areaChoices, character);
             if (areaChoices.Count > 0) {
@@ -28,32 +34,52 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                     //LocationGridTile targetTile = CollectionUtilities.GetRandomElement(locationGridTileChoices);
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, INTERACTION_TYPE.PLACE_FREEZING_TRAP, targetTile.tileObjectComponent.genericTileObject, character);
                     producedJob = job;
+#if DEBUG_LOG
                     log += $"\nCreated job to place trap at {targetTile}.";
+#endif
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                     return true;
                 } else {
+#if DEBUG_LOG
                     log += $"\nNo valid tiles at {chosenArea} to place trap.";
+#endif
                     producedJob = null;
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                     return false;
                 }
             } else {
                 ObjectPoolManager.Instance.ReturnAreaListToPool(areaChoices);
+#if DEBUG_LOG
                 log += $"\nNo valid areas to place freezing traps found.";
+#endif
                 producedJob = null;
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
                 return false;
             }
         } else {
+#if DEBUG_LOG
             log += $"\nChance to place freezing trap NOT met.";
+#endif
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Kobold Get Frozen Characters Surrounding Home");
+#endif
             List<Character> frozenCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
             PopulateFrozenCharactersSurroundingHome(frozenCharacters, character);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             if (frozenCharacters.Count > 0) {
                 //check if a character is frozen in any of the neighbouring areas,
                 //if there are, then create a job to carry then drop them at this character's home/territory
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"Kobold Capture Frozen Characters");
+#endif
                 Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharacters);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CAPTURE_CHARACTER, INTERACTION_TYPE.DROP, chosenCharacter, character);
                 if (character.homeSettlement?.mainStorage != null) {
@@ -67,30 +93,48 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                 }
                 ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
                 producedJob = job;
+#if DEBUG_LOG
                 log += $"\nFrozen character at surrounding area found, will carry {chosenCharacter.name} and drop at home.";
+#endif
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
                 return true;
             } else {
+#if DEBUG_LOG
                 log += $"\nNo frozen characters at surrounding area found, checking frozen characters at home.";
-                //if there are none, check if there are any characters inside this character's home/territory that is frozen
+#endif
+//if there are none, check if there are any characters inside this character's home/territory that is frozen
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"Kobold Populate Frozen Characters in Home");
+#endif
                 PopulateFrozenCharactersInHome(frozenCharacters, character);
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
                 if (frozenCharacters.Count > 0) {
+#if DEBUG_LOG
                     log += $"\nFrozen characters at home found.";
+#endif
                     //if there are, 8% chance to butcher one, otherwise mock or laugh at one
                     Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharacters);
                     if (GameUtilities.RollChance(8)) {
+#if DEBUG_LOG
                         log += $"\nChance to butcher met, will butcher {chosenCharacter.name}.";
+#endif
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_BUTCHER, INTERACTION_TYPE.BUTCHER, chosenCharacter, character);
                         job.SetCancelOnDeath(false);
                         ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
                         producedJob = job;
                         return true;
                     } else {
+#if DEBUG_LOG
                         log += $"\nChance to butcher NOT met, will roll Mock/Laugh At {chosenCharacter.name} instead.";
+#endif
                         if (GameUtilities.RollChance(30) && character.marker.IsPOIInVision(chosenCharacter)) {
+#if DEBUG_LOG
                             log += $"\nMock/Laugh triggered.";
+#endif
                             character.interruptComponent.TriggerInterrupt(GameUtilities.RollChance(50) ? INTERRUPT.Mock : INTERRUPT.Laugh_At, chosenCharacter);
                             ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
                             producedJob = null;
@@ -100,30 +144,43 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                 }
             }
             ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
-
+#if DEBUG_LOG
             log += $"\nNo jobs related to frozen characters created. Checking food piles at home";
+#endif
             //if none of the jobs above were created, check for food piles inside this character's home/territory,
             if (GameUtilities.RollChance(15)) {
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"Kobold Get Food Piles at Home");
-                List<FoodPile> foodPiles = RuinarchListPool<FoodPile>.Claim();
+#endif
+                List<TileObject> foodPiles = RuinarchListPool<TileObject>.Claim();
                 PopulateFoodPilesAtHome(foodPiles, character);
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
                 FoodPile chosenPile = null;
                 if (foodPiles.Count > 0) {
-                    chosenPile = CollectionUtilities.GetRandomElement(foodPiles);
+                    chosenPile = CollectionUtilities.GetRandomElement(foodPiles) as FoodPile;
                 }
-                RuinarchListPool<FoodPile>.Release(foodPiles);
+                RuinarchListPool<TileObject>.Release(foodPiles);
                 if (chosenPile != null) {
+#if DEBUG_PROFILER
                     Profiler.BeginSample($"Kobold Monster Eat Job");
+#endif
                     //if there are any, create job to eat a random food pile
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT, INTERACTION_TYPE.EAT, chosenPile, character);
                     producedJob = job;
+#if DEBUG_LOG
                     log += $"\nFood Piles found, will eat {chosenPile}";
+#endif
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                     return true;
                 }
             }
+#if DEBUG_LOG
             log += $"\nNo food piles found, will roam around territory";
+#endif
             return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
             
         }
@@ -155,16 +212,15 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         //return null;
     }
     private void PopulateFrozenCharactersSurroundingHome(List<Character> p_characterList, Character character) {
-        List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+        List<Area> surroundingAreas = RuinarchListPool<Area>.Claim();
         PopulateAreasSurroundingHome(surroundingAreas, character);
         //if (surroundingAreas != null) {
             for (int i = 0; i < surroundingAreas.Count; i++) {
                 Area area = surroundingAreas[i];
-                area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD &&
-                                                                                                                  c.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER) == false);
+                area.locationCharacterTracker.PopulateCharacterListInsideHexForKoboldBehaviour(p_characterList);
             }
         //}
-        ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
+        RuinarchListPool<Area>.Release(surroundingAreas);
     }
     private void PopulateFrozenCharactersInHome(List<Character> p_characterList, Character character) {
         if (character.homeSettlement?.mainStorage != null) {
@@ -173,7 +229,7 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         } else if (character.homeStructure != null) {
             character.homeStructure.PopulateCharacterListThatIsFrozenAndNotKobold(p_characterList);
         } else if (character.HasTerritory()) {
-            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
+            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatHasTraitAndNotRace(p_characterList, "Frozen", RACE.KOBOLD);
         }
     }
 
@@ -205,13 +261,13 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         //return null;
     }
 
-    private void PopulateFoodPilesAtHome(List<FoodPile> foodPiles, Character character) {
+    private void PopulateFoodPilesAtHome(List<TileObject> foodPiles, Character character) {
         if (character.homeSettlement != null) {
-            character.homeSettlement.PopulateTileObjectsOfType(foodPiles);
+            character.homeSettlement.PopulateTileObjectsOfType<FoodPile>(foodPiles);
         } else if (character.homeStructure != null) {
-            character.homeStructure.PopulateTileObjectsOfType(foodPiles);
+            character.homeStructure.PopulateTileObjectsOfType<FoodPile>(foodPiles);
         } else if (character.HasTerritory()) {
-            character.territory.tileObjectComponent.PopulateTileObjectsInArea(foodPiles);
+            character.territory.tileObjectComponent.PopulateTileObjectsInArea<FoodPile>(foodPiles);
         }
     }
 }

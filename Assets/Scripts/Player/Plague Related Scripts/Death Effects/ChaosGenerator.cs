@@ -21,7 +21,9 @@ namespace Plague.Death_Effect {
                     CreateChaosOrbs(3, p_character);
                     break;
             }
+#if DEBUG_LOG
             Debug.Log("Activated Chaos Generator Effect");
+#endif
         }
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {

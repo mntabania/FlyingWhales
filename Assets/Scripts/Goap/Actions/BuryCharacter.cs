@@ -55,38 +55,61 @@ public class BuryCharacter : GoapAction {
             LocationStructure targetStructure = GetTargetStructure(goapNode);
             if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                 if(goapNode.actor.homeSettlement != null) {
-                    List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();
+                    List<Area> surroundingAreas = RuinarchListPool<Area>.Claim();
+                    List<LocationGridTile> validTiles = RuinarchListPool<LocationGridTile>.Claim();
+
                     goapNode.actor.homeSettlement.PopulateSurroundingAreas(surroundingAreas);
-                    surroundingAreas = CollectionUtilities.Shuffle(surroundingAreas);
-                    List<LocationGridTile> validTiles = null;
+                    CollectionUtilities.Shuffle(surroundingAreas);
                     for (int i = 0; i < surroundingAreas.Count; i++) {
                         Area surroundingArea = surroundingAreas[i];
                         for (int j = 0; j < surroundingArea.gridTileComponent.gridTiles.Count; j++) {
                             LocationGridTile tileInSurroundingArea = surroundingArea.gridTileComponent.gridTiles[j];
                             if (!tileInSurroundingArea.isOccupied && tileInSurroundingArea.IsNextToSettlement(goapNode.actor.homeSettlement) && tileInSurroundingArea.structure is Wilderness) {
-                                if (validTiles == null) { validTiles = new List<LocationGridTile>(); }
+                                //if (validTiles == null) { validTiles = new List<LocationGridTile>(); }
                                 validTiles.Add(tileInSurroundingArea);
                             }
                         }
-                        if (validTiles != null) { break; }
+                        //Why put break here? This will mean that upon adding 1 tile the loop will end so the validTiles list will always have 1 element only
+                        //if (validTiles != null) { break; }
                     }
-                    ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
-                    if (validTiles == null) {
+                    if (validTiles.Count <= 0) {
                         //fallback
-                        validTiles = targetStructure.unoccupiedTiles.Where(tile => tile.IsNextToSettlement(goapNode.actor.homeSettlement)).ToList(); 
+                        for (int i = 0; i < targetStructure.unoccupiedTiles.Count; i++) {
+                            LocationGridTile t = targetStructure.unoccupiedTiles[i];
+                            if (t.IsNextToSettlement(goapNode.actor.homeSettlement)) {
+                                validTiles.Add(t);
+                            }
+                        }
                     }
-                    return CollectionUtilities.GetRandomElement(validTiles);
+                    LocationGridTile chosenTile = null;
+                    if (validTiles.Count > 0) {
+                        chosenTile = CollectionUtilities.GetRandomElement(validTiles);
+                    }
+                    RuinarchListPool<Area>.Release(surroundingAreas);
+                    RuinarchListPool<LocationGridTile>.Release(validTiles);
+                    return chosenTile;
                 } else if (goapNode.poiTarget.gridTileLocation != null) {
                     return goapNode.poiTarget.gridTileLocation.GetNearestUnoccupiedTileFromThisWithStructure(targetStructure.structureType);
                 } else if (goapNode.actor.gridTileLocation != null) {
                     return goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThisWithStructure(targetStructure.structureType);
                 }
             } else if (targetStructure.structureType == STRUCTURE_TYPE.CEMETERY) {
-                List<LocationGridTile> validTiles = targetStructure.unoccupiedTiles.Where(tile => tile.groundType != LocationGridTile.Ground_Type.Ruined_Stone).ToList();
-                if (validTiles.Count <= 0) {
-                    validTiles = new List<LocationGridTile>(targetStructure.unoccupiedTiles);
+                List<LocationGridTile> validTiles = RuinarchListPool<LocationGridTile>.Claim();
+                for (int i = 0; i < targetStructure.unoccupiedTiles.Count; i++) {
+                    LocationGridTile t = targetStructure.unoccupiedTiles[i];
+                    if (t.groundType != LocationGridTile.Ground_Type.Ruined_Stone) {
+                        validTiles.Add(t);
+                    }
                 }
-                return CollectionUtilities.GetRandomElement(validTiles);
+                if (validTiles.Count <= 0) {
+                    validTiles.AddRange(targetStructure.unoccupiedTiles);
+                }
+                LocationGridTile chosenTile = null;
+                if (validTiles.Count > 0) {
+                    chosenTile = CollectionUtilities.GetRandomElement(validTiles);
+                }
+                RuinarchListPool<LocationGridTile>.Release(validTiles);
+                return chosenTile;
             }
         }
         return null; //allow normal logic to pick target tile
@@ -133,10 +156,12 @@ public class BuryCharacter : GoapAction {
         //**After Effect 2**: Place a Tombstone tile object in adjacent unoccupied tile, link it with Target.
         LocationGridTile chosenLocation = goapNode.actor.gridTileLocation;
         if (chosenLocation.isOccupied) {
-            List<LocationGridTile> choices = goapNode.actor.gridTileLocation.UnoccupiedNeighbours.Where(x => x.structure == goapNode.actor.currentStructure).ToList();
+            List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
+            goapNode.actor.gridTileLocation.PopulateUnoccupiedNeighboursThatIsSameStructureAs(choices, goapNode.actor.currentStructure);
             if (choices.Count > 0) {
-                chosenLocation = choices[Random.Range(0, choices.Count)];
+                chosenLocation = choices[GameUtilities.RandomBetweenTwoNumbers(0, choices.Count - 1)];
             }
+            RuinarchListPool<LocationGridTile>.Release(choices);
         }
         Tombstone tombstone = new Tombstone();
         tombstone.SetCharacter(targetCharacter);

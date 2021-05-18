@@ -23,8 +23,10 @@ public class BuildLair : GoapAction {
 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -60,9 +62,9 @@ public class BuildLair : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         Character actor = goapNode.actor;
@@ -90,20 +92,20 @@ public class BuildLair : GoapAction {
 
         structure.SetOccupiedArea(targetArea);
 
-        List<BlockWall> walls = RuinarchListPool<BlockWall>.Claim();
-        structure.PopulateTileObjectsOfType(walls);
+        List<TileObject> walls = RuinarchListPool<TileObject>.Claim();
+        structure.PopulateTileObjectsOfType(walls, TILE_OBJECT_TYPE.BLOCK_WALL);
         for (int i = 0; i < walls.Count; i++) {
             TileObject blockWall = walls[i];
             blockWall.baseMapObjectVisual.ApplyGraphUpdate();
         }
-        RuinarchListPool<BlockWall>.Release(walls);
+        RuinarchListPool<TileObject>.Release(walls);
         targetArea.areaItem.UpdatePathfindingGraph();
         //targetHex.UpdatePathfindingGraphCoroutine();
 
         goapNode.actor.necromancerTrait.SetLairStructure(structure);
         goapNode.actor.MigrateHomeStructureTo(structure);
     }
-    #endregion
+#endregion
 
     //#region Requirement
     //protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {

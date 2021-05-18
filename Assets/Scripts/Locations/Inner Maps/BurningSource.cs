@@ -31,7 +31,9 @@ public class BurningSource {
     }
     private void RemoveObjectOnFire(ITraitable traitable) {
         if (objectsOnFire.Remove(traitable)) {
+#if DEBUG_LOG
             Debug.Log($"Removed object on fire {traitable.name} from burning source {id.ToString()}");
+#endif
             if (objectsOnFire.Count == 0) {
                 SetAsInactive();
             } else if (traitable is IPointOfInterest && _poisOnFireCount > 0){
@@ -55,13 +57,13 @@ public class BurningSource {
         DatabaseManager.Instance.burningSourceDatabase.UnRegister(this);
     }
     
-    #region Listeners
+#region Listeners
     private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
         if (trait is Burning) {
             RemoveObjectOnFire(traitable);
         }
     }
-    #endregion
+#endregion
     
     public override string ToString() {
         return $"Burning Source {id.ToString()}. Objects: {objectsOnFire.Count.ToString()}";

@@ -46,7 +46,9 @@ public class CharacterAIPath : AILerp {
     #region Overrides
     public override void OnTargetReached() {
         base.OnTargetReached();
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{marker.character.name} Target Reached");
+#endif
         if (!_hasReachedTarget && reachedEndOfPath && //&& !pathPending
             //only execute target reach if the agent has a destination transform, vector or has a flee path
             (marker.destinationSetter.target != null || !float.IsPositiveInfinity(destination.x) || marker.hasFleePath)) {
@@ -63,16 +65,20 @@ public class CharacterAIPath : AILerp {
                 marker.StartMovement();    
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     protected override void OnPathComplete(Path newPath) {
         if (marker.character.isDead) {
             ClearAllCurrentPathData();
             return;
         }
+#if DEBUG_LOG
         if (newPath.CompleteState == PathCompleteState.Error) {
             Debug.LogWarning($"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}. Destination is {destination.ToString()}");
         }
+#endif
         currentPath = newPath;
         if (newPath is FleeMultiplePath) {
             marker.OnFleePathComputed(newPath);
@@ -160,19 +166,31 @@ public class CharacterAIPath : AILerp {
         if (!marker.gameObject.activeSelf || marker.character == null) {
             return;
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{marker.character.name} - Update Position");
+#endif
         marker.UpdatePosition();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         //added checking for marker.character again because the call to UpdatePosition can cause the character to die or possibly turn to a food pile,
         //resulting in his marker being reset, before this function is finished 
         if (marker.character == null || marker.character.limiterComponent.canMove == false || isStopMovement || GameManager.Instance.isPaused) { return; }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{marker.character.name} - Update Rotation");
+#endif
         UpdateRotation();
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{marker.character.name} - Base Update Me Call");
+#endif
         base.UpdateMe();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         //Vector3 markerPos = marker.transform.position; 
         //marker.transform.position = new Vector3(markerPos.x, markerPos.y, 0f);
     }
@@ -184,13 +202,13 @@ public class CharacterAIPath : AILerp {
             } else {
                 direction = interpolator.tangent;
             }
-            Profiler.BeginSample("Quaternion.LookRotation");
+            //Profiler.BeginSample("Quaternion.LookRotation");
             Quaternion lookRotation = Quaternion.LookRotation(Vector3.forward, direction);
-            Profiler.EndSample();
+            //Profiler.EndSample();
             
-            Profiler.BeginSample("Set look rotation");
+            //Profiler.BeginSample("Set look rotation");
             marker.visualsParent.localRotation = lookRotation;
-            Profiler.EndSample();
+            //Profiler.EndSample();
             //if(marker.character.currentParty.icon.travelLine == null) {
             //    if (!IsNodeWalkable(destination)) {
             //        //if(marker.character.currentAction)
@@ -198,15 +216,15 @@ public class CharacterAIPath : AILerp {
             //}
         } else if (marker.character.currentActionNode != null && marker.character.currentActionNode.poiTarget != marker.character) {
             if (marker.character.currentActionNode.poiTarget.gridTileLocation != null) {
-                Profiler.BeginSample("LookAt");
+                //Profiler.BeginSample("LookAt");
                 marker.LookAt(marker.character.currentActionNode.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
-                Profiler.EndSample();
+                //Profiler.EndSample();
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void SetIsStopMovement(bool state) {
         isStopMovement = state;
     }
@@ -420,5 +438,5 @@ public class CharacterAIPath : AILerp {
     public void SetEndReachedDistance(float amount) {
         endReachDistance = amount;
     }
-    #endregion
+#endregion
 }

@@ -170,7 +170,9 @@ public class TreeObject : TileObject {
     }
     private void RemoveOccupyingEnt() {
         if (_ent != null) {
+#if DEBUG_LOG
             Debug.Log($"Removed Occupying ent of {name} {id.ToString()}");
+#endif
             //if previous value is not null and will set it to null, unsubscribe from previous ent
             _ent.UnsubscribeToAwakenEntEvent(this);
             _ent = null;
@@ -234,7 +236,7 @@ public class TreeObject : TileObject {
             AwakenOccupant(p_ent.gridTileLocation);
         }
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

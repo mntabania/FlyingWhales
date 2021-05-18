@@ -40,20 +40,27 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
     protected override bool TamedBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
         if (TryTakeSettlementJob(p_character, ref p_log, out p_producedJob)) {
             return true;
-        } 
+        }
+#if DEBUG_LOG
         p_log = $"{p_log}\n-Will try to take personal patrol job.";
+#endif
         if (TryTakePersonalPatrolJob(p_character, 15, ref p_log, out p_producedJob)) {
             return true;
         }
-
+#if DEBUG_LOG
         p_log = $"{p_log}\n-Will try to lay egg";
+#endif
         if (GameUtilities.RollChance(1, ref p_log)) {
             if (TryTriggerLayEgg(p_character, 5, TILE_OBJECT_TYPE.HARPY_EGG, out p_producedJob)) {
+#if DEBUG_LOG
                 p_log = $"{p_log}\n-Will lay an egg";
+#endif
                 return true;
             }
         }
+#if DEBUG_LOG
         p_log = $"{p_log}\n-Will roam";
+#endif
         return p_character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.IDLE_RETURN_HOME, out p_producedJob);
     }
 

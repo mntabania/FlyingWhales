@@ -16,8 +16,12 @@ public class Tombstone : TileObject {
     }
     private bool _respawnCorpseOnDestroy; 
     public override Character[] users {
-        get { return new[] { character }; }
+        get {
+            _users[0] = character;
+            return _users; 
+        }
     }
+    private Character[] _users;
     public Character character { get; private set; }
 
     public override System.Type serializedData => typeof(SaveDataTombstone);
@@ -28,9 +32,11 @@ public class Tombstone : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RAISE_CORPSE);
         AddAdvertisedAction(INTERACTION_TYPE.CARRY_CORPSE);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_CORPSE);
+        _users = new Character[1];
         _respawnCorpseOnDestroy = true;
     }
     public Tombstone(SaveDataTombstone data) : base(data) {
+        _users = new Character[1];
         _respawnCorpseOnDestroy = true;
     }
     public override void LoadSecondWave(SaveDataTileObject data) {

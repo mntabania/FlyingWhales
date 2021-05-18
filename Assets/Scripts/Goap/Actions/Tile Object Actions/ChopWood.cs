@@ -25,8 +25,10 @@ public class ChopWood : GoapAction {
         SetState("Chop Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -38,9 +40,9 @@ public class ChopWood : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -48,9 +50,9 @@ public class ChopWood : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreChopSuccess(ActualGoapNode goapNode) {
         TreeObject tree = goapNode.poiTarget as TreeObject;
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -84,5 +86,5 @@ public class ChopWood : GoapAction {
         InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE, wood,
             goapNode.actor, tile);
     }
-    #endregion
+#endregion
 }

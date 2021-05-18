@@ -132,12 +132,16 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		TryCreateMiningJob();
 	}
 	private void HourlyJobActions() {
+#if DEBUG_PROFILER
 		Profiler.BeginSample($"{_owner.name} settlement Hourly Job Actions");
+#endif
 		CreatePatrolJobs();
 		TryCreateMiningJob();
 		HourlyCheckForNeededCharacterClasses();
 		TryCreateMissingFoodProducingStructure();
+#if DEBUG_PROFILER
 		Profiler.EndSample();
+#endif
 	}
 	private void OnResourceInPileChangedVillage(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
@@ -266,13 +270,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	// }
 	private void OnSettlementChangedStorage(NPCSettlement npcSettlement) {
 		if (npcSettlement == _owner) {
-			List<ResourcePile> resourcePiles = RuinarchListPool<ResourcePile>.Claim();
-			_owner.region.PopulateTileObjectsOfType(resourcePiles);
+			List<TileObject> resourcePiles = RuinarchListPool<TileObject>.Claim();
+			_owner.region.PopulateTileObjectsOfType<ResourcePile>(resourcePiles);
 			for (int i = 0; i < resourcePiles.Count; i++) {
-				ResourcePile resourcePile = resourcePiles[i];
+				ResourcePile resourcePile = resourcePiles[i] as ResourcePile;
 				TryCreateHaulJob(resourcePile);
 			}
-			RuinarchListPool<ResourcePile>.Release(resourcePiles);
+			RuinarchListPool<TileObject>.Release(resourcePiles);
 		}
 	}
 	private void OnBurningSourceInactive(BurningSource burningSource) {
@@ -311,7 +315,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			}
 		}
 	}
-	#endregion
+#endregion
 
 	//#region Utilities
 	//private bool HasNearbyCave() {
@@ -330,18 +334,18 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	//}
 	//#endregion
 
-	#region Resources
+#region Resources
 	public int GetTotalResource(RESOURCE resourceType) {
 		int resource = 0;
-		List<ResourcePile> piles = RuinarchListPool<ResourcePile>.Claim();
-		_owner.mainStorage.PopulateTileObjectsOfType(piles);
+		List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
+		_owner.mainStorage.PopulateTileObjectsOfType<ResourcePile>(piles);
 		for (int i = 0; i < piles.Count; i++) {
-			ResourcePile resourcePile = piles[i];
+			ResourcePile resourcePile = piles[i] as ResourcePile;
 			if (resourcePile.providedResource == resourceType) {
-				resource += piles[i].resourceInPile;	
+				resource += resourcePile.resourceInPile;	
 			}
 		}
-		RuinarchListPool<ResourcePile>.Release(piles);
+		RuinarchListPool<TileObject>.Release(piles);
 		return resource;
 	}
 	private int GetMinimumResource(RESOURCE resource) {
@@ -497,9 +501,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
             _owner.AddToAvailableJobs(job);
         }
 	}
-	#endregion
+#endregion
 
-	#region Repair
+#region Repair
 	private void TryCreateRepairTileObjectJob(TileObject target) {
 		if (_owner.HasJob(JOB_TYPE.REPAIR, target) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
@@ -512,9 +516,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			_owner.AddToAvailableJobs(job);
 		}
 	}
-	#endregion
+#endregion
 
-	#region Haul
+#region Haul
 	public void TryCreateHaulJob(ResourcePile target) {
 		if (_owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region) {
 
@@ -544,9 +548,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
             _owner.AddToAvailableJobs(job);
         }
     }
-    #endregion
+#endregion
 
-    #region Judge Prisoner
+#region Judge Prisoner
     public void TryCreateJudgePrisoner(Character target) {
 		if (target.traitContainer.HasTrait("Restrained") && target.traitContainer.HasTrait("Criminal")
             && target.gridTileLocation != null
@@ -565,9 +569,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
             }
 		}
 	}
-	#endregion
+#endregion
 
-	#region Apprehend
+#region Apprehend
 	public void TryCreateApprehend(Character target) {
 		if (target.currentSettlement == _owner && _owner.owner != null && target.traitContainer.HasTrait("Criminal") && !target.isDead && target.currentStructure != _owner.prison) {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
@@ -583,9 +587,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			}
 		}
 	}
-	#endregion
+#endregion
 
-	#region Patrol
+#region Patrol
 	private void CreatePatrolJobs() {
 		int patrolChance = UnityEngine.Random.Range(0, 100);
 		if (patrolChance < 15 && _owner.GetNumberOfJobsWith(JOB_TYPE.PATROL) < 2) {
@@ -594,9 +598,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			_owner.AddToAvailableJobs(job);
 		}
 	}
-	#endregion
+#endregion
 
-	#region Obtain Personal Food
+#region Obtain Personal Food
 	private void TryTriggerObtainPersonalFood(Table table) {
 		if (table.food < 20 && _owner.HasJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, table) == false) {
 			//Only get the amount of food that is missing from 30
@@ -626,9 +630,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
         //}
         //return false;
     }
-	#endregion
+#endregion
 
-	#region Combine Stockpile
+#region Combine Stockpile
 	private void TryCreateCombineStockpile(ResourcePile pile) {
 		if (pile.mapObjectState != MAP_OBJECT_STATE.BUILT) {
 			return;
@@ -662,31 +666,41 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			_owner.AddToAvailableJobs(job);
 		}
 	}
-	#endregion
+#endregion
 
-	#region Knockout
+#region Knockout
 	private void TryCreateRestrainJobs() {
+#if DEBUG_LOG
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is under siege, trying to create knockout jobs...";
+#endif
 		if (CanCreateRestrainJob()) {
-			int combatantResidents = 
-				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
+			int combatantResidents = _owner.GetNumberOfResidentsThatHasTrait("Combatant");
 			int existingRestrainJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.RESTRAIN);
+#if DEBUG_LOG
 			summary += $"\nCombatant residents: {combatantResidents.ToString()}";
 			summary += $"\nExisting restrain jobs: {existingRestrainJobs.ToString()}";
-			List<Character> hostileCharacters = _owner.GetHostileCharactersInSettlement();
-			if (hostileCharacters.Count > 0) {
-				Character target = hostileCharacters.First();
+#endif
+			Character hostile = _owner.GetFirstHostileCharacterInSettlement();
+			if (hostile != null) {
 				int jobsToCreate = combatantResidents - existingRestrainJobs;
+#if DEBUG_LOG
 				summary += $"\nWill create {jobsToCreate.ToString()} restrain jobs.";
+#endif
 				for (int i = 0; i < jobsToCreate; i++) {
-					summary += $"\nWill create restrain job targeting {target.name}.";
-					CreateRestrainJob(target);
+#if DEBUG_LOG
+					summary += $"\nWill create restrain job targeting {hostile.name}.";
+#endif
+					CreateRestrainJob(hostile);
 				}	
 			}
 		} else {
+#if DEBUG_LOG
 			summary += $"\nCannot create restrain jobs";
+#endif
 		}
+#if DEBUG_LOG
 		Debug.Log(summary);
+#endif
 	}
 	private void TryCreateRestrainJobs(Character target) {
 		if (CanCreateRestrainJob() && target.faction.IsHostileWith(_owner.owner) && target.limiterComponent.canPerform && 
@@ -750,9 +764,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		}
 		return false;
 	}
-	#endregion
+#endregion
 
-	#region Douse Fire
+#region Douse Fire
 	public void TriggerDouseFire() {
         if (_owner.firesInSettlement.Count > 0) {
 			int existingDouseFire = dousers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.DOUSE_FIRE);
@@ -770,13 +784,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	private void CheckDouseFireJobsValidity() {
 		if (_owner.firesInSettlement.Count == 0) {
 			//cancel all douse fire jobs
-			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DOUSE_FIRE);
+			List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+			_owner.PopulateJobsOfType(jobs, JOB_TYPE.DOUSE_FIRE);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
 					jqi.ForceCancelJob(false, "no more fires");	
 				}
 			}
+			RuinarchListPool<JobQueueItem>.Release(jobs);
 		}
 	}
 	private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
@@ -808,9 +824,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	public void RemoveDouser(Character character) {
 		dousers.Remove(character);
 	}
-	#endregion
+#endregion
 
-	#region Dry Tiles
+#region Dry Tiles
 	private void AddWetTile(LocationGridTile tile) {
 		if (!wetTiles.Contains(tile)) {
 			wetTiles.Add(tile);
@@ -840,13 +856,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	private void CheckDryTilesValidity() {
 		if (wetTiles.Count == 0) {
 			//cancel all dry tiles jobs
-			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DRY_TILES);
+			List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+			_owner.PopulateJobsOfType(jobs, JOB_TYPE.DRY_TILES);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
 					jqi.ForceCancelJob(false, "no more wet floors");	
 				}
 			}
+			RuinarchListPool<JobQueueItem>.Release(jobs);
 		}
 	}
 	public void AddTileDryer(Character character) {
@@ -855,9 +873,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	public void RemoveTileDryer(Character character) {
 		tileDryers.Remove(character);
 	}
-	#endregion
+#endregion
 	
-	#region Cleanse Tiles
+#region Cleanse Tiles
 	private void AddPoisonedTile(LocationGridTile tile) {
 		if (!poisonedTiles.Contains(tile)) {
 			poisonedTiles.Add(tile);
@@ -887,13 +905,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	private void CheckCleanseTilesValidity() {
 		if (poisonedTiles.Count == 0) {
 			//cancel all cleanse tiles jobs
-			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.CLEANSE_TILES);
+			List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+			_owner.PopulateJobsOfType(jobs, JOB_TYPE.CLEANSE_TILES);
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
 					jqi.ForceCancelJob(false, "no more poisoned floors");	
 				}
 			}
+			RuinarchListPool<JobQueueItem>.Release(jobs);
 		}
 	}
 	public void AddPoisonCleanser(Character character) {
@@ -902,9 +922,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	public void RemovePoisonCleanser(Character character) {
 		poisonCleansers.Remove(character);
 	}
-	#endregion
+#endregion
 
-	#region Tend Farm
+#region Tend Farm
 	private void ScheduleTendFarmCheck() {
 		//GameDate checkDate = GameManager.Instance.Today();
 		//checkDate.AddDays(1);
@@ -966,24 +986,26 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		_owner.AddToAvailableJobs(job);
 	}
 	private void CancelTendJobs() {
-		List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.TEND_FARM);
+		List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+		_owner.PopulateJobsOfType(jobs, JOB_TYPE.TEND_FARM);
 		for (int i = 0; i < jobs.Count; i++) {
 			JobQueueItem job = jobs[i];
 			job.ForceCancelJob(false);
 		}
+		RuinarchListPool<JobQueueItem>.Release(jobs);
 	}
-	#endregion
+#endregion
 
-	#region Mining
+#region Mining
 	private void TryCreateMiningJob() {
 		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && _owner.HasStructure(STRUCTURE_TYPE.MINE_SHACK)) { //6
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
 			_owner.AddToAvailableJobs(job);
 		}
 	}
-	#endregion
+#endregion
 
-    #region Party
+#region Party
     //public bool TriggerExterminationJob(LocationStructure targetStructure) { //bool forceDoAction = false
     //    if (!_owner.HasJob(JOB_TYPE.EXTERMINATE)) {
     //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXTERMINATE, INTERACTION_TYPE.EXTERMINATE, null, _owner);
@@ -999,9 +1021,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
         job.SetCanTakeThisJobChecker(JobManager.Can_Take_Join_Gathering);
         _owner.AddToAvailableJobs(job);
     }
-    #endregion
+#endregion
 
-    #region Craft Water Well
+#region Craft Water Well
     private void StartCraftWaterWellCheck() {
 	    CheckIfShouldCraftWaterWell();
 	    //check every hour if water well should be crafted
@@ -1020,7 +1042,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     }
     
     public void CheckIfShouldCraftWaterWell() {
+#if DEBUG_PROFILER
 	    Profiler.BeginSample($"{_owner.name} settlementt Craft Water Well Check");
+#endif
 	    LocationStructure cityCenter = _owner.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
 	    TileObject waterWell = cityCenter.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
 	    Assert.IsNotNull(waterWell);
@@ -1034,13 +1058,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
             UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(_owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.WATER_WELL).mainRecipe });
 		    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Well);
-		    _owner.AddToAvailableJobs(job); 
-	    }
+		    _owner.AddToAvailableJobs(job);
+		}
+#if DEBUG_PROFILER
 	    Profiler.EndSample();
+#endif
     }
-    #endregion
+#endregion
 
-    #region Steal Corpse
+#region Steal Corpse
     public bool CreateStealCorpseJob(LocationStructure dropLocation) {
         if(!_owner.HasJob(JOB_TYPE.STEAL_CORPSE)) {
             LocationGridTile targetTile = dropLocation.GetRandomUnoccupiedTile();
@@ -1116,9 +1142,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
         }
         return null;
     }
-    #endregion
+#endregion
 
-    #region Summon Bone Golem
+#region Summon Bone Golem
     public bool CreateSummonBoneGolemJob(LocationStructure cultTemple) {
         if (!_owner.HasJob(JOB_TYPE.SUMMON_BONE_GOLEM)) {
             object[] corpses = Get3CorpsesToSummonBoneGolem(cultTemple);
@@ -1157,18 +1183,18 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
             return new object[] { corpse1, corpse2, corpse3 };
         }
     }
-    #endregion
+#endregion
     
-    #region Quarantine
+#region Quarantine
     public void TriggerQuarantineJob(Character target) {
 	    if (!_owner.HasJob(JOB_TYPE.QUARANTINE, target)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.QUARANTINE, INTERACTION_TYPE.QUARANTINE, target, _owner);
 		    _owner.AddToAvailableJobs(job);
 	    }
     }
-    #endregion
+#endregion
 
-    #region Change Class
+#region Change Class
     public void OnNeededClassRemoved(string p_removedClass) {
 	    //cancel all change class jobs targeting removed class
 	    List<JobQueueItem> changeClassJobs = _owner.availableJobs.GetJobsWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, p_removedClass);
@@ -1214,9 +1240,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		    _owner.AddToAvailableJobs(job);    
 	    }
     }
-    #endregion
+#endregion
 
-    #region Food Producing Structure
+#region Food Producing Structure
     private void TryCreateMissingFoodProducingStructure() {
 	    if (!_owner.HasFoodProducingStructure()) {
 		    TriggerBuildFoodProducingStructure();
@@ -1232,5 +1258,5 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		    }
 	    }
     }
-    #endregion
+#endregion
 }

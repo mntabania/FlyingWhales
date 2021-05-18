@@ -122,15 +122,17 @@ namespace Inner_Maps {
         public LocationGridTile GetTileToGoToRegion([NotNull]Region targetRegion) {
             Assert.IsTrue(targetRegion != region, $"target region passed is same as owning region! {targetRegion.name}");
             Vector3 coordinates = GetClosestPointToRegion(targetRegion);
+#if DEBUG_LOG
             Debug.Log($"Getting target tile to go to {targetRegion.name} from {region.name}. Result was {coordinates.ToString()}");
+#endif
             int xCoordinate = Mathf.Clamp((int)coordinates.x, 0, width - 1);
             int yCoordinate = Mathf.Clamp((int)coordinates.y, 0, height - 1);
             LocationGridTile targetTile = map[xCoordinate, yCoordinate];
             return targetTile;
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         private Vector2Int GetRegionDimensions(Region p_region) {
             int maxX = p_region.areas.Max(t => t.areaData.xCoordinate);
             int minX = p_region.areas.Min(t => t.areaData.xCoordinate);
@@ -146,6 +148,6 @@ namespace Inner_Maps {
         private Vector2Int GetInnerMapSizeGivenRegionDimensions(Vector2Int p_dimensions) {
             return new Vector2Int(p_dimensions.x * InnerMapManager.AreaLocationGridTileSize.x, p_dimensions.y * InnerMapManager.AreaLocationGridTileSize.y);
         }
-        #endregion
+#endregion
     }
 }

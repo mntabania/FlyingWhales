@@ -17,8 +17,10 @@ public class Disable : GoapAction {
         SetState("Disable Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override bool IsInvalidOnVision(ActualGoapNode node, out string reason) {
@@ -26,9 +28,9 @@ public class Disable : GoapAction {
         reason = string.Empty;
         return false;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PreDisableSuccess(ActualGoapNode goapNode) {
         //Spawn Particle Effect
         GameManager.Instance.CreateParticleEffectAt(goapNode.actor.gridTileLocation, PARTICLE_EFFECT.Disabler);
@@ -54,5 +56,5 @@ public class Disable : GoapAction {
             log.AddLogToDatabase(true);
         }
     }
-    #endregion
+#endregion
 }

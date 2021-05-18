@@ -70,12 +70,16 @@ public class BookmarkableEventDispatcher {
     public void Subscribe(IListener p_listener, IBookmarkable p_subscribeTo) {
         _onBookmarkRemoved += p_listener.OnBookmarkRemoved;
         _onBookmarkableChangedNameOrElements += p_listener.OnBookmarkChangedName;
+#if DEBUG_LOG
         Debug.Log($"{p_listener.ToString()} subscribed to bookmarkable: {p_subscribeTo.bookmarkName} events");
+#endif
     }
     public void Unsubscribe(IListener p_listener, IBookmarkable p_unsubscribeFrom) {
         _onBookmarkRemoved -= p_listener.OnBookmarkRemoved;
         _onBookmarkableChangedNameOrElements -= p_listener.OnBookmarkChangedName;
+#if DEBUG_LOG
         Debug.Log($"{p_listener.ToString()} unsubscribed to bookmarkable: {p_unsubscribeFrom.bookmarkName} events");
+#endif
     }
     public void ExecuteBookmarkRemovedEvent(IBookmarkable p_bookmarkable) {
         _onBookmarkRemoved?.Invoke(p_bookmarkable);

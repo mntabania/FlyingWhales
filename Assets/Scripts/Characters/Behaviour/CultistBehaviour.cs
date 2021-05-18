@@ -38,8 +38,10 @@ public class CultistBehaviour : CharacterBehaviourComponent {
         // chance = 100;
         
         int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
         log += $"\nWill try to do cultist action. Chance is {chance.ToString()}. Roll is {roll.ToString()}";
-        
+#endif
+
         if (roll < chance) {
             return TryCreateCultistJob(character, ref log, out producedJob);
         }

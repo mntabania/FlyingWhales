@@ -228,22 +228,31 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         }
     }
     private void VillageMigrationEvent() {
-        string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";
-
+        string debugLog = string.Empty;
+#if DEBUG_LOG
+        debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";
+#endif
         if (IsMigrationEventAllowed()) {
             List<PreCharacterData> unspawnedCharacters = RuinarchListPool<PreCharacterData>.Claim();
             DatabaseManager.Instance.familyTreeDatabase.ForcePopulateAllUnspawnedCharactersThatFitFaction(unspawnedCharacters, owner.owner.race, owner.owner);
             if (unspawnedCharacters.Count > 0) {
                 Migrate(unspawnedCharacters, owner.owner, ref debugLog);
             } else {
+#if DEBUG_LOG
                 debugLog += $"\nNo unspawned character to spawn for {owner.owner.race.ToString()}/{owner.owner.name}";
+#endif
             }
             RuinarchListPool<PreCharacterData>.Release(unspawnedCharacters);
         }
+#if DEBUG_LOG
         Debug.Log(debugLog);
+#endif
     }
     private void VillageMigrationEventOnEmptySettlement() {
-        string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for Empty Settlement is triggered";
+        string debugLog = string.Empty;
+#if DEBUG_LOG
+        debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for Empty Settlement is triggered";
+#endif
         List<PreCharacterData> unspawnedCharacters = RuinarchListPool<PreCharacterData>.Claim();
         RACE migrationRace = RACE.HUMANS;
         if (GameUtilities.RollChance(50)) {
@@ -257,10 +266,14 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             Migrate(unspawnedCharacters, newFaction, ref debugLog);
             Messenger.Broadcast(FactionSignals.FORCE_FACTION_UI_RELOAD);
         } else {
+#if DEBUG_LOG
             debugLog += $"\nNo unspawned character to spawn for {migrationRace}/Vagrants";
+#endif
         }
         RuinarchListPool<PreCharacterData>.Release(unspawnedCharacters);
+#if DEBUG_LOG
         Debug.Log(debugLog);
+#endif
     }
     private void Migrate(List<PreCharacterData> unspawnedCharacters, Faction faction, ref string debugLog) {
         AdjustLongTermModifier(-1);
@@ -279,7 +292,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         }
 
         LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(edgeTileChoices);
+#if DEBUG_LOG
         debugLog += $"\nWill spawn {randomAmount} characters at {edgeTile}";
+#endif
         for (int i = 0; i < randomAmount; i++) {
             if (unspawnedCharacters.Count <= 0) { break; }
             PreCharacterData characterToSpawn = CollectionUtilities.GetRandomElement(unspawnedCharacters);
@@ -308,7 +323,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             newCharacter.CreateMarker();
             newCharacter.InitialCharacterPlacement(edgeTile);
             newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
+#if DEBUG_LOG
             debugLog += $"\nSpawned new character {newCharacter.name} at {edgeTile}";
+#endif
             newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
             Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
@@ -323,7 +340,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     private string GetMigrationMeterBookmarkName() {
         return $"<b>{owner.name}</b> Incoming Migrants: {Mathf.FloorToInt(GetNormalizedMigrationMeterValue() * 100f).ToString()}%";
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -332,7 +349,7 @@ public class SaveDataSettlementVillageMigrationComponent : SaveData<SettlementVi
     public int perHourIncrement;
     public int longTermModifier;
 
-    #region Overrides
+#region Overrides
     public override void Save(SettlementVillageMigrationComponent data) {
         villageMigrationMeter = data.villageMigrationMeter;
         perHourIncrement = data.perHourIncrement;
@@ -343,5 +360,5 @@ public class SaveDataSettlementVillageMigrationComponent : SaveData<SettlementVi
         SettlementVillageMigrationComponent component = new SettlementVillageMigrationComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

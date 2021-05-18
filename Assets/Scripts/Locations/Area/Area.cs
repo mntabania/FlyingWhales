@@ -143,7 +143,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     }
     public bool HasAliveVillagerResident() {
         //Does not count if hextile is only a territory
-        return settlementOnArea != null && settlementOnArea.HasResidentThatMeetsCriteria(resident => !resident.isDead && resident.isNormalCharacter);
+        return settlementOnArea != null && settlementOnArea.HasResidentThatIsVillagerAndNotDead();
     }
     #endregion
 

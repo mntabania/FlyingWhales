@@ -9,9 +9,13 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} is berserked";
+#endif
         if (!character.combatComponent.isInCombat) {
+#if DEBUG_LOG
             log += $"\n-{character.name} is not in combat will try to attack nearby characters/objects";
+#endif
             bool hasCreatedJob = false;
             for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
                 IPointOfInterest inVisionPOI = character.marker.inVisionPOIs[i];
@@ -62,7 +66,9 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
                 }
             }
             if (!hasCreatedJob) {
+#if DEBUG_LOG
                 log += $"\n-{character.name} did not create berserk attack job, will stroll instead";
+#endif
                 character.jobComponent.PlanIdleBerserkStrollOutside(out producedJob);
             }
         }

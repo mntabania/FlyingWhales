@@ -88,10 +88,14 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 
     #region Sub Text
     private void UpdateAllTextsAndIcon() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Character Nameplate - Update All Texts and Icon");
+#endif
         UpdateMainAndActionText();
         UpdateSubTextAndIcon();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void UpdateMainAndActionText() {
         mainLbl.text = $"<b>{character.firstNameWithColor}</b>";
@@ -108,9 +112,9 @@ public class CharacterNameplateItem : NameplateItem<Character> {
             subLbl.gameObject.SetActive(true);
         }
     }
-    #endregion
+#endregion
 
-    #region Leader Icon
+#region Leader Icon
     public void OnHoverLeaderIcon() {
         string message = string.Empty;
         if (character.isSettlementRuler) {
@@ -124,9 +128,9 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     public void OnHoverExitLeaderIcon() {
         UIManager.Instance.HideSmallInfo();
     }
-    #endregion
+#endregion
 
-    #region Race Icon
+#region Race Icon
     public void OnHoverRaceIcon() {
         string message = GameUtilities.GetNormalizedSingularRace(character.race);
         UIManager.Instance.ShowSmallInfo(message);
@@ -134,5 +138,5 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     public void OnHoverExitRaceIcon() {
         UIManager.Instance.HideSmallInfo();
     }
-    #endregion
+#endregion
 }

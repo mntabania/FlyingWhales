@@ -18,7 +18,9 @@ namespace Quests {
         }
 
         private void CheckCriteria() {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Is At Time Quest");
+#endif
             if (_validTimes.Contains(GameManager.Instance.Today().tick)) {
                 if (hasCriteriaBeenMet == false) {
                     SetCriteriaAsMet();    
@@ -28,7 +30,9 @@ namespace Quests {
                     SetCriteriaAsUnMet();    
                 }
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
     }
 }

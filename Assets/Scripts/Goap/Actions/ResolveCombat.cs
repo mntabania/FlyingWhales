@@ -43,19 +43,21 @@ public class ResolveCombat : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +50(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 50;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     //public void AfterCombatSuccess(ActualGoapNode goapNode) {
 
     //}
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsCombatFinished(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if (target is Character targetCharacter) {
             if (jobType.IsJobLethal()) {
@@ -74,9 +76,9 @@ public class ResolveCombat : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     //protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
     //    bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
     //    if (satisfied) {
@@ -84,5 +86,5 @@ public class ResolveCombat : GoapAction {
     //    }
     //    return false;
     //}
-    #endregion
+#endregion
 }

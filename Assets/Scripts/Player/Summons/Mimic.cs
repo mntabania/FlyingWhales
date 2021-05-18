@@ -64,17 +64,21 @@ public class Mimic : Summon {
         }
     }
     public void SubscribeToAwakenMimicEvent(TreasureChest p_chest) {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{p_chest.nameWithID} subscribed to {name} ({id.ToString()})({persistentID}) Awaken Event");
+#endif
         _awakenMimicEvent += p_chest.TryAwakenMimic;
     }
     public void UnsubscribeToAwakenMimicEvent(TreasureChest p_chest) {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{p_chest.nameWithID} unsubscribed from {name} ({id.ToString()})({persistentID}) Awaken Event");
+#endif
         _awakenMimicEvent -= p_chest.TryAwakenMimic;
     }
     private void ExecuteAwakenMimicEvent() {
         _awakenMimicEvent?.Invoke(this);
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]

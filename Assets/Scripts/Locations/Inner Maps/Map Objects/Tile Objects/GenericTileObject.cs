@@ -123,9 +123,13 @@ public class GenericTileObject : TileObject {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"GTO - Adjust HP - DamageModifierByElementsAndTraits");
+#endif
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
@@ -135,13 +139,19 @@ public class GenericTileObject : TileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
+#if DEBUG_PROFILER
             Profiler.BeginSample($"GTO - Adjust HP - ApplyElementalDamage - {elementalDamageType.ToString()}");
+#endif
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, createHitEffect: false, setAsPlayerSource: isPlayerSource);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
         
         if (currentHP <= 0) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"GTO - Adjust HP - DetermineNextGroundTypeAfterDestruction");
+#endif
             if (gridTileLocation.structure.structureType.IsPlayerStructure()) {
                 //once tile in demonic structure is destroyed, revert tile to corrupted.
                 gridTileLocation.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
@@ -149,17 +159,27 @@ public class GenericTileObject : TileObject {
                 //floor has been destroyed
                 gridTileLocation.DetermineNextGroundTypeAfterDestruction();    
             }
-                
+
+#if DEBUG_PROFILER
             Profiler.EndSample();
-        } 
+#endif
+        }
         if (amount < 0) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"GTO - Adjust HP - OnTileDamaged");
+#endif
             structureLocation.OnTileDamaged(gridTileLocation, amount);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (amount > 0) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"GTO - Adjust HP - OnTileRepaired");
+#endif
             structureLocation.OnTileRepaired(gridTileLocation, amount);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
 
         if (currentHP <= 0) {
@@ -190,7 +210,7 @@ public class GenericTileObject : TileObject {
             isCurrentlyBuilding = false;
         }
     }
-    #endregion
+#endregion
 
     public BaseMapObjectVisual GetOrCreateMapVisual() {
         if (ReferenceEquals(mapVisual, null)) {
@@ -238,7 +258,7 @@ public class GenericTileObject : TileObject {
         // SetGridTileLocation(tile);
     }
 
-    #region Structure Blueprints
+#region Structure Blueprints
     public bool PlaceExpiringBlueprintOnTile(string prefabName) {
         if (PlaceBlueprintOnTile(prefabName, out var blueprint)) {
             ScheduleBlueprintExpiry();
@@ -406,9 +426,9 @@ public class GenericTileObject : TileObject {
         BuildBlueprint(blueprintOnTile, p_settlement, null);
         selfBuildingStructureSettlement = null;
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public override void LoadSecondWave(SaveDataTileObject data) {
         base.LoadSecondWave(data);
         SaveDataGenericTileObject saveDataGenericTileObject = data as SaveDataGenericTileObject;
@@ -448,7 +468,7 @@ public class GenericTileObject : TileObject {
         structureObject.SetTilesInStructure(occupiedTiles.ToArray());
         blueprintOnTile = structureObject;
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

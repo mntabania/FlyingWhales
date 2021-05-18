@@ -26,11 +26,15 @@ public class HarvestPlant : GoapAction {
         SetState("Harvest Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             //target is at structure that character is avoiding
+#if DEBUG_LOG
             costLog += $" +2000(Location of target is in avoid structure)";
             actor.logComponent.AppendCostLog(costLog);
+#endif
             return 2000;
         }
         if(target.gridTileLocation != null) {
@@ -38,8 +42,10 @@ public class HarvestPlant : GoapAction {
             if(target.gridTileLocation.IsPartOfSettlement(out settlement)) {
                 if(settlement.owner != null && actor.homeSettlement != settlement) {
                     //If target is in a claimed settlement and actor's home settlement is not the target's settlement, do not harvest, even if the faction owner of the target's settlement is also the faciton of the actor
+#if DEBUG_LOG
                     costLog += $" +2000(Target's settlement is not the actor's home settlement)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     return 2000;
                 }
             }
@@ -53,15 +59,19 @@ public class HarvestPlant : GoapAction {
 
                 if(distance > distanceToCheck) {
                     //target is at structure that character is avoiding
+#if DEBUG_LOG
                     costLog += $" +2000(Location of target too far from actor)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     return 2000;
                 }
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(40, 51);
+#if DEBUG_LOG
         costLog += $" +{cost.ToString()}(Random Cost Between 40-50)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -77,9 +87,9 @@ public class HarvestPlant : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -91,9 +101,9 @@ public class HarvestPlant : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreHarvestSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(null, "30", LOG_IDENTIFIER.STRING_1);
         //if (goapNode.actor.characterClass.IsCombatant()) {
@@ -143,9 +153,9 @@ public class HarvestPlant : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     private string GetTargetString(IPointOfInterest poi) {
         if (poi is BerryShrub) {
             return "berries";
@@ -157,5 +167,5 @@ public class HarvestPlant : GoapAction {
             return poi.name;
         }
     }
-    #endregion
+#endregion
 }

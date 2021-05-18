@@ -19,7 +19,8 @@ namespace Traits {
             string successLogKey = base.TriggerFlaw(character);
             int loverID = character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER); 
             if (loverID != -1) {
-                List<int> affairIDs = character.relationshipContainer.GetAllRelatableIDWithRelationship(RELATIONSHIP_TYPE.AFFAIR);
+                List<int> affairIDs = RuinarchListPool<int>.Claim();
+                character.relationshipContainer.PopulateAllRelatableIDWithRelationship(affairIDs, RELATIONSHIP_TYPE.AFFAIR);
                 Character aliveAffair = null;
                 for (int i = 0; i < affairIDs.Count; i++) {
                     int affairID = affairIDs[i];
@@ -29,6 +30,7 @@ namespace Traits {
                         break;
                     }
                 }
+                RuinarchListPool<int>.Release(affairIDs);
                 if (aliveAffair == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         List<Character> choices = new List<Character>();

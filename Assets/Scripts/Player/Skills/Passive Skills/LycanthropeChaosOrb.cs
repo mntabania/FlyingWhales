@@ -17,7 +17,9 @@ public class LycanthropeChaosOrb : PassiveSkill {
             Character responsibleCharacter = p_character.traitContainer.GetTraitOrStatus<Trait>("Dead").responsibleCharacter;
             if (responsibleCharacter != null) {
                 if (responsibleCharacter.traitContainer.HasTrait("Lycanthrope")) {
+#if DEBUG_LOG
                     Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [Kill by lycan] - [2]");
+#endif
                     Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 2, p_character.gridTileLocation.parentMap);
                 }
             }
@@ -25,7 +27,9 @@ public class LycanthropeChaosOrb : PassiveSkill {
     }
 
     void OnLycanthropeShedWolfPelt(Character p_character) {
+#if DEBUG_LOG
         Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [OnLycanthropeShedWolfPelt] - [2]");
+#endif
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 2, p_character.gridTileLocation.parentMap);
     }
 }
