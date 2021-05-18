@@ -2241,12 +2241,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             owner.jobQueue.AddJobInQueue(job);
         }
     }
-    public void TriggerAbsorbPower(IPointOfInterest target, out JobQueueItem producedJob) {
+    public bool TriggerAbsorbPower(IPointOfInterest target, out JobQueueItem producedJob) {
 	    producedJob = null;
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.ABSORB_POWER)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_POWER, INTERACTION_TYPE.ABSORB_POWER, target, owner);
 		    producedJob = job;
+            return true;
 	    }
+        return false;
     }
     public bool TriggerReadNecronomicon(out JobQueueItem producedJob) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
