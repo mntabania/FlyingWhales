@@ -74,11 +74,20 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
 
                 if(deadSummon != null) {
                     log += $"\n-Character saw a dead summon will try to absorb power";
-                    ELEMENTAL_TYPE elementalType = deadSummon.characterClass.elementalType;
-                    if (elementalType != ELEMENTAL_TYPE.Normal) {
-                        if (!character.traitContainer.HasTrait(elementalType.ToString() + " Attacker")) {
-                            //NOTE: Rename to absorb element
-                            character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob);
+                    //Removed absorbing element since characters can now equip weapons that can change elements also
+                    //This will conflict the new system of changing elements
+                    //ELEMENTAL_TYPE elementalType = deadSummon.characterClass.elementalType;
+                    //if (elementalType != ELEMENTAL_TYPE.Normal) {
+                    //    if (!character.traitContainer.HasTrait(elementalType.ToString() + " Attacker")) {
+                    //        //NOTE: Rename to absorb element
+                    //        if(character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob)) {
+                    //            return true;
+                    //        }
+                    //    }
+                    //}
+                    if (!character.traitContainer.HasTrait("Enhanced Power")) {
+                        if (character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob)) {
+                            //Will absorb power that will enhance attack damage temporarily (12 hours)
                             return true;
                         }
                     }

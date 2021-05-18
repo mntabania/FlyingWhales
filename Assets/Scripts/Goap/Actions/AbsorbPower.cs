@@ -62,7 +62,7 @@ public class AbsorbPower : GoapAction {
         //(goapNode.poiTarget as Character).Death(deathFromAction: goapNode);
 
         Character targetCharacter = goapNode.poiTarget as Character;
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, targetCharacter.characterClass.elementalType.ToString() + " Attacker");
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Enhanced Power");
 
         if (targetCharacter.hasMarker) {
             targetCharacter.DestroyMarker();
