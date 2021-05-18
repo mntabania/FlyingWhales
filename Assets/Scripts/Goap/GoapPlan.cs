@@ -19,6 +19,7 @@ public class GoapPlan {
     public bool isPersonalPlan { get; private set; }
     public bool doNotRecalculate { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
+    public bool resetPlanOnFinishRecalculation { get; private set; }
 
     public GoapPlan() { }
     public GoapPlan(SaveDataGoapPlan data) {
@@ -191,6 +192,9 @@ public class GoapPlan {
     public void SetDoNotRecalculate(bool state) {
         doNotRecalculate = state;
     }
+    public void SetResetPlanOnFinishRecalculation(bool p_state) {
+        resetPlanOnFinishRecalculation = p_state;
+    }
     //public void SetHasShownNotification(bool state) {
     //    hasShownNotification = state;
     //}
@@ -256,6 +260,7 @@ public class GoapPlan {
         isEnd = false;
         isBeingRecalculated = false;
         doNotRecalculate = false;
+        resetPlanOnFinishRecalculation = false;
     }
 #endregion
     //public void OnActionInPlanFinished(Character actor, GoapAction action, string result) {

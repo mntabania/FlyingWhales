@@ -714,7 +714,7 @@ public class ObjectPoolManager : MonoBehaviour {
         plan.SetTarget(p_target);
         return plan;
     }
-    public GoapPlan CreateNewGoapPlan() {
+    private GoapPlan CreateNewGoapPlan() {
         if (_goapPlanPool.Count > 0) {
             GoapPlan data = _goapPlanPool[0];
             _goapPlanPool.RemoveAt(0);
@@ -723,6 +723,9 @@ public class ObjectPoolManager : MonoBehaviour {
         return new GoapPlan();
     }
     public void ReturnGoapPlanToPool(GoapPlan data) {
+#if DEBUG_LOG
+        Debug.Log($"Returned plan to pool:\n {data.LogPlan()}");
+#endif
         data.Reset();
         _goapPlanPool.Add(data);
     }
