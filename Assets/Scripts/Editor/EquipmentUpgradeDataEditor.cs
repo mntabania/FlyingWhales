@@ -71,23 +71,23 @@ public class EquipmentUpgradeDataEditor : Editor {
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_Piercing)) {
-                m_additionalPiercing = data.equipmentUpgradeData.AdditionalPiercing = EditorGUILayout.FloatField("additional Piercing", data.equipmentUpgradeData.AdditionalPiercing);
+                m_additionalPiercing = data.equipmentUpgradeData.AdditionalPiercing = EditorGUILayout.FloatField("Additional Piercing", data.equipmentUpgradeData.AdditionalPiercing);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Percentage)) {
-                m_additionalMaxHPPercentage = data.equipmentUpgradeData.AdditionalmaxHPPercentage = EditorGUILayout.FloatField("additional Max HP(%)", data.equipmentUpgradeData.AdditionalmaxHPPercentage);
+                m_additionalMaxHPPercentage = data.equipmentUpgradeData.AdditionalMaxHPPercentage = EditorGUILayout.FloatField("Additional Max HP(%)", data.equipmentUpgradeData.AdditionalMaxHPPercentage);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Actual)) {
-                m_additionalMaxHPActual = data.equipmentUpgradeData.AdditionalmaxHPActual = EditorGUILayout.FloatField("additional Max HP(actual)", data.equipmentUpgradeData.AdditionalmaxHPActual);
+                m_additionalMaxHPActual = data.equipmentUpgradeData.AdditionalMaxHPActual = EditorGUILayout.IntField("Additional Max HP(actual)", data.equipmentUpgradeData.AdditionalMaxHPActual);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Atk_Percentage)) {
-                m_additionalAttackPercentage = data.equipmentUpgradeData.AdditionalAttackPercentage = EditorGUILayout.FloatField("additional Attack(%)", data.equipmentUpgradeData.AdditionalAttackPercentage);
+                m_additionalAttackPercentage = data.equipmentUpgradeData.AdditionalAttackPercentage = EditorGUILayout.FloatField("Additional Attack(%)", data.equipmentUpgradeData.AdditionalAttackPercentage);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Atk_Actual)) {
-                m_additionalAttackActual = data.equipmentUpgradeData.AdditionalAttackActual = EditorGUILayout.FloatField("additional Attack(actual)", data.equipmentUpgradeData.AdditionalAttackActual);
+                m_additionalAttackActual = data.equipmentUpgradeData.AdditionalAttackActual = EditorGUILayout.IntField("Additional Attack(actual)", data.equipmentUpgradeData.AdditionalAttackActual);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_3_Random_Resistance) || data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_4_Random_Resistance) || data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_5_Random_Resistance)) {

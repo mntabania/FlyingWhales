@@ -10,13 +10,13 @@ public class EquipmentUpgradeData {
     [HideInInspector]
     public float AdditionalPiercing;
     [HideInInspector]
-    public float AdditionalmaxHPPercentage;
+    public float AdditionalMaxHPPercentage;
     [HideInInspector]
-    public float AdditionalmaxHPActual;
+    public int AdditionalMaxHPActual;
     [HideInInspector]
     public float AdditionalAttackPercentage;
     [HideInInspector]
-    public float AdditionalAttackActual;
+    public int AdditionalAttackActual;
     [HideInInspector]
     public float additionalResistanceBonus;
     [HideInInspector]

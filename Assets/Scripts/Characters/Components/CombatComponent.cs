@@ -9,12 +9,10 @@ using Locations.Settlements;
 public class CombatComponent : CharacterComponent {
     public int attack { get; private set; }
     public int attackModification { get; private set; }
-
-    public int attackModificationFromEquips { get; set; }
+    public float attackPercentModification { get; private set; }
     public int maxHP { get; private set; }
     public int maxHPModification { get; private set; }
-
-    public int maxHPModificationFromEquips { get; private set; }
+    public float maxHPPercentModification { get; private set; }
     public int attackSpeed { get; private set; }  //in milliseconds, The lower the amount the faster the attack rate
     public int numOfKilledCharacters { get; private set; }
     public COMBAT_MODE combatMode { get; private set; }
@@ -60,10 +58,8 @@ public class CombatComponent : CharacterComponent {
 
         attack = data.attack;
         attackModification = data.attackModification;
-        attackModificationFromEquips = data.attackModificationFromWeapon;
         maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
-        maxHPModificationFromEquips = data.maxHPModificationFromWeapon;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
@@ -1156,10 +1152,12 @@ public class CombatComponent : CharacterComponent {
         }
     }
     private void UpdateAttack() {
-        attack = unModifiedAttack + attackModification + attackModificationFromEquips;
+        int modifiedAttack = unModifiedAttack + attackModification;
+        attack = modifiedAttack + Mathf.RoundToInt(modifiedAttack * (attackPercentModification / 100f));
     }
     private void UpdateMaxHP() {
-        maxHP = unModifiedMaxHP + maxHPModification + maxHPModificationFromEquips;
+        int modifiedHP = unModifiedMaxHP + maxHPModification;
+        maxHP = modifiedHP + Mathf.RoundToInt(modifiedHP * (maxHPPercentModification / 100f));
         if (maxHP < 0) {
             maxHP = 1;
         }
@@ -1189,28 +1187,12 @@ public class CombatComponent : CharacterComponent {
         attackModification += modification;
         UpdateAttack();
     }
-    public void AdjustAttackModifierFromEquips(int modification) {
-        attackModificationFromEquips += modification;
-        UpdateAttack();
-    }
-    public void AdjustMaxHPModifierFromEquips(int modification) {
-        maxHPModificationFromEquips += modification;
+    public void AdjustMaxHPPercentModifier(float modification) {
+        maxHPPercentModification += modification;
         UpdateMaxHPAndProportionateHP();
     }
-    public void AddAttackBaseOnPercentage(float modification) {
-        attackModification += (int)(modification * attack);
-        UpdateAttack();
-    }
-    public void SubtractAttackBaseOnPercentage(float modification) {
-        attackModification -= (int)(modification * attack);
-        UpdateAttack();
-    }
-    public void AddAttackFromEquipsBaseOnPercentage(float modification) {
-        attackModificationFromEquips += (int)(modification * attack);
-        UpdateAttack();
-    }
-    public void SubtractAttackFromEquipsBaseOnPercentage(float modification) {
-        attackModificationFromEquips -= (int)(modification * attack);
+    public void AdjustAttackPercentModifier(float modification) {
+        attackPercentModification += modification;
         UpdateAttack();
     }
     #endregion
@@ -1397,10 +1379,8 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public override void Save(CombatComponent data) {
         attack = data.attack;
         attackModification = data.attackModification;
-        attackModificationFromWeapon = data.attackModificationFromEquips;
         maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
-        maxHPModificationFromWeapon = data.maxHPModificationFromEquips;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
         initialElementalDamageType = data.initialElementalType;
